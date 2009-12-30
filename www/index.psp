@@ -1,0 +1,33 @@
+<%
+import cx_Oracle
+import Session
+%>
+
+<html>
+<head><title>Welcome to Qiime</title></head>
+<body>
+
+<h2>Logged in</h2>
+
+<%
+con = cx_Oracle.Connection('bob/justbob@microbiome1.colorado.edu/demo1')
+study_names = con.cursor()
+con.cursor().callproc('get_study_names', [study_names])
+
+req.write('Study Names:<br>\n')
+req.write('<select>\n')
+for row in study_names:
+    req.write('<option value="' + row[0] + '">' + row[0] + '</option>\n')
+    
+req.write('</select>\n')
+    
+study_names.close()
+con.close()
+
+%>
+
+<p/>
+The rest of the page goes here.
+
+</body>
+</html>
