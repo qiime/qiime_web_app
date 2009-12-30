@@ -1,0 +1,47 @@
+<%
+import cx_Oracle
+import Session
+%>
+
+<html>
+<head><title>Please Log In</title></head>
+<body>
+
+<h2>Qiime Login</h2>
+
+<%
+if form.has_key('username'):
+    # begin
+    verified = ''
+    con = cx_Oracle.Connection('WEB_APP_USER/WEB_APP_PWD@microbiome1.colorado.edu/demo1')
+    curs = con.cursor()
+    return_values = curs.callproc('authenticate_user', [verified])
+    curs.close()
+    con.close()
+    
+    if ( len(return_values) > 0 ) and ( return_values[0] == "Y" ):
+        session = Session.Session(req)
+        session['username'] = form["username"]
+        session['password'] = form["password"]
+        psp.redirect("index.psp")
+    else:
+        req.write("<h2>Invalid username/password.")
+    
+%>
+
+<%
+# end
+%>
+
+<table>
+<form method="post" action="login.psp">
+
+    <tr><td>Username</td><td><input type="text" id="username" name="username"></td></tr>
+    <tr><td>Password</td><td><input type="text" id="password" name="password"></td></tr>
+    <tr><td colspan="2"><input type="submit" value="Log In"></tr>
+
+</form>
+</table>
+
+</body>
+</html>
