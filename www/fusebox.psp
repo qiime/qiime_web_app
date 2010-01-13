@@ -2,5 +2,15 @@
 
 <h2>The Body</h2>
 
+<%
+if form.has_key('page'):
+    # We have the page form variable - pick the right page to include
+    req.write('found da page')
+else:
+    # No page found... to be safe, require user to log in again
+    # todo: invalidate session here
+    psp.redirect('login.psp')
+%>
+
 <%@ include file="footer.psp"%>
 

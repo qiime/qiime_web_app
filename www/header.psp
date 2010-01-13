@@ -2,4 +2,8 @@
 <head><title>Qiime</title></head>
 <body>
 
+<form name="PageForm">
+<input name="page" id="form" value="login.psp">
+</form>
+
 <h3>Header Text</h3>

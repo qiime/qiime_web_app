@@ -1,7 +1,7 @@
 <%
 import cx_Oracle
 import Session
-import WebDBAdmin 
+from webdbadmin.web_db_admin import WebDBAdmin 
 %>
 
 <html>
@@ -13,16 +13,15 @@ import WebDBAdmin
 <%
 if form.has_key('username'):
     # begin
-	session = Session.Session(req)
+    session = Session.Session(req)
 	
-	try:
+    try:
         dsdb = WebDBAdmin()
         can_login, messages = dsdb.login(session, user, pw, ip_addr, web_app_name)
         messages = custom_login(cur_sess, messages, dsdb)
-        
         dsdb.DBConn.close()
     except Exception, e:
-    #except IOError, e:
+        #except IOError, e:
         # this is bad - probably could not connect to database
         messages = ["An unknown error has occured. %s" % str(e),
                     "Please report this to MicrobiomeHelp@colorado.edu"]
