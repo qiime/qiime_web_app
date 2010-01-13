@@ -10,7 +10,7 @@ import Session
 <h2>Logged in</h2>
 
 <%
-con = cx_Oracle.Connection('bob/justbob@microbiome1.colorado.edu/demo1')
+con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
 study_names = con.cursor()
 con.cursor().callproc('get_study_names', [study_names])
 
