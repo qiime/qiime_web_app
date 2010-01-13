@@ -1,0 +1,6 @@
+<%@ include file="header.psp"%>
+
+<h2>The Body</h2>
+
+<%@ include file="footer.psp"%>
+
