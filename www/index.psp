@@ -12,6 +12,24 @@ import Session
     th{text-align: left;}
 </style>
 <script type="text/javascript" src="./js/qiime.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
+<script type="text/javascript">
+
+$.validator.setDefaults({
+    submitHandler:function(){
+        study_metadata.submit();
+    }
+});
+
+$.metadata.setType("attr","validate");
+
+$(document).ready(function(){
+    $("#study_metadata").validate();
+});
+
+</script>
 </head>
 <body>
 
@@ -26,7 +44,7 @@ con.cursor().callproc('get_metadata_headers', [metadata_headers])
 %>
 
     <h3>Select the Studies and Metadata fields to compare.</h3>
-    <form action="./meta_samples.psp" method="post">
+    <form id="study_metadata" action="./meta_samples.psp" method="get">
         <table>
             <tr>
                 <th>Study Names:</th>
@@ -53,7 +71,7 @@ con.cursor().callproc('get_metadata_headers', [metadata_headers])
             <tr>
 <%	
 req.write('\t\t<td>\n')
-req.write('\t\t\t<select name="study_names" id="study" multiple>\n')
+req.write('\t\t\t<select validate="required:true, minlength:1" name="study_names" id="study" multiple>\n')
 for row in study_names:
     req.write('\t\t\t\t<option value="' + row[0] + '">' + row[0] + '</option>\n')
 
@@ -62,7 +80,7 @@ req.write('\t\t\t</select>\n')
 study_names.close()
 
 req.write('\t\t</td>\n\t\t<td>\n')
-req.write('\t\t\t<select name="metadata_headers" id="metadata_header" multiple>\n')
+req.write('\t\t\t<select validate="required:true, minlength:1" name="metadata_headers" id="metadata_header" multiple>\n')
 for row in metadata_headers:
     req.write('\t\t\t\t<option value="' + row[0] + '">' + row[0] + '</option>\n')
 req.write('\t\t\t</select>\n')
