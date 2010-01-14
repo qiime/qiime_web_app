@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>Metadata Sample Types</title>
+</head>
+<body>
+
+<%
+studies=form['study_names']
+metadata_type=form['metadata_headers']
+
+if isinstance(studies,list):
+    for study in studies:
+        req.write(study+'<br>')
+else: 
+    req.write(studies+'<br>')
+
+if isinstance(metadata_type,list):
+    for type in metadata_type:
+        req.write(type+'<br>')
+else:
+    req.write(metadata_type+'<br>')
+%>
+
+</body>
+</html>
