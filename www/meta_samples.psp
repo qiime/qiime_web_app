@@ -1,25 +1,83 @@
 <html>
 <head>
 <title>Metadata Sample Types</title>
+<style type="text/css">
+td{
+vertical-align:top;
+padding:10px;
+text-align:center;
+}
+</style>
+<script type="text/javascript" src="./js/qiime.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
+<script type="text/javascript">
+
+$.validator.setDefaults({
+    submitHandler:function(){
+        sample_types.submit();
+    }
+});
+
+$.metadata.setType("attr","validate");
+    
+$(document).ready(function(){
+    $("#sample_types").validate();
+});
+</script>
+
 </head>
 <body>
+<form id="sample_types" name="sample_types" action="./parameters.psp" method="get">
+
+<table>
+<tr>
 
 <%
+import cx_Oracle
+import Session
+
 studies=form['study_names']
 metadata_type=form['metadata_headers']
 
+con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
+
+column_values = con.cursor()
+
 if isinstance(studies,list):
+    combined_studies=[]
     for study in studies:
-        req.write(study+'<br>')
+	combined_studies.append('\'' + str(study) + '\'')
+    studies_to_get=','.join(combined_studies)
+    
 else: 
-    req.write(studies+'<br>')
+    studies_to_get="\'" + str(studies) + "\'"
 
 if isinstance(metadata_type,list):
-    for type in metadata_type:
-        req.write(type+'<br>')
-else:
-    req.write(metadata_type+'<br>')
-%>
+    for s_type in metadata_type:
+        con.cursor().callproc('get_metadata_by_study_list',[s_type,studies_to_get,column_values])
+	req.write("<td><h5>"+str(s_type)+"</h5>\n")
+        req.write('<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);"><option value="javascript:"><option value="javascript:select_all(\''+str(s_type)+'\');">All<option value="javascript:select_none(\''+str(s_type)+'\');">None<option value="Javascript:select_invert(\''+str(s_type)+'\');">Invert</select>\n<br>\n')
 
+        req.write('\t\t\t<select validate="required:true, minlength:1" name="'+str(s_type)+'" id="'+str(s_type)+'" multiple>\n')
+        for row in column_values:
+            req.write('\t\t\t\t<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+        req.write('</select></td>')
+else:
+    con.cursor().callproc('get_metadata_by_study_list',[metadata_type,studies_to_get,column_values])
+    req.write("<td><h5>"+str(metadata_type)+"</h5>\n")
+    req.write('\t\t\t<select validate="required:true, minlength:1" name="'+str(metadata_type)+'" id="'+str(metadata_type)+'" multiple>\n')
+    for row in column_values:
+        req.write('\t\t\t\t<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+    req.write('</select>')
+
+
+column_values.close()
+con.close()
+%>
+</table>
+<input type="submit" value="Next">
+</form>
 </body>
 </html>
