@@ -1,9 +1,16 @@
+<%
+# Check to make sure session is valid. If not, redirect to login
+s = Session.Session(req)
+if not ( s.has_key('username' ) ):
+	s.invalidate()
+	req.redirect('login.psp')
+
+%>
+
 <html>
 <head><title>Qiime</title></head>
 <body>
 
-<form name="PageForm">
-<input name="page" id="form" value="login.psp">
-</form>
-
-<h3>Header Text</h3>
+<table width="100%" bgcolor="#CCCCCC">
+<tr><td>Qiime<br/>Logged in as <%=s['username']%></td></tr>
+</table>

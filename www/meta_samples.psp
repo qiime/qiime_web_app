@@ -1,6 +1,4 @@
-<html>
-<head>
-<title>Metadata Sample Types</title>
+
 <style type="text/css">
 td{
 vertical-align:top;
@@ -27,9 +25,8 @@ $(document).ready(function(){
 });
 </script>
 
-</head>
-<body>
-<form id="sample_types" name="sample_types" action="./parameters.psp" method="get">
+<form id="sample_types" name="sample_types" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="parameters.psp">
 
 <table>
 <tr>
@@ -79,5 +76,4 @@ con.close()
 </table>
 <input type="submit" value="Next">
 </form>
-</body>
-</html>
+

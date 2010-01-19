@@ -1,47 +1,32 @@
 <%
-import cx_Oracle
-import Session
-from webdbadmin.web_db_admin import WebDBAdmin 
+from mod_python import Session
+from DataAccess import QiimeDataAccess
 %>
 
 <html>
 <head><title>Please Log In</title></head>
 <body>
 
+<form action="fusebox.psp" method="post" name="login_form" id="login_form">
+<input type="hidden" name="page" value="study_select.psp">
+</form>
+
 <h2>Qiime Login</h2>
 
 <%
 if form.has_key('username'):
     # begin
-    session = Session.Session(req)
-	
-    try:
-        dsdb = WebDBAdmin()
-        can_login, messages = dsdb.login(session, user, pw, ip_addr, web_app_name)
-        messages = custom_login(cur_sess, messages, dsdb)
-        dsdb.DBConn.close()
-    except Exception, e:
-        #except IOError, e:
-        # this is bad - probably could not connect to database
-        messages = ["An unknown error has occured. %s" % str(e),
-                    "Please report this to MicrobiomeHelp@colorado.edu"]
-
-
-    verified = ''
-    con = cx_Oracle.Connection('WEB_APP_USER/WEB_APP_PWD@microbiome1.colorado.edu/demo1')
-    curs = con.cursor()
-    return_values = curs.callproc('authenticate_user', [verified])
-    curs.close()
-    con.close()
-    
-    if ( len(return_values) > 0 ) and ( return_values[0] == "Y" ):
-        session = Session.Session(req)
-        session['username'] = form["username"]
-        session['password'] = form["password"]
-        psp.redirect("index.psp")
+    qiimeDataAccess = QiimeDataAccess()
+    user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
+    if ( user_data ):
+        s = Session.Session(req)
+        s['username'] = form["username"]
+        s['is_admin'] = user_data['is_admin']
+        s['document_root'] = '/home/qiime_user/QIIME_webdev/qiime_web_app/www/'
+        s.save()
+        req.write('<script language=\"javascript\">document.login_form.submit();</script>')
     else:
-        req.write("<h2>Invalid username/password.")
-    
+        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
 %>
 
 <%
@@ -50,11 +35,9 @@ if form.has_key('username'):
 
 <table>
 <form method="post" action="login.psp">
-
-    <tr><td>Username</td><td><input type="text" id="username" name="username"></td></tr>
-    <tr><td>Password</td><td><input type="text" id="password" name="password"></td></tr>
+    <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
+    <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
     <tr><td colspan="2"><input type="submit" value="Log In"></tr>
-
 </form>
 </table>
 

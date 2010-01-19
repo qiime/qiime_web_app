@@ -1,4 +1,6 @@
 
-<h3>Footer Text</h3>
+<table width="100%" bgcolor="#CCCCCC">
+<tr><td>Some footer text here</td></tr>
+</table>
 </body>
 </html>
