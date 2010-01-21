@@ -33,6 +33,7 @@ if form.has_key('username'):
         s = Session.Session(req)
         s['username'] = form["username"]
         s['is_admin'] = user_data['is_admin']
+        s['web_app_user_id'] = user_data['web_app_user_id']
         s['document_root'] = '/home/qiime_user/QIIME_webdev/qiime_web_app/www/'
         s.save()
         req.write('<script language=\"javascript\">document.login_form.submit();</script>')
