@@ -11,29 +11,26 @@ db_values=con.cursor()
 column_names={}
 out_directory='/tmp_qiime/'
 
-#req.write(str(type(Session['web_app_user_id'])))
-#user_id=Session['web_app_user_id']
 job_value=0
-job_id=con.cursor().callproc('create_queue_job',(1,job_value))
-#req.write(db_values)
+job_id=con.cursor().callproc('create_queue_job',(sess['web_app_user_id'],job_value))
 
-req.write(str(job_id[1]))
 user_dir=out_directory+'user_'+str(sess['web_app_user_id'])
 if not os.path.exists(user_dir):
     os.mkdir(user_dir)
 
-job_dir=user_dir+'/job_'+str(job_id[1])
+job_dir=user_dir+'/job_'+str(job_id[1])+'/'
 
 if not os.path.exists(job_dir[1]):
     os.mkdir(job_dir)
 
 '''Writing the QIIME Parameters File'''
-#Pick OTU parameters
+
+f1 = open(job_dir+'qiime_parameters.txt','w')
 
 for field in form:
-    if form[field]!='page':
-        req.write('%s\t%s\n<br>' % (field,form[field]))
-
+    if form[field]!='page' and form[field]!='qiime_submission.psp':
+        f1.write('%s\t%s\n' % (field,form[field]))
+f1.close()
 """
 req.write('#OTU Picking Parameters\n<br>')
 if form['pick_otus:otu_picking_method']=='cdhit':
@@ -100,16 +97,16 @@ req.write('\n<br>')
 
 '''Info for getting mapping data'''
 
-for field in Session:
+for field in sess:
     if field != 'page' and field != 'username' and field != 'is_admin' and field != 'document_root' and field != 'web_app_user_id' and field != 'study_names':
         
-        if isinstance(Session[field],list):
+        if isinstance(sess[field],list):
             categories=[]
-            for cat in Session[field]:
+            for cat in sess[field]:
 	            categories.append('\'' + str(cat) + '\'')
             column_names[field]=",".join(categories)
         else: 
-            column_names[field]="\'" + str(s[field]) + "\'"
+            column_names[field]="\'" + str(sess[field]) + "\'"
 
 meta_fields=[]
 headers=[]
@@ -119,40 +116,44 @@ for col in column_names:
 meta_cat_fields=' or '.join(meta_fields)
 meta_headers='SAMPLE_ID,STUDY_NAME,'+','.join(headers)
 
-studies=Session['study_names']
+studies=sess['study_names']
 con.cursor().callproc('get_mapping_file_data',[studies,meta_headers,meta_cat_fields,db_values])
 
 # Write Mapping file
 # sample_names=write_mapping_file(outpath,headers,
+f2=open(job_dir+'sample_mapping.txt','w')
 
-req.write('#SAMPLE_ID\tSTUDY_NAME\t')
+f2.write('#SAMPLE_ID\tSTUDY_NAME\t')
 for label in headers:
-    req.write(str(label)+"\t")
-req.write("<br>")
+    f2.write(str(label)+"\t")
+f2.write("\n")
 
 sample_names=[]
 for row in db_values:
     for i in row:
-        req.write(str(i)+"\t")
-    req.write("<br>")
+        f2.write(str(i)+"\t")
+    f2.write("\n")
 
     sample_names.append('\''+row[0]+'\'')
+f2.close()
 
 samples_to_get=','.join(sample_names)
-
-req.write(samples_to_get)
-
 con.cursor().callproc('get_fasta_file_data',[studies,samples_to_get,db_values])
-
 
 seqs=[]
 for row in db_values:
     seqs.append((str(row[0])+'_'+str(row[1])+' '+str(row[2]),str(row[3])))
-
+    
 fasta_seqs=LoadSeqs(data=seqs,aligned=False)
-req.write(fasta_seqs.toFasta())
+
+seq_out=fasta_seqs.toFasta()
+f3=open(job_dir+'seqs.fna','w')
+f3.write(seq_out)
+f3.close()
 
 
+req.write("Thank you for using QIIME.  Your job is in the queue and you will receive an email when your \
+            job has been processed")
 #
 
 %>
