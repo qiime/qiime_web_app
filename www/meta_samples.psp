@@ -43,7 +43,7 @@ $(document).ready(function(){
 
 <%
 import cx_Oracle
-import Session
+
 
 studies=form['study_names']
 metadata_type=form['metadata_headers']
@@ -55,14 +55,21 @@ column_values = con.cursor()
 if isinstance(studies,list):
     combined_studies=[]
     for study in studies:
-	combined_studies.append('\'' + str(study) + '\'')
+	    combined_studies.append('\'' + str(study) + '\'')
     studies_to_get=','.join(combined_studies)
     
 else: 
     studies_to_get="\'" + str(studies) + "\'"
 
+
+sess['study_names']=studies_to_get
+sess.save()
+
+
 if isinstance(metadata_type,list):
+    combined_metadata=[]
     for s_type in metadata_type:
+        combined_metadata.append('\'' + str(s_type) + '\'')
         con.cursor().callproc('get_metadata_by_study_list',[s_type,studies_to_get,column_values])
 	req.write("<td><h5>"+str(s_type)+"</h5>\n")
         req.write('<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);"><option value="javascript:"><option value="javascript:select_all(\''+str(s_type)+'\');">All<option value="javascript:select_none(\''+str(s_type)+'\');">None<option value="Javascript:select_invert(\''+str(s_type)+'\');">Invert</select>\n<br>\n')
@@ -71,6 +78,7 @@ if isinstance(metadata_type,list):
         for row in column_values:
             req.write('\t\t\t\t<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
         req.write('</select></td>')
+    metadata_to_get=','.join(combined_metadata)
 else:
     con.cursor().callproc('get_metadata_by_study_list',[metadata_type,studies_to_get,column_values])
     req.write("<td><h5>"+str(metadata_type)+"</h5>\n")
@@ -78,6 +86,8 @@ else:
     for row in column_values:
         req.write('\t\t\t\t<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
     req.write('</select>')
+    metadata_to_get="\'" + str(metadata_type) + "\'"
+
 
 
 column_values.close()

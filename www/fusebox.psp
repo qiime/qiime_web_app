@@ -17,8 +17,8 @@ import os
 if form.has_key('page'):
 	# We have the page form variable so let's load it up	
 	page = form["page"]
-	if ( os.path.isfile( s['document_root'] + page ) ):
-		code = parse( page, s['document_root'] )
+	if ( os.path.isfile( sess['document_root'] + page ) ):
+		code = parse( page, sess['document_root'] )
 		exec ( code )
 	else:
 		req.write('<h3>Page not found.</h3>')

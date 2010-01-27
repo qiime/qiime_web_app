@@ -1,0 +1,158 @@
+<%
+
+import cx_Oracle
+
+from cogent import LoadSeqs
+import os
+
+con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
+db_values=con.cursor()
+
+column_names={}
+out_directory='/tmp_qiime/'
+
+#req.write(str(type(Session['web_app_user_id'])))
+#user_id=Session['web_app_user_id']
+job_value=0
+job_id=con.cursor().callproc('create_queue_job',(1,job_value))
+#req.write(db_values)
+
+req.write(str(job_id[1]))
+user_dir=out_directory+'user_'+str(sess['web_app_user_id'])
+if not os.path.exists(user_dir):
+    os.mkdir(user_dir)
+
+job_dir=user_dir+'/job_'+str(job_id[1])
+
+if not os.path.exists(job_dir[1]):
+    os.mkdir(job_dir)
+
+'''Writing the QIIME Parameters File'''
+#Pick OTU parameters
+
+for field in form:
+    if form[field]!='page':
+        req.write('%s\t%s\n<br>' % (field,form[field]))
+
+"""
+req.write('#OTU Picking Parameters\n<br>')
+if form['pick_otus:otu_picking_method']=='cdhit':
+    req.write('pick_otus:otu_picking_method\t'+form['pick_otus:otu_picking_method']+"\n<br>")
+    req.write('pick_otus:similarity\t'+form['pick_otus:similarity']+"\n<br>")
+    req.write('pick_otus:prefix_prefilter_length\t'+form['pick_otus:prefix_prefilter_length']+"\n<br>")
+    req.write('pick_otus:trie_prefilter\t'+form['pick_otus:trie_prefilter']+"\n<br>")
+elif form['pick_otus:otu_picking_method']=='trie':
+    req.write('pick_otus:otu_picking_method\t'+form['pick_otus:otu_picking_method']+"\n<br>")
+elif form['pick_otus:otu_picking_method']=='blast':
+    req.write('pick_otus:otu_picking_method\t'+form['pick_otus:otu_picking_method']+"\n<br>")
+    req.write('pick_otus:similarity\t'+form['pick_otus:similarity']+"\n<br>")
+    #req.write('pick_otus:blast_db\t'+form['pick_otus:blast_db']+"\n<br>")
+    req.write('pick_otus:max_e_value\t'+form['pick_otus:max_e_value']+"\n<br>")
+elif form['pick_otus:otu_picking_method']=='mothur':
+    req.write('pick_otus:otu_picking_method\t'+form['pick_otus:otu_picking_method']+"\n<br>")
+    req.write('pick_otus:clustering_algorithm\t'+form['pick_otus:clustering_algorithm']+"\n<br>")
+elif form['pick_otus:otu_picking_method']=='prefix_suffix':
+    req.write('pick_otus:otu_picking_method\t'+form['pick_otus:otu_picking_method']+"\n<br>")
+    req.write('pick_otus:prefix_length\t'+form['pick_otus:prefix_length']+"\n<br>")
+    req.write('pick_otus:suffix_length\t'+form['pick_otus:suffix_length']+"\n<br>")
+
+req.write('\n<br>')
+#Pick OTU parameters
+req.write('#Pick Representative Set Parameters\n<br>')
+req.write('pick_rep_set:rep_set_picking_method\t'+form['pick_rep_set:rep_set_picking_method']+"\n<br>")
+req.write('pick_rep_set:sort_by\t'+form['pick_rep_set:sort_by']+"\n<br>")
+
+req.write('\n<br>')
+#Sequence Alignment parameters
+req.write('#Sequence Alignment Parameters\n<br>')
+if form['align_seqs:alignment_method']=='pynast':
+    req.write('align_seqs:alignment_method\t'+form['align_seqs:alignment_method']+"\n<br>")
+    if form['align_seqs:pairwise_alignment_method']=='blast':
+        req.write('align_seqs:pairwise_alignment_method\t'+form['align_seqs:pairwise_alignment_method']+"\n<br>")
+    req.write('align_seqs:min_percent_id\t'+form['align_seqs:min_percent_id']+"\n<br>")
+    req.write('align_seqs:min_length\t'+form['align_seqs:min_length']+"\n<br>")
+
+req.write('\n<br>')
+#Filter Alignment parameters
+req.write('#Filter Alignment Parameters\n<br>')
+req.write('filter_alignment:allowed_gap_frac\t'+form['filter_alignment:allowed_gap_frac']+"\n<br>")
+
+req.write('\n<br>')
+#Assign Taxonomy parameters
+req.write('#Assign Taxonomy Parameters\n<br>')
+if form['assign_taxonomy:assignment_method']=='rdp':
+    req.write('assign_taxonomy:assignment_method\t'+form['assign_taxonomy:assignment_method']+"\n<br>")
+    req.write('assign_taxonomy:confidence\t'+form['assign_taxonomy:confidence']+"\n<br>")
+elif form['assign_taxonomy:assignment_method']=='blast':
+    req.write('assign_taxonomy:assignment_method\t'+form['assign_taxonomy:assignment_method']+"\n<br>")
+    req.write('assign_taxonomy:e_value\t'+form['assign_taxonomy:e_value']+"\n<br>")
+    #req.write('assign_taxonomy:blast_db\t'+form['assign_taxonomy:blast_db']+"\n<br>")
+
+req.write('\n<br>')
+#Make Phylogeny parameters
+req.write('#Make Phylogeny Parameters\n<br>')
+if form['make_phylogeny:tree_method']=='fasttree':
+    req.write('make_phylogeny:tree_method\t'+form['make_phylogeny:tree_method']+"\n<br>")
+
+req.write('\n<br>')
+
+"""
+
+'''Info for getting mapping data'''
+
+for field in Session:
+    if field != 'page' and field != 'username' and field != 'is_admin' and field != 'document_root' and field != 'web_app_user_id' and field != 'study_names':
+        
+        if isinstance(Session[field],list):
+            categories=[]
+            for cat in Session[field]:
+	            categories.append('\'' + str(cat) + '\'')
+            column_names[field]=",".join(categories)
+        else: 
+            column_names[field]="\'" + str(s[field]) + "\'"
+
+meta_fields=[]
+headers=[]
+for col in column_names:
+    meta_fields.append('%s in (%s)' % (col, column_names[col]))
+    headers.append(col)
+meta_cat_fields=' or '.join(meta_fields)
+meta_headers='SAMPLE_ID,STUDY_NAME,'+','.join(headers)
+
+studies=Session['study_names']
+con.cursor().callproc('get_mapping_file_data',[studies,meta_headers,meta_cat_fields,db_values])
+
+# Write Mapping file
+# sample_names=write_mapping_file(outpath,headers,
+
+req.write('#SAMPLE_ID\tSTUDY_NAME\t')
+for label in headers:
+    req.write(str(label)+"\t")
+req.write("<br>")
+
+sample_names=[]
+for row in db_values:
+    for i in row:
+        req.write(str(i)+"\t")
+    req.write("<br>")
+
+    sample_names.append('\''+row[0]+'\'')
+
+samples_to_get=','.join(sample_names)
+
+req.write(samples_to_get)
+
+con.cursor().callproc('get_fasta_file_data',[studies,samples_to_get,db_values])
+
+
+seqs=[]
+for row in db_values:
+    seqs.append((str(row[0])+'_'+str(row[1])+' '+str(row[2]),str(row[3])))
+
+fasta_seqs=LoadSeqs(data=seqs,aligned=False)
+req.write(fasta_seqs.toFasta())
+
+
+#
+
+%>

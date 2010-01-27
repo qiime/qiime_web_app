@@ -12,8 +12,8 @@ __status__ = "Production"
 <%
 # Check to make sure session is valid. If not, redirect to login
 sess = Session.Session(req)
-if not ( s.has_key('username' ) ):
-	s.invalidate()
+if not ( sess.has_key('username' ) ):
+	sess.invalidate()
 	req.redirect('login.psp')
 
 %>
@@ -23,5 +23,5 @@ if not ( s.has_key('username' ) ):
 <body>
 
 <table width="100%" bgcolor="#CCCCCC">
-<tr><td>Qiime<br/>Logged in as <%=s['username']%></td></tr>
+<tr><td>Qiime<br/>Logged in as <%=sess['username']%></td></tr>
 </table>

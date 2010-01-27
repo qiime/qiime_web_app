@@ -11,7 +11,7 @@ __status__ = "Production"
 
 <%
 import cx_Oracle
-import Session
+
 %>
 
 <style type="text/css">

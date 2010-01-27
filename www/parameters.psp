@@ -1,0 +1,249 @@
+
+<style type="text/css">
+td{
+vertical-align:top;
+padding:10px;
+text-align:center;
+}
+</style>
+<script type="text/javascript" src="./js/qiime.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
+<script type="text/javascript">
+
+$.validator.setDefaults({
+    submitHandler:function(){
+        qiime_parameters.submit();
+    }
+});
+
+$.metadata.setType("attr","validate");
+    
+$(document).ready(function(){
+    $("#qiime_parameters").validate();
+});
+</script>
+
+<form id="qiime_parameters" name="qiime_parameters" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="qiime_submission.psp">
+
+<table>
+<tr>
+
+<%
+import cx_Oracle
+
+
+column_names=[]
+sample_categories=[]
+for form_id in form:    
+    if form_id != 'page':
+        sess[form_id]=form[form_id]
+
+sess.save()
+
+
+con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
+db_values=con.cursor()
+
+'''OTU Picking Parameters'''
+#OTU Picking Method
+con.cursor().callproc('get_parameter_by_script',['\'otu_picking_method\'','\'pick_otus\'',db_values])
+req.write("<td>")
+req.write('OTU Picking Method:<select validate="required:true, minlength:1" name="pick_otus:otu_picking_method" id="pick_otus:otu_picking_method">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select></td>')
+
+#Clustering Algorithm
+con.cursor().callproc('get_parameter_by_script',['\'clustering_algorithm\'','\'pick_otus\'',db_values])
+req.write("<td>")
+req.write('Clustering Algorithm:<select validate="required:true, minlength:1" name="pick_otus:clustering_algorithm" id="pick_otus:clustering_algorithm">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+'''
+#Maximum cd-hit memory
+con.cursor().callproc('get_parameter_by_script',['\'max_cdhit_memory\'','\'pick_otus\'',db_values])
+req.write("<td>\n")
+req.write('Max Cd-Hit Memory:<input validate="required:true, max:400,digits:true" name="pick_otus:max_cdhit_memory" id="pick_otus:max_cdhit_memory" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+'''
+
+#Sequence Similarity
+con.cursor().callproc('get_parameter_by_script',['\'similarity\'','\'pick_otus\'',db_values])
+req.write("<td>\n")
+req.write('Sequence Similarity:<input validate="required:true, min:0.01, max:1.00, number:true" name="pick_otus:similarity" id="pick_otus:similarity" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+#Max E-Value
+con.cursor().callproc('get_parameter_by_script',['\'max_e_value\'','\'pick_otus\'',db_values])
+req.write("<td>\n")
+req.write('Max e-value:<input validate="required:true, min:0.000000000001, max:1.00, number:true" name="pick_otus:max_e_value" id="pick_otus:max_e_value" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+#Prefix length
+con.cursor().callproc('get_parameter_by_script',['\'prefix_length\'','\'pick_otus\'',db_values])
+req.write("<td>\n")
+req.write('Prefix Length:<input validate="required:true, digits:true" name="pick_otus:prefix_length" id="pick_otus:prefix_length" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+#Suffix length
+con.cursor().callproc('get_parameter_by_script',['\'suffix_length\'','\'pick_otus\'',db_values])
+req.write("<td>\n")
+req.write('Suffix length:<input validate="required:true, digits:true" name="pick_otus:suffix_length" id="pick_otus:suffix_length" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+#Prefix Prefilter length
+con.cursor().callproc('get_parameter_by_script',['\'prefix_prefilter_length\'','\'pick_otus\'',db_values])
+req.write("<td>\n")
+req.write('Prefix Prefilter Length:<input validate="required:true, digits:true" name="pick_otus:prefix_prefilter_length" id="pick_otus:prefix_prefilter_length" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+#Trie Prefilter
+con.cursor().callproc('get_parameter_by_script',['\'trie_prefilter\'','\'pick_otus\'',db_values])
+req.write("<td>")
+req.write('Trie Prefilter:<select validate="required:true, minlength:1" name="pick_otus:trie_prefilter" id="pick_otus:trie_prefilter">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+req.write("</tr>\n")
+
+'''Picking Representative Sequence Set'''
+
+req.write("<tr>\n")
+
+#Pick Representative Set Method
+con.cursor().callproc('get_parameter_by_script',['\'rep_set_picking_method\'','\'pick_rep_set\'',db_values])
+req.write("<td>")
+req.write('Pick Representative Set Method:<select validate="required:true, minlength:1" name="pick_rep_set:rep_set_picking_method" id="pick_rep_set:rep_set_picking_method">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+#Sort By Method
+con.cursor().callproc('get_parameter_by_script',['\'sort_by\'','\'pick_rep_set\'',db_values])
+req.write("<td>")
+req.write('Sort By:<select validate="required:true, minlength:1" name="pick_rep_set:sort_by" id="pick_rep_set:sort_by">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+req.write("</tr>\n")
+
+'''Sequence Alignment'''
+
+req.write("<tr>\n")
+
+#Alignment Method
+con.cursor().callproc('get_parameter_by_script',['\'alignment_method\'','\'align_seqs\'',db_values])
+req.write("<td>")
+req.write('Sequence Alignment Method:<select validate="required:true, minlength:1" name="align_seqs:alignment_method" id="align_seqs:alignment_method">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+#Pairwise Alignment Method
+con.cursor().callproc('get_parameter_by_script',['\'pairwise_alignment_method\'','\'align_seqs\'',db_values])
+req.write("<td>")
+req.write('Pairwise Alignment Method:<select validate="required:true, minlength:1" name="align_seqs:pairwise_alignment_method" id="align_seqs:pairwise_alignment_method">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+#Minimum Sequence Length
+con.cursor().callproc('get_parameter_by_script',['\'min_length\'','\'align_seqs\'',db_values])
+req.write("<td>\n")
+req.write('Minimum Sequence Length:<input validate="required:true, digits:true" name="align_seqs:min_length" id="align_seqs:min_length" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+#Minimum Percent Identity
+con.cursor().callproc('get_parameter_by_script',['\'min_percent_id\'','\'align_seqs\'',db_values])
+req.write("<td>\n")
+req.write('Minimum Percent Identity:<input validate="required:true, number:true,min:0.01,max:100.00" name="align_seqs:min_percent_id" id="align_seqs:min_percent_id" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+req.write("</tr>\n")
+
+'''Filter Alignment'''
+req.write("<tr>\n")
+
+#Assign Gap Fraction
+con.cursor().callproc('get_parameter_by_script',['\'allowed_gap_frac\'','\'filter_alignment\'',db_values])
+req.write("<td>\n")
+req.write('Gap Fraction:<input validate="required:true, number:true,min:0.01,max:1.00" name="filter_alignment:allowed_gap_frac" id="filter_alignment:allowed_gap_frac" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+req.write("</tr>\n")
+
+'''Assign Taxonomy'''
+req.write("<tr>\n")
+
+#Pairwise Alignment Method
+con.cursor().callproc('get_parameter_by_script',['\'assignment_method\'','\'assign_taxonomy\'',db_values])
+req.write("<td>")
+req.write('Assign Taxonomy Method:<select validate="required:true, minlength:1" name="assign_taxonomy:assignment_method" id="assign_taxonomy:assignment_method">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+#Assign Gap Fraction
+con.cursor().callproc('get_parameter_by_script',['\'confidence\'','\'assign_taxonomy\'',db_values])
+req.write("<td>\n")
+req.write('Confidence:<input validate="required:true, number:true,min:0.01,max:1.00" name="assign_taxonomy:confidence" id="assign_taxonomy:confidence" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+#Max E-Value
+con.cursor().callproc('get_parameter_by_script',['\'e_value\'','\'assign_taxonomy\'',db_values])
+req.write("<td>\n")
+req.write('Max e-value:<input validate="required:true, min:0.000000000001, max:1.00, number:true" name="assign_taxonomy:e_value" id="assign_taxonomy:e_value" value=')
+for row in db_values:
+    req.write(row[0]+' \>\n')
+req.write("</td>\n")
+
+req.write("</tr>\n")
+
+'''Make Phylogeny'''
+req.write("<tr>\n")
+
+#Tree Method
+con.cursor().callproc('get_parameter_by_script',['\'tree_method\'','\'make_phylogeny\'',db_values])
+req.write("<td>")
+req.write('Tree Building Method:<select validate="required:true, minlength:1" name="make_phylogeny:tree_method" id="make_phylogeny:tree_method">\n')
+for row in db_values:
+    req.write('<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+req.write('</select>\n</td>\n')
+
+db_values.close()
+con.close()
+
+
+%>
+</table>
+<input type="submit" value="Submit Job">
+</form>
+
