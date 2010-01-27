@@ -30,12 +30,12 @@ if form.has_key('username'):
     qiimeDataAccess = QiimeDataAccess()
     user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
     if ( user_data ):
-        s = Session.Session(req)
-        s['username'] = form["username"]
-        s['is_admin'] = user_data['is_admin']
-        s['web_app_user_id'] = user_data['web_app_user_id']
-        s['document_root'] = '/home/qiime_user/QIIME_webdev/qiime_web_app/www/'
-        s.save()
+        sess = Session.Session(req)
+        sess['username'] = form["username"]
+        sess['is_admin'] = user_data['is_admin']
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+        sess['document_root'] = '/home/qiime_user/QIIME_webdev/qiime_web_app/www/'
+        sess.save()
         req.write('<script language=\"javascript\">document.login_form.submit();</script>')
     else:
         req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")

@@ -11,7 +11,7 @@ __status__ = "Production"
 
 <%
 # Check to make sure session is valid. If not, redirect to login
-s = Session.Session(req)
+sess = Session.Session(req)
 if not ( s.has_key('username' ) ):
 	s.invalidate()
 	req.redirect('login.psp')
