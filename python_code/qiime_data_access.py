@@ -59,7 +59,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         web_app_user. 
 
 
-factor out call to database. generic method that passes in name of proc, list of params, then returns both cursor and output params. put this in
+	factor out call to database. generic method that passes in name of proc, list of params, then returns both cursor and output params. put this in
 	generic data access, move all qiime data access to the qiime svn proj. 
         """
         try:
