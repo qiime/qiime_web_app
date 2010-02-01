@@ -11,7 +11,7 @@ __status__ = "Production"
 
 <%
 from mod_python import Session
-from DataAccess import QiimeDataAccess
+from qiime_data_access import QiimeDataAccess
 %>
 
 <html>
