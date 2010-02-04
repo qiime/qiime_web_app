@@ -9,17 +9,6 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 -->
 
-<style type="text/css">
-td{
-vertical-align:top;
-padding:10px;
-text-align:center;
-}
-</style>
-<script type="text/javascript" src="./js/qiime.js"></script>
-<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
-<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
-<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
 <script type="text/javascript">
 
 $.validator.setDefaults({
@@ -42,56 +31,45 @@ $(document).ready(function(){
 <tr>
 
 <%
-import cx_Oracle
-
-
+# Grab the list of study names and metadata headers from the previous page
 studies=form['study_names']
 metadata_type=form['metadata_headers']
-
-con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
-
-column_values = con.cursor()
 
 if isinstance(studies,list):
     combined_studies=[]
     for study in studies:
-	    combined_studies.append('\'' + str(study) + '\'')
-    studies_to_get=','.join(combined_studies)
-    
+        combined_studies.append('\'' + str(study) + '\'')
+    studies_to_get=','.join(combined_studies)    
 else: 
     studies_to_get="\'" + str(studies) + "\'"
 
-
-sess['study_names']=studies_to_get
+sess['study_names'] = studies_to_get
 sess.save()
 
+# Instantiate a new instance of QiimeDataAccess
+data_access = QiimeDataAccess()
 
 if isinstance(metadata_type,list):
     combined_metadata=[]
     for s_type in metadata_type:
         combined_metadata.append('\'' + str(s_type) + '\'')
-        con.cursor().callproc('get_metadata_by_study_list',[s_type,studies_to_get,column_values])
+        column_values = data_access.getMetadataByStudyList(s_type, studies_to_get)        
 	req.write("<td><h5>"+str(s_type)+"</h5>\n")
         req.write('<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);"><option value="javascript:"><option value="javascript:select_all(\''+str(s_type)+'\');">All<option value="javascript:select_none(\''+str(s_type)+'\');">None<option value="Javascript:select_invert(\''+str(s_type)+'\');">Invert</select>\n<br>\n')
 
         req.write('\t\t\t<select validate="required:true, minlength:1" name="'+str(s_type)+'" id="'+str(s_type)+'" multiple>\n')
-        for row in column_values:
-            req.write('\t\t\t\t<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+        for item in column_values:
+            req.write('\t\t\t\t<option value="' + item + '">' + item + '</option>\n')
         req.write('</select></td>')
     metadata_to_get=','.join(combined_metadata)
 else:
-    con.cursor().callproc('get_metadata_by_study_list',[metadata_type,studies_to_get,column_values])
+    column_values = data_access.getMetadataByStudyList(metadata_type, studies_to_get)
     req.write("<td><h5>"+str(metadata_type)+"</h5>\n")
     req.write('\t\t\t<select validate="required:true, minlength:1" name="'+str(metadata_type)+'" id="'+str(metadata_type)+'" multiple>\n')
-    for row in column_values:
-        req.write('\t\t\t\t<option value="' + str(row[0]) + '">' + str(row[0]) + '</option>\n')
+    for item in column_values:
+        req.write('\t\t\t\t<option value="' + item + '">' + item + '</option>\n')
     req.write('</select>')
     metadata_to_get="\'" + str(metadata_type) + "\'"
-
-
-
-column_values.close()
-con.close()
 %>
 </table>
 <input type="submit" value="Next">

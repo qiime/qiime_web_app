@@ -16,10 +16,20 @@ if not ( sess.has_key('username' ) ):
 	sess.invalidate()
 	req.redirect('login.psp')
 
+# Imports
+from qiime_data_access import QiimeDataAccess
 %>
 
+<script type="text/javascript" src="./js/qiime.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
+
 <html>
-<head><title>Qiime</title></head>
+<head>
+<title>Qiime</title>
+<link rel="stylesheet" href="styles.css" type="text/css">
+</head>
 <body>
 
 <table width="100%" bgcolor="#CCCCCC">
