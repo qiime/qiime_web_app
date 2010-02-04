@@ -17,36 +17,64 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
 class QiimeDataAccessTests(unittest.TestCase):
-	"""Unit tests for the QiimeDataAccess class
-	
-	QiimeDataAccess unit tests. These tests are designed to validate that
-	the various database functions work and return expected values.
-	"""
-	
-	# Global variables required for all tests
-	_qiime_data_access = None
+    """Unit tests for the QiimeDataAccess class
 
-	# Set up and tear downdown
-	def setUp(self):
-		global _qiime_data_access
-		_qiime_data_access = QiimeDataAccess()
-		
-	def tearDown(self):
-		pass
-		
-	# The rest of the unit tests
-	def test_getDatabaseConnection(self):
-		global _qiime_data_access
-		con = _qiime_data_access.getDatabaseConnection()
-		self.assertTrue(con)
-		con.close()
+    QiimeDataAccess unit tests. These tests are designed to validate that
+    the various database functions work and return expected values.
+    """
 
-	def test_authenticateWebAppUser(self):
-		global _qiime_data_access
-		result = _qiime_data_access.authenticateWebAppUser('asdf', '1234')
-		self.assertFalse(result)
-		#user_info = result = _qiime_data_access.authenticateWebAppUser('', '')
-		#self.assertTrue(type(user_info).name == 'dict')
+    # Global variables required for all tests
+    _qiime_data_access = None
+
+    # Set up and tear downdown
+    def setUp(self):
+        global _qiime_data_access
+        _qiime_data_access = QiimeDataAccess()
+
+    def tearDown(self):
+        pass
+
+    # The rest of the unit tests
+    def test_getDatabaseConnection(self):
+        global _qiime_data_access
+        con = _qiime_data_access.getDatabaseConnection()
+        self.assertTrue(con)
+        con.close()
+
+    def test_authenticateWebAppUser(self):
+        global _qiime_data_access
+        result = _qiime_data_access.authenticateWebAppUser('asdf', '1234')
+        self.assertFalse(result)
+        #user_info = result = _qiime_data_access.authenticateWebAppUser('', '')
+        #self.assertTrue(type(user_info).name == 'dict')
+
+    def test_getStudyNames(self):
+        """ Unit test method for getStudyNames 
+        """
+        global _qiime_data_access
+        study_names = _qiime_data_access.getStudyNames()
+        self.assertTrue(study_names)
+
+    def test_getMetadataHeaders(self):
+        """ Unit test method for getMetadataHeaders
+        """
+        global _qiime_data_access
+        metadata_headers = _qiime_data_access.getMetadataHeaders()
+        self.assertTrue(metadata_headers)
+
+    def test_getMetadataByStudyList(self):
+        """ Unit test method for getMetadataByStudyList
+        """
+        global _qiime_data_access
+        metadata = _qiime_data_access.getMetadataByStudyList('HOST_AGE', '\'GUT\'')
+        self.assertTrue(metadata)
+
+    def test_getParameterByScript(self):
+        """ Unit test method for getParameterByScript
+        """
+        global _qiime_data_access
+        values = _qiime_data_access.getParameterByScript('\'otu_picking_method\'','\'pick_otus\'')
+        self.assertTrue(values)
 
 if __name__ == '__main__':
 	unittest.main()
