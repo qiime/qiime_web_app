@@ -141,4 +141,23 @@ class QiimeDataAccess( AbstractDataAccess ):
             if (con):
                 con.cursor().close()
                 con.close()
-        
+
+    def greengenes_livesearch(self, query):
+        """ Returns a list of metadata values based on a study type and list
+        """
+        try:
+            con = self.getDatabaseConnection()		
+            column_values = con.cursor()
+            con.cursor().callproc('greengenes_livesearch', [query, column_values])
+            for row in column_values:
+                if row[0] is None:
+                    continue
+                query_results.append(row[0])
+            return query_results
+        except Exception as e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
