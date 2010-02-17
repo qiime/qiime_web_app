@@ -141,7 +141,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             if (con):
                 con.cursor().close()
                 con.close()
-
+                
     def greengenes_livesearch(self, query):
         """ Returns a list of metadata values based on a study type and list
         """
