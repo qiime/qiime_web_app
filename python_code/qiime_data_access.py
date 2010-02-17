@@ -149,6 +149,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             con = self.getDatabaseConnection()		
             column_values = con.cursor()
             con.cursor().callproc('greengenes_livesearch', [query, column_values])
+            query_results=[]
             for row in column_values:
                 if row[0] is None:
                     continue
