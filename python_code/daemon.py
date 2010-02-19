@@ -1,5 +1,20 @@
 #!/usr/bin/env python
 
+from __future__ import division
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, The QIIME project"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0-dev"
+__maintainer__ = "Jesse Stombaugh"
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Pre-release"
+
+""" 
+This code is from \ http://www.jejik.com/articles/2007/02/a_simple_unix_linux_daemon_in_python/ \
+""""
+
 import sys, os, time, atexit
 from signal import SIGTERM 
 
