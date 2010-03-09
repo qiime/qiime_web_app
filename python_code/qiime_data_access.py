@@ -1,3 +1,8 @@
+#/bin/env python
+
+"""
+Centralized database access for the Qiime web app
+"""
 
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
@@ -7,11 +12,6 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
-
-#/bin/env python
-"""
-Centralized database access for the Qiime web app
-"""
 
 import cx_Oracle
 from crypt import crypt
@@ -34,6 +34,21 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
+            return con
+        except Exception as e:
+            print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
+            return False;
+            
+
+    def getOntologyDatabaseConnection(self):
+        """ Obtains a connection to the qiime_production schema
+
+        Get a database connection. Note that the consumer is responsible 
+        for closing this connection once obtained. This method is intended
+        to be used internally by this class.
+        """
+        try:
+            con = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
             return con
         except Exception as e:
             print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
