@@ -137,6 +137,26 @@ class QiimeDataAccess( AbstractDataAccess ):
             if (con):
                 con.cursor().close()
                 con.close()
+
+
+    def createStudy(self, user_id, study_name, public_data):
+        """ Returns a list of metadata values based on a study type and list
+        """
+        try:
+            con = self.getDatabaseConnection()		
+            values = con.cursor()
+            con.cursor().callproc('create_study', [user_id, study_name, public_data, study_id])
+            value_list = []
+            for row in study_id:
+                value_list.append(row[0])
+            return value_list
+        except Exception as e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
         
     def getParameterByScript(self, parameter_type, script_type):
         """ Returns a list of metadata values based on a study type and list
