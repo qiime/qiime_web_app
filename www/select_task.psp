@@ -1,0 +1,26 @@
+<!--
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+-->
+
+<form id="sff_upload" action="fusebox.psp" method="post">
+	<input type="hidden" name="page" id="page" value="new_study.psp">
+	<p>Create a new Study:<input type="submit" value="Go"></p>
+</form>
+
+<form id="study_metadata" action="fusebox.psp" method="post">
+	<input type="hidden" name="page" id="page" value="meta_samples.psp">
+    <p>Upload new Metadata:<input type="submit" value="Go"></p>
+</form>
+
+<form id="study_metadata" action="fusebox.psp" method="post">
+	<input type="hidden" name="page" id="page" value="meta_samples.psp">
+	<p>Replace existing metadata:<input type="submit" value="Go"></p>
+</form>
+

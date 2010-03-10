@@ -1,0 +1,156 @@
+<!--
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+-->
+
+<%
+
+out_directory='/tmp_qiime/'
+
+user_dir=out_directory+'user_'+str(sess['web_app_user_id'])
+if not os.path.exists(user_dir):
+    os.mkdir(user_dir)
+#
+%>
+
+<script type="text/javascript">
+
+$.validator.setDefaults({
+    submitHandler:function(){
+        study_metadata.submit();
+    }
+});
+
+$.metadata.setType("attr","validate");
+
+$(document).ready(function(){
+    $("#study_metadata").validate();
+});
+
+window.onload="resizeApplet()";
+
+var keylist="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+var temp=''
+var output_fname
+
+function generatepass(plength)
+{
+    temp=''
+    for (i=0;i<plength;i++){
+        temp+=keylist.charAt(Math.floor(Math.random()*keylist.length))
+    }
+    return temp
+}
+
+function appletInitialized( uploader ) {
+    output_fname='tmp'+generatepass(10)
+    var attributeSet = uploader.getUploader().getAttributeSet();
+    var attribute = attributeSet.createStringAttribute( "output_fname", output_fname);
+    attribute.setSendToServer( true );
+}
+
+function uploaderFileStatusChanged( uploader, file ) {
+    if( file.isFinished() && file.getType() == 0 ) {
+        var fname="'"+file.getName()+"'";
+        var stripped_fname=fname.replace(/\s+/g,'');
+        var outf=stripped_fname.replace(/\'/g,'');
+        var downloadLocation = "<a  href=/tmp_qiime/"+"user_id_"+sess['web_app_user_id']+ output_fname + outf+ ">"+ 
+        output_fname+outf +"</a>";
+        var url_link="/tmp_qiime/"+"user_id_"+sess['web_app_user_id']+ output_fname + outf
+        var fileLinks = document.getElementById( "fileLinks" );
+        fileLinks.innerHTML += "Your file has been successfully uploaded!<br><br>"+
+        "Download Link: " + downloadLocation + "<br><br>" + url_link;
+        uploader.removeFile( file );
+    }
+
+    if( file.isFinished() && file.getType() == 1 ) {
+        uploader.removeFile( file );
+    }
+}
+function resizeApplet() {
+	var applet = document.jumpLoaderApplet;
+	var dx = 0;
+	var dy = 7;
+	var w_newWidth, w_newHeight;
+	var w_maxWidth = 715, w_maxHeight = 500;
+	var dx = 0;
+	var dy = 2;
+	if( navigator.appName.indexOf( "Microsoft" ) != -1 ) {
+		w_newWidth = document.body.clientWidth;
+		w_newHeight = document.body.clientHeight;
+	} else {
+		var netscapeScrollWidth = 15;
+		w_newWidth = window.innerWidth - netscapeScrollWidth;
+		w_newHeight = window.innerHeight - netscapeScrollWidth;
+	}
+	if( w_newWidth > w_maxWidth ) {
+		w_newWidth = w_maxWidth;
+	}
+	if( w_newHeight > w_maxHeight ) {
+		w_newHeight = w_maxHeight;
+	}
+	applet.width = w_newWidth - dx;
+	applet.height = w_newHeight - dy;
+	applet.setSize( w_newWidth - dx, w_newHeight - dy );
+	//window.scroll( 0,0 );
+}
+
+/**
+ * add attribute to uploader
+ */
+ function createUploaderAttribute() {
+ 	var uploader = document.jumpLoaderApplet.getUploader();
+ 	var attrSet = uploader.getAttributeSet();
+ 	var name = 'study_name';
+ 	var value = document.debugForm.uploaderAttributeValue.value;
+ 	var attr = attrSet.createStringAttribute( name, value );
+ 	attr.setSendToServer( true );
+ 	//dumpUploaderAttributes();
+ }
+
+
+</script>
+
+<table class="formTableOuter">
+    <tr><td>
+    	<table class="formTableInner">
+    	<tr>
+    		<td class="formLabel">Name:</td>
+
+    		<td class="formControl"><input type="text" name="fileAttributeName"></td>
+    	</tr>
+    	<tr>
+    		<td class="formLabel">Value:</td>
+    		<td class="formControl"><input type="text" name="fileAttributeValue"></td>
+    	</tr>
+    	<tr>
+    		<td class="formLabel">Send to server:</td>
+
+    		<td class="formControl"><input type="checkbox" name="fileAttributeSendToServer"></td>
+    	</tr>
+    	</table>
+    </td></tr>
+    <tr><td class="formFooter">
+    	<input type="button" value="set" onClick="createFileAttribute()">
+    </td></tr>
+</table>
+
+<p id="fileLinks">Create a Study Name: <input type="text" /><br><br><b>Please upload only zipped files. The filename should not contain spaces or non-alphanumeric characters.</b><br><br></p>
+<applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
+        archive="jar/jumploader_z.jar" height="500" width="715" mayscript>
+    <param name="uc_maxFileLength" value="100000000000"/>
+    <param name="vc_useThumbs" value="false"/>
+    <param name="uc_useMetadata" value="true"/>
+    <param name="uc_metadataDescriptorUrl" value="../doc/metadata.xml"/>
+    <param name="ac_fireAppletInitialized" value="true"/> 
+    <param name="uc_imageEditorEnabled" value="true">
+    <param name="ac_fireUploaderFileStatusChanged" value="true"/>
+    <param name="uc_uploadUrl" value="parse_sff_upload.psp">
+</applet>
+

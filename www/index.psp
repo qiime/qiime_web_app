@@ -1,0 +1,57 @@
+<!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+-->
+
+<%
+from mod_python import Session
+from qiime_data_access import QiimeDataAccess
+%>
+
+<html>
+<head><title>Please Log In</title></head>
+<body>
+
+<form action="fusebox.psp" method="post" name="login_form" id="login_form">
+<input type="hidden" name="page" value="select_task.psp">
+</form>
+
+<h2>Qiime Login</h2>
+
+<%
+if form.has_key('username'):
+    # begin
+    qiimeDataAccess = QiimeDataAccess()
+    user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
+    if ( user_data ):
+        sess = Session.Session(req)
+        sess['username'] = form["username"]
+        sess['is_admin'] = user_data['is_admin']
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+        sess['document_root'] = '/var/wwwroot/htdocs/qiime/'
+        sess.save()
+        req.write('<script language=\"javascript\">document.login_form.submit();</script>')
+    else:
+        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+%>
+
+<%
+# end
+%>
+
+<table>
+<form method="post" action="index.psp">
+    <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
+    <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
+    <tr><td colspan="2"><input type="submit" value="Log In"></tr>
+</form>
+</table>
+
+</body>
+</html>
