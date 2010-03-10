@@ -31,7 +31,7 @@ from qiime_data_access import QiimeDataAccess
 <link rel="stylesheet" href="styles.css" type="text/css">
 </head>
 <body>
-
+<img src="./img/wordpressheader.png" alt="Qiime Logo" />
 <table width="100%" bgcolor="#CCCCCC">
-<tr><td>Qiime<br/>Logged in as <%=sess['username']%></td></tr>
+<tr><td>Logged in as <%=sess['username']%></td></tr>
 </table>
