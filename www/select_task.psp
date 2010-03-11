@@ -10,17 +10,17 @@ __status__ = "Production"
 -->
 
 <form id="sff_upload" action="fusebox.psp" method="post">
-	<input type="hidden" name="page" id="page" value="new_study.psp">
+	<input type="hidden" name="page" id="page" value="./new_study.psp">
 	<p>Create a new Study:<input type="submit" value="Go"></p>
 </form>
 
 <form id="study_metadata" action="fusebox.psp" method="post">
-	<input type="hidden" name="page" id="page" value="meta_samples.psp">
+	<input type="hidden" name="page" id="page" value="./meta_samples.psp">
     <p>Upload new Metadata:<input type="submit" value="Go"></p>
 </form>
 
 <form id="study_metadata" action="fusebox.psp" method="post">
-	<input type="hidden" name="page" id="page" value="meta_samples.psp">
+	<input type="hidden" name="page" id="page" value="./meta_samples.psp">
 	<p>Replace existing metadata:<input type="submit" value="Go"></p>
 </form>
 

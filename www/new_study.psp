@@ -24,16 +24,33 @@ $(document).ready(function(){
 });
 
 </script>
-
-    <h3>Select the Studies and Metadata fields to compare.</h3>
+    <br>
     <form id="new_study" action="fusebox.psp" method="post">
-        <input type="hidden" name="page" id="page" value="sff_upload.psp">
-        <input type="text" name"study_name" id="study_name" />
-        <select name="privileges" id="privileges">
-        <option value="">
-        <option value="Public">
-        <option value="Private">
-        </select>
-        
-        <input type="submit" value="Next">
+    <input type="hidden" name="page" id="page" value="add_new_study.psp">
+        <table>
+            <tr>
+                <td>Create a Study Name:
+                </td>
+                <td>
+                    <input type="text" name"study_name" id="study_name" />
+                </td>
+            </tr>
+            <tr>
+                <td>Choose the availability of this Study:
+                </td>
+                <td>
+                    <select name="privileges" id="privileges">
+                        <option value=""></option>
+                        <option value="Y">Public</option>
+                        <option value="N">Private</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="submit" value="Next">
+                </td>
+            </tr>
+        </table>
     </form>
+

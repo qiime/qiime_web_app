@@ -13,6 +13,7 @@ __status__ = "Production"
 
 <%
 import os
+import psp
 
 if form.has_key('page'):
 	# We have the page form variable so let's load it up	
@@ -22,10 +23,15 @@ if form.has_key('page'):
 		exec ( code )
 	else:
 		req.write('<h3>Page not found.</h3>')
+		
+	if form.has_key('study_name'):
+	    sess['study_name']=form['study_name']
+	    sess['privileges']=form['privileges']
+	    sess.save()
 else:
 	# No page found... to be safe, require user to log in again
 	sess.invalidate()
-	req.redirect('login.psp')
+	req.redirect('index.psp')
 %>
 
 <%

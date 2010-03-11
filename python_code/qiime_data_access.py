@@ -35,10 +35,9 @@ class QiimeDataAccess( AbstractDataAccess ):
         try:
             con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
             return con
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
             return False;
-            
 
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the qiime_production schema
@@ -50,7 +49,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         try:
             con = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
             return con
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
             return False;
 
@@ -72,7 +71,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 return user_data
             else:
                 return False
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         finally:
@@ -91,7 +90,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             for row in study_names:
                 study_name_list.append(row[0])
             return study_name_list
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         finally:
@@ -110,7 +109,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             for row in metadata_headers:
                 metadata_headers_list.append(row[0])
             return metadata_headers_list
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         finally:
@@ -130,7 +129,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                     continue
                 metadata_list.append(row[0])
             return metadata_list
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         finally:
@@ -138,7 +137,25 @@ class QiimeDataAccess( AbstractDataAccess ):
                 con.cursor().close()
                 con.close()
 
-
+    def getStudyByName(self, study_name):
+        """ Returns a list of metadata values based on a study type and list
+        """
+        try:
+            con = self.getDatabaseConnection()		
+            values = con.cursor()
+            con.cursor().callproc('get_study_by_name', [study_name, study_id])
+            value_list = []
+            for row in study_id:
+                value_list.append(row[0])
+            return value_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+            
     def createStudy(self, user_id, study_name, public_data):
         """ Returns a list of metadata values based on a study type and list
         """
@@ -150,7 +167,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             for row in study_id:
                 value_list.append(row[0])
             return value_list
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         finally:
@@ -169,7 +186,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             for row in values:
                 value_list.append(row[0])
             return value_list
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         finally:
@@ -190,7 +207,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                     continue
                 query_results.append(row[0])
             return query_results
-        except Exception as e:
+        except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         finally:

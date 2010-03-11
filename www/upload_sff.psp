@@ -10,6 +10,8 @@ __status__ = "Production"
 -->
 
 <%
+data_access = QiimeDataAccess()
+
 
 out_directory='/tmp_qiime/'
 
@@ -17,27 +19,13 @@ user_dir=out_directory+'user_'+str(sess['web_app_user_id'])
 if not os.path.exists(user_dir):
     os.mkdir(user_dir)
 #
+
 %>
 
 <script type="text/javascript">
 
-$.validator.setDefaults({
-    submitHandler:function(){
-        study_metadata.submit();
-    }
-});
-
-$.metadata.setType("attr","validate");
-
-$(document).ready(function(){
-    $("#study_metadata").validate();
-});
 
 window.onload="resizeApplet()";
-
-var keylist="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
-var temp=''
-var output_fname
 
 function generatepass(plength)
 {
@@ -117,31 +105,8 @@ function resizeApplet() {
 
 </script>
 
-<table class="formTableOuter">
-    <tr><td>
-    	<table class="formTableInner">
-    	<tr>
-    		<td class="formLabel">Name:</td>
 
-    		<td class="formControl"><input type="text" name="fileAttributeName"></td>
-    	</tr>
-    	<tr>
-    		<td class="formLabel">Value:</td>
-    		<td class="formControl"><input type="text" name="fileAttributeValue"></td>
-    	</tr>
-    	<tr>
-    		<td class="formLabel">Send to server:</td>
-
-    		<td class="formControl"><input type="checkbox" name="fileAttributeSendToServer"></td>
-    	</tr>
-    	</table>
-    </td></tr>
-    <tr><td class="formFooter">
-    	<input type="button" value="set" onClick="createFileAttribute()">
-    </td></tr>
-</table>
-
-<p id="fileLinks">Create a Study Name: <input type="text" /><br><br><b>Please upload only zipped files. The filename should not contain spaces or non-alphanumeric characters.</b><br><br></p>
+<p id="fileLinks"><b>Please upload only zipped files. The filename should not contain spaces or non-alphanumeric characters.</b></p>
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="500" width="715" mayscript>
     <param name="uc_maxFileLength" value="100000000000"/>

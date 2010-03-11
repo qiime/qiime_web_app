@@ -19,7 +19,7 @@ from qiime_data_access import QiimeDataAccess
 <body>
 
 <form action="fusebox.psp" method="post" name="login_form" id="login_form">
-<input type="hidden" name="page" value="select_task.psp">
+<input type="hidden" name="page" value="./select_task.psp">
 </form>
 
 <h2>Qiime Login</h2>

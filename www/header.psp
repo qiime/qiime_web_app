@@ -10,11 +10,12 @@ __status__ = "Production"
 -->
 
 <%
+
 # Check to make sure session is valid. If not, redirect to login
 sess = Session.Session(req)
 if not ( sess.has_key('username' ) ):
 	sess.invalidate()
-	req.redirect('login.psp')
+	req.redirect('index.psp')
 
 # Imports
 from qiime_data_access import QiimeDataAccess
