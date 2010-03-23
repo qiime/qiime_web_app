@@ -40,7 +40,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False;
 
     def getOntologyDatabaseConnection(self):
-        """ Obtains a connection to the qiime_production schema
+        """ Obtains a connection to the ontologies schema
 
         Get a database connection. Note that the consumer is responsible 
         for closing this connection once obtained. This method is intended
@@ -48,6 +48,20 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             con = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
+            return con
+        except Exception, e:
+            print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
+            return False;
+
+    def getTestDatabaseConnection(self):
+        """ Obtains a connection to the qiime_test schema
+
+        Get a database connection. Note that the consumer is responsible 
+        for closing this connection once obtained. This method is intended
+        to be used internally by this class.
+        """
+        try:
+            con = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu/microbe')
             return con
         except Exception, e:
             print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
@@ -121,6 +135,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
+            metadata_list = []
             con = self.getDatabaseConnection()		
             column_values = con.cursor()
             con.cursor().callproc('get_metadata_by_study_list', [field_name, study_list, column_values])
@@ -207,6 +222,28 @@ class QiimeDataAccess( AbstractDataAccess ):
                     continue
                 query_results.append(row[0])
             return query_results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+
+    def getColumnDictionary(self):
+        """ Returns the full column dictionary
+        """
+        try:
+            column_dictionary = []
+            con = self.getTestDatabaseConnection()		
+            column_values = con.cursor()
+            con.cursor().callproc('get_column_dictionary', [column_values])
+            for row in column_values:
+                if row[0] is None:
+                    continue
+                list_item = row[0], row[1], row[2]
+                column_dictionary.append(list_item)
+            return column_dictionary
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

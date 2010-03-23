@@ -41,6 +41,18 @@ class QiimeDataAccessTests(unittest.TestCase):
         self.assertTrue(con)
         con.close()
 
+    def test_getOntologyDatabaseConnection(self):
+        global _qiime_data_access
+        con = _qiime_data_access.getOntologyDatabaseConnection()
+        self.assertTrue(con)
+        con.close()
+
+    def test_getTestDatabaseConnection(self):
+        global _qiime_data_access
+        con = _qiime_data_access.getTestDatabaseConnection()
+        self.assertTrue(con)
+        con.close()
+
     def test_authenticateWebAppUser(self):
         global _qiime_data_access
         result = _qiime_data_access.authenticateWebAppUser('asdf', '1234')
@@ -75,6 +87,15 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         values = _qiime_data_access.getParameterByScript('\'otu_picking_method\'','\'pick_otus\'')
         self.assertTrue(values)
+
+    def test_getColumnDictionary(self):
+        """ Unit test method for getParameterByScript
+        """
+        global _qiime_data_access
+        values = _qiime_data_access.getColumnDictionary()
+        self.assertTrue(values)
+
+
 
 if __name__ == '__main__':
 	unittest.main()
