@@ -1,0 +1,29 @@
+
+<%
+from qiime_data_access import QiimeDataAccess
+qiimeDataAccess = QiimeDataAccess()
+
+study_name=sess['study_name']
+privs=sess['privileges']
+
+study_id=qiimeDataAccess.createStudy(sess['web_app_user_id'],study_name,privs)
+req.write(str(study_id))
+sess['study_id']=str(study_id)
+sess.save()
+%>
+
+
+<br>
+<form id="sff_file" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="upload_sff.psp">
+<input type="submit" value="Upload SFF(s)">
+</form>
+
+<form id="sff_file" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="create_new_study.psp">
+<input type="submit" value="Upload MetaData">
+</form>
+
+<form id="new_study" action="fusebox.psp" method="post">
+  <input type="hidden" name="page" id="page" value="add_new_study.psp">
+</form>
