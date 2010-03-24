@@ -74,11 +74,18 @@ class QiimeDataAccessTests(unittest.TestCase):
         values = _qiime_data_access.createQueueJob(1)
         self.assertTrue(values)
 
+    def test_getUserStudyNames(self):
+        """ Unit test method for getStudyUserNames 
+        """
+        global _qiime_data_access
+        study_names = _qiime_data_access.getUserStudyNames(11296)
+        self.assertTrue(study_names)
+        
     def test_getStudyNames(self):
         """ Unit test method for getStudyNames 
         """
         global _qiime_data_access
-        study_names = _qiime_data_access.getStudyNames(11296)
+        study_names = _qiime_data_access.getStudyNames()
         self.assertTrue(study_names)
 
     def test_getMetadataHeaders(self):

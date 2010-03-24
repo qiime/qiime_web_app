@@ -93,13 +93,35 @@ class QiimeDataAccess( AbstractDataAccess ):
                 con.cursor().close()
                 con.close()
 
-    def getStudyNames(self, user_id):
+    def getStudyNames(self):
         """ Returns a list of study names
         """
         try:
             con = self.getDatabaseConnection()
             study_names = con.cursor()
-            con.cursor().callproc('get_study_names', [user_id, study_names])
+            con.cursor().callproc('get_study_names', [study_names])
+            study_name_list = []
+            for row in study_names:
+                if row is None:
+                    continue
+                else:
+                    study_name_list.append(row)
+            return study_name_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if con:
+                con.cursor().close()
+                con.close()
+
+    def getUserStudyNames(self, user_id):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getDatabaseConnection()
+            study_names = con.cursor()
+            con.cursor().callproc('get_user_study_names', [user_id, study_names])
             study_name_list = []
             for row in study_names:
                 if row[0] is None:

@@ -36,7 +36,7 @@ $(document).ready(function(){
 <%
 # Get a new QiimeDataAccess object and obtain our lists
 data_access = QiimeDataAccess()
-study_names = data_access.getStudyNames(sess['web_app_user_id'])
+study_names = data_access.getUserStudyNames(sess['web_app_user_id'])
 
 for study_name in study_names:
     req.write('\t\t\t\t<option value="' + str(study_name[1]) + '">' + str(study_name[0]) + '</option>\n')
