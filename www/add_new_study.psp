@@ -13,19 +13,6 @@ This script adds the users new study to the database, then asks them how they
 want to proceed.
 '''
 
-
-from qiime_data_access import QiimeDataAccess
-qiimeDataAccess = QiimeDataAccess()
-
-study_name=sess['study_name']
-privs=sess['privileges']
-
-#Add the new study to the database
-study_id=qiimeDataAccess.createStudy(sess['web_app_user_id'],study_name,privs)
-
-# Add the study id to the session.
-sess['study_id']=str(study_id)
-sess.save()
 %>
 
 <!--Create to form options for the user to select-->

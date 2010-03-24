@@ -76,8 +76,7 @@ function check_study_name(){
 </script>
 <!-- Define the form-->
 <br>
-<form id="new_study" action="fusebox.psp" method="post">
-<input type="hidden" name="page" id="page" value="add_new_study.psp">
+<form id="new_study" action="new_study_submit.psp" method="post">
     <!-- put the form fields in a table to add structure to the layout-->
     <table>
         <tr>

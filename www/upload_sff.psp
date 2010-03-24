@@ -9,26 +9,11 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
 '''This script is the SFF upload page, which uses the JumpLoader java applet.'''
-
-data_access = QiimeDataAccess()
-
-out_directory='/tmp_qiime/'
-
-user_dir=os.path.join(out_directory,'user_'+str(sess['web_app_user_id']),
-                        'study_'+str(sess['study_id']))
-
-#See if the study folder exists and if not, creates it.
-try:
-    os.mkdir(user_dir)
-except:
-    pass
-
-# end
 %>
 
 <script type="text/javascript">
 
-var user_dir = \'<%=user_dir%>\'+'/'
+var user_dir = \'<%=sess['user_dir']%>\'+'/'
 
 window.onload="resizeApplet()";
 
