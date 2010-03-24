@@ -60,6 +60,20 @@ class QiimeDataAccessTests(unittest.TestCase):
         #user_info = result = _qiime_data_access.authenticateWebAppUser('', '')
         #self.assertTrue(type(user_info).name == 'dict')
 
+    def test_createStudy(self):
+        """ Unit test method for create Study
+        """
+        global _qiime_data_access
+        values = _qiime_data_access.createStudy(1,'test','Y')
+        self.assertTrue(values)
+        
+    def test_createQueueJob(self):
+        """ Unit test method for creating Queue Job
+        """
+        global _qiime_data_access
+        values = _qiime_data_access.createQueueJob(1)
+        self.assertTrue(values)
+
     def test_getStudyNames(self):
         """ Unit test method for getStudyNames 
         """

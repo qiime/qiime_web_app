@@ -175,13 +175,26 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
-            con = self.getDatabaseConnection()		
-            values = con.cursor()
-            con.cursor().callproc('create_study', [user_id, study_name, public_data, study_id])
-            value_list = []
-            for row in study_id:
-                value_list.append(row[0])
-            return value_list
+            con = self.getDatabaseConnection()
+            study_id=0
+            study_id=con.cursor().callproc('create_study', [user_id, study_name, public_data, study_id])
+            return study_id[3]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+                
+    def createQueueJob(self, user_id):
+        """ Returns a list of metadata values based on a study type and list
+        """
+        try:
+            con = self.getDatabaseConnection()
+            job_id=0
+            job_id=con.cursor().callproc('create_queue_job', [user_id, job_id])
+            return job_id[1]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -201,27 +214,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             for row in values:
                 value_list.append(row[0])
             return value_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
-                
-    def greengenes_livesearch(self, query):
-        """ Returns a list of metadata values based on a study type and list
-        """
-        try:
-            con = self.getDatabaseConnection()		
-            column_values = con.cursor()
-            con.cursor().callproc('greengenes_livesearch', [query, column_values])
-            query_results=[]
-            for row in column_values:
-                if row[0] is None:
-                    continue
-                query_results.append(row[0])
-            return query_results
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

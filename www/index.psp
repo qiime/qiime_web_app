@@ -25,6 +25,9 @@ from qiime_data_access import QiimeDataAccess
 <h2>Qiime Login</h2>
 
 <%
+
+output_dir='/tmp_qiime/'
+
 if form.has_key('username'):
     # begin
     qiimeDataAccess = QiimeDataAccess()
@@ -34,14 +37,19 @@ if form.has_key('username'):
         sess['username'] = form["username"]
         sess['is_admin'] = user_data['is_admin']
         sess['web_app_user_id'] = user_data['web_app_user_id']
+        
+        sess['user_dir']=os.path.join(output_dir,'user_'+str(sess['web_app_user_id']))
+        try:
+            os.mkdir(sess['user_dir'])
+        except:
+            pass
+        
         sess['document_root'] = req.document_root() + '/qiime/'
         sess.save()
         req.write('<script language=\"javascript\">document.login_form.submit();</script>')
     else:
         req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
-%>
 
-<%
 # end
 %>
 

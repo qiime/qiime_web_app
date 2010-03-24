@@ -8,22 +8,57 @@ __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 -->
-
-<script type="text/javascript">
+<script type='text/javascript'>
 
 $.validator.setDefaults({
     submitHandler:function(){
-        study_metadata.submit();
+        valid=check_study_name()
+        if (valid=='True'){
+            study=document.getElementById('new_study');
+            study.submit();
+        }
     }
 });
 
 $.metadata.setType("attr","validate");
-
+    
 $(document).ready(function(){
-    $("#study_metadata").validate();
+    $("#new_study").validate();
+ 
 });
 
+var studynames=new Array();
+
+<%
+from qiime_data_access import QiimeDataAccess
+qiimeDataAccess = QiimeDataAccess()
+study_names = qiimeDataAccess.getStudyNames()
+
+for i in range(len(study_names)):
+    req.write('studynames['+str(i)+']=\''+study_names[i]+'\'\n');
+#
+
+
+%>
+
+function check_study_name(){
+    study=document.getElementById('study_name').value;
+    var study1=study.toUpperCase();
+    var valid='True'
+    for (var i=0;i<studynames.length;i++){
+        var studynames1=studynames[i].toUpperCase();
+        if (study1==studynames1){
+            valid='False'
+        }
+    }
+
+    if(valid=='False'){
+        alert("Please enter another Study Name, since this one is taken.");
+    }
+    return valid
+}
 </script>
+
     <br>
     <form id="new_study" action="fusebox.psp" method="post">
     <input type="hidden" name="page" id="page" value="add_new_study.psp">
@@ -32,14 +67,14 @@ $(document).ready(function(){
                 <td>Create a Study Name:
                 </td>
                 <td>
-                    <input type="text" name"study_name" id="study_name" />
+                    <input class="input required" type="text" name="study_name" id="study_name" />
                 </td>
             </tr>
             <tr>
                 <td>Choose the availability of this Study:
                 </td>
                 <td>
-                    <select name="privileges" id="privileges">
+                    <select class="input required" name="privileges" id="privileges">
                         <option value=""></option>
                         <option value="Y">Public</option>
                         <option value="N">Private</option>
@@ -48,7 +83,7 @@ $(document).ready(function(){
             </tr>
             <tr>
                 <td>
-                    <input type="submit" value="Next">
+                    <input type="submit" value="Next"/>
                 </td>
             </tr>
         </table>

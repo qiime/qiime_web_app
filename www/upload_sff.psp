@@ -15,18 +15,25 @@ data_access = QiimeDataAccess()
 
 out_directory='/tmp_qiime/'
 
-user_dir=out_directory+'user_'+str(sess['web_app_user_id'])
-if not os.path.exists(user_dir):
+user_dir=os.path.join(out_directory,'user_'+str(sess['web_app_user_id']),'study_'+str(sess['study_id']))
+
+try:
     os.mkdir(user_dir)
+except:
+    pass
 #
 
 %>
 
 <script type="text/javascript">
 
+var user_dir = \'<%=user_dir%>\'+'/'
 
 window.onload="resizeApplet()";
 
+var keylist="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+var temp=''
+var output_fname
 function generatepass(plength)
 {
     temp=''
@@ -40,7 +47,9 @@ function appletInitialized( uploader ) {
     output_fname='tmp'+generatepass(10)
     var attributeSet = uploader.getUploader().getAttributeSet();
     var attribute = attributeSet.createStringAttribute( "output_fname", output_fname);
+    var attribute2 = attributeSet.createStringAttribute( "output_dir", user_dir);
     attribute.setSendToServer( true );
+    attribute2.setSendToServer( true );
 }
 
 function uploaderFileStatusChanged( uploader, file ) {
@@ -48,19 +57,19 @@ function uploaderFileStatusChanged( uploader, file ) {
         var fname="'"+file.getName()+"'";
         var stripped_fname=fname.replace(/\s+/g,'');
         var outf=stripped_fname.replace(/\'/g,'');
-        var downloadLocation = "<a  href=/tmp_qiime/"+"user_id_"+sess['web_app_user_id']+ output_fname + outf+ ">"+ 
-        output_fname+outf +"</a>";
-        var url_link="/tmp_qiime/"+"user_id_"+sess['web_app_user_id']+ output_fname + outf
+        var downloadLocation = user_dir+ output_fname + outf;
+        var url_link=user_dir+ output_fname + outf
         var fileLinks = document.getElementById( "fileLinks" );
         fileLinks.innerHTML += "Your file has been successfully uploaded!<br><br>"+
         "Download Link: " + downloadLocation + "<br><br>" + url_link;
         uploader.removeFile( file );
-    }
-
-    if( file.isFinished() && file.getType() == 1 ) {
+    }else if( file.isFinished() && file.getType() == 1 ) {
         uploader.removeFile( file );
+    }else if(file.getStatus() == 3 ) {
+            alert("There was a problem parsing your sff file.")
     }
 }
+
 function resizeApplet() {
 	var applet = document.jumpLoaderApplet;
 	var dx = 0;
@@ -89,20 +98,6 @@ function resizeApplet() {
 	//window.scroll( 0,0 );
 }
 
-/**
- * add attribute to uploader
- */
- function createUploaderAttribute() {
- 	var uploader = document.jumpLoaderApplet.getUploader();
- 	var attrSet = uploader.getAttributeSet();
- 	var name = 'study_name';
- 	var value = document.debugForm.uploaderAttributeValue.value;
- 	var attr = attrSet.createStringAttribute( name, value );
- 	attr.setSendToServer( true );
- 	//dumpUploaderAttributes();
- }
-
-
 </script>
 
 
@@ -110,12 +105,11 @@ function resizeApplet() {
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="500" width="715" mayscript>
     <param name="uc_maxFileLength" value="100000000000"/>
-    <param name="vc_useThumbs" value="false"/>
-    <param name="uc_useMetadata" value="true"/>
-    <param name="uc_metadataDescriptorUrl" value="../doc/metadata.xml"/>
     <param name="ac_fireAppletInitialized" value="true"/> 
-    <param name="uc_imageEditorEnabled" value="true">
+    <param name="uc_fileNamePattern" value='^.+\.((zip))' />
+    <param name="vc_mainViewShowUploadErrors" value="true" />
     <param name="ac_fireUploaderFileStatusChanged" value="true"/>
     <param name="uc_uploadUrl" value="parse_sff_upload.psp">
+
 </applet>
 
