@@ -78,7 +78,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ Unit test method for getStudyNames 
         """
         global _qiime_data_access
-        study_names = _qiime_data_access.getStudyNames()
+        study_names = _qiime_data_access.getStudyNames(11296)
         self.assertTrue(study_names)
 
     def test_getMetadataHeaders(self):
