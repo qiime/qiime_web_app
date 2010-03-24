@@ -7,6 +7,8 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
+
+'''This script is the user login page'''
 -->
 
 <%
@@ -26,6 +28,7 @@ from qiime_data_access import QiimeDataAccess
 
 <%
 
+#This is the location where the user directories are written
 output_dir='/tmp_qiime/'
 
 if form.has_key('username'):
@@ -38,7 +41,9 @@ if form.has_key('username'):
         sess['is_admin'] = user_data['is_admin']
         sess['web_app_user_id'] = user_data['web_app_user_id']
         
-        sess['user_dir']=os.path.join(output_dir,'user_'+str(sess['web_app_user_id']))
+        #This checks if teh user has a directory and if not, it creates one
+        sess['user_dir'] = os.path.join(output_dir,
+                                        'user_'+str(sess['web_app_user_id']))
         try:
             os.mkdir(sess['user_dir'])
         except:

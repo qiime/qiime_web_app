@@ -7,6 +7,12 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
+
+'''
+This is the main handler for all pages in this web app, where it checks to
+make sure that the user is logged in and then performs page redirects.
+'''
+
 -->
 
 <%@ include file="header.psp" %>
@@ -19,6 +25,8 @@ if form.has_key('page'):
 	# We have the page form variable so let's load it up	
 	page = form["page"]
 	
+	#The following is for new_study.psp, since we need to pass this information
+	#to add_new_study.psp
 	if form.has_key('privileges') and form.has_key('study_name'):
 	    sess['study_name']=str(form['study_name'])
 	    sess['privileges']=str(form['privileges'])

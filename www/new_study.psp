@@ -7,11 +7,22 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
+
+''' 
+This page is used to create a new study in the database (i.e. the user wants to
+upload a new SFF file and its associated data.
+'''
 -->
+
 <script type='text/javascript'>
 
+/*
+This function performs validation on the form fields and then submits the
+form if the fields are valid.
+*/
 $.validator.setDefaults({
     submitHandler:function(){
+        //check the the user-defined study is not present in the database
         valid=check_study_name()
         if (valid=='True'){
             study=document.getElementById('new_study');
@@ -20,27 +31,32 @@ $.validator.setDefaults({
     }
 });
 
+//Create the validation attribute
 $.metadata.setType("attr","validate");
-    
+
+//Set the validation for each form field
 $(document).ready(function(){
     $("#new_study").validate();
  
 });
 
+//Create an array of study names retrieved from the database
 var studynames=new Array();
 
 <%
 from qiime_data_access import QiimeDataAccess
 qiimeDataAccess = QiimeDataAccess()
+
+# get a python list of studies from the database
 study_names = qiimeDataAccess.getStudyNames()
 
+# iterate through the studies and write them into a javascript array
 for i in range(len(study_names)):
     req.write('studynames['+str(i)+']=\''+study_names[i]+'\'\n');
 #
-
-
 %>
 
+//Check that the user-defined study name is not in the database
 function check_study_name(){
     study=document.getElementById('study_name').value;
     var study1=study.toUpperCase();
@@ -51,41 +67,42 @@ function check_study_name(){
             valid='False'
         }
     }
-
+    //If the study name is already taken, alert the user
     if(valid=='False'){
         alert("Please enter another Study Name, since this one is taken.");
     }
     return valid
 }
 </script>
-
-    <br>
-    <form id="new_study" action="fusebox.psp" method="post">
-    <input type="hidden" name="page" id="page" value="add_new_study.psp">
-        <table>
-            <tr>
-                <td>Create a Study Name:
-                </td>
-                <td>
-                    <input class="input required" type="text" name="study_name" id="study_name" />
-                </td>
-            </tr>
-            <tr>
-                <td>Choose the availability of this Study:
-                </td>
-                <td>
-                    <select class="input required" name="privileges" id="privileges">
-                        <option value=""></option>
-                        <option value="Y">Public</option>
-                        <option value="N">Private</option>
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <input type="submit" value="Next"/>
-                </td>
-            </tr>
-        </table>
-    </form>
+<!-- Define the form-->
+<br>
+<form id="new_study" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="add_new_study.psp">
+    <!-- put the form fields in a table to add structure to the layout-->
+    <table>
+        <tr>
+            <td>Create a Study Name:
+            </td>
+            <td>
+                <input class="input required" type="text" name="study_name" id="study_name" />
+            </td>
+        </tr>
+        <tr>
+            <td>Choose the availability of this Study:
+            </td>
+            <td>
+                <select class="input required" name="privileges" id="privileges">
+                    <option value=""></option>
+                    <option value="Y">Public</option>
+                    <option value="N">Private</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="Next"/>
+            </td>
+        </tr>
+    </table>
+</form>
 

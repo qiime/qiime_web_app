@@ -44,6 +44,7 @@ if form.has_key('file') and form['file'].filename:
         # create a zipfile object
         t=zipfile.ZipFile(os.path.join(dir_path, fname),'r')
         
+        contains_sff=False
         # iterate through the list of files in the zipped file
         for f in t.namelist():
             
@@ -64,11 +65,15 @@ if form.has_key('file') and form['file'].filename:
                 # determine if the file written is an sff, in which the sffinfo
                 # is called on the file.
                 if outfname.endswith('.sff'):
+                    contains_sff=True
                     try: 
                         sffinfo_cmd=' '.join(['sffinfo -m',str(outfname)])
                         popen(sffinfo_cmd)
                     except:
-                        res.write("error:file is not properly formatted")
+                        raise ValueError
+        #if the zip does not have any sff files, raise an error
+        if contains_sff==False:
+            raise ValueError
 
 #
 %>

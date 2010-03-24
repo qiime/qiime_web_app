@@ -61,7 +61,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         #self.assertTrue(type(user_info).name == 'dict')
 
     def test_createStudy(self):
-        """ Unit test method for create Study
+        """ Unit test method for creating Study
         """
         global _qiime_data_access
         values = _qiime_data_access.createStudy(1,'test','Y')

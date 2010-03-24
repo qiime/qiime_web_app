@@ -1,18 +1,34 @@
-
 <%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+'''
+This script adds the users new study to the database, then asks them how they
+want to proceed.
+'''
+
+
 from qiime_data_access import QiimeDataAccess
 qiimeDataAccess = QiimeDataAccess()
 
 study_name=sess['study_name']
 privs=sess['privileges']
 
+#Add the new study to the database
 study_id=qiimeDataAccess.createStudy(sess['web_app_user_id'],study_name,privs)
-req.write(str(study_id))
+
+# Add the study id to the session.
 sess['study_id']=str(study_id)
 sess.save()
 %>
 
-
+<!--Create to form options for the user to select-->
 <br>
 <form id="sff_file" action="fusebox.psp" method="post">
 <input type="hidden" name="page" id="page" value="upload_sff.psp">
@@ -22,8 +38,4 @@ sess.save()
 <form id="sff_file" action="fusebox.psp" method="post">
 <input type="hidden" name="page" id="page" value="create_new_study.psp">
 <input type="submit" value="Upload MetaData">
-</form>
-
-<form id="new_study" action="fusebox.psp" method="post">
-  <input type="hidden" name="page" id="page" value="add_new_study.psp">
 </form>
