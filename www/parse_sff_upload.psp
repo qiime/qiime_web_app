@@ -1,9 +1,24 @@
 <%
-#!/usr/bin/env python
-from random import choice, randrange
+#/bin/env python
+
+"""
+This script is the upload handler for uploading the SFF files using JumpLoader'
+"""
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
 import os
 import zipfile
 from os import popen
+
+#determine if a file has been passed
 if form.has_key('file') and form['file'].filename:
     try: # Windows needs stdio set for binary mode.
         import msvcrt
@@ -20,37 +35,40 @@ if form.has_key('file') and form['file'].filename:
         # strip leading path from file name to avoid directory traversal attacks
         fname=form['output_fname']+fileitem.filename.strip().replace(" ","")
         dir_path =os.path.join(os.path.dirname(req.filename), form['output_dir'])
+        
+        # write the zipped file on the server
         zippedf = open(os.path.join(dir_path, fname), 'wb')
         zippedf.write(fileitem.file.read())
         zippedf.close()
     
+        # create a zipfile object
         t=zipfile.ZipFile(os.path.join(dir_path, fname),'r')
-
+        
+        # iterate through the list of files in the zipped file
         for f in t.namelist():
+            
+            # if the name is a folder, create a directory
             if f.endswith('/'):
                 try:
                     os.mkdir(os.path.join(dir_path, f))
                 except:
                     pass
             else:
-                
+                # Write a file
                 outfname=os.path.join(dir_path, f)
                 outfile = open(outfname, 'wb')
                 outfile.write(t.read(f))
                 outfile.flush()
                 outfile.close()
-                
-                if test or script:
-                    # Change the permissions on the new file to make it executable
-                    chmod_string = ' '.join(['chmod 755',output_fp])
-                    popen(chmod_string)
                     
+                # determine if the file written is an sff, in which the sffinfo
+                # is called on the file.
                 if outfname.endswith('.sff'):
                     try: 
-                        sffinfo_cmd=' '.join(['sffinfo -m',str('F2YRTSR02.sff'),'-m'])
+                        sffinfo_cmd=' '.join(['sffinfo -m',str(outfname)])
                         popen(sffinfo_cmd)
                     except:
-                        res.write("message:File exists, overwrite?")
+                        res.write("error:file is not properly formatted")
 
 #
 %>
