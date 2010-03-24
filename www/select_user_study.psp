@@ -1,0 +1,52 @@
+<!--
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+-->
+
+<script type="text/javascript">
+
+$.validator.setDefaults({
+    submitHandler:function(){
+        user_study.submit();
+    }
+});
+
+$.metadata.setType("attr","validate");
+
+$(document).ready(function(){
+    $("#user_study").validate();
+});
+            
+</script>
+
+    <h3>Select the Studies that you want to add data to:</h3>
+    <form id="user_study" action="select_user_study_submit.psp" method="post">
+        <table>
+            <tr>
+                <th>Study Names:</th>
+                <td><select validate="required:true" name="study_names" id="study_names">
+                    <option value=""></option>
+
+<%
+# Get a new QiimeDataAccess object and obtain our lists
+data_access = QiimeDataAccess()
+study_names = data_access.getStudyNames(sess['web_app_user_id'])
+
+for study_name in study_names:
+    req.write('\t\t\t\t<option value="' + str(study_name[1]) + '">' + str(study_name[0]) + '</option>\n')
+
+# end
+%>
+                </select>
+                </td>
+            </tr>
+        </table>
+        <br>
+        <input type="submit" value="Next">
+    </form>
