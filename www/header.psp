@@ -1,4 +1,4 @@
-<!--
+<%
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
@@ -7,9 +7,6 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
--->
-
-<%
 
 # Check to make sure session is valid. If not, redirect to login
 sess = Session.Session(req)

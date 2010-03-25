@@ -1,4 +1,4 @@
-<!--
+<%
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
@@ -7,13 +7,13 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
--->
+%>
 
 <script type="text/javascript">
 
 $.validator.setDefaults({
     submitHandler:function(){
-        user_study.submit();
+        document.forms['user_study'].submit();
     }
 });
 
@@ -25,13 +25,13 @@ $(document).ready(function(){
             
 </script>
 
-    <h3>Select the Studies that you want to add data to:</h3>
-    <form id="user_study" action="select_user_study_submit.psp" method="post">
-        <table>
-            <tr>
-                <th>Study Names:</th>
-                <td><select validate="required:true" name="study_names" id="study_names">
-                    <option value=""></option>
+<h3>Select the Studies that you want to add data to:</h3>
+<form id="user_study" action="select_user_study_submit.psp" method="post">
+    <table>
+        <tr>
+            <th>Study Names:</th>
+            <td><select validate="required:true" name="study_names" id="study_names">
+                <option value=""></option>
 
 <%
 # Get a new QiimeDataAccess object and obtain our lists
@@ -43,10 +43,10 @@ for study_name in study_names:
 
 # end
 %>
-                </select>
-                </td>
-            </tr>
-        </table>
-        <br>
-        <input type="submit" value="Next">
-    </form>
+            </select>
+            </td>
+        </tr>
+    </table>
+    <br>
+    <input type="submit" value="Next">
+</form>

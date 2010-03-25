@@ -1,4 +1,4 @@
-<!--
+<%
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
@@ -7,44 +7,44 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
--->
+%>
+
 <br>
-
 <p>
-<b>Generate Template:</b>
-<ul>
-<li>
-Generate a MIENS-compliant metadata template:
-</li>
-</ul>
+    <b>Generate Template:</b>
+    <ul>
+        <li>
+            Generate a MIENS-compliant metadata template:
+        </li>
+    </ul>
 
-<b>Upload new Data:</b>
-<ul>
-<li>
-<form id="create_new_study" action="fusebox.psp" method="post">
-	<input type="hidden" name="page" id="page" value="./new_study.psp">
-	<p>Create a new Study:<input type="submit" value="Go"></p>
-</form>
-</li><li>
-<form id="associate_data_to_study" action="fusebox.psp" method="post">
-	<input type="hidden" name="page" id="page" value="./select_user_study.psp">
-	<p>Upload SFF or Metadata to one of your studies:<input type="submit" value="Go"></p>
-</form>
-</li>
-</ul>
+    <b>Upload new Data:</b>
+    <ul>
+        <li>
+            <form id="create_new_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="./new_study.psp">
+                <p>Create a new Study:<input type="submit" value="Go"></p>
+            </form>
+        </li><li>
+            <form id="associate_data_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="./select_user_study.psp">
+                <p>Upload SFF or Metadata to one of your studies:<input type="submit" value="Go"></p>
+            </form>
+        </li>
+    </ul>
 
-<b>New Analysis:</b>
-<ul>
-<li>
-Select Studies and Categories to analyze:
-</li>
-</ul>
+    <b>New Analysis:</b>
+    <ul>
+        <li>
+            Select Studies and Categories to analyze:
+        </li>
+    </ul>
 
-<b>View Results:</b>
-<ul>
-<li>
-View your previous analyses:
-</li>
-</ul>
+    <b>View Results:</b>
+    <ul>
+        <li>
+            View your previous analyses:
+        </li>
+    </ul>
 
 </p>

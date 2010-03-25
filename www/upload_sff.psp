@@ -13,7 +13,7 @@ __status__ = "Production"
 
 <script type="text/javascript">
 
-var user_dir = \'<%=sess['user_dir']%>\'+'/'
+var study_dir = \'<%=sess['study_dir']%>\'+'/'
 
 window.onload="resizeApplet()";
 
@@ -35,7 +35,7 @@ function appletInitialized( uploader ) {
     output_fname='tmp'+generatepass(10)
     var attributeSet = uploader.getUploader().getAttributeSet();
     var attribute = attributeSet.createStringAttribute( "output_fname", output_fname);
-    var attribute2 = attributeSet.createStringAttribute( "output_dir", user_dir);
+    var attribute2 = attributeSet.createStringAttribute( "output_dir", study_dir);
     attribute.setSendToServer( true );
     attribute2.setSendToServer( true );
 }

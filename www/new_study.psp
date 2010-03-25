@@ -1,4 +1,4 @@
-<!--
+<%
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
@@ -12,7 +12,7 @@ __status__ = "Production"
 This page is used to create a new study in the database (i.e. the user wants to
 upload a new SFF file and its associated data.
 '''
--->
+%>
 
 <script type='text/javascript'>
 
@@ -73,7 +73,9 @@ function check_study_name(){
     }
     return valid
 }
+
 </script>
+
 <!-- Define the form-->
 <br>
 <form id="new_study" action="new_study_submit.psp" method="post">

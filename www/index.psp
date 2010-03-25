@@ -1,4 +1,4 @@
-<!--
+<%
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
@@ -9,9 +9,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
 '''This script is the user login page'''
--->
 
-<%
 from mod_python import Session
 from qiime_data_access import QiimeDataAccess
 %>

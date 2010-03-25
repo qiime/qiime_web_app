@@ -1,10 +1,4 @@
 <%
-#/bin/env python
-
-"""
-This script is the upload handler for uploading the SFF files using JumpLoader'
-"""
-
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Jesse Stombaugh"]
@@ -13,6 +7,10 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
+
+"""
+This script is the upload handler for uploading the SFF files using JumpLoader'
+"""
 
 import os
 import zipfile
@@ -74,6 +72,7 @@ if form.has_key('file') and form['file'].filename:
         #if the zip does not have any sff files, raise an error
         if contains_sff==False:
             raise ValueError
+        
 
 #
 %>

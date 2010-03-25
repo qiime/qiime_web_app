@@ -1,4 +1,4 @@
-<!--
+<%
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
@@ -7,25 +7,18 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
--->
+%>
 <%@ include file="header.psp" %>
 
 <%
 import os
+
 sess['study_id']=form['study_names']
 
-sess['user_dir']=os.path.join(sess['user_dir'],'study_'+sess['study_id'])
+sess['study_dir']=os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
 sess.save()
+
+psp.redirect('fusebox.psp?page=add_new_study.psp')
+
 %>
-
-<!--create fusebox redirect form-->
-<br>
-<form id="redirect" action="fusebox.psp" method="post">
-    <input type="hidden" name="page" id="page" value="add_new_study.psp">
-</form>
-
-<!--submit the form to fusebox (i.e. redirect)-->
-<script type='text/javascript'>
-    document.forms["redirect"].submit();
-</script>
 

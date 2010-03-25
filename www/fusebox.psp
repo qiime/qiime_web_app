@@ -35,7 +35,7 @@ if form.has_key('page'):
 else:
 	# No page found... to be safe, require user to log in again
 	sess.invalidate()
-	req.redirect('index.psp')
+	psp.redirect('index.psp')
 %>
 
 <%
