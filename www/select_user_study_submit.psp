@@ -11,7 +11,10 @@ __status__ = "Production"
 <%@ include file="header.psp" %>
 
 <%
+import os
 sess['study_id']=form['study_names']
+
+sess['user_dir']=os.path.join(sess['user_id'],'study_'+sess['study_id'])
 sess.save()
 %>
 
