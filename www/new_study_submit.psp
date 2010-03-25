@@ -43,7 +43,7 @@ try:
 except:
     pass
 
-psp.redirect('fusebox.psp?page=add_new_study.psp')
+psp.redirect('fusebox.psp?page=select_upload_type.psp')
 
 %>
 

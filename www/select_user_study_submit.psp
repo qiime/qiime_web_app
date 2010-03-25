@@ -18,7 +18,7 @@ sess['study_id']=form['study_names']
 sess['study_dir']=os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
 sess.save()
 
-psp.redirect('fusebox.psp?page=add_new_study.psp')
+psp.redirect('fusebox.psp?page=select_upload_type.psp')
 
 %>
 
