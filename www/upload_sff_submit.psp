@@ -63,7 +63,7 @@ if form.has_key('file') and form['file'].filename:
                     # is called on the file.
                     contains_sff=True
                     try: 
-                        sffinfo_cmd=['sffinfo', '-m',str(outfname)]
+                        sffinfo_cmd=['sffinfo','-m',str(outfname)]
                         process=Popen(sffinfo_cmd,stdout=PIPE,shell=False)
                         if not int(exit_status)==0:
                             req.write("Error: the SFF file could not be parsed!")
