@@ -14,7 +14,7 @@ This script is the upload handler for uploading the SFF files using JumpLoader'
 
 import os
 import zipfile
-from subprocess import Popen,PIPE
+from subprocess import PIPE,Popen
 from qiime_data_access import QiimeDataAccess
 data_access = QiimeDataAccess()
 
@@ -63,21 +63,19 @@ if form.has_key('file') and form['file'].filename:
                     # is called on the file.
                     contains_sff=True
                     try: 
-                        sffinfo_cmd=['sffinfo','-m',str(outfname)]
-                        process=Popen(sffinfo_cmd,stdout=PIPE,shell=False)
-                        if not int(exit_status)==0:
+                        process=Popen(['sffinfo','-m',outfname], stdout=PIPE, 
+                                                                    shell=False)
+                        if not int(process.wait())==0:
                             req.write("Error: the SFF file could not be parsed!")
                         job_id=data_access.createQueueJob(
                                     form['web_app_user_id'], form['study_id'],
                                     0, outfname)
                     except:
-                        req.write("Error: ")
+                        req.write("Error: there was a problem parsing the SFF and/or inserting job in the queue!")
                         
         #if the zip does not have any sff files, raise an error
         if contains_sff==False:
             req.write("Error: This zip does not contain any SFF files!")
 
 #
-def _accept_exit_status(self, status):
-    return int(status) == 0
 %>

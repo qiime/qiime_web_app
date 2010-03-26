@@ -9,7 +9,6 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
 '''This script is the SFF upload page, which uses the JumpLoader java applet.'''
-
 %>
 
 <script type="text/javascript">
