@@ -71,7 +71,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ Unit test method for creating Queue Job
         """
         global _qiime_data_access
-        values = _qiime_data_access.createQueueJob(1)
+        values = _qiime_data_access.createQueueJob(1,1,0,'/tmp/')
         self.assertTrue(values)
 
     def test_getUserStudyNames(self):

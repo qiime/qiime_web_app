@@ -19,7 +19,7 @@ make sure that the user is logged in and then performs page redirects.
 
 <%
 import os
-import psp
+
 
 if form.has_key('page'):
 	# We have the page form variable so let's load it up	

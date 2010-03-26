@@ -212,14 +212,14 @@ class QiimeDataAccess( AbstractDataAccess ):
                 con.cursor().close()
                 con.close()
                 
-    def createQueueJob(self, user_id):
+    def createQueueJob(self, user_id,study_id,status,filepath):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
             con = self.getDatabaseConnection()
             job_id=0
-            job_id=con.cursor().callproc('create_queue_job', [user_id, job_id])
-            return job_id[1]
+            job_id=con.cursor().callproc('create_queue_job', [user_id,study_id,status,filepath,job_id])
+            return job_id[4]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

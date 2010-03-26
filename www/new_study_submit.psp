@@ -19,7 +19,6 @@ import os
 from qiime_data_access import QiimeDataAccess
 qiimeDataAccess = QiimeDataAccess()
 
-
 sess['study_name']=form['study_name']
 sess['privileges']=form['privileges']
 

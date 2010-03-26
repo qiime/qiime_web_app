@@ -9,6 +9,7 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
 '''This script is the SFF upload page, which uses the JumpLoader java applet.'''
+
 %>
 
 <script type="text/javascript">
@@ -35,29 +36,57 @@ function appletInitialized( uploader ) {
     output_fname='tmp'+generatepass(10)
     var attributeSet = uploader.getUploader().getAttributeSet();
     var attribute = attributeSet.createStringAttribute( "output_fname", output_fname);
-    var attribute2 = attributeSet.createStringAttribute( "output_dir", study_dir);
     attribute.setSendToServer( true );
+    var attribute2 = attributeSet.createStringAttribute( "output_dir", study_dir);
     attribute2.setSendToServer( true );
+    var attribute3 = attributeSet.createStringAttribute( "web_app_user_id", <%=sess['web_app_user_id']%>);
+    attribute3.setSendToServer( true );
+    var attribute4 = attributeSet.createStringAttribute( "study_id", <%=sess['study_id']%>);
+    attribute4.setSendToServer( true );
 }
 
 /*When file status changes, check if the upload was successful*/
+
+var valid=new Array();
+var invalid=0;
+var complete=false
 function uploaderFileStatusChanged( uploader, file ) {
-    //if valid, hide the applet and ask the user where to go next
-    if( file.isFinished() && file.getType() == 0 ) {
-        var fname="'"+file.getName()+"'";
-        var stripped_fname=fname.replace(/\s+/g,'');
-        var outf=stripped_fname.replace(/\'/g,'');
-        var url_link=user_dir+ output_fname + outf
-        var fileLinks = document.getElementById( "fileLinks" );
-        fileLinks.innerHTML += "Your file has been successfully uploaded!<br><br>" + url_link;
-        uploader.removeFile( file );
-    //if the upload happened, but there was an error
-    }else if( file.isFinished() && file.getType() == 1 ) {
-        uploader.removeFile( file );
-    //if the sff file is invalid or missing from the zip
-    }else if(file.getStatus() == 3 ) {
-        alert("There was a problem parsing your sff file.")
-        uploader.removeFile( file );
+    var filecount=uploader.getFileCount()
+    var index=file.getIndex()
+    if (file.getResponseContent() != null && file.getResponseContent() != ''){
+        alert(file.getResponseContent())
+    }else{
+    
+    if (index<(filecount-1)){
+        if( file.isFinished() && file.getType() == 0 ) {
+            valid[index]=true;
+        }else{
+            valid[index]=false;
+        }
+    }else{
+        if( file.isFinished() && file.getType() == 0 ) {
+            valid[index]=true;
+            complete=true
+        }else if (file.isFailed()){
+            valid[index]=false;
+            complete=true
+        }else{
+            valid[index]=false;
+        }
+    }
+    if (complete){
+        for (var i=0;i<valid.length;i++){
+            if (valid[i]){
+                //do nothing
+            }else{
+                invalid=invalid+1;
+            }
+        }
+        if (invalid==0){
+            document.getElementById( "applet" ).innerHTML='';
+            setCompleteBox();
+        }
+    }
     }
 }
 
@@ -67,7 +96,7 @@ function resizeApplet() {
 	var dx = 0;
 	var dy = 7;
 	var w_newWidth, w_newHeight;
-	var w_maxWidth = 715, w_maxHeight = 500;
+	var w_maxWidth = 600, w_maxHeight = 250;
 	var dx = 0;
 	var dy = 2;
 	if( navigator.appName.indexOf( "Microsoft" ) != -1 ) {
@@ -89,18 +118,56 @@ function resizeApplet() {
 	applet.setSize( w_newWidth - dx, w_newHeight - dy );
 	//window.scroll( 0,0 );
 }
+function setCompleteBox(){
+document.getElementById('complete').innerHTML='\
+<!--Create to form options for the user to select-->\
+<p>\
+<b>Your SFF file has been successfully uploaded and validated!</b>\
+<br><br>\
+Following the links below to upload another SFF file or Metadata or return to \
+the Main Menu:\
+</p>\
+<form id="sff_file" action="fusebox.psp" method="post">\
+<input type="hidden" name="page" id="page" value="upload_sff.psp">\
+<input type="submit" value="Upload SFF(s)">\
+</form>\
+<form id="metadata_upload" action="fusebox.psp" method="post">\
+<input type="hidden" name="page" id="page" value="metadata_upload.psp">\
+<input type="submit" value="Upload MetaData">\
+</form>\
+<form id="home" action="fusebox.psp" method="post">\
+<input type="hidden" name="page" id="page" value="select_task.psp">\
+<input type="submit" value="Home">\
+</form>\'
+
+}
+
 </script>
 
+<table>
+<tr><td>
 <!--this is the message area, where results are written-->
-<p id="fileLinks"><b>Please upload only zipped files. The filename should not contain spaces or non-alphanumeric characters.</b></p>
-
+<div id='complete'>
+</div>
+</td></tr>
+<tr><td>
+<div id='applet'>
 <!--this is the jumploader applet-->
+<p><b>Please upload only zipped files. The filename should not contain spaces or non-alphanumeric characters.</b></p>
+
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
-        archive="jar/jumploader_z.jar" height="500" width="715" mayscript>
+        archive="jar/jumploader_z.jar" height="250" width="600" mayscript>
+    <param name="vc_uploadListViewName" value="_compact"/>
+    <param name="vc_lookAndFeel" value="crossPlatform"/>
+    <param name="vc_uploadViewStartUploadButtonText" value="Start upload"/>
+    <param name="vc_uploadViewStartUploadButtonImageUrl" value="/img/media_play_green.png"/>
+    <param name="vc_uploadViewStopUploadButtonText" value="Stop upload"/>
+    <param name="vc_uploadViewStopUploadButtonImageUrl" value="/img/media_stop_red.png"/>
     <param name="uc_maxFileLength" value="100000000000"/>
     <param name="ac_fireAppletInitialized" value="true"/> 
     <param name="uc_fileNamePattern" value='^.+\.((zip))' />
     <param name="ac_fireUploaderFileStatusChanged" value="true"/>
-    <param name="uc_uploadUrl" value="parse_sff_upload.psp">
+    <param name="uc_uploadUrl" value="upload_sff_submit.psp">
 </applet>
-
+</div>
+</td></tr></table>

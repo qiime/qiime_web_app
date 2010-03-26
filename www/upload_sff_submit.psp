@@ -14,7 +14,9 @@ This script is the upload handler for uploading the SFF files using JumpLoader'
 
 import os
 import zipfile
-from os import popen
+from subprocess import Popen,PIPE
+from qiime_data_access import QiimeDataAccess
+data_access = QiimeDataAccess()
 
 #determine if a file has been passed
 if form.has_key('file') and form['file'].filename:
@@ -47,32 +49,35 @@ if form.has_key('file') and form['file'].filename:
         for f in t.namelist():
             
             # if the name is a folder, create a directory
-            if f.endswith('/'):
-                try:
-                    os.mkdir(os.path.join(dir_path, f))
-                except:
-                    pass
-            else:
+            if not f.endswith('/'):
                 # Write a file
-                outfname=os.path.join(dir_path, f)
-                outfile = open(outfname, 'wb')
-                outfile.write(t.read(f))
-                outfile.flush()
-                outfile.close()
+                filename=os.path.split(f)[-1].lower()
+                if filename.endswith('.sff') and not filename.startswith('.'):
+                    outfname=os.path.join(dir_path, filename)
+                    outfile = open(outfname, 'wb')
+                    outfile.write(t.read(f))
+                    outfile.flush()
+                    outfile.close()
                     
-                # determine if the file written is an sff, in which the sffinfo
-                # is called on the file.
-                if outfname.endswith('.sff'):
+                    # determine if the file written is an sff, in which the sffinfo
+                    # is called on the file.
                     contains_sff=True
                     try: 
-                        sffinfo_cmd=' '.join(['sffinfo -m',str(outfname)])
-                        popen(sffinfo_cmd)
+                        sffinfo_cmd=['sffinfo', '-m',str(outfname)]
+                        process=Popen(sffinfo_cmd,stdout=PIPE,shell=False)
+                        if not int(exit_status)==0:
+                            req.write("Error: the SFF file could not be parsed!")
+                        job_id=data_access.createQueueJob(
+                                    form['web_app_user_id'], form['study_id'],
+                                    0, outfname)
                     except:
-                        raise ValueError
+                        req.write("Error: ")
+                        
         #if the zip does not have any sff files, raise an error
         if contains_sff==False:
-            raise ValueError
-        
+            req.write("Error: This zip does not contain any SFF files!")
 
 #
+def _accept_exit_status(self, status):
+    return int(status) == 0
 %>
