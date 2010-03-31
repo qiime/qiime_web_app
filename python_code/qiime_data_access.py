@@ -258,9 +258,75 @@ class QiimeDataAccess( AbstractDataAccess ):
             for row in column_values:
                 if row[0] is None:
                     continue
-                list_item = row[0], row[1], row[2]
+                list_item = row[0], row[1], row[2], row[3]
                 column_dictionary.append(list_item)
             return column_dictionary
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+
+    def getControlledVocabs(self, column_name):
+        """ Returns the full column dictionary
+        """
+        controlled_vocabs = []
+        
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_controlled_vocab_list', [results, column_name])
+            for row in results:
+                controlled_vocabs.append(row[0])
+
+            return controlled_vocabs
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+
+    def getOntologies(self, column_name):
+        """ Returns the full column dictionary
+        """
+        ontologies = []
+        
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_ontology_list', [results, column_name])
+            for row in results:
+                ontologies.append(row[0])
+
+            return ontologies
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+
+    def validateListValue(self, list_name, list_value):
+        """ Returns the full column dictionary
+        """
+        try:
+            vocab_value_id = 0
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('validate_list_value', [results, list_name])
+            
+            for row in results:
+                if list_value == row[0]:
+                    return True
+                    
+            # Value was not found
+            return False
+            
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

@@ -116,6 +116,27 @@ class QiimeDataAccessTests(unittest.TestCase):
         values = _qiime_data_access.getColumnDictionary()
         self.assertTrue(values)
 
+    def test_getControlledVocabs(self):
+        """ Unit test method for getParameterByScript
+        """
+        global _qiime_data_access
+        controlled_vocab_list = _qiime_data_access.getControlledVocabs('investigation_type')
+        self.assertTrue(controlled_vocab_list[0] == 'Investigation Type')
+
+    def test_getOntologies(self):
+        """ Unit test method for getParameterByScript
+        """
+        global _qiime_data_access
+        controlled_vocab_list = _qiime_data_access.getOntologies('body_habitat')
+        self.assertTrue(controlled_vocab_list[0] == 'FMA')
+
+    def test_validateListValue(self):
+        """ Unit test method for getParameterByScript
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.validateListValue('Investigation Type', 'eukaryote')
+        self.assertTrue(result)
+
 
 
 if __name__ == '__main__':
