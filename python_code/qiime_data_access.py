@@ -311,22 +311,42 @@ class QiimeDataAccess( AbstractDataAccess ):
                 con.cursor().close()
                 con.close()
 
-    def validateListValue(self, list_name, list_value):
+    def getListValues(self, list_name):
         """ Returns the full column dictionary
         """
         try:
-            vocab_value_id = 0
+            list_values = []
             con = self.getTestDatabaseConnection()
             results = con.cursor()
-            con.cursor().callproc('validate_list_value', [results, list_name])
+            con.cursor().callproc('get_list_values', [results, list_name])
             
             for row in results:
-                if list_value == row[0]:
-                    return True
+                list_values.append(row[0])
                     
-            # Value was not found
-            return False
+            return list_values
             
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+                
+    def getOntologyValues(self, ontology_name):
+        """ Returns the full column dictionary
+        """
+        try:
+            ontology_values = []
+            con = self.getOntologyDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_ontology_values', [results, ontology_name])
+
+            for row in results:
+                ontology_values.append(row[0])
+
+            return ontology_values
+
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

@@ -17,12 +17,47 @@ from qiime_data_access import QiimeDataAccess
 import csv
 import re
 
-class FieldValue(object):
-    def __init__(self, value):
-        self.value = value
-        self.isValid = True
+class ListManager(object):
+    """ Singleton class which manages lists and ontologies. Guarnatess that each list
+    is only loaded once. Necessary for performancd
+    """
+    _instance = None
+    _lists = {}
+    _ontologies = {}
+    
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super(ListManager, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+        
+    # Probably want to refactor the two functions below... think about it
+        
+    def checkListValue(self, list_name, value):
+        # Make sure list has been loaded
+        if list_name not in self._lists:
+            self._lists[list_name] = QiimeDataAccess().getListValues(list_name)
+        
+        # Check if values is in list
+        if value in self._lists[list_name]:
+            return True
+        else:
+            return False
+            
+    def checkOntologyValue(self, ontology_name, term):
+        # Make sure ontology has been loaded
+        if ontology_name not in self._ontologies:
+            self._ontologies[ontology_name] = QiimeDataAccess().getOntologyValues(ontology_name)
+
+        # Check if term is in ontology
+        if term in self._ontologies[ontology_name]:
+            return True
+        else:
+            return False
+
 
 class ColumnFactory(object):
+    """ Factory class for producing metadata columns
+    """
     def __init__(self, isInvalid):
         self._isInvalid = isInvalid
 
@@ -33,7 +68,7 @@ class ColumnFactory(object):
             if row[0].upper() == column_name:
                 found = True
                 break
-                
+                      
         return found
         
     def _validateNumeric(self, value):
@@ -45,7 +80,6 @@ class ColumnFactory(object):
         else:
             return True
         
-        
     def _validateText(self, value):
         """ return true if number, false otherwise
         """
@@ -54,23 +88,28 @@ class ColumnFactory(object):
         else:
             return False
 
-
+    # Consider refactoring with _validateOntology()
     def _validateList(self, value, list_names):
         """ returns true if value is in list designated by list_name, 
         false otherwise
         """
-        for list_name in list_names:    
-            if (QiimeDataAccess().validateListValue(list_name, value)):
+        for list_name in list_names:
+            if (ListManager().checkListValue(list_name, value)):
                 return True
                 
-        # Value not found in any list
+        # Not found in any list
         return False
-
-    def _validateOntology(self, term, ontology_name):
+        
+    def _validateOntology(self, term, ontology_names):
         """ returns true if term is in ontology designated by ontology_name, 
         false otherwise 
         """
-        return True
+        for ontology_name in ontology_names:
+            if (ListManager().checkOntologyValue(ontology_name, term)):
+                return True
+                
+        # Not found in any list
+        return False
 
     def _validateDate(self, date):
         """ returns true if provided date is in a valid format, false otherwise 
@@ -109,6 +148,9 @@ class ColumnFactory(object):
         return column
 
 class BaseColumn(object):
+    """ The base class for all column types in the metadata table. This class 
+    implements common functionality for all column classes.
+    """
     def __init__(self, column_name, validate, isInvalid):
         # Name of this column. Should be unique in MetadataTable object
         self.column_name = column_name
@@ -196,7 +238,16 @@ class MetadataTable(object):
         self._metadataFile = metadataFile
         self._template_id = template_id
         self._createTableColumns()
-
+        
+    def getInvalidRows(self):
+        return self._invalid_rows
+        
+    def writeToDatabase(self, data_access):
+        if len(self._invalid_rows) > 0:
+            raise Exception('Data cannot be written while invalid rows still exist')
+        else:
+            data_access.writeTableToDatabase()
+            
     def _isInvalid(self, column_name, invalid_row):
         """ A callback that is fired when an invalid field has been found
         """
@@ -236,16 +287,18 @@ class MetadataTable(object):
                 i += 1
 
         #self._printTable()
-
-        print 'Invalid Rows:'
-        for row in self._invalid_rows:
-            print row
+        self._printInvalidRows()
 
     def _createTableColumns(self):
         self._readMetadataFile()
 
     def _addColumn(self, column):
         self._columns.append(column)
+
+    def _printInvalidRows(self):
+        print 'Invalid Rows:'
+        for row in self._invalid_rows:
+            print row
 
     def _printTable(self):
         print '\n\n'
@@ -270,5 +323,3 @@ class MetadataTable(object):
             y += 1 
             
         print '\n\n'
-        
-        

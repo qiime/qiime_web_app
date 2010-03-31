@@ -130,13 +130,19 @@ class QiimeDataAccessTests(unittest.TestCase):
         controlled_vocab_list = _qiime_data_access.getOntologies('body_habitat')
         self.assertTrue(controlled_vocab_list[0] == 'FMA')
 
-    def test_validateListValue(self):
+    def test_getListValues(self):
         """ Unit test method for getParameterByScript
         """
         global _qiime_data_access
-        result = _qiime_data_access.validateListValue('Investigation Type', 'eukaryote')
+        result = _qiime_data_access.getListValues('Investigation Type')
         self.assertTrue(result)
 
+    def test_getOntologyValues(self):
+        """ Unit test method for getParameterByScript
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.getOntologyValues('CL')
+        self.assertTrue(result)
 
 
 if __name__ == '__main__':
