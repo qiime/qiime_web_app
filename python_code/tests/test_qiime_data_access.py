@@ -110,40 +110,60 @@ class QiimeDataAccessTests(unittest.TestCase):
         self.assertTrue(values)
 
     def test_getColumnDictionary(self):
-        """ Unit test method for getParameterByScript
+        """ 
         """
         global _qiime_data_access
         values = _qiime_data_access.getColumnDictionary()
         self.assertTrue(values)
 
     def test_getControlledVocabs(self):
-        """ Unit test method for getParameterByScript
+        """ 
         """
         global _qiime_data_access
         controlled_vocab_list = _qiime_data_access.getControlledVocabs('investigation_type')
         self.assertTrue(controlled_vocab_list[0] == 'Investigation Type')
 
     def test_getOntologies(self):
-        """ Unit test method for getParameterByScript
+        """ 
         """
         global _qiime_data_access
         controlled_vocab_list = _qiime_data_access.getOntologies('body_habitat')
         self.assertTrue(controlled_vocab_list[0] == 'FMA')
 
     def test_getListValues(self):
-        """ Unit test method for getParameterByScript
+        """ 
         """
         global _qiime_data_access
         result = _qiime_data_access.getListValues('Investigation Type')
         self.assertTrue(result)
 
+    def test_validateListValue(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.validateListValue('Investigation Type', 'eukaryote')
+        self.assertTrue(result > 0)
+
     def test_getOntologyValues(self):
-        """ Unit test method for getParameterByScript
+        """ 
         """
         global _qiime_data_access
         result = _qiime_data_access.getOntologyValues('CL')
         self.assertTrue(result)
 
+    def test_validateOntologyValue(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.validateOntologyValue('FMA', 'FMA:86707')
+        self.assertTrue(result > 0)
+
+    def test_getControlledVocabValueList(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.getControlledVocabValueList(1)
+        self.assertTrue(len(result))
 
 if __name__ == '__main__':
 	unittest.main()

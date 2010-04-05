@@ -14,7 +14,10 @@ __status__ = "Production"
     <b>Generate Template:</b>
     <ul>
         <li>
-            Generate a MIENS-compliant metadata template:
+            <form id="create_new_template" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="new_template.psp">
+                <p>Generate a MIENS-compliant metadata template:<input type="submit" value="Go"></p>
+            </form>
         </li>
     </ul>
 

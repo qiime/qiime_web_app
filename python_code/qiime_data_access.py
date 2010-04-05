@@ -21,6 +21,9 @@ class QiimeDataAccess( AbstractDataAccess ):
     """
     The actual implementation
     """
+    
+    _testDatabaseConnection = None
+    _ontologyDatabaseConnection = None
 
     def __init__(self):
         pass
@@ -46,12 +49,14 @@ class QiimeDataAccess( AbstractDataAccess ):
         for closing this connection once obtained. This method is intended
         to be used internally by this class.
         """
-        try:
-            con = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
-            return con
-        except Exception, e:
-            print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
-            return False;
+        if self._ontologyDatabaseConnection == None:
+            try:
+                self._ontologyDatabaseConnection = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
+            except Exception, e:
+                print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
+                return False;
+                
+        return self._ontologyDatabaseConnection
 
     def getTestDatabaseConnection(self):
         """ Obtains a connection to the qiime_test schema
@@ -60,12 +65,14 @@ class QiimeDataAccess( AbstractDataAccess ):
         for closing this connection once obtained. This method is intended
         to be used internally by this class.
         """
-        try:
-            con = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu/microbe')
-            return con
-        except Exception, e:
-            print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
-            return False;
+        if self._testDatabaseConnection == None:
+            try:
+                self._testDatabaseConnection = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu/microbe')
+            except Exception, e:
+                print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
+                return False;
+        
+        return self._testDatabaseConnection
 
     def authenticateWebAppUser( self, username, password ):
         """ Attempts to validate authenticate the supplied username/password
@@ -264,10 +271,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
 
     def getControlledVocabs(self, column_name):
         """ Returns the full column dictionary
@@ -285,10 +292,31 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
+        
+    def getControlledVocabValueList(self, controlled_vocab_id):
+        """ Returns the full column dictionary
+        """
+        vocab_items = {}
+
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_controlled_vocab_values', [controlled_vocab_id, results])
+            for row in results:
+                vocab_items[row[0]] = row[1]
+
+            return vocab_items
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
 
     def getOntologies(self, column_name):
         """ Returns the full column dictionary
@@ -306,10 +334,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
 
     def getListValues(self, list_name):
         """ Returns the full column dictionary
@@ -328,10 +356,26 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
+                
+    def validateListValue(self, list_name, list_value):
+        """ Returns the full column dictionary
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = 0
+            results = con.cursor().callproc('validate_list_value', [list_name, list_value, results])
+            return results[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
                 
     def getOntologyValues(self, ontology_name):
         """ Returns the full column dictionary
@@ -350,7 +394,23 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
+
+    def validateOntologyValue(self, ontology_name, identifier_value):
+        """ Returns the full column dictionary
+        """
+        try:
+            con = self.getOntologyDatabaseConnection()
+            results = 0
+            results = con.cursor().callproc('validate_ontology_value', [ontology_name, identifier_value, results])
+            return results[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()

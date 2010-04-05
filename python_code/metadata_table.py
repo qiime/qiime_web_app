@@ -17,49 +17,14 @@ from qiime_data_access import QiimeDataAccess
 import csv
 import re
 
-class ListManager(object):
-    """ Singleton class which manages lists and ontologies. Guarnatess that each list
-    is only loaded once. Necessary for performancd
-    """
-    _instance = None
-    _lists = {}
-    _ontologies = {}
-    
-    def __new__(cls, *args, **kwargs):
-        if not cls._instance:
-            cls._instance = super(ListManager, cls).__new__(cls, *args, **kwargs)
-        return cls._instance
-        
-    # Probably want to refactor the two functions below... think about it
-        
-    def checkListValue(self, list_name, value):
-        # Make sure list has been loaded
-        if list_name not in self._lists:
-            self._lists[list_name] = QiimeDataAccess().getListValues(list_name)
-        
-        # Check if values is in list
-        if value in self._lists[list_name]:
-            return True
-        else:
-            return False
-            
-    def checkOntologyValue(self, ontology_name, term):
-        # Make sure ontology has been loaded
-        if ontology_name not in self._ontologies:
-            self._ontologies[ontology_name] = QiimeDataAccess().getOntologyValues(ontology_name)
-
-        # Check if term is in ontology
-        if term in self._ontologies[ontology_name]:
-            return True
-        else:
-            return False
-
-
 class ColumnFactory(object):
     """ Factory class for producing metadata columns
     """
+    _qiimeDataAccess = None
+    
     def __init__(self, isInvalid):
         self._isInvalid = isInvalid
+        self._qiimeDataAccess = QiimeDataAccess()
 
     def _columnExists(self, column_name):
         found = False
@@ -94,22 +59,34 @@ class ColumnFactory(object):
         false otherwise
         """
         for list_name in list_names:
-            if (ListManager().checkListValue(list_name, value)):
+            if self._qiimeDataAccess.validateListValue(list_name, value) > 0:
                 return True
+        
+        #for list_name in list_names:
+        #    if (ListManager().checkListValue(list_name, value)):
+        #        return True
                 
         # Not found in any list
         return False
+        
+        #return True
         
     def _validateOntology(self, term, ontology_names):
         """ returns true if term is in ontology designated by ontology_name, 
         false otherwise 
         """
         for ontology_name in ontology_names:
-            if (ListManager().checkOntologyValue(ontology_name, term)):
+            if self._qiimeDataAccess.validateOntologyValue(ontology_name, term) > 0:
                 return True
+        
+        #for ontology_name in ontology_names:
+        #    if (ListManager().checkOntologyValue(ontology_name, term)):
+        #        return True
                 
         # Not found in any list
         return False
+        
+        #return True
 
     def _validateDate(self, date):
         """ returns true if provided date is in a valid format, false otherwise 
