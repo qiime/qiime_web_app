@@ -1,0 +1,51 @@
+<%
+
+from datetime import datetime
+
+# Retrieve the session. If None the redirect
+sess = Session.Session(req)
+if sess == None:
+    psp.redirect('index.psp')
+
+post_fix = str(datetime.now())
+study_file_name = 'tmp/study_template_' + post_fix + '.xls'
+sample_file_name = 'tmp/sample_template_' + post_fix + '.xls'
+prep_file_name = 'tmp/prep_template_' + post_fix + '.xls'
+
+study_fields = []
+sample_fields = []
+prep_fields = []
+
+for field in form:
+    items = field.split(':')
+    if items[0] == 'study':
+        study_fields.append(items[1])
+    elif items[0] == 'sample':
+        sample_fields.append(items[1])
+    elif items[0] == 'prep':
+        prep_fields.append(items[1])
+    else:
+        req.write('Unknown field detected: ' + field + '<br/>')
+        
+req.write('<h3>Please download your templates. You may close this page when finished.</h3>')
+req.write('<ul>')
+
+try:    
+    with open(sess['document_root'] + study_file_name, 'w') as f:
+        f.write('\t'.join(study_fields))
+    req.write('<li><a href=\'%s\'>%s</a>' % (study_file_name, 'Study Template</li>'))
+    
+    with open(sess['document_root'] + sample_file_name, 'w') as f:
+        f.write('\t'.join(sample_fields))
+    req.write('<li><a href=\'%s\'>%s</a>' % (sample_file_name, 'Sample Template</li>'))
+    
+    with open(sess['document_root'] + prep_file_name, 'w') as f:
+        f.write('\t'.join(prep_fields))
+    req.write('<li><a href=\'%s\'>%s</a>' % (prep_file_name, 'Library/Prep/Sequencing Template</li>'))
+
+except Exception, e:
+    req.write(str(e))
+
+req.write('</ul>')
+
+%>

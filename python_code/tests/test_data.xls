@@ -1,0 +1,14 @@
+sample_name	host_text_id	height_or_length	body_habitat	investigation_type
+sample_1	host_1	3.4	FMA:86707	eukaryote
+sample_2	host_2	2.9	FMA:86707	eukaryote
+sample_3	host_1	4.45	FMA:86707	eukaryote
+sample_4	host_1	4.45x	FMA:86707	eukaryote
+sample_5	host_1	4.45	FMA:86707	eukaryote
+sample_6	host_2	1.4234	FMA:86709	eukaryote
+sample_7	host_2	2.32	FMA:86709	eukaryote
+sample_8	host_2	.323	FMA:86709	eukaryotex
+sample_9	host_2	6.5	FMA:86709	eukaryote
+sample_10	host_2	44.2	FMA:86709	eukaryote
+sample_11	host_2	123	FMA:86709	eukaryote
+sample_12	host_1	.99342	FMA:86709	eukaryote
+sample_13	host_1	1.23142	FMA:86709x	eukaryote

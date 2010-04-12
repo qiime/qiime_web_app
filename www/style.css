@@ -1,0 +1,230 @@
+/* +++++++++++++++++++++++++++++ Shifting Ground +++++++++++++++++++++++++++++ */
+
+
+/* ++++++++++++++++++++ Common Styles ++++++++++++++++++++ */
+
+
+* {
+	margin: 0px;
+	padding: 0px;
+}
+
+body {
+	color: #fff;
+	background-color: #484848;
+	font-family: 'verdana', 'helvetica', sans-serif;
+	font-size: 100%;
+	text-align: center;
+}
+
+table {
+	font-size: 1em;
+}
+
+td {
+	color: #fff;
+	background-color: inherit;
+	font-family: 'verdana', 'helvetica', sans-serif;
+	font-size: 1em;
+}
+
+a {
+	color: #fff;
+	background-color: inherit;
+	text-decoration: underline;
+}
+
+a:hover {
+	color: #fff;
+	background-color: inherit;
+	text-decoration: none;
+}
+
+img {
+	border: none;
+}
+
+ul, ul li {
+	list-style: none outside;
+}
+
+ol, ol li {
+	list-style: decimal inside;
+}
+
+p {
+	padding: 0.6em 0em 0.6em;
+}
+
+fieldset {
+	border: none;
+}
+
+input, textarea, select {
+	font-family: 'verdana', 'helvetica', sans-serif;
+	font-size: 13px;
+}
+
+.hidethis {
+	display: none;
+}
+
+.clearthis {
+	margin : 0px;
+	height : 1px;
+	clear : both;
+	float : none;
+	font-size: 1px;
+	overflow : hidden;
+	visibility: hidden;
+}
+
+
+/* ++++++++++++++++++++ Image Thumbnails ++++++++++++++++++++ */
+
+.tb_center {
+	text-align: center;
+}
+
+.tb_center img {
+	margin: 1.3em auto;
+	border: 1px #fff solid;
+}
+
+
+
+/* ++++++++++++++++++++ Body Wrappers ++++++++++++++++++++ */
+
+#body_wrapper {
+	margin: 35px 10px;
+	width: 982px;
+	background: url('images/rightcol_img.gif') no-repeat 100% 68px;
+	font-size: 0.71em;
+}
+
+/* ++++++++++++++++++++ Body Container ++++++++++++++++++++ */
+
+#body_container {
+	float: right;
+	position: relative;
+	left: -243px;
+	width: 496px;
+	background: url('images/main_bg_bot.gif') no-repeat 0% 100%;
+}
+
+#body_container_b {
+	padding: 15px 0px;
+	width: 496px;
+	background: url('images/main_bg_top.gif') no-repeat 0% 0%;
+}
+
+#body_container_c {
+	color: inherit;
+	background-color: #8e8257;
+	border-left: #fff 6px solid;
+	border-right: #fff 6px solid;
+}
+
+
+
+/* ++++++++++++++++++++ Page Header ++++++++++++++++++++ */
+
+#page_header {
+	padding-bottom: 2px;
+	color: inherit;
+	background-color: #b3ab78;
+}
+
+#page_header h1 {
+	position: relative;
+	top: -4px;
+	width: 100%;
+	height: 40px;
+	background: url('images/counterstrike_logo.gif') no-repeat 50% 50%;
+}
+
+
+
+/* ++++++++++++++++++++ Page Content ++++++++++++++++++++ */
+
+#page_content {
+	padding: 15px 17px 10px;
+	font-weight: bold;
+	text-align: left;
+}
+
+.link_readmore {
+	padding: 35px 0px 10px;
+	text-align: right;
+}
+
+.link_readmore a {
+	margin-left: auto;
+	display: block;
+	width: 94px;
+	height: 24px;
+	background: url('images/button_readmore.gif') no-repeat 0% 0%;
+}
+
+
+
+/* ++++++++++++++++++++ Navigation Menu ++++++++++++++++++++ */
+
+#navmenu {
+	float: left;
+	margin-top: 68px;
+	position: relative;
+	left: 77px;
+	width: 166px;
+	background: url('images/navmenu_bg_bot.gif') no-repeat 0% 100%;
+	font-size: 1.15em;
+	font-weight: bold;
+}
+
+#navmenu_b {
+	padding: 15px 0px;
+	width: 166px;
+	background: url('images/navmenu_bg_top.gif') no-repeat 0% 0%;
+}
+
+#navmenu_c {
+	color: inherit;
+	background-color: #6d6845;
+	border-left: #fff 6px solid;
+}
+
+#navmenu a {
+	text-decoration: none;
+	text-transform: uppercase;
+}
+
+#navmenu li {
+	border-top: #fff 1px solid;
+}
+
+#navmenu li a {
+	display: block;
+	padding: 5px 0px;
+	width: 160px;
+}
+
+#navmenu li a:hover {
+	color: inherit;
+	background-color: #989160
+}
+
+#navmenu li.list_first {
+	border-top: none;
+}
+
+
+
+/* ++++++++++++++++++++ Page Footer ++++++++++++++++++++ */
+
+#page_footer {
+	padding: 20px 0px;
+	font-size: 0.9em;
+	font-weight: bold;
+}
+
+

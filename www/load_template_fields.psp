@@ -1,0 +1,89 @@
+<%
+__author__ = 'Doug Wendel'
+__copyright__ = 'Copyright 2009-2010, Qiime Web Analysis'
+__credits__ = ['Doug Wendel']
+__license__ = 'GPL'
+__version__ = '1.0.0.dev'
+__maintainer__ = ['Doug Wendel']
+__email__ = 'wendel@colorado.edu'
+__status__ = 'Development'
+
+''' 
+This page is consumed by new_template.psp as a means for generating the list of 
+available fields for a package type.
+'''
+%>
+<th style='text-align:left'>Include in Template</th>
+<th style='text-align:left'>Field Name</th>
+<th style='text-align:left'>Data Type</th>
+<th style='text-align:left'>Description/Expected Values</th>
+<th style='text-align:left'>Details</th>
+
+<tr>
+    <td width='200px'></td>
+    <td width='250px'></td>
+    <td width='100px'></td>
+    <td width='200px'></td>
+    <td></td>
+</tr>
+
+<%
+from mod_python import *
+from qiime_data_access import *
+
+def outputFields(field_list, prefix):
+    count = 0
+    
+    for field in field_list:
+        # Extract the variables for readability
+        column_name_with_prefix = prefix + ':' + field[0]
+        column_name = field[0]
+        required = field[1]
+        data_type = field[2]
+        desc_or_value = field[3]
+        definition = field[4]
+        
+        # For alternate coloring of rows
+        if required == 'M':
+            row_color = '#FFDDDD'
+        elif count % 2 == 0: 
+            row_color = '#FFFFF'
+        else:
+            row_color = '#EEEEFF'
+
+        # Output each table row
+        if required == 'M': # Required
+            req.write('<tr style=\'background:%s\'><td><b>Required</b></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (row_color, column_name, data_type, desc_or_value, definition))
+            req.write('\n<input type=hidden id=\'%s\' name = \'%s\' value=\'%s\'>' % (column_name_with_prefix, column_name_with_prefix, 'on'))
+        else:
+            req.write('<tr style=\'background:%s\'><td><input type=\'checkbox\' id=\'%s\' name=\'%s\'></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (row_color, column_name_with_prefix, column_name_with_prefix, column_name, data_type, desc_or_value, definition))    
+            
+        # Increment for alternating coloring
+        count += 1
+
+# Write out the study fields
+field_list = QiimeDataAccess().getPackageColumns(-3)
+outputFields(field_list, 'study')
+
+# Write out the prep fields
+field_list = QiimeDataAccess().getPackageColumns(-1)
+outputFields(field_list, 'prep')
+
+# Write out the required sample fields along with the package-specific fields
+field_list = QiimeDataAccess().getPackageColumns(-2)
+outputFields(field_list, 'sample')
+
+parameters = util.FieldStorage(req)
+package_type_id = parameters.get('package_type_id', None)
+field_list = QiimeDataAccess().getPackageColumns(package_type_id)
+outputFields(field_list, 'sample')
+%>
+
+<tr>
+    <td colspan='5'>&nbsp</td>
+</tr>
+<tr>
+    <td colspan='5'><input type='submit' value='Genereate Templates'></td>
+<tr>
+
+

@@ -414,3 +414,25 @@ class QiimeDataAccess( AbstractDataAccess ):
         #    if (con):
         #        con.cursor().close()
         #        con.close()
+
+    def getPackageColumns(self, package_type_id):
+        """ Returns the full column dictionary
+        """
+        try:
+            package_columns = []
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_package_columns', [package_type_id, results])
+
+            for row in results:
+                package_columns.append((row[0], row[1], row[2], row[3], row[4]))
+
+            return package_columns
+
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()

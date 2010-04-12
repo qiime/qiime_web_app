@@ -1,0 +1,40 @@
+<%
+__author__ = 'Doug Wendel'
+__copyright__ = 'Copyright 2009-2010, Qiime Web Analysis'
+__credits__ = ['Doug Wendel']
+__license__ = 'GPL'
+__version__ = '1.0.0.dev'
+__maintainer__ = ['Doug Wendel']
+__email__ = 'wendel@colorado.edu'
+__status__ = 'Production'
+%>
+
+<%
+qiimeDataAccess = QiimeDataAccess()
+%>
+
+<script type='text/javascript' src='js/template.js'></script>
+
+<p/>
+Select a study type:
+<p/>
+
+<form id='field_form'>
+
+    <select id='package_type' onchange='loadTemplateFields();'>
+        <option value='' selected>Please select...</option>
+
+<%
+results = qiimeDataAccess.getControlledVocabValueList(1)
+options = ''.join(['<option value=\'%s\'>%s</value>' % (k, v) for k, v in results.items()])
+req.write(options)
+%>
+
+    </select>
+</form>
+
+<form action='new_template_submit.psp' target='_blank'>
+    <!--- This is where the study columns will be presented --->
+    <table id='package_fields'>
+    </table>
+</form>
