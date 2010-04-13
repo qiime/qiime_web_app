@@ -242,7 +242,7 @@ class MetadataTable(object):
         column_name_list = {}
         for item in column_detail_list:
             column_name_list[item[0]] = item[3]
-                    
+
         # Create the header columns
         headers = reader.next()
         for column in headers:
