@@ -1,0 +1,82 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+"""
+This script is the upload handler for uploading the SFF files using JumpLoader'
+"""
+
+import os
+import zipfile
+from subprocess import PIPE,Popen
+from qiime_data_access import QiimeDataAccess
+data_access = QiimeDataAccess()
+
+#determine if a file has been passed
+if form.has_key('file') and form['file'].filename:
+
+    # A nested FieldStorage instance holds the file
+    fileitem = form['file']
+    
+    # Test if the file was uploaded
+    if fileitem.filename:
+        # strip leading path from file name to avoid directory traversal attacks
+        fname=form['output_fname']+fileitem.filename.strip().replace(" ","")
+        dir_path =os.path.join(os.path.dirname(req.filename), form['output_dir'])
+                
+        # write the zipped file on the server
+        zippedf = open(os.path.join(dir_path, fname), 'wb')
+        zippedf.write(fileitem.file.read())
+        zippedf.close()
+    
+        # create a zipfile object
+        t=zipfile.ZipFile(os.path.join(dir_path, fname),'r')
+        
+        templates = []
+        
+        # iterate through the list of files in the zipped file
+        for f in t.namelist():
+            
+            # if the name is a folder, create a directory
+            if not f.endswith('/'):
+                # Write a file
+                filename=os.path.split(f)[-1].lower()
+                if filename.endswith('.xls') and not filename.startswith('.'):
+                    outfname=os.path.join(dir_path, filename)
+                    outfile = open(outfname, 'w')
+                    outfile.write(t.read(f))
+                    outfile.flush()
+                    outfile.close()
+                    templates.append(filename)
+                    
+        # If the zip does not have exactly three templates, raise an error
+        if len(templates) != 3:
+            req.write("Error: Exactly three templates must be in the archive.\n\n")
+            
+        # Make sure the file names look reasonable
+        error_message = ''
+        for template in templates:
+            if template.startswith('study_template') or \
+                template.startswith('sample_template') or \
+                template.startswith('prep_template'):
+                pass
+            else:
+                error_message += 'Error: file does not does not appear to be valid: \n' + template + '\n\n'
+                
+        if error_message != '':
+            req.write(error_message)
+            
+        # Looks like we're OK. Clear out the old files
+        # Clear out any existing .zip and .xls files before writing our new archive
+        files = os.listdir(dir_path)
+        for file_name in files:
+            if file_name.endswith('.xls') or file_name.endswith('.zip'):
+                if file_name not in templates:
+                    os.remove(os.path.join(dir_path, file_name))
+%>

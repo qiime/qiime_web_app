@@ -13,7 +13,7 @@ This page is consumed by new_template.psp as a means for generating the list of
 available fields for a package type.
 '''
 %>
-<th style='text-align:left'>Include in Template</th>
+<th style='text-align:left'>Include in Template?</th>
 <th style='text-align:left'>Field Name</th>
 <th style='text-align:left'>Data Type</th>
 <th style='text-align:left'>Description/Expected Values</th>
@@ -52,11 +52,15 @@ def outputFields(field_list, prefix):
             row_color = '#EEEEFF'
 
         # Output each table row
-        if required == 'M': # Required
-            req.write('<tr style=\'background:%s\'><td><b>Required</b></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (row_color, column_name, data_type, desc_or_value, definition))
+        if required == 'M': # Manditory
+            req.write('<tr style=\'background:%s\'><td><b>Required</b></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' \
+                % (row_color, column_name, data_type, desc_or_value, definition))
             req.write('\n<input type=hidden id=\'%s\' name = \'%s\' value=\'%s\'>' % (column_name_with_prefix, column_name_with_prefix, 'on'))
-        else:
-            req.write('<tr style=\'background:%s\'><td><input type=\'checkbox\' id=\'%s\' name=\'%s\'></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (row_color, column_name_with_prefix, column_name_with_prefix, column_name, data_type, desc_or_value, definition))    
+        elif required == 'H': # Manditory but hide from user until export
+            req.write('\n<input type=hidden id=\'%s\' name = \'%s\' value=\'%s\'>' % (column_name_with_prefix, column_name_with_prefix, 'on'))
+        else: # Optional fields
+            req.write('<tr style=\'background:%s\'><td><input type=\'checkbox\' id=\'%s\' name=\'%s\'></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' \
+                % (row_color, column_name_with_prefix, column_name_with_prefix, column_name, data_type, desc_or_value, definition))    
             
         # Increment for alternating coloring
         count += 1

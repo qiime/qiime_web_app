@@ -1,6 +1,7 @@
 <%
 
 from datetime import datetime
+from qiime_data_access import QiimeDataAccess
 
 # Retrieve the session. If None the redirect
 sess = Session.Session(req)
@@ -11,11 +12,15 @@ post_fix = str(datetime.now())
 study_file_name = 'tmp/study_template_' + post_fix + '.xls'
 sample_file_name = 'tmp/sample_template_' + post_fix + '.xls'
 prep_file_name = 'tmp/prep_template_' + post_fix + '.xls'
+doc_file_name = 'tmp/field_reference_' + post_fix + '.xls'
 
 study_fields = []
 sample_fields = []
 prep_fields = []
+documentation_fields = []
 
+# Put the fields into the right buckets so we can write them to the
+# proper template files below
 for field in form:
     items = field.split(':')
     if items[0] == 'study':
@@ -27,10 +32,17 @@ for field in form:
     else:
         req.write('Unknown field detected: ' + field + '<br/>')
         
-req.write('<h3>Please download your templates. You may close this page when finished.</h3>')
+# Get the documentation for the list of fields
+column_dictionary = QiimeDataAccess().getColumnDictionary()
+for entry in column_dictionary:
+    if entry[0] in study_fields or entry[0] in sample_fields or entry[0] in prep_fields:
+        documentation_fields.append(entry)
+
+req.write('<h3>Please download your templates and documentation:</h3>')
 req.write('<ul>')
 
-try:    
+try:
+    # Write out the individual template files
     with open(sess['document_root'] + study_file_name, 'w') as f:
         f.write('\t'.join(study_fields))
     req.write('<li><a href=\'%s\'>%s</a>' % (study_file_name, 'Study Template</li>'))
@@ -43,9 +55,18 @@ try:
         f.write('\t'.join(prep_fields))
     req.write('<li><a href=\'%s\'>%s</a>' % (prep_file_name, 'Library/Prep/Sequencing Template</li>'))
 
+    # Write out documentation for the selected fields
+    with open(sess['document_root'] + doc_file_name, 'w') as f:
+        f.write('Field Name\tData Type\tDescription/Expected Values\tDescription')
+        for field in documentation_fields:
+            f.write(field[0] + '\t' + field[3] + '\t' + field[1] + '\t' + field[2] + '\n')
+    req.write('<li><a href=\'%s\'>%s</a>' % (doc_file_name, 'Field Reference Documentation</li>'))
+    
 except Exception, e:
     req.write(str(e))
 
 req.write('</ul>')
+
+req.write('You may close this page when finished.')
 
 %>

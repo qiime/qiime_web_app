@@ -20,7 +20,6 @@ make sure that the user is logged in and then performs page redirects.
 <%
 import os
 
-
 if form.has_key('page'):
 	# We have the page form variable so let's load it up	
 	page = form["page"]
@@ -31,7 +30,6 @@ if form.has_key('page'):
 	else:
 		req.write('<h3>Page not found.</h3>')
 	
-
 else:
 	# No page found... to be safe, require user to log in again
 	sess.invalidate()

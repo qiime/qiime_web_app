@@ -1,0 +1,197 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+'''This script is the SFF upload page, which uses the JumpLoader java applet.'''
+%>
+
+<script type="text/javascript">
+
+var study_dir = \'<%=sess['study_dir']%>\'+'/'
+window.onload="resizeApplet()";
+
+/*Create a random filename for uploading the zip file.*/
+var keylist="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
+var temp=''
+var output_fname
+
+function generatepass(plength)
+{
+    temp=''
+    for (i=0;i<plength;i++){
+        temp+=keylist.charAt(Math.floor(Math.random()*keylist.length))
+    }
+    return temp
+}
+
+/*Initialize the jumploader applet*/
+function appletInitialized( uploader ) 
+{
+    output_fname='tmp'+generatepass(10)
+    var attributeSet = uploader.getUploader().getAttributeSet();
+    var attribute = attributeSet.createStringAttribute( "output_fname", output_fname);
+    attribute.setSendToServer( true );
+    var attribute2 = attributeSet.createStringAttribute( "output_dir", study_dir);
+    attribute2.setSendToServer( true );
+    var attribute3 = attributeSet.createStringAttribute( "web_app_user_id", <%=sess['web_app_user_id']%>);
+    attribute3.setSendToServer( true );
+    var attribute4 = attributeSet.createStringAttribute( "study_id", <%=sess['study_id']%>);
+    attribute4.setSendToServer( true );
+}
+
+/*When file status changes, check if the upload was successful*/
+var valid=new Array();
+var invalid=0;
+var complete=false
+function uploaderFileStatusChanged( uploader, file ) 
+{
+    var filecount=uploader.getFileCount()
+    var index=file.getIndex()
+    if (file.getResponseContent() != null && file.getResponseContent() != '')
+    {
+        alert(file.getResponseContent())
+    }
+    else
+    {    
+        if (index<(filecount-1))
+        {
+            if( file.isFinished() && file.getType() == 0 ) 
+            {
+                valid[index]=true;
+            }
+            else
+            {
+                valid[index]=false;
+            }
+        }
+        else
+        {
+            if( file.isFinished() && file.getType() == 0 ) 
+            {
+                valid[index]=true;
+                complete=true
+            }
+            else if (file.isFailed())
+            {
+                valid[index]=false;
+                complete=true
+            }
+            else
+            {
+                valid[index]=false;
+            }
+        }
+        if (complete)
+        {
+            for (var i=0;i<valid.length;i++)
+            {
+                if (valid[i])
+                {
+                    //do nothing
+                }
+                else
+                {
+                    invalid=invalid+1;
+                }
+            }
+            if (invalid==0)
+            {
+                document.getElementById( "applet" ).innerHTML='';
+                setCompleteBox();
+            }
+        }
+    }
+}
+
+/*Resize the java applet depending on the browser*/
+function resizeApplet() 
+{
+	var applet = document.jumpLoaderApplet;
+	var dx = 0;
+	var dy = 7;
+	var w_newWidth, w_newHeight;
+	var w_maxWidth = 600, w_maxHeight = 250;
+	var dx = 0;
+	var dy = 2;
+	if( navigator.appName.indexOf( "Microsoft" ) != -1 ) 
+	{
+		w_newWidth = document.body.clientWidth;
+		w_newHeight = document.body.clientHeight;
+	}
+	else 
+	{
+		var netscapeScrollWidth = 15;
+		w_newWidth = window.innerWidth - netscapeScrollWidth;
+		w_newHeight = window.innerHeight - netscapeScrollWidth;
+	}
+	if( w_newWidth > w_maxWidth ) 
+	{
+		w_newWidth = w_maxWidth;
+	}
+	if( w_newHeight > w_maxHeight ) 
+	{
+		w_newHeight = w_maxHeight;
+	}
+	applet.width = w_newWidth - dx;
+	applet.height = w_newHeight - dy;
+	applet.setSize( w_newWidth - dx, w_newHeight - dy );
+	//window.scroll( 0,0 );
+}
+
+function setCompleteBox()
+{
+    document.getElementById('complete').innerHTML='\
+    <!--Create to form options for the user to select-->\
+    <p>\
+    <b>Your templates have been successfully uploaded!</b>\
+    <br><br>\
+    Following the links below to upload an SFF file or return to \
+    the Main Menu:\
+    </p>\
+    <form id="sff_file" action="fusebox.psp" method="post">\
+    <input type="hidden" name="page" id="page" value="upload_sff.psp">\
+    <input type="submit" value="Upload SFF(s)">\
+    </form>\
+    <form id="home" action="fusebox.psp" method="post">\
+    <input type="hidden" name="page" id="page" value="select_task.psp">\
+    <input type="submit" value="Home">\
+    </form>'
+}
+
+</script>
+
+<table>
+<tr><td>
+<!--this is the message area, where results are written-->
+<div id='complete'>
+</div>
+</td></tr>
+<tr><td>
+<div id='applet'>
+<!--this is the jumploader applet-->
+<p><b>Please zip your 3 metadata files into a single archive prior to uploading.<br/>
+The filename should not contain spaces or non-alphanumeric characters.</b></p>
+
+<applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
+        archive="jar/jumploader_z.jar" height="250" width="600" mayscript>
+    <param name="vc_uploadListViewName" value="_compact"/>
+    <param name="vc_lookAndFeel" value="crossPlatform"/>
+    <param name="vc_uploadViewStartUploadButtonText" value="Start upload"/>
+    <param name="vc_uploadViewStartUploadButtonImageUrl" value="/img/media_play_green.png"/>
+    <param name="vc_uploadViewStopUploadButtonText" value="Stop upload"/>
+    <param name="vc_uploadViewStopUploadButtonImageUrl" value="/img/media_stop_red.png"/>
+    <param name="uc_maxFileLength" value="100000000000"/>
+    <param name="ac_fireAppletInitialized" value="true"/> 
+    <param name="uc_fileNamePattern" value='^.+\.((zip))' />
+    <param name="ac_fireUploaderFileStatusChanged" value="true"/>
+    <param name="uc_uploadUrl" value="upload_metadata_submit.psp">
+</applet>
+</div>
+</td></tr></table>
+<p/>

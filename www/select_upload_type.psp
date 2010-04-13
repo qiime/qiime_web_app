@@ -23,6 +23,6 @@ want to proceed.
 </form>
 
 <form id="sff_file" action="fusebox.psp" method="post">
-<input type="hidden" name="page" id="page" value="create_new_study.psp">
+<input type="hidden" name="page" id="page" value="upload_metadata.psp">
 <input type="submit" value="Upload MetaData">
 </form>
