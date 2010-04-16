@@ -1,34 +1,32 @@
 <%
-__author__ = "Jesse Stombaugh"
+__author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
-__email__ = "jesse.stombaugh@colorado.edu"
-__status__ = "Production"
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
 
 """
-This script is the upload handler for uploading the SFF files using JumpLoader'
+This script is the upload handler for uploading metadata files using JumpLoader'
 """
 
 import os
 import zipfile
 from subprocess import PIPE,Popen
 from qiime_data_access import QiimeDataAccess
-data_access = QiimeDataAccess()
+from metadata_table import MetadataTable
 
-#determine if a file has been passed
-if form.has_key('file') and form['file'].filename:
-
+def validateFileContents():
     # A nested FieldStorage instance holds the file
     fileitem = form['file']
     
     # Test if the file was uploaded
     if fileitem.filename:
         # strip leading path from file name to avoid directory traversal attacks
-        fname=form['output_fname']+fileitem.filename.strip().replace(" ","")
-        dir_path =os.path.join(os.path.dirname(req.filename), form['output_dir'])
+        fname = form['output_fname']+fileitem.filename.strip().replace(" ","")
+        dir_path = os.path.join(os.path.dirname(req.filename), form['output_dir'])
                 
         # write the zipped file on the server
         zippedf = open(os.path.join(dir_path, fname), 'wb')
@@ -36,47 +34,88 @@ if form.has_key('file') and form['file'].filename:
         zippedf.close()
     
         # create a zipfile object
-        t=zipfile.ZipFile(os.path.join(dir_path, fname),'r')
+        t = zipfile.ZipFile(os.path.join(dir_path, fname),'r')
         
+        # Do some error checking of the archive's contents
+        error_message = ''
         templates = []
         
-        # iterate through the list of files in the zipped file
-        for f in t.namelist():
+        for fullname in t.namelist():
+            # Ignore directories
+            if fullname.endswith('/'):
+                continue
             
-            # if the name is a folder, create a directory
-            if not f.endswith('/'):
-                # Write a file
-                filename=os.path.split(f)[-1].lower()
-                if filename.endswith('.xls') and not filename.startswith('.'):
-                    outfname=os.path.join(dir_path, filename)
-                    outfile = open(outfname, 'w')
-                    outfile.write(t.read(f))
-                    outfile.flush()
-                    outfile.close()
-                    templates.append(filename)
-                    
-        # If the zip does not have exactly three templates, raise an error
-        if len(templates) != 3:
-            req.write("Error: Exactly three templates must be in the archive.\n\n")
-            
-        # Make sure the file names look reasonable
-        error_message = ''
-        for template in templates:
-            if template.startswith('study_template') or \
-                template.startswith('sample_template') or \
-                template.startswith('prep_template'):
+            filename = os.path.basename(fullname).lower()
+            # Ignore files that start with '.' - seem to be an artifact
+            if filename.startswith('.'):
+                continue
+    
+            # Make sure ends with .xls
+            if not filename.endswith('.xls'):
+                error_message += 'Error: File names must end with a .xls extension.\n\n'
+                continue
+
+            # Add the file to the list of templates
+            templates.append(filename)
+
+            # Strip the path off and validate that it's one of the three expected templates
+            if filename.startswith('study_template') or \
+                filename.startswith('sample_template') or \
+                filename.startswith('prep_template'):
+                # Looks like a valid file
                 pass
             else:
-                error_message += 'Error: file does not does not appear to be valid: \n' + template + '\n\n'
+                error_message += 'Error: file does not does not appear to be valid: \n' + filename + '\n\n'
                 
+            # Looks like we're good, write it out to the filesystem
+            outfile = open(os.path.join(dir_path, filename), 'w')
+            outfile.write(t.read(fullname))
+            outfile.flush()
+            outfile.close()
+
+        # If the zip does not have exactly three templates, raise an error
+        if len(templates) != 3:
+            error_message += "Error: Exactly 3 templates must be in the archive. %s files were found.\n\n" % len(templates)
+
+        # If there were errors, report them and stop processing
         if error_message != '':
             req.write(error_message)
-            
-        # Looks like we're OK. Clear out the old files
-        # Clear out any existing .zip and .xls files before writing our new archive
+            return None
+                            
+        # Delete the old files
         files = os.listdir(dir_path)
         for file_name in files:
             if file_name.endswith('.xls') or file_name.endswith('.zip'):
-                if file_name not in templates:
+                if os.path.basename(file_name) not in templates:
                     os.remove(os.path.join(dir_path, file_name))
+                    
+        # Assuming all went well, return the list of templates
+        return templates
+
+"""----------------------------------------------------------------------------
+Process the uploaded archive. If valid, write files out to the filesystem
+and validate the contents of each.
+----------------------------------------------------------------------------"""
+
+# Some code for Windows systems
+if form.has_key('file') and form['file'].filename:
+    try: # Windows needs stdio set for binary mode.
+        import msvcrt
+        msvcrt.setmode (0, os.O_BINARY) # stdin  = 0
+        msvcrt.setmode (1, os.O_BINARY) # stdout = 1
+    except ImportError:
+        pass
+
+# Validate zip file contents. If valid, get list of template files back and
+# validate their contents
+templates = validateFileContents()
+if templates != None:
+    fullnames = []
+    for template in templates:
+        fullnames.append(os.path.join(form['output_dir'], template))
+        
+    sess = Session.Session(req)
+    sess["templates"] = fullnames
+    sess.save()
+
 %>

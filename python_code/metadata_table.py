@@ -150,9 +150,11 @@ class BaseColumn(object):
         pass
     
     def addValue(self, value):
-        self.values.append(value)
+        status = 'good'
         if not self.validate(value):
-             self.isInvalid(self.column_name, len(self.values))
+            status = 'bad'
+            self.isInvalid(self.column_name, len(self.values))     
+        self.values.append((value, status))
         
 class NumericColumn(BaseColumn):
     """ Numeric implementation of BaseColumn class
@@ -168,9 +170,11 @@ class ListColumn(BaseColumn):
         self.list_names = list_names
         
     def addValue(self, value):
-        self.values.append(value)
+        status = 'good'
         if not self.validate(value, self.list_names):
+            status = 'bad'
             self.isInvalid(self.column_name, len(self.values))
+        self.values.append((value, status))
         
 class OntologyColumn(BaseColumn):
     """ Ontology implementation of BaseColumn class
@@ -180,9 +184,11 @@ class OntologyColumn(BaseColumn):
         self.ontology_names = ontology_names
 
     def addValue(self, value):
-        self.values.append(value)
+        status = 'good'
         if not self.validate(value, self.ontology_names):
+            status = 'bad'
             self.isInvalid(self.column_name, len(self.values))
+        self.values.append((value, status))
     
 class TextColumn(BaseColumn):
     """ Text implementation of BaseColumn class
@@ -207,13 +213,13 @@ class MetadataTable(object):
 
     _metadataFile = None
 
-    def __init__(self, template_id, metadataFile):
+    def __init__(self, metadataFile):
         global _metadataFile
         
         self._invalid_rows = []
         self._columns = []
         self._metadataFile = metadataFile
-        self._template_id = template_id
+        #self._template_id = template_id
         self._createTableColumns()
         
     def getInvalidRows(self):
@@ -228,7 +234,6 @@ class MetadataTable(object):
     def _isInvalid(self, column_name, invalid_row):
         """ A callback that is fired when an invalid field has been found
         """
-        #print 'Row ' + str(invalid_row) + ' in column ' + column_name + ' is invalid.'
         self._invalid_rows.append((column_name, invalid_row))
 
     def _readMetadataFile(self):
@@ -256,7 +261,7 @@ class MetadataTable(object):
             except Exception as err:
                 raise err
 
-		# Read the column values
+        # Read the column values
         for row in reader:
             i = 0
             for column in row:
@@ -300,3 +305,36 @@ class MetadataTable(object):
             y += 1 
             
         print '\n\n'
+
+    def printHTMLTable(self):
+        html_table = '<table border=1>'
+        
+        column_count = len(self._columns)
+        row_count = len(self._columns[0].values)
+
+        # Print the column headers
+        x = 0
+        while x < column_count:
+            html_table += '<th>' + self._columns[x].column_name + '</th>'
+            x += 1
+
+        # Print the table rows
+        y = 0
+        while y < row_count:
+            x = 0
+            html_table += '<tr>'
+            while x < column_count:
+                for column in self._columns:
+                    if column.values[y][1] == 'good':
+                        cell_color = '#FFFFFF'
+                        html_table += '<td style=\"background-color:%s;\">%s</td>' % (cell_color, str(column.values[y][0]))
+                    else:
+                        cell_color = '#FF5555'
+                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" value=\"%s\"></td>' % (cell_color, str(column.values[y][0]))
+                    x += 1
+            html_table +='</tr>'
+            y += 1 
+            
+        html_table += '</table>'
+        
+        return html_table

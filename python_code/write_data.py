@@ -20,22 +20,22 @@ def write_fasta_from_db(out_path,resulting_seqs):
     for i in range(len(resulting_seqs)):
         f_out.write(">%s_%s\t%s\n" % (resulting_seqs[i][0],resulting_seqs[i][3], resulting_seqs[i][1]))
         f_out.write("%s\n" % resulting_seqs[i][2])
-    
+
     f_out.close()
 
 def write_metadata_from_db(out_path,headers,resulting_metadata):
     header_dict={}
     for j in range(len(headers)):
-        header_dict[headers[j][1]]= str(headers[j][0]) 
-    
+        header_dict[headers[j][1]]= str(headers[j][0])
+
     f_out = open(out_path+'mapping.txt', 'w')
     metadata_results=""
     f_out.write("#")
     for j in range(len(header_dict)):
         f_out.write("%s\t" % str(header_dict[j+1]))
-    
+
     f_out.write('\n')
-        
+
     for i in range(len(resulting_metadata)):
         for j in range(len(resulting_metadata[i])):
             f_out.write("%s\t" % str(resulting_metadata[i][j]))

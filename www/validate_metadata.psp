@@ -1,0 +1,26 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<h2>Metadata Validation</h2>
+
+<%
+from metadata_table import *
+
+templates = sess["templates"]
+if templates != None:
+    for template in templates:
+        req.write('<h3> Results for file: ' + os.path.basename(template) + '</h3>')
+        table = MetadataTable(template)
+        #for invalid_row in table._invalid_rows:
+        #    req.write('<tr><td>Error: ' + str(invalid_row) + '</td><td><input type=\"text\"></td>')
+        req.write(table.printHTMLTable())
+    req.write('<p/>')
+%>

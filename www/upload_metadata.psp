@@ -146,25 +146,14 @@ function resizeApplet()
 
 function setCompleteBox()
 {
-    document.getElementById('complete').innerHTML='\
-    <!--Create to form options for the user to select-->\
-    <p>\
-    <b>Your templates have been successfully uploaded!</b>\
-    <br><br>\
-    Following the links below to upload an SFF file or return to \
-    the Main Menu:\
-    </p>\
-    <form id="sff_file" action="fusebox.psp" method="post">\
-    <input type="hidden" name="page" id="page" value="upload_sff.psp">\
-    <input type="submit" value="Upload SFF(s)">\
-    </form>\
-    <form id="home" action="fusebox.psp" method="post">\
-    <input type="hidden" name="page" id="page" value="select_task.psp">\
-    <input type="submit" value="Home">\
-    </form>'
+    upload_complete.submit();
 }
 
 </script>
+
+<form name="upload_complete" id="upload_complete" method="post" action="fusebox.psp">
+    <input type="hidden" id="page" name="page" value="validate_metadata.psp">
+</form>
 
 <table>
 <tr><td>
@@ -195,3 +184,4 @@ The filename should not contain spaces or non-alphanumeric characters.</b></p>
 </div>
 </td></tr></table>
 <p/>
+

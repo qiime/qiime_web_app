@@ -87,18 +87,9 @@ class MetadtaTableTests(unittest.TestCase):
     ######################################################
 
     def test_MetadataTableCreate(self):
-        template_id = 1
-        #table = MetadataTable(template_id, 'tests/test_data.xls')
-        table = MetadataTable(template_id, 'tests/test_data.xls')
+        table = MetadataTable('tests/test_data.xls')
         self.assertTrue(table)
         
-    #def test_VerifyMetadataColumns(self):
-    #    template_id = 1
-    #    table = MetadataTable(template_id, 'tests/test_data.xls')
-    #    self.assertEqual(len(table._columns), 2)
-
-
-
 if __name__ == '__main__':
     unittest.main()
 
