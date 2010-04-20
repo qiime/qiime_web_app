@@ -37,4 +37,7 @@ req.write(options)
     <!--- This is where the study columns will be presented --->
     <table id='package_fields'>
     </table>
+    <table id='additional_fields'>
+    </table>
 </form>
+

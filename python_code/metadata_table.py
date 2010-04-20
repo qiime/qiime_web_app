@@ -220,7 +220,7 @@ class MetadataTable(object):
         self._columns = []
         self._metadataFile = metadataFile
         #self._template_id = template_id
-        self._createTableColumns()
+        self._readMetadataFile()
         
     def getInvalidRows(self):
         return self._invalid_rows
@@ -252,6 +252,9 @@ class MetadataTable(object):
         headers = reader.next()
         for column in headers:
             try:
+                # First column starts with a #, make sure to strip it
+                if column.startswith('#'):
+                    column = column[1:]
                 if column in column_name_list:
                     result = column_factory.createColumn(column, column_name_list[column])
                     if result:
@@ -263,6 +266,9 @@ class MetadataTable(object):
 
         # Read the column values
         for row in reader:
+            # Skip any additional rows starting with a #
+            if str(row[0]).startswith('#'):
+                continue
             i = 0
             for column in row:
                 self._columns[i].addValue(column)
@@ -270,9 +276,6 @@ class MetadataTable(object):
 
         #self._printTable()
         self._printInvalidRows()
-
-    def _createTableColumns(self):
-        self._readMetadataFile()
 
     def _addColumn(self, column):
         self._columns.append(column)

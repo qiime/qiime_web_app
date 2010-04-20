@@ -42,6 +42,11 @@ req.write('<h3>Please download your templates and documentation:</h3>')
 req.write('<ul>')
 
 try:
+    # Make sure the temp directory exists:
+    template_path = os.path.join(sess['document_root'], 'tmp/')
+    if not os.path.exists(template_path):
+        os.makedirs(template_path)
+        
     # Write out the individual template files
     with open(sess['document_root'] + study_file_name, 'w') as f:
         f.write('\t'.join(study_fields))

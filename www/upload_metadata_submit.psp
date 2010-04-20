@@ -27,7 +27,7 @@ def validateFileContents():
         # strip leading path from file name to avoid directory traversal attacks
         fname = form['output_fname']+fileitem.filename.strip().replace(" ","")
         dir_path = os.path.join(os.path.dirname(req.filename), form['output_dir'])
-                
+
         # write the zipped file on the server
         zippedf = open(os.path.join(dir_path, fname), 'wb')
         zippedf.write(fileitem.file.read())
@@ -44,12 +44,12 @@ def validateFileContents():
             # Ignore directories
             if fullname.endswith('/'):
                 continue
-            
+
             filename = os.path.basename(fullname).lower()
             # Ignore files that start with '.' - seem to be an artifact
             if filename.startswith('.'):
                 continue
-    
+
             # Make sure ends with .xls
             if not filename.endswith('.xls'):
                 error_message += 'Error: File names must end with a .xls extension.\n\n'

@@ -77,10 +77,17 @@ outputFields(field_list, 'prep')
 field_list = QiimeDataAccess().getPackageColumns(-2)
 outputFields(field_list, 'sample')
 
+# Write out the rest of the package fields
 parameters = util.FieldStorage(req)
 package_type_id = parameters.get('package_type_id', None)
 field_list = QiimeDataAccess().getPackageColumns(package_type_id)
 outputFields(field_list, 'sample')
+
+# Finally, display options for searching for more fields
+#req.write('<p/><p/>')
+#req.write('Search for additional fields:')
+#req.write('<form name=\"%s\" id=\"%s\"><input type=\"text\" name=\"%s\" id=\"%s\"></form>' % ('search_form', 'search_form', 'search_term', 'search_term'))
+#req.write('<p/><a href=\"\">Show all additional fields...</a>')
 %>
 
 <tr>
@@ -89,5 +96,3 @@ outputFields(field_list, 'sample')
 <tr>
     <td colspan='5'><input type='submit' value='Genereate Templates'></td>
 <tr>
-
-
