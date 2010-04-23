@@ -1,7 +1,7 @@
 <%
 __author__ = 'Doug Wendel'
 __copyright__ = 'Copyright 2009-2010, Qiime Web Analysis'
-__credits__ = ['Doug Wendel']
+__credits__ = ['Doug Wendel', 'Jesse Stombaugh']
 __license__ = 'GPL'
 __version__ = '1.0.0.dev'
 __maintainer__ = ['Doug Wendel']
@@ -13,6 +13,7 @@ This page is consumed by new_template.psp as a means for generating the list of
 available fields for a package type.
 '''
 %>
+
 <th style='text-align:left'>Include in Template?</th>
 <th style='text-align:left'>Field Name</th>
 <th style='text-align:left'>Data Type</th>
@@ -31,9 +32,27 @@ available fields for a package type.
 from mod_python import *
 from qiime_data_access import *
 
-def outputFields(field_list, prefix):
+def outputFields(field_list, prefix, header_text):
     count = 0
-    
+
+
+    # Sort the fields and add to session 
+    field_list = sorted(field_list)
+    for field in field_list:        
+        if field[0] == 'sample_name':
+            field_list.remove(field)
+            field_list.insert(0, field)
+        elif field[0] == 'project_name':
+            field_list.remove(field)
+            field_list.insert(0, field)
+                
+    #Output a header row
+    if header_text != '':
+        style = 'background:#444444;color:#FFFFFF;vertical-align:middle'
+        req.write('<tr style=\'%s\'><td colspan=5></td></tr>' % (style))
+        req.write('<tr style=\'%s\'><td colspan=5>%s</td><tr>' % (style, header_text))
+        req.write('<tr style=\'%s\'><td colspan=5></td></tr>' % (style))
+
     for field in field_list:
         # Extract the variables for readability
         column_name_with_prefix = prefix + ':' + field[0]
@@ -47,7 +66,7 @@ def outputFields(field_list, prefix):
         if required == 'M':
             row_color = '#FFDDDD'
         elif count % 2 == 0: 
-            row_color = '#FFFFF'
+            row_color = '#FFFFFF'
         else:
             row_color = '#EEEEFF'
 
@@ -61,38 +80,63 @@ def outputFields(field_list, prefix):
         else: # Optional fields
             req.write('<tr style=\'background:%s\'><td><input type=\'checkbox\' id=\'%s\' name=\'%s\'></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' \
                 % (row_color, column_name_with_prefix, column_name_with_prefix, column_name, data_type, desc_or_value, definition))    
-            
+        
+        # For source readability
+        req.write('\n')
+        
         # Increment for alternating coloring
         count += 1
 
 # Write out the study fields
 field_list = QiimeDataAccess().getPackageColumns(-3)
-outputFields(field_list, 'study')
+outputFields(field_list, 'study', 'Study Fields')
+
+# Write out the SRA study fields
+field_list = QiimeDataAccess().getPackageColumns(-7)
+outputFields(field_list, 'study', 'SRA Study Fields')
 
 # Write out the prep fields
 field_list = QiimeDataAccess().getPackageColumns(-1)
-outputFields(field_list, 'prep')
+outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
+
+# Write out the SRA experiment fields
+field_list = QiimeDataAccess().getPackageColumns(-6)
+outputFields(field_list, 'prep', 'SRA Experiment Fields')
 
 # Write out the required sample fields along with the package-specific fields
 field_list = QiimeDataAccess().getPackageColumns(-2)
-outputFields(field_list, 'sample')
+outputFields(field_list, 'sample', 'Sample-Level Package Fields')
+
+# Write out the SRA sample fields
+field_list = QiimeDataAccess().getPackageColumns(-5)
+outputFields(field_list, 'sample', 'SRA Sample Fields')
 
 # Write out the rest of the package fields
 parameters = util.FieldStorage(req)
 package_type_id = parameters.get('package_type_id', None)
 field_list = QiimeDataAccess().getPackageColumns(package_type_id)
-outputFields(field_list, 'sample')
-
-# Finally, display options for searching for more fields
-#req.write('<p/><p/>')
-#req.write('Search for additional fields:')
-#req.write('<form name=\"%s\" id=\"%s\"><input type=\"text\" name=\"%s\" id=\"%s\"></form>' % ('search_form', 'search_form', 'search_term', 'search_term'))
-#req.write('<p/><a href=\"\">Show all additional fields...</a>')
+outputFields(field_list, 'sample', '')
 %>
 
 <tr>
     <td colspan='5'>&nbsp</td>
 </tr>
 <tr>
-    <td colspan='5'><input type='submit' value='Genereate Templates'></td>
+    <td colspan='5'>
+        <table id="selected_additional_fields">
+        </table>
+        <p/>Search for additional fields:
+        <br/>(This is experimental! Several big issues to resolve but it does work...)
+        <p/><input type="text" name="search_term" id="search_term" onkeyup="loadAdditionalFields();" onclick="loadAdditionalFields();">
+        <p/>
+        <table id="additional_fields_results">
+        </table>
+    </td>
+</tr>
+<tr>
+    <td colspan='5'>&nbsp</td>
+</tr>
+<tr>
+    <td colspan='5'><input type='submit' value='Genereate Templates'>
+    </td>
 <tr>

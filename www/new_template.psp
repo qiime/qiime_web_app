@@ -37,7 +37,15 @@ req.write(options)
     <!--- This is where the study columns will be presented --->
     <table id='package_fields'>
     </table>
-    <table id='additional_fields'>
-    </table>
 </form>
+
+<!---
+<div id="map_canvas" style="width: 500px; height: 300px"></div>
+<script src="http://maps.google.com/maps?file=api&amp;v=2&amp;sensor=true&amp;key=ABQIAAAAIRftQnxtXoW13ICX72IRUxTO3WkbM4i15FGTJ7ziKxuS21QJvhQlSfFH8WAIzhmf3MfUKCYcPhTMEw" type="text/javascript"></script>
+<script>
+var map = new GMap2(document.getElementById("map_canvas"));
+map.setCenter(new GLatLng(37.4419, -122.1419), 13);
+map.setUIToDefault();
+</script>
+--->
 

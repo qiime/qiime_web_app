@@ -27,7 +27,7 @@ class QiimeDataAccess( AbstractDataAccess ):
 
     def __init__(self):
         pass
-	
+    
     def getDatabaseConnection(self):
         """ Obtains a connection to the qiime_production schema
         

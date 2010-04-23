@@ -30,8 +30,9 @@ for field in form:
     elif items[0] == 'prep':
         prep_fields.append(items[1])
     else:
-        req.write('Unknown field detected: ' + field + '<br/>')
-        
+        # Other form fields will simply be ignored.
+        pass
+
 # Get the documentation for the list of fields
 column_dictionary = QiimeDataAccess().getColumnDictionary()
 for entry in column_dictionary:
@@ -39,7 +40,26 @@ for entry in column_dictionary:
         documentation_fields.append(entry)
 
 req.write('<h3>Please download your templates and documentation:</h3>')
+req.write('<p>NOTE: Upper-case fields are required for SRA submission.</p>')
 req.write('<ul>')
+
+# Sort the fields
+study_fields = sorted(study_fields)
+if 'project_name' in study_fields:
+    study_fields.remove('project_name')
+    study_fields.insert(0, 'project_name')
+sample_fields = sorted(sample_fields)
+if 'sample_name' in sample_fields:
+    sample_fields.remove('sample_name')
+    sample_fields.insert(0, 'sample_name')
+if 'project_name' in sample_fields:
+    sample_fields.remove('project_name')
+    sample_fields.insert(0, 'project_name')
+prep_fields = sorted(prep_fields)
+if 'sample_name' in prep_fields:
+    prep_fields.remove('sample_name')
+    prep_fields.insert(0, 'sample_name')
+documentation_fields = sorted(documentation_fields)
 
 try:
     # Make sure the temp directory exists:
