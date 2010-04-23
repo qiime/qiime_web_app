@@ -1,0 +1,63 @@
+<%
+__author__ = 'Doug Wendel'
+__copyright__ = 'Copyright 2009-2010, Qiime Web Analysis'
+__credits__ = ['Doug Wendel']
+__license__ = 'GPL'
+__version__ = '1.0.0.dev'
+__maintainer__ = ['Doug Wendel']
+__email__ = 'wendel@colorado.edu'
+__status__ = 'Development'
+
+''' 
+This page is consumed by new_template.psp. It generates a list of additional
+template fields for the user to add to their project.
+'''
+%>
+
+<%
+from mod_python import *
+from qiime_data_access import *
+
+def writeTerms(search_term):    
+    if search_term == '':
+        return
+    
+    search_term = search_term.lower()
+    
+    column_dictionary = QiimeDataAccess().getColumnDictionary()
+    for column in column_dictionary:
+        if column[0] == None or column[2] == None:
+            return
+        
+        #if column[0] in Session.Session(req)["current_fields"]:
+        #    continue
+        #req.write('test')
+        #req.write(str(Session.Session(req)["current_fields"]))
+        
+        if search_term not in column[0].lower() and search_term not in column[2].lower():
+            continue
+            
+        req.write('<tr style=\"background:#DDDDDD;\">')
+        
+        req.write('<td>')
+        req.write('<input type=\"checkbox\" id=\"%s\" onclick=\"additionalFieldChecked(this)\">' % (column[0]))
+        req.write('</td>')
+        
+        req.write('<td>')
+        req.write('%s' % (column[0]))
+        req.write('</td>')
+        
+        req.write('<td>')
+        req.write('%s' % (column[2]))
+        req.write('</td>')
+        
+        req.write('</tr>')
+        
+        # For source readability
+        req.write('\n')
+
+# Not sure why, but unless the form object is accessed outside
+# the function call, it returns None. 
+search_term = form["search_term"]
+writeTerms(search_term)
+%>
