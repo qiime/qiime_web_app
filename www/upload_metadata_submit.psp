@@ -46,7 +46,8 @@ def validateFileContents():
                 continue
 
             filename = os.path.basename(fullname).lower()
-            # Ignore files that start with '.' - seem to be an artifact
+            # Ignore files that start with '.' - seem to be an artifact of the built-in
+            # Mac file compression option within the Finder
             if filename.startswith('.'):
                 continue
 

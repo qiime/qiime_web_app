@@ -14,13 +14,16 @@ __status__ = "Development"
 <%
 from metadata_table import *
 
+req.write('<form name=\"metadata_form\" id=\"metadata_form\" method=\"post\" action=\"submit_corrected_metadata.psp\">')
+
 templates = sess["templates"]
 if templates != None:
     for template in templates:
         req.write('<h3> Results for file: ' + os.path.basename(template) + '</h3>')
         table = MetadataTable(template)
-        #for invalid_row in table._invalid_rows:
-        #    req.write('<tr><td>Error: ' + str(invalid_row) + '</td><td><input type=\"text\"></td>')
         req.write(table.printHTMLTable())
     req.write('<p/>')
+    
+req.write('<p/><input type=\"submit\" value=\"Submit Metadata\" disabled><p/>')
+req.write('</form>')
 %>

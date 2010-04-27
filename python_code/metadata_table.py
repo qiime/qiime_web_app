@@ -40,7 +40,7 @@ class ColumnFactory(object):
         """ return true if number, false otherwise
         """
         # Matches number of the form 234, 2.34, or .234
-        if re.match('^[0-9]+$|^[0-9]*\.[0-9]+$', value) == None:
+        if re.match('^\-*[0-9]+$|^\-*[0-9]*\.[0-9]+$', value) == None:
             return False
         else:
             return True
@@ -76,7 +76,11 @@ class ColumnFactory(object):
         false otherwise 
         """
         for ontology_name in ontology_names:
-            if self._qiimeDataAccess.validateOntologyValue(ontology_name, term) > 0:
+            term_values = term.split(':')
+            if len(term_values) != 2:
+                return False
+            
+            if self._qiimeDataAccess.validateOntologyValue(ontology_name, term_values[1]) > 0:
                 return True
         
         #for ontology_name in ontology_names:
@@ -329,15 +333,16 @@ class MetadataTable(object):
             while x < column_count:
                 for column in self._columns:
                     if column.values[y][1] == 'good':
+                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" value=\"%s\">' % (column.column_name, str(column.values[y][0]))
                         cell_color = '#FFFFFF'
-                        html_table += '<td style=\"background-color:%s;\">%s</td>' % (cell_color, str(column.values[y][0]))
+                        html_table += '<td style=\"background-color:%s;\">%s%s</td>\n' % (cell_color, hidden_field_text, str(column.values[y][0]))
                     else:
                         cell_color = '#FF5555'
-                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" value=\"%s\"></td>' % (cell_color, str(column.values[y][0]))
+                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" value=\"%s\"></td>' % (cell_color, column.column_name, str(column.values[y][0]))
                     x += 1
             html_table +='</tr>'
             y += 1 
-            
+        
         html_table += '</table>'
         
         return html_table

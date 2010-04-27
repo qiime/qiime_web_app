@@ -108,16 +108,16 @@ outputFields(field_list, 'study', 'SRA Study Fields')
 field_list = QiimeDataAccess().getPackageColumns(-1)
 outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
 
-# Write out the SRA experiment fields
-field_list = QiimeDataAccess().getPackageColumns(-6)
+# Write out the SRA sample fields
+field_list = QiimeDataAccess().getPackageColumns(-5)
 outputFields(field_list, 'prep', 'SRA Experiment Fields')
 
 # Write out the required sample fields along with the package-specific fields
 field_list = QiimeDataAccess().getPackageColumns(-2)
 outputFields(field_list, 'sample', 'Required Sample Fields')
 
-# Write out the SRA sample fields
-field_list = QiimeDataAccess().getPackageColumns(-5)
+# Write out the SRA experiment fields
+field_list = QiimeDataAccess().getPackageColumns(-6)
 outputFields(field_list, 'sample', 'SRA Sample Fields')
 
 # Write out the rest of the package fields

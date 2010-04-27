@@ -10,7 +10,7 @@ __status__ = "Production"
 -->
 
 <table width="100%" bgcolor="#CCCCCC">
-<tr><td>Some footer text here</td></tr>
+<tr><td></td></tr>
 </table>
 </body>
 </html>
