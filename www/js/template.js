@@ -23,21 +23,31 @@ function testMe()
 
 function additionalFieldChecked(sender)
 {
-    var table = document.getElementById("selected_additional_fields");
-    var table_row = document.createElement("TR");
-    var table_data1 = document.createElement("TD");
-    var checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = "true";
-    checkbox.id = "sample:" + sender.id;
-    checkbox.name = "sample:" + sender.id;
-    var table_data2 = document.createElement("TD");
-    table_data2.appendChild(document.createTextNode(sender.id));
-    
-    table_data1.appendChild(checkbox);
-    table_row.appendChild(table_data1);
-    table_row.appendChild(table_data2);
-    table.appendChild(table_row);
+    // If the element already exists, just toggle checkbox
+    cb = document.getElementById("sample:" + sender.id);
+    if (cb != null)
+    {
+        cb.checked = sender.checked;
+    }
+    // Add it if never been added before
+    else
+    {
+        var table = document.getElementById("selected_additional_fields");
+        var table_row = document.createElement("TR");
+        var table_data1 = document.createElement("TD");
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = "true";
+        checkbox.id = "sample:" + sender.id;
+        checkbox.name = "sample:" + sender.id;
+        var table_data2 = document.createElement("TD");
+        table_data2.appendChild(document.createTextNode(sender.id));
+        
+        table_data1.appendChild(checkbox);
+        table_row.appendChild(table_data1);
+        table_row.appendChild(table_data2);
+        table.appendChild(table_row);
+    }    
 }
 
 function loadAdditionalFields()

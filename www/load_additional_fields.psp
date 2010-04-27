@@ -18,7 +18,7 @@ template fields for the user to add to their project.
 from mod_python import *
 from qiime_data_access import *
 
-def writeTerms(search_term):    
+def writeTerms(search_term, sess):
     if search_term == '':
         return
     
@@ -28,15 +28,16 @@ def writeTerms(search_term):
     for column in column_dictionary:
         if column[0] == None or column[2] == None:
             return
+
+        # If already displayed, don't list in additional fields
+        if column[0].lower() in sess["field_list"]:
+            continue
         
-        #if column[0] in Session.Session(req)["current_fields"]:
-        #    continue
-        #req.write('test')
-        #req.write(str(Session.Session(req)["current_fields"]))
-        
+        # Match terms
         if search_term not in column[0].lower() and search_term not in column[2].lower():
             continue
-            
+        
+        # Show the additional field            
         req.write('<tr style=\"background:#DDDDDD;\">')
         
         req.write('<td>')
@@ -57,7 +58,9 @@ def writeTerms(search_term):
         req.write('\n')
 
 # Not sure why, but unless the form object is accessed outside
-# the function call, it returns None. 
+# the function call, it returns None.
+
 search_term = form["search_term"]
-writeTerms(search_term)
+sess = Session.Session(req)
+writeTerms(search_term, sess)
 %>

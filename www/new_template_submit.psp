@@ -2,6 +2,8 @@
 
 from datetime import datetime
 from qiime_data_access import QiimeDataAccess
+from zipfile import ZipFile
+import os
 
 # Retrieve the session. If None the redirect
 sess = Session.Session(req)
@@ -13,6 +15,7 @@ study_file_name = 'tmp/study_template_' + post_fix + '.xls'
 sample_file_name = 'tmp/sample_template_' + post_fix + '.xls'
 prep_file_name = 'tmp/prep_template_' + post_fix + '.xls'
 doc_file_name = 'tmp/field_reference_' + post_fix + '.xls'
+zip_file_name = 'tmp/zip_archive_' + post_fix + '.zip'
 
 study_fields = []
 sample_fields = []
@@ -86,6 +89,15 @@ try:
         for field in documentation_fields:
             f.write(field[0] + '\t' + field[3] + '\t' + field[1] + '\t' + field[2] + '\n')
     req.write('<li><a href=\'%s\'>%s</a>' % (doc_file_name, 'Field Reference Documentation</li>'))
+    
+    # Create a zip archive
+    zip = ZipFile(sess['document_root'] + zip_file_name, 'w')
+    zip.write(sess['document_root'] + study_file_name, os.path.basename(study_file_name))
+    zip.write(sess['document_root'] + sample_file_name, os.path.basename(sample_file_name))
+    zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))
+    zip.write(sess['document_root'] + doc_file_name, os.path.basename(doc_file_name))
+    zip.close()
+    req.write('<li><a href=\'%s\'>%s</a>' % (zip_file_name, 'Download zip archive of all files</li>'))
     
 except Exception, e:
     req.write(str(e))

@@ -32,26 +32,30 @@ available fields for a package type.
 from mod_python import *
 from qiime_data_access import *
 
+sess = Session.Session(req)
+
 def outputFields(field_list, prefix, header_text):
     count = 0
 
 
-    # Sort the fields and add to session 
+    # Sort the fields
     field_list = sorted(field_list)
-    for field in field_list:        
+    for field in field_list:
+        sess["field_list"].append(field[0].lower())
         if field[0] == 'sample_name':
             field_list.remove(field)
             field_list.insert(0, field)
         elif field[0] == 'project_name':
             field_list.remove(field)
             field_list.insert(0, field)
+    sess.save()
                 
     #Output a header row
     if header_text != '':
-        style = 'background:#444444;color:#FFFFFF;vertical-align:middle'
+        style = 'background:#444444;color:#FFFFFF;vertical-align:middle;font-size:20px'
         req.write('<tr style=\'%s\'><td colspan=5></td></tr>' % (style))
         req.write('<tr style=\'%s\'><td colspan=5>%s</td><tr>' % (style, header_text))
-        req.write('<tr style=\'%s\'><td colspan=5></td></tr>' % (style))
+        #req.write('<tr style=\'%s\'><td colspan=5></td></tr>' % (style))
 
     for field in field_list:
         # Extract the variables for readability
@@ -87,6 +91,11 @@ def outputFields(field_list, prefix, header_text):
         # Increment for alternating coloring
         count += 1
 
+
+# Make sure the field list is an empty list
+sess["field_list"] = []
+sess.save()
+
 # Write out the study fields
 field_list = QiimeDataAccess().getPackageColumns(-3)
 outputFields(field_list, 'study', 'Study Fields')
@@ -105,7 +114,7 @@ outputFields(field_list, 'prep', 'SRA Experiment Fields')
 
 # Write out the required sample fields along with the package-specific fields
 field_list = QiimeDataAccess().getPackageColumns(-2)
-outputFields(field_list, 'sample', 'Sample-Level Package Fields')
+outputFields(field_list, 'sample', 'Required Sample Fields')
 
 # Write out the SRA sample fields
 field_list = QiimeDataAccess().getPackageColumns(-5)
@@ -115,7 +124,7 @@ outputFields(field_list, 'sample', 'SRA Sample Fields')
 parameters = util.FieldStorage(req)
 package_type_id = parameters.get('package_type_id', None)
 field_list = QiimeDataAccess().getPackageColumns(package_type_id)
-outputFields(field_list, 'sample', '')
+outputFields(field_list, 'sample', 'Package-Specific Sample Fields')
 %>
 
 <tr>
@@ -126,7 +135,6 @@ outputFields(field_list, 'sample', '')
         <table id="selected_additional_fields">
         </table>
         <p/>Search for additional fields:
-        <br/>(This is experimental! Several big issues to resolve but it does work...)
         <p/><input type="text" name="search_term" id="search_term" onkeyup="loadAdditionalFields();" onclick="loadAdditionalFields();">
         <p/>
         <table id="additional_fields_results">
@@ -137,6 +145,5 @@ outputFields(field_list, 'sample', '')
     <td colspan='5'>&nbsp</td>
 </tr>
 <tr>
-    <td colspan='5'><input type='submit' value='Genereate Templates'>
-    </td>
-<tr>
+    <td colspan='5'><input type='submit' value='Genereate Templates'></td>
+</tr>
