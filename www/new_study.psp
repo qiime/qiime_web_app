@@ -140,7 +140,7 @@ for item in sorted(list):
             </td>
         </tr>
         <tr>
-            <td>Submit to INSCD?
+            <td>Submit to INSDC?
             </td>
             <td>
                 <select class="input required" name="submit_to_insdc" id="submit_to_insdc">
