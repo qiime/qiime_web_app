@@ -10,11 +10,11 @@ __status__ = "Development"
 %>
 
 <h2>Metadata Validation</h2>
+<form name="metadata_form" id="metadata_form" method="post" action="fusebox.psp">
+<input type="hidden" id="page" name="page" value="submit_corrected_metadata.psp"/>
 
 <%
 from metadata_table import *
-
-req.write('<form name=\"metadata_form\" id=\"metadata_form\" method=\"post\" action=\"submit_corrected_metadata.psp\">')
 
 templates = sess["templates"]
 if templates != None:
@@ -23,7 +23,9 @@ if templates != None:
         table = MetadataTable(template)
         req.write(table.printHTMLTable())
     req.write('<p/>')
-    
-req.write('<p/><input type=\"submit\" value=\"Submit Metadata\" disabled><p/>')
-req.write('</form>')
 %>
+
+<p/>
+<input type="submit" value="Submit Metadata">
+<p/>
+</form>

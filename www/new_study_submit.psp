@@ -17,25 +17,25 @@ want to proceed.
 <%
 import os
 from qiime_data_access import QiimeDataAccess
-qiimeDataAccess = QiimeDataAccess()
 
-sess['study_name']=form['study_name']
-sess['privileges']=form['privileges']
+sess['study_name'] = form['study_name']
+sess['privileges'] = form['privileges']
 
-study_name=sess['study_name']
-privs=sess['privileges']
+study_name = sess['study_name']
+privs = sess['privileges']
 
 #Add the new study to the database
-study_id=qiimeDataAccess.createStudy(sess['web_app_user_id'],study_name,privs)
+study_id = QiimeDataAccess().createStudy(sess['web_app_user_id'], study_name, form['investigation_type'], \
+    form['environmental_package'], form['study_completion_status'], form['submit_to_insdc'], privs)
 
 # Add the study id to the session.
-sess['study_id']=study_id
+sess['study_id'] = study_id
 
-study_dir=os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
+study_dir = os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
 
-sess['study_dir']=str(study_dir)
+sess['study_dir'] = str(study_dir)
 sess.save()
-sess['user_dir']
+
 #See if the study folder exists and if not, creates it.
 try:
     if not os.path.exists(study_dir):
@@ -45,7 +45,7 @@ except Exception, e:
     req.write(str(e))
     sys.exit()
 
-psp.redirect('fusebox.psp?page=select_upload_type.psp')
+psp.redirect('fusebox.psp?page=select_task.psp')
 
 %>
 

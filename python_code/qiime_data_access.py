@@ -104,7 +104,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getDatabaseConnection()
+            con = self.getTestDatabaseConnection()
             study_names = con.cursor()
             con.cursor().callproc('get_study_names', [study_names])
             study_name_list = []
@@ -126,7 +126,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getDatabaseConnection()
+            con = self.getTestDatabaseConnection()
             study_names = con.cursor()
             con.cursor().callproc('get_user_study_names', [user_id, study_names])
             study_name_list = []
@@ -134,7 +134,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 if row[0] is None:
                     continue
                 else:
-                    study_name_list.append([row[0],row[1]])
+                    study_name_list.append((row[0], row[1]))
             return study_name_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -148,7 +148,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata headers
         """
         try:
-            con = self.getDatabaseConnection()		
+            con = self.getDatabaseConnection()
             metadata_headers = con.cursor()
             con.cursor().callproc('get_metadata_headers', [metadata_headers])
             metadata_headers_list = []
@@ -168,7 +168,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             metadata_list = []
-            con = self.getDatabaseConnection()		
+            con = self.getDatabaseConnection()
             column_values = con.cursor()
             con.cursor().callproc('get_metadata_by_study_list', [field_name, study_list, column_values])
             for row in column_values:
@@ -188,7 +188,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
-            con = self.getDatabaseConnection()		
+            con = self.getDatabaseConnection()
             values = con.cursor()
             con.cursor().callproc('get_study_by_name', [study_name, study_id])
             value_list = []
@@ -202,15 +202,15 @@ class QiimeDataAccess( AbstractDataAccess ):
             if (con):
                 con.cursor().close()
                 con.close()
-            
-    def createStudy(self, user_id, study_name, public_data):
+
+    def createStudy(self, user_id, study_name, investigation_type, environmental_package, study_completion_status, submit_to_insdc, public_data):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
-            con = self.getDatabaseConnection()
-            study_id=0
-            study_id=con.cursor().callproc('create_study', [user_id, study_name, public_data, study_id])
-            return study_id[3]
+            con = self.getTestDatabaseConnection()
+            study_id = 0
+            study_id = con.cursor().callproc('study_insert', [user_id, study_name, investigation_type, environmental_package, study_completion_status, submit_to_insdc, public_data, study_id])
+            return study_id[7]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -239,7 +239,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
-            con = self.getDatabaseConnection()		
+            con = self.getDatabaseConnection()
             values = con.cursor()
             con.cursor().callproc('get_parameter_by_script', [parameter_type, script_type, values])
             value_list = []
@@ -259,7 +259,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             column_dictionary = []
-            con = self.getTestDatabaseConnection()		
+            con = self.getTestDatabaseConnection()
             column_values = con.cursor()
             con.cursor().callproc('get_column_dictionary', [column_values])
             for row in column_values:
@@ -436,3 +436,50 @@ class QiimeDataAccess( AbstractDataAccess ):
         #    if (con):
         #        con.cursor().close()
         #        con.close()
+
+    def findMetadataTable(self, column_name):
+        """ Finds the target metadata table for the supplied column name
+        """
+        try:
+            table = ''
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('find_metadata_table', [column_name, results])
+
+            for row in results:
+                table = row[0]
+
+            return table
+
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
+
+
+    def writeMetadataValue(self, column_name, sample_name, file_type, value):
+        """ Writes a metadata value to the database
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            table_name = self.findMetadataTable(column_name)
+            
+            # If sample type, make sure key row in sample and satellite table(s) exist
+                # create key row
+            # update table_name where key_row is correct and column name = column_name
+            
+            sample_id = 0
+            con.cursor().execute('select study_id from study where sample_name = ' + sample_name)
+            
+            statement = 'insert into %s (%s) values (%s)' % (table_name, column_name, value)
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        #finally:
+        #    if (con):
+        #        con.cursor().close()
+        #        con.close()
+

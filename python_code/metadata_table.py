@@ -16,6 +16,7 @@ __status__ = "Development"
 from qiime_data_access import QiimeDataAccess
 import csv
 import re
+import os
 
 class ColumnFactory(object):
     """ Factory class for producing metadata columns
@@ -314,6 +315,17 @@ class MetadataTable(object):
         print '\n\n'
 
     def printHTMLTable(self):
+        # Determine the type of file we're dealing with
+        file_type = ''
+        if os.path.basename(self._metadataFile).startswith('study'):
+            file_type = 'study'
+        elif os.path.basename(self._metadataFile).startswith('sample'):
+            file_type = 'sample'
+        elif os.path.basename(self._metadataFile).startswith('prep'):
+            file_type = 'prep'
+        else:
+            return
+        
         html_table = '<table border=1>'
         
         column_count = len(self._columns)
@@ -332,13 +344,14 @@ class MetadataTable(object):
             html_table += '<tr>'
             while x < column_count:
                 for column in self._columns:
+                    unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
                     if column.values[y][1] == 'good':
-                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" value=\"%s\">' % (column.column_name, str(column.values[y][0]))
+                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">' % (unique_column_name, unique_column_name, str(column.values[y][0]))
                         cell_color = '#FFFFFF'
                         html_table += '<td style=\"background-color:%s;\">%s%s</td>\n' % (cell_color, hidden_field_text, str(column.values[y][0]))
                     else:
                         cell_color = '#FF5555'
-                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" value=\"%s\"></td>' % (cell_color, column.column_name, str(column.values[y][0]))
+                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\"></td>' % (cell_color, unique_column_name, unique_column_name, str(column.values[y][0]))
                     x += 1
             html_table +='</tr>'
             y += 1 

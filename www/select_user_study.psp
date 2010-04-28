@@ -5,8 +5,8 @@ __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
-__email__ = "jesse.stombaugh@colorado.edu"
-__status__ = "Production"
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
 %>
 
 <script type="text/javascript">
@@ -34,13 +34,9 @@ $(document).ready(function(){
                 <option value=""></option>
 
 <%
-# Get a new QiimeDataAccess object and obtain our lists
-data_access = QiimeDataAccess()
-study_names = data_access.getUserStudyNames(sess['web_app_user_id'])
-
+study_names = QiimeDataAccess().getUserStudyNames(sess['web_app_user_id'])
 for study_name in study_names:
-    req.write('\t\t\t\t<option value="' + str(study_name[1]) + '">' + str(study_name[0]) + '</option>\n')
-
+    req.write('<option value="' + str(study_name[0]) + '">' + study_name[1] + '</option>\n')
 # end
 %>
             </select>

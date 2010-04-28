@@ -45,10 +45,9 @@ var studynames=new Array();
 
 <%
 from qiime_data_access import QiimeDataAccess
-qiimeDataAccess = QiimeDataAccess()
 
 # get a python list of studies from the database
-study_names = qiimeDataAccess.getStudyNames()
+study_names = QiimeDataAccess().getStudyNames()
 
 # iterate through the studies and write them into a javascript array
 for i in range(len(study_names)):
@@ -57,19 +56,22 @@ for i in range(len(study_names)):
 %>
 
 //Check that the user-defined study name is not in the database
-function check_study_name(){
+function check_study_name()
+{
     study=document.getElementById('study_name').value;
     var study1=study.toUpperCase();
     var valid='True'
-    for (var i=0;i<studynames.length;i++){
+    for (var i=0;i<studynames.length;i++)
+    {
         var studynames1=studynames[i].toUpperCase();
         if (study1==studynames1){
             valid='False'
         }
     }
     //If the study name is already taken, alert the user
-    if(valid=='False'){
-        alert("Please enter another Study Name, since this one is taken.");
+    if(valid=='False')
+    {
+        alert("The selected study name has already been taken. Please enter a different name.");
     }
     return valid
 }
@@ -82,10 +84,70 @@ function check_study_name(){
     <!-- put the form fields in a table to add structure to the layout-->
     <table>
         <tr>
-            <td>Create a Study Name:
+            <td>
+                Study Name:
             </td>
             <td>
                 <input class="input required" type="text" name="study_name" id="study_name" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Investigation Type
+            </td>
+            <td>
+                <select class="input required" name="investigation_type" name="investigation_type">
+                    <option value=""></option>
+<%
+list = QiimeDataAccess().getListValues('Investigation Type')
+for item in sorted(list):
+    req.write('<option value=\"%s\">%s</option>\n' % (item, item))
+#
+%>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Environmental Package
+            </td>
+            <td>
+                <select class="input required" name="environmental_package" name="environmental_package">
+                    <option value=""></option>
+<%
+list = QiimeDataAccess().getListValues('Package Type')
+for item in sorted(list):
+    req.write('<option value=\"%s\">%s</option>\n' % (item, item))
+#
+%>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Study Completion Status
+            </td>
+            <td>
+                <select class="input required" name="study_completion_status" name="study_completion_status">
+                    <option value=""></option>
+<%
+list = QiimeDataAccess().getListValues('Study Completion Status')
+for item in sorted(list):
+    req.write('<option value=\"%s\">%s</option>\n' % (item, item))
+#
+%>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Submit to INSCD?
+            </td>
+            <td>
+                <select class="input required" name="submit_to_insdc" id="submit_to_insdc">
+                    <option value=""></option>
+                    <option value="y">Yes</option>
+                    <option value="n">No</option>
+                </select>
             </td>
         </tr>
         <tr>
@@ -94,8 +156,8 @@ function check_study_name(){
             <td>
                 <select class="input required" name="privileges" id="privileges">
                     <option value=""></option>
-                    <option value="Y">Public</option>
-                    <option value="N">Private</option>
+                    <option value="y">Public</option>
+                    <option value="n">Private</option>
                 </select>
             </td>
         </tr>
