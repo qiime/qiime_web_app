@@ -19,15 +19,12 @@ from mod_python import *
 from qiime_data_access import *
 
 def writeTerms(search_term, sess):
-    if search_term == '':
-        return
-    
     search_term = search_term.lower()
     
     column_dictionary = QiimeDataAccess().getColumnDictionary()
     for column in column_dictionary:
         if column[0] == None or column[2] == None:
-            return
+            continue
 
         # If already displayed, don't list in additional fields
         if column[0].lower() in sess["field_list"]:

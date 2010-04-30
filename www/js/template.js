@@ -21,6 +21,36 @@ function testMe()
     alert("I work, there for I am.");
 }
 
+function findListTerms(term, column_name)
+{    
+    // check if browser can perform xmlhttp
+    xmlhttp=GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+
+    var url = "load_field_details.psp";
+    url=url + "?search_term=" + term + "&column_name=" + column_name;
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            // Clear the table first
+            //document.getElementById('package_fields').innerHTML = "";
+            top.frames['bottom'].document.getElementById('selected_field_details').innerHTML = xmlhttp.responseText;
+            
+            //package_fields = xmlhttp.responseText.split('#');
+            //writeFieldValues('package_fields', package_fields);
+        }
+    }
+    //perform a GET 
+    xmlhttp.open("GET",url,true);
+    xmlhttp.send(null);
+}
+
 function additionalFieldChecked(sender)
 {
     // If the element already exists, just toggle checkbox

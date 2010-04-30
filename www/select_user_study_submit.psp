@@ -13,8 +13,9 @@ __status__ = "Production"
 <%
 import os
 
-sess['study_id']=form['study_names']
-
+parts = form['study_names'].split(':')
+sess['study_id'] = parts[0]
+sess['study_name'] = parts[1]
 sess['study_dir']=os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
 sess.save()
 

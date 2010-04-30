@@ -4,28 +4,15 @@ __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
-__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 %>
 
-<h2>Metadata Validation</h2>
-<form name="metadata_form" id="metadata_form" method="post" action="fusebox.psp">
-<input type="hidden" id="page" name="page" value="submit_corrected_metadata.psp"/>
 
-<%
-from metadata_table import *
+<frameset rows="*,200px" border="1" framespacing="3">
+    <frame src="validate_metadata_list.psp"/ id="top" name="top" noresize>
+    <frame src="validate_metadata_info.psp"/ id="bottom" name="bottom" noresize>
+</frameset>
 
-templates = sess["templates"]
-if templates != None:
-    for template in templates:
-        req.write('<h3> Results for file: ' + os.path.basename(template) + '</h3>')
-        table = MetadataTable(template)
-        req.write(table.printHTMLTable())
-    req.write('<p/>')
-%>
 
-<p/>
-<input type="submit" value="Submit Metadata">
-<p/>
-</form>

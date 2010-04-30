@@ -101,7 +101,7 @@ function check_study_name()
 <%
 list = QiimeDataAccess().getListValues('Investigation Type')
 for item in sorted(list):
-    req.write('<option value=\"%s\">%s</option>\n' % (item, item))
+    req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
 #
 %>
                 </select>
@@ -117,7 +117,8 @@ for item in sorted(list):
 <%
 list = QiimeDataAccess().getListValues('Package Type')
 for item in sorted(list):
-    req.write('<option value=\"%s\">%s</option>\n' % (item, item))
+    if item[0] > 0:
+        req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
 #
 %>
                 </select>
@@ -133,7 +134,7 @@ for item in sorted(list):
 <%
 list = QiimeDataAccess().getListValues('Study Completion Status')
 for item in sorted(list):
-    req.write('<option value=\"%s\">%s</option>\n' % (item, item))
+    req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
 #
 %>
                 </select>

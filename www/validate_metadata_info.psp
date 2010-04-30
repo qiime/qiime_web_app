@@ -1,0 +1,28 @@
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body style="background-color:#CCCCCC">
+
+<table class="metadata_table">
+    <tr>
+        <td>
+            <table width="100%" class="metadata_table">
+                <tr>
+                    <td>
+                        <table width="100%" id="selected_field_details" class="metadata_table">
+                        </table>
+                    </td>
+                    <td style="width:200px">
+                        <table id="select_field_values" class="metadata_table">
+                        </table>
+                    </td>
+                </td>
+            </table>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

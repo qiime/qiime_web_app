@@ -152,7 +152,7 @@ class BaseColumn(object):
     def writeJSValidation(self):
         """ Writes the Javascript validation funciton if necessary
         """
-        pass
+        return ''
     
     def addValue(self, value):
         status = 'good'
@@ -181,6 +181,12 @@ class ListColumn(BaseColumn):
             self.isInvalid(self.column_name, len(self.values))
         self.values.append((value, status))
         
+    def writeJSValidation(self):
+        function_string = 'findListTerms(this.value, \'%s\')' % self.column_name 
+        validation_string = ' onclick=\"%s\"; ' % (function_string)
+        validation_string += ' onkeyup=\"%s\"; ' % (function_string)
+        return validation_string
+        
 class OntologyColumn(BaseColumn):
     """ Ontology implementation of BaseColumn class
     """
@@ -194,6 +200,12 @@ class OntologyColumn(BaseColumn):
             status = 'bad'
             self.isInvalid(self.column_name, len(self.values))
         self.values.append((value, status))
+        
+    def writeJSValidation(self):
+        function_string = 'findListTerms(this.value, \'%s\')' % self.column_name 
+        validation_string = ' onclick=\"%s\"; ' % (function_string)
+        validation_string += ' onkeyup=\"%s\"; ' % (function_string)
+        return validation_string
     
 class TextColumn(BaseColumn):
     """ Text implementation of BaseColumn class
@@ -326,7 +338,7 @@ class MetadataTable(object):
         else:
             return
         
-        html_table = '<table border=1>'
+        html_table = '<table class="metadata_table">'
         
         column_count = len(self._columns)
         row_count = len(self._columns[0].values)
@@ -334,28 +346,28 @@ class MetadataTable(object):
         # Print the column headers
         x = 0
         while x < column_count:
-            html_table += '<th>' + self._columns[x].column_name + '</th>'
+            html_table += '<th>' + self._columns[x].column_name + '</th>\n'
             x += 1
 
         # Print the table rows
         y = 0
         while y < row_count:
             x = 0
-            html_table += '<tr>'
+            html_table += '<tr>\n'
             while x < column_count:
                 for column in self._columns:
                     unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
                     if column.values[y][1] == 'good':
-                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">' % (unique_column_name, unique_column_name, str(column.values[y][0]))
+                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, str(column.values[y][0]))
                         cell_color = '#FFFFFF'
                         html_table += '<td style=\"background-color:%s;\">%s%s</td>\n' % (cell_color, hidden_field_text, str(column.values[y][0]))
                     else:
                         cell_color = '#FF5555'
-                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\"></td>' % (cell_color, unique_column_name, unique_column_name, str(column.values[y][0]))
+                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\" %s></td>\n' % (cell_color, unique_column_name, unique_column_name, str(column.values[y][0]), column.writeJSValidation())
                     x += 1
-            html_table +='</tr>'
+            html_table +='</tr>\n'
             y += 1 
         
-        html_table += '</table>'
+        html_table += '</table>\n'
         
         return html_table

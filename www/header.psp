@@ -29,10 +29,10 @@ from qiime_data_access import QiimeDataAccess
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
-<form id="send_me_home" name="send_me_home" action="fusebox.psp" method="post">
+<form target="_top" id="send_me_home" name="send_me_home" action="fusebox.psp" method="post">
     <input type="hidden" id="page" name="page" value="select_task.psp">
 </form>
 <a href="#" onclick="send_me_home.submit();"><img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 /></a>
 <table width="100%" bgcolor="#CCCCCC">
-<tr><td>Logged in as <%=sess['username']%></td></tr>
+<tr><td class="gray_background">Logged in as <%=sess['username']%></td></tr>
 </table>

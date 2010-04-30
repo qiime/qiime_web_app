@@ -1,0 +1,36 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+search_term = form["search_term"]
+column_name = form["column_name"]
+%>
+
+<th width="200">Field Name</th><th width="80">Data Type</th><th width="250">Description/Expected Values</th><th>Details</th><th>Values</th>
+<%
+from qiime_data_access import *
+field_details = QiimeDataAccess().getFieldDetails(column_name)
+req.write('<tr>\n')
+req.write('<td>%s</td>' % field_details[0])
+req.write('<td>%s</td>' % field_details[1])
+req.write('<td>%s</td>' % field_details[2])
+req.write('<td>%s</td>' % field_details[3])
+
+req.write('<td>')
+field_matches = QiimeDataAccess().getTermMatches(column_name, search_term)
+for match in field_matches:
+    req.write(str(match) + '<br/>')
+
+#
+req.write('</td>')
+
+req.write('</tr>\n')
+%>

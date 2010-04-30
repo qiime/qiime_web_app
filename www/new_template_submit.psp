@@ -62,6 +62,7 @@ prep_fields = sorted(prep_fields)
 if 'sample_name' in prep_fields:
     prep_fields.remove('sample_name')
     prep_fields.insert(0, 'sample_name')
+
 documentation_fields = sorted(documentation_fields)
 
 try:
@@ -73,6 +74,10 @@ try:
     # Write out the individual template files
     with open(sess['document_root'] + study_file_name, 'w') as f:
         f.write('\t'.join(study_fields))
+        # Grab the known study fields and add to the file
+        #study_info = QiimeDataAccess().getStudyInfo(sess['study_id'])
+        #f.write('\n')
+        # Hmm, tricky. How to tell where to write values? 
     req.write('<li><a href=\'%s\'>%s</a>' % (study_file_name, 'Study Template</li>'))
     
     with open(sess['document_root'] + sample_file_name, 'w') as f:
