@@ -8,7 +8,7 @@ __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel"]
 __license__ = "GPL"
-__version__ = "1.0.0.dev"
+__version__ = "1.0.0"
 __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
@@ -167,6 +167,12 @@ class NumericColumn(BaseColumn):
     def __init__(self, column_name, validate, isInvalid):
         super(NumericColumn, self).__init__(column_name, validate, isInvalid)
         
+    def writeJSValidation(self):
+        function_string = 'validateNumericField(this, \'%s\')' % self.column_name 
+        validation_string = ' onclick=\"%s\"; ' % (function_string)
+        validation_string += ' onkeyup=\"%s\"; ' % (function_string)
+        return validation_string
+        
 class ListColumn(BaseColumn):
     """ List implementation of BaseColumn class
     """
@@ -182,7 +188,7 @@ class ListColumn(BaseColumn):
         self.values.append((value, status))
         
     def writeJSValidation(self):
-        function_string = 'findListTerms(this.value, \'%s\')' % self.column_name 
+        function_string = 'findListTerms(this, \'%s\')' % self.column_name 
         validation_string = ' onclick=\"%s\"; ' % (function_string)
         validation_string += ' onkeyup=\"%s\"; ' % (function_string)
         return validation_string
@@ -202,7 +208,7 @@ class OntologyColumn(BaseColumn):
         self.values.append((value, status))
         
     def writeJSValidation(self):
-        function_string = 'findListTerms(this.value, \'%s\')' % self.column_name 
+        function_string = 'findListTerms(this, \'%s\')' % self.column_name 
         validation_string = ' onclick=\"%s\"; ' % (function_string)
         validation_string += ' onkeyup=\"%s\"; ' % (function_string)
         return validation_string
@@ -283,11 +289,20 @@ class MetadataTable(object):
 
         # Read the column values
         for row in reader:
+            
+            # If a row is incomplete, probably means end of file whitespace
+            if len(row) < len(self._columns):
+                continue
+            
             # Skip any additional rows starting with a #
             if str(row[0]).startswith('#'):
                 continue
+            
             i = 0
             for column in row:
+                # Skip any rows starting with white space
+                if column.startswith('\t') or column.startswith(' '):
+                    continue
                 self._columns[i].addValue(column)
                 i += 1
 
@@ -346,25 +361,46 @@ class MetadataTable(object):
         # Print the column headers
         x = 0
         while x < column_count:
-            html_table += '<th>' + self._columns[x].column_name + '</th>\n'
+            html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
             x += 1
 
+        #####################################
         # Print the table rows
+        #####################################
+        
+        # Max length for text columns
+        max_text_length = 50
+        
+        # Index for rows
         y = 0
+        
         while y < row_count:
             x = 0
             html_table += '<tr>\n'
             while x < column_count:
                 for column in self._columns:
+                    # Create a unique column name for processing later
                     unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
+
+                    value_output = str(column.values[y][0])
+                    
+                    #For fields that are valid:
                     if column.values[y][1] == 'good':
-                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, str(column.values[y][0]))
+                        # If this is a text column, truncate the length of the string to keep the display reasonable
+                        if type(column) == TextColumn:
+                            if len(value_output) > max_text_length:
+                                value_output = value_output[:max_text_length] + '...'
+                            
+                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, value_output)
                         cell_color = '#FFFFFF'
-                        html_table += '<td style=\"background-color:%s;\">%s%s</td>\n' % (cell_color, hidden_field_text, str(column.values[y][0]))
+                        html_table += '<td style=\"background-color:%s;\">%s%s</td>\n' % (cell_color, hidden_field_text, value_output)
+                    
+                    # For fields that are not valid
                     else:
                         cell_color = '#FF5555'
-                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\" %s></td>\n' % (cell_color, unique_column_name, unique_column_name, str(column.values[y][0]), column.writeJSValidation())
+                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\" %s></td>\n' % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation())
                     x += 1
+                    
             html_table +='</tr>\n'
             y += 1 
         

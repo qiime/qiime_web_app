@@ -145,5 +145,5 @@ outputFields(field_list, 'sample', 'Package-Specific Sample Fields')
     <td colspan='5'>&nbsp</td>
 </tr>
 <tr>
-    <td colspan='5'><input type='submit' value='Genereate Templates'></td>
+    <td colspan='5'><input type='submit' value='Generate Templates'></td>
 </tr>

@@ -21,8 +21,8 @@ function testMe()
     alert("I work, there for I am.");
 }
 
-function findListTerms(term, column_name)
-{    
+function validateNumericField(sender, column_name)
+{
     // check if browser can perform xmlhttp
     xmlhttp=GetXmlHttpObject()
     if (xmlhttp==null)
@@ -30,8 +30,11 @@ function findListTerms(term, column_name)
         alert ("Your browser does not support XML HTTP Request");
         return;
     }
-
-    var url = "load_field_details.psp";
+    
+    // Is the term in a valid numeric format?
+    var term = sender.value;
+    
+    var url = "load_numeric_field_details.psp";
     url=url + "?search_term=" + term + "&column_name=" + column_name;
 
     xmlhttp.onreadystatechange=function()
@@ -49,6 +52,54 @@ function findListTerms(term, column_name)
     //perform a GET 
     xmlhttp.open("GET",url,true);
     xmlhttp.send(null);
+}
+
+function findListTerms(sender, column_name)
+{    
+    // check if browser can perform xmlhttp
+    xmlhttp_details = GetXmlHttpObject()
+    xmlhttp_values = GetXmlHttpObject()
+
+    // Make sure browser supports xmlhttp    
+    if (xmlhttp_details == null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+
+    term = sender.value;
+
+    // URL for each loading page
+    var url_details = "load_list_field_details.psp";
+    url_details = url_details + "?search_term=" + term + "&column_name=" + column_name;
+
+    var url_values = "load_list_field_values.psp";
+    url_values = url_values + "?search_term=" + term + "&column_name=" + column_name;
+
+    // xmlhttp callbacks
+    xmlhttp_details.onreadystatechange=function()
+    {
+        if (xmlhttp_details.readyState==4)
+        {
+            top.frames['bottom'].document.getElementById('selected_field_details').innerHTML = xmlhttp_details.responseText;
+        }
+    }
+    
+    xmlhttp_values.onreadystatechange=function()
+    {
+        if (xmlhttp_values.readyState==4)
+        {
+            top.frames['bottom'].document.getElementById('selected_field_values').innerHTML = xmlhttp_values.responseText;
+        }
+    }
+    
+    // Get details
+    xmlhttp_details.open("GET", url_details, true);
+    xmlhttp_details.send(null);
+    
+    // Get values 
+    xmlhttp_values.open("GET", url_values ,true);
+    xmlhttp_values.send(null);
 }
 
 function additionalFieldChecked(sender)

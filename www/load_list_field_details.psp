@@ -1,0 +1,29 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+column_name = form["column_name"]
+%>
+
+<th width="200" class="meta_th">Field Name</th>
+<th width="80" class="meta_th">Data Type</th>
+<th width="250" class="meta_th">Description/Expected Values</th>
+<th class="meta_th">Details</th>
+<%
+from qiime_data_access import *
+field_details = QiimeDataAccess().getFieldDetails(column_name)
+req.write('<tr>\n')
+req.write('<td style="vertical-align:top;">%s</td>' % field_details[0])
+req.write('<td style="vertical-align:top;">%s</td>' % field_details[1])
+req.write('<td style="vertical-align:top;">%s</td>' % field_details[2])
+req.write('<td style="vertical-align:top;">%s</td>' % field_details[3])
+req.write('</tr>\n')
+%>

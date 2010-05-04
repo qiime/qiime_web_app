@@ -1,0 +1,33 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from qiime_data_access import *
+
+search_term = form["search_term"]
+column_name = form["column_name"]
+%>
+
+<th class="meta_th">Possible Values</th>
+<tr><td>
+<select id="values" name="values" size="10" multiple style="width:100%;">
+
+<%
+field_matches = QiimeDataAccess().getTermMatches(column_name, search_term)
+req.write(str(field_matches))
+for match in field_matches:
+    req.write('<option value="%s">%s</option>' % (str(match), str(match)))
+
+# End loop
+%>
+
+</select>
+</td></tr>

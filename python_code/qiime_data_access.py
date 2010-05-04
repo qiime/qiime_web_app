@@ -498,15 +498,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         try:
             con = self.getTestDatabaseConnection()
             table_name = None
-            field_name = '"' + field_name.upper() + '"'
             
             # Find the table name
             log.append('Locating table name...')
             table_name = self.findMetadataTable(field_name)
-            ######### DEBUGGING
-            if table_name not in ['STUDY', '"SAMPLE"', 'SEQUENCE_PREP', 'COMMON_FIELDS', 'HOST']:
-                return
-            ######### END EBUGGING
             if table_name == None or table_name == '':
                 log.append('Could not determine table for field "%s" with value "%s"' % (field_name, field_value))
                 raise Exception
@@ -523,6 +518,10 @@ class QiimeDataAccess( AbstractDataAccess ):
                 log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
                 field_value = results[0]
             
+            ########################################
+            ### For STUDY
+            ########################################
+            
             # Study is special - handle separately since row is guaranteed to exist and there
             # can only be one row
             if table_name == '"STUDY"':
@@ -532,7 +531,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 results = con.cursor().execute(statement)
                 con.cursor().execute('commit')
                 return
-                        
+            
             # Find the assocaited sample_id
             log.append('Determining if required key row exists...')
             statement = 'select sample_id from "SAMPLE" where sample_name = \'%s\'' % (key_field)
@@ -540,27 +539,39 @@ class QiimeDataAccess( AbstractDataAccess ):
             results = con.cursor().execute(statement).fetchone()
             if results != None:
                 sample_id = results[0]
-                log.append('Found sample_id: %s' + str(sample_id))
+                log.append('Found sample_id: %s' % str(sample_id))
             else:
                 log.append('Could not determine sample_id. Skipping write for field "%s" with value "%s".' % (field_name, field_value))
                 raise Exception
 
-            # If it ain't there, create it
-            log.append('Attempting to create new key row...')
-            statement = 'select * from %s where sample_id = %s' % (table_name, sample_id)
-            log.append(statement)
-            results = con.cursor().execute(statement).fetchone()
-            if results == None:
-                log.append('No row found, inserting new row:')
-                statement = 'insert into %s (sample_id) values (%s)' % (table_name, field_value)
+            ########################################
+            ### For SAMPLE and SEQUENCE_PREP
+            ########################################
+
+            if table_name in ['"SAMPLE"', '"SEQUENCE_PREP"']:
+                # If it ain't there, create it
+                log.append('Attempting to create new key row...')
+                statement = 'select * from %s where sample_id = %s' % (table_name, sample_id)
                 log.append(statement)
-                con.cursor().execute(statement)
+                results = con.cursor().execute(statement).fetchone()
+                if results == None:
+                    log.append('No row found, inserting new row:')
+                    statement = 'insert into %s (sample_id) values (%s)' % (table_name, field_value)
+                    log.append(statement)
+                    con.cursor().execute(statement)
+                
+                # Attempt to write the metadata field
+                log.append('Writing metadata value...')
+                statement = 'update %s set %s=\'%s\' where sample_id = %s' % (table_name, field_name, field_value, sample_id)
+                log.append(statement)
+                results = con.cursor().execute(statement)
             
-            # Attempt to write the metadata field
-            log.append('Writing metadata value...')
-            statement = 'update %s set %s=\'%s\' where sample_id = %s' % (table_name, field_name, field_value, sample_id)
-            log.append(statement)
-            results = con.cursor().execute(statement)
+            ########################################
+            ### For SAMPLE and SEQUENCE_PREP
+            ########################################
+            
+            else:
+                return table_name
             
             # Finally, commit the changes
             results = con.cursor().execute('commit')
