@@ -169,8 +169,8 @@ class NumericColumn(BaseColumn):
         
     def writeJSValidation(self):
         function_string = 'validateNumericField(this, \'%s\')' % self.column_name 
-        validation_string = ' onclick=\"%s\"; ' % (function_string)
-        validation_string += ' onkeyup=\"%s\"; ' % (function_string)
+        validation_string = ' onclick="%s;" ' % (function_string)
+        validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
         
 class ListColumn(BaseColumn):
@@ -189,8 +189,8 @@ class ListColumn(BaseColumn):
         
     def writeJSValidation(self):
         function_string = 'findListTerms(this, \'%s\')' % self.column_name 
-        validation_string = ' onclick=\"%s\"; ' % (function_string)
-        validation_string += ' onkeyup=\"%s\"; ' % (function_string)
+        validation_string = ' onclick="%s;" ' % (function_string)
+        validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
         
 class OntologyColumn(BaseColumn):
@@ -209,8 +209,8 @@ class OntologyColumn(BaseColumn):
         
     def writeJSValidation(self):
         function_string = 'findListTerms(this, \'%s\')' % self.column_name 
-        validation_string = ' onclick=\"%s\"; ' % (function_string)
-        validation_string += ' onkeyup=\"%s\"; ' % (function_string)
+        validation_string = ' onclick="%s;" ' % (function_string)
+        validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
     
 class TextColumn(BaseColumn):
@@ -363,7 +363,7 @@ class MetadataTable(object):
         while x < column_count:
             html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
             x += 1
-
+        
         #####################################
         # Print the table rows
         #####################################
@@ -398,7 +398,9 @@ class MetadataTable(object):
                     # For fields that are not valid
                     else:
                         cell_color = '#FF8888'
-                        html_table += '<td><input style=\"background-color:%s;\" type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\" %s></td>\n' % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation())
+                        html_table += '<td><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
+                            <a href="" onclick="replaceWithCurrent(\'%s\');return false;">replace all</a></td>\n' \
+                            % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation(), unique_column_name)
                     x += 1
                     
             html_table +='</tr>\n'

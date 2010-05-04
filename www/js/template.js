@@ -18,6 +18,37 @@ function testMe()
     alert("I work, there for I am.");
 }
 
+function replaceWithCurrent(field_name)
+{
+    field_name_parts = field_name.split(':');
+    
+    // Loop over form elements. For those elements that have a similar name, replace value
+    for (i = 0; i < document.metadata_form.elements.length; i++)
+    {
+        e = document.metadata_form.elements[i];
+        
+        // Skip hidden fields
+        if (e.type == 'hidden')
+        {
+            continue;
+        }
+        
+        element_id_parts = e.id.split(':');
+        
+        if
+        (
+            (element_id_parts[0] == field_name_parts[0]) &&
+            (element_id_parts[2] == field_name_parts[2]) &&
+            (element_id_parts[3] == field_name_parts[3])
+        )
+        {
+            current_field = document.getElementById(field_name);
+            e.value = current_field.value;
+            e.style.background = current_field.style.background;
+        }
+    }
+}
+
 function validateNumericField(sender, column_name)
 {
     // check if browser can perform xmlhttp
@@ -29,23 +60,27 @@ function validateNumericField(sender, column_name)
     }
     
     // Is the term in a valid numeric format?
-    var term = sender.value;
+    if (isNaN(sender.value) || (sender.value == ""))
+    {
+        // Not a number
+        sender.style.background = "#FF8888";
+    }
+    else
+    {
+        sender.style.background = "#88FF88";
+    }
     
     var url = "load_numeric_field_details.psp";
-    url=url + "?search_term=" + term + "&column_name=" + column_name;
+    url=url + "?column_name=" + column_name;
 
     xmlhttp.onreadystatechange=function()
     {
         if (xmlhttp.readyState==4)
         {
-            // Clear the table first
-            //document.getElementById('package_fields').innerHTML = "";
             top.frames['bottom'].document.getElementById('selected_field_details').innerHTML = xmlhttp.responseText;
-            
-            //package_fields = xmlhttp.responseText.split('#');
-            //writeFieldValues('package_fields', package_fields);
         }
     }
+    
     //perform a GET 
     xmlhttp.open("GET",url,true);
     xmlhttp.send(null);

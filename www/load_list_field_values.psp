@@ -23,7 +23,7 @@ field_id = form["field_id"]
 <%
 js = 'field = top.frames[\'top\'].document.getElementById(\'' + field_id + '\'); \n';
 js += 'field.value = this.value; \n'
-js += 'field.style.background = \'#CCFFCC\'; \n'
+js += 'field.style.background = \'#88FF88\'; \n'
 
 req.write('<select id="values" name="values" size="10" style="width:100%%;" onchange="%s">\n' % (js))
 
