@@ -397,8 +397,8 @@ class MetadataTable(object):
                     
                     # For fields that are not valid
                     else:
-                        cell_color = '#FF5555'
-                        html_table += '<td style=\"background-color:%s;\"><input type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\" %s></td>\n' % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation())
+                        cell_color = '#FF8888'
+                        html_table += '<td><input style=\"background-color:%s;\" type=\"text\" id=\"%s\" name=\"%s\" value=\"%s\" %s></td>\n' % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation())
                     x += 1
                     
             html_table +='</tr>\n'

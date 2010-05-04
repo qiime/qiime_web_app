@@ -13,9 +13,6 @@ __status__ = "Production"
 
 var xmlhttp
 
-/*
-Loads and writes field values for the selected package types
-*/
 function testMe()
 {
     alert("I work, there for I am.");
@@ -74,7 +71,7 @@ function findListTerms(sender, column_name)
     url_details = url_details + "?search_term=" + term + "&column_name=" + column_name;
 
     var url_values = "load_list_field_values.psp";
-    url_values = url_values + "?search_term=" + term + "&column_name=" + column_name;
+    url_values = url_values + "?search_term=" + term + "&column_name=" + column_name + "&field_id=" + sender.id;
 
     // xmlhttp callbacks
     xmlhttp_details.onreadystatechange=function()

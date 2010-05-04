@@ -20,6 +20,7 @@ column_name = form["column_name"]
 <th width="80" class="meta_th">Data Type</th>
 <th width="250" class="meta_th">Description/Expected Values</th>
 <th class="meta_th">Details</th>
+
 <%
 from qiime_data_access import *
 field_details = QiimeDataAccess().getFieldDetails(column_name)

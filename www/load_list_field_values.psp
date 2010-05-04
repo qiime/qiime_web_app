@@ -14,20 +14,26 @@ from qiime_data_access import *
 
 search_term = form["search_term"]
 column_name = form["column_name"]
+field_id = form["field_id"]
 %>
 
 <th class="meta_th">Possible Values</th>
 <tr><td>
-<select id="values" name="values" size="10" multiple style="width:100%;">
 
 <%
+js = 'field = top.frames[\'top\'].document.getElementById(\'' + field_id + '\'); \n';
+js += 'field.value = this.value; \n'
+js += 'field.style.background = \'#CCFFCC\'; \n'
+
+req.write('<select id="values" name="values" size="10" style="width:100%%;" onchange="%s">\n' % (js))
+
 field_matches = QiimeDataAccess().getTermMatches(column_name, search_term)
 req.write(str(field_matches))
 for match in field_matches:
-    req.write('<option value="%s">%s</option>' % (str(match), str(match)))
+    req.write('<option value="%s">%s</option>\n' % (str(match), str(match)))
 
 # End loop
+req.write('</select>\n')
 %>
 
-</select>
 </td></tr>

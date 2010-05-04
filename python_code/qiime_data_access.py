@@ -442,10 +442,16 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Finds close term matches for columns of type onotlogy or list
         """
         try:
-            matches = []
+            # Handle the ontology prefix:
+            term_parts = term_value.split(':')
+            if len(term_parts) > 1:
+                term_value = term_parts[1]
+            
             details = self.getFieldDetails(column_name)
             if len(details) == 0:
                 return None
+            
+            matches = []
             column_type = details[1]
             
             if column_type == 'list':
