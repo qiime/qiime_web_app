@@ -16,7 +16,8 @@ __status__ = "Production"
         <li>
             <form id="create_new_template" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="new_template.psp">
-                <p>Generate a MIENS-compliant metadata template:<input type="submit" value="Go"></p>
+                <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
+                Generate a MIENS-compliant metadata template</a>
             </form>
         </li>
     </ul>
@@ -26,12 +27,14 @@ __status__ = "Production"
         <li>
             <form id="create_new_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="./new_study.psp">
-                <p>Create a new Study:<input type="submit" value="Go"></p>
+                <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
+                Create a new Study</a>
             </form>
         </li><li>
             <form id="associate_data_to_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="./select_user_study.psp">
-                <p>Upload SFF or Metadata to one of your studies:<input type="submit" value="Go"></p>
+                <a href="" onclick="document.forms['associate_data_to_study'].submit(); return false;">
+                Upload SFF or Metadata to one of your studies</a>
             </form>
         </li>
     </ul>
