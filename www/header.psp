@@ -33,6 +33,6 @@ from qiime_data_access import QiimeDataAccess
     <input type="hidden" id="page" name="page" value="select_task.psp">
 </form>
 <a href="#" onclick="send_me_home.submit();"><img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 /></a>
-<table width="100%" bgcolor="#CCCCCC">
-<tr><td class="gray_background">Logged in as <%=sess['username']%></td></tr>
+<table class="header_table">
+<tr><td>Logged in as <%=sess['username']%></td></tr>
 </table>

@@ -31,11 +31,8 @@ if templates != None:
 %>
 
 <p/>
-<input type="submit" value="Submit Metadata">
+<input type="submit" value="Submit Metadata"> (Fix errors above to enable submit button.)
 <p/>
 </form>
 
 <%@ include file="footer.psp" %>
-
-
-

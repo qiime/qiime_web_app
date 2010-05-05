@@ -94,9 +94,26 @@ class ColumnFactory(object):
         #return True
 
     def _validateDate(self, date):
-        """ returns true if provided date is in a valid format, false otherwise 
+        """Returns true if provided date is in a valid format, false otherwise
+        
+        Borrowed from http://regexlib.com/DisplayPatterns.aspx?cattabindex=4&categoryId=5
+        
+        Description: Following expression can be used to validate a datetime column from SQL Server.
+        This expression is an enhanced version of Scott Watermasysk's date/time submission. It now
+        accepts leading zeros in months, days, and hours. In addition, this expression properly handles
+        the 11th hour. Watermasysk's would take the 10th and 12th hour but not the 11th. This regex has
+        been tweaked to do so. Does not handle the February 29th problem on non-leap years yet. Will
+        learn a little more about RegEx and do so in later submission. 
+        
+        Matches: 11/30/2003 10:12:24 am | 2/29/2003 08:14:56 pm | 5/22/2003
+        Non-Matches: 11/31/2003 10:12:24 am | 2/30/2003 08:14:56 pm | 5/22/2003 14:15
         """
-        return True
+        
+        re_string = '^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-2]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])\s))([AM|PM|am|pm]{2,2})))?$'
+        if re.match(re_string, date) == None:
+            return False
+        else:
+            return True
 
     def _getControlledVocabs(self, column_name, datatype):
         if datatype == 'list':
@@ -122,6 +139,8 @@ class ColumnFactory(object):
             column = NumericColumn(column_name, self._validateNumeric, self._isInvalid)
         elif datatype == 'text':
             column = TextColumn(column_name, self._validateText, self._isInvalid)
+        elif datatype == 'date':
+            column = DateColumn(column_name, self._validateDate, self._isInvalid)
         elif datatype == 'list':
             column = ListColumn(column_name, self._validateList, self._isInvalid, controlled_vocab_list)
         elif datatype == 'ontology':
@@ -224,6 +243,12 @@ class DateColumn(BaseColumn):
     """
     def __init__(self, column_name, validate, isInvalid):
         super(DateColumn, self).__init__(column_name, validate, isInvalid)
+        
+    def writeJSValidation(self):
+        function_string = 'validateDateField(this, \'%s\')' % self.column_name 
+        validation_string = ' onclick="%s;" ' % (function_string)
+        validation_string += ' onkeyup="%s;" ' % (function_string)
+        return validation_string
         
 class MetadataTable(object):
     """ The parent class which represents a metadata table object
@@ -399,7 +424,7 @@ class MetadataTable(object):
                     else:
                         cell_color = '#FF8888'
                         html_table += '<td><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
-                            <a href="" onclick="replaceWithCurrent(\'%s\');return false;">replace all</a></td>\n' \
+                            <a href="" onclick="replaceWithCurrent(\'%s\');return false;"><div style="font-size:11px">replace all</div></a></td>\n' \
                             % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation(), unique_column_name)
                     x += 1
                     

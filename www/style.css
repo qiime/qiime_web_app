@@ -10,6 +10,15 @@ td
     border-style: dotted;
     border-width: 1px;
 }
+.header_table
+{
+    width: 100%;
+    background-color: #DDDDDD;
+    border-width: 0px;
+    padding: 5px;
+    text-align: left;
+    vertical-align: middle;
+}
 .meta_td
 {
     padding: 2px;
@@ -29,7 +38,7 @@ td
 {
     padding: 2px;
     border: 1px solid black;
-    background-color:#CCCCCC;    
+    background-color:#DDDDDD;    
 }
 .metadata_table
 {

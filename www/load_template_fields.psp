@@ -53,7 +53,6 @@ def outputFields(field_list, prefix, header_text):
     #Output a header row
     if header_text != '':
         style = 'background:#444444;color:#FFFFFF;vertical-align:middle;font-size:20px'
-        req.write('<tr style=\'%s\'><td colspan=5></td></tr>' % (style))
         req.write('<tr style=\'%s\'><td colspan=5>%s</td><tr>' % (style, header_text))
         #req.write('<tr style=\'%s\'><td colspan=5></td></tr>' % (style))
 
