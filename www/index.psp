@@ -15,14 +15,20 @@ from qiime_data_access import QiimeDataAccess
 %>
 
 <html>
-<head><title>Please Log In</title></head>
+<head>
+<title>Please Log In</title>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
 <body>
 
 <form action="fusebox.psp" method="post" name="login_form" id="login_form">
 <input type="hidden" name="page" value="./select_task.psp">
 </form>
 
-<h2>Qiime Login</h2>
+<img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 />
+<table class="header_table">
+<tr><td>Please Log In</td></tr>
+</table>
 
 <%
 
