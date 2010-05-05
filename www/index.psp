@@ -65,7 +65,7 @@ if form.has_key('username'):
 
 # end
 %>
-
+<p/>
 <table>
 <form method="post" action="index.psp">
     <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
