@@ -11,7 +11,9 @@ __status__ = "Production"
 
 */
 
-var xmlhttp
+var xmlhttp;
+var invalid_color = '#EEEEFF';
+var valid_color = '#88FF88';
 
 function testMe()
 {
@@ -62,7 +64,7 @@ function replaceWithCurrent(field_name)
     }
 }
 
-function validateDateField(sender, column_name)
+function validateDateField(sender, column_name, reg_exp)
 {
     // check if browser can perform xmlhttp
     xmlhttp=GetXmlHttpObject()
@@ -72,18 +74,17 @@ function validateDateField(sender, column_name)
         return;
     }
     
-    //re_string = new RegExp(/^\s*$/);
-    re_string = new RegExp(/^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-2]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])\s))([AM|PM|am|pm]{2,2})))?$/);
+    regexp = new RegExp(reg_exp);
 
-    // Is the term in a valid numeric format?
-    if ( (hasWhiteSpace(sender.value)) || (!re_string.test(sender.value)))
+    // Is the term in a valid date format?
+    if ( (hasWhiteSpace(sender.value)) || (!regexp.test(sender.value)))
     {
         // Not a number
-        sender.style.background = "#FF8888";
+        sender.style.background = invalid_color;
     }
     else
     {
-        sender.style.background = "#88FF88";
+        sender.style.background = valid_color;
     }
     
     var url = "load_field_details.psp";
@@ -103,7 +104,7 @@ function validateDateField(sender, column_name)
     xmlhttp.send(null);
 }
 
-function validateNumericField(sender, column_name)
+function validateYesNoField(sender, column_name, reg_exp)
 {
     // check if browser can perform xmlhttp
     xmlhttp=GetXmlHttpObject()
@@ -113,15 +114,57 @@ function validateNumericField(sender, column_name)
         return;
     }
     
+    regexp = new RegExp(reg_exp)
+    
     // Is the term in a valid numeric format?
-    if (isNaN(sender.value) || (hasWhiteSpace(sender.value)))
+    if ((!regexp.test(sender.value)) || (hasWhiteSpace(sender.value)))
     {
         // Not a number
-        sender.style.background = "#FF8888";
+        sender.style.background = invalid_color;
     }
     else
     {
-        sender.style.background = "#88FF88";
+        sender.style.background = valid_color;
+    }
+    
+    var url = "load_field_details.psp";
+    url=url + "?column_name=" + column_name;
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            top.frames['bottom'].document.getElementById('selected_field_details').innerHTML = xmlhttp.responseText;
+            top.frames['bottom'].document.getElementById('selected_field_values').innerHTML = '';
+        }
+    }
+    
+    //perform a GET 
+    xmlhttp.open("GET",url,true);
+    xmlhttp.send(null);
+}
+
+function validateNumericField(sender, column_name, reg_exp)
+{
+    // check if browser can perform xmlhttp
+    xmlhttp=GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+    
+    regexp = new RegExp(reg_exp);
+
+    // Is the term in a valid numeric format?
+    if ((!regexp.test(sender.value)) || (hasWhiteSpace(sender.value)))
+    {
+        // Not a number
+        sender.style.background = invalid_color;
+    }
+    else
+    {
+        sender.style.background = valid_color;
     }
     
     var url = "load_field_details.psp";

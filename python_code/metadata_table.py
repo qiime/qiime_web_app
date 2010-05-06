@@ -21,11 +21,9 @@ import os
 class ColumnFactory(object):
     """ Factory class for producing metadata columns
     """
-    _qiimeDataAccess = None
     
     def __init__(self, isInvalid):
         self._isInvalid = isInvalid
-        self._qiimeDataAccess = QiimeDataAccess()
 
     def _columnExists(self, column_name):
         found = False
@@ -36,84 +34,6 @@ class ColumnFactory(object):
                 break
                       
         return found
-        
-    def _validateNumeric(self, value):
-        """ return true if number, false otherwise
-        """
-        # Matches number of the form 234, 2.34, or .234
-        if re.match('^\-*[0-9]+$|^\-*[0-9]*\.[0-9]+$', value) == None:
-            return False
-        else:
-            return True
-        
-    def _validateText(self, value):
-        """ return true if number, false otherwise
-        """
-        if isinstance(value, str):
-            return True
-        else:
-            return False
-
-    # Consider refactoring with _validateOntology()
-    def _validateList(self, value, list_names):
-        """ returns true if value is in list designated by list_name, 
-        false otherwise
-        """
-        for list_name in list_names:
-            if self._qiimeDataAccess.validateListValue(list_name, value) > 0:
-                return True
-        
-        #for list_name in list_names:
-        #    if (ListManager().checkListValue(list_name, value)):
-        #        return True
-                
-        # Not found in any list
-        return False
-        
-        #return True
-        
-    def _validateOntology(self, term, ontology_names):
-        """ returns true if term is in ontology designated by ontology_name, 
-        false otherwise 
-        """
-        for ontology_name in ontology_names:
-            term_values = term.split(':')
-            if len(term_values) != 2:
-                return False
-            
-            if self._qiimeDataAccess.validateOntologyValue(ontology_name, term_values[1]) > 0:
-                return True
-        
-        #for ontology_name in ontology_names:
-        #    if (ListManager().checkOntologyValue(ontology_name, term)):
-        #        return True
-                
-        # Not found in any list
-        return False
-        
-        #return True
-
-    def _validateDate(self, date):
-        """Returns true if provided date is in a valid format, false otherwise
-        
-        Borrowed from http://regexlib.com/DisplayPatterns.aspx?cattabindex=4&categoryId=5
-        
-        Description: Following expression can be used to validate a datetime column from SQL Server.
-        This expression is an enhanced version of Scott Watermasysk's date/time submission. It now
-        accepts leading zeros in months, days, and hours. In addition, this expression properly handles
-        the 11th hour. Watermasysk's would take the 10th and 12th hour but not the 11th. This regex has
-        been tweaked to do so. Does not handle the February 29th problem on non-leap years yet. Will
-        learn a little more about RegEx and do so in later submission. 
-        
-        Matches: 11/30/2003 10:12:24 am | 2/29/2003 08:14:56 pm | 5/22/2003
-        Non-Matches: 11/31/2003 10:12:24 am | 2/30/2003 08:14:56 pm | 5/22/2003 14:15
-        """
-        
-        re_string = '^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-2]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])\s))([AM|PM|am|pm]{2,2})))?$'
-        if re.match(re_string, date) == None:
-            return False
-        else:
-            return True
 
     def _getControlledVocabs(self, column_name, datatype):
         if datatype == 'list':
@@ -136,15 +56,17 @@ class ColumnFactory(object):
         
         # Create the appropriate type of column
         if datatype == 'numeric':
-            column = NumericColumn(column_name, self._validateNumeric, self._isInvalid)
+            column = NumericColumn(column_name, self._isInvalid)
         elif datatype == 'text':
-            column = TextColumn(column_name, self._validateText, self._isInvalid)
+            column = TextColumn(column_name, self._isInvalid)
+        elif datatype == 'yn':
+            column = YesNoColumn(column_name, self._isInvalid)
         elif datatype == 'date':
-            column = DateColumn(column_name, self._validateDate, self._isInvalid)
+            column = DateColumn(column_name, self._isInvalid)
         elif datatype == 'list':
-            column = ListColumn(column_name, self._validateList, self._isInvalid, controlled_vocab_list)
+            column = ListColumn(column_name, self._isInvalid, controlled_vocab_list)
         elif datatype == 'ontology':
-            column = OntologyColumn(column_name, self._validateOntology, self._isInvalid, controlled_vocab_list)
+            column = OntologyColumn(column_name, self._isInvalid, controlled_vocab_list)
 
         return column
 
@@ -152,12 +74,9 @@ class BaseColumn(object):
     """ The base class for all column types in the metadata table. This class 
     implements common functionality for all column classes.
     """
-    def __init__(self, column_name, validate, isInvalid):
+    def __init__(self, column_name, isInvalid):
         # Name of this column. Should be unique in MetadataTable object
         self.column_name = column_name
-        
-        # Validation function pointer
-        self.validate = validate
         
         # Callback to notify parent of an invalid value entry
         self.isInvalid = isInvalid
@@ -168,40 +87,79 @@ class BaseColumn(object):
         # List of invalid indicies in this column
         self._invalid_indicies = []
         
+        # RegEx validation string (if applicable)
+        self.reg_exp = ''
+        
     def writeJSValidation(self):
         """ Writes the Javascript validation funciton if necessary
         """
         return ''
     
-    def addValue(self, value):
+    def _addValue(self, value):
         status = 'good'
-        if not self.validate(value):
+        if not self._validate(value):
             status = 'bad'
             self.isInvalid(self.column_name, len(self.values))     
         self.values.append((value, status))
         
+    def _validate(self, value):
+        """ Validates a value of this column type
+        """
+        return True
+
 class NumericColumn(BaseColumn):
     """ Numeric implementation of BaseColumn class
     """
-    def __init__(self, column_name, validate, isInvalid):
-        super(NumericColumn, self).__init__(column_name, validate, isInvalid)
+    def __init__(self, column_name, isInvalid):
+        super(NumericColumn, self).__init__(column_name, isInvalid)
+        self.reg_exp = '^\-*[0-9]+$|^\-*[0-9]*\.[0-9]+$'
         
     def writeJSValidation(self):
-        function_string = 'validateNumericField(this, \'%s\')' % self.column_name 
+        function_string = 'validateNumericField(this, \'%s\', \'%s\')' % (self.column_name, self.reg_exp.replace('\\', '\\\\'))
         validation_string = ' onclick="%s;" ' % (function_string)
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
         
+    def _validate(self, value):
+        """ return true if number, false otherwise
+        """
+        # Matches number of the form 234, 2.34, or .234
+        if re.match(self.reg_exp, value) == None:
+            return False
+        else:
+            return True
+        
+class YesNoColumn(BaseColumn):
+    """ Yes/No implementation of BaseColumn class
+    """
+    def __init__(self, column_name, isInvalid):
+        super(YesNoColumn, self).__init__(column_name, isInvalid)
+        self.reg_exp = '^y$|^Y$|^n$|^N$'
+        
+    def writeJSValidation(self):
+        function_string = 'validateYesNoField(this, \'%s\', \'%s\')' % (self.column_name, self.reg_exp.replace('\\', '\\\\'))
+        validation_string = ' onclick="%s;" ' % (function_string)
+        validation_string += ' onkeyup="%s;" ' % (function_string)
+        return validation_string
+    
+    def _validate(self, value):
+        """ return true if y/Y/n/N, false otherwise
+        """
+        if re.match(self.reg_exp, value):
+            return True
+        else:
+            return False
+
 class ListColumn(BaseColumn):
     """ List implementation of BaseColumn class
     """
-    def __init__(self, column_name, validate, isInvalid, list_names):
-        super(ListColumn, self).__init__(column_name, validate, isInvalid)
+    def __init__(self, column_name, isInvalid, list_names):
+        super(ListColumn, self).__init__(column_name, isInvalid)
         self.list_names = list_names
         
-    def addValue(self, value):
+    def _addValue(self, value):
         status = 'good'
-        if not self.validate(value, self.list_names):
+        if not self._validate(value, self.list_names):
             status = 'bad'
             self.isInvalid(self.column_name, len(self.values))
         self.values.append((value, status))
@@ -211,17 +169,29 @@ class ListColumn(BaseColumn):
         validation_string = ' onclick="%s;" ' % (function_string)
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
+
+    # Consider refactoring with _validateOntology()
+    def _validate(self, value, list_names):
+        """ returns true if value is in list designated by list_name, 
+        false otherwise
+        """
+        for list_name in list_names:
+            if QiimeDataAccess().validateListValue(list_name, value) > 0:
+                return True
         
+        # Not found in any list
+        return False
+
 class OntologyColumn(BaseColumn):
     """ Ontology implementation of BaseColumn class
     """
-    def __init__(self, column_name, validate, isInvalid, ontology_names):
-        super(OntologyColumn, self).__init__(column_name, validate, isInvalid)
+    def __init__(self, column_name, isInvalid, ontology_names):
+        super(OntologyColumn, self).__init__(column_name, isInvalid)
         self.ontology_names = ontology_names
 
-    def addValue(self, value):
+    def _addValue(self, value):
         status = 'good'
-        if not self.validate(value, self.ontology_names):
+        if not self._validate(value, self.ontology_names):
             status = 'bad'
             self.isInvalid(self.column_name, len(self.values))
         self.values.append((value, status))
@@ -232,23 +202,67 @@ class OntologyColumn(BaseColumn):
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
     
+    def _validate(self, term, ontology_names):
+        """ returns true if term is in ontology designated by ontology_name, 
+        false otherwise 
+        """
+        for ontology_name in ontology_names:
+            term_values = term.split(':')
+            if len(term_values) != 2:
+                return False
+            
+            if QiimeDataAccess().validateOntologyValue(ontology_name, term_values[1]) > 0:
+                return True
+        
+        # Not found in any list
+        return False
+    
 class TextColumn(BaseColumn):
     """ Text implementation of BaseColumn class
     """
-    def __init__(self, column_name, validate, isInvalid):
-        super(TextColumn, self).__init__(column_name, validate, isInvalid)
+    def __init__(self, column_name, isInvalid):
+        super(TextColumn, self).__init__(column_name, isInvalid)
+        
+    def _validate(self, value):
+        """ return true if number, false otherwise
+        """
+        if isinstance(value, str):
+            return True
+        else:
+            return False
         
 class DateColumn(BaseColumn):
     """ Date implementation of BaseColumn class
     """
-    def __init__(self, column_name, validate, isInvalid):
-        super(DateColumn, self).__init__(column_name, validate, isInvalid)
+    def __init__(self, column_name, isInvalid):
+        super(DateColumn, self).__init__(column_name, isInvalid)
+        self.reg_exp = '^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-2]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])\s))([AM|PM|am|pm]{2,2})))?$'
         
     def writeJSValidation(self):
-        function_string = 'validateDateField(this, \'%s\')' % self.column_name 
+        function_string = 'validateDateField(this, \'%s\', \'%s\')' % (self.column_name, self.reg_exp.replace('\\', '\\\\'))
         validation_string = ' onclick="%s;" ' % (function_string)
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
+    
+    def _validate(self, date):
+        """Returns true if provided date is in a valid format, false otherwise
+        
+        Borrowed from http://regexlib.com/DisplayPatterns.aspx?cattabindex=4&categoryId=5
+        
+        Description: Following expression can be used to validate a datetime column from SQL Server.
+        This expression is an enhanced version of Scott Watermasysk's date/time submission. It now
+        accepts leading zeros in months, days, and hours. In addition, this expression properly handles
+        the 11th hour. Watermasysk's would take the 10th and 12th hour but not the 11th. This regex has
+        been tweaked to do so. Does not handle the February 29th problem on non-leap years yet. Will
+        learn a little more about RegEx and do so in later submission. 
+        
+        Matches: 11/30/2003 10:12:24 am | 2/29/2003 08:14:56 pm | 5/22/2003
+        Non-Matches: 11/31/2003 10:12:24 am | 2/30/2003 08:14:56 pm | 5/22/2003 14:15
+        """
+        if re.match(self.reg_exp, date) == None:
+            return False
+        else:
+            return True
         
 class MetadataTable(object):
     """ The parent class which represents a metadata table object
@@ -300,9 +314,6 @@ class MetadataTable(object):
         headers = reader.next()
         for column in headers:
             try:
-                # First column starts with a #, make sure to strip it
-                if column.startswith('#'):
-                    column = column[1:]
                 if column in column_name_list:
                     result = column_factory.createColumn(column, column_name_list[column])
                     if result:
@@ -328,7 +339,7 @@ class MetadataTable(object):
                 # Skip any rows starting with white space
                 if column.startswith('\t') or column.startswith(' '):
                     continue
-                self._columns[i].addValue(column)
+                self._columns[i]._addValue(column)
                 i += 1
 
         #self._printTable()
@@ -342,6 +353,7 @@ class MetadataTable(object):
         for row in self._invalid_rows:
             print row
 
+    """ depreciated
     def _printTable(self):
         print '\n\n'
         column_count = len(self._columns)
@@ -365,6 +377,7 @@ class MetadataTable(object):
             y += 1 
             
         print '\n\n'
+    """
 
     def printHTMLTable(self):
         # Determine the type of file we're dealing with
@@ -422,8 +435,8 @@ class MetadataTable(object):
                     
                     # For fields that are not valid
                     else:
-                        cell_color = '#FF8888'
-                        html_table += '<td><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
+                        cell_color = '#EEEEFF'
+                        html_table += '<td style="background-color:#DDDDDD;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
                             <a href="" onclick="replaceWithCurrent(\'%s\');return false;"><div style="font-size:11px">replace all</div></a></td>\n' \
                             % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation(), unique_column_name)
                     x += 1
