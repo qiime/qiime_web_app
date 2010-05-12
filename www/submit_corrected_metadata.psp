@@ -97,6 +97,7 @@ for item in form:
     # Now that we're sure all parent rows exist, write the field value to db
     #req.write('<br/> Writing metadata value to database: %s, value %s' % (field_name, field_value))
     req.write('* ')
+    #req.write('field_type: ' + field_type + ', key_field: ' + key_field + ', field_name: ' + field_name + ', field_value: ' + field_value + ', study_id: ' + study_id + '<p/>')
     result = QiimeDataAccess().writeMetadataValue(field_type, key_field, field_name, field_value, study_id)
     if result != None:
         req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))

@@ -19,7 +19,18 @@ sess['study_name'] = parts[1]
 sess['study_dir']=os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
 sess.save()
 
-psp.redirect('fusebox.psp?page=select_upload_type.psp')
+#See if the study folder exists and if not, creates it.
+try:
+    study_dir = sess['study_dir']
+    if not os.path.exists(study_dir):
+            os.mkdir(study_dir)
+except Exception, e:
+    req.write('<h1>Error: The study directory could not be created.</h1>')
+    req.write(str(e))
+    sys.exit()
 
+# end except
+
+psp.redirect('fusebox.psp?page=select_upload_type.psp')
 %>
 

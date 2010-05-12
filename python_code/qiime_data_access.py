@@ -34,7 +34,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._databaseConnection == None:
             try:
-                self._databaseConnection = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
+                self._databaseConnection = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -50,7 +50,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._ontologyDatabaseConnection == None:
             try:
-                self._ontologyDatabaseConnection = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
+                self._ontologyDatabaseConnection = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -66,7 +66,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._testDatabaseConnection == None:
             try:
-                self._testDatabaseConnection = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu/microbe')
+                self._testDatabaseConnection = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -257,17 +257,27 @@ class QiimeDataAccess( AbstractDataAccess ):
             column_values = con.cursor()
             con.cursor().callproc('get_column_dictionary', [column_values])
             for row in column_values:
+                # Skip if no column name is found
                 if row[0] is None:
                     continue
+
+                # Some variables to allow for re-assignment should any of them be None
+                column_name = row[0]
+                expected_values = row[1]
+                description = row[2]
+                data_type = row[3]
+                data_length = row[4]
                 
                 if row[1] == None:
-                    row[1] == ''
+                    expected_values == ''
                 elif row[2] == None:
-                    row[2] == ''
+                    description == ''
                 elif row[3] == None:
-                    row[3] = ''
+                    data_type = ''
+                elif row[4] == None:
+                    data_length = ''
                     
-                list_item = (row[0], row[1], row[2], row[3])
+                list_item = (column_name, expected_values, description, data_type, data_length)
                 column_dictionary.append(list_item)
             return column_dictionary
         except Exception, e:
@@ -538,6 +548,10 @@ class QiimeDataAccess( AbstractDataAccess ):
                 con.cursor().execute('commit')
                 return
             
+            ########################################
+            ### For SAMPLE and SEQUENCE_PREP
+            ########################################
+            
             # Find the assocaited sample_id
             log.append('Determining if required key row exists...')
             statement = 'select sample_id from "SAMPLE" where sample_name = \'%s\'' % (key_field)
@@ -549,10 +563,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             else:
                 log.append('Could not determine sample_id. Skipping write for field "%s" with value "%s".' % (field_name, field_value))
                 raise Exception
-
-            ########################################
-            ### For SAMPLE and SEQUENCE_PREP
-            ########################################
 
             if table_name in ['"SAMPLE"', '"SEQUENCE_PREP"']:
                 # If it ain't there, create it
@@ -571,10 +581,6 @@ class QiimeDataAccess( AbstractDataAccess ):
                 statement = 'update %s set %s=\'%s\' where sample_id = %s' % (table_name, field_name, field_value, sample_id)
                 log.append(statement)
                 results = con.cursor().execute(statement)
-            
-            ########################################
-            ### For SAMPLE and SEQUENCE_PREP
-            ########################################
             
             else:
                 return table_name

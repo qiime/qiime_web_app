@@ -64,6 +64,43 @@ function replaceWithCurrent(field_name)
     }
 }
 
+function validateTextLength(sender, column_name, max_length)
+{
+    // check if browser can perform xmlhttp
+    xmlhttp=GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+
+    // Is the term in a valid date format?
+    if (sender.value.length > max_length)
+    {
+        sender.style.background = invalid_color;
+    }
+    else
+    {
+        sender.style.background = valid_color;
+    }
+    
+    var url = "load_field_details.psp";
+    url=url + "?column_name=" + column_name;
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            top.frames['bottom'].document.getElementById('selected_field_details').innerHTML = xmlhttp.responseText;
+            top.frames['bottom'].document.getElementById('selected_field_values').innerHTML = '';
+        }
+    }
+    
+    //perform a GET 
+    xmlhttp.open("GET",url,true);
+    xmlhttp.send(null);
+ }
+
 function validateDateField(sender, column_name, reg_exp)
 {
     // check if browser can perform xmlhttp

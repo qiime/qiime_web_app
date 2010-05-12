@@ -41,7 +41,7 @@ class ColumnFactory(object):
         elif datatype == 'ontology':
             return QiimeDataAccess().getOntologies(column_name)
 
-    def createColumn(self, column_name, datatype):
+    def createColumn(self, column_name, datatype, length):
         """ Creates a column of the right type based on the column name
         """
         column = None
@@ -58,7 +58,7 @@ class ColumnFactory(object):
         if datatype == 'numeric':
             column = NumericColumn(column_name, self._isInvalid)
         elif datatype == 'text':
-            column = TextColumn(column_name, self._isInvalid)
+            column = TextColumn(column_name, self._isInvalid, length)
         elif datatype == 'yn':
             column = YesNoColumn(column_name, self._isInvalid)
         elif datatype == 'date':
@@ -220,16 +220,26 @@ class OntologyColumn(BaseColumn):
 class TextColumn(BaseColumn):
     """ Text implementation of BaseColumn class
     """
-    def __init__(self, column_name, isInvalid):
+    def __init__(self, column_name, isInvalid, length):
         super(TextColumn, self).__init__(column_name, isInvalid)
+        self.maxLength = length
         
     def _validate(self, value):
         """ return true if number, false otherwise
         """
-        if isinstance(value, str):
-            return True
-        else:
+        if self.maxLength == '':
             return False
+        elif len(value) > self.maxLength:
+            return False
+        else:
+            return True
+        
+    def writeJSValidation(self):
+        function_string = 'validateTextLength(this, \'%s\', \'%s\')' % (self.column_name, self.maxLength)
+        validation_string = ' onclick="%s;" ' % (function_string)
+        validation_string += ' onkeyup="%s;" ' % (function_string)
+        return validation_string
+
         
 class DateColumn(BaseColumn):
     """ Date implementation of BaseColumn class
@@ -260,9 +270,9 @@ class DateColumn(BaseColumn):
         Non-Matches: 11/31/2003 10:12:24 am | 2/30/2003 08:14:56 pm | 5/22/2003 14:15
         """
         if re.match(self.reg_exp, date) == None:
-            return False
-        else:
             return True
+        else:
+            return False
         
 class MetadataTable(object):
     """ The parent class which represents a metadata table object
@@ -306,16 +316,17 @@ class MetadataTable(object):
 
         # Obtain the list of metadata columns for validation
         column_detail_list = QiimeDataAccess().getColumnDictionary()
-        column_name_list = {}
+        column_details = {}
         for item in column_detail_list:
-            column_name_list[item[0]] = item[3]
+            # Store off the data type and data length for each column name
+            column_details[item[0]] = (item[3], item[4])
 
         # Create the header columns
         headers = reader.next()
         for column in headers:
             try:
-                if column in column_name_list:
-                    result = column_factory.createColumn(column, column_name_list[column])
+                if column in column_details:
+                    result = column_factory.createColumn(column, column_details[column][0], column_details[column][1])
                     if result:
                         self._addColumn(result)
                     else:
@@ -326,19 +337,16 @@ class MetadataTable(object):
         # Read the column values
         for row in reader:
             
+            # Skip any rows starting with white space
+            if row[0].startswith('\t') or row[0].startswith(' '):
+                continue
+
             # If a row is incomplete, probably means end of file whitespace
             if len(row) < len(self._columns):
                 continue
             
-            # Skip any additional rows starting with a #
-            if str(row[0]).startswith('#'):
-                continue
-            
             i = 0
             for column in row:
-                # Skip any rows starting with white space
-                if column.startswith('\t') or column.startswith(' '):
-                    continue
                 self._columns[i]._addValue(column)
                 i += 1
 
@@ -419,8 +427,15 @@ class MetadataTable(object):
                 for column in self._columns:
                     # Create a unique column name for processing later
                     unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
-
+                    #print 'column_count: ' + str(column_count) + ', row_count: ' + str(row_count)
+                    #print unique_column_name
+                    #print str(column.values)
+                    
+                    # This is the output value for the HTML page. It may be truncated for display if the
+                    # text is very long.
                     value_output = str(column.values[y][0])
+                    # This will always hold the full value of the field. Used for submission to database.
+                    actual_value = str(column.values[y][0])
                     
                     #For fields that are valid:
                     if column.values[y][1] == 'good':
@@ -429,7 +444,7 @@ class MetadataTable(object):
                             if len(value_output) > max_text_length:
                                 value_output = value_output[:max_text_length] + '...'
                             
-                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, value_output)
+                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
                         cell_color = '#FFFFFF'
                         html_table += '<td style=\"background-color:%s;\">%s%s</td>\n' % (cell_color, hidden_field_text, value_output)
                     
@@ -438,7 +453,7 @@ class MetadataTable(object):
                         cell_color = '#EEEEFF'
                         html_table += '<td style="background-color:#DDDDDD;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
                             <a href="" onclick="replaceWithCurrent(\'%s\');return false;"><div style="font-size:11px">replace all</div></a></td>\n' \
-                            % (cell_color, unique_column_name, unique_column_name, value_output, column.writeJSValidation(), unique_column_name)
+                            % (cell_color, unique_column_name, unique_column_name, actual_value, column.writeJSValidation(), unique_column_name)
                     x += 1
                     
             html_table +='</tr>\n'
