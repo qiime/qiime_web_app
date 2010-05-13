@@ -10,64 +10,83 @@ __status__ = "Development"
 %>
 
 <h3>Please wait while values are written to the database...</h3>
-<p style="font-size:12px">Writing Keys:</p>
+
 <%
+# The obligatory data access import
 from qiime_data_access import *
 
 # Gather all fields for submission
 study_name = sess['study_name']
 study_id = sess['study_id']
+
 sample_key_fields = {}
 prep_key_fields = {}
+host_key_fields = {}
+
 key_field = None
 
+host_fields = []
 prep_fields = []
+all_other_fields = []
 
-# Make one pass to pull out all of the key fields and create rows
+# Make one pass to shuffle all fields into the right buckets
+req.write('<p style="font-size:12px">Writing Sample Key Values:</p>')
+
 for item in form:
     parts = item.split(':')
     
     # Not a metadata field if length of parts is wrong
     if len(parts) != 4:
         continue
-            
+    
+    # Sort the parts into more meaningful variable names
     field_type = parts[0]
     row_num = parts[1]
     field_name = parts[3]
     field_value = form[item]
     
-    if field_type == 'study':
-        key_field = study_name
-    elif field_type == 'sample':
-        if field_name == 'sample_name':
-            # Insert the sample key row and add it to the dictionary
-            #req.write('<br/>Writing "%s" key to database: "%s"; "%s"; value: "%s"' % (field_type, field_name, study_name, field_value))
-            req.write('* ')
-            QiimeDataAccess().createKeyField(study_id, study_name, field_type, field_value)
-            sample_key_fields[row_num] = field_value
-    elif field_type == 'prep':
-        if field_name == 'sample_name':
-            # Capture the value only - will insert after we have done all samples
-            prep_fields.append(item)
-            prep_key_fields[row_num] = field_value
+    # Sample key rows can be inserted now
+    if  field_type == 'sample' and field_name == 'sample_name':
+        QiimeDataAccess().createSampleKey(study_id, field_value)
+        sample_key_fields[row_num] = field_value
+        req.write('* ')
+    # Host rows will be written after all samples are in place
+    elif  field_type == 'sample' and field_name == 'host_subject_id':
+        host_fields.append(item)
+        host_key_fields[row_num] = field_value
+    # Prep rows will be written once all sample rows are in place
+    elif field_type == 'prep' and field_name == 'sample_name':
+        prep_fields.append(item)
+        prep_key_fields[row_num] = field_value
+    # All other fields will be inserted in step 3
+    else:
+        all_other_fields.append(item)
 
-# Insert the prep key fields now that sample rows all exist
+req.write('<p style="font-size:12px">Writing Prep Key Values:</p>')
+
+# Insert the prep key rows now that sample rows all exist
 for item in prep_fields:
-    parts = item.split(':')            
-    field_type = parts[0]
-    field_name = parts[3]
     field_value = form[item]
-    #req.write('<br/>Writing "%s" key to database: "%s"; "%s"; value: "%s"' % (field_type, field_name, study_name, field_value))
+    QiimeDataAccess().createPrepKey(study_id, field_value)
     req.write('* ')
-    QiimeDataAccess().createKeyField(study_id, study_name, field_type, field_value)
 
-req.write('<p style="font-size:12px">Writing Field Values:</p>')
+req.write('<p style="font-size:12px">Writing Host Key Values:</p>')
 
-# Make a 2nd pass to write the rest of the values now that rows exist
-for item in form:
+# Insert the host key rows now that sample rows all exist
+for item in host_fields:
+    parts = item.split(':')
+    row_num = parts[1]
+    field_value = form[item]
+    sample_name = sample_key_fields[row_num]
+    QiimeDataAccess().createHostKey(study_id, sample_name, field_value)
+    req.write('* ')
+
+req.write('<p style="font-size:12px">Writing Metadata Values (this may take a while):</p>')
+
+# Make a final pass to write the rest of the values now that rows exist
+for item in all_other_fields:
     # Reset the key_field
-    key_field = None
-    
+    key_field = None    
     parts = item.split(':')
     
     # Not a metadata field if length of parts is wrong
@@ -78,10 +97,6 @@ for item in form:
     row_num = parts[1]
     field_name = parts[3]
     field_value = form[item]
-    
-    # Skip these since we already processed them
-    if field_name == 'sample_name' or field_name == 'study_name':
-        continue
     
     if field_type == 'sample':
         key_field = sample_key_fields[row_num]
@@ -96,15 +111,14 @@ for item in form:
     
     # Now that we're sure all parent rows exist, write the field value to db
     #req.write('<br/> Writing metadata value to database: %s, value %s' % (field_name, field_value))
-    req.write('* ')
-    #req.write('field_type: ' + field_type + ', key_field: ' + key_field + ', field_name: ' + field_name + ', field_value: ' + field_value + ', study_id: ' + study_id + '<p/>')
+    #req.write('* ')
+    req.write('field_type: ' + field_type + '<br/>key_field: ' + key_field + '<br/>field_name: ' + field_name + '<br/>field_value: ' + field_value + '<br/>study_id: ' + study_id + '<p/>')
     result = QiimeDataAccess().writeMetadataValue(field_type, key_field, field_name, field_value, study_id)
     if result != None:
         req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))
 
 
 req.write('<h3>Upload Complete</h3>')
-
 
 
 #req.write('<hr/>')

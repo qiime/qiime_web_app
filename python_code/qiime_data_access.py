@@ -72,6 +72,22 @@ class QiimeDataAccess( AbstractDataAccess ):
                 return False;
         
         return self._testDatabaseConnection
+    
+    def convertToOracleHappyName(self, date_string):
+        """ Oracle is picky about dates. This function takes a previously validated
+        date format and returns a formatted string for inserting into database
+        """
+        formatted_date = ''
+        
+        # First handle the date portion since it must exist for a valid submission
+        if date_string.find(' ') == -1:
+            # Date only
+            formatted_date = 'to_date(\'%s\', \'%s\')' % (date_string, 'MM/DD/YYYY')
+        else:
+            # Date and time exist
+            formatted_date = 'to_date(\'%s\', \'%s\')' % (date_string, 'MM/DD/YYYY HH24:MI:SS')
+        
+        return formatted_date
 
     def authenticateWebAppUser( self, username, password ):
         """ Attempts to validate authenticate the supplied username/password
@@ -490,20 +506,36 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def createKeyField(self, study_id, study_name, field_type, field_value):
-        """ Writes a key row to the database
+    def createSampleKey(self, study_id, sample_name):
+        """ Writes a sample key row to the database
         """
         try:
             con = self.getTestDatabaseConnection()
-            if field_type == 'sample':
-                con.cursor().callproc('sample_insert', [study_id, field_value])
-            elif field_type == 'prep':
-                con.cursor().callproc('prep_insert', [study_name, field_value])
-
+            con.cursor().callproc('sample_insert', [study_id, sample_name])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
+
+    def createPrepKey(self, study_id, sample_name):
+        """ Writes a prep key row to the database
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('prep_insert', [study_id, sample_name])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def createHostKey(self, study_id, sample_name, host_subject_id):
+        """ Writes a host key row to the database
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('host_insert', [study_id, sample_name, host_subject_id])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id):
         """ Writes a metadata value to the database
         """
@@ -552,19 +584,21 @@ class QiimeDataAccess( AbstractDataAccess ):
             ### For SAMPLE and SEQUENCE_PREP
             ########################################
             
-            # Find the assocaited sample_id
-            log.append('Determining if required key row exists...')
-            statement = 'select sample_id from "SAMPLE" where sample_name = \'%s\'' % (key_field)
-            log.append(statement)
-            results = con.cursor().execute(statement).fetchone()
-            if results != None:
-                sample_id = results[0]
-                log.append('Found sample_id: %s' % str(sample_id))
-            else:
-                log.append('Could not determine sample_id. Skipping write for field "%s" with value "%s".' % (field_name, field_value))
-                raise Exception
-
+            ### add other sample_id tables to this list
             if table_name in ['"SAMPLE"', '"SEQUENCE_PREP"']:
+            
+                # Find the assocaited sample_id
+                log.append('Determining if required key row exists...')
+                statement = 'select sample_id from "SAMPLE" where sample_name = \'%s\'' % (key_field)
+                log.append(statement)
+                results = con.cursor().execute(statement).fetchone()
+                if results != None:
+                    sample_id = results[0]
+                    log.append('Found sample_id: %s' % str(sample_id))
+                else:
+                    log.append('Could not determine sample_id. Skipping write for field "%s" with value "%s".' % (field_name, field_value))
+                    raise Exception
+
                 # If it ain't there, create it
                 log.append('Attempting to create new key row...')
                 statement = 'select * from %s where sample_id = %s' % (table_name, sample_id)
@@ -578,12 +612,15 @@ class QiimeDataAccess( AbstractDataAccess ):
                 
                 # Attempt to write the metadata field
                 log.append('Writing metadata value...')
-                statement = 'update %s set %s=\'%s\' where sample_id = %s' % (table_name, field_name, field_value, sample_id)
+                if field_type == 'date':
+                    statement = 'update %s set %s=%s where sample_id = %s' % (table_name, field_name, self.convertToOracleHappyName(field_value), sample_id)
+                else:
+                    statement = 'update %s set %s=\'%s\' where sample_id = %s' % (table_name, field_name, field_value, sample_id)
                 log.append(statement)
                 results = con.cursor().execute(statement)
             
             else:
-                return table_name
+                return 'Not yet implemented: ' + table_name
             
             # Finally, commit the changes
             results = con.cursor().execute('commit')

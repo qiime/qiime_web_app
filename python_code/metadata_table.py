@@ -324,13 +324,17 @@ class MetadataTable(object):
         # Create the header columns
         headers = reader.next()
         for column in headers:
-            try:
+            try:    
                 if column in column_details:
                     result = column_factory.createColumn(column, column_details[column][0], column_details[column][1])
                     if result:
                         self._addColumn(result)
                     else:
                         raise ValueError('Column creation failed for \'' + column + '\' however the column does exist in the column dictionary')
+                # Column not in dictionary - was added by user. Capture this field and store as metadata
+                else:
+                    pass
+                    #result = column_factory.createColumn(column, 'text', '4000')
             except Exception as err:
                 raise err
 
