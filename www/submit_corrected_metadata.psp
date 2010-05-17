@@ -24,6 +24,7 @@ prep_key_fields = {}
 host_key_fields = {}
 
 key_field = None
+with_errors = False
 
 host_fields = []
 prep_fields = []
@@ -70,16 +71,16 @@ for item in prep_fields:
     QiimeDataAccess().createPrepKey(study_id, field_value)
     req.write('* ')
 
-req.write('<p style="font-size:12px">Writing Host Key Values:</p>')
-
 # Insert the host key rows now that sample rows all exist
-for item in host_fields:
-    parts = item.split(':')
-    row_num = parts[1]
-    field_value = form[item]
-    sample_name = sample_key_fields[row_num]
-    QiimeDataAccess().createHostKey(study_id, sample_name, field_value)
-    req.write('* ')
+if len(host_fields) > 0:
+    req.write('<p style="font-size:12px">Writing Host Key Values:</p>')
+    for item in host_fields:
+        parts = item.split(':')
+        row_num = parts[1]
+        field_value = form[item]
+        sample_name = sample_key_fields[row_num]
+        QiimeDataAccess().createHostKey(study_id, sample_name, field_value)
+        req.write('* ')
 
 req.write('<p style="font-size:12px">Writing Metadata Values (this may take a while):</p>')
 
@@ -104,47 +105,30 @@ for item in all_other_fields:
         key_field = prep_key_fields[row_num]
     elif field_type == 'study':
         key_field = study_name
-                    
+
     # Just in case...
     if key_field == None:
         continue
     
     # Now that we're sure all parent rows exist, write the field value to db
     #req.write('<br/> Writing metadata value to database: %s, value %s' % (field_name, field_value))
-    #req.write('* ')
-    req.write('field_type: ' + field_type + '<br/>key_field: ' + key_field + '<br/>field_name: ' + field_name + '<br/>field_value: ' + field_value + '<br/>study_id: ' + study_id + '<p/>')
-    result = QiimeDataAccess().writeMetadataValue(field_type, key_field, field_name, field_value, study_id)
+    req.write('* ')
+    #req.write('field_type: ' + field_type + '<br/>key_field: ' + key_field + '<br/>field_name: ' + field_name + '<br/>field_value: ' + field_value + '<br/>study_id: ' + study_id + '<p/>')
+    result = QiimeDataAccess().writeMetadataValue(field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num)
     if result != None:
         req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))
+        with_errors = True
 
+if with_errors:
+    req.write('<h3>Upload Completed With Errors</h3>')
+    req.write('<p style="font-size:12px">You should review the errors above, make the appropriate adjustments to your metadata files, then re-submit them to your study.</p>')
+else:
+    req.write('<h3>Upload Completed Without Errors</h3>')
+    req.write('<p style="font-size:8px">yahoo!</p>')
+    req.write('<img src="img/firework3.gif"/>')
 
-req.write('<h3>Upload Complete</h3>')
-
-
-#req.write('<hr/>')
-# Some debugging output
-#req.write(study_name)
-#req.write('<hr/>')
-
-#for item in sample_key_fields:
-#    req.write(item + ': ' + sample_key_fields[item] + '<br/>')
-
-#req.write('<hr/>')
-
-#for item in prep_key_fields:
-#    req.write(item + ': ' + prep_key_fields[item] + '<br/>')
-
-#req.write('<hr/>')
-
-#req.write(str(sess))
-#req.write('<hr/>')
-#req.write('<table>')
-#for item in form:
-#    req.write('<tr><td>')
-#    req.write(str(item))
-#    req.write('</td><td>')
-#    req.write(form[item])
-#    req.write('</td></tr>')
-
-#req.write('</table>')
+# end if/else
 %>
+
+
+

@@ -20,6 +20,52 @@ function testMe()
     alert("I work, there for I am.");
 }
 
+function displayErrorCount()
+{
+    alert(error_count);
+}
+
+function adjustErrorCount(sender, adjust_by)
+{
+    current_color = sender.style.backgroundColor;
+    
+    // alert("invalid_color: " + invalid_color + ' :::: current_color: ' + current_color);
+    
+    if ( (current_color == invalid_color) && (adjust_by == 1) )
+    {
+        // Do nothing - state has not changed
+        return;
+    }
+    else if ( (current_color == invalid_color) && (adjust_by == -1) )
+    {
+        // Has changed from invalid to valid - decrement count
+        alert('valid now');
+        error_count += adjust_by;
+    }
+    else if ( (current_color == valid_color) && (adjust_by == 1) )
+    {
+        // Has changed from valid to invalid - increment count
+        error_count += adjust_by;
+    }
+    else if ( (current_color == valid_color) && (adjust_by == -1) )
+    {
+        // Do nothing - state has not changed
+        return;
+    }
+    
+    // Handle enable/disable of submit button
+    metadata_submit = document.getElementById('metadata_submit');
+    if (error_count < 10)
+    {
+        alert('less than 10');
+        metadata_submit.enabled = true;
+    }
+    else
+    {
+        metadata_submit.enabled = false;
+    }
+}
+
 function hasWhiteSpace(value)
 {
     reWhiteSpace = new RegExp(/^\s*$/);
@@ -74,13 +120,15 @@ function validateTextLength(sender, column_name, max_length)
         return;
     }
 
-    // Is the term in a valid date format?
+    // Is the term too long?
     if (sender.value.length > max_length)
     {
+        adjustErrorCount(sender, 1);
         sender.style.background = invalid_color;
     }
     else
     {
+        adjustErrorCount(sender, -1);
         sender.style.background = valid_color;
     }
     
@@ -192,15 +240,17 @@ function validateNumericField(sender, column_name, reg_exp)
     }
     
     regexp = new RegExp(reg_exp);
-
+    
     // Is the term in a valid numeric format?
     if ((!regexp.test(sender.value)) || (hasWhiteSpace(sender.value)))
     {
         // Not a number
+        adjustErrorCount(sender, 1);
         sender.style.background = invalid_color;
     }
     else
     {
+        adjustErrorCount(sender, -1);
         sender.style.background = valid_color;
     }
     

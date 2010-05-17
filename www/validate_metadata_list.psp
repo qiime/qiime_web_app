@@ -15,6 +15,8 @@ __status__ = "Development"
 
 <h2>Metadata Validation</h2>
 
+<a href="#" onclick="displayErrorCount(); return false;">Show Error Count</a>
+
 <form target="_top" name="metadata_form" id="metadata_form" method="post" action="fusebox.psp">
 <input type="hidden" id="page" name="page" value="submit_corrected_metadata.psp"/>
 
@@ -23,15 +25,28 @@ from metadata_table import *
 
 templates = sess["templates"]
 if templates != None:
+    error_count = 0
+    
     for template in templates:
         req.write('<h3> Results for file: ' + os.path.basename(template) + '</h3>')
         table = MetadataTable(template)
-        req.write(table.printHTMLTable())
+        htmlTable, errors = table.printHTMLTable()
+        error_count += errors
+        req.write(htmlTable)
+        
     req.write('<p/>')
+    #req.write('<input type="hidden" id="error_count" value="%s"\n' % (error_count))
+    
+    req.write('<script type="text/javascript">\n')
+    req.write('var error_count = %s;\n' % (error_count))
+    req.write('</script>\n')
+
 %>
 
 <p/>
-<input type="submit" value="Submit Metadata"> (Fix errors above to enable submit button.)
+<input type="submit" id="metadata_submit" value="Submit Metadata" disabled><br/>
+<p style="font-size:10px">(Fix errors above to enable submit button)</p>
+
 <p/>
 </form>
 

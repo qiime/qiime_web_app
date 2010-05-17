@@ -270,9 +270,9 @@ class DateColumn(BaseColumn):
         Non-Matches: 11/31/2003 10:12:24 am | 2/30/2003 08:14:56 pm | 5/22/2003 14:15
         """
         if re.match(self.reg_exp, date) == None:
-            return True
-        else:
             return False
+        else:
+            return True
         
 class MetadataTable(object):
     """ The parent class which represents a metadata table object
@@ -351,7 +351,7 @@ class MetadataTable(object):
             
             i = 0
             for column in row:
-                self._columns[i]._addValue(column)
+                self._columns[i]._addValue(column.strip())
                 i += 1
 
         #self._printTable()
@@ -421,6 +421,9 @@ class MetadataTable(object):
         # Max length for text columns
         max_text_length = 50
         
+        # Count of errors on page
+        error_count = 0
+        
         # Index for rows
         y = 0
         
@@ -454,6 +457,7 @@ class MetadataTable(object):
                     
                     # For fields that are not valid
                     else:
+                        error_count += 1
                         cell_color = '#EEEEFF'
                         html_table += '<td style="background-color:#DDDDDD;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
                             <a href="" onclick="replaceWithCurrent(\'%s\');return false;"><div style="font-size:11px">replace all</div></a></td>\n' \
@@ -464,5 +468,8 @@ class MetadataTable(object):
             y += 1 
         
         html_table += '</table>\n'
+                
+        # Form variable to hold count of errors on page. Determines when "sumbit" will be enabled.
+        #html_table += '<input type="hidden" name="%s_error_count" value="%s"\n' % (file_type, error_count)
         
-        return html_table
+        return html_table, error_count

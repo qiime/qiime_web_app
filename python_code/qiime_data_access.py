@@ -536,7 +536,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     
-    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id):
+    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num):
         """ Writes a metadata value to the database
         """
         statement = ''
@@ -556,22 +556,37 @@ class QiimeDataAccess( AbstractDataAccess ):
             table_name = '"' + table_name + '"'
             log.append('Table name found: %s' % (table_name))
             
+            # Get extended field info from the database
+            field_details = self.getFieldDetails(field_name)
+            if field_details == None:
+                log.append('Could not obtain detailed field information. Skipping.')
+                raise Exception
+            else:
+                database_data_type = field_details[1]
+                log.append('Read field database data type as "%s"' % database_data_type)
+            
             # Figure out if this needs to be an integer ID instead of a text value
-            log.append('Determing if field value exists in controlled_vocab_values:')
-            statement = 'select vocab_value_id from controlled_vocab_values where term = \'%s\'' % (field_value)
-            log.append(statement)
-            results = con.cursor().execute(statement).fetchone()
-            if results != None:
-                # If found, set the field_value to its numeric identifier for storage
-                log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
-                field_value = results[0]
+            if database_data_type == 'list':
+                log.append('Field is of type list. Looking up integer value...')
+                statement = 'select vocab_value_id from controlled_vocab_values where term = \'%s\'' % (field_value)
+                log.append(statement)
+                results = con.cursor().execute(statement).fetchone()
+                if results != None:
+                    # If found, set the field_value to its numeric identifier for storage
+                    log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
+                    field_value = results[0]
+                else:
+                    log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.' % (field_name, field_value))
+                    raise Exception
+            
+            # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
+            field_name = '"%s"' % field_name.upper()
             
             ########################################
             ### For STUDY
             ########################################
             
-            # Study is special - handle separately since row is guaranteed to exist and there
-            # can only be one row
+            # Study is special - handle separately since row is guaranteed to exist and there can only be one row
             if table_name == '"STUDY"':
                 log.append('Updating study field...')
                 statement = 'update study set %s = \'%s\' where study_id = %s' % (field_name, field_value, study_id)
@@ -581,46 +596,53 @@ class QiimeDataAccess( AbstractDataAccess ):
                 return
             
             ########################################
-            ### For SAMPLE and SEQUENCE_PREP
+            ### For other tables
             ########################################
             
-            ### add other sample_id tables to this list
-            if table_name in ['"SAMPLE"', '"SEQUENCE_PREP"']:
-            
-                # Find the assocaited sample_id
-                log.append('Determining if required key row exists...')
+            if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
+            '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"']:
                 statement = 'select sample_id from "SAMPLE" where sample_name = \'%s\'' % (key_field)
-                log.append(statement)
-                results = con.cursor().execute(statement).fetchone()
-                if results != None:
-                    sample_id = results[0]
-                    log.append('Found sample_id: %s' % str(sample_id))
-                else:
-                    log.append('Could not determine sample_id. Skipping write for field "%s" with value "%s".' % (field_name, field_value))
-                    raise Exception
-
-                # If it ain't there, create it
-                log.append('Attempting to create new key row...')
-                statement = 'select * from %s where sample_id = %s' % (table_name, sample_id)
-                log.append(statement)
-                results = con.cursor().execute(statement).fetchone()
-                if results == None:
-                    log.append('No row found, inserting new row:')
-                    statement = 'insert into %s (sample_id) values (%s)' % (table_name, field_value)
-                    log.append(statement)
-                    con.cursor().execute(statement)
-                
-                # Attempt to write the metadata field
-                log.append('Writing metadata value...')
-                if field_type == 'date':
-                    statement = 'update %s set %s=%s where sample_id = %s' % (table_name, field_name, self.convertToOracleHappyName(field_value), sample_id)
-                else:
-                    statement = 'update %s set %s=\'%s\' where sample_id = %s' % (table_name, field_name, field_value, sample_id)
-                log.append(statement)
-                results = con.cursor().execute(statement)
-            
+                key_column = 'sample_id'
+                key_table = '"SAMPLE"'
+            elif table_name in ['"HOST"', '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HUMAN_ASSOCIATED"']:
+                statement = 'select host_id from "HOST" where host_subject_id = \'%s\'' % (host_key_fields[row_num])
+                key_column = 'host_id'
+                key_table = '"HOST"'
             else:
+                #SAMPLE_CHEM_ADMIN
+                #HOST_DISEASE, 
                 return 'Not yet implemented: ' + table_name
+            
+            # Find the assocaited key column
+            log.append('Determining if required key row exists...')
+            log.append(statement)
+            results = con.cursor().execute(statement).fetchone()
+            if results != None:
+                key_column_value = results[0]
+                log.append('Found key_column_value: %s' % str(key_column_value))
+            else:
+                log.append('Could not determine key. Skipping write for field %s with value "%s".' % (field_name, field_value))
+                raise Exception
+
+            # If it ain't there, create it
+            log.append('Checking if row already exists...')
+            statement = 'select * from %s where %s = %s' % (table_name, key_column, key_column_value)
+            log.append(statement)
+            results = con.cursor().execute(statement).fetchone()
+            if results == None:
+                log.append('No row found, inserting new row:')
+                statement = 'insert into %s (%s) values (\'%s\')' % (table_name, key_column, key_column_value)
+                log.append(statement)
+                con.cursor().execute(statement)
+            
+            # Attempt to write the metadata field
+            log.append('Writing metadata value...')
+            if database_data_type == 'date':
+                statement = 'update %s set %s = %s where %s = %s' % (table_name, field_name, self.convertToOracleHappyName(field_value), key_column, key_column_value)
+            else:
+                statement = 'update %s set %s = \'%s\' where %s = %s' % (table_name, field_name, field_value, key_column, key_column_value)
+            log.append(statement)
+            results = con.cursor().execute(statement)
             
             # Finally, commit the changes
             results = con.cursor().execute('commit')
@@ -633,3 +655,4 @@ class QiimeDataAccess( AbstractDataAccess ):
                 (field_name, field_value, table_name, call_string, log_string, str(e))
             print error_msg
             return error_msg
+
