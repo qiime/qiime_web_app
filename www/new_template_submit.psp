@@ -90,7 +90,7 @@ try:
 
     # Write out documentation for the selected fields
     with open(sess['document_root'] + doc_file_name, 'w') as f:
-        f.write('Field Name\tData Type\tDescription/Expected Values\tDescription')
+        f.write('Field Name\tData Type\tDescription/Expected Values\tDescription\n')
         for field in documentation_fields:
             f.write(field[0] + '\t' + field[3] + '\t' + field[1] + '\t' + field[2] + '\n')
     req.write('<li><a href=\'%s\'>%s</a>' % (doc_file_name, 'Field Reference Documentation</li>'))
