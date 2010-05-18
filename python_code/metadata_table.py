@@ -95,14 +95,14 @@ class BaseColumn(object):
         """
         return ''
     
-    def _addValue(self, value):
+    def _addValue(self, value, data_access):
         status = 'good'
-        if not self._validate(value):
+        if not self._validate(value, data_access):
             status = 'bad'
             self.isInvalid(self.column_name, len(self.values))     
         self.values.append((value, status))
         
-    def _validate(self, value):
+    def _validate(self, value, data_access):
         """ Validates a value of this column type
         """
         return True
@@ -120,7 +120,7 @@ class NumericColumn(BaseColumn):
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
         
-    def _validate(self, value):
+    def _validate(self, value, data_access):
         """ return true if number, false otherwise
         """
         # Matches number of the form 234, 2.34, or .234
@@ -142,7 +142,7 @@ class YesNoColumn(BaseColumn):
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
     
-    def _validate(self, value):
+    def _validate(self, value, data_access):
         """ return true if y/Y/n/N, false otherwise
         """
         if re.match(self.reg_exp, value):
@@ -157,9 +157,9 @@ class ListColumn(BaseColumn):
         super(ListColumn, self).__init__(column_name, isInvalid)
         self.list_names = list_names
         
-    def _addValue(self, value):
+    def _addValue(self, value, data_access):
         status = 'good'
-        if not self._validate(value, self.list_names):
+        if not self._validate(value, self.list_names, data_access):
             status = 'bad'
             self.isInvalid(self.column_name, len(self.values))
         self.values.append((value, status))
@@ -171,12 +171,12 @@ class ListColumn(BaseColumn):
         return validation_string
 
     # Consider refactoring with _validateOntology()
-    def _validate(self, value, list_names):
+    def _validate(self, value, list_names, data_access):
         """ returns true if value is in list designated by list_name, 
         false otherwise
         """
         for list_name in list_names:
-            if QiimeDataAccess().validateListValue(list_name, value) > 0:
+            if data_access.validateListValue(list_name, value) > 0:
                 return True
         
         # Not found in any list
@@ -189,9 +189,9 @@ class OntologyColumn(BaseColumn):
         super(OntologyColumn, self).__init__(column_name, isInvalid)
         self.ontology_names = ontology_names
 
-    def _addValue(self, value):
+    def _addValue(self, value, data_access):
         status = 'good'
-        if not self._validate(value, self.ontology_names):
+        if not self._validate(value, self.ontology_names, data_access):
             status = 'bad'
             self.isInvalid(self.column_name, len(self.values))
         self.values.append((value, status))
@@ -202,7 +202,7 @@ class OntologyColumn(BaseColumn):
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
     
-    def _validate(self, term, ontology_names):
+    def _validate(self, term, ontology_names, data_access):
         """ returns true if term is in ontology designated by ontology_name, 
         false otherwise 
         """
@@ -210,8 +210,8 @@ class OntologyColumn(BaseColumn):
             term_values = term.split(':')
             if len(term_values) != 2:
                 return False
-            
-            if QiimeDataAccess().validateOntologyValue(ontology_name, term_values[1]) > 0:
+        
+            if data_access.validateOntologyValue(ontology_name, term_values[1]) > 0:
                 return True
         
         # Not found in any list
@@ -224,7 +224,7 @@ class TextColumn(BaseColumn):
         super(TextColumn, self).__init__(column_name, isInvalid)
         self.maxLength = length
         
-    def _validate(self, value):
+    def _validate(self, value, data_access):
         """ return true if number, false otherwise
         """
         if self.maxLength == '':
@@ -246,7 +246,7 @@ class DateColumn(BaseColumn):
     """
     def __init__(self, column_name, isInvalid):
         super(DateColumn, self).__init__(column_name, isInvalid)
-        self.reg_exp = '^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-2]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])\s))([AM|PM|am|pm]{2,2})))?$'
+        self.reg_exp = '^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-9])|(2[0-3]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])))))?$'
         
     def writeJSValidation(self):
         function_string = 'validateDateField(this, \'%s\', \'%s\')' % (self.column_name, self.reg_exp.replace('\\', '\\\\'))
@@ -254,7 +254,7 @@ class DateColumn(BaseColumn):
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
     
-    def _validate(self, date):
+    def _validate(self, date, data_access):
         """Returns true if provided date is in a valid format, false otherwise
         
         Borrowed from http://regexlib.com/DisplayPatterns.aspx?cattabindex=4&categoryId=5
@@ -313,6 +313,7 @@ class MetadataTable(object):
         column_factory = ColumnFactory(self._isInvalid)
         data_file = open(self._metadataFile, "rU")
         reader = csv.reader(data_file,  delimiter='\t')
+        data_access = QiimeDataAccess()
 
         # Obtain the list of metadata columns for validation
         column_detail_list = QiimeDataAccess().getColumnDictionary()
@@ -342,6 +343,8 @@ class MetadataTable(object):
         for row in reader:
             
             # Skip any rows starting with white space
+            if len(row) == 0:
+                continue
             if row[0].startswith('\t') or row[0].startswith(' '):
                 continue
 
@@ -351,11 +354,11 @@ class MetadataTable(object):
             
             i = 0
             for column in row:
-                self._columns[i]._addValue(column.strip())
+                self._columns[i]._addValue(column.strip(), data_access)
                 i += 1
 
         #self._printTable()
-        self._printInvalidRows()
+        #self._printInvalidRows()
 
     def _addColumn(self, column):
         self._columns.append(column)

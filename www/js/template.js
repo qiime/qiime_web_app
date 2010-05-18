@@ -12,57 +12,35 @@ __status__ = "Production"
 */
 
 var xmlhttp;
-var invalid_color = '#EEEEFF';
-var valid_color = '#88FF88';
+var invalid_color = 'rgb(238, 238, 255)';
+var valid_color = 'rgb(136, 255, 136)';
 
 function testMe()
 {
     alert("I work, there for I am.");
 }
 
-function displayErrorCount()
+function validateCorrectedMetadata()
 {
-    alert(error_count);
-}
-
-function adjustErrorCount(sender, adjust_by)
-{
-    current_color = sender.style.backgroundColor;
+    // Look for all fields that are editable. Check if the color is set to valid or
+    // invalid. If all valid, allow submit. If not, display message and don't allow
+    // submission to proceed
     
-    // alert("invalid_color: " + invalid_color + ' :::: current_color: ' + current_color);
-    
-    if ( (current_color == invalid_color) && (adjust_by == 1) )
+    for (i = 0; i < document.metadata_form.elements.length; i++)
     {
-        // Do nothing - state has not changed
-        return;
-    }
-    else if ( (current_color == invalid_color) && (adjust_by == -1) )
-    {
-        // Has changed from invalid to valid - decrement count
-        alert('valid now');
-        error_count += adjust_by;
-    }
-    else if ( (current_color == valid_color) && (adjust_by == 1) )
-    {
-        // Has changed from valid to invalid - increment count
-        error_count += adjust_by;
-    }
-    else if ( (current_color == valid_color) && (adjust_by == -1) )
-    {
-        // Do nothing - state has not changed
-        return;
-    }
-    
-    // Handle enable/disable of submit button
-    metadata_submit = document.getElementById('metadata_submit');
-    if (error_count < 10)
-    {
-        alert('less than 10');
-        metadata_submit.enabled = true;
-    }
-    else
-    {
-        metadata_submit.enabled = false;
+        e = document.metadata_form.elements[i];
+        
+        // Ignore hidden fields
+        if (e.type == 'hidden')
+        {
+            continue;
+        }
+        
+        if (e.style.backgroundColor == invalid_color)
+        {
+            alert('Please correct all errors before submitting your metadata.')
+            return false;
+        }
     }
 }
 
@@ -123,12 +101,10 @@ function validateTextLength(sender, column_name, max_length)
     // Is the term too long?
     if (sender.value.length > max_length)
     {
-        adjustErrorCount(sender, 1);
         sender.style.background = invalid_color;
     }
     else
     {
-        adjustErrorCount(sender, -1);
         sender.style.background = valid_color;
     }
     
@@ -245,12 +221,10 @@ function validateNumericField(sender, column_name, reg_exp)
     if ((!regexp.test(sender.value)) || (hasWhiteSpace(sender.value)))
     {
         // Not a number
-        adjustErrorCount(sender, 1);
         sender.style.background = invalid_color;
     }
     else
     {
-        adjustErrorCount(sender, -1);
         sender.style.background = valid_color;
     }
     

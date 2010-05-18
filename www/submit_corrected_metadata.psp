@@ -30,6 +30,8 @@ host_fields = []
 prep_fields = []
 all_other_fields = []
 
+data_access = QiimeDataAccess()
+
 # Make one pass to shuffle all fields into the right buckets
 req.write('<p style="font-size:12px">Writing Sample Key Values:</p>')
 
@@ -48,7 +50,7 @@ for item in form:
     
     # Sample key rows can be inserted now
     if  field_type == 'sample' and field_name == 'sample_name':
-        QiimeDataAccess().createSampleKey(study_id, field_value)
+        data_access.createSampleKey(study_id, field_value)
         sample_key_fields[row_num] = field_value
         req.write('* ')
     # Host rows will be written after all samples are in place
@@ -68,7 +70,7 @@ req.write('<p style="font-size:12px">Writing Prep Key Values:</p>')
 # Insert the prep key rows now that sample rows all exist
 for item in prep_fields:
     field_value = form[item]
-    QiimeDataAccess().createPrepKey(study_id, field_value)
+    data_access.createPrepKey(study_id, field_value)
     req.write('* ')
 
 # Insert the host key rows now that sample rows all exist
@@ -79,7 +81,7 @@ if len(host_fields) > 0:
         row_num = parts[1]
         field_value = form[item]
         sample_name = sample_key_fields[row_num]
-        QiimeDataAccess().createHostKey(study_id, sample_name, field_value)
+        data_access.createHostKey(study_id, sample_name, field_value)
         req.write('* ')
 
 req.write('<p style="font-size:12px">Writing Metadata Values (this may take a while):</p>')
@@ -114,7 +116,7 @@ for item in all_other_fields:
     #req.write('<br/> Writing metadata value to database: %s, value %s' % (field_name, field_value))
     req.write('* ')
     #req.write('field_type: ' + field_type + '<br/>key_field: ' + key_field + '<br/>field_name: ' + field_name + '<br/>field_value: ' + field_value + '<br/>study_id: ' + study_id + '<p/>')
-    result = QiimeDataAccess().writeMetadataValue(field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num)
+    result = data_access.writeMetadataValue(field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num)
     if result != None:
         req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))
         with_errors = True

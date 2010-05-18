@@ -60,12 +60,11 @@ class QiimeDataAccess( AbstractDataAccess ):
     def getTestDatabaseConnection(self):
         """ Obtains a connection to the qiime_test schema
 
-        Get a database connection. Note that the consumer is responsible 
-        for closing this connection once obtained. This method is intended
-        to be used internally by this class.
+        Get a database connection. 
         """
         if self._testDatabaseConnection == None:
             try:
+                print 'No active connection - obtaining new connection to qiime_test.'
                 self._testDatabaseConnection = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
@@ -539,6 +538,9 @@ class QiimeDataAccess( AbstractDataAccess ):
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num):
         """ Writes a metadata value to the database
         """
+        
+        # This is a mess and it's slow right now. In need of serious speed improvements and cleanup.
+        
         statement = ''
         log = []
         pk_name = ''
@@ -568,9 +570,10 @@ class QiimeDataAccess( AbstractDataAccess ):
             # Figure out if this needs to be an integer ID instead of a text value
             if database_data_type == 'list':
                 log.append('Field is of type list. Looking up integer value...')
-                statement = 'select vocab_value_id from controlled_vocab_values where term = \'%s\'' % (field_value)
+                named_params = {'field_value':field_value.upper()}
+                statement = 'select vocab_value_id from controlled_vocab_values where upper(term) = :field_value'
                 log.append(statement)
-                results = con.cursor().execute(statement).fetchone()
+                results = con.cursor().execute(statement, named_params).fetchone()
                 if results != None:
                     # If found, set the field_value to its numeric identifier for storage
                     log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
@@ -589,9 +592,10 @@ class QiimeDataAccess( AbstractDataAccess ):
             # Study is special - handle separately since row is guaranteed to exist and there can only be one row
             if table_name == '"STUDY"':
                 log.append('Updating study field...')
-                statement = 'update study set %s = \'%s\' where study_id = %s' % (field_name, field_value, study_id)
+                named_params = {'field_value':field_value, 'study_id':study_id}
+                statement = 'update study set %s = :field_value where study_id = :study_id' % (field_name)
                 log.append(statement)
-                results = con.cursor().execute(statement)
+                results = con.cursor().execute(statement, named_params)
                 con.cursor().execute('commit')
                 return
             
@@ -599,24 +603,25 @@ class QiimeDataAccess( AbstractDataAccess ):
             ### For other tables
             ########################################
             
+            
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
             '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"']:
-                statement = 'select sample_id from "SAMPLE" where sample_name = \'%s\'' % (key_field)
+                named_params = {'key_field':key_field}
+                statement = 'select sample_id from "SAMPLE" where sample_name = :key_field'
                 key_column = 'sample_id'
                 key_table = '"SAMPLE"'
             elif table_name in ['"HOST"', '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HUMAN_ASSOCIATED"']:
-                statement = 'select host_id from "HOST" where host_subject_id = \'%s\'' % (host_key_fields[row_num])
+                named_params = {'key_field':host_key_fields[row_num]}
+                statement = 'select host_id from "HOST" where host_subject_id = :key_field'
                 key_column = 'host_id'
                 key_table = '"HOST"'
             else:
-                #SAMPLE_CHEM_ADMIN
-                #HOST_DISEASE, 
-                return 'Not yet implemented: ' + table_name
+                return 'Unknown table found - no action taken: ' + table_name
             
             # Find the assocaited key column
             log.append('Determining if required key row exists...')
-            log.append(statement)
-            results = con.cursor().execute(statement).fetchone()
+            log.append(statement + ' ::: key_field is ' + key_field)
+            results = con.cursor().execute(statement, named_params).fetchone()
             if results != None:
                 key_column_value = results[0]
                 log.append('Found key_column_value: %s' % str(key_column_value))
@@ -626,14 +631,16 @@ class QiimeDataAccess( AbstractDataAccess ):
 
             # If it ain't there, create it
             log.append('Checking if row already exists...')
-            statement = 'select * from %s where %s = %s' % (table_name, key_column, key_column_value)
+            named_params = {'key_column_value':key_column_value}
+            statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
             log.append(statement)
-            results = con.cursor().execute(statement).fetchone()
+            results = con.cursor().execute(statement, named_params).fetchone()
             if results == None:
                 log.append('No row found, inserting new row:')
-                statement = 'insert into %s (%s) values (\'%s\')' % (table_name, key_column, key_column_value)
+                named_params = {'key_column_value':key_column_value}
+                statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
                 log.append(statement)
-                con.cursor().execute(statement)
+                con.cursor().execute(statement, named_params)
             
             # Attempt to write the metadata field
             log.append('Writing metadata value...')

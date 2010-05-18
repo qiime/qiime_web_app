@@ -39,19 +39,16 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         con = _qiime_data_access.getDatabaseConnection()
         self.assertTrue(con)
-        con.close()
 
     def test_getOntologyDatabaseConnection(self):
         global _qiime_data_access
         con = _qiime_data_access.getOntologyDatabaseConnection()
         self.assertTrue(con)
-        con.close()
 
     def test_getTestDatabaseConnection(self):
         global _qiime_data_access
         con = _qiime_data_access.getTestDatabaseConnection()
         self.assertTrue(con)
-        con.close()
 
     def test_authenticateWebAppUser(self):
         global _qiime_data_access
