@@ -22,6 +22,7 @@ class QiimeDataAccess( AbstractDataAccess ):
     The actual implementation
     """
     
+    _bmf2DatabaseConnection = None
     _databaseConnection = None
     _testDatabaseConnection = None
     _ontologyDatabaseConnection = None
@@ -40,6 +41,18 @@ class QiimeDataAccess( AbstractDataAccess ):
                 return False;
                 
         return self._databaseConnection
+
+    def getBMF2DatabaseConnection(self):
+        """ Obtains a connection to the web_app_user schema
+        """
+        if self._bmf2DatabaseConnection == None:
+            try:
+                self._bmf2DatabaseConnection = cx_Oracle.Connection('web_app_user/"WW3bApp..."@bmf2.colorado.edu/local2')
+            except Exception, e:
+                print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
+                return False;
+                
+        return self._bmf2DatabaseConnection
 
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the ontologies schema
@@ -546,6 +559,9 @@ class QiimeDataAccess( AbstractDataAccess ):
         pk_name = ''
         
         try:
+            # Make sure there are no single quotes in the field_value. Escape with double quotes for Oracle
+            field_value = field_value.replace('\'', '\'\'')
+            
             con = self.getTestDatabaseConnection()
             table_name = None
             

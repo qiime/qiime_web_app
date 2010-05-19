@@ -257,7 +257,8 @@ class DateColumn(BaseColumn):
     def _validate(self, date, data_access):
         """Returns true if provided date is in a valid format, false otherwise
         
-        Borrowed from http://regexlib.com/DisplayPatterns.aspx?cattabindex=4&categoryId=5
+        Borrowed from http://regexlib.com/DisplayPatterns.aspx?cattabindex=4&categoryId=5, modified
+        to remove AM/PM and allow for 24-hour time format.
         
         Description: Following expression can be used to validate a datetime column from SQL Server.
         This expression is an enhanced version of Scott Watermasysk's date/time submission. It now
@@ -265,9 +266,6 @@ class DateColumn(BaseColumn):
         the 11th hour. Watermasysk's would take the 10th and 12th hour but not the 11th. This regex has
         been tweaked to do so. Does not handle the February 29th problem on non-leap years yet. Will
         learn a little more about RegEx and do so in later submission. 
-        
-        Matches: 11/30/2003 10:12:24 am | 2/29/2003 08:14:56 pm | 5/22/2003
-        Non-Matches: 11/31/2003 10:12:24 am | 2/30/2003 08:14:56 pm | 5/22/2003 14:15
         """
         if re.match(self.reg_exp, date) == None:
             return False
@@ -275,7 +273,7 @@ class DateColumn(BaseColumn):
             return True
         
 class MetadataTable(object):
-    """ The parent class which represents a metadata table object
+    """ Represents a metadata table object
     
     This class encapsulates the functionality of a metadata table
     for use with the Qiime database. It ties together the concept
@@ -339,8 +337,14 @@ class MetadataTable(object):
             except Exception as err:
                 raise err
 
+        i = 0
+        for col in self._columns:
+            print str(i) + ', col = ' + col.column_name
+            i += 1
+
         # Read the column values
         for row in reader:
+            print row
             
             # Skip any rows starting with white space
             if len(row) == 0:
