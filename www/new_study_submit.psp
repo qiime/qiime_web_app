@@ -24,9 +24,14 @@ sess['privileges'] = form['privileges']
 study_name = sess['study_name']
 privs = sess['privileges']
 
-#Add the new study to the database
+# Add the new study to the database
 study_id = QiimeDataAccess().createStudy(sess['web_app_user_id'], study_name, form['investigation_type'], \
-    form['environmental_package'], form['study_completion_status'], form['submit_to_insdc'], privs)
+    form['study_completion_status'], form['submit_to_insdc'], privs)
+
+# Associate the chosen environmental packages to the study
+for env_package in form['environmental_package']:
+    #req.write('study_id: ' + str(study_id) + ', env_package: ' + env_package + '<p>')
+    QiimeDataAccess().createStudyPackage(study_id, env_package)
 
 # Add the study id to the session.
 sess['study_id'] = study_id

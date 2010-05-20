@@ -236,18 +236,29 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-    def createStudy(self, user_id, study_name, investigation_type, environmental_package, study_completion_status, submit_to_insdc, public_data):
+        
+    def createStudy(self, user_id, study_name, investigation_type, study_completion_status, submit_to_insdc, public_data):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
             con = self.getTestDatabaseConnection()
             study_id = 0
-            study_id = con.cursor().callproc('study_insert', [user_id, study_name, investigation_type, environmental_package, study_completion_status, submit_to_insdc, public_data, study_id])
-            return study_id[7]
+            study_id = con.cursor().callproc('study_insert', [user_id, study_name, investigation_type, study_completion_status, submit_to_insdc, public_data, study_id])
+            return study_id[6]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+
+    def createStudyPackage(self, study_id, env_package):
+        """ 
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('study_packages_insert', [study_id, env_package])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
                 
     def createQueueJob(self, user_id,study_id,status,filepath):
         """ Returns a list of metadata values based on a study type and list
