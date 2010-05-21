@@ -8,11 +8,10 @@ __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 %>
-<%@ include file="header.psp" %>
 
 <%
 import os
-
+sess = Session.Session(req)
 parts = form['study_names'].split(':')
 sess['study_id'] = parts[0]
 sess['study_name'] = parts[1]
@@ -31,6 +30,5 @@ except Exception, e:
 
 # end except
 
-psp.redirect('fusebox.psp?page=select_upload_type.psp')
+psp.redirect('fusebox.psp?page=select_study_task.psp')
 %>
-

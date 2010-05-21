@@ -170,8 +170,8 @@ function setCompleteBox()
 <tr><td>
 <div id='applet'>
 <!--this is the jumploader applet-->
-<p><b>Please zip your 3 metadata files into a single archive prior to uploading.<br/>
-The filename should not contain spaces or non-alphanumeric characters.</b></p>
+<p><b>Please zip your 3 metadata files into a single archive prior to uploading.</b><br/>
+The filename should not contain spaces or non-alphanumeric characters.</p>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="250" width="600" mayscript>

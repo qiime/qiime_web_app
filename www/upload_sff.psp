@@ -152,7 +152,8 @@ the Main Menu:\
 <tr><td>
 <div id='applet'>
 <!--this is the jumploader applet-->
-<p><b>Please upload only zipped files. The filename should not contain spaces or non-alphanumeric characters.</b></p>
+<p><b>SFF Upload: Please upload only zipped files.</b><br/>
+The filename should not contain spaces or non-alphanumeric characters.</p>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="250" width="600" mayscript>

@@ -22,7 +22,7 @@ from qiime_data_access import QiimeDataAccess
 <body>
 
 <form action="fusebox.psp" method="post" name="login_form" id="login_form">
-<input type="hidden" name="page" value="./select_task.psp">
+<input type="hidden" name="page" value="./select_study.psp">
 </form>
 
 <img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 />
@@ -44,8 +44,9 @@ if form.has_key('username'):
         sess['username'] = form["username"]
         sess['is_admin'] = user_data['is_admin']
         sess['web_app_user_id'] = user_data['web_app_user_id']
+        sess['study_name'] = ''
         
-        #This checks if teh user has a directory and if not, it creates one
+        #This checks if the user has a directory and if not, it creates one
         sess['user_dir'] = os.path.join(output_dir, 'user_'+str(sess['web_app_user_id']))
         try:
             if not os.path.exists(sess['user_dir']):

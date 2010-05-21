@@ -16,6 +16,13 @@ if not (sess.has_key('username')):
 
 # Imports
 from qiime_data_access import QiimeDataAccess
+
+# Set the image link based on whether or not a study has been selected:
+if sess['study_name']:
+	link_page = 'select_study_task.psp'
+else:
+	link_page = 'select_study.psp'
+# end
 %>
 
 <script type="text/javascript" src="./js/qiime.js"></script>
@@ -30,9 +37,18 @@ from qiime_data_access import QiimeDataAccess
 </head>
 <body>
 <form target="_top" id="send_me_home" name="send_me_home" action="fusebox.psp" method="post">
-    <input type="hidden" id="page" name="page" value="select_task.psp">
+    <input type="hidden" id="page" name="page" value="<%=link_page%>">
 </form>
 <a href="#" onclick="send_me_home.submit();"><img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 /></a>
 <table class="header_table">
-<tr><td>Logged in as <%=sess['username']%></td></tr>
+<tr>
+	<td>Logged in as <%=sess['username']%></td>
+	<td style="text-align:right;">
+<%
+if sess['study_name']:
+	req.write('Selected study: %s' % sess['study_name'])
+# end if
+%>
+	</td>
+</tr>
 </table>

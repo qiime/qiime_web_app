@@ -8,11 +8,18 @@ __maintainer__ = ['Doug Wendel']
 __email__ = 'wendel@colorado.edu'
 __status__ = 'Development'
 
-''' 
-This page is consumed by new_template.psp as a means for generating the list of 
-available fields for a package type.
-'''
 %>
+
+<%
+qda = QiimeDataAccess()
+%>
+
+<script type='text/javascript' src='js/template.js'></script>
+
+<p/>
+
+<form action='new_template_submit.psp' target='_blank'>
+<table id='package_fields'>
 
 <th style='text-align:left'>Include in Template?</th>
 <th style='text-align:left'>Field Name</th>
@@ -31,8 +38,6 @@ available fields for a package type.
 <%
 from mod_python import *
 from qiime_data_access import *
-
-sess = Session.Session(req)
 
 def outputFields(field_list, prefix, header_text):
     count = 0
@@ -96,34 +101,40 @@ sess["field_list"] = []
 sess.save()
 
 # Write out the study fields
-field_list = QiimeDataAccess().getPackageColumns(-3)
+field_list = qda.getPackageColumns(-3)
 outputFields(field_list, 'study', 'Study Fields')
 
 # Write out the SRA study fields
-field_list = QiimeDataAccess().getPackageColumns(-7)
+field_list = qda.getPackageColumns(-7)
 outputFields(field_list, 'study', 'SRA Study Fields')
 
 # Write out the prep fields
-field_list = QiimeDataAccess().getPackageColumns(-1)
+field_list = qda.getPackageColumns(-1)
 outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
 
 # Write out the SRA sample fields
-field_list = QiimeDataAccess().getPackageColumns(-5)
+field_list = qda.getPackageColumns(-5)
 outputFields(field_list, 'prep', 'SRA Experiment Fields')
 
 # Write out the required sample fields along with the package-specific fields
-field_list = QiimeDataAccess().getPackageColumns(-2)
+field_list = qda.getPackageColumns(-2)
 outputFields(field_list, 'sample', 'Required Sample Fields')
 
 # Write out the SRA experiment fields
-field_list = QiimeDataAccess().getPackageColumns(-6)
+field_list = qda.getPackageColumns(-6)
 outputFields(field_list, 'sample', 'SRA Sample Fields')
 
 # Write out the rest of the package fields
-parameters = util.FieldStorage(req)
-package_type_id = parameters.get('package_type_id', None)
-field_list = QiimeDataAccess().getPackageColumns(package_type_id)
-outputFields(field_list, 'sample', 'Package-Specific Sample Fields')
+packages = qda.getStudyPackages(sess['study_id'])
+unique_package_fields = []
+for package in packages:
+    field_list = qda.getPackageColumns(package)
+    for field in field_list:
+        if field not in unique_package_fields:
+            unique_package_fields.append(field)
+
+outputFields(unique_package_fields, 'sample', 'Package-Specific Sample Fields')
+# end
 %>
 
 <tr>
@@ -146,3 +157,6 @@ outputFields(field_list, 'sample', 'Package-Specific Sample Fields')
 <tr>
     <td colspan='5'><input type='submit' value='Generate Templates'></td>
 </tr>
+
+</table>
+</form>

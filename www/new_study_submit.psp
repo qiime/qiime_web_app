@@ -13,11 +13,12 @@ This script adds the users new study to the database, then asks them how they
 want to proceed.
 '''
 %>
-<%@ include file="header.psp" %>
+
 <%
 import os
 from qiime_data_access import QiimeDataAccess
 
+sess = Session.Session(req)
 sess['study_name'] = form['study_name']
 sess['privileges'] = form['privileges']
 
@@ -50,7 +51,7 @@ except Exception, e:
     req.write(str(e))
     sys.exit()
 
-psp.redirect('fusebox.psp?page=select_task.psp')
+psp.redirect('fusebox.psp?page=select_study_task.psp')
 
 %>
 

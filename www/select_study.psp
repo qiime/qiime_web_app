@@ -1,0 +1,38 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+%>
+
+<br>
+<p>
+    <b>Study Options:</b>
+    <ul>
+        <li>
+            <form id="create_new_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="./new_study.psp">
+                <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
+                Create a New Study</a>
+            </form>
+        </li>
+        <li>
+            <form id="user_study" action="select_user_study_submit.psp" method="post">
+                Select an Existing Study:
+                <select validate="required:true" name="study_names" id="study_names" onchange="user_study.submit();">
+                <option value=""></option>
+<%
+study_names = QiimeDataAccess().getUserStudyNames(sess['web_app_user_id'])
+for study_name in study_names:
+    req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + study_name[1] + '</option>\n')
+# end
+%>
+                </select>
+            </form>
+        </li>
+    </ul>
+</p>

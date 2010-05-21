@@ -259,6 +259,20 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def getStudyPackages(self, study_id):
+        """ Returns a list env_package types associated to this study
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_study_packages', [study_id, results])
+            env_packages = []
+            for row in results:
+                env_packages.append(row[0])
+            return env_packages
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
                 
     def createQueueJob(self, user_id,study_id,status,filepath):
         """ Returns a list of metadata values based on a study type and list

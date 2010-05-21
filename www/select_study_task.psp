@@ -1,0 +1,78 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<br>
+<p>
+    <h3>Selected Study: <%=sess['study_name']%></h3>
+    <br/>
+
+    <b>Study Options:</b>
+    <ul>
+        <li>
+            <form id="create_new_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="new_study.psp">
+                <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
+                Create a new study</a>
+            </form>
+        </li>
+        <li>
+            <form id="user_study" action="select_user_study_submit.psp" method="post">
+                Select an Existing Study:
+                <select validate="required:true" name="study_names" id="study_names" onchange="user_study.submit();">
+                <option value=""></option>
+<%
+study_names = QiimeDataAccess().getUserStudyNames(sess['web_app_user_id'])
+for study_name in study_names:
+    if (sess['study_name'] == study_name[1]):
+        req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '" selected>' + study_name[1] + '</option>\n')
+    else:
+        req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + study_name[1] + '</option>\n')
+# end
+%>
+                </select>
+            </form>
+        </li>
+    </ul>
+    <b>Other Tasks:</b>
+    <ul>
+        <li>
+            <form id="create_new_template" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="load_template_fields.psp">
+                <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
+                Generate a MIENS-compliant metadata template</a>
+            </form>
+        </li>
+        <li>
+            <form id="associate_sff_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_sff.psp">
+                <a href="" onclick="document.forms['associate_sff_to_study'].submit(); return false;">
+                Upload SFF files to this study</a>
+            </form>
+        </li>
+        <li>
+            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
+                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
+                Upload metadata to this study</a>
+            </form>
+        </li>
+    </ul>
+    <b>Tools:</b>
+    <ul>
+        <li>
+            <form id="open_ontolgoy_geo_tools" action="fusebox.psp" method="post" target="_parent">
+                <input type="hidden" name="page" id="page" value="tools_ontology_and_geo.psp">
+                <a href="" onclick="document.forms['open_ontolgoy_geo_tools'].submit(); return false;" target="_parent">
+                Ontology Lookup and Georeferencing Utility</a>
+            </form>
+        </li>
+    </ul>
+</p>
