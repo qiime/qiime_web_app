@@ -16,7 +16,8 @@ ontology_list = data_access.get_list_of_ontologies()
 %>
 
     <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-    <script type="text/javascript" src="./js/ontology.js">window.onload=initialize;</script>
+    <script type="text/javascript" src="./js/ontology.js"></script>
+    <script type="text/javascript">window.onload=initialize;</script>
     <style type="text/css">
         td{
             text-align:left;
