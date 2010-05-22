@@ -352,14 +352,14 @@ This function checks to see if all input boxes are valid, updates the original
 list of terms from the user, with the corrected terms, then calls the
 function to write the data to the new window
 */
-function write_data_to_new_window(original_ont_term_array,original_unique_terms,updated_unique_terms){
+function write_data_to_new_window(original_ont_term_array, original_unique_terms, updated_unique_terms){
 
     //Determine that all terms are valid
     for (var i=0;i<original_unique_terms.length;i++){
         if (original_unique_terms[i]!=''){
             validity=document.getElementById('validtxtbox'+(i)).innerHTML
-            if ( validity=='' || validity=='validating...'){
-                alert('You need to wait for re-validation, then output the data');
+            if ( validity=='' || validity=='Click Input Box...'){
+                alert('You need choose valid terms!');
                 return;
             }else if (validity=='Invalid' || validity=='Invalid\n'){
                 alert('You have invalid terms!');

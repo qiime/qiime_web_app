@@ -72,7 +72,7 @@ ontology_list = data_access.get_list_of_ontologies()
         Onsubmit returns false, since the form is not formally submitted and
         it will remove the return key functionality.
     -->
-    <form id="ontology_lookup" onsubmit="return false;">
+    <form id="ontology_lookup" onsubmit="return false;" action="#">
     <br>
         <table id='table1'>
             <tr>
@@ -169,6 +169,5 @@ for ont in ontology_list:
         </table>
     </div>
     <br>
-
     <div id="map_canvas" style="width:500px; height:400px;visibility:hidden;border:3px solid black"></div>
 
