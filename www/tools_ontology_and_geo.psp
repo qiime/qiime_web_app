@@ -35,34 +35,40 @@ ontology_list = data_access.get_list_of_ontologies()
             text-align:center;
             font-size:8pt;
         }
-        .usual td {
+        .usual th {
             text-decoration:none!important;
             height: 30px;
             font-size:10pt;
             color:#FFF;
             background:black;
-            font-weight:bold;
             text-align:center;
             cursor:pointer;
             cursor:hand;
             vertical-align:middle;
             font-family:"Helvetica","Arial",serif;
         }
+        .usual td {
+            text-decoration:none!important;
+            height: 30px;
+            font-size:10pt;
+            color:#FFF;
+            background:black;
+        }
         .usual{
             width:100%;
             color:#FFF;
         }
-        .usual td:hover{
+        .usual th:hover{
             background:blue;
         }
     </style>
 
     <hr />
     <table class="usual"><tr>
-    <td id="Home" style="width:10%" onmouseover="javascript:mouseover('Home');" onmouseout="javascript:mouseover('Home');" onclick="send_me_home.submit();">Home</td>
-    <td id="OntServ" style="width:20%" onmouseover="javascript:mouseover('OntServ');" onmouseout="javascript:mouseover('OntServ');" onclick="javascript:displayOntology();">Ontology Service</td>
-    <td id="LatLngServ" style="width:20%" onmouseover="javascript:mouseover('LatLngServ');" onmouseout="javascript:mouseover('LatLngServ');" onclick="javascript:displayGeography();">Latitude/Longitude/Elevation</td>
-    <td style="width:50%"></td></tr>
+    <th id="Home" style="width:10%" onmouseover="javascript:mouseover('Home');" onmouseout="javascript:mouseover('Home');" onclick="send_me_home.submit();">Home</th>
+    <th id="OntServ" style="width:20%" onmouseover="javascript:mouseover('OntServ');" onmouseout="javascript:mouseover('OntServ');" onclick="javascript:displayOntology();">Ontology Service</th>
+    <th id="LatLngServ" style="width:20%" onmouseover="javascript:mouseover('LatLngServ');" onmouseout="javascript:mouseover('LatLngServ');" onclick="javascript:displayGeography();">Latitude/Longitude/Elevation</th>
+    <td style="width:50%" onmouseover="" onmouseout=""></td></tr>
     </table>
 
     <!-- 
