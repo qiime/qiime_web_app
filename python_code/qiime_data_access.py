@@ -22,7 +22,7 @@ class QiimeDataAccess( AbstractDataAccess ):
     The actual implementation
     """
     
-    _bmf2DatabaseConnection = None
+    _webAppUserDatabaseConnection = None
     _databaseConnection = None
     _testDatabaseConnection = None
     _ontologyDatabaseConnection = None
@@ -42,12 +42,12 @@ class QiimeDataAccess( AbstractDataAccess ):
                 
         return self._databaseConnection
 
-    def getBMF2DatabaseConnection(self):
+    def getWebAppUserDatabaseConnection(self):
         """ Obtains a connection to the web_app_user schema
         """
-        if self._bmf2DatabaseConnection == None:
+        if self._webAppUserDatabaseConnection == None:
             try:
-                self._bmf2DatabaseConnection = cx_Oracle.Connection('web_app_user/"WW3bApp..."@bmf2.colorado.edu/local2')
+                self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@microbiome1.colorado.edu/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -572,8 +572,18 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+        
+    def insertMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num):
+        """ Writes a host key row to the database
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('insert_metadata_value', [study_id, field_type])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
     
-    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num):
+    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field):
         """ Writes a metadata value to the database
         """
         
@@ -584,18 +594,28 @@ class QiimeDataAccess( AbstractDataAccess ):
         pk_name = ''
         
         try:
-            # Make sure there are no single quotes in the field_value. Escape with double quotes for Oracle
-            field_value = field_value.replace('\'', '\'\'')
-            
             con = self.getTestDatabaseConnection()
             table_name = None
             
             # Find the table name
             log.append('Locating table name...')
             table_name = self.findMetadataTable(field_name)
+            
+            # If table is not found, assume user-defined column and store appropriately
             if table_name == None or table_name == '':
-                log.append('Could not determine table for field "%s" with value "%s"' % (field_name, field_value))
-                raise Exception
+                # If the table was not found, this is a user-added column.
+                if field_type == 'study':
+                    statement = 'insert study_extra (sample_id, column_name, value)'
+                    pass
+                elif field_type == 'sample':
+                    pass
+                elif field_type == 'prep':
+                    pass
+                else:
+                    # Unknown field type - return with log message
+                    log.append('Could not determine table for user-specified field "%s" with value "%s"' % (field_name, field_value))
+                    raise Exception
+                
             table_name = '"' + table_name + '"'
             log.append('Table name found: %s' % (table_name))
             
@@ -644,7 +664,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             ### For other tables
             ########################################
             
-            
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
             '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"']:
                 named_params = {'key_field':key_field}
@@ -652,7 +671,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 key_column = 'sample_id'
                 key_table = '"SAMPLE"'
             elif table_name in ['"HOST"', '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HUMAN_ASSOCIATED"']:
-                named_params = {'key_field':host_key_fields[row_num]}
+                named_params = {'key_field':host_key_field}
                 statement = 'select host_id from "HOST" where host_subject_id = :key_field'
                 key_column = 'host_id'
                 key_table = '"HOST"'
@@ -703,4 +722,5 @@ class QiimeDataAccess( AbstractDataAccess ):
                 (field_name, field_value, table_name, call_string, log_string, str(e))
             print error_msg
             return error_msg
+
 
