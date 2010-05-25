@@ -122,6 +122,47 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def checkWebAppUserAvailability(self, username):
+        """ Attempts to validate authenticate the supplied username/password
+
+        Attempt to authenticate the user against the list of users in
+        web_app_user table. If successful, a dict with user innformation is
+        returned. If not, the function returns False.
+        """
+        try:
+            con = self.getWebAppUserDatabaseConnection()
+            availability = con.cursor()
+            con.cursor().callproc('check_username_availability', [username, availability])
+            row = availability.fetchone()
+            if row:
+                return False
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def registerWebAppUser( self, username, password ):
+        """ Attempts to register a new user using the supplied username/password
+    
+        Attempt to register the user. If successful, a dict with user innformation is
+        returned. If not, the function returns False.
+        """
+        try:
+            crypt_pass = crypt(password, username)
+            con = self.getWebAppUserDatabaseConnection()
+            user_data = con.cursor()
+            con.cursor().callproc('web_app_user_insert', [username, crypt_pass])
+            row = user_data.fetchone()
+            if row:
+                user_data = {'web_app_user_id':row[0], 'email':row[1], 'password':row[2], 'is_admin':row[3], 'is_locked':row[4], 'last_login':row[5]}
+                return user_data
+            else:
+                return False
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
 
     def getStudyNames(self):
         """ Returns a list of study names
