@@ -52,7 +52,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
                 
-        return self._bmf2DatabaseConnection
+        return self._webAppUserDatabaseConnection
 
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the ontologies schema
