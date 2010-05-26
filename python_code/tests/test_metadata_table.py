@@ -17,16 +17,14 @@ __status__ = "Production"
 
 import unittest
 from metadata_table import *
+from qiime_data_access import *
 
-# Callback functions
-def validate(value):
-    if value == 10:
-        return True
-    else:
-        return False
-        
-def isInvalid(column_name, row_index):
+# Callback for invalid rows
+def is_invalid(column_name, row_index):
     return column_name, row_index
+
+# Global data access
+qda = QiimeDataAccess()
 
 class MetadtaTableTests(unittest.TestCase):
     """ Unit tests for the MetadataTable and related classes
@@ -43,52 +41,56 @@ class MetadtaTableTests(unittest.TestCase):
     ######################################################
     
     def test_BaseColumnCreate(self):        
-        baseColumn = BaseColumn('depth', validate, isInvalid)
-        self.assertTrue(baseColumn)
-        self.assertTrue(baseColumn.column_name)
-        self.assertTrue(baseColumn.validate)
-        self.assertTrue(baseColumn.isInvalid)
-
-    def test_BaseColumnValidate(self):
-        baseColumn = BaseColumn('depth', validate, isInvalid)
-        self.assertTrue(baseColumn.validate(10))
-        self.assertFalse(baseColumn.validate(9))
+        base_column = BaseColumn('depth', is_invalid, True)
+        self.assertTrue(base_column)
+        self.assertTrue(base_column.column_name)
+        self.assertTrue(base_column.is_invalid, True)
 
     def test_AddBaseColumnValue(self):
-        baseColumn = BaseColumn('depth', validate, isInvalid)
-        baseColumn.addValue(10)
-        self.assertTrue(len(baseColumn.values) == 1)
+        base_column = BaseColumn('depth', is_invalid, True)
+        base_column._addValue(10, qda)
+        self.assertTrue(len(base_column.values) == 1)
+
+    ######################################################    
+    # Tests for RegEx column class
+    ######################################################
+    
+    def test_RegExColumnCreate(self):
+        regex = '^y$|^Y$|^n$|^N$'
+        reg_ex_column = RegExColumn('test_name', is_invalid, True, regex)
+        self.assertTrue(reg_ex_column)
+
+    def test_AddRegExColumnCreate(self):
+        regex = '^y$|^Y$|^n$|^N$'
+        reg_ex_column = RegExColumn('test_name', is_invalid, True, regex)
+        reg_ex_column._addValue('y', qda)
+        self.assertTrue(len(reg_ex_column.values) == 1)
         
-    def test_AddValidBaseColumnValue(self):
-        baseColumn = BaseColumn('depth', validate, isInvalid)
-        baseColumn.addValue(10)
-        self.assertTrue(len(baseColumn._invalid_indicies) == 0)
-
-    def test_AddInvalidBaseColumnValue(self):
-        baseColumn = BaseColumn('depth', validate, isInvalid)
-        baseColumn.addValue(9)
-        self.assertTrue(len(baseColumn._invalid_indicies) == 0)
-
     ######################################################    
     # Tests for ColumnFactory class
     ######################################################
 
     def test_ColumnFactoryCreate(self):
-        factory = ColumnFactory(isInvalid)
+        factory = ColumnFactory(is_invalid)
         self.assertTrue(factory)
 
     def test_ColumnFactoryCreateNumeric(self):
-        factory = ColumnFactory(isInvalid)
-        column = factory.createColumn('depth', 'numeric')
+        factory = ColumnFactory(is_invalid)
+        column = factory.createColumn('depth', 'numeric', True, 0)
+        self.assertTrue(column)
+        
+    def test_ColumnFactoryCreateNotInDictionary(self):
+        factory = ColumnFactory(is_invalid)
+        column = factory.createColumn('xyz', 'text', False, 4000)
         self.assertTrue(column)
 
     ######################################################    
     # Tests for MetaddataTable class
     ######################################################
 
-    def test_MetadataTableCreate(self):
-        table = MetadataTable('tests/test_data.xls')
-        self.assertTrue(table)
+    #def test_MetadataTableCreate(self):
+    #    table = MetadataTable('tests/test_data.xls')
+    #    self.assertTrue(table)
         
 if __name__ == '__main__':
     unittest.main()

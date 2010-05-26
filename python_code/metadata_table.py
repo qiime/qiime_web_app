@@ -22,8 +22,8 @@ class ColumnFactory(object):
     """ Factory class for producing metadata columns
     """
     
-    def __init__(self, isInvalid):
-        self._isInvalid = isInvalid
+    def __init__(self, is_invalid):
+        self._is_invalid = is_invalid
 
     def _columnExists(self, column_name):
         found = False
@@ -41,51 +41,51 @@ class ColumnFactory(object):
         elif datatype == 'ontology':
             return QiimeDataAccess().getOntologies(column_name)
 
-    def createColumn(self, column_name, datatype, length):
+    def createColumn(self, column_name, datatype, length, in_dictionary):
         """ Creates a column of the right type based on the column name
         """
-        column = None
-        controlled_vocab_list = None
+        _column = None
+        _controlled_vocab_list = None
 
         # Deterine if this column is associated with a list or ontology
         if datatype == 'list' or datatype == 'ontology':
-            controlled_vocab_list = self._getControlledVocabs(column_name, datatype)
-            if controlled_vocab_list == None:
+            _controlled_vocab_list = self._getControlledVocabs(column_name, datatype)
+            if _controlled_vocab_list == None:
                 print 'Error: No controlled vocabulary or ontology found even though column is listed as ' + datatype + '.'
                 return None
         
         # Create the appropriate type of column
-        if datatype == 'numeric' :
+        if datatype == 'numeric':
             regex = '^\-*[0-9]+$|^\-*[0-9]*\.[0-9]+$'
-            column = RegExColumn(column_name, self._isInvalid, regex)
+            _column = RegExColumn(column_name, self._is_invalid, in_dictionary, regex)
         elif datatype == 'range':
             regex = '^((\-?[0-9]+)|(\-?[0-9]*\.[0-9]+))(\-((\-?[0-9]+)|(\-?[0-9]*\.[0-9]+)))?$'
-            column = RegExColumn(column_name, self._isInvalid, regex)
+            _column = RegExColumn(column_name, self._is_invalid, in_dictionary, regex)
         elif datatype == 'yn':
             regex = '^y$|^Y$|^n$|^N$'
-            column = RegExColumn(column_name, self._isInvalid, regex)
+            _column = RegExColumn(column_name, self._is_invalid, in_dictionary, regex)
         elif datatype == 'date':
             regex = '^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-9])|(2[0-3]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])))))?$'
-            column = RegExColumn(column_name, self._isInvalid, regex)
+            _column = RegExColumn(column_name, self._is_invalid, in_dictionary, regex)
         elif datatype == 'text':
-            column = TextColumn(column_name, self._isInvalid, length)
+            _column = TextColumn(column_name, self._is_invalid, in_dictionary, length)
         elif datatype == 'list':
-            column = ListColumn(column_name, self._isInvalid, controlled_vocab_list)
+            _column = ListColumn(column_name, self._is_invalid, in_dictionary, _controlled_vocab_list)
         elif datatype == 'ontology':
-            column = OntologyColumn(column_name, self._isInvalid, controlled_vocab_list)
+            _column = OntologyColumn(column_name, self._is_invalid, in_dictionary, _controlled_vocab_list)
 
-        return column
+        return _column
 
 class BaseColumn(object):
     """ The base class for all column types in the metadata table. This class 
     implements common functionality for all column classes.
     """
-    def __init__(self, column_name, isInvalid):
+    def __init__(self, column_name, is_invalid, in_dictionary):
         # Name of this column. Should be unique in MetadataTable object
         self.column_name = column_name
         
         # Callback to notify parent of an invalid value entry
-        self.isInvalid = isInvalid
+        self.is_invalid = is_invalid
         
         # List of values in this column
         self.values = []
@@ -96,28 +96,21 @@ class BaseColumn(object):
         # RegEx validation string (if applicable)
         self.reg_exp = ''
         
-    def writeJSValidation(self):
-        """ Writes the Javascript validation funciton if necessary
-        """
-        return ''
+        # Variable to store whether or not this column exists in the column dictionary
+        self._in_dictionary = in_dictionary
     
     def _addValue(self, value, data_access):
         status = 'good'
         if not self._validate(value, data_access):
             status = 'bad'
-            self.isInvalid(self.column_name, len(self.values))     
+            self.is_invalid(self.column_name, len(self.values))     
         self.values.append((value, status))
-        
-    def _validate(self, value, data_access):
-        """ Validates a value of this column type
-        """
-        return True
 
 class RegExColumn(BaseColumn):
     """ RegExColumn implementation of BaseColumn class
     """
-    def __init__(self, column_name, isInvalid, regex):
-        super(RegExColumn, self).__init__(column_name, isInvalid)
+    def __init__(self, column_name, is_invalid, in_dictionary, regex):
+        super(RegExColumn, self).__init__(column_name, is_invalid, in_dictionary)
         self.reg_exp = regex
         
     def writeJSValidation(self):
@@ -137,15 +130,15 @@ class RegExColumn(BaseColumn):
 class ListColumn(BaseColumn):
     """ List implementation of BaseColumn class
     """
-    def __init__(self, column_name, isInvalid, list_names):
-        super(ListColumn, self).__init__(column_name, isInvalid)
+    def __init__(self, column_name, is_invalid, in_dictionary, list_names):
+        super(ListColumn, self).__init__(column_name, is_invalid, in_dictionary)
         self.list_names = list_names
         
     def _addValue(self, value, data_access):
         status = 'good'
         if not self._validate(value, self.list_names, data_access):
             status = 'bad'
-            self.isInvalid(self.column_name, len(self.values))
+            self.is_invalid(self.column_name, len(self.values))
         self.values.append((value, status))
         
     def writeJSValidation(self):
@@ -169,15 +162,15 @@ class ListColumn(BaseColumn):
 class OntologyColumn(BaseColumn):
     """ Ontology implementation of BaseColumn class
     """
-    def __init__(self, column_name, isInvalid, ontology_names):
-        super(OntologyColumn, self).__init__(column_name, isInvalid)
+    def __init__(self, column_name, is_invalid, in_dictionary, ontology_names):
+        super(OntologyColumn, self).__init__(column_name, is_invalid, in_dictionary)
         self.ontology_names = ontology_names
 
     def _addValue(self, value, data_access):
         status = 'good'
         if not self._validate(value, self.ontology_names, data_access):
             status = 'bad'
-            self.isInvalid(self.column_name, len(self.values))
+            self.is_invalid(self.column_name, len(self.values))
         self.values.append((value, status))
         
     def writeJSValidation(self):
@@ -204,8 +197,8 @@ class OntologyColumn(BaseColumn):
 class TextColumn(BaseColumn):
     """ Text implementation of BaseColumn class
     """
-    def __init__(self, column_name, isInvalid, length):
-        super(TextColumn, self).__init__(column_name, isInvalid)
+    def __init__(self, column_name, is_invalid, in_dictionary, length):
+        super(TextColumn, self).__init__(column_name, is_invalid, in_dictionary)
         self.maxLength = length
         
     def _validate(self, value, data_access):
@@ -253,14 +246,14 @@ class MetadataTable(object):
         else:
             data_access.writeTableToDatabase()
             
-    def _isInvalid(self, column_name, invalid_row):
+    def _is_invalid(self, column_name, invalid_row):
         """ A callback that is fired when an invalid field has been found
         """
         self._invalid_rows.append((column_name, invalid_row))
 
     def _readMetadataFile(self):
         global _metadataFile
-        column_factory = ColumnFactory(self._isInvalid)
+        column_factory = ColumnFactory(self._is_invalid)
         data_file = open(self._metadataFile, "rU")
         reader = csv.reader(data_file,  delimiter='\t')
         data_access = QiimeDataAccess()
@@ -277,27 +270,21 @@ class MetadataTable(object):
         for column in headers:
             try:    
                 if column in column_details:
-                    result = column_factory.createColumn(column, column_details[column][0], column_details[column][1])
+                    result = column_factory.createColumn(column, column_details[column][0], column_details[column][1], True)
                     if result:
                         self._addColumn(result)
                     else:
                         raise ValueError('Column creation failed for \'' + column + '\' however the column does exist in the column dictionary')
                 # Column not in dictionary - was added by user. Capture this field and store as metadata
                 else:
-                    pass
-                    #result = column_factory.createColumn(column, 'text', '4000')
+                    result = column_factory.createColumn(column, 'text', '4000', False)
+                    if result:
+                        self._addColumn(result)
             except Exception as err:
                 raise err
 
-        i = 0
-        for col in self._columns:
-            #print str(i) + ', col = ' + col.column_name
-            i += 1
-
         # Read the column values
         for row in reader:
-            #print row
-            
             # Skip any rows starting with white space
             if len(row) == 0:
                 continue
@@ -370,7 +357,11 @@ class MetadataTable(object):
         # Print the column headers
         x = 0
         while x < column_count:
-            html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
+            current_column = self._columns[x]
+            if current_column._in_dictionary:
+                html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
+            else:
+                html_table += '<th class="meta_th" style="background:#00FFFF">' + self._columns[x].column_name + '</th>\n'
             x += 1
         
         #####################################
@@ -391,15 +382,14 @@ class MetadataTable(object):
             html_table += '<tr>\n'
             while x < column_count:
                 for column in self._columns:
+
                     # Create a unique column name for processing later
                     unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
-                    #print 'column_count: ' + str(column_count) + ', row_count: ' + str(row_count)
-                    #print unique_column_name
-                    #print str(column.values)
-                    
+
                     # This is the output value for the HTML page. It may be truncated for display if the
                     # text is very long.
                     value_output = str(column.values[y][0])
+
                     # This will always hold the full value of the field. Used for submission to database.
                     actual_value = str(column.values[y][0])
                     

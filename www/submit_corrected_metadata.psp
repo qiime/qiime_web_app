@@ -14,6 +14,8 @@ __status__ = "Development"
 <%
 # The obligatory data access import
 from qiime_data_access import *
+from metadata_worker import *
+import threading
 
 # Gather all fields for submission
 study_name = sess['study_name']
@@ -86,40 +88,34 @@ if len(host_fields) > 0:
 
 req.write('<p style="font-size:12px">Writing Metadata Values (this may take a while):</p>')
 
-# Make a final pass to write the rest of the values now that rows exist
+# To hold the current bucket of metadata values
+item_list = []
+
+# Sets the number of metadata fields to be processed by each thread
+bucket_size = 50
+
+# Go workers go!
 for item in all_other_fields:
-    # Reset the key_field
-    key_field = None    
-    parts = item.split(':')
     
     # Not a metadata field if length of parts is wrong
+    parts = item.split(':')
     if len(parts) != 4:
         continue
-
-    field_type = parts[0]
-    row_num = parts[1]
-    field_name = parts[3]
-    field_value = form[item]
     
-    if field_type == 'sample':
-        key_field = sample_key_fields[row_num]
-    elif field_type == 'prep':
-        key_field = prep_key_fields[row_num]
-    elif field_type == 'study':
-        key_field = study_name
+    # Fill a bucket and pass off to worker
+    if len(item_list) == bucket_size:
+        #t = TestThread('asdf')
+        #t.setValues(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id)
+        #t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, data_access)
+        #t.start()
+        item_list = []
+    else:
+        item_list.append(item)
 
-    # Just in case...
-    if key_field == None:
-        continue
-    
-    # Now that we're sure all parent rows exist, write the field value to db
-    #req.write('<br/> Writing metadata value to database: %s, value %s' % (field_name, field_value))
-    req.write('* ')
-    #req.write('field_type: ' + field_type + '<br/>key_field: ' + key_field + '<br/>field_name: ' + field_name + '<br/>field_value: ' + field_value + '<br/>study_id: ' + study_id + '<p/>')
-    result = data_access.writeMetadataValue(field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num)
-    if result != None:
-        req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))
-        with_errors = True
+# If there are any items left, process those last
+#if len(item_list) > 0:
+#    t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, data_access)
+#    t.start()
 
 if with_errors:
     req.write('<h3>Upload Completed With Errors</h3>')
@@ -131,6 +127,3 @@ else:
 
 # end if/else
 %>
-
-
-

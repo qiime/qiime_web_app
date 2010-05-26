@@ -35,7 +35,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._databaseConnection == None:
             try:
-                self._databaseConnection = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/microbe')
+                self._databaseConnection = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -47,12 +47,12 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._webAppUserDatabaseConnection == None:
             try:
-                self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@microbiome1.colorado.edu/microbe')
+                self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
                 
-        return self._webAppUserDatabaseConnection
+        return self._bmf2DatabaseConnection
 
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the ontologies schema
@@ -63,7 +63,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._ontologyDatabaseConnection == None:
             try:
-                self._ontologyDatabaseConnection = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
+                self._ontologyDatabaseConnection = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -78,7 +78,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         if self._testDatabaseConnection == None:
             try:
                 print 'No active connection - obtaining new connection to qiime_test.'
-                self._testDatabaseConnection = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu/microbe')
+                self._testDatabaseConnection = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -114,69 +114,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             user_data = con.cursor()
             con.cursor().callproc('authenticate_user', [username, crypt_pass, user_data])
             row = user_data.fetchone()
-            if row:
-                user_data = {'web_app_user_id':row[0], 'email':row[1], 'password':row[2], 'is_admin':row[3], 'is_locked':row[4], 'last_login':row[5]}
-                return user_data
-            else:
-                return False
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-            
-    def checkWebAppUserAvailability(self, username):
-        """ Attempts to validate authenticate the supplied username/password
-
-        Attempt to authenticate the user against the list of users in
-        web_app_user table. If successful, a dict with user innformation is
-        returned. If not, the function returns False.
-        """
-        try:
-            con = self.getWebAppUserDatabaseConnection()
-            availability = con.cursor()
-            con.cursor().callproc('check_username_availability', [username, availability])
-            row = availability.fetchone()
-            if row:
-                return False
-            else:
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
-    def registerWebAppUser( self, username, password ):
-        """ Attempts to register a new user using the supplied username/password
-    
-        Attempt to register the user. If successful, a dict with user innformation is
-        returned. If not, the function returns False.
-        """
-        try:
-            crypt_pass = crypt(password, username)
-            con = self.getWebAppUserDatabaseConnection()
-            user_data = con.cursor()
-            con.cursor().callproc('web_app_user_insert', [username, crypt_pass])
-            row = user_data.fetchone()
-            if row:
-                user_data = {'web_app_user_id':row[0], 'email':row[1], 'password':row[2], 'is_admin':row[3], 'is_locked':row[4], 'last_login':row[5]}
-                return user_data
-            else:
-                return False
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-            
-    def updateWebAppUserPwd( self, username, password ):
-        """ Attempts to register a new user using the supplied username/password
-
-        Attempt to register the user. If successful, a dict with user innformation is
-        returned. If not, the function returns False.
-        """
-        try:
-            crypt_pass = crypt(password, username)
-            con = self.getWebAppUserDatabaseConnection()
-            user_data = con.cursor()
-            con.cursor().callproc('update_web_app_user_password', [username, crypt_pass])
-            row = user_data.fetchone()
-            return row
             if row:
                 user_data = {'web_app_user_id':row[0], 'email':row[1], 'password':row[2], 'is_admin':row[3], 'is_locked':row[4], 'last_login':row[5]}
                 return user_data
@@ -636,16 +573,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def insertMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_fields, row_num):
-        """ Writes a host key row to the database
-        """
-        try:
-            con = self.getTestDatabaseConnection()
-            con.cursor().callproc('insert_metadata_value', [study_id, field_type])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field):
         """ Writes a metadata value to the database
         """
@@ -668,7 +595,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             if table_name == None or table_name == '':
                 # If the table was not found, this is a user-added column.
                 if field_type == 'study':
-                    statement = 'insert study_extra (sample_id, column_name, value)'
+                    statement = 'insert study_extra (sample_id, column_name, value_list) values (%s, \'%s\', \'%s\')' % (study_id, field_name, field_value)
                     pass
                 elif field_type == 'sample':
                     pass
@@ -776,6 +703,8 @@ class QiimeDataAccess( AbstractDataAccess ):
             
             # Finally, commit the changes
             results = con.cursor().execute('commit')
+            
+            print log
             
         except Exception, e:
             call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')' % (field_type, key_field, field_name, field_value, study_id)
