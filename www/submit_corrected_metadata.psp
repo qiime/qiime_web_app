@@ -90,32 +90,38 @@ req.write('<p style="font-size:12px">Writing Metadata Values (this may take a wh
 
 # To hold the current bucket of metadata values
 item_list = []
+threads = []
+thread_count = 20
 
 # Sets the number of metadata fields to be processed by each thread
-bucket_size = 50
+bucket_size = len(all_other_fields) / thread_count
+
+# Define the thread callback
+def _callback(self, message):
+    req.write(message)
 
 # Go workers go!
 for item in all_other_fields:
     
-    # Not a metadata field if length of parts is wrong
-    parts = item.split(':')
-    if len(parts) != 4:
-        continue
-    
     # Fill a bucket and pass off to worker
     if len(item_list) == bucket_size:
-        #t = TestThread('asdf')
-        #t.setValues(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id)
-        #t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, data_access)
-        #t.start()
+        t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, _callback)
+        threads.append(t)
+        req.write('^ ')
+        t.start()
         item_list = []
     else:
         item_list.append(item)
 
 # If there are any items left, process those last
-#if len(item_list) > 0:
-#    t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, data_access)
-#    t.start()
+if len(item_list) > 0:
+    t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, _callback)
+    threads.append(t)
+    req.write('^<br/>')
+    t.start()
+
+for t in threads:
+    t.join()
 
 if with_errors:
     req.write('<h3>Upload Completed With Errors</h3>')

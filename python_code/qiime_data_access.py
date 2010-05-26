@@ -704,8 +704,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             # Finally, commit the changes
             results = con.cursor().execute('commit')
             
-            print log
-            
         except Exception, e:
             call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')' % (field_type, key_field, field_name, field_value, study_id)
             log_string = '<br/>'.join(log)
