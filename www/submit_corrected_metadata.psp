@@ -91,7 +91,7 @@ req.write('<p style="font-size:12px">Writing Metadata Values (this may take a wh
 # To hold the current bucket of metadata values
 item_list = []
 threads = []
-thread_count = 15
+thread_count = 1
 
 # Sets the number of metadata fields to be processed by each thread
 bucket_size = len(all_other_fields) / thread_count
@@ -107,7 +107,7 @@ for item in all_other_fields:
     
     # Fill a bucket and pass off to worker
     if len(item_list) == bucket_size:
-        t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ')
+        t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ', data_access)
         threads.append(t)
         req.write('^ ')
         t.start()
@@ -119,7 +119,7 @@ for item in all_other_fields:
 # If there are any items left, process those last
 if len(item_list) > 0:
     delimiter += 1
-    t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ')
+    t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ', data_access)
     threads.append(t)
     req.write('^<br/>')
     t.start()

@@ -30,7 +30,7 @@ class TestThread(threading.Thread):
         print self.val
 
 class MetadataWorkerThread(threading.Thread):
-    def __init__(self, req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, delimiter):
+    def __init__(self, req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, delimiter, data_access):
         threading.Thread.__init__(self)
         self.req = req
         self.item_list = item_list
@@ -41,6 +41,7 @@ class MetadataWorkerThread(threading.Thread):
         self.form = form
         self.study_id = study_id
         self.delimiter = delimiter
+        self.data_access = data_access
     
     def run(self):
         
@@ -79,6 +80,7 @@ class MetadataWorkerThread(threading.Thread):
             field_value = field_value.replace('\'', '\'\'')
             
             try:
+                #result = self.data_access.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
                 self.req.write(self.delimiter)
             except Exception, e:
