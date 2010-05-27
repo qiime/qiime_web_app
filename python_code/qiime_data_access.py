@@ -16,6 +16,7 @@ __status__ = "Production"
 import cx_Oracle
 from crypt import crypt
 from data_access import AbstractDataAccess
+from threading import RLock
 
 class QiimeDataAccess( AbstractDataAccess ):
     """
@@ -583,7 +584,11 @@ class QiimeDataAccess( AbstractDataAccess ):
         log = []
         pk_name = ''
         
+        lock = RLock()
+        
         try:
+            lock.acquire()
+            
             con = self.getTestDatabaseConnection()
             table_name = None
             
@@ -712,5 +717,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 (field_name, field_value, table_name, call_string, log_string, str(e))
             print error_msg
             return error_msg
+        finally:
+            lock.release()
 
 

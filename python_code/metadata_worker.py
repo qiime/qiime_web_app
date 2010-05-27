@@ -30,7 +30,7 @@ class TestThread(threading.Thread):
         print self.val
 
 class MetadataWorkerThread(threading.Thread):
-    def __init__(self, req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, callback):
+    def __init__(self, req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, delimiter):
         threading.Thread.__init__(self)
         self.req = req
         self.item_list = item_list
@@ -40,7 +40,7 @@ class MetadataWorkerThread(threading.Thread):
         self.study_name = study_name
         self.form = form
         self.study_id = study_id
-        self.callback = callback
+        self.delimiter = delimiter
     
     def run(self):
         
@@ -78,17 +78,9 @@ class MetadataWorkerThread(threading.Thread):
             # For oracle, clean up single quotes
             field_value = field_value.replace('\'', '\'\'')
             
-            #self.req.write('field_type: ' + field_type + '::')
-            #self.req.write('key_field: ' + key_field + '::')
-            #self.req.write('field_name: ' + field_name + '::')
-            #self.req.write('field_value: ' + field_value + '::')
-            #self.req.write('study_id: ' + self.study_id + '::')
-            #self.req.write('host_key_field: ' + host_key_field + '<br>')
-
             try:
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
-                self.req.write('* ')
-                #callback('c ')
+                self.req.write(self.delimiter)
             except Exception, e:
                 self.req.write(result)
             
