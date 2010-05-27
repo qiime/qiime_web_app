@@ -95,7 +95,7 @@ if form.has_key('username'):
         alphabet += "01234567890"
 
         activation_code=''.join([choice(alphabet) for i in range(20)])
-        user_data=qiimeDataAccess.registerWebAppUser( form["username"], form["password"] )
+        user_data=qiimeDataAccess.registerWebAppUser( form["username"], form["password"] ,activation_code)
         
         process_and_send_email('qiime.web.app@colorado.edu',form["username"], \
             'QIIME account activation', \
