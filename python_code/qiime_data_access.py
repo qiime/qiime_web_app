@@ -53,7 +53,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
                 
-        return self._bmf2DatabaseConnection
+        return self._webAppUserDatabaseConnection
 
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the ontologies schema
@@ -124,6 +124,27 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def activateWebAppUser( self, username, activation_code ):
+        """ Attempts to activate user's account
+
+        Attempt to activate the user account. If successful, returns True. 
+        If not, the function returns False.
+        """
+        try:
+            con = self.getWebAppUserDatabaseConnection()
+            user_data = con.cursor()
+
+            con.cursor().callproc('verify_user_activation_code', [username, activation_code, user_data])
+            row = user_data.fetchone()
+            if row:
+                con.cursor().callproc('activate_user_account', [username])
+                return True
+            else:
+                return False
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
     def getStudyNames(self):
         """ Returns a list of study names
         """

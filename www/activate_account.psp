@@ -1,0 +1,48 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+
+from mod_python import Session
+from qiime_data_access import QiimeDataAccess
+%>
+
+<html>
+<head>
+<title>Qiime</title>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+<form target="_top" id="send_me_home" name="send_me_home" action="fusebox.psp" method="post">
+    <input type="hidden" id="page" name="page" value="select_task.psp">
+</form>
+<a href="#" onclick="send_me_home.submit();"><img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 /></a>
+<table class="header_table">
+<tr><td>Account Activation</td></tr>
+</table>
+
+<%
+
+if form.has_key('username') and form.has_key('activation_code'):
+    qiimeDataAccess=QiimeDataAccess()
+    verify_activation = qiimeDataAccess.activateWebAppUser(form['username'], \
+                                            form['activation_code'])
+    if verify_activation:
+        req.write('<p>Your Account has been activated!</p>')
+        req.write('<input type="button" onclick="send_me_home.submit();" value="Log In" \>')
+        
+    else:
+        req.write('<p style="color:red">Invalid Username/Activation Code: Please verify that the username and activation code are the same as in your email.</p>')
+else:
+    req.write('<p style="color:red">Invalid URL: Please verify that the url from your email matches what is in the browser.</p>')
+%>
+
+
+</body>
+</html>
