@@ -100,7 +100,7 @@ if form.has_key('username'):
         process_and_send_email('qiime.web.app@colorado.edu',form["username"], \
             'QIIME account activation', \
             'Please click on the link below to activate your QIIME Account:\n\nhttp://microbio.me/qiime/activate_account.psp?username=%s;activation_code=%s' % (form['username'],activation_code))
-        req.write('<p>Thank you for registering for QIIME.<br>You will receive an email shortly containing a link to activate your account.</p>')
+        req.write('<p>Thank you for registering for QIIME.<br><br>You will receive an email shortly containing a link to activate your account.</p>')
     elif not available and good_password:
         req.write('<p style="color:red;">This username is already taken!</p>')
     elif available and not good_password:
