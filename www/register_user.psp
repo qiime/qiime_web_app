@@ -119,24 +119,54 @@ if form.has_key('username'):
     elif not available and good_password:
         # if the username is not available, then let the user know
         req.write('<p style="color:red;">This username is already taken!</p>')
+%>
+        <form id="new_user" method="post" action="register_user.psp">
+            <table>
+            <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+            <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+            <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+            </table>
+        </form>
+<%
     elif available and not good_password:
         # if the username is available but the password is bad, let the user
         # know
         req.write('<div style="color:red;"><p><b>Invalid Password!</b> Your password must contain at least 2 of following and have a length greater than 6 characters:</p><ul><li>non-alphanumeric characters </li><li> upper-case alphanumeric characters </li><li> lower-case alphanumeric characters </li><li> numbers </li></ul><p>For Example: "Password","password1" or "password*"</p></div>')
+%>
+        <form id="new_user" method="post" action="register_user.psp">
+            <table>
+            <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+            <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+            <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+            </table>
+        </form>
+<%
     else:
         # Alert the user that their username is taken
         req.write('<p style="color:red;">This username is already taken!</p>')
+%>
+        <form id="new_user" method="post" action="register_user.psp">
+            <table>
+            <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+            <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+            <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+            </table>
+        </form>
+<%
 else:
     # if this page was not a submitted form, then load default page
 %>
-<form id="new_user" method="post" action="register_user.psp">
-    <table>
-    <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
-    <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
-    <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
-    <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
-    </table>
-</form>
+    <form id="new_user" method="post" action="register_user.psp">
+        <table>
+        <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+        <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+        <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+        <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+        </table>
+    </form>
 <%
 #
 %>
