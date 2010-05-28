@@ -35,9 +35,28 @@ class QiimeDataAccessTests(unittest.TestCase):
         pass
 
     # The rest of the unit tests
+    
+    #These two functions are first, because they create a test user acct.
+    def test_registerWebAppUser(self):
+        global _qiime_data_access
+        result = _qiime_data_access.registerWebAppUser('test_user1313', 'calkd1579','calkd1579')
+        self.assertFalse(result)
+    
+    def test_activateWebAppUser(self):
+        global _qiime_data_access
+        result = _qiime_data_access.activateWebAppUser('test_user1313', 'calkd1579')
+        self.assertTrue(result)
+    
+    #####
+    
     def test_getDatabaseConnection(self):
         global _qiime_data_access
         con = _qiime_data_access.getDatabaseConnection()
+        self.assertTrue(con)\
+
+    def test_getWebAppUserDatabaseConnection(self):
+        global _qiime_data_access
+        con = _qiime_data_access.getWebAppUserDatabaseConnection()
         self.assertTrue(con)
 
     def test_getOntologyDatabaseConnection(self):
@@ -50,13 +69,25 @@ class QiimeDataAccessTests(unittest.TestCase):
         con = _qiime_data_access.getTestDatabaseConnection()
         self.assertTrue(con)
 
+    def test_getTestDatabaseConnection(self):
+        global _qiime_data_access
+        con = _qiime_data_access.getTestDatabaseConnection()
+        self.assertTrue(con)
+
     def test_authenticateWebAppUser(self):
         global _qiime_data_access
-        result = _qiime_data_access.authenticateWebAppUser('asdf', '1234')
-        self.assertFalse(result)
+        result = _qiime_data_access.authenticateWebAppUser('test_user1313', 'calkd1579')
+        self.assertTrue(result)
         #user_info = result = _qiime_data_access.authenticateWebAppUser('', '')
         #self.assertTrue(type(user_info).name == 'dict')
+        
+    def test_checkWebAppUserAvailability(self):
+        global _qiime_data_access
+        result = _qiime_data_access.checkWebAppUserAvailability('test_user1313')
+        self.assertFalse(result)
+        
 
+        
     def test_createStudy(self):
         """ Unit test method for creating Study
         """
@@ -75,7 +106,8 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ Unit test method for getStudyUserNames 
         """
         global _qiime_data_access
-        study_names = _qiime_data_access.getUserStudyNames(11296)
+        con = _qiime_data_access.getDatabaseConnection()
+        study_names = con.getUserStudyNames(11296)
         self.assertTrue(study_names)
         
     def test_getStudyNames(self):
