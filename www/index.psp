@@ -16,15 +16,13 @@ from qiime_data_access import QiimeDataAccess
 
 <html>
 <head>
-<title>Please Log In</title>
 <link rel="stylesheet" href="style.css" type="text/css">
+<title>Please Log In</title>
 </head>
 <body>
-
 <form action="fusebox.psp" method="post" name="login_form" id="login_form">
 <input type="hidden" name="page" value="./select_study.psp">
 </form>
-
 <img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 />
 <table class="header_table">
 <tr><td>Please Log In</td></tr>
@@ -72,8 +70,14 @@ if form.has_key('username'):
     <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
     <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
     <tr><td colspan="2"><input type="submit" value="Log In"></tr>
+    <tr><td colspan="2"><br></td></tr>
 </form>
 </table>
 
+<table>
+    <tr><td>Are you already registered? <a href="./register_user.psp">Create Account</a></td></tr>
+    <tr><td>Forget your password? <a href="./forgot_password.psp">Get a New Password</a></td></tr>
+    <tr><td>Would you like to change your password? <a href="./change_password.psp">Change Password</a></td></tr>
+</table>
 </body>
 </html>
