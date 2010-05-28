@@ -8,19 +8,23 @@ __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
+'''This page takes the username and password from the User's email and
+activates their account.'''
 
 from mod_python import Session
 from qiime_data_access import QiimeDataAccess
 %>
-
+<!-- this is header information for the page -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <title>Qiime</title>
-<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" href="style.css" type="text/css" />
 </head>
 <body>
 <form target="_top" id="send_me_home" name="send_me_home" action="fusebox.psp" method="post">
-    <input type="hidden" id="page" name="page" value="select_task.psp">
+    <input type="hidden" id="page" name="page" value="select_task.psp" />
 </form>
 <a href="#" onclick="send_me_home.submit();"><img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 /></a>
 <table class="header_table">
@@ -28,9 +32,12 @@ from qiime_data_access import QiimeDataAccess
 </table>
 
 <%
-
+#This loop verifies the username and activation code in the url.
 if form.has_key('username') and form.has_key('activation_code'):
+    #if username and activation code are valid, make the account valid
     qiimeDataAccess=QiimeDataAccess()
+    
+    #verify activation
     verify_activation = qiimeDataAccess.activateWebAppUser(form['username'], \
                                             form['activation_code'])
     if verify_activation:
@@ -40,9 +47,8 @@ if form.has_key('username') and form.has_key('activation_code'):
     else:
         req.write('<p style="color:red">Invalid Username/Activation Code: Please verify that the username and activation code are the same as in your email.</p>')
 else:
+    #if the variables are broken in the url, print an error message
     req.write('<p style="color:red">Invalid URL: Please verify that the url from your email matches what is in the browser.</p>')
 %>
-
-
 </body>
 </html>
