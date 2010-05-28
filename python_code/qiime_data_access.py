@@ -185,7 +185,21 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+    def updateWebAppUserPwd( self, username, password ):
+        """ Attempts to validate authenticate the supplied username/password
+
+        Attempt to authenticate the user against the list of users in
+        web_app_user table. If successful, a dict with user innformation is
+        returned. If not, the function returns False.
+        """
+        try:
+            crypt_pass = crypt(password, username)
+            con = self.getWebAppUserDatabaseConnection()
+            user_data = con.cursor()
+            con.cursor().callproc('update_web_app_user_password', [username, crypt_pass])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False  
     def getStudyNames(self):
         """ Returns a list of study names
         """
