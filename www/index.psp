@@ -39,7 +39,7 @@ if form.has_key('username'):
     # begin
     qiimeDataAccess = QiimeDataAccess()
     user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
-    if ( user_data ):
+    if ( user_data and user_data['verified']=='y'):
         sess = Session.Session(req)
         sess['username'] = form["username"]
         sess['is_admin'] = user_data['is_admin']
