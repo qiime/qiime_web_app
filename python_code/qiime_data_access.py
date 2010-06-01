@@ -53,7 +53,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
                 
-        return self._webAppUserDatabaseConnection
+        return self._bmf2DatabaseConnection
 
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the ontologies schema
@@ -200,6 +200,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False  
+
     def getStudyNames(self):
         """ Returns a list of study names
         """
@@ -293,35 +294,34 @@ class QiimeDataAccess( AbstractDataAccess ):
             study_info = {}
             for row in results:
                 print row
-                study_info['public'] = row[0]
-                study_info['submit_to_insdc'] = row[1]
-                study_info['investigation_type'] = row[2]
-                study_info['project_name'] = row[3]
-                study_info['experimental_factor'] = row[4]
-                study_info['env_package_id'] = row[5]
-                study_info['study_complt_stat'] = row[6]
-                study_info['study_alias'] = row[7]
-                study_info['study_title'] = row[8]
-                study_info['study_type'] = row[9]
-                study_info['study_abstract'] = row[10]
-                study_info['study_description'] = row[11]
-                study_info['center_name'] = row[12]
-                study_info['center_project_name'] = row[13]
-                study_info['project_id'] = row[14]
-                study_info['pmid'] = row[15]
+                study_info['submit_to_insdc'] = row[0]
+                study_info['investigation_type'] = row[1]
+                study_info['project_name'] = row[2]
+                study_info['experimental_factor'] = row[3]
+                study_info['env_package_id'] = row[4]
+                study_info['study_complt_stat'] = row[5]
+                study_info['study_alias'] = row[6]
+                study_info['study_title'] = row[7]
+                study_info['study_type'] = row[8]
+                study_info['study_abstract'] = row[9]
+                study_info['study_description'] = row[10]
+                study_info['center_name'] = row[11]
+                study_info['center_project_name'] = row[12]
+                study_info['project_id'] = row[13]
+                study_info['pmid'] = row[14]
             return study_info
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def createStudy(self, user_id, study_name, investigation_type, study_completion_status, submit_to_insdc, public_data):
+    def createStudy(self, user_id, study_name, investigation_type, study_completion_status, submit_to_insdc):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
             con = self.getTestDatabaseConnection()
             study_id = 0
-            study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, investigation_type, study_completion_status, submit_to_insdc, public_data, study_id])
-            return study_id[6]
+            study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, investigation_type, study_completion_status, submit_to_insdc, study_id])
+            return study_id[5]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

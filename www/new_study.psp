@@ -45,9 +45,10 @@ var studynames=new Array();
 
 <%
 from qiime_data_access import QiimeDataAccess
+qda = QiimeDataAccess()
 
 # get a python list of studies from the database
-study_names = QiimeDataAccess().getStudyNames()
+study_names = qda.getStudyNames()
 
 # iterate through the studies and write them into a javascript array
 for i in range(len(study_names)):
@@ -99,7 +100,7 @@ function check_study_name()
                 <select class="input required" name="investigation_type" name="investigation_type">
                     <option value=""></option>
 <%
-list = QiimeDataAccess().getListValues('Investigation Type')
+list = qda.getListValues('Investigation Type')
 for item in sorted(list):
     item_text = item[1]
     if item[1] == 'miens-survey':
@@ -124,7 +125,7 @@ for item in sorted(list):
             <td>
                 <select class="input required" name="environmental_package" name="environmental_package" multiple>
 <%
-list = QiimeDataAccess().getListValues('Package Type')
+list = qda.getListValues('Package Type')
 for item in sorted(list):
     if item[0] > 0:
         req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
@@ -141,7 +142,7 @@ for item in sorted(list):
                 <select class="input required" name="study_completion_status" name="study_completion_status">
                     <option value=""></option>
 <%
-list = QiimeDataAccess().getListValues('Study Completion Status')
+list = qda.getListValues('Study Completion Status')
 for item in sorted(list):
     req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
 #
@@ -157,17 +158,6 @@ for item in sorted(list):
                     <option value=""></option>
                     <option value="y">Yes</option>
                     <option value="n">No</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td>Choose the availability of this Study:
-            </td>
-            <td>
-                <select class="input required" name="privileges" id="privileges">
-                    <option value=""></option>
-                    <option value="y">Public</option>
-                    <option value="n">Private</option>
                 </select>
             </td>
         </tr>
