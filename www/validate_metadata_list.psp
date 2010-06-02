@@ -38,6 +38,8 @@ if templates != None:
             req.write(str(e))
             req.write('<p/>Please email your metadata archive and a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
             break
+    
+    # End for
 %>
 
 <p/>

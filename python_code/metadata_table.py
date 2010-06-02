@@ -305,8 +305,12 @@ class MetadataTable(object):
                 
                 i = 0
                 for column in row:
+                    # Some files contain extra whitespace characters beyond the bounds of the last column.
+                    # Skip over these values.
                     if (i > len(self._columns) - 1):
                         continue
+                    
+                    # Add the current value to the appropriate metadata table column
                     self._columns[i]._addValue(column.strip(), data_access)
                     i += 1
         except Exception, e:
