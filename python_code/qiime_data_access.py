@@ -316,19 +316,18 @@ class QiimeDataAccess( AbstractDataAccess ):
                 study_info['investigation_type'] = row[1]
                 study_info['project_name'] = row[2]
                 study_info['experimental_factor'] = row[3]
-                study_info['env_package_id'] = row[4]
-                study_info['study_complt_stat'] = row[5]
-                study_info['study_alias'] = row[6]
-                study_info['study_title'] = row[7]
-                study_info['study_type'] = row[8]
-                study_info['study_abstract'] = row[9]
-                study_info['study_description'] = row[10]
-                study_info['center_name'] = row[11]
-                study_info['center_project_name'] = row[12]
-                study_info['project_id'] = row[13]
-                study_info['pmid'] = row[14]
-                study_info['metadata_complete'] = row[15]
-                study_info['sff_complete'] = row[16]
+                study_info['study_complt_stat'] = row[4]
+                study_info['study_alias'] = row[5]
+                study_info['study_title'] = row[6]
+                study_info['study_type'] = row[7]
+                study_info['study_abstract'] = row[8]
+                study_info['study_description'] = row[9]
+                study_info['center_name'] = row[10]
+                study_info['center_project_name'] = row[11]
+                study_info['project_id'] = row[12]
+                study_info['pmid'] = row[13]
+                study_info['metadata_complete'] = row[14]
+                study_info['sff_complete'] = row[15]
             return study_info
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -739,14 +738,29 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def createQueueJob(self, study_id, user_id, status, filepath):
+    def createQueueJob(self, study_id, user_id, filepath):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
             con = self.getTestDatabaseConnection()
             job_id = 0
-            job_id = con.cursor().callproc('create_queue_job', [study_id, user_id, status, filepath, job_id])
-            return job_id[4]
+            job_id = con.cursor().callproc('qiime_assets.create_queue_job', [study_id, user_id, filepath, job_id])
+            return job_id[3]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return -1
+        
+    def getJobInfo(self, study_id):
+        """ Returns submits a job to the queue and returns the job_id
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            jobs = []
+            con.cursor().callproc('qiime_assets.get_job_info', [study_id, results])
+            for row in results:
+                jobs.append((row[0], row[1], row[2]))
+            return jobs
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

@@ -66,6 +66,7 @@ if form.has_key('file') and form['file'].filename:
                         process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
                         if not int(process.wait())==0:
                             req.write("Error: the SFF file could not be parsed!")
+                            #study_id, user_id, status, filepath
                         job_id = data_access.createQueueJob(form['web_app_user_id'], form['study_id'], 0, outfname)
                     except:
                         req.write("Error: there was a problem parsing the SFF and/or inserting job in the queue!")

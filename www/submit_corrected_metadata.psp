@@ -135,7 +135,7 @@ if with_errors:
     # Update the database flag for the failed upload
     data_access.updateMetadataFlag(study_id, 'n')
 else:
-    req.write('<h3>Upload Completed Without Errors</h3>')
+    req.write('<h3>Upload Completed!</h3>')
     req.write('<p style="font-size:8px">yahoo!</p>')
     req.write('<img src="img/firework3.gif"/>')
     

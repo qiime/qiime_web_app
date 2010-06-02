@@ -11,7 +11,13 @@ __status__ = "Production"
 
 <%
 from qiime_data_access import *
+
+# Grab some required values for this page
 data_access = QiimeDataAccess()
+study_id = int(sess['study_id'])
+study_info = data_access.getStudyInfo(study_id)
+metadata_complete = study_info['metadata_complete']
+sff_complete = study_info['sff_complete']
 %>
 
 <br>
@@ -32,7 +38,6 @@ data_access = QiimeDataAccess()
             <form id="user_study" action="select_user_study_submit.psp" method="post">
                 Select an Existing Study:
                 <select validate="required:true" name="study_names" id="study_names" onchange="user_study.submit();">
-                <option value=""></option>
 <%
 study_names = QiimeDataAccess().getUserStudyNames(sess['web_app_user_id'])
 for study_name in study_names:
@@ -61,15 +66,20 @@ for study_name in study_names:
                 <a href="" onclick="document.forms['associate_sff_to_study'].submit(); return false;">
                 Upload SFF files to this study
 <%
-if True:
+if sff_complete == 'n':
     
 %>        
-(not complete)
+(not complete) </a><img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
-# End if
+else:
+    
+%>
+(complete)</a> <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+<%
 
-%>            
-                </a></form>
+# End if
+%>
+                </form>
         </li>
         <li>        
             <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
@@ -77,23 +87,42 @@ if True:
                 <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
                 Upload metadata to this study 
 <%
-if True:
+if metadata_complete == 'n':
     
 %>        
-(not complete)
+(not complete)</a> <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
-# End if
+else:
+    
+%>
+(complete)</a> <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+<%
 
-%>            
-                </a></form>
+# End if
+%>
+                </form>
         </li>
         <li>
+
 <%
-if False:
+jobs = data_access.getJobInfo(study_id)
+if len(jobs) > 0:
+    # Will only be one row so safe to assume zero index
+    job = jobs[0]
+    job_id = job[0]
+    submission_date = job[1]
+    status = job[2]
+    
+%>
+
+Job submitted. Current status: <b><%=status%></b>
+
+<%
+elif metadata_complete == 'y' and sff_complete == 'y':
     
 %>
             <form id="submit_job_to_qiime" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="submit_job.psp">
+                <input type="hidden" name="page" id="page" value="submit_job_to_qiime.psp">
                 <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
                 Submit Job to Qiime</a>
             </form>
