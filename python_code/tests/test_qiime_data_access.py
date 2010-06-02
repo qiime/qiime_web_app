@@ -46,12 +46,17 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         result = _qiime_data_access.deactivateWebAppUser('test_user1313', 'calkd1579')
         self.assertTrue(result)
-    
+
     def test_activateWebAppUser(self):
         global _qiime_data_access
         result = _qiime_data_access.activateWebAppUser('test_user1313', 'calkd1579')
         self.assertTrue(result)
 
+    def test_verifyActivationCode(self):
+        global _qiime_data_access
+        result = _qiime_data_access.verifyActivationCode('test_user1313', 'calkd1579')
+        self.assertTrue(result)
+        
     def test_updateWebAppUserPwd(self):
         global _qiime_data_access
         result = _qiime_data_access.updateWebAppUserPwd('test_user1313','calkd1579')
