@@ -63,11 +63,11 @@ if form.has_key('file') and form['file'].filename:
                     # is called on the file.
                     contains_sff = True
                     try: 
-                        process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
-                        if not int(process.wait())==0:
-                            req.write("Error: the SFF file could not be parsed!")
-                            #study_id, user_id, status, filepath
-                        job_id = data_access.createQueueJob(form['web_app_user_id'], form['study_id'], 0, outfname)
+                        #process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
+                        #if not int(process.wait())==0:
+                        #    req.write("Error: the SFF file could not be parsed!")
+                        #data_access.createQueueJob(form['study_id'], form['web_app_user_id'], 'none')
+                        data_access.updateSFFFlag(form['study_id'], 'y')
                     except:
                         req.write("Error: there was a problem parsing the SFF and/or inserting job in the queue!")
                         

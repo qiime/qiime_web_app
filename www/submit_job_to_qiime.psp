@@ -1,0 +1,33 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from qiime_data_access import QiimeDataAccess
+data_access = QiimeDataAccess()
+sess = Session.Session(req)
+
+# Gather necessary values to create a new queue job
+study_id = int(sess['study_id'])
+user_id = int(sess['web_app_user_id'])
+filepath = 'none'
+
+# Submit the job to the queue
+job_id = data_access.createQueueJob(study_id, user_id, filepath)
+
+# Make sure a legit job_id was created. If not, inform the user there was a problem
+if job_id < 0:
+    req.write('<p/>There was an error creating the job. Please contact the system administrator.')
+else:
+    # Redirect to the home page for this study
+    psp.redirect('fusebox.psp?page=select_study_task.psp')
+
+# End if
+%>

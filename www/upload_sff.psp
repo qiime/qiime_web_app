@@ -117,31 +117,18 @@ function resizeApplet() {
 	applet.setSize( w_newWidth - dx, w_newHeight - dy );
 	//window.scroll( 0,0 );
 }
-function setCompleteBox(){
-document.getElementById('complete').innerHTML='\
-<!--Create to form options for the user to select-->\
-<p>\
-<b>Your SFF file has been successfully uploaded and validated!</b>\
-<br><br>\
-Following the links below to upload another SFF file or Metadata or return to \
-the Main Menu:\
-</p>\
-<form id="sff_file" action="fusebox.psp" method="post">\
-<input type="hidden" name="page" id="page" value="upload_sff.psp">\
-<input type="submit" value="Upload SFF(s)">\
-</form>\
-<form id="metadata_upload" action="fusebox.psp" method="post">\
-<input type="hidden" name="page" id="page" value="metadata_upload.psp">\
-<input type="submit" value="Upload MetaData">\
-</form>\
-<form id="home" action="fusebox.psp" method="post">\
-<input type="hidden" name="page" id="page" value="select_task.psp">\
-<input type="submit" value="Home">\
-</form>\'
 
+
+function setCompleteBox()
+{
+    upload_complete.submit();
 }
 
 </script>
+
+
+<form name="upload_complete" id="upload_complete" method="post" action="fusebox.psp?page=select_study_task.psp">
+</form>
 
 <table>
 <tr><td>
