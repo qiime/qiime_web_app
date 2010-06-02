@@ -104,7 +104,6 @@ def _callback(self, message):
 req.write('<p style="font-size:9px">')
 delimiter = 0
 for item in all_other_fields:
-    
     # Fill a bucket and pass off to worker
     if len(item_list) == bucket_size:
         t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ', data_access)

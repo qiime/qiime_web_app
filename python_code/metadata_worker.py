@@ -84,7 +84,7 @@ class MetadataWorkerThread(threading.Thread):
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
                 self.req.write(self.delimiter)
             except Exception, e:
-                self.req.write(result)
+                self.req.write(str(e) + '<p/>')
             
             #if result != None:
             #    self.req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))

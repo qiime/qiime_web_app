@@ -23,6 +23,10 @@ class QiimeDataAccess( AbstractDataAccess ):
     The actual implementation
     """
     
+    #####################################
+    # Connections
+    #####################################
+    
     _webAppUserDatabaseConnection = None
     _databaseConnection = None
     _testDatabaseConnection = None
@@ -86,6 +90,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         
         return self._testDatabaseConnection
     
+    #####################################
+    # Helper Functions
+    #####################################
+    
     def convertToOracleHappyName(self, date_string):
         """ Oracle is picky about dates. This function takes a previously validated
         date format and returns a formatted string for inserting into database
@@ -101,6 +109,10 @@ class QiimeDataAccess( AbstractDataAccess ):
             formatted_date = 'to_date(\'%s\', \'%s\')' % (date_string, 'MM/DD/YYYY HH24:MI:SS')
         
         return formatted_date
+
+    #####################################
+    # Users
+    #####################################
 
     def authenticateWebAppUser( self, username, password ):
         """ Attempts to validate authenticate the supplied username/password
@@ -235,6 +247,10 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False  
 
+    #####################################
+    # Study
+    #####################################
+
     def getStudyNames(self):
         """ Returns a list of study names
         """
@@ -270,39 +286,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-    def getMetadataHeaders(self):
-        """ Returns a list of metadata headers
-        """
-        try:
-            con = self.getDatabaseConnection()
-            metadata_headers = con.cursor()
-            con.cursor().callproc('get_metadata_headers', [metadata_headers])
-            metadata_headers_list = []
-            for row in metadata_headers:
-                metadata_headers_list.append(row[0])
-            return metadata_headers_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
-    def getMetadataByStudyList(self, field_name, study_list):
-        """ Returns a list of metadata values based on a study type and list
-        """
-        try:
-            metadata_list = []
-            con = self.getDatabaseConnection()
-            column_values = con.cursor()
-            con.cursor().callproc('get_metadata_by_study_list', [field_name, study_list, column_values])
-            for row in column_values:
-                if row[0] is None:
-                    continue
-                metadata_list.append(row[0])
-            return metadata_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
+        
     def getStudyByName(self, study_name):
         """ Returns a list of metadata values based on a study type and list
         """
@@ -343,6 +327,8 @@ class QiimeDataAccess( AbstractDataAccess ):
                 study_info['center_project_name'] = row[12]
                 study_info['project_id'] = row[13]
                 study_info['pmid'] = row[14]
+                study_info['metadata_complete'] = row[15]
+                study_info['sff_complete'] = row[16]
             return study_info
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -384,15 +370,61 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-                
-    def createQueueJob(self, study_id, user_id, status, filepath):
-        """ Returns submits a job to the queue and returns the job_id
+        
+    def updateMetadataFlag(self, study_id, status):
+        """ Updates the status of the metadata submission flag (y/n)
         """
         try:
             con = self.getTestDatabaseConnection()
-            job_id = 0
-            job_id = con.cursor().callproc('create_queue_job', [study_id, user_id, status, filepath, job_id])
-            return job_id[4]
+            con.cursor().callproc('qiime_assets.update_metadata_flag', [study_id, status])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def updateSFFFlag(self, study_id, status):
+        """ Updates the status of the sff submission flag (y/n)
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('qiime_assets.update_sff_flag', [study_id, status])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    #####################################
+    # Metadata
+    #####################################
+
+    def getMetadataHeaders(self):
+        """ Returns a list of metadata headers
+        """
+        try:
+            con = self.getDatabaseConnection()
+            metadata_headers = con.cursor()
+            con.cursor().callproc('get_metadata_headers', [metadata_headers])
+            metadata_headers_list = []
+            for row in metadata_headers:
+                metadata_headers_list.append(row[0])
+            return metadata_headers_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def getMetadataByStudyList(self, field_name, study_list):
+        """ Returns a list of metadata values based on a study type and list
+        """
+        try:
+            metadata_list = []
+            con = self.getDatabaseConnection()
+            column_values = con.cursor()
+            con.cursor().callproc('get_metadata_by_study_list', [field_name, study_list, column_values])
+            for row in column_values:
+                if row[0] is None:
+                    continue
+                metadata_list.append(row[0])
+            return metadata_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -447,118 +479,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-    def getControlledVocabs(self, column_name):
-        """ Returns the full column dictionary
-        """
-        controlled_vocabs = []
         
-        try:
-            con = self.getTestDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_controlled_vocab_list', [results, column_name])
-            for row in results:
-                controlled_vocabs.append(row[0])
-
-            return controlled_vocabs
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-        
-    def getControlledVocabValueList(self, controlled_vocab_id):
-        """ Returns the full column dictionary
-        """
-        vocab_items = {}
-
-        try:
-            con = self.getTestDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_controlled_vocab_values', [controlled_vocab_id, results])
-            for row in results:
-                vocab_items[row[0]] = row[1]
-
-            return vocab_items
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
-    def getOntologies(self, column_name):
-        """ Returns the full column dictionary
-        """
-        ontologies = []
-        
-        try:
-            con = self.getTestDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_ontology_list', [results, column_name])
-            for row in results:
-                ontologies.append(row[0])
-
-            return ontologies
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
-    def getListValues(self, list_name):
-        """ Returns the full column dictionary
-        """
-        try:
-            list_values = []
-            con = self.getTestDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_list_values', [results, list_name])
-            
-            for row in results:
-                list_values.append((row[0], row[1]))
-                    
-            return list_values
-            
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-                
-    def validateListValue(self, list_name, list_value):
-        """ Returns the full column dictionary
-        """
-        try:
-            con = self.getTestDatabaseConnection()
-            results = 0
-            results = con.cursor().callproc('qiime_assets.validate_list_value', [list_name, list_value, results])
-            return results[2]
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-                
-    def getOntologyValues(self, ontology_name):
-        """ Returns the full column dictionary
-        """
-        try:
-            ontology_values = []
-            con = self.getOntologyDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_ontology_values', [results, ontology_name])
-
-            for row in results:
-                ontology_values.append(row[0])
-
-            return ontology_values
-
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
-    def validateOntologyValue(self, ontology_name, identifier_value):
-        """ Returns the full column dictionary
-        """
-        try:
-            con = self.getOntologyDatabaseConnection()
-            results = 0
-            results = con.cursor().callproc('validate_ontology_value', [ontology_name, identifier_value, results])
-            return results[2]
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
     def getPackageColumns(self, package_type_id):
         """ Returns the full column dictionary
         """
@@ -611,49 +532,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-                
-    def getTermMatches(self, column_name, term_value):
-        """ Finds close term matches for columns of type onotlogy or list
-        """
-        try:
-            # Handle the ontology prefix:
-            term_parts = term_value.split(':')
-            if len(term_parts) > 1:
-                term_value = term_parts[1]
-            
-            details = self.getFieldDetails(column_name)
-            if len(details) == 0:
-                return None
-            
-            matches = []
-            column_type = details[1]
-            
-            if column_type == 'list':
-                con = self.getTestDatabaseConnection()
-                results = con.cursor()
-                con.cursor().callproc('qiime_assets.get_list_matches', [column_name, term_value, results])
-                for row in results:
-                    matches.append(row[1])
-            elif column_type == 'ontology':
-                con = self.getTestDatabaseConnection()
-                ontologies = con.cursor()
-                con.cursor().callproc('qiime_assets.get_column_ontologies', [column_name, ontologies])
-                for row in ontologies:
-                    con_tology = self.getOntologyDatabaseConnection()
-                    results = con_tology.cursor()
-                    con_tology.cursor().callproc('get_ontology_terms', ['\'' + row[0] + '\'', term_value.upper(), results])
-                    for row in results:
-                        matches.append(row[1])
-            else:
-                # Do nothing for all other types
-                return None
-            
-            return matches
         
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
     def createSampleKey(self, study_id, sample_name):
         """ Writes a sample key row to the database
         """
@@ -830,6 +709,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         finally:
             lock.release()
             
+    #####################################
+    # Jobs
+    #####################################
+    
     def checkForNewJobs(self):
         """ Returns a list of jobs that are ready to start
         """
@@ -856,25 +739,173 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def updateMetadataFlag(self, study_id, status):
-        """ Updates the status of the metadata submission flag (y/n)
+    def createQueueJob(self, study_id, user_id, status, filepath):
+        """ Returns submits a job to the queue and returns the job_id
         """
         try:
             con = self.getTestDatabaseConnection()
-            con.cursor().callproc('qiime_assets.update_metadata_flag', [study_id, status])
-            return True
+            job_id = 0
+            job_id = con.cursor().callproc('create_queue_job', [study_id, user_id, status, filepath, job_id])
+            return job_id[4]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        
+    #####################################
+    # Ontologies and Lists
+    #####################################
+
+    def getControlledVocabs(self, column_name):
+        """ Returns the full column dictionary
+        """
+        controlled_vocabs = []
+        
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_controlled_vocab_list', [results, column_name])
+            for row in results:
+                controlled_vocabs.append(row[0])
+
+            return controlled_vocabs
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        
+    def getControlledVocabValueList(self, controlled_vocab_id):
+        """ Returns the full column dictionary
+        """
+        vocab_items = {}
+
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_controlled_vocab_values', [controlled_vocab_id, results])
+            for row in results:
+                vocab_items[row[0]] = row[1]
+
+            return vocab_items
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def updateSFFFlag(self, study_id, status):
-        """ Updates the status of the sff submission flag (y/n)
+    def getOntologies(self, column_name):
+        """ Returns the full column dictionary
         """
+        ontologies = []
+        
         try:
             con = self.getTestDatabaseConnection()
-            con.cursor().callproc('qiime_assets.update_sff_flag', [study_id, status])
-            return True
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_ontology_list', [results, column_name])
+            for row in results:
+                ontologies.append(row[0])
+
+            return ontologies
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+
+    def getListValues(self, list_name):
+        """ Returns the full column dictionary
+        """
+        try:
+            list_values = []
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_list_values', [results, list_name])
+            
+            for row in results:
+                list_values.append((row[0], row[1]))
+                    
+            return list_values
+            
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+                
+    def validateListValue(self, list_name, list_value):
+        """ Returns the full column dictionary
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = 0
+            results = con.cursor().callproc('qiime_assets.validate_list_value', [list_name, list_value, results])
+            return results[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+                
+    def getOntologyValues(self, ontology_name):
+        """ Returns the full column dictionary
+        """
+        try:
+            ontology_values = []
+            con = self.getOntologyDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_ontology_values', [results, ontology_name])
+
+            for row in results:
+                ontology_values.append(row[0])
+
+            return ontology_values
+
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def validateOntologyValue(self, ontology_name, identifier_value):
+        """ Returns the full column dictionary
+        """
+        try:
+            con = self.getOntologyDatabaseConnection()
+            results = 0
+            results = con.cursor().callproc('validate_ontology_value', [ontology_name, identifier_value, results])
+            return results[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+                
+    def getTermMatches(self, column_name, term_value):
+        """ Finds close term matches for columns of type onotlogy or list
+        """
+        try:
+            # Handle the ontology prefix:
+            term_parts = term_value.split(':')
+            if len(term_parts) > 1:
+                term_value = term_parts[1]
+            
+            details = self.getFieldDetails(column_name)
+            if len(details) == 0:
+                return None
+            
+            matches = []
+            column_type = details[1]
+            
+            if column_type == 'list':
+                con = self.getTestDatabaseConnection()
+                results = con.cursor()
+                con.cursor().callproc('qiime_assets.get_list_matches', [column_name, term_value, results])
+                for row in results:
+                    matches.append(row[1])
+            elif column_type == 'ontology':
+                con = self.getTestDatabaseConnection()
+                ontologies = con.cursor()
+                con.cursor().callproc('qiime_assets.get_column_ontologies', [column_name, ontologies])
+                for row in ontologies:
+                    con_tology = self.getOntologyDatabaseConnection()
+                    results = con_tology.cursor()
+                    con_tology.cursor().callproc('get_ontology_terms', ['\'' + row[0] + '\'', term_value.upper(), results])
+                    for row in results:
+                        matches.append(row[1])
+            else:
+                # Do nothing for all other types
+                return None
+            
+            return matches
+        
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
 

@@ -9,6 +9,11 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
 
+<%
+from qiime_data_access import *
+data_access = QiimeDataAccess()
+%>
+
 <br>
 <p>
     <h3>Selected Study: <%=sess['study_name']%></h3>
