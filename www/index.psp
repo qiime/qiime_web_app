@@ -76,7 +76,7 @@ if form.has_key('username'):
 
 <table>
     <tr><td>Are you already registered? <a href="./register_user.psp">Create Account</a></td></tr>
-    <tr><td>Forget your password? <a href="./forgot_password.psp">Get a New Password</a></td></tr>
+    <tr><td>Forget your password? <a href="./forgot_password.psp">Reset Password</a></td></tr>
     <tr><td>Would you like to change your password? <a href="./change_password.psp">Change Password</a></td></tr>
 </table>
 </body>
