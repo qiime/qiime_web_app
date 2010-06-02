@@ -54,15 +54,53 @@ for study_name in study_names:
             <form id="associate_sff_to_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="upload_sff.psp">
                 <a href="" onclick="document.forms['associate_sff_to_study'].submit(); return false;">
-                Upload SFF files to this study</a>
-            </form>
+                Upload SFF files to this study
+<%
+if True:
+    
+%>        
+(not complete)
+<%
+# End if
+
+%>            
+                </a></form>
         </li>
-        <li>
+        <li>        
             <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="upload_metadata.psp">
                 <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
-                Upload metadata to this study</a>
+                Upload metadata to this study 
+<%
+if True:
+    
+%>        
+(not complete)
+<%
+# End if
+
+%>            
+                </a></form>
+        </li>
+        <li>
+<%
+if False:
+    
+%>
+            <form id="submit_job_to_qiime" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="submit_job.psp">
+                <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
+                Submit Job to Qiime</a>
             </form>
+<%
+else:
+    
+%>
+            Submit Job to Qiime (Complete SFF and Metadata upload first)
+<%
+# End if
+
+%>
         </li>
     </ul>
     <b>Tools:</b>

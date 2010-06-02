@@ -132,10 +132,16 @@ req.write('</p>')
 if with_errors:
     req.write('<h3>Upload Completed With Errors</h3>')
     req.write('<p style="font-size:12px">You should review the errors above, make the appropriate adjustments to your metadata files, then re-submit them to your study.</p>')
+    
+    # Update the database flag for the failed upload
+    data_access.updateMetadataFlag(study_id, 'n')
 else:
     req.write('<h3>Upload Completed Without Errors</h3>')
     req.write('<p style="font-size:8px">yahoo!</p>')
     req.write('<img src="img/firework3.gif"/>')
+    
+    # Update the database flag for successful metadata upload
+    data_access.updateMetadataFlag(study_id, 'y')
 
 # end if/else
 %>

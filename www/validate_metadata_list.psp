@@ -27,12 +27,17 @@ if templates != None:
     
     for template in templates:
         req.write('<h3> Results for file: ' + os.path.basename(template) + '</h3>')
-        table = MetadataTable(template)
-        htmlTable, errors = table.printHTMLTable()
-        error_count += errors
-        req.write(htmlTable)
+        try:
+            table = MetadataTable(template)
+            htmlTable, errors = table.printHTMLTable()
+            error_count += errors
+            req.write(htmlTable)
         
-    req.write('<p/>')
+            req.write('<p/>')
+        except Exception, e:
+            req.write(str(e))
+            req.write('<p/>Please email your metadata archive and a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
+            break
 %>
 
 <p/>

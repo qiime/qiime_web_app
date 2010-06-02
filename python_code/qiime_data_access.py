@@ -385,13 +385,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
                 
-    def createQueueJob(self, user_id,study_id,status,filepath):
-        """ Returns a list of metadata values based on a study type and list
+    def createQueueJob(self, study_id, user_id, status, filepath):
+        """ Returns submits a job to the queue and returns the job_id
         """
         try:
-            con = self.getDatabaseConnection()
-            job_id=0
-            job_id=con.cursor().callproc('create_queue_job', [user_id,study_id,status,filepath,job_id])
+            con = self.getTestDatabaseConnection()
+            job_id = 0
+            job_id = con.cursor().callproc('create_queue_job', [study_id, user_id, status, filepath, job_id])
             return job_id[4]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -829,5 +829,52 @@ class QiimeDataAccess( AbstractDataAccess ):
             return error_msg
         finally:
             lock.release()
+            
+    def checkForNewJobs(self):
+        """ Returns a list of jobs that are ready to start
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_new_queue_jobs', [results])
+            jobs = []
+            for row in results:
+                jobs.append((row[0], row[1], row[2]))
+            return jobs
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        
+    def updateJobStatus(self, job_id, status):
+        """ Updates the status message for a job
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('qiime_assets.update_job_status', [job_id, status])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        
+    def updateMetadataFlag(self, study_id, status):
+        """ Updates the status of the metadata submission flag (y/n)
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('qiime_assets.update_metadata_flag', [study_id, status])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
 
+    def updateSFFFlag(self, study_id, status):
+        """ Updates the status of the sff submission flag (y/n)
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('qiime_assets.update_sff_flag', [study_id, status])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
 

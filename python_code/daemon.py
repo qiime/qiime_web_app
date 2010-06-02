@@ -63,12 +63,12 @@ class Daemon:
 		# redirect standard file descriptors
 		sys.stdout.flush()
 		sys.stderr.flush()
-		#si = file(self.stdin, 'r')
-		#so = file(self.stdout, 'a+')
-		#se = file(self.stderr, 'a+', 0)
-		#os.dup2(si.fileno(), sys.stdin.fileno())
-		#os.dup2(so.fileno(), sys.stdout.fileno())
-		#os.dup2(se.fileno(), sys.stderr.fileno())
+		si = file(self.stdin, 'r')
+		so = file(self.stdout, 'a+')
+		se = file(self.stderr, 'a+', 0)
+		os.dup2(si.fileno(), sys.stdin.fileno())
+		os.dup2(so.fileno(), sys.stdout.fileno())
+		os.dup2(se.fileno(), sys.stderr.fileno())
 	
 		# write pidfile
 		atexit.register(self.delpid)
@@ -138,7 +138,7 @@ class Daemon:
 		self.start()
 
 	def run(self):
-	    """
-	    You should override this method when you subclass Daemon. It will be called after the process has been
-	    daemonized by start() or restart().
-	    """
+		"""
+		You should override this method when you subclass Daemon. It will be called after the process has been
+		daemonized by start() or restart().
+		"""

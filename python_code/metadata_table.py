@@ -234,8 +234,15 @@ class MetadataTable(object):
         self._invalid_rows = []
         self._columns = []
         self._metadataFile = metadataFile
-        #self._template_id = template_id
-        self._readMetadataFile()
+        try:
+            self._readMetadataFile()
+        except Exception, e:
+            # Try to figure out what went wrong
+            column_list = 'Successfully read columns: <p/>'
+            for col in self._columns:
+                column_list += col.column_name + '<br>'
+            error_message = str(e) + '<p/>' + column_list
+            raise Exception(error_message)
         
     def getInvalidRows(self):
         return self._invalid_rows
@@ -284,21 +291,27 @@ class MetadataTable(object):
                 raise err
 
         # Read the column values
-        for row in reader:
-            # Skip any rows starting with white space
-            if len(row) == 0:
-                continue
-            if row[0].startswith('\t') or row[0].startswith(' '):
-                continue
-
-            # If a row is incomplete, probably means end of file whitespace
-            if len(row) < len(self._columns):
-                continue
-            
-            i = 0
-            for column in row:
-                self._columns[i]._addValue(column.strip(), data_access)
-                i += 1
+        try:
+            for row in reader:
+                # Skip any rows starting with white space
+                if len(row) == 0:
+                    continue
+                if row[0].startswith('\t') or row[0].startswith(' '):
+                    continue
+    
+                # If a row is incomplete, probably means end of file whitespace
+                if len(row) < len(self._columns):
+                    continue
+                
+                i = 0
+                for column in row:
+                    if (i > len(self._columns) - 1):
+                        continue
+                    self._columns[i]._addValue(column.strip(), data_access)
+                    i += 1
+        except Exception, e:
+            msg = 'Error adding data to column %s. Maximum column index for this metadata table is %s. The error was: \n<p/>%s' % (str(i), str(len(self._columns) - 1), str(e))
+            raise Exception(msg)
 
         #self._printTable()
         #self._printInvalidRows()
