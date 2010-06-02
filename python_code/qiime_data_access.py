@@ -145,6 +145,20 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
             
+    def deactivateWebAppUser( self, username, activation_code ):
+        """ Attempts to activate user's account
+
+        Attempt to activate the user account. If successful, returns True. 
+        If not, the function returns False.
+        """
+        try:
+            con = self.getWebAppUserDatabaseConnection()
+            con.cursor().callproc('deactivate_user_account', [username,activation_code])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
     def checkWebAppUserAvailability(self, username):
         """ Attempts to validate authenticate the supplied username/password
 
@@ -185,6 +199,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
     def updateWebAppUserPwd( self, username, password ):
         """ Attempts to validate authenticate the supplied username/password
 
