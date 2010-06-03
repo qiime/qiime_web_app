@@ -82,6 +82,9 @@ class MetadataWorkerThread(threading.Thread):
             try:
                 #result = self.data_access.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
+                if result:
+                    self.req.write('<br/><br/>' + result + '<br/><br/>')
+                    
                 self.req.write(self.delimiter)
             except Exception, e:
                 self.req.write(str(e) + '<p/>')

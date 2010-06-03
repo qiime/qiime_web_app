@@ -295,13 +295,28 @@ class MetadataTable(object):
             for row in reader:
                 # Skip any rows starting with white space
                 if len(row) == 0:
+                    print 'Skipping row due to zero lengh'
+                    print str(row)
                     continue
                 if row[0].startswith('\t') or row[0].startswith(' '):
+                    print 'Skipping row due to leading white space'
+                    print str(row)
                     continue
-    
+
                 # If a row is incomplete, probably means end of file whitespace
                 if len(row) < len(self._columns):
+                    print 'Skipping row due to insufficient number of columns'
+                    print str(row)
                     continue
+
+                # There is data but not enough to fill the columns - pad out data
+                if len(row) > 1 and len(row) < len(self._columns):
+                    i = 0
+                    while i < len(self._columns) - len(row):
+                        row.append('\t')
+                        i += 1
+                
+                print len(row)
                 
                 i = 0
                 for column in row:
@@ -315,6 +330,7 @@ class MetadataTable(object):
                     i += 1
         except Exception, e:
             msg = 'Error adding data to column %s. Maximum column index for this metadata table is %s. The error was: \n<p/>%s' % (str(i), str(len(self._columns) - 1), str(e))
+            print msg
             raise Exception(msg)
 
         #self._printTable()

@@ -17,6 +17,7 @@ import cx_Oracle
 from crypt import crypt
 from data_access import AbstractDataAccess
 from threading import RLock
+from time import sleep
 
 class QiimeDataAccess( AbstractDataAccess ):
     """
@@ -93,6 +94,15 @@ class QiimeDataAccess( AbstractDataAccess ):
     #####################################
     # Helper Functions
     #####################################
+    
+    def testDatabase(self):
+        con = self.getTestDatabaseConnection()
+        sleep(.1)
+        sleep(.1)
+        sleep(.1)
+        sleep(.1)
+        sleep(.1)
+        return True
     
     def convertToOracleHappyName(self, date_string):
         """ Oracle is picky about dates. This function takes a previously validated
@@ -523,9 +533,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             con = self.getTestDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_field_details', [field_name, results])
-            
+
             for row in results:
                 value_list.append((row[0], row[1], row[2], row[3]))
+                
+            if len(value_list) == 0:
+                # If not found in the dictionary, assume this is a user-created column
+                value_list.append((field_name, 'text', '', ''))
                 
             return value_list[0]
         except Exception, e:
@@ -561,7 +575,72 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+    
+    def handleExtraData(self, study_id, field_name, field_type, log, con):
         
+        # Define the names of the 'extra' tables
+        extra_table = ''
+        key_table = ''
+        
+        # Other required values
+        schema_owner = 'QIIME_TEST'
+        statement = ''
+        
+        # Figure out which table we're talking about
+        if field_type == 'study':
+            extra_table = str('extra_study_' + str(study_id)).upper()
+            key_table = 'study'
+        elif field_type == 'sample':
+            extra_table = str('extra_sample_' + str(study_id)).upper()
+            key_table = 'sample'
+        elif field_type == 'prep':
+            extra_table = str('extra_prep_' + str(study_id)).upper()
+            key_table = 'sample'
+        else:
+            # Error state
+            raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
+            
+        # Does table exist already?
+        log.append('Checking if table %s exists...' % extra_table)
+        named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
+        statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
+        log.append(statement)
+        results = con.cursor().execute(statement, named_params).fetchone()
+        
+        # Create if it doesn't exist already
+        if not results:
+            log.append('Creating "extra" table %s...' % extra_table)
+            statement = 'create table %s (%s_id int not null, constraint pk_%s primary key (%s_id), \
+                constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
+                (extra_table, key_table, extra_table, key_table, extra_table, key_table, key_table, key_table)
+            log.append(statement)
+            results = con.cursor().execute(statement)
+        
+            # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
+            if field_type == 'study':
+                log.append('Inserting study extra row...')                        
+                statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
+                log.append(statement)
+                results = con.cursor().execute(statement)
+                con.cursor().execute('commit')
+                            
+        # Check if the column exists
+        log.append('Checking if extra column exists: %s' % field_name)
+        named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
+        statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
+        log.append(statement)
+        results = con.cursor().execute(statement, named_params).fetchone()
+        
+        # If column doesn't exist, add it:
+        if not results:
+            log.append('Creating extra column: %s' % field_name)
+            statement = 'alter table %s add %s clob default \'\'' % (extra_table, field_name)
+            log.append(statement)
+            results = con.cursor().execute(statement)
+        
+        # Return the proper table name
+        return extra_table
+    
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field):
         """ Writes a metadata value to the database
         """
@@ -571,7 +650,6 @@ class QiimeDataAccess( AbstractDataAccess ):
         statement = ''
         log = []
         pk_name = ''
-        
         lock = RLock()
         
         try:
@@ -587,23 +665,17 @@ class QiimeDataAccess( AbstractDataAccess ):
             # If table is not found, assume user-defined column and store appropriately
             if table_name == None or table_name == '':
                 # If the table was not found, this is a user-added column.
-                if field_type == 'study':
-                    statement = 'insert study_extra (sample_id, column_name, value_list) values (%s, \'%s\', \'%s\')' % (study_id, field_name, field_value)
-                    pass
-                elif field_type == 'sample':
-                    pass
-                elif field_type == 'prep':
-                    pass
-                else:
-                    # Unknown field type - return with log message
-                    log.append('Could not determine table for user-specified field "%s" with value "%s"' % (field_name, field_value))
-                    raise Exception
-                
+                table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
+            
+            # Double-quote for database safety.    
             table_name = '"' + table_name + '"'
+            
             log.append('Table name found: %s' % (table_name))
             
             # Get extended field info from the database
+            log.append('Loading field details...')
             field_details = self.getFieldDetails(field_name)
+            log.append(str(field_details))
             if field_details == None:
                 log.append('Could not obtain detailed field information. Skipping.')
                 raise Exception
@@ -634,13 +706,16 @@ class QiimeDataAccess( AbstractDataAccess ):
             ########################################
             
             # Study is special - handle separately since row is guaranteed to exist and there can only be one row
-            if table_name == '"STUDY"':
+            if table_name == '"STUDY"' or 'EXTRA_STUDY_' in table_name:
                 log.append('Updating study field...')
                 named_params = {'field_value':field_value, 'study_id':study_id}
-                statement = 'update study set %s = :field_value where study_id = :study_id' % (field_name)
+                statement = 'update %s set %s = :field_value where study_id = :study_id' % (table_name, field_name)
                 log.append(statement)
+                log.append('field_value = "%s", study_id = "%s"' % (field_value, study_id))
                 results = con.cursor().execute(statement, named_params)
                 con.cursor().execute('commit')
+                log.append('Study updated.')
+                #raise Exception
                 return
             
             ########################################
@@ -648,7 +723,8 @@ class QiimeDataAccess( AbstractDataAccess ):
             ########################################
             
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
-            '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"']:
+            '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"'] \
+            or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_field':key_field}
                 statement = 'select sample_id from "SAMPLE" where sample_name = :key_field'
                 key_column = 'sample_id'

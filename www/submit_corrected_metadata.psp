@@ -16,6 +16,7 @@ __status__ = "Development"
 from qiime_data_access import *
 from metadata_worker import *
 import threading
+from time import sleep
 
 # Gather all fields for submission
 study_name = sess['study_name']
@@ -112,6 +113,7 @@ for item in all_other_fields:
         t.start()
         item_list = []
         delimiter += 1
+        sleep(1)
     else:
         item_list.append(item)
 
