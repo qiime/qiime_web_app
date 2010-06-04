@@ -136,17 +136,13 @@ for item in sorted(list):
         </tr>
         <tr>
             <td>
-                Study Completion Status
+                MIENS Compliant?
             </td>
             <td>
-                <select class="input required" name="study_completion_status" name="study_completion_status">
+                <select class="input required" name="miens_compliant" id="miens_compliant">
                     <option value=""></option>
-<%
-list = qda.getListValues('Study Completion Status')
-for item in sorted(list):
-    req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
-#
-%>
+                    <option value="y">Yes</option>
+                    <option value="n">No</option>
                 </select>
             </td>
         </tr>

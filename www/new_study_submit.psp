@@ -24,7 +24,7 @@ study_name = sess['study_name']
 
 # Add the new study to the database
 study_id = QiimeDataAccess().createStudy(sess['web_app_user_id'], study_name, form['investigation_type'], \
-    form['study_completion_status'], form['submit_to_insdc'])
+    form['miens_compliant'], form['submit_to_insdc'])
 
 # Associate the chosen environmental packages to the study
 for env_package in form['environmental_package']:

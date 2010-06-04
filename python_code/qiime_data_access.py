@@ -326,30 +326,30 @@ class QiimeDataAccess( AbstractDataAccess ):
                 study_info['investigation_type'] = row[1]
                 study_info['project_name'] = row[2]
                 study_info['experimental_factor'] = row[3]
-                study_info['study_complt_stat'] = row[4]
-                study_info['study_alias'] = row[5]
-                study_info['study_title'] = row[6]
-                study_info['study_type'] = row[7]
-                study_info['study_abstract'] = row[8]
-                study_info['study_description'] = row[9]
-                study_info['center_name'] = row[10]
-                study_info['center_project_name'] = row[11]
-                study_info['project_id'] = row[12]
-                study_info['pmid'] = row[13]
-                study_info['metadata_complete'] = row[14]
-                study_info['sff_complete'] = row[15]
+                study_info['study_alias'] = row[4]
+                study_info['study_title'] = row[5]
+                study_info['study_type'] = row[6]
+                study_info['study_abstract'] = row[7]
+                study_info['study_description'] = row[8]
+                study_info['center_name'] = row[9]
+                study_info['center_project_name'] = row[10]
+                study_info['project_id'] = row[11]
+                study_info['pmid'] = row[12]
+                study_info['metadata_complete'] = row[13]
+                study_info['sff_complete'] = row[14]
+                study_info['miens_compliant'] = row[15]
             return study_info
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def createStudy(self, user_id, study_name, investigation_type, study_completion_status, submit_to_insdc):
+    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
             con = self.getTestDatabaseConnection()
             study_id = 0
-            study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, investigation_type, study_completion_status, submit_to_insdc, study_id])
+            study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, study_id])
             return study_id[5]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
