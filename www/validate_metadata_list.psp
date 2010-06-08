@@ -29,6 +29,7 @@ if templates != None:
         req.write('<h3> Results for file: ' + os.path.basename(template) + '</h3>')
         try:
             table = MetadataTable(template)
+            table.readMetadataFile()
             htmlTable, errors = table.printHTMLTable()
             error_count += errors
             req.write(htmlTable)

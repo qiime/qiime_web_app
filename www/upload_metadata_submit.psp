@@ -51,9 +51,11 @@ def validateFileContents():
             if filename.startswith('.'):
                 continue
 
-            # Make sure ends with .xls
-            if not filename.endswith('.xls'):
-                error_message += 'Error: File names must end with a .xls extension.\n\n'
+            # Make sure ends with .xls or .txt
+            if filename.endswith('.xls') or filename.endswith('.txt'):
+                pass
+            else:
+                error_message += 'Error: File names must end with a .xls or .txt extension.\n\n'
                 continue
 
             # Add the file to the list of templates
@@ -67,12 +69,25 @@ def validateFileContents():
                 pass
             else:
                 error_message += 'Error: file does not does not appear to be valid: \n' + filename + '\n\n'
-                
+            
             # Looks like we're good, write it out to the filesystem
             outfile = open(os.path.join(dir_path, filename), 'w')
             outfile.write(t.read(fullname))
             outfile.flush()
             outfile.close()
+
+            # Check to see if columns are valid in this file. If so, output the first 10 errors...
+            mdtable = MetadataTable(os.path.join(dir_path, filename))
+            errors = mdtable.validateColumnNames()
+            if len(errors) > 0:
+                i = 0
+                error_message += 'Error: The following column names are invalid:\n'
+                for error in errors:
+                    error_message += error + '\n\n'
+                    if i > 5:
+                        error_message += '... Error report truncated. Please fix all such errors in your templates.'
+                        break
+                    i += 1
 
         # If the zip does not have exactly three templates, raise an error
         if len(templates) != 3:

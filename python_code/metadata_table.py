@@ -234,15 +234,6 @@ class MetadataTable(object):
         self._invalid_rows = []
         self._columns = []
         self._metadataFile = metadataFile
-        try:
-            self._readMetadataFile()
-        except Exception, e:
-            # Try to figure out what went wrong
-            column_list = 'Successfully read columns: <p/>'
-            for col in self._columns:
-                column_list += col.column_name + '<br>'
-            error_message = str(e) + '<p/>' + column_list
-            raise Exception(error_message)
         
     def getInvalidRows(self):
         return self._invalid_rows
@@ -258,7 +249,28 @@ class MetadataTable(object):
         """
         self._invalid_rows.append((column_name, invalid_row))
 
-    def _readMetadataFile(self):
+    def validateColumnNames(self):
+        global _metadataFile
+        invalid_columns = []
+        expression = '^[A-Za-z][A-Za-z0-9_]*$'
+        max_column_length = 30
+        
+        data_file = open(self._metadataFile, "rU")
+        reader = csv.reader(data_file,  delimiter='\t')
+        headers = reader.next()
+        for column in headers:
+            message = ''
+            # Check the length of the column
+            if len(column) > max_column_length:
+                message += '"%s": Column name is too long. Names must be %s characters or less.' % (column, str(max_column_length))
+            if re.match(expression, column) == None:
+                message += '\n"%s": Column name contains invalid characters. Column names must start with a letter and may only contain letters, numbers, and the underscore ("_") character. Spaces are not allowed.' % column
+            if len(message) > 0:
+                invalid_columns.append(message)
+
+        return invalid_columns
+
+    def readMetadataFile(self):
         global _metadataFile
         column_factory = ColumnFactory(self._is_invalid)
         data_file = open(self._metadataFile, "rU")
