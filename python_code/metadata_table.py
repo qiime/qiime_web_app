@@ -226,16 +226,12 @@ class MetadataTable(object):
     each type of column.
     """
 
-    _metadataFile = None
-    _log = []
-
     def __init__(self, metadataFile):
-        global _metadataFile
-        
         self._invalid_rows = []
         self._columns = []
+        self._log = []
         self._metadataFile = metadataFile
-        
+    
     def getInvalidRows(self):
         return self._invalid_rows
         
@@ -352,7 +348,7 @@ class MetadataTable(object):
                         continue
                     
                     # Add the current value to the appropriate metadata table column
-                    self._log.append('Adding new column to metadata table: "%s"' % column.strip())
+                    self._log.append('Adding new value to metadata column %s: "%s"' % (self._columns[i].column_name, column.strip()))
                     self._columns[i]._addValue(column.strip(), data_access)
                     i += 1
         except Exception, e:
@@ -373,7 +369,6 @@ class MetadataTable(object):
         
         # Return variables
         html_table = ''
-        error_count = 0
 
         try:
             # Determine the type of file we're dealing with
@@ -387,7 +382,7 @@ class MetadataTable(object):
                 file_type = 'prep'
             else:
                 self._log.append('Could not determine type of file: "%s". Exiting.' % self._metadataFile)
-                return None, 0, log
+                return None, log
             
             self._log.append('File type is "%s"' % file_type)
             
@@ -401,7 +396,7 @@ class MetadataTable(object):
             x = 0
             while x < column_count:
                 current_column = self._columns[x]
-                self._log.append('Current column is "%s"' % current_column)
+                self._log.append('Current column is "%s"' % current_column.column_name)
                 if current_column._in_dictionary:
                     html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
                     self._log.append('Column is in dictionary')
@@ -428,6 +423,7 @@ class MetadataTable(object):
     
                         # Create a unique column name for processing later
                         unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
+                        self._log.append('Unique column name: "%s"' % (unique_column_name))
     
                         # This is the output value for the HTML page. It may be truncated for display if the
                         # text is very long.
@@ -435,9 +431,11 @@ class MetadataTable(object):
     
                         # This will always hold the full value of the field. Used for submission to database.
                         actual_value = str(column.values[y][0])
+                        self._log.append('Actual value: "%s"' % (actual_value))
                         
                         #For fields that are valid:
                         if column.values[y][1] == 'good':
+                            self._log.append('Field is "good"')
                             # If this is a text column, truncate the length of the string to keep the display reasonable
                             if type(column) == TextColumn:
                                 if len(value_output) > max_text_length:
@@ -449,7 +447,7 @@ class MetadataTable(object):
                         
                         # For fields that are not valid
                         else:
-                            error_count += 1
+                            self._log.append('Field is "bad"')
                             cell_color = '#EEEEFF'
                             html_table += '<td style="background-color:#DDDDDD;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
                                 <a href="" onclick="replaceWithCurrent(\'%s\');return false;"><div style="font-size:11px">replace all</div></a></td>\n' \
@@ -460,12 +458,10 @@ class MetadataTable(object):
                 y += 1 
             
             html_table += '</table>\n'
-                    
-            # Form variable to hold count of errors on page. Determines when "sumbit" will be enabled.
-            #html_table += '<input type="hidden" name="%s_error_count" value="%s"\n' % (file_type, error_count)
-            
-            return html_table, error_count, self._log
+
+            # Return the table and an empty error log
+            return html_table, None
         
         except Exception, e:            
             self._log.append('Error caught in printHTMLTable: %s' % str(e))
-            return html_table, error_count, self._log
+            return html_table, self._log

@@ -41,11 +41,11 @@ if templates != None:
                 break
             
             log.append('Printing HTML table...')
-            htmlTable, error_count, html_log = table.printHTMLTable()
+            htmlTable, error_log = table.printHTMLTable()
             
             # If errors were found, report them and skip to next file
-            if error_count > 0:
-                for entry in html_log:
+            if error_log:
+                for entry in error_log:
                     req.write(entry + '<br/>')
                 break
             
