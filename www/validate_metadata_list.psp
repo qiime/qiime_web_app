@@ -23,30 +23,53 @@ from metadata_table import *
 
 templates = sess["templates"]
 if templates != None:
-    error_count = 0
+    draw_submit = True
     
     for template in templates:
         req.write('<h3> Results for file: ' + os.path.basename(template) + '</h3>')
+        log = []
         try:
+            log.append('Creating metadata table for file "%s"' % template)
             table = MetadataTable(template)
-            table.readMetadataFile()
-            htmlTable, errors = table.printHTMLTable()
-            error_count += errors
+            log.append('Reading metadata file...')
+            error_log = table.readMetadataFile()
+            
+            # If errors were found, report them here and skip file
+            if error_log:
+                for entry in error_log:
+                    req.write(entry + '<br/>')
+                break
+            
+            log.append('Printing HTML table...')
+            htmlTable, error_count, html_log = table.printHTMLTable()
+            
+            # If errors were found, report them and skip to next file
+            if error_count > 0:
+                for entry in html_log:
+                    req.write(entry + '<br/>')
+                break
+            
             req.write(htmlTable)
-        
             req.write('<p/>')
+        
         except Exception, e:
-            req.write(str(e))
+            for entry in log:
+                req.write(entry + '<br/>')
+            req.write(str(e) + '<p/>')
             req.write('<p/>Please email your metadata archive and a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
+            draw_submit = False
             break
     
-    # End for
+    if draw_submit:
+        req.write('<p/>')
+        req.write('<input type="submit" id="metadata_submit" value="Submit Metadata"><br/>')
+        req.write('<p/>')
+        
+    # End if
+
+# End if
 %>
 
-<p/>
-<input type="submit" id="metadata_submit" value="Submit Metadata"><br/>
-
-<p/>
 </form>
 
 <%@ include file="footer.psp" %>

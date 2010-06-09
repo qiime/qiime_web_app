@@ -84,7 +84,7 @@ def validateFileContents():
             errors = mdtable.validateColumnNames()
             if len(errors) > 0:
                 i = 0
-                error_message += 'Error: The following column names are invalid:\n'
+                error_message += 'Error: The following errors were found:\n'
                 for error in errors:
                     error_message += error + '\n\n'
                     if i > 5:
