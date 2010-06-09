@@ -62,13 +62,16 @@ def validateFileContents():
             templates.append(filename)
 
             # Strip the path off and validate that it's one of the three expected templates
-            if filename.startswith('study_template') or \
-                filename.startswith('sample_template') or \
-                filename.startswith('prep_template'):
-                # Looks like a valid file
+            if 'study_template' in filename or 'sample_template' in filename or 'prep_template' in filename:
                 pass
+            #if filename.startswith('study_template') or \
+            #    filename.startswith('sample_template') or \
+            #    filename.startswith('prep_template'):
+                # Looks like a valid file
+            #    pass
             else:
-                error_message += 'Error: file does not does not appear to be valid: \n' + filename + '\n\n'
+                error_message += 'Error: file does not does not appear to be valid: \n' + filename + '. The file name must contain one of the following: "study_template", "sample_template" or "prep_template".\n\n'
+                break
             
             # Looks like we're good, write it out to the filesystem
             outfile = open(os.path.join(dir_path, filename), 'w')

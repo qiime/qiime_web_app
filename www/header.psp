@@ -46,7 +46,7 @@ else:
 	<td style="text-align:right;">
 <%
 if sess['study_name']:
-	req.write('Selected study: %s' % sess['study_name'])
+	req.write('Selected study: %s (%s)' % (sess['study_name'], sess['study_id']))
 # end if
 %>
 	</td>

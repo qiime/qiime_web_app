@@ -725,8 +725,8 @@ class QiimeDataAccess( AbstractDataAccess ):
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
             '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"'] \
             or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
-                named_params = {'key_field':key_field}
-                statement = 'select sample_id from "SAMPLE" where sample_name = :key_field'
+                named_params = {'key_field':key_field, 'study_id':study_id}
+                statement = 'select sample_id from "SAMPLE" where sample_name = :key_field and study_id = :study_id'
                 key_column = 'sample_id'
                 key_table = '"SAMPLE"'
             elif table_name in ['"HOST"', '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HUMAN_ASSOCIATED"']:
@@ -735,11 +735,11 @@ class QiimeDataAccess( AbstractDataAccess ):
                 key_column = 'host_id'
                 key_table = '"HOST"'
             else:
-                return 'Unknown table found - no action taken: ' + table_name
+                return 'Unknown table found - no action taken. Table name was: "%s". Column name was: "%s"' %  (table_name, field_name)
             
             # Find the assocaited key column
             log.append('Determining if required key row exists...')
-            log.append(statement + ' ::: key_field is ' + key_field)
+            log.append(statement + '", key_field is ' + key_field + ', study_id is ' + str(study_id))
             results = con.cursor().execute(statement, named_params).fetchone()
             if results != None:
                 key_column_value = results[0]
