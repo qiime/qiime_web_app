@@ -32,7 +32,7 @@ if templates != None:
             log.append('Creating metadata table for file "%s"' % template)
             table = MetadataTable(template)
             log.append('Reading metadata file...')
-            error_log = table.readMetadataFile()
+            error_log = table.processMetadataFile()
             
             # If errors were found, report them here and skip file
             if error_log:

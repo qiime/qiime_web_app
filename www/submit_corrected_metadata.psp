@@ -120,7 +120,6 @@ for item in all_other_fields:
         t.start()
         item_list = []
         delimiter += 1
-        sleep(1)
     else:
         item_list.append(item)
 
