@@ -28,13 +28,11 @@ class QiimeDataAccess( AbstractDataAccess ):
     # Connections
     #####################################
     
-    _webAppUserDatabaseConnection = None
-    _databaseConnection = None
-    _testDatabaseConnection = None
-    _ontologyDatabaseConnection = None
-
     def __init__(self):
-        pass
+        self._webAppUserDatabaseConnection = None
+        self._databaseConnection = None
+        self._testDatabaseConnection = None
+        self._ontologyDatabaseConnection = None
     
     def getDatabaseConnection(self):
         """ Obtains a connection to the qiime_production schema
