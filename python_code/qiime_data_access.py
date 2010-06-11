@@ -648,10 +648,8 @@ class QiimeDataAccess( AbstractDataAccess ):
         statement = ''
         log = []
         pk_name = ''
-        lock = Lock()
         
         try:
-            lock.acquire()
             
             con = self.getTestDatabaseConnection()
             table_name = None
@@ -779,8 +777,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 (field_name, field_value, table_name, call_string, log_string, str(e))
             print error_msg
             return error_msg
-        finally:
-            lock.release()
+
             
     #####################################
     # Jobs
