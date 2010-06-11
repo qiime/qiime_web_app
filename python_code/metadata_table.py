@@ -291,3 +291,4 @@ class MetadataTable(object):
         except Exception, e:            
             self._log.append('Error caught in printHTMLTable: %s' % str(e))
             return html_table, self._log
+

@@ -16,7 +16,7 @@ __status__ = "Production"
 import cx_Oracle
 from crypt import crypt
 from data_access import AbstractDataAccess
-from threading import RLock
+from threading import Lock
 from time import sleep
 
 class QiimeDataAccess( AbstractDataAccess ):
@@ -648,7 +648,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         statement = ''
         log = []
         pk_name = ''
-        lock = RLock()
+        lock = Lock()
         
         try:
             lock.acquire()

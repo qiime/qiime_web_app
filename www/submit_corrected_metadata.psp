@@ -99,7 +99,7 @@ req.write('<p style="font-size:12px">Writing Metadata Values (this may take a wh
 # To hold the current bucket of metadata values
 item_list = []
 threads = []
-thread_count = 1
+thread_count = 10
 
 # Sets the number of metadata fields to be processed by each thread
 bucket_size = len(all_other_fields) / thread_count

@@ -51,7 +51,7 @@ for study_name in study_names:
             </form>
         </li>
     </ul>
-    <b>Other Tasks:</b>
+    <b>Study Tasks:</b>
     <ul>
         <li>
             <form id="create_new_template" action="fusebox.psp" method="post">
@@ -86,6 +86,27 @@ else:
                 <input type="hidden" name="page" id="page" value="upload_metadata.psp">
                 <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
                 Upload metadata to this study 
+<%
+if metadata_complete == 'n':
+    
+%>        
+(not complete)</a> <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+<%
+else:
+    
+%>
+(complete)</a> <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+<%
+
+# End if
+%>
+                </form>
+        </li>
+        <li>        
+            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
+                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
+                Create a mapping file 
 <%
 if metadata_complete == 'n':
     
