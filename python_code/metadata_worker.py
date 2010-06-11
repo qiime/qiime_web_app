@@ -80,6 +80,8 @@ class MetadataWorkerThread(threading.Thread):
             # For oracle, clean up single quotes
             field_value = field_value.replace('\'', '\'\'')
             
+            lock = Lock()
+            
             try:
                 lock.acquire()
                 #result = self.data_access.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
@@ -91,7 +93,7 @@ class MetadataWorkerThread(threading.Thread):
             except Exception, e:
                 self.req.write(str(e) + '<p/>')
             finally:
-                locl.release()
+                lock.release()
             
             #if result != None:
             #    self.req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))
