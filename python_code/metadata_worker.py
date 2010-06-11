@@ -17,7 +17,6 @@ import threading
 import mod_python
 from qiime_data_access import *
 from metadata_table import *
-from threading import Lock
 
 class TestThread(threading.Thread):
     def __init__(self, val):
@@ -47,7 +46,6 @@ class MetadataWorkerThread(threading.Thread):
     def run(self):
         
         da = QiimeDataAccess()
-        lock = Lock()
         
         for item in self.item_list:
             
@@ -82,7 +80,6 @@ class MetadataWorkerThread(threading.Thread):
             field_value = field_value.replace('\'', '\'\'')
             
             try:
-                lock.acquire()
                 #result = self.data_access.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
                 if result:
@@ -91,8 +88,6 @@ class MetadataWorkerThread(threading.Thread):
                 self.req.write(self.delimiter)
             except Exception, e:
                 self.req.write(str(e) + '<p/>')
-            finally:
-                locl.release()
             
             #if result != None:
             #    self.req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))
