@@ -94,8 +94,3 @@ class MetadataWorkerThread(threading.Thread):
                 self.req.write(str(e) + '<p/>')
             finally:
                 lock.release()
-            
-            #if result != None:
-            #    self.req.write('<p style="font-size:10px">WARNING: %s</p>' % (result))
-            #    with_errors = True
-            #self.req.write('* ')
