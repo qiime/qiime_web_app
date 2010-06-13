@@ -168,6 +168,30 @@ class WorkflowTests(TestCase):
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)
 
+    def test_run_process_sff_through_pick_otus_parallel(self):
+        """run_process_sff_through_pick_otus in parallel runs with out error"""
+        run_process_sff_through_pick_otus(
+         sff_input_fp=self.sff_fp, 
+         mapping_fp=self.fasting_mapping_fp,
+         output_dir=self.wf_out, 
+         denoise=False,
+         command_handler=call_commands_serially,
+         params=self.params,
+         qiime_config=self.qiime_config, 
+         parallel=True,
+         status_update_callback=no_status_updates)
+
+        input_file_basename = splitext(split(self.sff_fp)[1])[0]
+        otu_fp = join(self.wf_out,'uclust_picked_otus','seqs_otus.txt')
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries','seqs.fna')
+
+        # check that the two final output files have non-zero size
+        self.assertTrue(getsize(split_lib_seqs_fp) > 0)
+        self.assertTrue(getsize(otu_fp) > 0)
+
+        # Check that the log file is created and has size > 0
+        log_fp = glob(join(self.wf_out,'log*.txt'))[0]
+        self.assertTrue(getsize(log_fp) > 0)
 
 '''
     
@@ -240,7 +264,7 @@ pick_otus:suppress_new_clusters
 pick_otus:uclust_otu_id_prefix  otu_
 
 # Parallel options
-parallel:jobs_to_start	1
+parallel:jobs_to_start	2
 parallel:retain_temp_files	False
 parallel:seconds_to_sleep	1
 
