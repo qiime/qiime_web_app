@@ -212,6 +212,13 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         result = _qiime_data_access.getPackageColumns(1)
         self.assertTrue(result)
+        
+    def test_loadSFFData(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.loadSFFData(False)
+        self.assertTrue(result)
 
 
 if __name__ == '__main__':

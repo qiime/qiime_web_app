@@ -13,6 +13,9 @@ __status__ = "Development"
  
 from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file
+from cogent.util.misc import app_path
+from cogent.app.util import ApplicationNotFoundError
+from os import system
 from qiime.workflow import WorkflowLogger
 from os.path import split, splitext, join
 from qiime.workflow import print_commands,call_commands_serially,\
@@ -21,6 +24,8 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import (compute_seqs_per_library_stats, 
                         get_qiime_scripts_dir,
                         create_dir)
+from qiime_data_access import QiimeDataAccess
+data_access = QiimeDataAccess()
 
 ## Begin task-specific workflow functions
 def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir, 
@@ -57,10 +62,33 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
       output_dir)
     commands.append([('ProcessSFFs', process_sff_cmd)])
     
+    process_fasta=join(output_dir,input_basename+'.fna')
+    process_qual=join(output_dir,input_basename+'.qual')
+    process_flow=join(output_dir,input_basename+'.txt')
+    
+    #Send the files
+    try:
+        scp_file_transfer(23,process_fasta,'wwwuser','microbiome1.colorado.edu','/SFF_Files/fasta.dat')
+        scp_file_transfer(23,process_qual,'wwwuser','microbiome1.colorado.edu','/SFF_Files/qual.dat')
+        scp_file_transfer(23,process_flow,'wwwuser','microbiome1.colorado.edu','/SFF_Files/flow.dat')
+        files_transferred=True
+    except:
+        raise ValueError, 'Error: Unable to scp files to database server!'
+    
+    #Run the Oracle process_sff_files load package
+    if files_transferred:
+        try: 
+            sff_load=data_access.loadSFFData(True)
+            if not sff_load:
+                raise ValueError, 'Error: Unable to load data into database!
+        except:
+            raise ValueError, 'Error: Unable to load data into database!
+    
+    '''
     # Run split_libraries on the resulting files from process_sff.py
-    split_library_fasta=join(output_dir,input_basename+'.fna')
-    split_library_qual=join(output_dir,input_basename+'.qual')
-    sff_flowgram=join(output_dir,input_basename+'.txt')
+    split_library_fasta=process_fasta
+    split_library_qual=process_qual
+    sff_flowgram=process_flow
     split_libary_output=join(output_dir,'split_libraries')
     create_dir(split_libary_output)
     try:
@@ -185,3 +213,17 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
 
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
+    '''
+
+def check_scp():
+    """Raise error if scp is not in $PATH """
+    if not app_path('scp'):
+        raise ApplicationNotFoundError,\
+        "scp is not in $PATH. Is it installed? Have you added it to $PATH?"
+         
+def scp_file_transfer(port,filepath,username,host,location):
+    """Makes flowgram file from sff file."""
+    check_scp()
+    system('scp -P %d %s %s@%s:%s' % (port,filepath,username,host,location))
+    
+#

@@ -1045,4 +1045,14 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     
-
+    def loadSFFData(self,start_job):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            if start_job:
+                con.cursor().callproc('sff.process_sff_files.sff_main')
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
