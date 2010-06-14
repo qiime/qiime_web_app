@@ -335,7 +335,8 @@ class QiimeDataAccess( AbstractDataAccess ):
                 study_info['pmid'] = row[12]
                 study_info['metadata_complete'] = row[13]
                 study_info['sff_complete'] = row[14]
-                study_info['miens_compliant'] = row[15]
+                study_info['mapping_file_complete'] = row[15]
+                study_info['miens_compliant'] = row[16]
             return study_info
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -377,7 +378,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
+
     def updateMetadataFlag(self, study_id, status):
         """ Updates the status of the metadata submission flag (y/n)
         """
@@ -389,32 +390,83 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def updateSFFFlag(self, study_id, status):
-        """ Updates the status of the sff submission flag (y/n)
+    def addSFFFile(self, study_id, sff_file_path):
+        """ adds a new SFF file to the study
         """
         try:
             con = self.getTestDatabaseConnection()
-            con.cursor().callproc('qiime_assets.update_sff_flag', [study_id, status])
+            con.cursor().callproc('qiime_assets.add_sff_file', [study_id, sff_file_path])
             return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    #def updateSFFFlag(self, study_id, status):
+    #    """ Updates the status of the sff submission flag (y/n)
+    #    """
+    #    try:
+    #        con = self.getTestDatabaseConnection()
+    #        con.cursor().callproc('qiime_assets.update_sff_flag', [study_id, status])
+    #        return True
+    #    except Exception, e:
+    #        print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+    #        return False
+
     #####################################
     # Metadata
     #####################################
 
-    def getMetadataHeaders(self):
-        """ Returns a list of metadata headers
+    #def getMetadataHeaders(self):
+    #    """ Returns a list of metadata headers
+    #    """
+    #    try:
+    #        con = self.getDatabaseConnection()
+    #        metadata_headers = con.cursor()
+    #        con.cursor().callproc('get_metadata_headers', [metadata_headers])
+    #        metadata_headers_list = []
+    #        for row in metadata_headers:
+    #            metadata_headers_list.append(row[0])
+    #        return metadata_headers_list
+    #    except Exception, e:
+    #        print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+    #        return False
+        
+    def getMetadataFields(self, study_id):
+        """ Returns a list of metadata fields
         """
         try:
-            con = self.getDatabaseConnection()
-            metadata_headers = con.cursor()
-            con.cursor().callproc('get_metadata_headers', [metadata_headers])
-            metadata_headers_list = []
-            for row in metadata_headers:
-                metadata_headers_list.append(row[0])
-            return metadata_headers_list
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_metadata_fields', [study_id, results])
+            metadata_fields = []
+            for row in results:
+                metadata_fields.append(row[0])
+            return metadata_fields
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        
+    def getSampleList(self, study_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_sample_list', [study_id, results])
+            sample_list = []
+            for row in results:
+                sample_list.append(row[0])
+            return sample_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def addStudyActualColumn(self, study_id, column_name):
+        """ inserts a selected metadata column name into the database
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('qiime_assets.add_study_actual_column', [study_id, column_name])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

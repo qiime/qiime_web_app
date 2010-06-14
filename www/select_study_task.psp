@@ -18,6 +18,7 @@ study_id = int(sess['study_id'])
 study_info = data_access.getStudyInfo(study_id)
 metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
+mapping_file_complete = study_info['mapping_file_complete']
 %>
 
 <br>
@@ -103,12 +104,12 @@ else:
                 </form>
         </li>
         <li>        
-            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
-                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
+            <form id="create_mapping_file" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="create_mapping_file.psp">
+                <a href="" onclick="document.forms['create_mapping_file'].submit(); return false;">
                 Create a mapping file 
 <%
-if metadata_complete == 'n':
+if mapping_file_complete == 'n':
     
 %>        
 (not complete)</a> <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
