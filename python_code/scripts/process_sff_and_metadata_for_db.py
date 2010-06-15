@@ -17,8 +17,9 @@ from os import makedirs
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
-from process_sff_and_metadata_workflow import run_process_sff_through_pick_otus
-from qiime.workflow import print_commands,call_commands_serially,\
+from process_sff_and_metadata_workflow import run_process_sff_through_pick_otus,\
+web_app_call_commands_serially
+from qiime.workflow import print_commands,\
                            print_to_stdout, no_status_updates
 
 qiime_config = load_qiime_config()
@@ -104,7 +105,7 @@ def main():
     if print_only:
         command_handler = print_commands
     else:
-        command_handler = call_commands_serially
+        command_handler = web_app_call_commands_serially
 
     if verbose:
         status_update_callback = print_to_stdout

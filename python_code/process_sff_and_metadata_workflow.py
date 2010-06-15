@@ -45,65 +45,78 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
     """
     
     # Prepare some variables for the later steps
-    input_dir, input_filename = split(sff_input_fp)
-    input_basename, input_ext = splitext(input_filename)
-    make_flowgram=True
-    create_dir(output_dir)
-    commands = []
-    python_exe_fp = qiime_config['python_exe_fp']
-    script_dir = get_qiime_scripts_dir()
-    logger = WorkflowLogger(generate_log_fp(output_dir),
-                            params=params,
-                            qiime_config=qiime_config)
+    sff_filenames=sff_input_fp.split(',')
+    split_libraries_results=[]
+    for sff_input_fp in sff_filenames:
+        input_dir, input_filename = split(sff_input_fp)
+        input_basename, input_ext = splitext(input_filename)
+        make_flowgram=True
+        create_dir(output_dir)
+        commands = []
+        python_exe_fp = qiime_config['python_exe_fp']
+        script_dir = get_qiime_scripts_dir()
+        logger = WorkflowLogger(generate_log_fp(output_dir),
+                                params=params,
+                                qiime_config=qiime_config)
     
-    # Convert sff file into fasta, qual and flowgram file
-    process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
-     (python_exe_fp, script_dir, sff_input_fp,
-      output_dir)
-    commands.append([('ProcessSFFs', process_sff_cmd)])
+        # Convert sff file into fasta, qual and flowgram file
+        process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
+         (python_exe_fp, script_dir, sff_input_fp,
+          output_dir)
+          
+        command_handler([[('ProcessSFFs', process_sff_cmd)]],status_update_callback,logger=logger)
     
-    process_fasta=join(output_dir,input_basename+'.fna')
-    process_qual=join(output_dir,input_basename+'.qual')
-    process_flow=join(output_dir,input_basename+'.txt')
+        process_fasta=join(output_dir,input_basename+'.fna')
+        process_qual=join(output_dir,input_basename+'.qual')
+        process_flow=join(output_dir,input_basename+'.txt')
     
-    if submit_to_db:
-        #Send the files
-        try:
-            scp_file_transfer(23,process_fasta,'wwwuser','microbiome1.colorado.edu','/SFF_Files/fasta.dat')
-            scp_file_transfer(23,process_qual,'wwwuser','microbiome1.colorado.edu','/SFF_Files/qual.dat')
-            scp_file_transfer(23,process_flow,'wwwuser','microbiome1.colorado.edu','/SFF_Files/flow.dat')
-            files_transferred=True
-        except:
-            raise ValueError, 'Error: Unable to scp files to database server!'
-    
-        #Run the Oracle process_sff_files load package
-        if files_transferred:
-            try: 
-                sff_load=data_access.loadSFFData(True)
-                if not sff_load:
-                    raise ValueError, 'Error: Unable to load data into database!'
+        if submit_to_db:
+            #Send the files
+            try:
+                scp_file_transfer(23,process_fasta,'wwwuser','microbiome1.colorado.edu','/SFF_Files/fasta.dat')
+                scp_file_transfer(23,process_qual,'wwwuser','microbiome1.colorado.edu','/SFF_Files/qual.dat')
+                scp_file_transfer(23,process_flow,'wwwuser','microbiome1.colorado.edu','/SFF_Files/flow.dat')
+                files_transferred=True
             except:
-                raise ValueError, 'Error: Unable to load data into database!'
+                raise ValueError, 'Error: Unable to scp files to database server!'
     
+            #Run the Oracle process_sff_files load package
+            if files_transferred:
+                try: 
+                    sff_load=data_access.loadSFFData(True)
+                    if not sff_load:
+                        raise ValueError, 'Error: Unable to load data into database!'
+                except:
+                    raise ValueError, 'Error: Unable to load data into database!'
     
-    # Run split_libraries on the resulting files from process_sff.py
-    split_library_fasta=process_fasta
-    split_library_qual=process_qual
-    sff_flowgram=process_flow
-    split_libary_output=join(output_dir,'split_libraries')
-    create_dir(split_libary_output)
-    try:
-        params_str = get_params_str(params['split_libraries'])
-    except KeyError:
-        params_str = ''
         
-    # Build the split libraries command
-    split_libraries_cmd = '%s %s/split_libraries.py -f %s -q %s -m %s -o %s %s' %\
-     (python_exe_fp, script_dir, split_library_fasta, split_library_qual,
-      mapping_fp, split_libary_output, params_str)
-    commands.append([('SplitLibraries', split_libraries_cmd)])
+        # Run split_libraries on the resulting files from process_sff.py
+        split_library_fasta=process_fasta
+        split_library_qual=process_qual
+        sff_flowgram=process_flow
+        split_library_output=join(output_dir,'split_libraries_%s' % (input_basename))
+        create_dir(split_library_output)
+        try:
+            params_str = get_params_str(params['split_libraries'])
+        except KeyError:
+            params_str = ''
+        
+        # Build the split libraries command
+        split_libraries_cmd = '%s %s/split_libraries.py -f %s -q %s -m %s -o %s %s' %\
+         (python_exe_fp, script_dir, split_library_fasta, split_library_qual,
+          mapping_fp, split_library_output, params_str)
+        command_handler([[('SplitLibraries', split_libraries_cmd)]],status_update_callback,logger=logger)
+        split_libraries_results.append(join(split_library_output,'seqs.fna'))
     
-    input_fp=join(output_dir,'split_libraries','seqs.fna')
+    split_library_combined=join(output_dir,'split_libraries_combined')
+    create_dir(split_library_combined)
+    out_fp=join(split_library_combined,'seqs.fna')
+    split_lib_fastas=' '.join(split_libraries_results)
+    
+    cat_fasta_files(split_lib_fastas,out_fp)
+    input_fp=join(split_library_combined,'seqs.fna')
+    
+    
     # Prep the denoising command
     if denoise:
         assert mapping_fp != None,\
@@ -215,7 +228,30 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
     
-
+    logger.close()
+    
+def web_app_call_commands_serially(commands,
+                           status_update_callback,
+                           logger):
+    """Run list of commands, one after another """
+    logger.write("Executing commands.\n\n")
+    for c in commands:
+        for e in c:
+            status_update_callback('%s\n%s' % e)
+            logger.write('# %s command \n%s\n\n' % e)
+            proc = Popen(e[1],shell=True,universal_newlines=True,\
+                         stdout=PIPE,stderr=STDOUT)
+            return_value = proc.wait()
+            if return_value != 0:
+                msg = "\n\n*** ERROR RAISED DURING STEP: %s\n" % e[0] +\
+                 "Command run was:\n %s\n" % e[1] +\
+                 "Command returned exit status: %d\n" % return_value +\
+                 "Stdout/stderr:\n%s\n" % proc.stdout.read()
+                logger.write(msg)
+                logger.close()
+                raise WorkflowError, msg
+    #logger.close()
+    
 def check_scp():
     """Raise error if scp is not in $PATH """
     if not app_path('scp'):
@@ -223,8 +259,17 @@ def check_scp():
         "scp is not in $PATH. Is it installed? Have you added it to $PATH?"
          
 def scp_file_transfer(port,filepath,username,host,location):
-    """Makes flowgram file from sff file."""
+    """Transfers files to another server."""
     check_scp()
     system('scp -P %d %s %s@%s:%s' % (port,filepath,username,host,location))
     
-#
+def check_cat():
+    """Raise error if cat is not in $PATH """
+    if not app_path('cat'):
+        raise ApplicationNotFoundError,\
+        "cat is not in $PATH. Is it installed? Have you added it to $PATH?"\
+        
+def cat_fasta_files(fasta_files,output_fname):
+    """Concatenate fasta files from split_libraries.py."""
+    check_cat()
+    system('cat %s > %s' % (fasta_files,output_fname))
