@@ -440,7 +440,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             con.cursor().callproc('qiime_assets.get_metadata_fields', [study_id, results])
             metadata_fields = []
             for row in results:
-                metadata_fields.append(row[0])
+                metadata_fields.append((row[0], row[1]))
             return metadata_fields
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -461,15 +461,15 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def addStudyActualColumn(self, study_id, column_name):
+    def addStudyActualColumn(self, study_id, column_name, table_name):
         """ inserts a selected metadata column name into the database
         """
         try:
             con = self.getTestDatabaseConnection()
-            con.cursor().callproc('qiime_assets.add_study_actual_column', [study_id, column_name])
+            con.cursor().callproc('qiime_assets.add_study_actual_column', [study_id, column_name, table_name])
         except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+            
+            raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
 
     def getMetadataByStudyList(self, field_name, study_list):
         """ Returns a list of metadata values based on a study type and list
@@ -557,7 +557,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def findMetadataTable(self, column_name):
+    def findMetadataTable(self, column_name, study_id):
         """ Finds the target metadata table for the supplied column name
         """
         try:
@@ -567,8 +567,25 @@ class QiimeDataAccess( AbstractDataAccess ):
             con.cursor().callproc('qiime_assets.find_metadata_table', [column_name, results])
 
             for row in results:
-                table = row[0]
-
+                # If it's a study table, find the right one
+                if row[0].upper().startswith('EXTRA_'):
+                    elements = row[0].split('_')
+                    # Compare the study_id for each. If they don't match, continue
+                    if elements[2] != str(study_id):
+                        continue
+                    else:
+                        table = row[0]
+                # Not an extra table, just assign the table name
+                else:
+                    table = row[0]
+            
+            # If we find an 'extra' table, make sure it's for the right study. If
+            # not, return '' so a new extra table will be created.
+            if table.upper().startswith('EXTRA_'):
+                elements = table.split('_')
+                if elements[2] != str(study_id):
+                    return ''
+                
             return table
 
         except Exception, e:
@@ -708,10 +725,10 @@ class QiimeDataAccess( AbstractDataAccess ):
             
             # Find the table name
             log.append('Locating table name...')
-            table_name = self.findMetadataTable(field_name)
+            table_name = self.findMetadataTable(field_name, study_id)
             
             # If table is not found, assume user-defined column and store appropriately
-            if table_name == None or table_name == '':
+            if table_name == '' or table_name == None:
                 # If the table was not found, this is a user-added column.
                 table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
             
@@ -719,6 +736,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             table_name = '"' + table_name + '"'
             
             log.append('Table name found: %s' % (table_name))
+            
+            # Store the field name in the database. These are the field names which will
+            # be used later to generate a mapping file. We collect the names here because
+            # it's an expensive operation to determine post-commit which fields were
+            # actually submitted to the database.
+            log.append('Attempting to store values in study_actual_columns: %s, %s, %s' % (study_id, field_name, table_name))
+            self.addStudyActualColumn(study_id, field_name, table_name);
             
             # Get extended field info from the database
             log.append('Loading field details...')

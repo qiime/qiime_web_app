@@ -51,12 +51,6 @@ for item in form:
     field_name = parts[3]
     field_value = form[item]
     
-    # Store the field name in the database. These are the field names which will
-    # be used later to generate a mapping file. We collect the names here because
-    # it's an expensive operation to determine post-commit which fields were
-    # actually submitted to the database.
-    data_access.addStudyActualColumn(study_id, field_name);
-    
     # Skip the project name field here since we absolutely don't want to
     # change the name the user typed when creating their study. This value
     # may show up in some legacy files or could be added by the user at a
