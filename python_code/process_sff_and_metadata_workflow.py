@@ -29,7 +29,7 @@ data_access = QiimeDataAccess()
 
 ## Begin task-specific workflow functions
 def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir, 
-    denoise, command_handler, params, qiime_config, parallel=False,
+    denoise,submit_to_db, command_handler, params, qiime_config, parallel=False,
     status_update_callback=print_to_stdout):
     """ NOTE: Parts of this function are a directly copied from the
         run_qiime_data_preparation function from the workflow.py library file 
@@ -66,25 +66,26 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
     process_qual=join(output_dir,input_basename+'.qual')
     process_flow=join(output_dir,input_basename+'.txt')
     
-    #Send the files
-    try:
-        scp_file_transfer(23,process_fasta,'wwwuser','microbiome1.colorado.edu','/SFF_Files/fasta.dat')
-        scp_file_transfer(23,process_qual,'wwwuser','microbiome1.colorado.edu','/SFF_Files/qual.dat')
-        scp_file_transfer(23,process_flow,'wwwuser','microbiome1.colorado.edu','/SFF_Files/flow.dat')
-        files_transferred=True
-    except:
-        raise ValueError, 'Error: Unable to scp files to database server!'
-    
-    #Run the Oracle process_sff_files load package
-    if files_transferred:
-        try: 
-            sff_load=data_access.loadSFFData(True)
-            if not sff_load:
-                raise ValueError, 'Error: Unable to load data into database!
+    if submit_to_db:
+        #Send the files
+        try:
+            scp_file_transfer(23,process_fasta,'wwwuser','microbiome1.colorado.edu','/SFF_Files/fasta.dat')
+            scp_file_transfer(23,process_qual,'wwwuser','microbiome1.colorado.edu','/SFF_Files/qual.dat')
+            scp_file_transfer(23,process_flow,'wwwuser','microbiome1.colorado.edu','/SFF_Files/flow.dat')
+            files_transferred=True
         except:
-            raise ValueError, 'Error: Unable to load data into database!
+            raise ValueError, 'Error: Unable to scp files to database server!'
     
-    '''
+        #Run the Oracle process_sff_files load package
+        if files_transferred:
+            try: 
+                sff_load=data_access.loadSFFData(True)
+                if not sff_load:
+                    raise ValueError, 'Error: Unable to load data into database!'
+            except:
+                raise ValueError, 'Error: Unable to load data into database!'
+    
+    
     # Run split_libraries on the resulting files from process_sff.py
     split_library_fasta=process_fasta
     split_library_qual=process_qual
@@ -213,7 +214,7 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
 
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
-    '''
+    
 
 def check_scp():
     """Raise error if scp is not in $PATH """
