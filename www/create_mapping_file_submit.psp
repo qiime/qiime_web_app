@@ -114,6 +114,8 @@ results = cur.execute(statement)
 
 # Create new mapping file in filesystem
 mapping_file = file(os.path.join(sess['study_dir'], form['mapping_file_name']), 'w')
+# All mapping files start with an opening hash
+mapping_file.write('#')
 
 # Write the header row
 to_write = ''
