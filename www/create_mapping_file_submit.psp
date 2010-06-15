@@ -1,0 +1,140 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+from qiime_data_access import *
+from io import FileIO
+sess = Session.Session(req)
+%>
+
+<%
+# Create the mapping file based on sample and field selections
+data_access = QiimeDataAccess()
+study_id = str(sess['study_id'])
+form_metadata_fields = form['metadata_fields']
+recorded_fields = data_access.getMetadataFields(study_id)
+database_map = {}
+tables = []
+
+# Start building the statement for writing out the mapping file
+statement = '"SAMPLE".sample_name as SampleID, \n'
+statement += '"SEQUENCE_PREP".barcode, \n'
+statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
+statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
+
+# Break out the recorded fields and store as dict: field name and table name
+# field[0] = field_name, field[1] = table_name
+for field in recorded_fields:
+    if field[0] in form_metadata_fields:
+        # Required fields which much show up first. Skip as they are already in the statement
+        if field[0] in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE']:
+            continue
+        
+        # Add to select list
+        statement += field[1] + '.' + field[0] + ', \n'
+        
+        # Add the table to our list if not already there and not one of the required tables
+        if field[1] not in tables and field[1] not in ['"STUDY"', '"SAMPLE"', '"SEQUENCE_PREP"']:
+            tables.append(field[1])
+        
+        # Finally, add to our column list
+        database_map[field[0]] = field[1]
+
+# End for
+
+statement = statement[0:len(statement) - 3]
+statement = '\
+select \n' + statement + ' \n\
+from "STUDY" '
+
+# Check for existence of extra_study
+if '"EXTRA_STUDY_' + study_id + '"' in tables:
+    tables.remove('"EXTRA_STUDY_' + study_id + '"')
+    statement += '\
+inner join "EXTRA_STUDY_' + study_id + '" \n\
+on "STUDY".study_id = "EXTRA_STUDY_' + study_id + '".study_id \n '
+    
+# End if
+
+statement += ' \n\
+inner join "SAMPLE" \n\
+on "STUDY".study_id = "SAMPLE".study_id \n '
+
+# Check for existence of extra_sample
+if '"EXTRA_SAMPLE_' + study_id + '"' in tables:
+    tables.remove('"EXTRA_SAMPLE_' + study_id + '"')
+    statement += '\
+inner join "EXTRA_SAMPLE_' + study_id + '" \n\
+on "SAMPLE".sample_id = "EXTRA_SAMPLE_' + study_id + '".sample_id \n '
+    
+# End if
+statement += ' \
+inner join "SEQUENCE_PREP" \n\
+on "SAMPLE".sample_id = "SEQUENCE_PREP".sample_id \n '
+
+# Check for existence of extra_sample
+if '"EXTRA_PREP_' + study_id + '"' in tables:
+    tables.remove('"EXTRA_PREP_' + study_id + '"')
+    statement += '\
+inner join "EXTRA_PREP_' + study_id + '" \n\
+on "SAMPLE".sample_id = "EXTRA_PREP_' + study_id + '".sample_id \n '
+
+if '"COMMON_FIELDS"' in tables:
+    tables.remove('"COMMON_FIELDS"')
+    statement += '\
+inner join "COMMON_FIELDS" \n\
+on "SAMPLE".sample_id = "COMMON_FIELDS".sample_id \n'
+    
+# Deal with the rest of the tables. They should all be assocaiated by sample id.
+for table in tables:
+    statement += '\
+inner join ' + table + '\n\
+on "SAMPLE".sample_id = ' + table + '.sample_id\n '
+
+# End for
+
+# Finally, write the where clause
+statement += 'where "STUDY".study_id = ' + study_id
+
+# Run the statement
+con = data_access.getTestDatabaseConnection()
+cur = con.cursor()
+results = cur.execute(statement)
+
+# Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
+
+
+# Create new mapping file in filesystem
+mapping_file = file(os.path.join(sess['study_dir'], form['mapping_file_name']), 'w')
+
+# Write the header row
+to_write = ''
+for column in cur.description:
+    to_write += column[0] + '\t'
+mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+
+for row in results:
+    # Can't use something like '\t'.join(row) because not all items in list
+    # are string values, hence the explicit loop structure here.
+    to_write = ''
+    for column in row:
+        to_write += str(column) + '\t'
+    # Write the row minus the last tab
+    mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+
+mapping_file.close()
+
+psp.redirect('fusebox.psp?page=select_study_task.psp')
+
+#req.write('<pre>' + statement + '<pre/>')
+#req.write('<pre>' + str(sess) + '<pre/>')
+%>
+
