@@ -44,11 +44,12 @@ if form.has_key('username'):
         sess['web_app_user_id'] = user_data['web_app_user_id']
         sess['study_name'] = ''
         
-        #This checks if the user has a directory and if not, it creates one
+        #User directories
         sess['user_dir'] = os.path.join(output_dir, 'user_'+str(sess['web_app_user_id']))
         try:
             if not os.path.exists(sess['user_dir']):
                 os.mkdir(sess['user_dir'])
+
         except Exception, e:
             req.write('<h1>Unable to create user directory. Upload operations will not function properly.</h1>')
             req.write(str(e))

@@ -14,20 +14,48 @@ from qiime_data_access import QiimeDataAccess
 data_access = QiimeDataAccess()
 sess = Session.Session(req)
 
+def submitJob(study_id, user_id, sff_file, mapping_file):
+    # Submit the job to the queue
+    job_id = data_access.createQueueJob(study_id, user_id, sff_file, mapping_file)
+    
+    # Make sure a legit job_id was created. If not, inform the user there was a problem
+    if job_id < 0:
+        req.write('<p/>There was an error creating the job. Please contact the system administratorx.')
+    else:
+        # Redirect to the home page for this study
+        psp.redirect('fusebox.psp?page=select_study_task.psp')
+    
+    # End if
+
 # Gather necessary values to create a new queue job
 study_id = int(sess['study_id'])
 user_id = int(sess['web_app_user_id'])
 filepath = 'none'
+sff_files = data_access.getSFFFiles(study_id)
+mapping_files = data_access.getMappingFiles(study_id)
 
-# Submit the job to the queue
-job_id = data_access.createQueueJob(study_id, user_id, filepath)
+# Check if this was re-submitted, which means selections have been made
+if 'sff_selection' in form:
+    submitJob(study_id, user_id, form['sff_selection'], form['mapping_selection'])
 
-# Make sure a legit job_id was created. If not, inform the user there was a problem
-if job_id < 0:
-    req.write('<p/>There was an error creating the job. Please contact the system administrator.')
+# If either file collection has more than one file, allow user to select
+elif len(sff_files) > 1 or len(mapping_files) > 1:
+    
+    req.write('<form method="post" action="submit_job_to_qiime.psp"')
+    req.write('<h3>Select SFF File</h3>\n')
+    for sff in sff_files:
+        req.write('<input type="radio" name="sff_selection" id="sff_selection" value="%s"> %s<br>' % (sff, sff))
+    
+    req.write('<h3>Select Mapping File</h3>\n')
+    for sff in mapping_files:
+        req.write('<input type="radio" name="mapping_selection" id="mapping_selection" value="%s"> %s<br>' % (sff, sff))
+    
+    req.write('<br/>')
+    req.write('<input type="submit" value="Submit Job">')
+    
 else:
-    # Redirect to the home page for this study
-    psp.redirect('fusebox.psp?page=select_study_task.psp')
-
-# End if
+    # Submit the job to the queue
+    submitJob(study_id, user_id, sff_files[0], mapping_files[0])
+    
+# End else
 %>

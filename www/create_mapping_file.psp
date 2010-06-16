@@ -11,21 +11,27 @@ __status__ = "Production"
 
 <%
 from qiime_data_access import *
+import os
 
 data_access = QiimeDataAccess()
 study_id = sess['study_id']
 field_list = data_access.getMetadataFields(study_id)
 sample_list = data_access.getSampleList(study_id)
+mapping_files = data_access.getMappingFiles(study_id)
 %>
 
 <p/>
 Existing Mapping Files:
-<a href="#" style="background-color:#CCCCCC">Mapping File 1</a>,
-<a href="#" style="background-color:#CCCCCC">Mapping File 2</a>
+<%
+for file in mapping_files:
+    req.write('<a href="%s" style="background-color:#CCCCCC" target="_blank">%s</a> ' % (file, os.path.basename(file)))
+
+# End for
+%>
 
 <form method="post" action="create_mapping_file_submit.psp">
 <h3>Create New Mapping File</h3>
-Mapping File Name: <input type="text" id="mapping_file_name" name="mapping_file_name">
+Mapping File Name: <input  type="text" id="mapping_file_name" name="mapping_file_name">
 <br/><br/><br/>
 <table>
     <tr>

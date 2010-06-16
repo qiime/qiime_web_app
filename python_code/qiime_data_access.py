@@ -401,6 +401,17 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def addMappingFile(self, study_id, mapping_file_path):
+        """ adds a new mapping file to the study
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('qiime_assets.add_mapping_file', [study_id, mapping_file_path])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
     #def updateSFFFlag(self, study_id, status):
     #    """ Updates the status of the sff submission flag (y/n)
     #    """
@@ -885,17 +896,47 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def createQueueJob(self, study_id, user_id, filepath):
+    def createQueueJob(self, study_id, user_id, sff_path, mapping_file_path):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
             con = self.getTestDatabaseConnection()
             job_id = 0
-            job_id = con.cursor().callproc('qiime_assets.create_queue_job', [study_id, user_id, filepath, job_id])
-            return job_id[3]
+            job_id = con.cursor().callproc('qiime_assets.create_queue_job', [study_id, user_id, sff_path, mapping_file_path, job_id])
+            return job_id[4]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return -1
+        
+    def getSFFFiles(self, study_id):
+        """ Gets a list of SFF files for this study
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            items = []
+            con.cursor().callproc('qiime_assets.get_sff_files', [study_id, results])
+            for row in results:
+                items.append(row[0])
+            return items
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        
+    def getMappingFiles(self, study_id):
+        """ Gets a list of mapping files for this study
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            items = []
+            con.cursor().callproc('qiime_assets.get_mapping_files', [study_id, results])
+            for row in results:
+                items.append(row[0])
+            return items
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
         
     def getJobInfo(self, study_id):
         """ Returns submits a job to the queue and returns the job_id

@@ -21,6 +21,70 @@ sff_complete = study_info['sff_complete']
 mapping_file_complete = study_info['mapping_file_complete']
 %>
 
+<script language="javascript">
+
+function showDiv(div_name)
+{
+    var ele = document.getElementById(div_name);
+    ele.style.display = "block";
+}
+
+function hideDiv(div_name)
+{
+    var ele = document.getElementById(div_name);
+    ele.style.display = "none";
+}
+
+</script>
+
+<div id="simplediv" style="background-color:#CCCCCC;border:1px solid black;display:none;width:600px;height:500px;position:absolute;top:50;left:50;">
+<%
+def submitJob(study_id, user_id, sff_file, mapping_file):
+    # Submit the job to the queue
+    job_id = data_access.createQueueJob(study_id, user_id, sff_file, mapping_file)
+    
+    # Make sure a legit job_id was created. If not, inform the user there was a problem
+    if job_id < 0:
+        req.write('<p/>There was an error creating the job. Please contact the system administratorx.')
+    else:
+        # Redirect to the home page for this study
+        psp.redirect('fusebox.psp?page=select_study_task.psp')
+    
+    # End if
+
+# Gather necessary values to create a new queue job
+study_id = int(sess['study_id'])
+user_id = int(sess['web_app_user_id'])
+filepath = 'none'
+sff_files = data_access.getSFFFiles(study_id)
+mapping_files = data_access.getMappingFiles(study_id)
+
+# Check if this was re-submitted, which means selections have been made
+if 'sff_selection' in form:
+    submitJob(study_id, user_id, form['sff_selection'], form['mapping_selection'])
+
+# If either file collection has more than one file, allow user to select
+elif len(sff_files) > 0 and len(mapping_files) > 0:
+    
+    req.write('<table><tr><td>')
+    req.write('<form method="post" action="submit_job_to_qiime.psp"')
+    req.write('<h3>Select SFF File</h3>\n')
+    for sff in sff_files:
+        req.write('<input type="radio" name="sff_selection" id="sff_selection" value="%s"> %s<br>' % (sff, os.path.basename(sff)))
+    
+    req.write('<h3>Select Mapping File</h3>\n')
+    for sff in mapping_files:
+        req.write('<input type="radio" name="mapping_selection" id="mapping_selection" value="%s"> %s<br>' % (sff, os.path.basename(sff)))
+    
+    req.write('<br/>')
+    req.write('<input type="submit" value="Submit Job">')
+    req.write('</form>')
+    req.write('</td></tr></table>')
+    
+# End if
+%>
+</div>
+
 <br>
 <p>
     <h3>Selected Study: <%=sess['study_name']%></h3>
@@ -140,10 +204,10 @@ if len(jobs) > 0:
 Job submitted. Current status: <b><%=status%></b>
 
 <%
-elif metadata_complete == 'y' and sff_complete == 'y':
+elif metadata_complete == 'y' and sff_complete == 'y' and mapping_file_complete == 'y':
     
 %>
-            <a href="submit_job_to_qiime.psp">Submt job to Qiime</a>
+            <a href="#" onclick="showDiv('simplediv');return false;">Submt job to Qiime</a>
 <%
 else:
     
