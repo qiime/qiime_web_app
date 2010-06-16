@@ -1,4 +1,3 @@
-#/bin/env python
 
 """
 Centralized database access for the Qiime web app
@@ -896,7 +895,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def createQueueJob(self, study_id, user_id, sff_path, mapping_file_path):
+    def createQueueJob(self, study_id, user_id, mapping_file_path, sff_path):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
