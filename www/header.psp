@@ -25,14 +25,13 @@ else:
 # end
 %>
 
+<html>
+<head>
+<title>Qiime</title>
 <script type="text/javascript" src="./js/qiime.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
-
-<html>
-<head>
-<title>Qiime</title>
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>

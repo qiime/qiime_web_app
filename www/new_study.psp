@@ -52,7 +52,7 @@ study_names = qda.getStudyNames()
 
 # iterate through the studies and write them into a javascript array
 for i in range(len(study_names)):
-    req.write('studynames['+str(i)+']=\''+study_names[i][0]+'\'\n');
+    req.write('studynames['+str(i)+']="'+study_names[i][0]+'"\n');
 #
 %>
 
