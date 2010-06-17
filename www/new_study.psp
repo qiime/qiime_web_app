@@ -47,7 +47,7 @@ var studynames=new Array();
 from qiime_data_access import QiimeDataAccess
 qda = QiimeDataAccess()
 
-# get a python list of studies from the database
+# get a list of studies from the database
 study_names = qda.getStudyNames()
 
 # iterate through the studies and write them into a javascript array

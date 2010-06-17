@@ -263,11 +263,11 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             con = self.getTestDatabaseConnection()
-            study_names = con.cursor()
-            con.cursor().callproc('qiime_assets.get_study_names', [study_names])
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_study_names', [results])
             study_name_list = []
-            for row in study_names:
-                if row is None:
+            for row in results:
+                if row[0] is None:
                     continue
                 else:
                     study_name_list.append(row)
