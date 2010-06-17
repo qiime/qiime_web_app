@@ -9,6 +9,13 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
 
+<script>
+$(document).ready(function(){
+    $("#mapping_form").validate();
+});
+</script>
+
+
 <%
 from qiime_data_access import *
 import os
@@ -29,9 +36,9 @@ for file in mapping_files:
 # End for
 %>
 
-<form method="post" action="create_mapping_file_submit.psp">
+<form method="post" class="cmxform" action="create_mapping_file_submit.psp" name="mapping_form" id="mapping_form">
 <h3>Create New Mapping File</h3>
-Mapping File Name: <input  type="text" id="mapping_file_name" name="mapping_file_name">
+Mapping File Name: <input class="required" type="text" id="mapping_file_name" name="mapping_file_name" validation="required email" />
 <br/><br/><br/>
 <table>
     <tr>
