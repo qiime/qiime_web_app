@@ -38,7 +38,7 @@ for file in mapping_files:
 
 <form method="post" class="cmxform" action="create_mapping_file_submit.psp" name="mapping_form" id="mapping_form">
 <h3>Create New Mapping File</h3>
-Mapping File Name: <input class="required" type="text" id="mapping_file_name" name="mapping_file_name" validation="required email" />
+Mapping File Name: <input class="required" type="text" id="mapping_file_name" name="mapping_file_name" />
 <br/><br/><br/>
 <table>
     <tr>
@@ -63,7 +63,7 @@ Mapping File Name: <input class="required" type="text" id="mapping_file_name" na
     </tr>
     <tr>
         <td>
-            <select multiple name="metadata_fields" id="metadata_fields">
+            <select multiple name="metadata_fields" id="metadata_fields" class="required">
 <%
 for f in field_list:
     field_name = f[0]
@@ -77,7 +77,7 @@ for f in field_list:
             </select>
         </td>
         <td>
-            <select multiple name="samples" id="samples">
+            <select multiple name="samples" id="samples" class="required">
 <%
 for s in sample_list:
     req.write('<option value="%s" selected>%s</option>' % (s, s))
