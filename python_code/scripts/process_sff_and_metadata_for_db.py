@@ -58,9 +58,6 @@ script_info['optional_options'] = [\
     make_option('-d','--denoise',action='store_true',\
            dest='denoise',help='Denoise the supplied dataset'+\
            '[default: %default]',default=False),\
-   make_option('-s','--submit_to_db',action='store_false',\
-          dest='submit_to_db',default=True,\
-          help='Submit the files to the database [default: %default]'),\
     make_option('-a','--parallel',action='store_true',\
            dest='parallel',default=False,\
            help='Run in parallel where available [default: %default]'),\
@@ -73,7 +70,6 @@ def main():
     
     sff_fname=opts.sff_fname
     output_dir = opts.output_dir
-    submit_to_db = opts.submit_to_db
     map_fname = opts.map_fname
     verbose = opts.verbose
     print_only = opts.print_only
@@ -116,7 +112,6 @@ def main():
      mapping_fp=map_fname,\
      output_dir=output_dir,\
      denoise=denoise,\
-     submit_to_db=submit_to_db,\
      command_handler=command_handler,\
      params=parse_qiime_parameters(parameter_f),\
      qiime_config=qiime_config,\

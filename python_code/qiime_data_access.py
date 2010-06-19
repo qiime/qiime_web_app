@@ -1110,12 +1110,44 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
     
     def loadSFFData(self,start_job):
-        """ Returns a list of study names
+        """ starts process of importing processed sff file data into the DB
         """
         try:
             con = self.getTestDatabaseConnection()
             if start_job:
                 con.cursor().callproc('sff.process_sff_files.sff_main')
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def loadSplitLibFasta(self,start_job):
+        """ starts process of importing processed sff file data into the DB
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results=0
+            if start_job:
+                con.cursor().callproc('sff.load_fna_file2',[results])
+            if results==0:
+                return True
+            else:
+                return False
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def loadSplitLibInfo(self,start_job,run_date, cmd, svn_version,log_str,
+                            hist_str, md5_input_file):
+        """ uploads the information related to the split_libraries run to the DB
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results=1
+            if start_job:
+                con.cursor().callproc('sff.register_split_library_run',
+                                        [run_date, cmd, svn_version,log_str,\
+                                         hist_str, md5_input_file])
             return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)

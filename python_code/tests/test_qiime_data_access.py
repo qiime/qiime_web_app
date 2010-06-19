@@ -220,6 +220,19 @@ class QiimeDataAccessTests(unittest.TestCase):
         result = _qiime_data_access.loadSFFData(False)
         self.assertTrue(result)
 
+    def test_loadSplitLibFasta(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.loadSplitLibFasta(False)
+        self.assertTrue(result)
+        
+    def test_loadSplitLibInfo(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.loadSplitLibInfo(False,1,1,1,1,1,1)
+        self.assertTrue(result)
 
 if __name__ == '__main__':
 	unittest.main()

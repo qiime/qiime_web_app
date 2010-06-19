@@ -52,7 +52,8 @@ class WorkflowTests(TestCase):
         
         # Cannot use get_qiime_project_dir() due to test errors in virtual box
         test_dir = os.path.join(get_qiime_project_dir(),'tests')
-        sff_original_fp =  os.path.join(test_dir, 'support_files', 'Fasting_subset.sff')
+        sff_original_fp = os.path.join(test_dir, 'support_files', \
+                                        'Fasting_subset.sff')
 
         # copy sff file to working directory
         self.sff_dir = tempfile.mkdtemp()
@@ -105,18 +106,18 @@ class WorkflowTests(TestCase):
         # set the 'alarm' to go off in allowed_seconds seconds
         signal.alarm(allowed_seconds_per_test)
         
-    '''
+    
     def tearDown(self):
         """ """
         # turn off the alarm
         signal.alarm(0)
+        
         remove_files(self.files_to_remove)
         # remove directories last, so we don't get errors
         # trying to remove files which may be in the directories
         for d in self.dirs_to_remove:
             if exists(d):
                 rmtree(d)
-    '''    
         
     def test_run_process_sff_through_pick_otus(self):
         """run_process_sff_through_pick_otus runs without error"""
@@ -125,7 +126,6 @@ class WorkflowTests(TestCase):
          mapping_fp=self.fasting_mapping_fp,
          output_dir=self.wf_out, 
          denoise=False,
-         submit_to_db=False,
          command_handler=call_commands_serially,
          params=self.params,
          qiime_config=self.qiime_config, 
@@ -133,8 +133,9 @@ class WorkflowTests(TestCase):
          status_update_callback=no_status_updates)
          
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
-        otu_fp = join(self.wf_out,'uclust_picked_otus','seqs_otus.txt')
-        split_lib_seqs_fp = join(self.wf_out,'split_libraries','seqs.fna')
+        otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
+                                    'seqs.fna')
          
         # check that the two final output files have non-zero size
         self.assertTrue(getsize(split_lib_seqs_fp) > 0)
@@ -151,7 +152,6 @@ class WorkflowTests(TestCase):
          mapping_fp=self.fasting_mapping_fp,
          output_dir=self.wf_out, 
          denoise=True,
-         submit_to_db=False,
          command_handler=call_commands_serially,
          params=self.params,
          qiime_config=self.qiime_config, 
@@ -159,8 +159,10 @@ class WorkflowTests(TestCase):
          status_update_callback=no_status_updates)
 
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
-        otu_fp = join(self.wf_out,'uclust_picked_otus','denoised_seqs_otus.txt')
-        split_lib_seqs_fp = join(self.wf_out,'split_libraries','seqs.fna')
+        otu_fp = join(self.wf_out,'picked_otus',\
+                        'denoised_seqs_otus.txt')
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
+                                    'seqs.fna')
 
         # check that the two final output files have non-zero size
         self.assertTrue(getsize(split_lib_seqs_fp) > 0)
@@ -177,7 +179,6 @@ class WorkflowTests(TestCase):
          mapping_fp=self.fasting_mapping_fp,
          output_dir=self.wf_out, 
          denoise=False,
-         submit_to_db=False,
          command_handler=call_commands_serially,
          params=self.params,
          qiime_config=self.qiime_config, 
@@ -185,8 +186,9 @@ class WorkflowTests(TestCase):
          status_update_callback=no_status_updates)
 
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
-        otu_fp = join(self.wf_out,'uclust_picked_otus','seqs_otus.txt')
-        split_lib_seqs_fp = join(self.wf_out,'split_libraries','seqs.fna')
+        otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
+                                    'seqs.fna')
 
         # check that the two final output files have non-zero size
         self.assertTrue(getsize(split_lib_seqs_fp) > 0)
