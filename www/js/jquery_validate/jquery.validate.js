@@ -262,6 +262,7 @@ $.extend($.validator, {
 		dateISO: "Please enter a valid date (ISO).",
 		number: "Please enter a valid number.",
 		digits: "Please enter only digits.",
+		safename: "Name cannot be blank, must start with a letter, and may only contain letters, number, and '_'.",
 		creditcard: "Please enter a valid credit card number.",
 		equalTo: "Please enter the same value again.",
 		accept: "Please enter a value with a valid extension.",
@@ -745,6 +746,7 @@ $.extend($.validator, {
 		number: {number: true},
 		numberDE: {numberDE: true},
 		digits: {digits: true},
+		safename: {safename: true},
 		creditcard: {creditcard: true}
 	},
 	
@@ -1020,6 +1022,18 @@ $.extend($.validator, {
 		// http://docs.jquery.com/Plugins/Validation/Methods/digits
 		digits: function(value, element) {
 			return this.optional(element) || /^\d+$/.test(value);
+		},
+		
+		// Added to support column naming rules in Oracle. Also can apply to file names.
+		safename: function(value, element) {
+			if (this.getLength(value, element) > 0)
+			{
+				return this.optional(element) || /^[A-Za-z][A-Za-z0-9_]*$/.test(value);
+			}
+			else
+			{
+				return false;
+			}
 		},
 		
 		// http://docs.jquery.com/Plugins/Validation/Methods/creditcard

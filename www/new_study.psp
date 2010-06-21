@@ -89,7 +89,7 @@ function check_study_name()
                 Study Name:
             </td>
             <td>
-                <input class="input required" type="text" name="study_name" id="study_name" />
+                <input class="safename" type="text" name="study_name" id="study_name" />
             </td>
         </tr>
         <tr>

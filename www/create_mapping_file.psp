@@ -38,7 +38,8 @@ for file in mapping_files:
 
 <form method="post" class="cmxform" action="create_mapping_file_submit.psp" name="mapping_form" id="mapping_form">
 <h3>Create New Mapping File</h3>
-Mapping File Name: <input class="required" type="text" id="mapping_file_name" name="mapping_file_name" />
+Mapping File Name: <input class="safename" type="text" id="mapping_file_name" name="mapping_file_name" /><br/>
+(A file extension will be added for you)
 <br/><br/><br/>
 <table>
     <tr>

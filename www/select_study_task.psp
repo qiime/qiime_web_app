@@ -168,20 +168,27 @@ else:
                 </form>
         </li>
         <li>        
+            
+<%
+if metadata_complete == 'n':
+%>
+Create a mapping file (complete metadata upload first)<br/><br/>
+<%
+elif mapping_file_complete == 'n':
+%>
             <form id="create_mapping_file" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="create_mapping_file.psp">
                 <a href="" onclick="document.forms['create_mapping_file'].submit(); return false;">
-                Create a mapping file 
-<%
-if mapping_file_complete == 'n':
-    
-%>        
-(not complete)</a> <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+                Create a mapping file (not complete)</a>
+            <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
 else:
-    
 %>
-(complete)</a> <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+            <form id="create_mapping_file" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="create_mapping_file.psp">
+                <a href="" onclick="document.forms['create_mapping_file'].submit(); return false;">
+                Create a mapping file (complete)</a>
+            <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
 
 # End if
@@ -212,7 +219,7 @@ elif metadata_complete == 'y' and sff_complete == 'y' and mapping_file_complete 
 else:
     
 %>
-            Submit Job to Qiime (Complete SFF and Metadata upload first)
+            Submit Job to Qiime (complete SFF and metadata upload first)
 <%
 # End if
 
