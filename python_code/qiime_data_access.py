@@ -258,6 +258,16 @@ class QiimeDataAccess( AbstractDataAccess ):
     # Study
     #####################################
 
+    def deleteStudy(self, study_id):
+        """ 
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            con.cursor().callproc('qiime_assets.study_delete', [study_id])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
     def getStudyNames(self):
         """ Returns a list of study names
         """
