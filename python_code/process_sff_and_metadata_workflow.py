@@ -230,65 +230,149 @@ def web_app_call_commands_serially(commands,
     logger.close()
     
 def submit_processed_data_to_db(fasta_files):
+    '''
+       This function takes the fasta filenames and using that path, determines
+       the location of the split-library and picked-otu files.  Once file
+       locations have been determined, it moves the files to the DB machine
+       and load the files into the DB.
+    '''
     
     fasta_filenames=fasta_files.split(',')
-    
     checksums=[]
+    #split the fasta filenames and determine filepaths
     for fasta_fname in fasta_filenames:
         input_fname,input_ext=splitext(split(fasta_fname)[-1])
         input_basename, input_ext = splitext(fasta_fname)
         input_dir=split(input_basename)[:-1][0]
         
+        #using the fasta basename, define qual and flow files
         qual_fname=join(input_basename+'.qual')
         flow_fname=join(input_basename+'.txt')
         
+        #get the md5 checksum for each fasta and qual file
         fna_md5sum=md5(open(fasta_fname,'rb').read()).hexdigest()
         qual_md5sum=md5(open(qual_fname,'rb').read()).hexdigest()
         checksums.append(input_fname+'.fna:'+fna_md5sum)
         checksums.append(input_fname+'.qual:'+qual_md5sum)
 
         '''
+        #move the fna, qual and flow files to the database server
         try:
             cmd_call=scp_file_transfer(23,fasta_fname,'wwwuser',\
                                         'microbiome1.colorado.edu',\
-                                        '/SFF_Files/fasta.dat')
+                                        '/SFF_Files/%s.fna' % (input_fname))
             cmd_call=scp_file_transfer(23,qual_fname,'wwwuser',\
                                         'microbiome1.colorado.edu',\
-                                        '/SFF_Files/qual.dat')
+                                        '/SFF_Files/%s.qual' % (input_fname))
             cmd_call=scp_file_transfer(23,flow_fname,'wwwuser',\
                                         'microbiome1.colorado.edu',\
-                                        '/SFF_Files/flow.dat')
+                                        '/SFF_Files/%s.txt' % (input_fname))
         except:
             raise ValueError, 'Error: Unable to scp files to database server!'
-
+        
         #Run the Oracle process_sff_files load package
         try: 
-            sff_load=data_access.loadSFFData(True)
+            sff_load,run_id=data_access.loadSFFData(True, input_fname)
             if not sff_load:
                 raise ValueError, 'Error: Unable to load data into database!'
         except:
             raise ValueError, 'Error: Unable to load data into database!'
         '''
+    print 'done 1'
+    run_id=1
+    #define the split library file paths using the original fasta input 
+    #directory
     split_lib_seqs=join(input_dir,'split_libraries','seqs.fna')
     split_lib_hist=join(input_dir,'split_libraries','histograms.txt')
     split_lib_log=join(input_dir,'split_libraries','split_library_log.txt')
     split_hist_str=open(split_lib_hist).read()
     split_log_str=open(split_lib_log).read()
     
-    svn_version=1386
+    #read in the workflow log file and determine timestamp and svn version of
+    #Qiime used for the analysis
+    svn_version='1386'
     comb_checksums=','.join(checksums)
-    run_date=datetime.now()
+    run_date=datetime.now().strftime("%m/%d/%Y/%H/%M/%S")
     full_log_fp = glob(join(input_dir,'log*.txt'))[0]
     full_log_str=open(full_log_fp,'U').read()
     log_str=open(full_log_fp,'U').readlines()
+    
+    #from the workflow log file get the split-library and pick-otus cmds
     for substr in log_str:
         if 'split_libraries.py' in substr:
             split_lib_cmd=substr
         elif 'pick_otus.py' in substr:
             pick_otus_cmd=substr
     
+    #Insert the split-library log information in the DB
+    valid=data_access.loadSplitLibInfo(True,run_id,run_date, split_lib_cmd, \
+                                     svn_version, split_log_str, \
+                                     split_hist_str, comb_checksums)
+    
+    #move the resulting seqs.fna file from split-libraries to the DB server
+    try:
+        cmd_call=scp_file_transfer(23,split_lib_seqs,'wwwuser',\
+                                    'microbiome1.colorado.edu',\
+                                    '/SFF_Files/file.fna')
+    except:
+        raise ValueError, 'Error: Unable to scp files to database server!'
+    
+    #Run the Oracle load_fna_file load procedure
+    try: 
+        sff_load=data_access.loadSplitLibFasta(True,run_id)
+        if not sff_load:
+            raise ValueError, 'Error: Unable to load data into database!'
+    except:
+        raise ValueError, 'Error: Unable to load data into database!'
+    
+    
+    #this is a temporary step for generating the commands to load the otu
+    #information into the db, so we keep the correct run_ids for each 
+    #dataset
+    f_out=open('/mnt/external/submit_pick_otus_cmds.txt','a')
+    pick_otu_cmd='echo "python /home/wwwuser/projects/QIIME-webdev/qiime_web_app/python_code/scripts/submit_otu_data_to_db.py -i %s -r %d" > job_scripts/%d_db.txt\n' % (fasta_files, run_id,run_id)
+    cluster_job_cmd='python make_cluster_jobs.py job_scripts/%d_db.txt "P%d_"\n\n' % (run_id,run_id)
+    f_out.write(pick_otu_cmd)
+    f_out.write(cluster_job_cmd)
+    f_out.close
+    
 
-    valid=data_access.loadSplitLibInfo(True,run_date, split_lib_cmd, \
+def submit_otu_data_to_db(fasta_files,run_id):
+    '''This function will be merged with submit_processed_data_to_db in the 
+       near FUTURE!!!
+       
+       This function takes the fasta filenames and using that path, determines
+       the location of the  picked-otu files.  Once file
+       locations have been determined, it moves the files to the DB machine
+       and load the files into the DB.
+    '''
+    fasta_filenames=fasta_files.split(',')
+
+    for fasta_fname in fasta_filenames:
+        input_basename, input_ext = splitext(fasta_fname)
+        input_dir=split(input_basename)[:-1][0]
+
+    svn_version='1386'
+    run_date=datetime.now().strftime("%m/%d/%Y/%H/%M/%S")
+    full_log_fp = glob(join(input_dir,'log*.txt'))[0]
+    full_log_str=open(full_log_fp,'U').read()
+    log_str=open(full_log_fp,'U').readlines()
+
+    for substr in log_str:
+        if 'split_libraries.py' in substr:
+            split_lib_cmd=substr
+        elif 'pick_otus.py' in substr:
+            pick_otus_cmd=substr
+            
+    pick_otus_map=join(input_dir,'picked_otus','seqs_otus.txt')
+    pick_otus_failures=join(input_dir,'picked_otus','seqs_failures.txt') 
+    pick_otus_log=join(input_dir,'picked_otus','seqs_otus.log') 
+    otus_log_str=open(pick_otus_log).read()
+    
+    print run_date
+    #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
+
+    valid=data_access.loadOTUInfo(True,run_date, split_lib_cmd, \
                                      svn_version, split_lib_log, \
                                      split_hist_str, comb_checksums)
 
@@ -308,18 +392,8 @@ def submit_processed_data_to_db(fasta_files):
     except:
         raise ValueError, 'Error: Unable to load data into database!'
     '''
-    
-    pick_otus_map=join(input_dir,'picked_otus','seqs_otus.txt')
-    pick_otus_failures=join(input_dir,'picked_otus','seqs_failures.txt') 
-    pick_otus_log=join(input_dir,'picked_otus','seqs_otus.log') 
-    
-    otus_log_str=open(pick_otus_log).read()
-    
 
-    
 
-    #log_split_str=log_str.split
-    
             
 def check_scp():
     """Raise error if scp is not in $PATH """

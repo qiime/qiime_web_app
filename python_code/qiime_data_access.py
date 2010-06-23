@@ -1109,26 +1109,32 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     
-    def loadSFFData(self,start_job):
-        """ starts process of importing processed sff file data into the DB
-        """
-        try:
-            con = self.getTestDatabaseConnection()
-            if start_job:
-                con.cursor().callproc('sff.process_sff_files.sff_main')
-            return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
-    def loadSplitLibFasta(self,start_job):
+    def loadSFFData(self,start_job,basename):
         """ starts process of importing processed sff file data into the DB
         """
         try:
             con = self.getTestDatabaseConnection()
             results=0
+            run_id=0
             if start_job:
-                con.cursor().callproc('sff.load_fna_file2',[results])
+                con.cursor().callproc('sff.process_sff_files.sff_main',\
+                                      [basename,run_id,results])
+            if results==0:
+                return True,run_id
+            else:
+                return False,run_id
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def loadSplitLibFasta(self,start_job,run_id):
+        """ starts process of importing processed split-library data into the DB
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results=0
+            if start_job:
+                con.cursor().callproc('sff.load_fna_file',[run_id,results])
             if results==0:
                 return True
             else:
@@ -1137,18 +1143,22 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def loadSplitLibInfo(self,start_job,run_date, cmd, svn_version,log_str,
-                            hist_str, md5_input_file):
+    def loadSplitLibInfo(self,start_job,run_id,run_date, cmd, svn_version,
+                            log_str,hist_str, md5_input_file):
         """ uploads the information related to the split_libraries run to the DB
         """
         try:
             con = self.getTestDatabaseConnection()
-            results=1
+            results=0
             if start_job:
                 con.cursor().callproc('sff.register_split_library_run',
-                                        [run_date, cmd, svn_version,log_str,\
-                                         hist_str, md5_input_file])
-            return True
+                                        [run_id,run_date, cmd, svn_version,\
+                                         log_str, hist_str, md5_input_file,\
+                                         results])
+            if results==0:
+                return True
+            else:
+                return False
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
