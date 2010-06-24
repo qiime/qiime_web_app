@@ -22,6 +22,12 @@ from time import sleep
 study_name = sess['study_name']
 study_id = sess['study_id']
 
+# Get our data_access instance
+data_access = QiimeDataAccess()
+
+# Remove any existing metadata before upload. 0 = delete all but study specific data
+data_access.deleteStudy(study_id, 0)
+
 sample_key_fields = {}
 prep_key_fields = {}
 host_key_fields = {}
@@ -32,8 +38,6 @@ with_errors = False
 host_fields = []
 prep_fields = []
 all_other_fields = []
-
-data_access = QiimeDataAccess()
 
 # Make one pass to shuffle all fields into the right buckets
 req.write('<p style="font-size:12px">Writing Sample Key Values:</p>')

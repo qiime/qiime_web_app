@@ -147,20 +147,24 @@ else:
                 </form>
         </li>
         <li>        
-            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
-                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
-                Upload metadata to this study 
 <%
 if metadata_complete == 'n':
     
-%>        
-(not complete)</a> <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+%>
+            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
+                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
+                Upload metadata to this study (not complete)</a>
+            <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
 else:
     
 %>
-(complete)</a> <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
+                <a href="" onclick="if (confirm('Warning, this will remove all existing metadata for this study. Do you want to continue?')) {document.forms['associate_metadata_to_study'].submit();} return false;">
+                Upload metadata to this study (complete)</a>
+            <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
 
 # End if
@@ -220,10 +224,17 @@ else:
     
 %>
             Submit Job to Qiime (complete SFF and metadata upload first)
+            <br/><br/>
 <%
 # End if
 
 %>
+        </li>
+        <li>
+            <form id="delete_study" action="delete_study.psp" method="post">
+                <a href="" onclick="if(confirm('Are you sure you want to remove this study? All associated data will be removed.')) {document.forms['delete_study'].submit(); } return false;">
+                Remove study from database</a>
+            </form>
         </li>
     </ul>
     <b>Tools:</b>

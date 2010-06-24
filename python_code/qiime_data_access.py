@@ -258,16 +258,21 @@ class QiimeDataAccess( AbstractDataAccess ):
     # Study
     #####################################
 
-    def deleteStudy(self, study_id):
-        """ 
+    def deleteStudy(self, study_id, full_delete):
+        """ Removes a study from the database
+        
+        study_id: the numeric identifier for the study in the database
+        full_delete: an integer value:
+            0 = delete all BUT the study entry
+            1 = delete everything including the study
         """
         try:
             con = self.getTestDatabaseConnection()
-            con.cursor().callproc('qiime_assets.study_delete', [study_id])
+            con.cursor().callproc('qiime_assets.study_delete', [study_id, full_delete])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+        
     def getStudyNames(self):
         """ Returns a list of study names
         """
