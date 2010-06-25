@@ -1124,22 +1124,24 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     
-    def loadSFFData(self,start_job,basename):
+    def loadSFFData(self,start_job,basename,run_id):
         """ starts process of importing processed sff file data into the DB
         """
         try:
             con = self.getTestDatabaseConnection()
-            results=0
-            run_id=0
+            error_flag=1
             if start_job:
-                con.cursor().callproc('sff.process_sff_files.sff_main',\
-                                      [basename,run_id,results])
-            if results==0:
-                return True,run_id
+                db_output=con.cursor().callproc(\
+                        'sff.process_sff_files.sff_main',[basename,run_id,\
+                                                          error_flag])
+                if db_output[2]==0:
+                    return True,db_output[1]
+                else:
+                    return False,db_output[1]
             else:
-                return False,run_id
+                return True,run_id
         except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
     def loadSplitLibFasta(self,start_job,run_id):
@@ -1147,15 +1149,18 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             con = self.getTestDatabaseConnection()
-            results=0
+            error_flag=1
             if start_job:
-                con.cursor().callproc('sff.load_fna_file',[run_id,results])
-            if results==0:
-                return True
+                db_output=con.cursor().callproc('sff.load_fna_file',[run_id,\
+                                                                    error_flag])
+                if db_output[1]==0:
+                    return True
+                else:
+                    return False
             else:
-                return False
+                return True
         except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
     def loadSplitLibInfo(self,start_job,run_id,run_date, cmd, svn_version,
@@ -1164,16 +1169,18 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             con = self.getTestDatabaseConnection()
-            results=0
+            error_flag=1
             if start_job:
-                con.cursor().callproc('sff.register_split_library_run',
+                db_output=con.cursor().callproc('sff.register_split_library_run',
                                         [run_id,run_date, cmd, svn_version,\
                                          log_str, hist_str, md5_input_file,\
-                                         results])
-            if results==0:
-                return True
+                                         error_flag])
+                if db_output[7]==0:
+                    return True
+                else:
+                    return False
             else:
-                return False
+                return True
         except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False

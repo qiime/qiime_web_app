@@ -216,22 +216,24 @@ class QiimeDataAccessTests(unittest.TestCase):
     def test_loadSFFData(self):
         """ 
         """
+        exp_run_id=0
         global _qiime_data_access
-        result = _qiime_data_access.loadSFFData(False)
+        result,obs_run_id = _qiime_data_access.loadSFFData(False,'Test',0)
+        self.assertEqual(obs_run_id,exp_run_id)
         self.assertTrue(result)
 
     def test_loadSplitLibFasta(self):
         """ 
         """
         global _qiime_data_access
-        result = _qiime_data_access.loadSplitLibFasta(False)
+        result = _qiime_data_access.loadSplitLibFasta(False,0)
         self.assertTrue(result)
         
     def test_loadSplitLibInfo(self):
         """ 
         """
         global _qiime_data_access
-        result = _qiime_data_access.loadSplitLibInfo(False,1,1,1,1,1,1)
+        result = _qiime_data_access.loadSplitLibInfo(False,1,1,1,1,1,1,1)
         self.assertTrue(result)
 
 if __name__ == '__main__':
