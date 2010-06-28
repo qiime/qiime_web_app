@@ -1184,3 +1184,72 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+        
+    def get_list_of_ontologies(self):
+        """ Returns a list of metadata values based on a study type and list
+        """
+        try:
+            con = self.getOntologyDatabaseConnection()
+            column_values = con.cursor()
+            con.cursor().callproc('get_list_of_ontologies', [column_values])
+            query_results=[]
+            for row in column_values:
+                if row[0] is None:
+                    continue
+                query_results.append(row)
+            return query_results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+    
+    def get_ontology_terms(self, ontology, query):
+        """ Returns a list of ontology terms if the term contains query as a
+            substring.
+            
+            Note: ontology can be a list of ontologies, and as such the value, whether
+            singular or multiple, must be quoted: e.g. '\'FMA\'', or '\'FMA\', \'OBI\''
+        """
+        try:
+            con = self.getOntologyDatabaseConnection()
+            column_values = con.cursor()
+            con.cursor().callproc('get_ontology_terms', [ontology, query, column_values])
+            query_results=[]
+            for row in column_values:
+                if row[1] is None:
+                    continue
+                query_results.append(row[1])
+            return query_results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+    
+    def validity_of_ontology_term(self, ontology, query):
+        """ Returns a list of ontology terms if the query is exactly equal to 
+            the term.
+        """
+        try:
+            con = self.getOntologyDatabaseConnection()
+            column_values = con.cursor()
+            con.cursor().callproc('validity_of_ontology_term', [ontology, query, column_values])
+            query_results=[]
+            for row in column_values:
+                if row[1] is None:
+                    continue
+                query_results.append(row[1])
+            return query_results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+        finally:
+            if (con):
+                con.cursor().close()
+                con.close()
+                

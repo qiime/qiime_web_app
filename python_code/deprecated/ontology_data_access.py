@@ -34,7 +34,7 @@ class OntologyDataAccess( AbstractDataAccess ):
         to be used internally by this class.
         """
         try:
-            con = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu/microbe')
+            con = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu:1523/microbe')
             return con
         except Exception, e:
             print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
