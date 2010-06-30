@@ -340,9 +340,6 @@ def submit_processed_data_to_db(fasta_files):
     
     
     
-    
-    
-    
     # FOR OTU
     
     #this is a temporary step for generating the commands to load the otu
@@ -360,42 +357,31 @@ def submit_processed_data_to_db(fasta_files):
     #define the picked OTU file paths using the original fasta input 
     #directory
     pick_otus_map = join(input_dir, 'picked_otus', 'seqs_otus.txt')
-    print 'pick_otus_map: %s' % pick_otus_map 
     pick_otus_failures = join(input_dir, 'picked_otus', 'seqs_failures.txt')
-    print 'pick_otus_failures: %s' % pick_otus_failures
     pick_otus_log = join(input_dir, 'picked_otus', 'seqs_otus.log')
-    print 'pick_otus_log: %s' % pick_otus_log
     otus_log_str = open(pick_otus_log).read()
     
+    print 'Starting transfer of OTU file: %s' % pick_otus_map
+
+    try:
+        cmd_call = scp_file_transfer(23, pick_otus_map, 'wwwuser',\
+            'microbiome1.colorado.edu',\
+            '/SFF_Files/otu.dat' % ())    
+    except:
+        raise ValueError, 'Error: Unable to scp OTU file to database server!'
+        
+    print "Finished scp transfer of OTU file!"
+
+
+
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
 
-    
+    #Insert the pick_otus information in the DB. 
+    print 'Starting load of OTU data into database...'
+    valid = data_access.loadOTUData(True, run_id)
+    print 'Successfully called data_access.loadOTUData()'
 
-    
-
-    #NOTE: The following fxn needs written!!!
-    #Insert the pick_otus log information in the DB. 
-    #valid = data_access.loadOTUInfo(True, run_date, split_lib_cmd, svn_version, \
-    #    split_lib_log, split_hist_str, comb_checksums)
-
-    #Here is some other scp cmds that I used!    
-    '''
-    try:
-        cmd_call=scp_file_transfer(23,split_lib_seqs,'wwwuser',\
-                                    'microbiome1.colorado.edu',\
-                                    '/SFF_Files/file.fna')
-    except:
-        raise ValueError, 'Error: Unable to scp files to database server!'
-
-    #Run the Oracle process_sff_files load package
-    try: 
-        sff_load=data_access.loadSplitLibFasta(True)
-        if not sff_load:
-            raise ValueError, 'Error: Unable to load data into database!'
-    except:
-        raise ValueError, 'Error: Unable to load data into database!'
-    '''
-    print 'End of functuon' 
+    print 'End of function' 
 
 def submit_otu_data_to_db(fasta_files,run_id):
     '''This function will be merged with submit_processed_data_to_db in the 
@@ -471,6 +457,7 @@ def scp_file_transfer(port,filepath,username,host,location):
     """Transfers files to another server."""
     check_scp()
     cmd_call='scp -P %d %s %s@%s:%s' % (port,filepath,username,host,location)
+    print 'scp command is: %s' % cmd_call
     system(cmd_call)
     return cmd_call
     
