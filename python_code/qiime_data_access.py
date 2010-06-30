@@ -1123,68 +1123,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
-    def loadSFFData(self,start_job,basename,run_id):
-        """ starts process of importing processed sff file data into the DB
-        """
-        try:
-            con = self.getTestDatabaseConnection()
-            error_flag=1
-            if start_job:
-                db_output=con.cursor().callproc(\
-                        'sff.process_sff_files.sff_main',[basename,run_id,\
-                                                          error_flag])
-                if db_output[2]==0:
-                    return True,db_output[1]
-                else:
-                    return False,db_output[1]
-            else:
-                return True,run_id
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
 
-    def loadSplitLibFasta(self,start_job,run_id):
-        """ starts process of importing processed split-library data into the DB
-        """
-        try:
-            con = self.getTestDatabaseConnection()
-            error_flag=1
-            if start_job:
-                db_output=con.cursor().callproc('sff.load_fna_file',[run_id,\
-                                                                    error_flag])
-                if db_output[1]==0:
-                    return True
-                else:
-                    return False
-            else:
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-
-    def loadSplitLibInfo(self,start_job,run_id,run_date, cmd, svn_version,
-                            log_str,hist_str, md5_input_file):
-        """ uploads the information related to the split_libraries run to the DB
-        """
-        try:
-            con = self.getTestDatabaseConnection()
-            error_flag=1
-            if start_job:
-                db_output=con.cursor().callproc('sff.register_split_library_run',
-                                        [run_id,run_date, cmd, svn_version,\
-                                         log_str, hist_str, md5_input_file,\
-                                         error_flag])
-                if db_output[7]==0:
-                    return True
-                else:
-                    return False
-            else:
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-        
     def get_list_of_ontologies(self):
         """ Returns a list of metadata values based on a study type and list
         """
@@ -1253,3 +1192,85 @@ class QiimeDataAccess( AbstractDataAccess ):
                 con.cursor().close()
                 con.close()
                 
+    #####################################
+    # Loading
+    #####################################
+    
+    def loadSFFData(self, start_job, basename, run_id, md5_checksum):
+        """ starts process of importing processed sff file data into the DB
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc('sff.process_sff_files.sff_main', [basename, md5_checksum, run_id, error_flag])
+                if db_output[2]==0:
+                    return True,db_output[1]
+                else:
+                    return False,db_output[1]
+            else:
+                return True,run_id
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def loadSplitLibFasta(self,start_job,run_id):
+        """ starts process of importing processed split-library data into the DB
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc('sff.load_fna_file',[run_id,\
+                                                                    error_flag])
+                if db_output[1]==0:
+                    return True
+                else:
+                    return False
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def loadSplitLibInfo(self, start_job, run_id, run_date, cmd, svn_version,
+                            log_str, hist_str, md5_input_file):
+        """ uploads the information related to the split_libraries run to the DB
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc('sff.register_split_library_run',
+                                        [run_id,run_date, cmd, svn_version,\
+                                         log_str, hist_str, md5_input_file,\
+                                         error_flag])
+                if db_output[7]==0:
+                    return True
+                else:
+                    return False
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+        
+    def loadOTUInfo(self, start_job,basename,run_id):
+        """ starts process of importing processed sff file data into the DB
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc(\
+                        'sff.process_sff_files.sff_main',[basename,run_id,\
+                                                          error_flag])
+                if db_output[2]==0:
+                    return True,db_output[1]
+                else:
+                    return False,db_output[1]
+            else:
+                return True,run_id
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
