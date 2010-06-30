@@ -19,7 +19,7 @@ from os import system
 from glob import glob
 from datetime import datetime
 from qiime.workflow import WorkflowLogger
-from os.path import split, splitext, join
+from os.path import *
 from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates,generate_log_fp,\
                            get_params_str, WorkflowError
@@ -281,32 +281,28 @@ def submit_processed_data_to_db(fasta_files):
         sff_file = join(rev[rev.find('/'):][::-1], input_fname + '.sff')
         sff_md5 = md5(open(sff_file,'rb').read()).hexdigest()
 
-        try: 
-            sff_load,run_id=data_access.loadSFFData(True, sff_file, run_id, sff_md5)
-            if not sff_load:
-                raise ValueError, 'Error: Unable to load data into database!'
-        except:
-            raise ValueError, 'Error: Unable to load data into database!'
+        # Load the data into the datbase. Will raise an exception if it fails.
+        sff_load, run_id = data_access.loadSFFData(True, sff_file, run_id, sff_md5)
         
     print 'Finished loading the processed SFF data!'
     print 'Run ID: %s' % run_id
     
     #define the split library file paths using the original fasta input 
     #directory
-    split_lib_seqs=join(input_dir,'split_libraries','seqs.fna')
-    split_lib_hist=join(input_dir,'split_libraries','histograms.txt')
-    split_lib_log=join(input_dir,'split_libraries','split_library_log.txt')
-    split_hist_str=open(split_lib_hist).read()
-    split_log_str=open(split_lib_log).read()
+    split_lib_seqs = join(input_dir, 'split_libraries', 'seqs.fna')
+    split_lib_hist = join(input_dir, 'split_libraries', 'histograms.txt')
+    split_lib_log = join(input_dir, 'split_libraries', 'split_library_log.txt')
+    split_hist_str = open(split_lib_hist).read()
+    split_log_str = open(split_lib_log).read()
     
     #read in the workflow log file and determine timestamp and svn version of
     #Qiime used for the analysis
-    svn_version='1386' # This is temporarily defined, however will use script to dtermine this value
-    comb_checksums=','.join(checksums)
+    svn_version = '1386' # This is temporarily defined, however will use script to dtermine this value
+    comb_checksums = ','.join(checksums)
     run_date=datetime.now().strftime("%m/%d/%Y/%H/%M/%S")
-    full_log_fp = glob(join(input_dir,'log*.txt'))[0]
-    full_log_str=open(full_log_fp,'U').read()
-    log_str=open(full_log_fp,'U').readlines()
+    full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
+    full_log_str = open(full_log_fp, 'U').read()
+    log_str = open(full_log_fp, 'U').readlines()
     
     #from the workflow log file get the split-library and pick-otus cmds
     for substr in log_str:
@@ -334,7 +330,7 @@ def submit_processed_data_to_db(fasta_files):
     
     #Run the Oracle load_fna_file load procedure
     try: 
-        sff_load=data_access.loadSplitLibFasta(True,run_id)
+        sff_load = data_access.loadSplitLibFasta(True, run_id)
         if not sff_load:
             raise ValueError, 'Error: Unable to load data into database!'
     except:
@@ -370,7 +366,6 @@ def submit_processed_data_to_db(fasta_files):
     pick_otus_log = join(input_dir, 'picked_otus', 'seqs_otus.log')
     print 'pick_otus_log: %s' % pick_otus_log
     otus_log_str = open(pick_otus_log).read()
-    print 'otus_log_str: %s' % otus_log_str
     
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
 
@@ -400,7 +395,7 @@ def submit_processed_data_to_db(fasta_files):
     except:
         raise ValueError, 'Error: Unable to load data into database!'
     '''
-    
+    print 'End of functuon' 
 
 def submit_otu_data_to_db(fasta_files,run_id):
     '''This function will be merged with submit_processed_data_to_db in the 

@@ -1204,15 +1204,16 @@ class QiimeDataAccess( AbstractDataAccess ):
             error_flag=1
             if start_job:
                 db_output=con.cursor().callproc('sff.process_sff_files.sff_main', [basename, md5_checksum, run_id, error_flag])
-                if db_output[2]==0:
-                    return True,db_output[1]
+                if db_output[3]==0:
+                    return True,db_output[2]
                 else:
-                    return False,db_output[1]
+                    return False,db_output[2]
             else:
                 return True,run_id
         except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
+            err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            print err
+            raise Exception(err)
 
     def loadSplitLibFasta(self,start_job,run_id):
         """ starts process of importing processed split-library data into the DB
