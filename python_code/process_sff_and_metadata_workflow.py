@@ -63,6 +63,12 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
     for sff_input_fp in sff_filenames:
         ##### GENERATE THE MD5 HERE AND STORE IN THE DATABASE AFTER FILE SUCCESSFULLY PROCESSED
         
+        # Copy the SFF into the processed files directory
+        copied_sff=split(sff_input_fp)[-1]
+        sff_input_fp_copy=join(output_dir, copied_sff)
+        copy_sff_cmd='cp %s %s' % (sff_input_fp,sff_input_fp_copy)
+        commands.append([('CopySFF', copy_sff_cmd)])
+        
         # Convert sff file into fasta, qual and flowgram file
         process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
          (python_exe_fp, script_dir, sff_input_fp,
@@ -201,7 +207,7 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
         input_fp = '%s/denoised_all.fasta' % pick_otu_dir
         otu_fp = '%s/denoised_otu_map.txt' % pick_otu_dir
         commands.append([('Merge denoiser output', merge_denoiser_output_cmd)])
-
+    
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
     
