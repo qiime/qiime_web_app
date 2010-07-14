@@ -88,6 +88,21 @@ class QiimeDataAccess( AbstractDataAccess ):
         
         return self._testDatabaseConnection
     
+    def getSFFDatabaseConnection(self):
+        """ Obtains a connection to the qiime_test schema
+
+        Get a database connection. 
+        """
+        if self._testDatabaseConnection == None:
+            try:
+                print 'No active connection - obtaining new connection to qiime_test.'
+                self._testDatabaseConnection = cx_Oracle.Connection('SFF/454SFF454@microbiome1.colorado.edu:1523/microbe')
+            except Exception, e:
+                print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
+                return False;
+
+        return self._testDatabaseConnection
+        
     #####################################
     # Helper Functions
     #####################################
@@ -1200,10 +1215,12 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ starts process of importing processed sff file data into the DB
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getSFFDatabaseConnection()
             error_flag=1
             if start_job:
-                db_output=con.cursor().callproc('sff.process_sff_files.sff_main', [basename, md5_checksum, run_id, error_flag])
+                db_output=con.cursor().callproc('process_sff_files.sff_main', \
+                                [basename, md5_checksum, run_id, error_flag])
+                print db_output
                 if db_output[3]==0:
                     return True,db_output[2]
                 else:
@@ -1219,10 +1236,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ starts process of importing processed split-library data into the DB
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getSFFDatabaseConnection()
             error_flag=1
             if start_job:
-                db_output=con.cursor().callproc('sff.load_fna_file',[run_id,\
+                db_output=con.cursor().callproc('load_fna_file',[run_id,\
                                                                     error_flag])
                 if db_output[1]==0:
                     return True
@@ -1239,10 +1256,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ uploads the information related to the split_libraries run to the DB
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getSFFDatabaseConnection()
             error_flag=1
             if start_job:
-                db_output=con.cursor().callproc('sff.register_split_library_run',
+                db_output=con.cursor().callproc('register_split_library_run',
                                         [run_id,run_date, cmd, svn_version,\
                                          log_str, hist_str, md5_input_file,\
                                          error_flag])
@@ -1260,11 +1277,11 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ starts process of importing processed sff file data into the DB
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getSFFDatabaseConnection()
             error_flag=1
             if start_job:
                 db_output=con.cursor().callproc(\
-                        'sff.process_sff_files.sff_main',[basename,run_id,\
+                        'register_otu_picking_run',[basename,run_id,\
                                                           error_flag])
                 if db_output[2]==0:
                     return True,db_output[1]
@@ -1280,10 +1297,10 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ starts process of importing processed otu file data into the DB
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getSFFDatabaseConnection()
             error_flag = 1
             if start_job:
-                db_output = con.cursor().callproc('sff.load_otu_file', [run_id, error_flag])
+                db_output = con.cursor().callproc('load_otu_file', [run_id, error_flag])
                 if db_output[1] == 0:
                     return True
                 else:

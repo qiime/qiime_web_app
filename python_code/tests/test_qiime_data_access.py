@@ -82,6 +82,11 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         con = _qiime_data_access.getTestDatabaseConnection()
         self.assertTrue(con)
+        
+    def test_getSFFDatabaseConnection(self):
+        global _qiime_data_access
+        con = _qiime_data_access.getSFFDatabaseConnection()
+        self.assertTrue(con)
 
     def test_getTestDatabaseConnection(self):
         global _qiime_data_access
@@ -218,7 +223,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         exp_run_id=0
         global _qiime_data_access
-        result,obs_run_id = _qiime_data_access.loadSFFData(False,'Test',0)
+        result,obs_run_id = _qiime_data_access.loadSFFData(False,'Test',0,0)
         self.assertEqual(obs_run_id,exp_run_id)
         self.assertTrue(result)
 

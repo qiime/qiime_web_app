@@ -15,7 +15,7 @@ from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
-from os import system
+from os import system,popen
 from glob import glob
 from datetime import datetime
 from qiime.workflow import WorkflowLogger
@@ -243,10 +243,8 @@ def submit_processed_data_to_db(fasta_files):
     '''
     
     fasta_filenames=fasta_files.split(',')
-    checksums=[]
-    flow_checksums=[]
-    run_id=0
-
+    run_id=0    
+    
     #split the fasta filenames and determine filepaths
     for fasta_fname in fasta_filenames:
         input_fname, input_ext = splitext(split(fasta_fname)[-1])
@@ -257,13 +255,13 @@ def submit_processed_data_to_db(fasta_files):
         qual_fname=join(input_basename+'.qual')
         flow_fname=join(input_basename+'.txt')
         
-        #get the md5 checksum for each fasta and qual file
-        fna_md5sum=md5(open(fasta_fname,'rb').read()).hexdigest()
-        qual_md5sum=md5(open(qual_fname,'rb').read()).hexdigest()
-        flow_md5sum=md5(open(flow_fname,'rb').read()).hexdigest()
-        checksums.append(input_fname+'.fna:'+fna_md5sum)
-        checksums.append(input_fname+'.qual:'+qual_md5sum)
-        flow_checksums.append(input_fname+'.txt:'+flow_md5sum)
+        split_lib_input_dir=join(input_dir,'split_library_input')
+        
+        try:
+            zip_cmd=zip_files(split_lib_input_dir,fasta_fname)
+            zip_cmd=zip_files(split_lib_input_dir,qual_fname)
+        except:
+            raise ValueError, 'Error: Unable to zip files!'
         
         #move the fna, qual and flow files to the database server
         try:
@@ -281,14 +279,15 @@ def submit_processed_data_to_db(fasta_files):
         print "Finished scp transfer of files!"
         
         #Run the Oracle process_sff_files load package
-        
-        ## Get the locaiton and name of the SFF file, get it's MD5. .SFF is one directory up from the other files
+        ## Get the location and name of the SFF file, get it's MD5. .SFF is one 
+        # directory up from the other files
         rev = dirname(fasta_fname)[::-1]
         sff_file = join(rev[rev.find('/'):][::-1], input_fname + '.sff')
         sff_md5 = md5(open(sff_file,'rb').read()).hexdigest()
 
         # Load the data into the datbase. Will raise an exception if it fails.
-        sff_load, run_id = data_access.loadSFFData(True, sff_file, run_id, sff_md5)
+        sff_load, run_id = data_access.loadSFFData(True, sff_file, run_id, \
+                                                    sff_md5)
         
     print 'Finished loading the processed SFF data!'
     print 'Run ID: %s' % run_id
@@ -300,11 +299,13 @@ def submit_processed_data_to_db(fasta_files):
     split_lib_log = join(input_dir, 'split_libraries', 'split_library_log.txt')
     split_hist_str = open(split_lib_hist).read()
     split_log_str = open(split_lib_log).read()
+    split_lib_input_md5sum=md5(open(split_lib_input_dir+'.zip',\
+                                    'rb').read()).hexdigest()
     
     #read in the workflow log file and determine timestamp and svn version of
     #Qiime used for the analysis
-    svn_version = '1386' # This is temporarily defined, however will use script to dtermine this value
-    comb_checksums = ','.join(checksums)
+    svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
+    qiime_revision=get_qiime_svn_version()
     run_date=datetime.now().strftime("%m/%d/%Y/%H/%M/%S")
     full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
     full_log_str = open(full_log_fp, 'U').read()
@@ -320,7 +321,7 @@ def submit_processed_data_to_db(fasta_files):
     #Insert the split-library log information in the DB
     valid=data_access.loadSplitLibInfo(True,run_id,run_date, split_lib_cmd, \
                                      svn_version, split_log_str, \
-                                     split_hist_str, comb_checksums)
+                                     split_hist_str, split_lib_input_md5sum)
     
     print "Finished loading the split-library log information!"
     
@@ -344,21 +345,7 @@ def submit_processed_data_to_db(fasta_files):
     
     print "Finished loading split-library fasta file!"
     
-    
-    
-    # FOR OTU
-    
-    #this is a temporary step for generating the commands to load the otu
-    #information into the db, so we keep the correct run_ids for each 
-    #dataset
-    '''
-    f_out=open('/mnt/external/submit_pick_otus_cmds.txt','a')
-    pick_otu_cmd='echo "python /home/wwwuser/projects/QIIME-webdev/qiime_web_app/python_code/scripts/submit_otu_data_to_db.py -i %s -r %d" > job_scripts/%d_db.txt\n' % (fasta_files, run_id,run_id)
-    cluster_job_cmd='python make_cluster_jobs.py job_scripts/%d_db.txt "P%d_"\n\n' % (run_id,run_id)
-    f_out.write(pick_otu_cmd)
-    f_out.write(cluster_job_cmd)
-    f_out.close
-    '''
+    # For OTU Tables
     
     #define the picked OTU file paths using the original fasta input 
     #directory
@@ -378,8 +365,6 @@ def submit_processed_data_to_db(fasta_files):
         
     print "Finished scp transfer of OTU file!"
 
-
-
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
 
     #Insert the pick_otus information in the DB. 
@@ -388,69 +373,6 @@ def submit_processed_data_to_db(fasta_files):
     print 'Successfully called data_access.loadOTUData()'
 
     print 'End of function' 
-
-def submit_otu_data_to_db(fasta_files,run_id):
-    '''This function will be merged with submit_processed_data_to_db in the 
-       near FUTURE!!!
-       
-       This function takes the fasta filenames and using that path, determines
-       the location of the  picked-otu files.  Once file
-       locations have been determined, it moves the files to the DB machine
-       and load the files into the DB.
-    '''
-    fasta_filenames=fasta_files.split(',')
-
-    for fasta_fname in fasta_filenames:
-        input_basename, input_ext = splitext(fasta_fname)
-        input_dir=split(input_basename)[:-1][0]
-
-    #read in the workflow log file and determine timestamp and svn version of
-    #Qiime used for the analysis
-    svn_version='1386' # This is temporarily defined, however will use script to dtermine this value
-    run_date=datetime.now().strftime("%m/%d/%Y/%H/%M/%S")
-    full_log_fp = glob(join(input_dir,'log*.txt'))[0]
-    full_log_str=open(full_log_fp,'U').read()
-    log_str=open(full_log_fp,'U').readlines()
-
-    for substr in log_str:
-        if 'split_libraries.py' in substr:
-            split_lib_cmd=substr
-        elif 'pick_otus.py' in substr:
-            pick_otus_cmd=substr
-            
-    #define the picked OTU file paths using the original fasta input 
-    #directory
-    pick_otus_map=join(input_dir,'picked_otus','seqs_otus.txt')
-    pick_otus_failures=join(input_dir,'picked_otus','seqs_failures.txt') 
-    pick_otus_log=join(input_dir,'picked_otus','seqs_otus.log') 
-    otus_log_str=open(pick_otus_log).read()
-    
-    #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
-
-    #NOTE: The following fxn needs written!!!
-    #Insert the pick_otus log information in the DB. 
-    valid=data_access.loadOTUInfo(True, run_date, split_lib_cmd, \
-                                     svn_version, split_lib_log, \
-                                     split_hist_str, comb_checksums)
-
-    #Here is some other scp cmds that I used!
-    '''
-    try:
-        cmd_call=scp_file_transfer(23,split_lib_seqs,'wwwuser',\
-                                    'microbiome1.colorado.edu',\
-                                    '/SFF_Files/file.fna')
-    except:
-        raise ValueError, 'Error: Unable to scp files to database server!'
-
-    #Run the Oracle process_sff_files load package
-    try: 
-        sff_load=data_access.loadSplitLibFasta(True)
-        if not sff_load:
-            raise ValueError, 'Error: Unable to load data into database!'
-    except:
-        raise ValueError, 'Error: Unable to load data into database!'
-    '''
-
 
             
 def check_scp():
@@ -467,9 +389,48 @@ def scp_file_transfer(port,filepath,username,host,location):
     system(cmd_call)
     return cmd_call
     
+    
+def cp_files(filepath,location):
+    """Transfers files to another server."""
+    check_cp()
+    cmd_call='cp %s %s' % (filepath,location)
+    print 'cp command is: %s' % cmd_call
+    system(cmd_call)
+    return cmd_call
+    
+def zip_files(filepath,location):
+    """Transfers files to another server."""
+    check_zip()
+    cmd_call='zip -rj %s.zip %s' % (filepath,location)
+    print 'zip command is: %s' % cmd_call
+    system(cmd_call)
+    return cmd_call    
+
+def get_qiime_svn_version():
+    """Transfers files to another server."""
+    qiime_dir=get_qiime_scripts_dir()
+    cmd_call='svn info %s | egrep "Revision: "' % (qiime_dir)
+    print 'svn command is: %s' % cmd_call
+    output = popen('svn info %s | egrep "Revision: "' % (qiime_dir)).read()
+    revision=output.replace("Revision: ","")
+
+    return revision
+
 def check_cat():
     """Raise error if cat is not in $PATH """
     if not app_path('cat'):
         raise ApplicationNotFoundError,\
         "cat is not in $PATH. Is it installed? Have you added it to $PATH?"\
         
+def check_cp():
+    """Raise error if cp is not in $PATH """
+    if not app_path('cp'):
+        raise ApplicationNotFoundError,\
+        "cp is not in $PATH. Is it installed? Have you added it to $PATH?"\
+
+def check_zip():
+    """Raise error if zip is not in $PATH """
+    if not app_path('zip'):
+        raise ApplicationNotFoundError,\
+        "zip is not in $PATH. Is it installed? Have you added it to $PATH?"\
+
