@@ -1211,6 +1211,41 @@ class QiimeDataAccess( AbstractDataAccess ):
     # Loading
     #####################################
     
+    def disableTableConstraints(self):
+        """ disable the table constraints
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag=1
+            db_output=con.cursor().callproc('disable_table_constraints', \
+                                                [error_flag])
+            if db_output[0]==0:
+                return True
+            else:
+                return False
+        except Exception, e:
+            err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            print err
+            raise Exception(err)
+    '''   
+    def enableTableConstraints(self):
+        """ enable the table constraints
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag=1
+            db_output=con.cursor().callproc('enable_table_constraints', \
+                                                [error_flag])
+            if db_output[0]==0:
+                return True
+            else:
+                return False
+        except Exception, e:
+            err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            print err
+            raise Exception(err)
+    '''
+           
     def loadSFFData(self, start_job, basename, run_id, md5_checksum, \
                     analysis_id, analysis_notes):
         """ starts process of importing processed sff file data into the DB
@@ -1223,11 +1258,11 @@ class QiimeDataAccess( AbstractDataAccess ):
                                 [basename, md5_checksum, run_id, analysis_id, \
                                  analysis_notes, error_flag])
                 if db_output[5]==0:
-                    return True,db_output[2]
+                    return True,db_output[2],db_output[3]
                 else:
-                    return False,db_output[2]
+                    return False,db_output[2],db_output[3]
             else:
-                return True,run_id
+                return True,run_id,analysis_id
         except Exception, e:
             err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             print err

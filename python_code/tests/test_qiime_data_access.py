@@ -217,13 +217,32 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         result = _qiime_data_access.getPackageColumns(1)
         self.assertTrue(result)
-        
+
+    def test_disableTableConstraints(self):
+        """ 
+        """
+        exp_run_id=True
+        global _qiime_data_access
+        obs_run_id = _qiime_data_access.disableTableConstraints()
+        self.assertEqual(obs_run_id,exp_run_id)
+    
+    '''
+    def test_enableTableConstraints(self):
+        """ 
+        """
+        exp_run_id=True
+        global _qiime_data_access
+        obs_run_id = _qiime_data_access.enable_table_constraints(1)
+        self.assertEqual(obs_run_id,exp_run_id)
+    '''
+                    
     def test_loadSFFData(self):
         """ 
         """
         exp_run_id=0
         global _qiime_data_access
-        result,obs_run_id = _qiime_data_access.loadSFFData(False,'Test',0,0,0,'')
+        result,obs_run_id,analysis_id = _qiime_data_access.loadSFFData(False,\
+                                            'Test',0,0,0,'')
         self.assertEqual(obs_run_id,exp_run_id)
         self.assertTrue(result)
 
