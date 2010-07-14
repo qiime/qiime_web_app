@@ -223,7 +223,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         exp_run_id=0
         global _qiime_data_access
-        result,obs_run_id = _qiime_data_access.loadSFFData(False,'Test',0,0)
+        result,obs_run_id = _qiime_data_access.loadSFFData(False,'Test',0,0,0,'')
         self.assertEqual(obs_run_id,exp_run_id)
         self.assertTrue(result)
 

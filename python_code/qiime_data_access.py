@@ -1211,7 +1211,8 @@ class QiimeDataAccess( AbstractDataAccess ):
     # Loading
     #####################################
     
-    def loadSFFData(self, start_job, basename, run_id, md5_checksum):
+    def loadSFFData(self, start_job, basename, run_id, md5_checksum, \
+                    analysis_id, analysis_notes):
         """ starts process of importing processed sff file data into the DB
         """
         try:
@@ -1219,9 +1220,9 @@ class QiimeDataAccess( AbstractDataAccess ):
             error_flag=1
             if start_job:
                 db_output=con.cursor().callproc('process_sff_files.sff_main', \
-                                [basename, md5_checksum, run_id, error_flag])
-                print db_output
-                if db_output[3]==0:
+                                [basename, md5_checksum, run_id, analysis_id, \
+                                 analysis_notes, error_flag])
+                if db_output[5]==0:
                     return True,db_output[2]
                 else:
                     return False,db_output[2]

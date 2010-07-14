@@ -251,6 +251,8 @@ def submit_processed_data_to_db(fasta_files):
         input_basename, input_ext = splitext(fasta_fname)
         input_dir = split(input_basename)[:-1][0]
         
+        analysis_notes=split(input_basename)[0]
+        
         #using the fasta basename, define qual and flow files
         qual_fname=join(input_basename+'.qual')
         flow_fname=join(input_basename+'.txt')
@@ -366,7 +368,12 @@ def submit_processed_data_to_db(fasta_files):
     print "Finished scp transfer of OTU file!"
 
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
-
+    '''
+    #Insert the otu-picking log information in the DB
+    valid=data_access.loadOTUInfo(True,run_id,run_date, split_lib_cmd, \
+                                     svn_version, split_log_str, \
+                                     split_hist_str, split_lib_input_md5sum)
+    '''                                 
     #Insert the pick_otus information in the DB. 
     print 'Starting load of OTU data into database...'
     valid = data_access.loadOTUData(True, run_id)
