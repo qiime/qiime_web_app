@@ -1268,16 +1268,20 @@ class QiimeDataAccess( AbstractDataAccess ):
             print err
             raise Exception(err)
 
-    def loadSplitLibFasta(self,start_job,run_id):
+    def loadSplitLibFasta(self,start_job,run_id,fname):
         """ starts process of importing processed split-library data into the DB
         """
         try:
             con = self.getSFFDatabaseConnection()
             error_flag=1
+            warning_flag=1
             if start_job:
-                db_output=con.cursor().callproc('load_fna_file',[run_id,\
-                                                                    error_flag])
-                if db_output[1]==0:
+                db_output=con.cursor().callproc('load_fna_file',[fname,run_id,\
+                                                    error_flag,warning_flag])
+                if db_output[3]==-1:
+                    print "Warning: some of the samples are already in the DB!"
+                
+                if db_output[2]==0:
                     return True
                 else:
                     return False

@@ -250,7 +250,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ 
         """
         global _qiime_data_access
-        result = _qiime_data_access.loadSplitLibFasta(False,0)
+        result = _qiime_data_access.loadSplitLibFasta(False,0,'seqs.fna')
         self.assertTrue(result)
         
     def test_loadSplitLibInfo(self):
