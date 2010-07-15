@@ -1287,19 +1287,20 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
-    def loadSplitLibInfo(self, start_job, run_id, run_date, cmd, svn_version,
+    def loadSplitLibInfo(self, start_job, analysis_id, run_date, cmd, svn_version,
                             log_str, hist_str, md5_input_file):
         """ uploads the information related to the split_libraries run to the DB
         """
         try:
             con = self.getSFFDatabaseConnection()
             error_flag=1
+            split_lib_run_id=1
             if start_job:
                 db_output=con.cursor().callproc('register_split_library_run',
-                                        [run_id,run_date, cmd, svn_version,\
+                                        [analysis_id,run_date, cmd, svn_version,\
                                          log_str, hist_str, md5_input_file,\
-                                         error_flag])
-                if db_output[7]==0:
+                                         split_lib_run_id,error_flag])
+                if db_output[8]==0:
                     return True
                 else:
                     return False
