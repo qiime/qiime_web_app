@@ -1364,8 +1364,8 @@ class QiimeDataAccess( AbstractDataAccess ):
                 con.cursor().callproc('get_test_analysis_data', 
                                         [results, analysis_id, sample_id])
                 for row in results:
-                    analysis_data.append(row[0])
-                return analysis_data
+                    analysis_data.append(row)
+                return analysis_data[0]
             else:
                 return True
         except Exception, e:
@@ -1378,12 +1378,11 @@ class QiimeDataAccess( AbstractDataAccess ):
         analysis_data = []
         error_flag = 1
         try:
-            
             con = self.getSFFDatabaseConnection()
             if start_job:
-                con.cursor().callproc('get_test_analysis_data', 
+                db_output=con.cursor().callproc('delete_test_analysis', 
                                         [analysis_id, error_flag])
-                if error_flag==0:
+                if db_output[1]==0:
                     return True
                 else:
                     return False
