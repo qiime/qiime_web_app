@@ -1351,3 +1351,44 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+
+    def getTestData(self, start_job,analysis_id, sample_id):
+        """ Returns the full column dictionary
+        """
+        analysis_data = []
+    
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_test_analysis_data', 
+                                        [results, analysis_id, sample_id])
+                for row in results:
+                    analysis_data.append(row[0])
+                return analysis_data
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def deleteTestAnalysis(self, start_job,analysis_id):
+        """ Returns the full column dictionary
+        """
+        analysis_data = []
+        error_flag = 1
+        try:
+            
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                con.cursor().callproc('get_test_analysis_data', 
+                                        [analysis_id, error_flag])
+                if error_flag==0:
+                    return True
+                else:
+                    return False
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False

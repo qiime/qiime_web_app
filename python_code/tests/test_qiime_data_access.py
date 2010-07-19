@@ -259,6 +259,21 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         result = _qiime_data_access.loadSplitLibInfo(False,1,1,1,1,1,1,1)
         self.assertTrue(result)
+        
+        
+    def test_getTestData(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.getTestData(False,1,'test')
+        self.assertTrue(result)
+        
+    def test_deleteTestAnalysis(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.deleteTestAnalysis(False,1)
+        self.assertTrue(result)
 
 if __name__ == '__main__':
 	unittest.main()
