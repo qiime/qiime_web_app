@@ -1338,20 +1338,26 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
-    def loadOTUData(self, start_job, run_id):
+    def loadOTUData(self, start_job, otu_run_set_id, analysis_id, 
+                        otu_map_filename,otu_failures_filename):
         """ starts process of importing processed otu file data into the DB
         """
         try:
             con = self.getSFFDatabaseConnection()
             error_flag = 1
+            warning_flag = 1
             if start_job:
-                db_output = con.cursor().callproc('load_otu_file', [run_id, error_flag])
-                if db_output[1] == 0:
-                    return True
+                db_output = con.cursor().callproc('load_otu_file', 
+                                                [otu_run_set_id, analysis_id,\
+                                                 otu_map_filename,\
+                                                 otu_failures_filename,\
+                                                 error_flag, warning_flag])
+                if db_output[4] == 0:
+                    return True,db_output[5]
                 else:
-                    return False
+                    return False,db_output[5]
             else:
-                return True
+                return True,0
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False

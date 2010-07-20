@@ -367,7 +367,7 @@ def submit_processed_data_to_db(fasta_files):
     
     valid = data_access.loadSplitLibFasta(True, run_id,split_lib_fname)
     if not valid:
-        raise ValueError, 'Error: Unable to load data into database!'
+        raise ValueError, 'Error: Unable to load split-lib run data into database!'
     
     
     print "Finished loading split-library fasta file!"
@@ -380,7 +380,7 @@ def submit_processed_data_to_db(fasta_files):
     pOTUs_threshold='.'.join(pattern.search(pick_otus_cmd).groups())
     
     pattern=re.compile("--otu_picking_method (\w+)")
-    pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip()
+    pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
     
     pick_otus_map = join(input_dir, 'picked_otus', 'seqs_otus.txt')
     pick_otus_failures = join(input_dir, 'picked_otus', 'seqs_failures.txt')
@@ -390,13 +390,17 @@ def submit_processed_data_to_db(fasta_files):
     split_lib_seqs_md5 = md5(open(split_lib_seqs,'rb').read()).hexdigest()
     
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
-    
+    otu_run_set_id=0
     #Insert the otu-picking log information in the DB
-    valid=data_access.loadOTUInfo(True, otu_run_set_id, analysis_id, run_date,
+    valid,new_otu_run_set_id=data_access.loadOTUInfo(True, otu_run_set_id, 
+                                  analysis_id, run_date,
                                   pOTUs_method, pOTUs_threshold,
-                                  svn_version, pick_otus_cmd, pick_otus_log,
+                                  svn_version, pick_otus_cmd, otus_log_str,
                                   split_lib_seqs_md5)
-    
+    if not valid:
+        raise ValueError, 'Error: Unable to load OTU run data into database!'
+        
+    print new_otu_run_set_id
     """
     print 'Starting transfer of OTU file: %s' % pick_otus_map
 
