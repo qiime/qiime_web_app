@@ -1314,7 +1314,9 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
         
-    def loadOTUInfo(self, start_job,basename,run_id):
+    def loadOTUInfo(self, start_job, otu_run_set_id, analysis_id, run_date,
+                    pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
+                    otus_log_str,split_lib_seqs_md5):
         """ starts process of importing processed sff file data into the DB
         """
         try:
@@ -1322,14 +1324,16 @@ class QiimeDataAccess( AbstractDataAccess ):
             error_flag=1
             if start_job:
                 db_output=con.cursor().callproc(\
-                        'register_otu_picking_run',[basename,run_id,\
-                                                          error_flag])
-                if db_output[2]==0:
-                    return True,db_output[1]
+                        'register_otu_picking_run',[otu_run_set_id, \
+                                analysis_id, run_date, pOTUs_method, \
+                                pOTUs_threshold, svn_version, pick_otus_cmd, \
+                                otus_log_str,split_lib_seqs_md5,error_flag])
+                if db_output[9]==0:
+                    return True,db_output[0]
                 else:
-                    return False,db_output[1]
+                    return False,db_output[0]
             else:
-                return True,run_id
+                return True,0
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False

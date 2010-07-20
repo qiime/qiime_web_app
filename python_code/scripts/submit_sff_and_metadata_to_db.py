@@ -49,8 +49,7 @@ def main():
     
     fasta_files=opts.processed_fasta_fnames
 
-
-    submit_processed_data_to_db(fasta_files=fasta_files)
+    analysis_id=submit_processed_data_to_db(fasta_files=fasta_files)
 
 if __name__ == "__main__":
     main()
