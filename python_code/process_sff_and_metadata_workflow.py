@@ -10,7 +10,8 @@ __version__ = "dev"
 __maintainer__ = "Jesse Stombaugh"
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
- 
+
+import time 
 from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file
 from cogent.util.misc import app_path
@@ -365,10 +366,14 @@ def submit_processed_data_to_db(fasta_files):
     
     #Run the Oracle load_fna_file load procedure
     
+    start = time.time()
+    print "Starting fna load" 
     valid = data_access.loadSplitLibFasta(True, run_id,split_lib_fname)
     if not valid:
         raise ValueError, 'Error: Unable to load split-lib run data into database!'
     
+    end = time.time()
+    print "Total processor time elapsed: %s" % str(end - start)
     
     print "Finished loading split-library fasta file!"
     
@@ -381,6 +386,16 @@ def submit_processed_data_to_db(fasta_files):
     
     pattern=re.compile("--otu_picking_method (\w+)")
     pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
+    
+    pattern=re.compile("--refseqs_fp ([a-zA-Z0-9_/.]+)")
+    ref_set_fname=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
+    ref_set, ref_set_ext = splitext(split(ref_set_fname)[-1])
+    ref_set_name,ref_set_threshold,generic_name,ref_set_date=ref_set.split('_')
+    
+    if ref_set_name=='GG':
+        reference_set_name='Greengenes'
+    else:
+        reference_set_name='Not a Reference Set'
     
     pick_otus_map = join(input_dir, 'picked_otus', 'seqs_otus.txt')
     pick_otus_failures = join(input_dir, 'picked_otus', 'seqs_failures.txt')
@@ -415,15 +430,19 @@ def submit_processed_data_to_db(fasta_files):
         raise ValueError, 'Error: Unable to scp OTU file to database server!'
         
     print "Finished scp transfer of OTU file!"
-                                     
+    '''
     #Insert the pick_otus information in the DB. 
     print 'Starting load of OTU data into database...'
-    valid,warning = data_access.loadOTUData(True, new_otu_run_set_id,analysis_id,otu_map_fname,otu_failures_fname)
+    valid,warning = data_access.loadOTUData(True, new_otu_run_set_id,
+                                            analysis_id,otu_map_fname,
+                                            otu_failures_fname,
+                                            reference_set_name,
+                                            ref_set_threshold)
     if not valid:
         raise ValueError, 'Error: Unable to load OTU map data into database!'
     
     print 'Successfully called data_access.loadOTUData()'
-   
+    '''
     print 'End of function' 
     
     return analysis_id
