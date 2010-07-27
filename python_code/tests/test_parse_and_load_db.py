@@ -4,6 +4,15 @@ from cogent.util.unit_test import TestCase, main
 from parse_and_load_db import unzip_and_cast_to_cxoracle_types, \
         input_set_generator, MockConnection
 
+__author__ = "Daniel McDonald"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Daniel McDonald", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Daniel McDonald"]
+__email__ = "mcdonadt@colorado.edu"
+__status__ = "Production"
+
 class MockConnectionTests(TestCase):
     def test_connect(self):
         mc = MockConnection()

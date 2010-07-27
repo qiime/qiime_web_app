@@ -3,15 +3,16 @@
 from sys import argv
 from cogent.util.misc import unzip
 from optparse import OptionParser, make_option
-#from cx_Oracle import connect, NUMBER, STRING
+from cx_Oracle import connect, NUMBER, STRING
 
-try:
-    import cx_Oracle
-    from cx_Oracle import connect, NUMBER, STRING
-except ImportError:
-    print 'UNABLE TO IMPORT CX_ORACLE!'
-    NUMBER = float
-    STRING = str
+__author__ = "Daniel McDonald"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Daniel McDonald", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Daniel McDonald"]
+__email__ = "mcdonadt@colorado.edu"
+__status__ = "Production"
 
 options = [make_option('--input',dest='input',default=None,type='string',\
               help="Input tab delimited file"),
