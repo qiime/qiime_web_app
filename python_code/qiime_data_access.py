@@ -1322,24 +1322,27 @@ class QiimeDataAccess( AbstractDataAccess ):
         try:
             con = self.getSFFDatabaseConnection()
             error_flag=1
+            otu_picking_run_id=0
             if start_job:
                 db_output=con.cursor().callproc(\
                         'register_otu_picking_run',[otu_run_set_id, \
                                 analysis_id, run_date, pOTUs_method, \
                                 pOTUs_threshold, svn_version, pick_otus_cmd, \
-                                otus_log_str,split_lib_seqs_md5,error_flag])
+                                otus_log_str,split_lib_seqs_md5,error_flag,
+                                otu_picking_run_id])
                 if db_output[9]==0:
-                    return True,db_output[0]
+                    return True,db_output[0],db_output[10]
                 else:
-                    return False,db_output[0]
+                    return False,db_output[0],db_output[10]
             else:
                 return True,0
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
-    def loadOTUData(self, start_job, otu_run_set_id, analysis_id, 
-                        otu_map_filename,otu_failures_filename):
+    def loadOTUData(self, start_job,otu_run_set_id,analysis_id,
+                            otu_map_fname,otu_failures_fname,
+                            reference_set_name,ref_set_threshold):
         """ starts process of importing processed otu file data into the DB
         """
         try:
@@ -1349,13 +1352,15 @@ class QiimeDataAccess( AbstractDataAccess ):
             if start_job:
                 db_output = con.cursor().callproc('load_otu_file', 
                                                 [otu_run_set_id, analysis_id,\
-                                                 otu_map_filename,\
-                                                 otu_failures_filename,\
+                                                 otu_map_fname,\
+                                                 otu_failures_fname,\
+                                                 reference_set_name,\
+                                                 ref_set_threshold,\
                                                  error_flag, warning_flag])
-                if db_output[4] == 0:
-                    return True,db_output[5]
+                if db_output[6] == 0:
+                    return True,db_output[7]
                 else:
-                    return False,db_output[5]
+                    return False,db_output[7]
             else:
                 return True,0
         except Exception, e:
@@ -1400,4 +1405,20 @@ class QiimeDataAccess( AbstractDataAccess ):
                 return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+            
+            
+    def loadOTUFailures(self, start_job, input_set):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc('load_otu_failures_package.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False

@@ -30,6 +30,9 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import (compute_seqs_per_library_stats, 
                         get_qiime_scripts_dir,
                         create_dir)
+
+from load_tab_file import input_set_generator
+
 from hashlib import md5
 from qiime_data_access import QiimeDataAccess
 data_access = QiimeDataAccess()
@@ -255,10 +258,10 @@ def submit_processed_data_to_db(fasta_files):
     analysis_id=0    
     split_lib_input_checksums=[]
     
-    
-    valid = data_access.disableTableConstraints()
+    """
+    #valid = data_access.disableTableConstraints()
     print "Disabled table constraints"
-    
+    """
     #split the fasta filenames and determine filepaths
     for fasta_fname in fasta_filenames:
         input_fname, input_ext = splitext(split(fasta_fname)[-1])
@@ -304,7 +307,7 @@ def submit_processed_data_to_db(fasta_files):
         #sff_file = join(rev[rev.find('/'):][::-1], input_fname + '.sff')
         sff_file=input_basename+'.sff'
         sff_md5 = md5(open(sff_file,'rb').read()).hexdigest()
-
+        
         # Load the data into the datbase. Will raise an exception if it fails.
         valid, run_id, analysis_id = data_access.loadSFFData(True, input_fname+'.sff',\
                                             run_id, sff_md5, analysis_id,\
@@ -407,7 +410,8 @@ def submit_processed_data_to_db(fasta_files):
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
     otu_run_set_id=0
     #Insert the otu-picking log information in the DB
-    valid,new_otu_run_set_id=data_access.loadOTUInfo(True, otu_run_set_id, 
+    valid,new_otu_run_set_id,otu_picking_run_id=data_access.loadOTUInfo(True,
+                                  otu_run_set_id, 
                                   analysis_id, run_date,
                                   pOTUs_method, pOTUs_threshold,
                                   svn_version, pick_otus_cmd, otus_log_str,
@@ -438,11 +442,30 @@ def submit_processed_data_to_db(fasta_files):
                                             otu_failures_fname,
                                             reference_set_name,
                                             ref_set_threshold)
+                                            
     if not valid:
         raise ValueError, 'Error: Unable to load OTU map data into database!'
-    
-    print 'Successfully called data_access.loadOTUData()'
     '''
+    print 'Successfully called data_access.loadOTUData()'
+
+    lines=open(pick_otus_failures,'U')
+    otu_failures=[]
+    for line in lines:
+        otu_failures.append('%s\t%s'% (line.strip('\n'),str(otu_picking_run_id)))
+
+    types=['s','i']
+    con=data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    set_count = 1
+    for input_set in input_set_generator(otu_failures, cur, types):
+        valid=data_access.loadOTUFailures(True, input_set)
+        set_count += 1
+        
+    if not valid:
+        raise ValueError, 'Error: Unable to load OTU failures data into database!'
+    
+    print 'Successfully loaded the OTU failures into the database!'
+    
     print 'End of function' 
     
     return analysis_id
@@ -462,7 +485,6 @@ def scp_file_transfer(port,filepath,username,host,location):
     system(cmd_call)
     return cmd_call
     
-    
 def cp_files(filepath,location):
     """Transfers files to another server."""
     check_cp()
@@ -481,7 +503,7 @@ def zip_files(filepath1,filepath2,directory,location):
     cmd_call='cd %s | zip -jX split_library_input.zip %s' % (directory,filepath2)
     print 'zip command is: %s' % cmd_call
     system(cmd_call)
-    return cmd_call    
+    return cmd_call
 
 def get_qiime_svn_version():
     """Transfers files to another server."""
