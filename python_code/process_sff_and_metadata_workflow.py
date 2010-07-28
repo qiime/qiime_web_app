@@ -425,7 +425,7 @@ def submit_processed_data_to_db(fasta_files):
     otu_failures_fname='%s.txt' % (('otu_failures_'+ tmp_filename))
     
     print 'Starting transfer of OTU file: %s' % pick_otus_map
-
+    
     try:
         cmd_call = scp_file_transfer(23, pick_otus_map, 'wwwuser',\
             'microbiome1.colorado.edu',\
@@ -434,7 +434,7 @@ def submit_processed_data_to_db(fasta_files):
         raise ValueError, 'Error: Unable to scp OTU file to database server!'
         
     print "Finished scp transfer of OTU file!"
-    '''
+    
     #Insert the pick_otus information in the DB. 
     print 'Starting load of OTU data into database...'
     valid,warning = data_access.loadOTUData(True, new_otu_run_set_id,
@@ -445,7 +445,7 @@ def submit_processed_data_to_db(fasta_files):
                                             
     if not valid:
         raise ValueError, 'Error: Unable to load OTU map data into database!'
-    '''
+    
     print 'Successfully called data_access.loadOTUData()'
 
     lines=open(pick_otus_failures,'U')
