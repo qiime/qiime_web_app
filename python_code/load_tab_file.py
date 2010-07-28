@@ -13,11 +13,11 @@ __status__ = "Development"
 
 
 from cogent.util.misc import unzip
-from cx_Oracle import NUMBER, STRING
+from cx_Oracle import NUMBER, STRING, DATETIME, CLOB
 from numpy import average
 from cogent.parse.flowgram_parser import lazy_parse_sff_handle
 
-type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING}
+type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB}
 def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
         type_lookup=type_lookup_oracle):
     """Unzips data and casts each field to the corresponding oracle type
@@ -78,7 +78,7 @@ def fasta_to_tab_delim(data):
             yield '\t'.join(to_yield)
             to_yield = []
 
-
+from datetime import datetime
 truncate_flow_value_f = lambda x: "%0.2f" % x
 def unzip_flow(flow, seq_run_id):
     """Returns tuple of the fields we care about"""
@@ -90,8 +90,8 @@ def unzip_flow(flow, seq_run_id):
     res.append(getattr(flow,'Run Name'))
 
     run_date_raw = getattr(flow, 'Run Prefix')
-    y,mon,d,h,m,s = run_date_raw.split('_')[1:-1]
-    run_date = "%s/%s/%s %s:%s:%s" % (mon,d,y,h,m,s)
+    datetime_raw = map(int, run_date_raw.split('_')[1:-1])
+    run_date = datetime(*datetime_raw)
 
     res.append(run_date)
     res.append(int(getattr(flow,'Region #')))
@@ -129,12 +129,12 @@ def flowfile_inputset_generator(data, cursor, seq_run_id, buffer_size=1000, \
                    's', # READ_SEQUENCE
                    'i', # READ_SEQUENCE_LENGTH
                    's', # RUN_NAME
-                   's', # RUN_DATE
+                   'd', # RUN_DATE
                    'i', # REGION
                    'i', # X_LOCATION
                    'i', # Y_LOCATION
-                   's', # FLOWGRAM_STRING
-                   's', # FLOW_INDEX_STRING
+                   'c', # FLOWGRAM_STRING
+                   'c', # FLOW_INDEX_STRING
                    'i', # CLIP_QUAL_LEFT
                    'i', # CLIP_QUAL_RIGHT
                    'i', # CLIP_ADAP_LEFT
@@ -142,7 +142,7 @@ def flowfile_inputset_generator(data, cursor, seq_run_id, buffer_size=1000, \
                    'i', # QUAL_MIN
                    'i', # QUAL_MAX
                    'f', # QUAL_AVG
-                   's'] # QUAL_STRING
+                   'c'] # QUAL_STRING
 
     flow_generator, header = lazy_parse_sff_handle(data)
 
