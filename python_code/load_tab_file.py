@@ -4,7 +4,7 @@ from __future__ import division
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "QIIME-webdev"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh","Daniel McDonald"]
 __license__ = "GPL"
 __version__ = "1.1.0-dev"
 __maintainer__ = "Jesse Stombaugh"
@@ -14,18 +14,18 @@ __status__ = "Development"
 
 from cogent.util.misc import unzip
 from cx_Oracle import NUMBER, STRING
+from numpy import average
+from cogent.parse.flowgram_parser import lazy_parse_sff_handle
 
 type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING}
-type_lookup_mock = {'i':int,'f':float,'s':str}
-def unzip_and_cast_to_cxoracle_types(data, cursor, types):
+def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
+        type_lookup=type_lookup_oracle):
     """Unzips data and casts each field to the corresponding oracle type
 
     data - a list or tuple of lists or tuples
 
     types - a list of 'i', 's', 'f' for int, string or float
     """
-    type_lookup = type_lookup_oracle
-
     res = []
     for t,f in zip(types, unzip(data)):
         if t == 'i':
@@ -37,19 +37,133 @@ def unzip_and_cast_to_cxoracle_types(data, cursor, types):
         res.append(cursor.arrayvar(type_lookup[t], tmp))
     return res 
 
-def input_set_generator(data, cursor, types, buffer_size=10000):
+def input_set_generator(data, cursor, types, buffer_size=10000, 
+        type_lookup=type_lookup_oracle, delim='\t'):
     """yields data parsed into oracle types in buffer_size rows at a time"""
     buffer = []
     for line in data:
         if line.startswith('#'):
             continue
 
-        buffer.append(line.strip().split('\t'))
+        buffer.append(line.strip().split(delim))
         if len(buffer) >= buffer_size:
-            res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types)
+            res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types, type_lookup)
             buffer = []
             yield res
 
     if buffer:
-        res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types)
+        res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types, type_lookup)
+        yield res
+
+def fasta_to_tab_delim(data):
+    """Yields FASTA files in tab delim format
+
+    Will strip off comments. For instance, the following file
+
+    >foo bar
+    attatatatggcca
+    ...
+
+    will result in a record:
+
+    foo\tattatatatggcca
+    """
+    to_yield = []
+    for line in data:
+        if line.startswith('>'):
+            id_ = line[1:].split()[0]
+            to_yield.append(id_)
+        else:
+            to_yield.append(line)
+            yield '\t'.join(to_yield)
+            to_yield = []
+
+
+truncate_flow_value_f = lambda x: "%0.2f" % x
+def unzip_flow(flow):
+    """Returns tuple of the fields we care about"""
+    res = []
+
+    res.append(getattr(flow,'Name'))
+    res.append(getattr(flow,'Bases'))
+    res.append(int(getattr(flow, '# of Bases')))
+    res.append(getattr(flow,'Run Name'))
+
+    run_date_raw = getattr(flow, 'Run Prefix')
+    y,mon,d,h,m,s = run_date_raw.split('_')[1:-1]
+    run_date = "%s/%s/%s %s:%s:%s" % (mon,d,y,h,m,s)
+
+    res.append(run_date)
+    res.append(int(getattr(flow,'Region #')))
+
+    xy_location = getattr(flow, 'XY Location')
+    x,y = xy_location.split('_')
+
+    res.append(int(x))
+    res.append(int(y))
+    res.append('\t'.join(map(truncate_flow_value_f,flow.flowgram)))
+    res.append(getattr(flow,'Flow Indexes'))
+    res.append(int(getattr(flow,'Clip Qual Left')))
+    res.append(int(getattr(flow,'Clip Qual Right')))
+    res.append(int(getattr(flow,'Clip Adap Left')))
+    res.append(int(getattr(flow,'Clip Adap Right')))
+   
+    qual = getattr(flow, 'Quality Scores')
+    qual_values = map(int,qual.split('\t'))
+    
+    res.append(min(qual_values))
+    res.append(max(qual_values))
+    res.append(average(qual_values))
+    res.append(qual)
+
+    return res
+
+def flowfile_inputset_generator(data, cursor, buffer_size=1000, \
+        type_lookup=type_lookup_oracle):
+    """Yields buffer_size tuples of flowgram data
+    
+    data : 
+    """
+    table_types = ['s', # READ_ID
+                   's', # READ_SEQUENCE
+                   'i', # READ_SEQUENCE_LENGTH
+                   's', # RUN_NAME
+                   's', # RUN_DATE
+                   'i', # REGION
+                   'i', # X_LOCATION
+                   'i', # Y_LOCATION
+                   's', # FLOWGRAM_STRING
+                   's', # FLOW_INDEX_STRING
+                   'i', # CLIP_QUAL_LEFT
+                   'i', # CLIP_QUAL_RIGHT
+                   'i', # CLIP_ADAP_LEFT
+                   'i', # CLIP_ADAP_RIGHT
+                   'i', # QUAL_MIN
+                   'i', # QUAL_MAX
+                   'f', # QUAL_AVG
+                   's'] # QUAL_STRING
+
+    flow_generator, header = lazy_parse_sff_handle(data)
+
+    buffer = []
+    buffer_count = 0
+
+    for flow in flow_generator:
+        flow_data = unzip_flow(flow)
+
+        buffer.append(flow_data)
+        buffer_count += 1    
+
+        if buffer_count >= buffer_size:
+            res = unzip_and_cast_to_cxoracle_types(buffer, cursor, table_types, \
+                                                   type_lookup)
+            buffer = []
+            buffer_count = 0
+            yield res
+
+    if buffer_count:
+        res = unzip_and_cast_to_cxoracle_types(buffer, cursor, table_types, \
+                                               type_lookup)
+        buffer = []
+        buffer_count = 0
         yield res
