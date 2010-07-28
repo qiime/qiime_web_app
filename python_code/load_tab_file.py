@@ -80,9 +80,9 @@ def fasta_to_tab_delim(data):
 
 
 truncate_flow_value_f = lambda x: "%0.2f" % x
-def unzip_flow(flow):
+def unzip_flow(flow, seq_run_id):
     """Returns tuple of the fields we care about"""
-    res = []
+    res = [seq_run_id]
 
     res.append(getattr(flow,'Name'))
     res.append(getattr(flow,'Bases'))
@@ -118,13 +118,14 @@ def unzip_flow(flow):
 
     return res
 
-def flowfile_inputset_generator(data, cursor, buffer_size=1000, \
+def flowfile_inputset_generator(data, cursor, seq_run_id, buffer_size=1000, \
         type_lookup=type_lookup_oracle):
     """Yields buffer_size tuples of flowgram data
     
     data : 
     """
-    table_types = ['s', # READ_ID
+    table_types = ['i', # SEQ_RUN_ID
+                   's', # READ_ID
                    's', # READ_SEQUENCE
                    'i', # READ_SEQUENCE_LENGTH
                    's', # RUN_NAME
@@ -149,8 +150,8 @@ def flowfile_inputset_generator(data, cursor, buffer_size=1000, \
     buffer_count = 0
 
     for flow in flow_generator:
-        flow_data = unzip_flow(flow)
-
+        flow_data = unzip_flow(flow, seq_run_id)
+        
         buffer.append(flow_data)
         buffer_count += 1    
 

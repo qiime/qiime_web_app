@@ -89,7 +89,8 @@ atcasdad
 
     def test_unzip_flow(self):
         """Properly unzips a flow"""
-        exp = ['FIQU8OX05GCVRO',
+        exp = [1,
+               'FIQU8OX05GCVRO',
                'tcagGCTAACTGTAACCCTCTTGGCACCCACTAAACGCCAATCTTGCTGGAGTGTTTACCAGGCACCCAGCAATGTGAATAGTCActgagcgggctggcaaggc',
                104,
                'R_2008_10_15_16_11_02_FLX04070166_adminrig_1548jinnescurtisstanford',
@@ -107,7 +108,7 @@ atcasdad
                40,
                36.5,
                '37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t40\t40\t40\t40\t37\t37\t37\t37\t37\t39\t39\t39\t39\t24\t24\t24\t37\t34\t28\t24\t24\t24\t28\t34\t39\t39\t39\t39\t39\t39\t39\t39\t39\t39\t39\t39\t40\t40\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37']
-        obs = unzip_flow(flows[0])
+        obs = unzip_flow(flows[0], 1)
 
         self.assertEqual(obs, exp)
 
@@ -125,16 +126,16 @@ atcasdad
 
         con = MockConnection()
         cur = con.cursor()
-        gen = flowfile_inputset_generator(input, cur, 2, type_lookup_mock)
+        gen = flowfile_inputset_generator(input, cur, 1, 2, type_lookup_mock)
         res = list(gen.next())
 
-        self.assertEqual(res[0], exp_names)
-        self.assertEqual(res[2], exp_num_bases)
-        self.assertEqual(res[4], exp_run_dates)
-        self.assertEqual(res[6], exp_x)
-        self.assertEqual(res[7], exp_y)
-        self.assertEqual(res[14], exp_qual_min)
-        self.assertEqual(res[15], exp_qual_max)
+        self.assertEqual(res[1], exp_names)
+        self.assertEqual(res[3], exp_num_bases)
+        self.assertEqual(res[5], exp_run_dates)
+        self.assertEqual(res[7], exp_x)
+        self.assertEqual(res[8], exp_y)
+        self.assertEqual(res[15], exp_qual_min)
+        self.assertEqual(res[16], exp_qual_max)
          
 
 test_flowgrams = """Common Header:
