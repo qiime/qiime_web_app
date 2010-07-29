@@ -40,7 +40,7 @@ def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
             all_strings_splits.append(len(clob))
             clob.setvalue(0,all_strings)
             res.append(clob)
-            res.append(cursor.arrayvar(NUMBER, all_strings_splits)
+            res.append(cursor.arrayvar(NUMBER, all_strings_splits))
             continue
         else:
             tmp = f
