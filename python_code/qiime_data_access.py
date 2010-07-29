@@ -1508,3 +1508,17 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+
+    def loadFNAFile(self, start_job, input_set):
+        """ starts process of importing fna file data
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag = 1
+            if start_job:
+                db_output=con.cursor().callproc('load_fna_file_package.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False

@@ -322,8 +322,13 @@ def submit_processed_data_to_db(fasta_files):
             cur = con.cursor()
             for res in flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id):
                 data_access.loadSFFData(True,res)
+          
             #process and load_fna_data
-            con.close()
+            types = ['s', 'i', 's']
+            for res in input_set_generator(fasta_to_tab_delim(fasta_fname), cur, types):
+                data_access.loadFNAData(True, res)
+
+	    con.close()
         else:
             seq_run_id=data_access.getSeqRunIDUsingMD5(sff_md5)
             
