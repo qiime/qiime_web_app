@@ -1407,8 +1407,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
             
-            
-            
     def loadOTUFailures(self, start_job, input_set):
         """ starts process of importing failed otus
         """
@@ -1419,6 +1417,94 @@ class QiimeDataAccess( AbstractDataAccess ):
                 db_output=con.cursor().callproc('load_otu_failures_package.array_insert',
                                                 input_set)
                 return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+            
+    def checkIfSFFExists(self, md5_checksum):
+        """ determine if the SFF is already in the DB
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            sff_exists=0
+            db_output=con.cursor().callproc('check_if_sff_file_exists',
+                                            [str(md5_checksum),sff_exists])
+            if db_output[1]==1:
+                return True
+            else:
+                return False
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def getSeqRunIDUsingMD5(self, md5_checksum):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            seq_run_id=0
+            db_output=con.cursor().callproc('get_seq_run_id_using_md5',
+                                            [md5_checksum,seq_run_id])
+            return db_output[1]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def createAnalysis(self):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            analysis_id=0
+            db_output=con.cursor().callproc('create_analysis',
+                                            [analysis_id])
+            return db_output[0]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def addSFFFile(self, start_job, sff_filename, number_of_reads,header_length,
+                    key_length, number_of_flows, flowgram_code, flow_characters,
+                    key_sequence, md5_checksum, seq_run_id):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                db_output=con.cursor().callproc('add_sff_file',
+                                                [sff_filename, number_of_reads,
+                                                 header_length,key_length, 
+                                                 number_of_flows, flowgram_code, 
+                                                 flow_characters, key_sequence, 
+                                                 md5_checksum,seq_run_id])
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+    
+    def createSequencingRun(self,start_job,instrument_code,version,seq_run_id):
+        """ creates a row in the sequencing_run table
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                db_output=con.cursor().callproc('create_sequencing_run',
+                                                [instrument_code, version,
+                                                 seq_run_id])
+                return db_output[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+            
+    def loadSFFData(self, start_job, input_set):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc('load_flow_data.array_insert',
+                                                input_set)
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False

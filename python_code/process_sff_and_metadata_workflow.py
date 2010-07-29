@@ -31,10 +31,11 @@ from qiime.util import (compute_seqs_per_library_stats,
                         get_qiime_scripts_dir,
                         create_dir)
 
-from load_tab_file import input_set_generator
+from load_tab_file import input_set_generator,flowfile_inputset_generator
 
 from hashlib import md5
 from qiime_data_access import QiimeDataAccess
+import cx_Oracle
 data_access = QiimeDataAccess()
 
 ## Begin task-specific workflow functions
@@ -254,7 +255,7 @@ def submit_processed_data_to_db(fasta_files):
     random_fname=''.join([choice(alphabet) for i in range(10)])
     tmp_filename ='_'+random_fname+'_'+strftime("%Y_%m_%d_%H_%M_%S")
     fasta_filenames=fasta_files.split(',')
-    run_id=0  
+    seq_run_id=0  
     analysis_id=0    
     split_lib_input_checksums=[]
     
@@ -283,13 +284,9 @@ def submit_processed_data_to_db(fasta_files):
         split_lib_input_checksums.append(input_fname+'.qual:%s' % 
                                             split_lib_qual_md5sum)
         
+        """
         #move the fna, qual and flow files to the database server
         try:
-            '''
-            cmd_call=scp_file_transfer(23,fasta_fname,'wwwuser',\
-                                        'microbiome1.colorado.edu',\
-                                        '/SFF_Files/%s.fna' % (input_fname))
-            '''
             cmd_call=scp_file_transfer(23,qual_fname,'wwwuser',\
                                         'microbiome1.colorado.edu',\
                                         '/SFF_Files/%s.qual' % (input_fname))
@@ -299,7 +296,7 @@ def submit_processed_data_to_db(fasta_files):
         except:
             raise ValueError, 'Error: Unable to scp files to database server!'
         print "Finished scp transfer of files!"
-        
+        """
         #Run the Oracle process_sff_files load package
         ## Get the location and name of the SFF file, get it's MD5. .SFF is one 
         # directory up from the other files
@@ -308,17 +305,43 @@ def submit_processed_data_to_db(fasta_files):
         sff_file=input_basename+'.sff'
         sff_md5 = md5(open(sff_file,'rb').read()).hexdigest()
         
+        if analysis_id==0:
+            analysis_id=data_access.createAnalysis()
+        
+        sff_exists=data_access.checkIfSFFExists(sff_md5)
+        print str(sff_exists)
+        
+        if not sff_exists:
+            if seq_run_id==0:
+                seq_run_id=data_access.createSequencingRun(True,'1','1',seq_run_id)
+                valid=data_access.addSFFFile(True,'test.sff',4,10,4,10,'GS FLX','TEST','TCAG','314f4000857668d45a413d2e94a755fc',seq_run_id)
+            else:
+                valid=data_access.addSFFFile(True,'test.sff',4,10,4,10,'GS FLX','TEST','TCAG','314f4000857668d45a413d2e94a755fc',seq_run_id)
+            
+            con=data_access.getSFFDatabaseConnection()
+            cur = con.cursor()
+            for res in flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id):
+                data_access.loadSFFData(True,res)
+            #process and load_fna_data
+            con.close()
+        else:
+            seq_run_id=data_access.getSeqRunIDUsingMD5(sff_md5)
+            
+        
+        print seq_run_id
+
+        
+        """
         # Load the data into the datbase. Will raise an exception if it fails.
-        valid, run_id, analysis_id = data_access.loadSFFData(True, input_fname+'.sff',\
-                                            run_id, sff_md5, analysis_id,\
+        valid, seq_run_id, analysis_id = data_access.loadSFFData(True, input_fname+'.sff',\
+                                            seq_run_id, sff_md5, analysis_id,\
                                             analysis_notes)
         if not valid:
             raise ValueError,'Error: Unable to load sff files to database server!'
-        
+        """
     print 'Finished loading the processed SFF data!'
-    print 'Run ID: %s' % run_id
+    print 'Run ID: %s' % seq_run_id
     print 'Analysis ID: %s' % analysis_id
-    
     
     #define the split library file paths using the original fasta input 
     #directory
@@ -371,7 +394,7 @@ def submit_processed_data_to_db(fasta_files):
     
     start = time.time()
     print "Starting fna load" 
-    valid = data_access.loadSplitLibFasta(True, run_id,split_lib_fname)
+    valid = data_access.loadSplitLibFasta(True, seq_run_id,split_lib_fname)
     if not valid:
         raise ValueError, 'Error: Unable to load split-lib run data into database!'
     
@@ -434,7 +457,7 @@ def submit_processed_data_to_db(fasta_files):
         raise ValueError, 'Error: Unable to scp OTU file to database server!'
         
     print "Finished scp transfer of OTU file!"
-    
+    """
     #Insert the pick_otus information in the DB. 
     print 'Starting load of OTU data into database...'
     valid,warning = data_access.loadOTUData(True, new_otu_run_set_id,
@@ -447,7 +470,7 @@ def submit_processed_data_to_db(fasta_files):
         raise ValueError, 'Error: Unable to load OTU map data into database!'
     
     print 'Successfully called data_access.loadOTUData()'
-
+    """
     lines=open(pick_otus_failures,'U')
     otu_failures=[]
     for line in lines:

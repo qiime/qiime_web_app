@@ -79,14 +79,26 @@ def fasta_to_tab_delim(data):
     foo\tattatatatggcca
     """
     to_yield = []
+    seq_string = ''
     for line in data:
         if line.startswith('>'):
+            if seq_string:
+                to_yield.append(seq_string)
+                seq_string = ''
+                yield '\t'.join(to_yield)
+                to_yield = []
+
+            items = line[1:].split(' ')
+            id_ = items[0]
+            length_ = items[1].split('=')[1]
             id_ = line[1:].split()[0]
             to_yield.append(id_)
+            to_yield.append(length_)
         else:
-            to_yield.append(line)
-            yield '\t'.join(to_yield)
-            to_yield = []
+            seq_string += line.strip()
+            #to_yield.append(line)
+            #yield '\t'.join(to_yield)
+            #to_yield = []
 
 from datetime import datetime
 truncate_flow_value_f = lambda x: "%0.2f" % x
