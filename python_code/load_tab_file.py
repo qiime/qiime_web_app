@@ -32,6 +32,16 @@ def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
             tmp = map(int, f)
         elif t == 'f':
             tmp = map(float, f)
+        # yes, this method is absolutely fucking ugly right now
+        elif t == 'c':
+            clob = cursor.var(CLOB)
+            all_strings = '@'.join(f)
+            all_strings_splits = [i+1 for i,s in enumerate(all_strings) if s == '@']
+            all_strings_splits.append(len(clob))
+            clob.setvalue(0,all_strings)
+            res.append(clob)
+            res.append(cursor.arrayvar(NUMBER, all_strings_splits)
+            continue
         else:
             tmp = f
         res.append(cursor.arrayvar(type_lookup[t], tmp))
