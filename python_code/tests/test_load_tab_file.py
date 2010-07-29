@@ -10,11 +10,12 @@ __maintainer__ = "Jesse Stombaugh"
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
 
+from datetime import datetime
 from cogent.parse.flowgram_parser import parse_sff
 from cogent.util.unit_test import TestCase, main
 from load_tab_file import unzip_and_cast_to_cxoracle_types,input_set_generator,fasta_to_tab_delim, unzip_flow, flowfile_inputset_generator
 
-type_lookup_mock = {'i':int,'f':float,'s':str}
+type_lookup_mock = {'i':int,'f':float,'s':str, 'd':str, 'c':str}
 class MockConnection(object):
     def __init__(self):
         pass
@@ -118,7 +119,8 @@ atcasdad
         # only testing some of the fields out of the sake of sanity
         exp_names = ['FIQU8OX05GCVRO','FIQU8OX05F8ILF']
         exp_num_bases = [104,206]
-        exp_run_dates = ['10/15/2008 16:11:02', '10/15/2008 16:11:02']
+        exp_run_dates = [datetime(2008,10,15,16,11,02),
+                         datetime(2008,10,15,16,11,02)]
         exp_x = [2489, 2440]
         exp_y = [3906, 913]
         exp_qual_min = [24, 20]

@@ -32,7 +32,7 @@ def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
             tmp = map(int, f)
         elif t == 'f':
             tmp = map(float, f)
-        elif t == 's':
+        else:
             tmp = f
         res.append(cursor.arrayvar(type_lookup[t], tmp))
     return res 
