@@ -15,7 +15,7 @@ from cogent.parse.flowgram_parser import parse_sff
 from cogent.util.unit_test import TestCase, main
 from load_tab_file import unzip_and_cast_to_cxoracle_types,input_set_generator,fasta_to_tab_delim, unzip_flow, flowfile_inputset_generator
 
-type_lookup_mock = {'i':int,'f':float,'s':str, 'd':str, 'c':str}
+type_lookup_mock = {'i':int,'f':float,'s':str, 'd':lambda x: x, 'c':str}
 class MockConnection(object):
     def __init__(self):
         pass
@@ -31,6 +31,10 @@ class MockConnection(object):
         return self
     def callproc(self, *args):
         pass
+    def var(self, foo):
+        return self
+    def setvalue(self,foo, bar):
+        return bar
 
 class ParseAndLoadDBTests(TestCase):
     def test_unzip_and_cast_to_cxoracle_types(self):
@@ -78,13 +82,13 @@ class ParseAndLoadDBTests(TestCase):
 
     def test_fasta_to_tab_delim(self):
         """make sure we can go from fasta to tab delim"""
-        input = """>a b c
+        input = """>a length=10 b c
 123123123
 >d e f
 atcasdad
 >h i j
 10 11 12"""
-        exp = ['a\t123123123','d\tatcasdad','h\t10 11 12']
+        exp = ['a\t10\t123123123','d\tN/A\tatcasdad','h\tN/A\t10 11 12']
         obs = list(fasta_to_tab_delim(input.splitlines()))
         self.assertEqual(obs, exp)
 
@@ -95,7 +99,7 @@ atcasdad
                'tcagGCTAACTGTAACCCTCTTGGCACCCACTAAACGCCAATCTTGCTGGAGTGTTTACCAGGCACCCAGCAATGTGAATAGTCActgagcgggctggcaaggc',
                104,
                'R_2008_10_15_16_11_02_FLX04070166_adminrig_1548jinnescurtisstanford',
-               "10/15/2008 16:11:02",
+               datetime(2008,10,15,16,11,02),
                5,
                2489,
                3906,
@@ -109,7 +113,7 @@ atcasdad
                40,
                36.5,
                '37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t40\t40\t40\t40\t37\t37\t37\t37\t37\t39\t39\t39\t39\t24\t24\t24\t37\t34\t28\t24\t24\t24\t28\t34\t39\t39\t39\t39\t39\t39\t39\t39\t39\t39\t39\t39\t40\t40\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37\t37']
-        obs = unzip_flow(flows[0], 1)
+        obs = unzip_flow(flows[0], 1, 2)
 
         self.assertEqual(obs, exp)
 
@@ -119,6 +123,7 @@ atcasdad
         # only testing some of the fields out of the sake of sanity
         exp_names = ['FIQU8OX05GCVRO','FIQU8OX05F8ILF']
         exp_num_bases = [104,206]
+        exp_run_names = ['R_2008_10_15_16_11_02_FLX04070166_adminrig_1548jinnescurtisstanford','foo']
         exp_run_dates = [datetime(2008,10,15,16,11,02),
                          datetime(2008,10,15,16,11,02)]
         exp_x = [2489, 2440]
@@ -128,7 +133,7 @@ atcasdad
 
         con = MockConnection()
         cur = con.cursor()
-        gen = flowfile_inputset_generator(input, cur, 1, 2, type_lookup_mock)
+        gen = flowfile_inputset_generator(input, cur, 1, 'foo', 2, type_lookup_mock)
         res = list(gen.next())
 
         self.assertEqual(res[1], exp_names)
@@ -136,8 +141,8 @@ atcasdad
         self.assertEqual(res[5], exp_run_dates)
         self.assertEqual(res[7], exp_x)
         self.assertEqual(res[8], exp_y)
-        self.assertEqual(res[15], exp_qual_min)
-        self.assertEqual(res[16], exp_qual_max)
+        self.assertEqual(res[17], exp_qual_min)
+        self.assertEqual(res[18], exp_qual_max)
          
 
 test_flowgrams = """Common Header:
@@ -180,7 +185,6 @@ Quality Scores:	37	37	37	37	37	37	37	37	37	37	37	37	37	40	40	40	40	37	37	37	37	3
   Region #:     5
   XY Location:  2440_0913
 
-  Run Name:       R_2008_10_15_16_11_02_FLX04070166_adminrig_1548jinnescurtisstanford
   Analysis Name:  /data/2008_10_15/R_2008_10_15_16_11_02_FLX04070166_adminrig_1548jinnescurtisstanford/D_2008_10_15_15_12_26_FLX04070166_1548jinnescurtisstanford_FullAnalysis
   Full Path:      /data/2008_10_15/R_2008_10_15_16_11_02_FLX04070166_adminrig_1548jinnescurtisstanford/D_2008_10_15_15_12_26_FLX04070166_1548jinnescurtisstanford_FullAnalysis
 

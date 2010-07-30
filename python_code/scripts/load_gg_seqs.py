@@ -5,14 +5,14 @@ from cogent.util.misc import unzip
 import cx_Oracle
 
 def unzip_and_cast_to_cxoracle_types(data, cursor):
-    ids,acc,dec,coreset,seq = unzip(data)
+    ids,acc,dec,coreset,seq,checksum = unzip(data)
     ids = cursor.arrayvar(cx_Oracle.NUMBER, map(int, ids))
     acc = cursor.arrayvar(cx_Oracle.STRING, acc)
     dec = cursor.arrayvar(cx_Oracle.STRING, dec)
     coreset = cursor.arrayvar(cx_Oracle.NUMBER, map(int, coreset))
     seq = cursor.arrayvar(cx_Oracle.STRING, seq)
-
-    return ids,acc,dec,coreset,seq
+    checksum = cursor.arrayvar(cx_Oracle.STRING, checksum)
+    return ids,acc,dec,coreset,seq,checksum
 
 def input_set_generator(data, cursor):
     buffer = []
@@ -38,9 +38,9 @@ def main():
     cur = con.cursor()
     ref_set_id = 4 #cur.var(cx_Oracle.NUMBER, 7)
     for input_set in input_set_generator(lines, cur):
-        ids,acc,dec,coreset,seq = input_set
+        ids,acc,dec,coreset,seq,checksum = input_set
         print 'would execute'
-        cur.callproc('load_gg_seq_data_package.array_insert',[ref_set_id, ids, acc, dec, coreset,seq])
+        cur.callproc('load_gg_seq_data_package.array_insert',[ref_set_id, ids, acc, dec, coreset,seq, checksum])
 
 if __name__ == '__main__':
     main()

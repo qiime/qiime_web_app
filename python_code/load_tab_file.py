@@ -4,7 +4,7 @@ from __future__ import division
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "QIIME-webdev"
-__credits__ = ["Jesse Stombaugh","Daniel McDonald"]
+__credits__ = ["Jesse Stombaugh","Daniel McDonald", "Doug Wendel"]
 __license__ = "GPL"
 __version__ = "1.1.0-dev"
 __maintainer__ = "Jesse Stombaugh"
@@ -16,6 +16,7 @@ from cogent.util.misc import unzip
 from cx_Oracle import NUMBER, STRING, DATETIME, CLOB
 from numpy import average
 from cogent.parse.flowgram_parser import lazy_parse_sff_handle
+from datetime import datetime
 
 type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB}
 def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
@@ -40,7 +41,7 @@ def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
             all_strings_splits.append(len(all_strings))
             clob.setvalue(0,all_strings)
             res.append(clob)
-            res.append(cursor.arrayvar(NUMBER, all_strings_splits))
+            res.append(cursor.arrayvar(type_lookup['i'], all_strings_splits))
             continue
         else:
             tmp = f
@@ -90,7 +91,12 @@ def fasta_to_tab_delim(data):
 
             items = line[1:].split(' ')
             id_ = items[0]
-            length_ = items[1].split('=')[1]
+
+            if '=' in items[1]:
+                length_ = items[1].split('=')[1]
+            else:
+                length_ = 'N/A'
+
             id_ = line[1:].split()[0]
             to_yield.append(id_)
             to_yield.append(length_)
@@ -99,17 +105,19 @@ def fasta_to_tab_delim(data):
             #to_yield.append(line)
             #yield '\t'.join(to_yield)
             #to_yield = []
+    if to_yield and seq_string:
+        to_yield.append(seq_string)
+        yield '\t'.join(to_yield)
 
-from datetime import datetime
 truncate_flow_value_f = lambda x: "%0.2f" % x
-def unzip_flow(flow, seq_run_id):
+def unzip_flow(flow, seq_run_id, file_md5):
     """Returns tuple of the fields we care about"""
     res = [seq_run_id]
 
     res.append(getattr(flow,'Name'))
     res.append(getattr(flow,'Bases'))
     res.append(int(getattr(flow, '# of Bases')))
-    res.append(getattr(flow,'Run Name'))
+    res.append(getattr(flow,'Run Name', file_md5))
 
     run_date_raw = getattr(flow, 'Run Prefix')
     datetime_raw = map(int, run_date_raw.split('_')[1:-1])
@@ -140,8 +148,8 @@ def unzip_flow(flow, seq_run_id):
 
     return res
 
-def flowfile_inputset_generator(data, cursor, seq_run_id, buffer_size=1000, \
-        type_lookup=type_lookup_oracle):
+def flowfile_inputset_generator(data, cursor, seq_run_id, file_md5, \
+        buffer_size=1000, type_lookup=type_lookup_oracle):
     """Yields buffer_size tuples of flowgram data
     
     data : 
@@ -172,7 +180,7 @@ def flowfile_inputset_generator(data, cursor, seq_run_id, buffer_size=1000, \
     buffer_count = 0
 
     for flow in flow_generator:
-        flow_data = unzip_flow(flow, seq_run_id)
+        flow_data = unzip_flow(flow, seq_run_id, file_md5)
         
         buffer.append(flow_data)
         buffer_count += 1    
