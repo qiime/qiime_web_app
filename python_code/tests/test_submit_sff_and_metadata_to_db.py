@@ -60,34 +60,37 @@ class WorkflowTests(TestCase):
 
         # copy sff file to working directory
         self.sff_dir = tempfile.mkdtemp()
-        self.dirs_to_remove.append(self.sff_dir)
+        #self.dirs_to_remove.append(self.sff_dir)
         
         self.sff_fp = os.path.join(self.sff_dir, 'Fasting_subset.sff')
         copy(sff_original_fp, self.sff_fp)
-        self.files_to_remove.append(self.sff_fp)
+        #self.files_to_remove.append(self.sff_fp)
         
-        tmp_dir = self.qiime_config['temp_dir'] or '/tmp/'
+        tmp_dir = "/home/wwwuser/qiime_test_dataset/"#self.qiime_config['temp_dir'] or '/tmp/'
         if not exists(tmp_dir):
             makedirs(tmp_dir)
             # if test creates the temp dir, also remove it
-            self.dirs_to_remove.append(tmp_dir)
-        
+            #self.dirs_to_remove.append(tmp_dir)
+        self.wf_out="/home/wwwuser/qiime_test_dataset/"
+        '''
         self.wf_out = get_tmp_filename(tmp_dir=tmp_dir,
          prefix='qiime_wf_out',suffix='',result_constructor=str)
         self.dirs_to_remove.append(self.wf_out)
-        
+        '''
         self.fasting_mapping_fp = get_tmp_filename(tmp_dir=tmp_dir,
          prefix='qiime_wf_mapping',suffix='.txt')
         fasting_mapping_f = open(self.fasting_mapping_fp,'w')
         fasting_mapping_f.write(fasting_map)
         fasting_mapping_f.close()
-        self.files_to_remove.append(self.fasting_mapping_fp)
+        #self.files_to_remove.append(self.fasting_mapping_fp)
         
         working_dir = self.qiime_config['working_dir'] or './'
         jobs_dir = join(working_dir,'jobs')
+        '''
         if not exists(jobs_dir):
             # only clean up the jobs dir if it doesn't already exist
             self.dirs_to_remove.append(jobs_dir)
+        '''
         self.params = parse_qiime_parameters(qiime_parameters_f)
 
         signal.signal(signal.SIGALRM, timeout)
@@ -109,7 +112,7 @@ class WorkflowTests(TestCase):
         
     def test_submit_processed_data_to_db(self):
         """run_process_sff_through_pick_otus runs without error"""
-        
+        '''
         run_process_sff_through_pick_otus(
           sff_input_fp=self.sff_fp, 
           mapping_fp=self.fasting_mapping_fp,
@@ -120,7 +123,7 @@ class WorkflowTests(TestCase):
           qiime_config=self.qiime_config, 
           parallel=False,
           status_update_callback=no_status_updates)
-        
+        '''
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
         otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
         split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
@@ -130,12 +133,12 @@ class WorkflowTests(TestCase):
         db_input_fp = join(self.wf_out,input_fname)
 
         analysis_id=submit_processed_data_to_db(db_input_fp+'.fna')
-        
+        print analysis_id
         exp_sff_md5='314f4000857668d45a413d2e94a755fc'
         exp_num_seqs=22
         exp_read_id='FLP3FBN01ELBSX'
         exp_instr_code='GS FLX'
-
+        
         obs_seq_run_id,obs_split_lib_id,obs_pick_otu_id,obs_pick_otu_run_id,\
         obs_sff_file_id,obs_sff_md5,obs_num_of_reads,obs_read_id,obs_read_seq,\
         obs_split_lib_md5,obs_split_lib_log,obs_instrument_code = \

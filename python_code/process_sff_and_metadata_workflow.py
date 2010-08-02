@@ -24,6 +24,7 @@ from datetime import datetime
 from time import strftime
 from qiime.workflow import WorkflowLogger
 from os.path import *
+from qiime.parse import fields_to_dict
 from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates,generate_log_fp,\
                            get_params_str, WorkflowError
@@ -32,10 +33,12 @@ from qiime.util import (compute_seqs_per_library_stats,
                         create_dir)
 
 from load_tab_file import input_set_generator,flowfile_inputset_generator
-
+from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 from qiime_data_access import QiimeDataAccess
 import cx_Oracle
+from cogent.util.misc import safe_md5
+
 data_access = QiimeDataAccess()
 
 ## Begin task-specific workflow functions
@@ -259,10 +262,10 @@ def submit_processed_data_to_db(fasta_files):
     analysis_id=0    
     split_lib_input_checksums=[]
     
-    """
+    
     #valid = data_access.disableTableConstraints()
     print "Disabled table constraints"
-    """
+    
     #split the fasta filenames and determine filepaths
     for fasta_fname in fasta_filenames:
         input_fname, input_ext = splitext(split(fasta_fname)[-1])
@@ -275,35 +278,20 @@ def submit_processed_data_to_db(fasta_files):
         qual_fname=join(input_basename+'.qual')
         flow_fname=join(input_basename+'.txt')
         
-        split_lib_fasta_md5sum=md5(open(fasta_fname,\
-                                        'rb').read()).hexdigest()
+        split_lib_fasta_md5sum=safe_md5(open(fasta_fname))
         split_lib_input_checksums.append(input_fname+'.fna:%s' % 
                                             split_lib_fasta_md5sum)
-        split_lib_qual_md5sum=md5(open(qual_fname,\
-                                        'rb').read()).hexdigest()
+        split_lib_qual_md5sum=safe_md5(open(qual_fname))
         split_lib_input_checksums.append(input_fname+'.qual:%s' % 
                                             split_lib_qual_md5sum)
         
-        """
-        #move the fna, qual and flow files to the database server
-        try:
-            cmd_call=scp_file_transfer(23,qual_fname,'wwwuser',\
-                                        'microbiome1.colorado.edu',\
-                                        '/SFF_Files/%s.qual' % (input_fname))
-            cmd_call=scp_file_transfer(23,flow_fname,'wwwuser',\
-                                        'microbiome1.colorado.edu',\
-                                        '/SFF_Files/%s.txt' % (input_fname))
-        except:
-            raise ValueError, 'Error: Unable to scp files to database server!'
-        print "Finished scp transfer of files!"
-        """
         #Run the Oracle process_sff_files load package
         ## Get the location and name of the SFF file, get it's MD5. .SFF is one 
         # directory up from the other files
         rev = dirname(fasta_fname)[::-1]
         #sff_file = join(rev[rev.find('/'):][::-1], input_fname + '.sff')
         sff_file=input_basename+'.sff'
-        sff_md5 = md5(open(sff_file,'rb').read()).hexdigest()
+        sff_md5 = safe_md5(open(sff_file))
         
         if analysis_id==0:
             analysis_id=data_access.createAnalysis()
@@ -312,41 +300,59 @@ def submit_processed_data_to_db(fasta_files):
         print str(sff_exists)
         
         if not sff_exists:
-            if seq_run_id==0:
-                seq_run_id=data_access.createSequencingRun(True,'1','1',seq_run_id)
-                valid=data_access.addSFFFile(True,'test.sff',4,10,4,10,'GS FLX','TEST','TCAG','314f4000857668d45a413d2e94a755fc',seq_run_id)
-            else:
-                valid=data_access.addSFFFile(True,'test.sff',4,10,4,10,'GS FLX','TEST','TCAG','314f4000857668d45a413d2e94a755fc',seq_run_id)
+            sff_header=get_header_info(open(flow_fname))
             
+            if sff_header['# of Flows']=='400':
+                instrument_code='GS FLX'
+            elif sff_header['# of Flows']=='168':
+                instrument_code='GS2-'
+            elif sff_header['# of Flows']=='800':
+                instrument_code='Titanium'
+            else:
+                instrument_code='UNKNOWN'
+            print instrument_code
+            if seq_run_id==0:
+                seq_run_id=data_access.createSequencingRun(True,instrument_code,
+                                            sff_header['Version'],seq_run_id)
+                valid=data_access.addSFFFile(True,sff_file,
+                                             sff_header['# of Reads'],
+                                             sff_header['Header Length'],
+                                             sff_header['Key Length'],
+                                             sff_header['# of Flows'],
+                                             sff_header['Flowgram Code'],
+                                             sff_header['Flow Chars'],
+                                             sff_header['Key Sequence'],
+                                             sff_md5,seq_run_id)
+            else:
+                valid=data_access.addSFFFile(True,sff_file,
+                                             sff_header['# of Reads'],
+                                             sff_header['Header Length'],
+                                             sff_header['Key Length'],
+                                             sff_header['# of Flows'],
+                                             sff_header['Flowgram Code'],
+                                             sff_header['Flow Chars'],
+                                             sff_header['Key Sequence'],
+                                             sff_md5,seq_run_id)
+
             con=data_access.getSFFDatabaseConnection()
             cur = con.cursor()
-            for res in flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id):
-                data_access.loadSFFData(True,res)
-          
-            #process and load_fna_data
-            types = ['s', 'i', 's']
-            for res in input_set_generator(fasta_to_tab_delim(fasta_fname), cur, types):
-                data_access.loadFNAData(True, res)
-
-	    con.close()
+            for res in flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id,sff_md5,100):
+                start = time.time()
+                valid=data_access.loadSFFData(True,res)
+                end = time.time()
+                print "Total processor time elapsed: %s" % str(end - start)
+            print time.time()
         else:
             seq_run_id=data_access.getSeqRunIDUsingMD5(sff_md5)
             
-        
-        print seq_run_id
-
-        
-        """
-        # Load the data into the datbase. Will raise an exception if it fails.
-        valid, seq_run_id, analysis_id = data_access.loadSFFData(True, input_fname+'.sff',\
-                                            seq_run_id, sff_md5, analysis_id,\
-                                            analysis_notes)
-        if not valid:
-            raise ValueError,'Error: Unable to load sff files to database server!'
-        """
+    
     print 'Finished loading the processed SFF data!'
     print 'Run ID: %s' % seq_run_id
     print 'Analysis ID: %s' % analysis_id
+    
+    valid=data_access.updateAnalysisWithSeqRunID(True,analysis_id,seq_run_id)
+    if not valid:
+        raise ValueError, 'Error: Unable to append SEQ_RUN_ID into ANALYSIS table!'
     
     #define the split library file paths using the original fasta input 
     #directory
@@ -374,7 +380,7 @@ def submit_processed_data_to_db(fasta_files):
             pick_otus_cmd=substr
     
     #Insert the split-library log information in the DB
-    valid=data_access.loadSplitLibInfo(True,analysis_id,run_date, split_lib_cmd, \
+    valid=data_access.loadSplitLibInfo(True,analysis_id,run_date, split_lib_cmd,\
                                      svn_version, split_log_str, \
                                      split_hist_str, split_lib_input_md5sum)
     
@@ -382,7 +388,7 @@ def submit_processed_data_to_db(fasta_files):
         raise ValueError,'Error: Unable to load split-library info to database server!'
     
     print "Finished loading the split-library log information!"
-    split_lib_fname='%s.fna' % (('sl_seqs'+ tmp_filename))
+    split_lib_fname='%s.fna' % ('sl_seqs'+ tmp_filename)
     print split_lib_fname
     
     #move the resulting seqs.fna file from split-libraries to the DB server
@@ -396,7 +402,14 @@ def submit_processed_data_to_db(fasta_files):
     print "Finished scp transfer the split-library seqs.fna file!"
     
     #Run the Oracle load_fna_file load procedure
+    '''
+    #process and load_fna_data
+    types = ['s', 'i', 's']
+    for res in input_set_generator(fasta_to_tab_delim(fasta_fname), cur, types):
+        data_access.loadFNAData(True, res)
+    con.close()
     
+    '''
     start = time.time()
     print "Starting fna load" 
     valid = data_access.loadSplitLibFasta(True, seq_run_id,split_lib_fname)
@@ -407,7 +420,7 @@ def submit_processed_data_to_db(fasta_files):
     print "Total processor time elapsed: %s" % str(end - start)
     
     print "Finished loading split-library fasta file!"
-    
+ 
     # For OTU Tables
     
     #define the picked OTU file paths using the original fasta input 
@@ -424,7 +437,7 @@ def submit_processed_data_to_db(fasta_files):
     ref_set_name,ref_set_threshold,generic_name,ref_set_date=ref_set.split('_')
     
     if ref_set_name=='GG':
-        reference_set_name='Greengenes'
+        reference_set_name='GREENGENES_REFERENCE'
     else:
         reference_set_name='Not a Reference Set'
     
@@ -432,8 +445,7 @@ def submit_processed_data_to_db(fasta_files):
     pick_otus_failures = join(input_dir, 'picked_otus', 'seqs_failures.txt')
     pick_otus_log = join(input_dir, 'picked_otus', 'seqs_otus.log')
     otus_log_str = open(pick_otus_log).read()
-    
-    split_lib_seqs_md5 = md5(open(split_lib_seqs,'rb').read()).hexdigest()
+    split_lib_seqs_md5=safe_md5(open(split_lib_seqs))
     
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
     otu_run_set_id=0
@@ -446,49 +458,46 @@ def submit_processed_data_to_db(fasta_files):
                                   split_lib_seqs_md5)
     if not valid:
         raise ValueError, 'Error: Unable to load OTU run data into database!'
+    else:
+        print "Finished registering OTU run!"
         
-    print new_otu_run_set_id
-    
     otu_map_fname='%s.txt' % (('otu_map_'+ tmp_filename))
     otu_failures_fname='%s.txt' % (('otu_failures_'+ tmp_filename))
     
-    print 'Starting transfer of OTU file: %s' % pick_otus_map
+    otu_map=[]
+    otu_to_seqid = fields_to_dict(open(pick_otus_map, 'U'))
+    for otu in otu_to_seqid:
+        for sample in otu_to_seqid[otu]:
+            otu_map.append('%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
+                                                reference_set_name))
     
-    try:
-        cmd_call = scp_file_transfer(23, pick_otus_map, 'wwwuser',\
-            'microbiome1.colorado.edu',\
-            '/SFF_Files/%s' % (otu_map_fname))    
-    except:
-        raise ValueError, 'Error: Unable to scp OTU file to database server!'
-        
-    print "Finished scp transfer of OTU file!"
-    """
-    #Insert the pick_otus information in the DB. 
-    print 'Starting load of OTU data into database...'
-    valid,warning = data_access.loadOTUData(True, new_otu_run_set_id,
-                                            analysis_id,otu_map_fname,
-                                            otu_failures_fname,
-                                            reference_set_name,
-                                            ref_set_threshold)
-                                            
+    types=['i','s','i','s']
+    con=data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    set_count = 1
+    start = time.time()
+    for input_set in input_set_generator(otu_map, cur, types,100):
+        valid=data_access.loadOTUMap(True, input_set)
+        set_count += 1
+    end = time.time()
+    print "Total processor time elapsed: %s" % str(end - start)
     if not valid:
-        raise ValueError, 'Error: Unable to load OTU map data into database!'
+        raise ValueError, 'Error: Unable to load OTU MAP data into database!'
+    else:
+        print 'Loaded the OTU map!'
     
-    print 'Successfully called data_access.loadOTUData()'
-    """
     lines=open(pick_otus_failures,'U')
     otu_failures=[]
     for line in lines:
         otu_failures.append('%s\t%s'% (line.strip('\n'),str(otu_picking_run_id)))
-
     types=['s','i']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     set_count = 1
-    for input_set in input_set_generator(otu_failures, cur, types):
+    for input_set in input_set_generator(otu_failures, cur, types,100):
         valid=data_access.loadOTUFailures(True, input_set)
         set_count += 1
-        
+    con.close()
     if not valid:
         raise ValueError, 'Error: Unable to load OTU failures data into database!'
     

@@ -1505,6 +1505,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             if start_job:
                 db_output=con.cursor().callproc('load_flow_data.array_insert',
                                                 input_set)
+                return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
@@ -1517,6 +1518,33 @@ class QiimeDataAccess( AbstractDataAccess ):
             error_flag = 1
             if start_job:
                 db_output=con.cursor().callproc('load_fna_file_package.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+
+    def updateAnalysisWithSeqRunID(self, start_job, analysis_id,seq_run_id):
+        """ starts process of importing fna file data
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                con.cursor().callproc('update_analysis_w_seq_run_id',
+                                                [analysis_id,seq_run_id])
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+            
+    def loadOTUMap(self, start_job, input_set):
+        """ starts process of importing otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                db_output=con.cursor().callproc('load_otu_map_package.array_insert',
                                                 input_set)
                 return True
         except Exception, e:
