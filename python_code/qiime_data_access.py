@@ -1227,46 +1227,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             print err
             raise Exception(err)
-    '''   
-    def enableTableConstraints(self):
-        """ enable the table constraints
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            error_flag=1
-            db_output=con.cursor().callproc('enable_table_constraints', \
-                                                [error_flag])
-            if db_output[0]==0:
-                return True
-            else:
-                return False
-        except Exception, e:
-            err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            print err
-            raise Exception(err)
-    '''
-           
-    def loadSFFData(self, start_job, basename, run_id, md5_checksum, \
-                    analysis_id, analysis_notes):
-        """ starts process of importing processed sff file data into the DB
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            error_flag=1
-            if start_job:
-                db_output=con.cursor().callproc('process_sff_files.sff_main', \
-                                [basename, md5_checksum, run_id, analysis_id, \
-                                 analysis_notes, error_flag])
-                if db_output[5]==0:
-                    return True,db_output[2],db_output[3]
-                else:
-                    return False,db_output[2],db_output[3]
-            else:
-                return True,run_id,analysis_id
-        except Exception, e:
-            err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            print err
-            raise Exception(err)
 
     def loadSplitLibFasta(self,start_job,run_id,fname):
         """ starts process of importing processed split-library data into the DB
@@ -1317,7 +1277,7 @@ class QiimeDataAccess( AbstractDataAccess ):
     def loadOTUInfo(self, start_job, otu_run_set_id, analysis_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
                     otus_log_str,split_lib_seqs_md5):
-        """ starts process of importing processed sff file data into the DB
+        """ loads the information pertaining to an OTU picking run
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1334,33 +1294,6 @@ class QiimeDataAccess( AbstractDataAccess ):
                     return True,db_output[0],db_output[10]
                 else:
                     return False,db_output[0],db_output[10]
-            else:
-                return True,0
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-
-    def loadOTUData(self, start_job,otu_run_set_id,analysis_id,
-                            otu_map_fname,otu_failures_fname,
-                            reference_set_name,ref_set_threshold):
-        """ starts process of importing processed otu file data into the DB
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            error_flag = 1
-            warning_flag = 1
-            if start_job:
-                db_output = con.cursor().callproc('load_otu_file', 
-                                                [otu_run_set_id, analysis_id,\
-                                                 otu_map_fname,\
-                                                 otu_failures_fname,\
-                                                 reference_set_name,\
-                                                 ref_set_threshold,\
-                                                 error_flag, warning_flag])
-                if db_output[6] == 0:
-                    return True,db_output[7]
-                else:
-                    return False,db_output[7]
             else:
                 return True,0
         except Exception, e:
@@ -1462,29 +1395,9 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
-    def getTestSplitLibData(self, start_job,analysis_id, sample_id):
-        """ Returns the full column dictionary
-        """
-        analysis_data = []
-        try:
-            con = self.getSFFDatabaseConnection()
-            results = con.cursor()
-            if start_job:
-                con.cursor().callproc('get_test_split_lib_data', 
-                                        [analysis_id, sample_id,results])
-                for row in results:
-                    analysis_data.append(row)
-                return analysis_data[0]
-            else:
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-            
                     
     def deleteTestAnalysis(self, start_job,analysis_id):
-        """ Returns the full column dictionary
+        """ Removes rows from the DB given an analysis id
         """
         analysis_data = []
         error_flag = 1
@@ -1534,7 +1447,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
 
     def getSeqRunIDUsingMD5(self, md5_checksum):
-        """ starts process of importing failed otus
+        """ returns the SEQ_RUN_ID given an md5_checksum
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1547,7 +1460,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
 
     def createAnalysis(self):
-        """ starts process of importing failed otus
+        """ creates a row in the ANALYSIS table 
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1562,7 +1475,7 @@ class QiimeDataAccess( AbstractDataAccess ):
     def addSFFFile(self, start_job, sff_filename, number_of_reads,header_length,
                     key_length, number_of_flows, flowgram_code, flow_characters,
                     key_sequence, md5_checksum, seq_run_id):
-        """ starts process of importing failed otus
+        """ appends the SFF info into the SFF_FILE table
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1593,7 +1506,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
             
     def loadSFFData(self, start_job, input_set):
-        """ starts process of importing failed otus
+        """ loads the flow data into the READ_454 table
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1622,7 +1535,7 @@ class QiimeDataAccess( AbstractDataAccess ):
 
 
     def updateAnalysisWithSeqRunID(self, start_job, analysis_id,seq_run_id):
-        """ starts process of importing fna file data
+        """ updates the ANALYSIS table with the SEQ_RUN_ID
         """
         try:
             con = self.getSFFDatabaseConnection()

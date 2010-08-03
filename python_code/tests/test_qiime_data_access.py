@@ -235,16 +235,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         obs_run_id = _qiime_data_access.enable_table_constraints(1)
         self.assertEqual(obs_run_id,exp_run_id)
     '''
-                    
-    def test_loadSFFData(self):
-        """ 
-        """
-        exp_run_id=0
-        global _qiime_data_access
-        result,obs_run_id,analysis_id = _qiime_data_access.loadSFFData(False,\
-                                            'Test',0,0,0,'')
-        self.assertEqual(obs_run_id,exp_run_id)
-        self.assertTrue(result)
+                
 
     def test_loadSplitLibFasta(self):
         """ 
@@ -259,7 +250,6 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         result = _qiime_data_access.loadSplitLibInfo(False,1,1,1,1,1,1,1)
         self.assertTrue(result)
-        
         
     def test_getTestData(self):
         """ 
@@ -281,13 +271,106 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         result = _qiime_data_access.loadOTUInfo(False,1,1,1,1,1,1,1,1,1)
         self.assertTrue(result)
-
-    def test_loadOTUData(self):
+        
+    def test_getTestFlowData(self):
         """ 
         """
         global _qiime_data_access
-        result = _qiime_data_access.loadOTUData(False,1,1,1,1)
+        result = _qiime_data_access.getTestFlowData(False,1,'test')
         self.assertTrue(result)
+    #
+    def test_getTestSplitLibData(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.getTestSplitLibData(False,1,'test')
+        self.assertTrue(result)
+    #
+    def test_getTestOTUData(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.getTestOTUData(False,1,'test')
+        self.assertTrue(result)
+    #
+    def test_getTestOTUFailureData(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.getTestOTUFailureData(False,1,'test')
+        self.assertTrue(result)
+    #
+    def test_deleteTestData(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.deleteTestData(False,1)
+        self.assertTrue(result)
+    #
+    def test_loadOTUFailures(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.loadOTUFailures(False,1)
+        self.assertFalse(result)
 
+    def test_checkIfSFFExists(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.checkIfSFFExists('test')
+        self.assertFalse(result)
+    #
+    def test_getSeqRunIDUsingMD5(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.getSeqRunIDUsingMD5('test')
+        self.assertFalse(result)
+
+    def test_createAnalysis(self):
+        """ 
+        """
+        global _qiime_data_access
+        #result = _qiime_data_access.createAnalysis()
+        #self.assertFalse(result)
+    #
+    def test_addSFFFile(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.addSFFFile(False,'test',1,1,1,1,'test',\
+                                                'test','A','test',1)
+        self.assertFalse(result)
+    #
+    def test_createSequencingRun(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.createSequencingRun(False,'test','1',1)
+        self.assertFalse(result)
+        
+    #
+    def test_loadSFFData(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.loadSFFData(False,'Test')
+        self.assertFalse(result)
+    #
+    def test_updateAnalysisWithSeqRunID(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.updateAnalysisWithSeqRunID(False,1,1)
+        self.assertFalse(result)
+    #
+    def test_loadOTUMap(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.loadOTUMap(False,1)
+        self.assertFalse(result) 
+        
 if __name__ == '__main__':
 	unittest.main()
