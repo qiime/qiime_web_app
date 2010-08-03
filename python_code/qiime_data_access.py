@@ -1560,3 +1560,16 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+            
+    def loadSeqToSourceMap(self, start_job, input_set):
+        """ starts process of importing otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                db_output=con.cursor().callproc('load_seq_to_source_package.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False

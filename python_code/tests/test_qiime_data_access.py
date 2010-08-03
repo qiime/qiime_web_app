@@ -371,6 +371,13 @@ class QiimeDataAccessTests(unittest.TestCase):
         global _qiime_data_access
         result = _qiime_data_access.loadOTUMap(False,1)
         self.assertFalse(result) 
+    #
+    def test_loadSeqToSourceMap(self):
+        """ 
+        """
+        global _qiime_data_access
+        result = _qiime_data_access.loadSeqToSourceMap(False,1)
+        self.assertFalse(result)
         
 if __name__ == '__main__':
 	unittest.main()
