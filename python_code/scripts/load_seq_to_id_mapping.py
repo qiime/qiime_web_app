@@ -18,6 +18,10 @@ from load_tab_file import input_set_generator
 from cogent.parse.fasta import MinimalFastaParser
 from os.path import split
 import cx_Oracle
+from qiime_data_access import QiimeDataAccess
+data_access = QiimeDataAccess()
+
+
 options_lookup = get_options_lookup()
 
 script_info = {}

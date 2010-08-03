@@ -178,7 +178,7 @@ class WorkflowTests(TestCase):
         
         exp_prokmsa=176564
         exp_otu_md5='a990fad228b5eaad9bce75b41ba40564'
-        exp_threshold=0.97
+        exp_threshold=97
         exp_pick_otu_cmd='python /home/wwwuser/software/Qiime/scripts/pick_otus.py -i /home/wwwuser/qiime_test_dataset/split_libraries/seqs.fna -o /home/wwwuser/qiime_test_dataset//picked_otus --otu_picking_method uclust_ref --similarity 0.97 --uclust_otu_id_prefix otu_ --max_cdhit_memory 400 --suppress_new_clusters --refseqs_fp /home/wwwuser/software/greengenes_core_sets/gg_otus_may2010/inflated_sub_gg/uclust_otus_97/rep_set/gg_97_otus_may2010.fasta --clustering_algorithm furthest --max_e_value 1e-10\n'
         
         obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\

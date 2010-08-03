@@ -421,8 +421,15 @@ def submit_processed_data_to_db(fasta_files):
     #define the picked OTU file paths using the original fasta input 
     #directory
     pattern=re.compile("--similarity (\d+)\.(\d+)")
-    pOTUs_threshold='.'.join(pattern.search(pick_otus_cmd).groups())
+    pOTUs_thresh_str='.'.join(pattern.search(pick_otus_cmd).groups())
     
+    if pOTUs_thresh_str=='0.97':
+        pOTUs_threshold=97
+    elif pOTUs_thresh_str=='0.98':
+            pOTUs_threshold=98
+    elif pOTUs_thresh_str=='0.99':
+            pOTUs_threshold=99
+            
     pattern=re.compile("--otu_picking_method (\w+)")
     pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
     
