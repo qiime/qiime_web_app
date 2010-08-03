@@ -396,6 +396,7 @@ def submit_processed_data_to_db(fasta_files):
     
     print "Finished scp transfer the split-library seqs.fna file!"
     
+
     #Run the Oracle load_fna_file load procedure
     '''
     #process and load_fna_data
@@ -404,7 +405,22 @@ def submit_processed_data_to_db(fasta_files):
         data_access.loadFNAData(True, res)
     con.close()
     
+
+    print "starting new fna load"
+    start = time.time()
+    valid = data_access.loadFNAFile(True, xxxinputsetxxx)
+    if not valid:
+        raise ValueError, 'Error: Unable to load FNA file into database!'
+
+    end = time.time()
+    print "Total processor time elapsed: %s" % str(end - start)
+    print "Finished loading FNA file."
+ 
     '''
+
+
+
+
     start = time.time()
     print "Starting fna load" 
     valid = data_access.loadSplitLibFasta(True, seq_run_id,split_lib_fname)
@@ -421,15 +437,17 @@ def submit_processed_data_to_db(fasta_files):
     #define the picked OTU file paths using the original fasta input 
     #directory
     pattern=re.compile("--similarity (\d+)\.(\d+)")
-    pOTUs_thresh_str='.'.join(pattern.search(pick_otus_cmd).groups())
+    pOTUs_threshold_str='.'.join(pattern.search(pick_otus_cmd).groups())
     
-    if pOTUs_thresh_str=='0.97':
-        pOTUs_threshold=97
-    elif pOTUs_thresh_str=='0.98':
-            pOTUs_threshold=98
-    elif pOTUs_thresh_str=='0.99':
-            pOTUs_threshold=99
-            
+    if pOTUs_threshold_str=='0.97':
+        pOTUs_threshold='97'
+    elif pOTUs_threshold_str=='0.98':
+        pOTUs_threshold='98'
+    elif pOTUs_threshold_str=='0.99':
+        pOTUs_threshold='99'
+    else:
+        pOTUs_threshold='NULL'
+    
     pattern=re.compile("--otu_picking_method (\w+)")
     pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
     
