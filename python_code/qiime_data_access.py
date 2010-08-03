@@ -1277,7 +1277,8 @@ class QiimeDataAccess( AbstractDataAccess ):
     def loadOTUInfo(self, start_job, otu_run_set_id, analysis_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
                     otus_log_str,split_lib_seqs_md5):
-        """ loads the information pertaining to an OTU picking run
+        """ loads the information pertaining to an OTU picking runls
+        
         """
         try:
             con = self.getSFFDatabaseConnection()
