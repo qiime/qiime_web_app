@@ -31,7 +31,7 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import (compute_seqs_per_library_stats, 
                         get_qiime_scripts_dir,
                         create_dir)
-
+from wrap_files_for_md5 import MD5Wrap
 from load_tab_file import input_set_generator,flowfile_inputset_generator
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
@@ -261,7 +261,7 @@ def submit_processed_data_to_db(fasta_files):
     seq_run_id=0  
     analysis_id=0    
     split_lib_input_checksums=[]
-    
+    fasta_qual_files=[]
     
     #valid = data_access.disableTableConstraints()
     print "Disabled table constraints"
@@ -277,13 +277,8 @@ def submit_processed_data_to_db(fasta_files):
         #using the fasta basename, define qual and flow files
         qual_fname=join(input_basename+'.qual')
         flow_fname=join(input_basename+'.txt')
-        
-        split_lib_fasta_md5sum=safe_md5(open(fasta_fname))
-        split_lib_input_checksums.append(input_fname+'.fna:%s' % 
-                                            split_lib_fasta_md5sum)
-        split_lib_qual_md5sum=safe_md5(open(qual_fname))
-        split_lib_input_checksums.append(input_fname+'.qual:%s' % 
-                                            split_lib_qual_md5sum)
+        fasta_qual_files.append(fasta_fname)
+        fasta_qual_files.append(qual_fname)
         
         #Run the Oracle process_sff_files load package
         ## Get the location and name of the SFF file, get it's MD5. .SFF is one 
@@ -291,8 +286,8 @@ def submit_processed_data_to_db(fasta_files):
         rev = dirname(fasta_fname)[::-1]
         #sff_file = join(rev[rev.find('/'):][::-1], input_fname + '.sff')
         sff_file=input_basename+'.sff'
-        sff_md5 = safe_md5(open(sff_file))
-        
+        sff_md5 = safe_md5(open(sff_file)).hexdigest()
+
         if analysis_id==0:
             analysis_id=data_access.createAnalysis()
         
@@ -314,7 +309,7 @@ def submit_processed_data_to_db(fasta_files):
             if seq_run_id==0:
                 seq_run_id=data_access.createSequencingRun(True,instrument_code,
                                             sff_header['Version'],seq_run_id)
-                valid=data_access.addSFFFile(True,sff_file,
+                valid=data_access.addSFFFile(True,input_fname,
                                              sff_header['# of Reads'],
                                              sff_header['Header Length'],
                                              sff_header['Key Length'],
@@ -324,7 +319,7 @@ def submit_processed_data_to_db(fasta_files):
                                              sff_header['Key Sequence'],
                                              sff_md5,seq_run_id)
             else:
-                valid=data_access.addSFFFile(True,sff_file,
+                valid=data_access.addSFFFile(True,input_fname,
                                              sff_header['# of Reads'],
                                              sff_header['Header Length'],
                                              sff_header['Key Length'],
@@ -344,8 +339,9 @@ def submit_processed_data_to_db(fasta_files):
             print time.time()
         else:
             seq_run_id=data_access.getSeqRunIDUsingMD5(sff_md5)
-            
-    
+    print fasta_qual_files
+    split_lib_input_md5sum=safe_md5(MD5Wrap(fasta_qual_files)).hexdigest()
+    print split_lib_input_md5sum
     print 'Finished loading the processed SFF data!'
     print 'Run ID: %s' % seq_run_id
     print 'Analysis ID: %s' % analysis_id
@@ -361,7 +357,6 @@ def submit_processed_data_to_db(fasta_files):
     split_lib_log = join(input_dir, 'split_libraries', 'split_library_log.txt')
     split_hist_str = open(split_lib_hist).read()
     split_log_str = open(split_lib_log).read()
-    split_lib_input_md5sum=','.join(split_lib_input_checksums)
     
     #read in the workflow log file and determine timestamp and svn version of
     #Qiime used for the analysis
@@ -445,7 +440,7 @@ def submit_processed_data_to_db(fasta_files):
     pick_otus_failures = join(input_dir, 'picked_otus', 'seqs_failures.txt')
     pick_otus_log = join(input_dir, 'picked_otus', 'seqs_otus.log')
     otus_log_str = open(pick_otus_log).read()
-    split_lib_seqs_md5=safe_md5(open(split_lib_seqs))
+    split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
     
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
     otu_run_set_id=0
@@ -504,7 +499,7 @@ def submit_processed_data_to_db(fasta_files):
     print 'Successfully loaded the OTU failures into the database!'
     
     print 'End of function' 
-    
+
     return analysis_id
 
             

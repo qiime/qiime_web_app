@@ -1368,7 +1368,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
 
     def getTestData(self, start_job,analysis_id, sample_id):
-        """ Returns the full column dictionary
+        """ Returns the data from the TEST data from DB
         """
         analysis_data = []
     
@@ -1377,7 +1377,64 @@ class QiimeDataAccess( AbstractDataAccess ):
             results = con.cursor()
             if start_job:
                 con.cursor().callproc('get_test_analysis_data', 
-                                        [results, analysis_id, sample_id])
+                                        [analysis_id, sample_id,results])
+                for row in results:
+                    analysis_data.append(row)
+                return analysis_data[0]
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+    def getTestFlowData(self, start_job,analysis_id, sample_id):
+        """ Returns the FLOW TEST Data from DB
+        """
+        analysis_data = []
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_test_flow_data', 
+                                        [analysis_id, sample_id,results])
+                for row in results:
+                    analysis_data.append(row)
+                return analysis_data[0]
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
+    def getTestSplitLibData(self, start_job,analysis_id, sample_id):
+        """ Returns the SPLIT_LIBRARY TEST Data
+        """
+        analysis_data = []
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_test_split_lib_data', 
+                                        [analysis_id, sample_id,results])
+                for row in results:
+                    analysis_data.append(row)
+                return analysis_data[0]
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
+    def getTestOTUData(self, start_job,analysis_id, sample_id):
+        """ Returns the OTU TEST DATA
+        """
+        analysis_data = []
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_test_otu_data', 
+                                        [analysis_id, sample_id,results])
                 for row in results:
                     analysis_data.append(row)
                 return analysis_data[0]
@@ -1387,6 +1444,45 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def getTestOTUFailureData(self, start_job,analysis_id, sample_id):
+        """ Returns the OTU FAILURE TEST DATA
+        """
+        analysis_data = []
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_test_otu_failure_data', 
+                                        [analysis_id, sample_id,results])
+                for row in results:
+                    analysis_data.append(row)
+                return analysis_data[0]
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
+    def getTestSplitLibData(self, start_job,analysis_id, sample_id):
+        """ Returns the full column dictionary
+        """
+        analysis_data = []
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_test_split_lib_data', 
+                                        [analysis_id, sample_id,results])
+                for row in results:
+                    analysis_data.append(row)
+                return analysis_data[0]
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+                    
     def deleteTestAnalysis(self, start_job,analysis_id):
         """ Returns the full column dictionary
         """
