@@ -203,7 +203,7 @@ else:
 
 <%
 #jobs = data_access.getJobInfo(study_id)
-jobs = None
+jobs = []
 if len(jobs) > 0:
     # Will only be one row so safe to assume zero index
     job = jobs[0]
