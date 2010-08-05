@@ -165,7 +165,7 @@ class WorkflowTests(TestCase):
         exp_split_lib_md5='Fasting_subset.fna:fd90ec77f6e426e7eebd5a1c11f3f8ab,Fasting_subset.qual:c992bb0e6dd74b39ec448d87f92a0fb9'
         exp_split_lib_seq='CTGGGCCGTGTCTCAGTCCCAATGTGGCCGTTTACCCTCTCAGGCCGGCTACGCATCATCGCCTTGGTGGGCCGTTACCTCACCAACTAGCTAATGCGCCGCAGGTCCATCCATGTTCACGCCTTGATGGGCGCTTTAATATACTGAGCATGCGCTCTGTATACCTATCCGGTTTTAGCTACCGTTTCCAGCAGTTATCCCGGACACATGGGCTAGG'
         exp_split_lib_md5='4a369b42e8fc542a4896ef1d1106162b'
-        exp_split_lib_seq_md5=None
+        exp_split_lib_seq_md5='008918f7469f8e33d5dd6e01075d5194'
 
         
         obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
