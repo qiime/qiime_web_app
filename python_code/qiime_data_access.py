@@ -306,6 +306,77 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    #
+    def appendStudyInvestigation(self,inv_id,study_id):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('append_study_investigation', [inv_id, \
+                                                                    study_id])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
+    #
+    #
+    def createInvestigation(self,web_app_user_id,inv_name):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            db_output=[]
+            inv_id=0
+            db_output=con.cursor().callproc('create_investigation', 
+                                                    [web_app_user_id, \
+                                                     inv_name,inv_id])
+                                                                
+            return db_output[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    #
+    #
+    def getInvestigationNames(self,web_app_user_id):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_investigation_names', [web_app_user_id,\
+                                                                results])
+            investigation_name_list = []
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    investigation_name_list.append(row)
+            return investigation_name_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    def getPublicStudyNames(self,web_app_user_id):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_study_names', [web_app_user_id,\
+                                                                results])
+            study_list = []
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    study_list.append(row)
+            return study_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
     def getUserStudyNames(self, user_id):
         """ Returns a list of study names
         """

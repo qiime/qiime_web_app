@@ -133,17 +133,21 @@ class WorkflowTests(TestCase):
         db_input_fp = join(self.wf_out,input_fname)
 
         analysis_id=submit_processed_data_to_db(db_input_fp+'.fna')
+        print 'Analysis ID is: %s' % str(analysis_id)
         print 'Testing the FLOW_DATA loading!'
         exp_sff_md5='314f4000857668d45a413d2e94a755fc'
         exp_num_seqs=22
         exp_read_id='FLP3FBN01ELBSX'
         exp_instr_code='GS FLX'
         exp_sff_fname='Fasting_subset'
-        
+       
+        #print 'Calling getTestFlowData...' 
         obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
         obs_instrument_code,obs_read_id,obs_read_seq,obs_flow_string,\
         obs_qual_string = data_access.getTestFlowData(True,analysis_id,
                                                             'test_PCx634_1')
+
+        #print 'After getTestFlowData...'
                                                             
         self.assertEqual(obs_sff_filename,exp_sff_fname)    
         self.assertEqual(obs_num_of_reads,exp_num_seqs)            

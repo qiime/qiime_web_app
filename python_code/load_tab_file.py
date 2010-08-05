@@ -17,6 +17,7 @@ from cx_Oracle import NUMBER, STRING, DATETIME, CLOB
 from numpy import average
 from cogent.parse.flowgram_parser import lazy_parse_sff_handle
 from datetime import datetime
+from hashlib import md5
 
 type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB}
 def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
@@ -66,7 +67,7 @@ def input_set_generator(data, cursor, types, buffer_size=10000,
         res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types, type_lookup)
         yield res
 
-def fasta_to_tab_delim(data):
+def fasta_to_tab_delim(data, seq_run_id):
     """Yields FASTA files in tab delim format
 
     Will strip off comments. For instance, the following file
@@ -84,30 +85,43 @@ def fasta_to_tab_delim(data):
     for line in data:
         if line.startswith('>'):
             if seq_string:
+                to_yield.append(str(len(seq_string)))
+                to_yield.append(md5(seq_string).hexdigest())
                 to_yield.append(seq_string)
-                seq_string = ''
                 yield '\t'.join(to_yield)
+                seq_string = ''
                 to_yield = []
 
             items = line[1:].split(' ')
-            id_ = items[0]
+            sample_id = items[0]
+            read_id = items[1]
+            orig_bc = items[2].split('=')[1]
+            new_bc = items[3].split('=')[1]
+            bc_diffs = items[4].split('=')[1]
 
-            if '=' in items[1]:
-                length_ = items[1].split('=')[1]
+            to_yield.append(str(seq_run_id))
+            to_yield.append(sample_id)
+
+            barcode_read_group_tag = sample_id.rfind('_')
+            if barcode_read_group_tag > 0:
+                barcode_read_group_tag = sample_id[0:sample_id.rfind('_')]
             else:
-                length_ = 'N/A'
+                barcode_read_group_tag = sample_id
+            to_yield.append(barcode_read_group_tag)
 
-            id_ = line[1:].split()[0]
-            to_yield.append(id_)
-            to_yield.append(length_)
+            to_yield.append(read_id)
+            to_yield.append(orig_bc)
+            to_yield.append(new_bc)
+            to_yield.append(bc_diffs)
         else:
             seq_string += line.strip()
-            #to_yield.append(line)
-            #yield '\t'.join(to_yield)
-            #to_yield = []
+    
     if to_yield and seq_string:
+        to_yield.append(str(len(seq_string)))
+        to_yield.append(md5(seq_string).hexdigest())
         to_yield.append(seq_string)
         yield '\t'.join(to_yield)
+
 
 truncate_flow_value_f = lambda x: "%0.2f" % x
 def unzip_flow(flow, seq_run_id, file_md5):

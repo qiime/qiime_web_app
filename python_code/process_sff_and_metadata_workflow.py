@@ -32,7 +32,7 @@ from qiime.util import (compute_seqs_per_library_stats,
                         get_qiime_scripts_dir,
                         create_dir)
 from wrap_files_for_md5 import MD5Wrap
-from load_tab_file import input_set_generator,flowfile_inputset_generator
+from load_tab_file import input_set_generator, flowfile_inputset_generator, fasta_to_tab_delim
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 from qiime_data_access import QiimeDataAccess
@@ -396,31 +396,42 @@ def submit_processed_data_to_db(fasta_files):
     
     print "Finished scp transfer the split-library seqs.fna file!"
     
-
-    #Run the Oracle load_fna_file load procedure
-    '''
     #process and load_fna_data
-    types = ['s', 'i', 's']
-    for res in input_set_generator(fasta_to_tab_delim(fasta_fname), cur, types):
-        data_access.loadFNAData(True, res)
-    con.close()
     
-
     print "starting new fna load"
     start = time.time()
-    valid = data_access.loadFNAFile(True, xxxinputsetxxx)
-    if not valid:
-        raise ValueError, 'Error: Unable to load FNA file into database!'
 
-    end = time.time()
-    print "Total processor time elapsed: %s" % str(end - start)
-    print "Finished loading FNA file."
- 
+    ''' 
+    The output values and types for each value are as follows:
+    0: sequence run id (integer)
+    1: sample id (text)
+    2: barcode read group tag (text)
+    3: read id (text)    
+    4: original barcode (text)
+    5: new barcode (text)
+    6: number of barcode diffs (integer)
+    7: sequence length (integer)
+    8: sequence md5 hash (text)
+    9: sequence string (text)
     '''
 
+    types = ['i', 's', 's', 's', 's', 's', 'i', 'i', 's', 's']
+    con = data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    open_fasta = open(split_lib_seqs)
 
+    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id), cur, types):
+        valid = data_access.loadFNAFile(True, res)
+        if not valid:
+            raise ValueError, 'Error: Unable to load FNA file into database!'
 
+    open_fasta.close()
 
+    end = time.time()
+    print 'Total processor time elapsed: %s' % str(end - start)
+    print 'Finished loading split_library FNA file.'
+
+    '''
     start = time.time()
     print "Starting fna load" 
     valid = data_access.loadSplitLibFasta(True, seq_run_id,split_lib_fname)
@@ -431,7 +442,8 @@ def submit_processed_data_to_db(fasta_files):
     print "Total processor time elapsed: %s" % str(end - start)
     
     print "Finished loading split-library fasta file!"
- 
+    '''
+    
     # For OTU Tables
     
     #define the picked OTU file paths using the original fasta input 

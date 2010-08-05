@@ -33,6 +33,30 @@ for study_name in study_names:
 %>
                 </select>
             </form>
-        </li>
+            </li>
+        </ul>
+        <b>Investigation Options:</b>
+        <ul>
+            <li>
+                <form id="create_new_investigation" action="fusebox.psp" method="post">
+                    <input type="hidden" name="page" id="page" value="./new_investigation.psp">
+                    <a href="" onclick="document.forms['create_new_investigation'].submit(); return false;">
+                    Create a New Investigation</a>
+                </form>
+            </li>
+        <li>
+            <form id="user_investigation" action="select_user_investigation_submit.psp" method="post">
+                Select an Existing Investigation:
+                <select validate="required:true" name="investigation_names" id="investigation_names" onchange="user_investigation.submit();">
+                <option value=""></option>
+<%
+investigation_names = QiimeDataAccess().getInvestigationNames(sess['web_app_user_id'])
+for investigation_name in investigation_names:
+    req.write('<option value="' + str(investigation_name[0]) + ':' + investigation_name[1] + '">' + investigation_name[1] + '</option>\n')
+# end
+%>
+                </select>
+            </form>
+            </li>
     </ul>
 </p>
