@@ -21,7 +21,7 @@ def input_set_generator(data, cursor):
             continue
         buffer.append(line.strip().split('\t'))
 
-        if len(buffer) > 10000:
+        if len(buffer) > 500:
             res = unzip_and_cast_to_cxoracle_types(buffer, cursor) 
             buffer = []
             yield res
@@ -33,10 +33,10 @@ def input_set_generator(data, cursor):
 def main():
     lines = open(argv[1])
     con = cx_Oracle.connect(user='SFF',
-                            password='454SFF454',
-                            dsn='microbiome1.colorado.edu:1523/microbe')
+                            password='SFF454SFF',
+                            dsn='quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
     cur = con.cursor()
-    ref_set_id = 4 #cur.var(cx_Oracle.NUMBER, 7)
+    ref_set_id = 7 #cur.var(cx_Oracle.NUMBER, 7)
     for input_set in input_set_generator(lines, cur):
         ids,acc,dec,coreset,seq,checksum = input_set
         print 'would execute'

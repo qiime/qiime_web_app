@@ -96,7 +96,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         if self._testDatabaseConnection == None:
             try:
                 print 'No active connection - obtaining new connection to qiime_test.'
-                self._testDatabaseConnection = cx_Oracle.Connection('SFF/454SFF454@microbiome1.colorado.edu:1523/microbe')
+                self._testDatabaseConnection = cx_Oracle.Connection('SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -339,6 +339,46 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
+    def getRunPrefixForSample(self,sample_name,study_id):
+        """ Returns a Run Prefix for Sample
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            db_output=[]
+            con.cursor().callproc('get_run_prefix_for_sample', 
+                                                    [sample_name,study_id,\
+                                                     results])
+                                                                
+            run_prefix = ''
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    run_prefix=row[0]
+            return run_prefix
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    #
+    def getStudiesByInvestigation(self,investigation_id):
+        """ Returns a list of study ids by investigation id
+        """
+        try:
+            con = self.getTestDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_studies_by_investigation', [investigation_id,\
+                                                                results])
+            investigation_name_list = []
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    investigation_name_list.append(row)
+            return investigation_name_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
     #
     def getInvestigationNames(self,web_app_user_id):
         """ Returns a list of study names
@@ -1347,7 +1387,8 @@ class QiimeDataAccess( AbstractDataAccess ):
         
     def loadOTUInfo(self, start_job, otu_run_set_id, analysis_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
-                    otus_log_str,split_lib_seqs_md5):
+                    otus_log_str,split_lib_seqs_md5,ref_set_name,
+                    ref_set_threshold):
         """ loads the information pertaining to an OTU picking runls
         
         """
@@ -1360,12 +1401,13 @@ class QiimeDataAccess( AbstractDataAccess ):
                         'register_otu_picking_run',[otu_run_set_id, \
                                 analysis_id, run_date, pOTUs_method, \
                                 pOTUs_threshold, svn_version, pick_otus_cmd, \
-                                otus_log_str,split_lib_seqs_md5,error_flag,
+                                otus_log_str,split_lib_seqs_md5,ref_set_name, \
+                                ref_set_threshold, error_flag, \
                                 otu_picking_run_id])
-                if db_output[9]==0:
-                    return True,db_output[0],db_output[10]
+                if db_output[11]==0:
+                    return True,db_output[0],db_output[12]
                 else:
-                    return False,db_output[0],db_output[10]
+                    return False,db_output[0],db_output[12]
             else:
                 return True,0
         except Exception, e:

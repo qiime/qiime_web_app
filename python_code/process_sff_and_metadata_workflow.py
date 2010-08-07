@@ -385,7 +385,7 @@ def submit_processed_data_to_db(fasta_files):
     print "Finished loading the split-library log information!"
     split_lib_fname='%s.fna' % ('sl_seqs'+ tmp_filename)
     print split_lib_fname
-    
+    '''
     #move the resulting seqs.fna file from split-libraries to the DB server
     try:
         cmd_call=scp_file_transfer(23,split_lib_seqs,'wwwuser',\
@@ -395,7 +395,7 @@ def submit_processed_data_to_db(fasta_files):
         raise ValueError, 'Error: Unable to scp files to database server!'
     
     print "Finished scp transfer the split-library seqs.fna file!"
-    
+    '''
     #process and load_fna_data
     
     print "starting new fna load"
@@ -487,7 +487,8 @@ def submit_processed_data_to_db(fasta_files):
                                   analysis_id, run_date,
                                   pOTUs_method, pOTUs_threshold,
                                   svn_version, pick_otus_cmd, otus_log_str,
-                                  split_lib_seqs_md5)
+                                  split_lib_seqs_md5,reference_set_name,
+                                  ref_set_threshold)
     if not valid:
         raise ValueError, 'Error: Unable to load OTU run data into database!'
     else:
