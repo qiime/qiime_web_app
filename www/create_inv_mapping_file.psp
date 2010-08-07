@@ -8,7 +8,7 @@ __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
-
+<script type="text/javascript" src="js/overlib.js"></script>
 <script>
 $(document).ready(function(){
     $("#mapping_form").validate();
@@ -30,21 +30,23 @@ else:
 field_list=[]
 sample_list=[]
 for i in study_ids:
-
+    
     study_id=i[0]
+    study_title=data_access.getStudyById(study_id)
     fields=data_access.getMetadataFields(study_id)
     for field in fields:
         field_list.append(field)
     
     samples = data_access.getSampleList(study_id)
     for sample in samples:
-        sample_list.append(sample)
+        sample_list.append(list((sample,study_id,study_title)))
     mapping_files = data_access.getMappingFiles(study_id)
 
 unique_field_list=list(set(field_list))
 unique_field_list.sort()
-unique_sample_list=list(set(sample_list))
-unique_sample_list.sort()
+
+unique_sample_list=sample_list
+#unique_sample_list.sort()
 #
 %>
 
@@ -103,7 +105,7 @@ for f in unique_field_list:
             <select multiple name="samples" id="samples" class="required">
 <%
 for s in unique_sample_list:
-    req.write('<option value="%s" selected>%s</option>' % (s, s))
+    req.write('<option value="%s_%s" selected onmouseover=\"return overlib(\'%s\')\" onmouseout=\'return nd();\'>%s</option>' % (s[0],s[1],s[2], s[0]))
 
 # End for
 %>

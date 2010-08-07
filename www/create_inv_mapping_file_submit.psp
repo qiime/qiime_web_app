@@ -28,6 +28,16 @@ else:
 
 form_metadata_fields = form['metadata_fields']
 form_sample_fields = form['samples']
+
+samples_array=[]
+if type(form['samples'])==type(form['mapping_file_name']):
+    sample=form['samples'].split('_')
+    samples_array.append(list(('_'.join(sample[:-1]),sample[-1])))
+else:
+    for s in form['samples']:
+        sample=s.split('_')
+        samples_array.append(list(('_'.join(sample[:-1]),sample[-1])))
+req.write(str(samples_array))
 '''
 for sample in form_sample_fields:
     req.write(sample+'<br>')
@@ -133,19 +143,12 @@ for i in study_ids:
     # Finally, write the where clause
     statement += 'where "STUDY".study_id = ' + study_id + ' and ('
     sample_statements=[]
-    if type(form['samples'])==type(form['mapping_file_name']):
-         sample_statements.append('"SAMPLE".sample_name = \'%s\'' % (str(form['samples'])))
-         run_prefix=data_access.getRunPrefixForSample(str(form['samples']),study_id)
-         if run_prefix <> '':
-             sample_list.append(list((str(form['samples']),str(run_prefix))))
-    else:
-         for sample in form['samples']:
-             sample_statements.append('"SAMPLE".sample_name = \'%s\'' % (str(sample)))
-             run_prefix=data_access.getRunPrefixForSample(str(sample),study_id)
-             if run_prefix <> '':
-                 sample_list.append(list((str(sample),str(run_prefix))))
+    for s in samples_array:
+        if study_id==s[1]:
+            sample_statements.append('"SAMPLE".sample_name = \'%s\'' % (str(s[0])))
+    
     statement +=' or '.join(sample_statements)+')'  
-
+    req.write(statement)
     # Run the statement
     con = data_access.getTestDatabaseConnection()
     cur = con.cursor()
@@ -192,7 +195,7 @@ for i in study_ids:
     #add to database list
     data_access.addMappingFile(study_id, mapping_file.name)
     mapping_file.close()
-req.write(str(sample_list))
+
 mapping_files = [open(fp,'U') for fp in map_files]
 no_data_value = 'no_data'
 
