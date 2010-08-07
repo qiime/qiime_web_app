@@ -1,0 +1,125 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<script>
+$(document).ready(function(){
+    $("#mapping_form").validate();
+});
+</script>
+
+
+<%
+from qiime_data_access import *
+import os
+
+data_access = QiimeDataAccess()
+
+if sess.has_key('investigation_id'):
+    study_ids=data_access.getStudiesByInvestigation(sess['investigation_id'])
+else:
+    study_ids = sess['study_id']
+
+field_list=[]
+sample_list=[]
+for i in study_ids:
+
+    study_id=i[0]
+    fields=data_access.getMetadataFields(study_id)
+    for field in fields:
+        field_list.append(field)
+    
+    samples = data_access.getSampleList(study_id)
+    for sample in samples:
+        sample_list.append(sample)
+    mapping_files = data_access.getMappingFiles(study_id)
+
+unique_field_list=list(set(field_list))
+unique_field_list.sort()
+unique_sample_list=list(set(sample_list))
+unique_sample_list.sort()
+#
+%>
+
+<p/>
+Existing Mapping Files:
+<%
+
+for file in mapping_files:
+    req.write('<a href="%s" style="background-color:#CCCCCC" target="_blank">%s</a> ' % (file, os.path.basename(file)))
+# End for
+
+%>
+
+<form method="post" class="cmxform" action="create_inv_mapping_file_submit.psp" name="mapping_form" id="mapping_form">
+<h3>Create New Mapping File</h3>
+Mapping File Name: <input class="safename" type="text" id="mapping_file_name" name="mapping_file_name" /><br/>
+(A file extension will be added for you)
+<br/><br/><br/>
+<table>
+    <tr>
+        <td>
+            Select Fields<br/>
+            <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
+                <option value="javascript:">
+                <option value="javascript:select_all('metadata_fields');">All
+                <option value="javascript:select_none('metadata_fields');">None
+                <option value="Javascript:select_invert('metadata_fields');">Invert
+            </select>
+        </td>
+        <td>
+            Select Samples<br/>
+            <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
+                <option value="javascript:">
+                <option value="javascript:select_all('samples');">All
+                <option value="javascript:select_none('samples');">None
+                <option value="Javascript:select_invert('samples');">Invert
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <select multiple name="metadata_fields" id="metadata_fields" class="required">
+<%
+for f in unique_field_list:
+    field_name = f[0]
+    if field_name in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'RUN_PREFIX','DESCRIPTION']:
+        req.write('<option value="%s" selected>%s</option>' % (field_name, field_name))
+    else:
+        req.write('<option value="%s">%s</option>' % (field_name, field_name))
+
+# End for
+%>
+            </select>
+        </td>
+        <td>
+            <select multiple name="samples" id="samples" class="required">
+<%
+for s in unique_sample_list:
+    req.write('<option value="%s" selected>%s</option>' % (s, s))
+
+# End for
+%>
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <input type="submit" value="Generate Mapping File">
+            <!--<br/>
+            <h3>Preview of mapping file:</h3>
+            <table>
+            Write out sample table here...
+            </table>-->
+        </td>
+    </tr>
+</table>
+
+</form>

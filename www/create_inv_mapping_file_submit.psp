@@ -1,0 +1,208 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+from qiime_data_access import *
+from io import FileIO
+from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
+sess = Session.Session(req)
+%>
+
+<%
+map_files=[]
+# Create the mapping file based on sample and field selections
+data_access = QiimeDataAccess()
+if sess.has_key('investigation_id'):
+    study_ids=data_access.getStudiesByInvestigation(sess['investigation_id'])
+else:
+    study_ids = sess['study_id']
+
+
+form_metadata_fields = form['metadata_fields']
+form_sample_fields = form['samples']
+'''
+for sample in form_sample_fields:
+    req.write(sample+'<br>')
+    
+#raise ValueError
+'''
+field_list=[]
+sample_list=[]
+for i in study_ids:
+    study_id=str(i[0])
+    
+    recorded_fields = data_access.getMetadataFields(study_id)
+    database_map = {}
+    tables = []
+
+    # Start building the statement for writing out the mapping file
+    statement = '"SAMPLE".sample_name as SampleID, \n'
+    statement += '"SEQUENCE_PREP".barcode, \n'
+    statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
+    statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
+
+    # Break out the recorded fields and store as dict: field name and table name
+    # field[0] = field_name, field[1] = table_name
+    for field in recorded_fields:
+        if field[0] in form_metadata_fields:
+            # Required fields which much show up first. Skip as they are already in the statement
+            if field[0] in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE']:
+                continue
+        
+            # Add to select list
+            statement += field[1] + '."' + field[0] + '", \n'
+        
+            # Add the table to our list if not already there and not one of the required tables
+            if field[1] not in tables and field[1] not in ['"STUDY"', '"SAMPLE"', '"SEQUENCE_PREP"']:
+                tables.append(field[1])
+        
+            # Finally, add to our column list
+            database_map[field[0]] = field[1]
+
+    # End for
+
+    statement = statement[0:len(statement) - 3]
+    statement = '\
+    select \n' + statement + ' \n\
+    from "STUDY" '
+
+    # Check for existence of extra_study
+    if '"EXTRA_STUDY_' + study_id + '"' in tables:
+        tables.remove('"EXTRA_STUDY_' + study_id + '"')
+        statement += '\
+    inner join "EXTRA_STUDY_' + study_id + '" \n\
+    on "STUDY".study_id = "EXTRA_STUDY_' + study_id + '".study_id \n '
+    
+    # End if
+
+    statement += ' \n\
+    inner join "SAMPLE" \n\
+    on "STUDY".study_id = "SAMPLE".study_id \n '
+
+    # Check for existence of extra_sample
+    if '"EXTRA_SAMPLE_' + study_id + '"' in tables:
+        tables.remove('"EXTRA_SAMPLE_' + study_id + '"')
+        statement += '\
+    inner join "EXTRA_SAMPLE_' + study_id + '" \n\
+    on "SAMPLE".sample_id = "EXTRA_SAMPLE_' + study_id + '".sample_id \n '
+    
+    # End if
+    statement += ' \
+    inner join "SEQUENCE_PREP" \n\
+    on "SAMPLE".sample_id = "SEQUENCE_PREP".sample_id \n '
+
+    # Check for existence of extra_sample
+    if '"EXTRA_PREP_' + study_id + '"' in tables:
+        tables.remove('"EXTRA_PREP_' + study_id + '"')
+        statement += '\
+    inner join "EXTRA_PREP_' + study_id + '" \n\
+    on "SAMPLE".sample_id = "EXTRA_PREP_' + study_id + '".sample_id \n '
+
+    if '"COMMON_FIELDS"' in tables:
+        tables.remove('"COMMON_FIELDS"')
+        statement += '\
+    left join "COMMON_FIELDS" \n\
+    on "SAMPLE".sample_id = "COMMON_FIELDS".sample_id \n'
+    
+    # Handle host tables
+    statement += '\
+    left join "HOST_SAMPLE" \n\
+    on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
+    
+    # Deal with the rest of the tables. They should all be assocaiated by sample id.
+    for table in tables:
+        if 'HOST' in table or 'HUMAN' in table:
+            statement += '\
+            left join ' + table + '\n\
+            on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
+        else:
+            statement += '\
+            left join ' + table + '\n\
+            on "SAMPLE".sample_id = ' + table + '.sample_id\n '
+
+    # End for
+
+    # Finally, write the where clause
+    statement += 'where "STUDY".study_id = ' + study_id + ' and ('
+    sample_statements=[]
+    if type(form['samples'])==type(form['mapping_file_name']):
+         sample_statements.append('"SAMPLE".sample_name = \'%s\'' % (str(form['samples'])))
+         run_prefix=data_access.getRunPrefixForSample(str(form['samples']),study_id)
+         if run_prefix <> '':
+             sample_list.append(list((str(form['samples']),str(run_prefix))))
+    else:
+         for sample in form['samples']:
+             sample_statements.append('"SAMPLE".sample_name = \'%s\'' % (str(sample)))
+             run_prefix=data_access.getRunPrefixForSample(str(sample),study_id)
+             if run_prefix <> '':
+                 sample_list.append(list((str(sample),str(run_prefix))))
+    statement +=' or '.join(sample_statements)+')'  
+
+    # Run the statement
+    con = data_access.getTestDatabaseConnection()
+    cur = con.cursor()
+    results = cur.execute(statement)
+
+    # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
+
+
+    # Create new mapping file in filesystem
+    mapping_file_dir = sess['mapping_file_dir']
+    if not os.path.exists(mapping_file_dir):
+        os.makedirs(mapping_file_dir)
+    
+    mapping_file = file(os.path.join(mapping_file_dir, form['mapping_file_name']+study_id), 'w')
+    map_files.append(os.path.join(mapping_file_dir, form['mapping_file_name']+study_id))
+    # All mapping files start with an opening hash
+    mapping_file.write('#')
+
+    # Write the header row
+    to_write = ''
+    for column in cur.description:
+        if column[0]=='SAMPLEID':
+            to_write+='SampleID\t'
+        elif column[0]=='BARCODE':
+            to_write+='BarcodeSequence\t'
+        elif column[0]=='DESCRIPTION':
+            to_write+='Description\t'
+        else:
+            to_write += column[0] + '\t'
+    mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+
+    for row in results:
+        # Can't use something like '\t'.join(row) because not all items in list
+        # are string values, hence the explicit loop structure here.
+        to_write = ''
+        for column in row:
+            val = str(column)
+            if val == 'None':
+                val = ''
+            to_write += val + '\t'
+        # Write the row minus the last tab
+        mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+    
+    #add to database list
+    data_access.addMappingFile(study_id, mapping_file.name)
+    mapping_file.close()
+req.write(str(sample_list))
+mapping_files = [open(fp,'U') for fp in map_files]
+no_data_value = 'no_data'
+
+mapping_data = merge_mapping_files(mapping_files,no_data_value=no_data_value)
+
+write_mapping_file(mapping_data,os.path.join(mapping_file_dir, \
+                                             form['mapping_file_name']))
+
+# All done, go back to the main page
+psp.redirect('fusebox.psp?page=select_investigation_task.psp')
+
+%>
+

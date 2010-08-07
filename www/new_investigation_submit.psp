@@ -1,0 +1,75 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+'''
+This script adds the users new study to the database, then asks them how they
+want to proceed.
+'''
+%>
+
+<%
+import os
+from qiime_data_access import QiimeDataAccess
+
+sess = Session.Session(req)
+sess['investigation_name'] = form['investigation_name']
+sess['study_names']=form['study_names']
+study_dict={}
+
+if type(sess['study_names'])==type(sess['investigation_name']):
+    study_ids=sess['study_names'].split(':')
+    study_dict[study_ids[0]]=':'.join(study_ids[1:])
+else:
+    for i in sess['study_names']:
+        study_ids=i.split(':')
+        study_dict[study_ids[0]]=':'.join(study_ids[1:])
+    
+investigation_name = sess['investigation_name']
+
+# Add the new Investigation to the database
+investigation_id = QiimeDataAccess().createInvestigation(\
+                            sess['web_app_user_id'],sess['investigation_name'])
+
+for i in study_dict:
+    valid= QiimeDataAccess().appendStudyInvestigation(investigation_id,i)
+
+# Add the Investigation id to the session.
+sess['investigation_id'] = investigation_id
+
+investigation_dir = os.path.join(sess['user_dir'],'investigation_'+str(sess['investigation_id']))
+sess['investigation_dir'] = str(investigation_dir)
+
+# Create new mapping file in filesystem
+mapping_file_dir = os.path.join(investigation_dir, 'mapping_files/') 
+sess['mapping_file_dir'] = mapping_file_dir
+
+# Create new otu table file in filesystem
+otu_table_file_dir = os.path.join(investigation_dir, 'otu_table_files/')
+sess['otu_table_file_dir'] = otu_table_file_dir
+sess.save()
+
+
+#See if the Investigation folder exists and if not, creates it.
+try:
+    if not os.path.exists(investigation_dir):
+        os.mkdir(investigation_dir)
+    if not os.path.exists(mapping_file_dir):
+        os.mkdir(mapping_file_dir)
+    if not os.path.exists(otu_table_file_dir):
+        os.mkdir(otu_table_file_dir)
+except Exception, e:
+    req.write('<h1>Error: The Investigation directory could not be created.</h1>')
+    req.write(str(e))
+    sys.exit()
+
+psp.redirect('fusebox.psp?page=select_investigation_task.psp')
+
+%>
+

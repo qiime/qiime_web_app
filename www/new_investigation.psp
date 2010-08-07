@@ -1,0 +1,116 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+''' 
+This page is used to create a new investigation in the database (i.e. the user 
+wants to select studies and its associated data.
+'''
+%>
+
+<script type='text/javascript'>
+
+/*
+This function performs validation on the form fields and then submits the
+form if the fields are valid.
+*/
+$.validator.setDefaults({
+    submitHandler:function(){
+        //check the the user-defined investigation is not present in the database
+        valid=check_investigation_name()
+        if (valid=='True'){
+            study=document.getElementById('new_investigation');
+            study.submit();
+        }
+    }
+});
+
+//Create the validation attribute
+$.metadata.setType("attr","validate");
+
+//Set the validation for each form field
+$(document).ready(function(){
+    $("#new_investigation").validate();
+ 
+});
+
+//Create an array of investigation names retrieved from the database
+var investigationnames=new Array();
+
+<%
+from qiime_data_access import QiimeDataAccess
+qda = QiimeDataAccess()
+
+# get a list of studies from the database
+investigation_names = qda.getInvestigationNames(sess['web_app_user_id'])
+
+# iterate through the studies and write them into a javascript array
+for i in range(len(investigation_names)):
+    req.write('investigationnames['+str(i)+']="'+str(investigation_names[i][1])+'"\n');
+#
+%>
+
+//Check that the user-defined investigation name is not in the database
+function check_investigation_name()
+{
+    investigation=document.getElementById('investigation_name').value;
+    var investigation1=investigation.toUpperCase();
+    var valid='True'
+    for (var i=0;i<investigationnames.length;i++)
+    {
+        var investigationnames1=investigationnames[i].toUpperCase();
+        if (investigation1==investigationnames1){
+            valid='False'
+        }
+    }
+    //If the investigation name is already taken, alert the user
+    if(valid=='False')
+    {
+        alert("The selected investigation name has already been taken. Please enter a different name.");
+    }
+    return valid
+}
+
+</script>
+
+<!-- Define the form-->
+<br>
+<form id="new_investigation" action="new_investigation_submit.psp" method="post">
+    <!-- put the form fields in a table to add structure to the layout-->
+    <table>
+        <tr>
+            <td>
+                Investigation Name:
+            </td>
+            <td>
+                <input class="safename" type="text" name="investigation_name" id="investigation_name" />
+            </td>
+        </tr>
+        <tr>
+        <td>
+                Select Studies:</td><td>
+                <select validate="required:true" name="study_names" id="study_names" multiple>
+                <option value=""></option>
+<%
+study_names = QiimeDataAccess().getPublicStudyNames(sess['web_app_user_id'])
+for study_name in study_names:
+    req.write('<option value="' + str(study_name[0]) + ':' + str(study_name[1]) + '">' + str(study_name[1]) + '</option>\n')
+# end
+%>
+                </select>
+        </td>
+        </tr>
+        <tr>
+            <td>
+                <input type="submit" value="Next"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
