@@ -17,6 +17,13 @@ sess['study_id']=0
 sess['investigation_id'] = parts[0]
 sess['investigation_name'] = parts[1]
 sess['investigation_dir'] = os.path.join(sess['user_dir'],'investigation_'+str(sess['investigation_id']))
+# Create new mapping file in filesystem
+mapping_file_dir = os.path.join(sess['investigation_dir'], 'mapping_files/') 
+sess['mapping_file_dir'] = mapping_file_dir
+
+# Create new otu table file in filesystem
+otu_table_file_dir = os.path.join(sess['investigation_dir'], 'otu_table_files/')
+sess['otu_table_file_dir'] = otu_table_file_dir
 sess.save()
 
 #See if the study folder exists and if not, creates it.

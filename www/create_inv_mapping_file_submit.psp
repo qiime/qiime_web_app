@@ -13,6 +13,7 @@ __status__ = "Production"
 from qiime_data_access import *
 from io import FileIO
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
+from qiime.make_otu_table import make_otu_map
 sess = Session.Session(req)
 %>
 
@@ -37,7 +38,7 @@ else:
     for s in form['samples']:
         sample=s.split('_')
         samples_array.append(list(('_'.join(sample[:-1]),sample[-1])))
-req.write(str(samples_array))
+
 '''
 for sample in form_sample_fields:
     req.write(sample+'<br>')
@@ -148,9 +149,9 @@ for i in study_ids:
             sample_statements.append('"SAMPLE".sample_name = \'%s\'' % (str(s[0])))
     
     statement +=' or '.join(sample_statements)+')'  
-    req.write(statement)
+
     # Run the statement
-    con = data_access.getTestDatabaseConnection()
+    con = data_access.getDatabaseConnection()
     cur = con.cursor()
     results = cur.execute(statement)
 
@@ -192,8 +193,6 @@ for i in study_ids:
         # Write the row minus the last tab
         mapping_file.write(to_write[0:len(to_write)-1] + '\n')
     
-    #add to database list
-    data_access.addMappingFile(study_id, mapping_file.name)
     mapping_file.close()
 
 mapping_files = [open(fp,'U') for fp in map_files]
@@ -201,10 +200,37 @@ no_data_value = 'no_data'
 
 mapping_data = merge_mapping_files(mapping_files,no_data_value=no_data_value)
 
-write_mapping_file(mapping_data,os.path.join(mapping_file_dir, \
-                                             form['mapping_file_name']))
+merge_mapping_fpath=os.path.join(mapping_file_dir, form['mapping_file_name'] + \
+                                    '_mapping.txt')
+write_mapping_file(mapping_data,merge_mapping_fpath)
 
+
+
+otu_map_dict={}
+iterator=0
+for t in samples_array:
+    otus=data_access.getOTUMap(t[0],int(t[1]),97,'UCLUST_REF',\
+                                'GREENGENES_REFERENCE',97)
+    for o in otus:   
+        if otu_map_dict.has_key(str(o[0])):
+            otu_map_dict[str(o[0])].append(o[1])
+        else:
+            otu_map_dict[str(o[0])]=[]
+            otu_map_dict[str(o[0])].append(o[1])
+    iterator=iterator+1
+
+otu_table_fpath=os.path.join(sess['otu_table_file_dir'], \
+                                form['mapping_file_name'] + '_otu_table.txt')
+outfile = open(otu_table_fpath, 'w')
+otu_to_taxonomy=None
+outfile.write(make_otu_map(otu_map_dict, otu_to_taxonomy))
+outfile.close()
 # All done, go back to the main page
+
+#add to database list
+valid=data_access.addInvestigationMapOTUFiles(True, sess['investigation_id'], \
+                                        merge_mapping_fpath,otu_table_fpath)
+
 psp.redirect('fusebox.psp?page=select_investigation_task.psp')
 
 %>

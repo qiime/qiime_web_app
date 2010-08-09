@@ -40,7 +40,7 @@ for i in study_ids:
     samples = data_access.getSampleList(study_id)
     for sample in samples:
         sample_list.append(list((sample,study_id,study_title)))
-    mapping_files = data_access.getMappingFiles(study_id)
+    
 
 unique_field_list=list(set(field_list))
 unique_field_list.sort()
@@ -51,14 +51,7 @@ unique_sample_list=sample_list
 %>
 
 <p/>
-Existing Mapping Files:
-<%
 
-for file in mapping_files:
-    req.write('<a href="%s" style="background-color:#CCCCCC" target="_blank">%s</a> ' % (file, os.path.basename(file)))
-# End for
-
-%>
 
 <form method="post" class="cmxform" action="create_inv_mapping_file_submit.psp" name="mapping_form" id="mapping_form">
 <h3>Create New Mapping File</h3>

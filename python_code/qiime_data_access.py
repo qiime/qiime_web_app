@@ -31,7 +31,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         self._webAppUserDatabaseConnection = None
         self._databaseConnection = None
         self._ontologyDatabaseConnection = None
-        
+        self._SFFDatabaseConnection = None
     def __del__(self):
         # Make sure we close out our connections when the object goes out of scope
         if self._webAppUserDatabaseConnection:
@@ -88,15 +88,15 @@ class QiimeDataAccess( AbstractDataAccess ):
 
         Get a database connection. 
         """
-        if self._testDatabaseConnection == None:
+        if self._SFFDatabaseConnection == None:
             try:
                 print 'No active connection - obtaining new connection to qiime_test.'
-                self._testDatabaseConnection = cx_Oracle.Connection('SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
+                self._SFFDatabaseConnection = cx_Oracle.Connection('SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
 
-        return self._testDatabaseConnection
+        return self._SFFDatabaseConnection
         
     #####################################
     # Helper Functions
@@ -316,7 +316,36 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
     
     #
+    def addInvestigationMapOTUFiles(self, start_job, investigation_id, \
+                                    mapping_fpath, otu_fpath):
+        try:
+            con = self.getDatabaseConnection()
+            if start_job:
+                con.cursor().callproc('add_map_and_otu_file_paths', 
+                                                    [investigation_id,\
+                                                    mapping_fpath,otu_fpath])  
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
     #
+    def getInvestigationFilepaths(self, investigation_id):
+        try:
+            con = self.getDatabaseConnection()
+            results=con.cursor()
+            con.cursor().callproc('get_investigation_filepaths', 
+                                                    [investigation_id,\
+                                                    results])
+            fpaths=[]
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    fpaths.append(row)
+            return fpaths
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
     def createInvestigation(self,web_app_user_id,inv_name):
         """ Returns a list of study names
         """
@@ -441,6 +470,21 @@ class QiimeDataAccess( AbstractDataAccess ):
             for row in study_id:
                 value_list.append(row[0])
             return value_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
+    def getStudyById(self, study_id):
+        """ Returns a study name using the study_id
+        """
+        try:
+            con = self.getDatabaseConnection()
+            values = con.cursor()
+            con.cursor().callproc('get_study_by_id', [study_id, values])
+            value_list = []
+            for row in values:
+                value_list.append(row[0])
+            return value_list[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -1680,4 +1724,26 @@ class QiimeDataAccess( AbstractDataAccess ):
                 return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+    #
+    def getOTUMap(self,sample_name,study_id,otu_threshold,otu_method,\
+                  source_name,ref_threshold):
+        """ Gets a list otus for a samples
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            user_data = con.cursor()
+            con.cursor().callproc('get_otu_map', [sample_name,study_id,\
+                                                  otu_threshold,otu_method,\
+                                                  source_name,ref_threshold,\
+                                                  user_data])
+            items = []
+            for row in user_data:
+                if row[0] is None:
+                    continue
+                else:
+                    items.append(row)
+            return items
+        except Exception, e:
+            return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
