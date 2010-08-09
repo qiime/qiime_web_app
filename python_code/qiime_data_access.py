@@ -30,15 +30,25 @@ class QiimeDataAccess( AbstractDataAccess ):
     def __init__(self):
         self._webAppUserDatabaseConnection = None
         self._databaseConnection = None
-        self._testDatabaseConnection = None
         self._ontologyDatabaseConnection = None
+        
+    def __del__(self):
+        # Make sure we close out our connections when the object goes out of scope
+        if self._webAppUserDatabaseConnection:
+            self._webAppUserDatabaseConnection.close()
+            
+        if self._databaseConnection:
+            self._databaseConnection.close()
+            
+        if self._ontologyDatabaseConnection:
+            self._ontologyDatabaseConnection.close()
     
     def getDatabaseConnection(self):
         """ Obtains a connection to the qiime_production schema
         """
         if self._databaseConnection == None:
             try:
-                self._databaseConnection = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu:1523/microbe')
+                self._databaseConnection = cx_Oracle.Connection('qiime_metadata/m_t_d_t_@quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -66,27 +76,12 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._ontologyDatabaseConnection == None:
             try:
-                self._ontologyDatabaseConnection = cx_Oracle.Connection('ontologies/odyssey$@microbiome1.colorado.edu:1523/microbe')
+                self._ontologyDatabaseConnection = cx_Oracle.Connection('ontologies/odyssey$@quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
                 
         return self._ontologyDatabaseConnection
-
-    def getTestDatabaseConnection(self):
-        """ Obtains a connection to the qiime_test schema
-
-        Get a database connection. 
-        """
-        if self._testDatabaseConnection == None:
-            try:
-                print 'No active connection - obtaining new connection to qiime_test.'
-                self._testDatabaseConnection = cx_Oracle.Connection('qiime_test/odyssey$@microbiome1.colorado.edu:1523/microbe')
-            except Exception, e:
-                print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
-                return False;
-        
-        return self._testDatabaseConnection
     
     def getSFFDatabaseConnection(self):
         """ Obtains a connection to the qiime_test schema
@@ -108,7 +103,7 @@ class QiimeDataAccess( AbstractDataAccess ):
     #####################################
     
     def testDatabase(self):
-        con = self.getTestDatabaseConnection()
+        con = self.getDatabaseConnection()
         sleep(.1)
         sleep(.1)
         sleep(.1)
@@ -282,7 +277,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             1 = delete everything including the study
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.study_delete', [study_id, full_delete])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -292,7 +287,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_study_names', [results])
             study_name_list = []
@@ -311,7 +306,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('append_study_investigation', [inv_id, \
                                                                     study_id])
@@ -326,7 +321,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             db_output=[]
             inv_id=0
@@ -343,7 +338,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a Run Prefix for Sample
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             db_output=[]
             con.cursor().callproc('get_run_prefix_for_sample', 
@@ -365,7 +360,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study ids by investigation id
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('get_studies_by_investigation', [investigation_id,\
                                                                 results])
@@ -384,7 +379,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('get_investigation_names', [web_app_user_id,\
                                                                 results])
@@ -402,7 +397,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('get_study_names', [web_app_user_id,\
                                                                 results])
@@ -421,7 +416,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of study names
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             study_names = con.cursor()
             con.cursor().callproc('qiime_assets.get_user_study_names', [user_id, study_names])
             study_name_list = []
@@ -454,7 +449,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_study_info', [study_id, results])
             study_info = {}
@@ -486,7 +481,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             study_id = 0
             study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, study_id])
             return study_id[5]
@@ -498,7 +493,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ 
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.study_packages_insert', [study_id, env_package])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -508,7 +503,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list env_package types associated to this study
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_study_packages', [study_id, results])
             env_packages = []
@@ -523,7 +518,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Updates the status of the metadata submission flag (y/n)
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.update_metadata_flag', [study_id, status])
             return True
         except Exception, e:
@@ -534,7 +529,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ adds a new SFF file to the study
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.add_sff_file', [study_id, sff_file_path])
             return True
         except Exception, e:
@@ -545,7 +540,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ adds a new mapping file to the study
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.add_mapping_file', [study_id, mapping_file_path])
             return True
         except Exception, e:
@@ -556,7 +551,7 @@ class QiimeDataAccess( AbstractDataAccess ):
     #    """ Updates the status of the sff submission flag (y/n)
     #    """
     #    try:
-    #        con = self.getTestDatabaseConnection()
+    #        con = self.getDatabaseConnection()
     #        con.cursor().callproc('qiime_assets.update_sff_flag', [study_id, status])
     #        return True
     #    except Exception, e:
@@ -586,7 +581,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata fields
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_metadata_fields', [study_id, results])
             metadata_fields = []
@@ -601,7 +596,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of metadata fields
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_sample_list', [study_id, results])
             sample_list = []
@@ -616,7 +611,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ inserts a selected metadata column name into the database
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.add_study_actual_column', [study_id, column_name, table_name])
         except Exception, e:
             
@@ -659,7 +654,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             column_dictionary = []
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             column_values = con.cursor()
             con.cursor().callproc('qiime_assets.get_column_dictionary', [column_values])
             for row in column_values:
@@ -695,7 +690,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             package_columns = []
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_package_columns', [package_type_id, results])
 
@@ -713,7 +708,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             table = ''
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.find_metadata_table', [column_name, results])
 
@@ -748,7 +743,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             value_list = []
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_field_details', [field_name, results])
 
@@ -768,7 +763,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Writes a sample key row to the database
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.sample_insert', [study_id, sample_name])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -778,7 +773,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Writes a prep key row to the database
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -788,7 +783,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Writes a host key row to the database
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.host_insert', [study_id, sample_name, host_subject_id])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -871,7 +866,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         
         try:
             
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             table_name = None
             
             # Find the table name
@@ -1014,7 +1009,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns a list of jobs that are ready to start
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_new_queue_jobs', [results])
             jobs = []
@@ -1029,7 +1024,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Updates the status message for a job
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.update_job_status', [job_id, status])
             return True
         except Exception, e:
@@ -1040,7 +1035,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             job_id = 0
             job_id = con.cursor().callproc('qiime_assets.create_queue_job', [study_id, user_id, sff_path, mapping_file_path, job_id])
             return job_id[4]
@@ -1052,7 +1047,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Gets a list of SFF files for this study
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             items = []
             con.cursor().callproc('qiime_assets.get_sff_files', [study_id, results])
@@ -1067,7 +1062,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Gets a list of mapping files for this study
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             items = []
             con.cursor().callproc('qiime_assets.get_mapping_files', [study_id, results])
@@ -1082,7 +1077,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             jobs = []
             con.cursor().callproc('qiime_assets.get_job_info', [study_id, results])
@@ -1103,7 +1098,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         controlled_vocabs = []
         
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_controlled_vocab_list', [results, column_name])
             for row in results:
@@ -1120,7 +1115,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         vocab_items = {}
 
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_controlled_vocab_values', [controlled_vocab_id, results])
             for row in results:
@@ -1137,7 +1132,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         ontologies = []
         
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_ontology_list', [results, column_name])
             for row in results:
@@ -1153,7 +1148,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             list_values = []
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_list_values', [results, list_name])
             
@@ -1170,7 +1165,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns the full column dictionary
         """
         try:
-            con = self.getTestDatabaseConnection()
+            con = self.getDatabaseConnection()
             results = 0
             results = con.cursor().callproc('qiime_assets.validate_list_value', [list_name, list_value, results])
             return results[2]
@@ -1225,13 +1220,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             column_type = details[1]
             
             if column_type == 'list':
-                con = self.getTestDatabaseConnection()
+                con = self.getDatabaseConnection()
                 results = con.cursor()
                 con.cursor().callproc('qiime_assets.get_list_matches', [column_name, term_value, results])
                 for row in results:
                     matches.append(row[1])
             elif column_type == 'ontology':
-                con = self.getTestDatabaseConnection()
+                con = self.getDatabaseConnection()
                 ontologies = con.cursor()
                 con.cursor().callproc('qiime_assets.get_column_ontologies', [column_name, ontologies])
                 for row in ontologies:
