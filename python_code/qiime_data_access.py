@@ -60,7 +60,8 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._webAppUserDatabaseConnection == None:
             try:
-                self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@microbiome1.colorado.edu:1523/microbe')
+                #self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@microbiome1.colorado.edu:1523/microbe')
+                self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
