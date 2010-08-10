@@ -317,13 +317,14 @@ class QiimeDataAccess( AbstractDataAccess ):
     
     #
     def addInvestigationMapOTUFiles(self, start_job, investigation_id, \
-                                    mapping_fpath, otu_fpath):
+                                    mapping_fpath, otu_fpath,zip_fpath):
         try:
             con = self.getDatabaseConnection()
             if start_job:
                 con.cursor().callproc('add_map_and_otu_file_paths', 
                                                     [investigation_id,\
-                                                    mapping_fpath,otu_fpath])  
+                                                    mapping_fpath,otu_fpath,
+                                                    zip_fpath])  
             return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)

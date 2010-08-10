@@ -14,61 +14,55 @@ from qiime_data_access import *
 
 # Grab some required values for this page
 data_access = QiimeDataAccess()
-# study_id = int(sess['study_id'])
-#study_info = data_access.getStudyInfo(study_id)
-
 %>
 
 <script language="javascript">
+    function showDiv(div_name)
+    {
+        var ele = document.getElementById(div_name);
+        ele.style.display = "block";
+    }
 
-function showDiv(div_name)
-{
-    var ele = document.getElementById(div_name);
-    ele.style.display = "block";
-}
-
-function hideDiv(div_name)
-{
-    var ele = document.getElementById(div_name);
-    ele.style.display = "none";
-}
-
+    function hideDiv(div_name)
+    {
+        var ele = document.getElementById(div_name);
+        ele.style.display = "none";
+    }
 </script>
 
 <%
-
+# get the investigation ID from the session
 investigation_id=sess['investigation_id']
 
-mapping_otu_files = \
-                    data_access.getInvestigationFilepaths(investigation_id)   
-
+# retrieve the paths to the mapping and OTU tables already created
+mapping_otu_files = data_access.getInvestigationFilepaths(investigation_id)
 %>
 
 <div id="simplediv" style="background-color:#CCCCCC;border:1px solid black;display:none;width:600px;height:500px;position:absolute;top:50;left:50;">
 </div>
-
-Existing Mapping Files:
+<p>
+<h3>Selected Investigation: <%=sess['investigation_name']%></h3>
 <%
-
-for files in mapping_otu_files:
-    req.write('<a href="%s" style="background-color:#CCCCCC" target="_blank">%s</a> ' % (files[0], os.path.basename(files[0])))
-    req.write('<a href="%s" style="background-color:#CCCCCC" target="_blank">%s</a> ' % (files[1], os.path.basename(files[1])))
-# End for
+# print a llst of the mapping and otu files already generated for this 
+# investigation
+if mapping_otu_files:
+    # write the file paths into an HTML table
+    req.write('<table>')
+    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;text-align:center;" colspan="3"><b>Previously Generated Files</b></td></tr>')
+    for files in mapping_otu_files:
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[0],os.path.basename(files[0])))
+        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
+        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td></tr>' % (files[2],os.path.basename(files[2])))
+    req.write('</table>')
 #
 %>
-
 <br>
-<p>
-    <h3>Selected Investigation: <%=sess['investigation_name']%></h3>
-    <br/>
-
-
-Create metadata mapping and OTU table file <br/><br/>
+<h4>Tasks:</h4>
         <ul><li>
             <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="create_inv_mapping_file.psp">
                 <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
-                Create metadata mapping and OTU table file</a>
+                Generate metadata mapping and OTU table file</a>
             </form>
         </li>
     </ul>

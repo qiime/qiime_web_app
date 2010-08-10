@@ -12,6 +12,7 @@ __status__ = "Production"
 <%
 from qiime_data_access import *
 from io import FileIO
+from os import system
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_map
 sess = Session.Session(req)
@@ -26,12 +27,16 @@ if sess.has_key('investigation_id'):
 else:
     study_ids = sess['study_id']
 
+otu_table_file_dir=sess['otu_table_file_dir']
+mapping_file_dir=sess['mapping_file_dir']
+zip_file_dir=sess['zip_file_dir']
 
+file_name_prefix=form['file_name_prefix']
 form_metadata_fields = form['metadata_fields']
 form_sample_fields = form['samples']
 
 samples_array=[]
-if type(form['samples'])==type(form['mapping_file_name']):
+if type(form['samples'])==type(form['file_name_prefix']):
     sample=form['samples'].split('_')
     samples_array.append(list(('_'.join(sample[:-1]),sample[-1])))
 else:
@@ -156,15 +161,9 @@ for i in study_ids:
     results = cur.execute(statement)
 
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
-
-
-    # Create new mapping file in filesystem
-    mapping_file_dir = sess['mapping_file_dir']
-    if not os.path.exists(mapping_file_dir):
-        os.makedirs(mapping_file_dir)
     
-    mapping_file = file(os.path.join(mapping_file_dir, form['mapping_file_name']+study_id), 'w')
-    map_files.append(os.path.join(mapping_file_dir, form['mapping_file_name']+study_id))
+    mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+study_id), 'w')
+    map_files.append(os.path.join(mapping_file_dir, file_name_prefix+study_id))
     # All mapping files start with an opening hash
     mapping_file.write('#')
 
@@ -200,7 +199,7 @@ no_data_value = 'no_data'
 
 mapping_data = merge_mapping_files(mapping_files,no_data_value=no_data_value)
 
-merge_mapping_fpath=os.path.join(mapping_file_dir, form['mapping_file_name'] + \
+merge_mapping_fpath=os.path.join(mapping_file_dir, file_name_prefix + \
                                     '_mapping.txt')
 write_mapping_file(mapping_data,merge_mapping_fpath)
 
@@ -219,18 +218,25 @@ for t in samples_array:
             otu_map_dict[str(o[0])].append(o[1])
     iterator=iterator+1
 
-otu_table_fpath=os.path.join(sess['otu_table_file_dir'], \
-                                form['mapping_file_name'] + '_otu_table.txt')
+otu_table_fpath=os.path.join(otu_table_file_dir, file_name_prefix + 
+                                '_otu_table.txt')
 outfile = open(otu_table_fpath, 'w')
 otu_to_taxonomy=None
 outfile.write(make_otu_map(otu_map_dict, otu_to_taxonomy))
 outfile.close()
 # All done, go back to the main page
 
+zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '.zip')
+cmd_call='zip -jX %s %s' % (zip_fpath,merge_mapping_fpath)
+system(cmd_call)
+cmd_call='zip -jX %s %s' % (zip_fpath,otu_table_fpath)
+system(cmd_call)
+
 #add to database list
 valid=data_access.addInvestigationMapOTUFiles(True, sess['investigation_id'], \
-                                        merge_mapping_fpath,otu_table_fpath)
-
+                                        merge_mapping_fpath,otu_table_fpath,
+                                        zip_fpath)
+                                        
 psp.redirect('fusebox.psp?page=select_investigation_task.psp')
 
 %>

@@ -15,74 +15,61 @@ $(document).ready(function(){
 });
 </script>
 
-
 <%
 from qiime_data_access import *
 import os
-
 data_access = QiimeDataAccess()
 
-if sess.has_key('investigation_id'):
-    study_ids=data_access.getStudiesByInvestigation(sess['investigation_id'])
-else:
-    study_ids = sess['study_id']
+# get the study_id's associated with this study
+study_ids=data_access.getStudiesByInvestigation(sess['investigation_id'])
 
+# iterate through the studies and get the title for each study along with the
+# fields and sample_id's associated
 field_list=[]
 sample_list=[]
 for i in study_ids:
-    
     study_id=i[0]
+    # get the study title
     study_title=data_access.getStudyById(study_id)
+    
+    # get the fields corresponding to this study
     fields=data_access.getMetadataFields(study_id)
     for field in fields:
         field_list.append(field)
     
+    # get the sample_id's for this study
     samples = data_access.getSampleList(study_id)
     for sample in samples:
         sample_list.append(list((sample,study_id,study_title)))
     
-
+# create a unique list of fields
 unique_field_list=list(set(field_list))
 unique_field_list.sort()
-
-unique_sample_list=sample_list
-#unique_sample_list.sort()
-#
 %>
 
 <p/>
-
-
+<!-- create a form -->
 <form method="post" class="cmxform" action="create_inv_mapping_file_submit.psp" name="mapping_form" id="mapping_form">
-<h3>Create New Mapping File</h3>
-Mapping File Name: <input class="safename" type="text" id="mapping_file_name" name="mapping_file_name" /><br/>
-(A file extension will be added for you)
-<br/><br/><br/>
-<table>
-    <tr>
-        <td>
-            Select Fields<br/>
-            <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
-                <option value="javascript:">
-                <option value="javascript:select_all('metadata_fields');">All
-                <option value="javascript:select_none('metadata_fields');">None
-                <option value="Javascript:select_invert('metadata_fields');">Invert
-            </select>
-        </td>
-        <td>
-            Select Samples<br/>
-            <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
-                <option value="javascript:">
-                <option value="javascript:select_all('samples');">All
-                <option value="javascript:select_none('samples');">None
-                <option value="Javascript:select_invert('samples');">Invert
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <select multiple name="metadata_fields" id="metadata_fields" class="required">
+    <h3>Create New Mapping and OTU Table File</h3>
+    <!-- put the input fields into a table to organize the layout -->
+    <table>
+        <tr>
+        <td colspan="2" bgcolor="#A9D0F5">
+            Filename Prefix: <input class="safename" type="text" id="file_name_prefix" name="file_name_prefix" />
+            (A file extension will be added for you)
+        </td></tr>
+        <tr>
+            <td style="text-align:center;" bgcolor="#A9D0F5">
+                Select Fields:
+                <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
+                    <option value="javascript:">
+                    <option value="javascript:select_all('metadata_fields');">All
+                    <option value="javascript:select_none('metadata_fields');">None
+                    <option value="Javascript:select_invert('metadata_fields');">Invert
+                </select><br>
+                <select multiple name="metadata_fields" id="metadata_fields" class="required" style="width:250px;">
 <%
+# iterate through the fields and add them to the HTML select box
 for f in unique_field_list:
     field_name = f[0]
     if field_name in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'RUN_PREFIX','DESCRIPTION']:
@@ -92,29 +79,30 @@ for f in unique_field_list:
 
 # End for
 %>
-            </select>
-        </td>
-        <td>
-            <select multiple name="samples" id="samples" class="required">
+                </select>
+            </td>
+            <td style="text-align:center;" bgcolor="#A9D0F5">
+                Select Samples:
+                <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
+                    <option value="javascript:">
+                    <option value="javascript:select_all('samples');">All
+                    <option value="javascript:select_none('samples');">None
+                    <option value="Javascript:select_invert('samples');">Invert
+                </select><br>
+                <select multiple name="samples" id="samples" class="required" style="width:250px;">
 <%
-for s in unique_sample_list:
+# iterate through the samples and add them to the HTML select box
+for s in sample_list:
     req.write('<option value="%s_%s" selected onmouseover=\"return overlib(\'%s\')\" onmouseout=\'return nd();\'>%s</option>' % (s[0],s[1],s[2], s[0]))
 
 # End for
 %>
-            </select>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2">
-            <input type="submit" value="Generate Mapping File">
-            <!--<br/>
-            <h3>Preview of mapping file:</h3>
-            <table>
-            Write out sample table here...
-            </table>-->
-        </td>
-    </tr>
-</table>
-
+                </select>
+        </tr>
+        <tr border="0">
+            <td colspan="2" style="text-align:right;">
+                <input type="submit" value="Generate Mapping and OTU Table File">
+            </td>
+        </tr>
+    </table>
 </form>
