@@ -24,6 +24,10 @@ sess['mapping_file_dir'] = mapping_file_dir
 # Create new otu table file in filesystem
 otu_table_file_dir = os.path.join(sess['investigation_dir'], 'otu_table_files/')
 sess['otu_table_file_dir'] = otu_table_file_dir
+
+# Create new zip file in filesystem
+zip_file_dir = os.path.join(sess['investigation_dir'], 'zip_files/')
+sess['zip_file_dir'] = zip_file_dir
 sess.save()
 
 #See if the study folder exists and if not, creates it.

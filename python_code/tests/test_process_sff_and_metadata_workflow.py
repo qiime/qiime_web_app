@@ -250,10 +250,10 @@ split_libraries:disable_primers	False
 split_libraries:reverse_primers	disable
 
 # OTU picker parameters
-pick_otus:otu_picking_method	uclust
+pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:max_cdhit_memory	400
-pick_otus:refseqs_fp
+pick_otus:refseqs_fp    /home/wwwuser/software/greengenes_core_sets/gg_otus_9aug2010/inflated_sub_gg/uclust_otus_97/rep_set/gg_97_otus_9aug2010.fasta
 pick_otus:blast_db
 pick_otus:similarity	0.97
 pick_otus:max_e_value	1e-10
