@@ -22,8 +22,8 @@ sess = Session.Session(req)
 map_files=[]
 # Create the mapping file based on sample and field selections
 data_access = QiimeDataAccess()
-if sess.has_key('investigation_id'):
-    study_ids=data_access.getStudiesByInvestigation(sess['investigation_id'])
+if sess.has_key('meta_analysis_id'):
+    study_ids=data_access.getStudiesByMetaAnalysis(sess['meta_analysis_id'])
 else:
     study_ids = sess['study_id']
 
@@ -233,11 +233,11 @@ cmd_call='zip -jX %s %s' % (zip_fpath,otu_table_fpath)
 system(cmd_call)
 
 #add to database list
-valid=data_access.addInvestigationMapOTUFiles(True, sess['investigation_id'], \
+valid=data_access.addMetaAnalysisMapOTUFiles(True, sess['meta_analysis_id'], \
                                         merge_mapping_fpath,otu_table_fpath,
                                         zip_fpath)
                                         
-psp.redirect('fusebox.psp?page=select_investigation_task.psp')
+psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
 
 %>
 

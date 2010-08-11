@@ -35,11 +35,17 @@ from wrap_files_for_md5 import MD5Wrap
 from load_tab_file import input_set_generator, flowfile_inputset_generator, fasta_to_tab_delim
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
-from qiime_data_access import QiimeDataAccess
-import cx_Oracle
+
+try:
+    from qiime_data_access import QiimeDataAccess
+    import cx_Oracle
+    data_access = QiimeDataAccess()
+except ImportError:
+    print "NOT IMPORTING QIIMEDATAACCESS"
+    pass
+
 from cogent.util.misc import safe_md5
 
-data_access = QiimeDataAccess()
 
 ## Begin task-specific workflow functions
 def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir, 

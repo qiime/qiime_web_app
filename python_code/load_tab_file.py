@@ -13,13 +13,18 @@ __status__ = "Development"
 
 
 from cogent.util.misc import unzip
-from cx_Oracle import NUMBER, STRING, DATETIME, CLOB
 from numpy import average
 from cogent.parse.flowgram_parser import lazy_parse_sff_handle
 from datetime import datetime
 from hashlib import md5
 
-type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB}
+try:
+    from cx_Oracle import NUMBER, STRING, DATETIME, CLOB
+    type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB}
+except ImportError:
+    print "Cannot import cx_Oracle"
+    type_lookup_oracle = {}
+    pass
 def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
         type_lookup=type_lookup_oracle):
     """Unzips data and casts each field to the corresponding oracle type

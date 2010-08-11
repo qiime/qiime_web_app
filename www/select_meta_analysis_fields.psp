@@ -21,7 +21,7 @@ import os
 data_access = QiimeDataAccess()
 
 # get the study_id's associated with this study
-study_ids=data_access.getStudiesByInvestigation(sess['investigation_id'])
+study_ids=data_access.getStudiesByMetaAnalysis(sess['meta_analysis_id'])
 
 # iterate through the studies and get the title for each study along with the
 # fields and sample_id's associated
@@ -49,7 +49,7 @@ unique_field_list.sort()
 
 <p/>
 <!-- create a form -->
-<form method="post" class="cmxform" action="create_inv_mapping_file_submit.psp" name="mapping_form" id="mapping_form">
+<form method="post" class="cmxform" action="select_meta_analysis_fields_submit.psp" name="mapping_form" id="mapping_form">
     <h3>Create New Mapping and OTU Table File</h3>
     <!-- put the input fields into a table to organize the layout -->
     <table>

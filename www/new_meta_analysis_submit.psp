@@ -19,11 +19,11 @@ import os
 from qiime_data_access import QiimeDataAccess
 
 sess = Session.Session(req)
-sess['investigation_name'] = form['investigation_name']
+sess['meta_analysis_name'] = form['meta_analysis_name']
 sess['study_names']=form['study_names']
 study_dict={}
 
-if type(sess['study_names'])==type(sess['investigation_name']):
+if type(sess['study_names'])==type(sess['meta_analysis_name']):
     study_ids=sess['study_names'].split(':')
     study_dict[study_ids[0]]=':'.join(study_ids[1:])
 else:
@@ -31,39 +31,39 @@ else:
         study_ids=i.split(':')
         study_dict[study_ids[0]]=':'.join(study_ids[1:])
     
-investigation_name = sess['investigation_name']
+meta_analysis_name = sess['meta_analysis_name']
 
 # Add the new Investigation to the database
-investigation_id = QiimeDataAccess().createInvestigation(\
-                            sess['web_app_user_id'],sess['investigation_name'])
+meta_analysis_id = QiimeDataAccess().createMetaAnalysis(\
+                            sess['web_app_user_id'],sess['meta_analysis_name'])
 
 for i in study_dict:
-    valid= QiimeDataAccess().appendStudyInvestigation(investigation_id,i)
+    valid= QiimeDataAccess().appendMetaAnalysisStudy(meta_analysis_id,i)
 
 # Add the Investigation id to the session.
-sess['investigation_id'] = investigation_id
+sess['meta_analysis_id'] = meta_analysis_id
 
-investigation_dir = os.path.join(sess['user_dir'],'investigation_'+str(sess['investigation_id']))
-sess['investigation_dir'] = str(investigation_dir)
+meta_analysis_dir = os.path.join(sess['user_dir'],'meta_analysis_'+str(sess['meta_analysis_id']))
+sess['meta_analysis_dir'] = str(meta_analysis_dir)
 
 # Create new mapping file in filesystem
-mapping_file_dir = os.path.join(investigation_dir, 'mapping_files/') 
+mapping_file_dir = os.path.join(meta_analysis_dir, 'mapping_files/') 
 sess['mapping_file_dir'] = mapping_file_dir
 
 # Create new otu table file in filesystem
-otu_table_file_dir = os.path.join(investigation_dir, 'otu_table_files/')
+otu_table_file_dir = os.path.join(meta_analysis_dir, 'otu_table_files/')
 sess['otu_table_file_dir'] = otu_table_file_dir
 
 # Create new otu table file in filesystem
-zip_file_dir = os.path.join(investigation_dir, 'zip_files/')
+zip_file_dir = os.path.join(meta_analysis_dir, 'zip_files/')
 sess['zip_file_dir'] = zip_file_dir
 sess.save()
 
 
 #See if the Investigation folder exists and if not, creates it.
 try:
-    if not os.path.exists(investigation_dir):
-        os.mkdir(investigation_dir)
+    if not os.path.exists(meta_analysis_dir):
+        os.mkdir(meta_analysis_dir)
     if not os.path.exists(mapping_file_dir):
         os.mkdir(mapping_file_dir)
     if not os.path.exists(otu_table_file_dir):
@@ -75,7 +75,7 @@ except Exception, e:
     req.write(str(e))
     sys.exit()
 
-psp.redirect('fusebox.psp?page=select_investigation_task.psp')
+psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
 
 %>
 

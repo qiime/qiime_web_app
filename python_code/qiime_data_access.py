@@ -303,13 +303,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
 
     #
-    def appendStudyInvestigation(self,inv_id,study_id):
+    def appendMetaAnalysisStudy(self,meta_ana_id,study_id):
         """ Returns a list of study names
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
-            con.cursor().callproc('append_study_investigation', [inv_id, \
+            con.cursor().callproc('append_meta_analysis_to_study', [meta_ana_id, \
                                                                     study_id])
             return True
         except Exception, e:
@@ -317,13 +317,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
     
     #
-    def addInvestigationMapOTUFiles(self, start_job, investigation_id, \
+    def addMetaAnalysisMapOTUFiles(self, start_job, meta_analysis_id, \
                                     mapping_fpath, otu_fpath,zip_fpath):
         try:
             con = self.getDatabaseConnection()
             if start_job:
                 con.cursor().callproc('add_map_and_otu_file_paths', 
-                                                    [investigation_id,\
+                                                    [meta_analysis_id,\
                                                     mapping_fpath,otu_fpath,
                                                     zip_fpath])  
             return True
@@ -331,12 +331,12 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
-    def getInvestigationFilepaths(self, investigation_id):
+    def getMetaAnalysisFilepaths(self, meta_analysis_id):
         try:
             con = self.getDatabaseConnection()
             results=con.cursor()
-            con.cursor().callproc('get_investigation_filepaths', 
-                                                    [investigation_id,\
+            con.cursor().callproc('get_meta_analysis_filepaths', 
+                                                    [meta_analysis_id,\
                                                     results])
             fpaths=[]
             for row in results:
@@ -348,79 +348,59 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    def createInvestigation(self,web_app_user_id,inv_name):
+            
+    def createMetaAnalysis(self,web_app_user_id,meta_analysis_name):
         """ Returns a list of study names
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
             db_output=[]
-            inv_id=0
-            db_output=con.cursor().callproc('create_investigation', 
+            meta_analysis_id=0
+            db_output=con.cursor().callproc('create_meta_analysis', 
                                                     [web_app_user_id, \
-                                                     inv_name,inv_id])
+                                                     meta_analysis_name,\
+                                                     meta_analysis_id])
                                                                 
             return db_output[2]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
-    def getRunPrefixForSample(self,sample_name,study_id):
-        """ Returns a Run Prefix for Sample
+    def getStudiesByMetaAnalysis(self,meta_analysis_id):
+        """ Returns a list of study ids by meta-analysis id
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
-            db_output=[]
-            con.cursor().callproc('get_run_prefix_for_sample', 
-                                                    [sample_name,study_id,\
-                                                     results])
-                                                                
-            run_prefix = ''
-            for row in results:
-                if row[0] is None:
-                    continue
-                else:
-                    run_prefix=row[0]
-            return run_prefix
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    #
-    def getStudiesByInvestigation(self,investigation_id):
-        """ Returns a list of study ids by investigation id
-        """
-        try:
-            con = self.getDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_studies_by_investigation', [investigation_id,\
+            con.cursor().callproc('get_studies_by_meta_analysis', [meta_analysis_id,\
                                                                 results])
-            investigation_name_list = []
+            meta_analysis_name_list = []
             for row in results:
                 if row[0] is None:
                     continue
                 else:
-                    investigation_name_list.append(row)
-            return investigation_name_list
+                    meta_analysis_name_list.append(row)
+            return meta_analysis_name_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
-    def getInvestigationNames(self,web_app_user_id):
+    def getMetaAnalysisNames(self,web_app_user_id):
         """ Returns a list of study names
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
-            con.cursor().callproc('get_investigation_names', [web_app_user_id,\
+            con.cursor().callproc('get_meta_analysis_names', [web_app_user_id,\
                                                                 results])
-            investigation_name_list = []
+            meta_analysis_name_list = []
             for row in results:
                 if row[0] is None:
                     continue
                 else:
-                    investigation_name_list.append(row)
-            return investigation_name_list
+                    meta_analysis_name_list.append(row)
+            return meta_analysis_name_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

@@ -9,7 +9,7 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
 ''' 
-This page is used to create a new investigation in the database (i.e. the user 
+This page is used to create a new meta_analysis in the database (i.e. the user 
 wants to select studies and its associated data.
 '''
 %>
@@ -22,10 +22,10 @@ form if the fields are valid.
 */
 $.validator.setDefaults({
     submitHandler:function(){
-        //check the the user-defined investigation is not present in the database
-        valid=check_investigation_name()
+        //check the the user-defined meta_analysis is not present in the database
+        valid=check_meta_analysis_name()
         if (valid=='True'){
-            study=document.getElementById('new_investigation');
+            study=document.getElementById('new_meta_analysis');
             study.submit();
         }
     }
@@ -36,43 +36,43 @@ $.metadata.setType("attr","validate");
 
 //Set the validation for each form field
 $(document).ready(function(){
-    $("#new_investigation").validate();
+    $("#new_meta_analysis").validate();
  
 });
 
-//Create an array of investigation names retrieved from the database
-var investigationnames=new Array();
+//Create an array of meta_analysis names retrieved from the database
+var meta_analysis_names=new Array();
 
 <%
 from qiime_data_access import QiimeDataAccess
 qda = QiimeDataAccess()
 
 # get a list of studies from the database
-investigation_names = qda.getInvestigationNames(sess['web_app_user_id'])
+meta_analysis_names = qda.getMetaAnalysisNames(sess['web_app_user_id'])
 
 # iterate through the studies and write them into a javascript array
-for i in range(len(investigation_names)):
-    req.write('investigationnames['+str(i)+']="'+str(investigation_names[i][1])+'"\n');
+for i in range(len(meta_analysis_names)):
+    req.write('meta_analysis_names['+str(i)+']="'+str(meta_analysis_names[i][1])+'"\n');
 #
 %>
 
-//Check that the user-defined investigation name is not in the database
-function check_investigation_name()
+//Check that the user-defined meta_analysis name is not in the database
+function check_meta_analysis_name()
 {
-    investigation=document.getElementById('investigation_name').value;
-    var investigation1=investigation.toUpperCase();
+    meta_analysis=document.getElementById('meta_analysis_name').value;
+    var meta_analysis1=meta_analysis.toUpperCase();
     var valid='True'
-    for (var i=0;i<investigationnames.length;i++)
+    for (var i=0;i<meta_analysis_names.length;i++)
     {
-        var investigationnames1=investigationnames[i].toUpperCase();
-        if (investigation1==investigationnames1){
+        var meta_analysis_names1=meta_analysis_names[i].toUpperCase();
+        if (meta_analysis1==meta_analysis_names1){
             valid='False'
         }
     }
-    //If the investigation name is already taken, alert the user
+    //If the meta_analysis name is already taken, alert the user
     if(valid=='False')
     {
-        alert("The selected investigation name has already been taken. Please enter a different name.");
+        alert("The selected meta_analysis name has already been taken. Please enter a different name.");
     }
     return valid
 }
@@ -81,15 +81,15 @@ function check_investigation_name()
 
 <!-- Define the form-->
 <br>
-<form id="new_investigation" action="new_investigation_submit.psp" method="post">
+<form id="new_meta_analysis" action="new_meta_analysis_submit.psp" method="post">
     <!-- put the form fields in a table to add structure to the layout-->
     <table>
         <tr>
             <td>
-                Investigation Name:
+                Meta-Analysis Name:
             </td>
             <td>
-                <input class="safename" type="text" name="investigation_name" id="investigation_name" />
+                <input class="safename" type="text" name="meta_analysis_name" id="meta_analysis_name" />
             </td>
         </tr>
         <tr>

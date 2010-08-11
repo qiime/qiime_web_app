@@ -35,24 +35,24 @@ for study_name in study_names:
             </form>
             </li>
         </ul>
-        <b>Investigation Options:</b>
+        <b>Perform Meta-Analysis:</b>
         <ul>
             <li>
-                <form id="create_new_investigation" action="fusebox.psp" method="post">
-                    <input type="hidden" name="page" id="page" value="./new_investigation.psp">
-                    <a href="" onclick="document.forms['create_new_investigation'].submit(); return false;">
-                    Create a New Investigation</a>
+                <form id="create_new_meta_analysis" action="fusebox.psp" method="post">
+                    <input type="hidden" name="page" id="page" value="./new_meta_analysis.psp">
+                    <a href="" onclick="document.forms['create_new_meta_analysis'].submit(); return false;">
+                    Create a New Meta-Analysis</a>
                 </form>
             </li>
         <li>
-            <form id="user_investigation" action="select_user_investigation_submit.psp" method="post">
-                Select an Existing Investigation:
-                <select validate="required:true" name="investigation_names" id="investigation_names" onchange="user_investigation.submit();">
+            <form id="user_meta_analysis" action="select_meta_analysis_submit.psp" method="post">
+                Select Previous Meta-Analyses:
+                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="user_meta_analysis.submit();">
                 <option value=""></option>
 <%
-investigation_names = QiimeDataAccess().getInvestigationNames(sess['web_app_user_id'])
-for investigation_name in investigation_names:
-    req.write('<option value="' + str(investigation_name[0]) + ':' + investigation_name[1] + '">' + investigation_name[1] + '</option>\n')
+meta_analysis_names = QiimeDataAccess().getMetaAnalysisNames(sess['web_app_user_id'])
+for meta_analysis_name in meta_analysis_names:
+    req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
 # end
 %>
                 </select>

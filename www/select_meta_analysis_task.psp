@@ -31,20 +31,20 @@ data_access = QiimeDataAccess()
 </script>
 
 <%
-# get the investigation ID from the session
-investigation_id=sess['investigation_id']
+# get the meta_analysis ID from the session
+meta_analysis_id=sess['meta_analysis_id']
 
 # retrieve the paths to the mapping and OTU tables already created
-mapping_otu_files = data_access.getInvestigationFilepaths(investigation_id)
+mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
 %>
 
 <div id="simplediv" style="background-color:#CCCCCC;border:1px solid black;display:none;width:600px;height:500px;position:absolute;top:50;left:50;">
 </div>
 <p>
-<h3>Selected Investigation: <%=sess['investigation_name']%></h3>
+<h3>Selected Meta-Analysis: <%=sess['meta_analysis_name']%></h3>
 <%
 # print a llst of the mapping and otu files already generated for this 
-# investigation
+# meta_analysis
 if mapping_otu_files:
     # write the file paths into an HTML table
     req.write('<table>')
@@ -60,7 +60,7 @@ if mapping_otu_files:
 <h4>Tasks:</h4>
         <ul><li>
             <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="create_inv_mapping_file.psp">
+                <input type="hidden" name="page" id="page" value="select_meta_analysis_fields.psp">
                 <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
                 Generate metadata mapping and OTU table file</a>
             </form>
