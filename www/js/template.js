@@ -97,6 +97,8 @@ function validateTextLength(sender, column_name, max_length)
         alert ("Your browser does not support XML HTTP Request");
         return;
     }
+    
+    alert("Sender is: " + sender.value);
 
     // Is the term too long?
     if (sender.value.length > max_length)

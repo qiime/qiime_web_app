@@ -85,13 +85,13 @@ class QiimeDataAccess( AbstractDataAccess ):
         return self._ontologyDatabaseConnection
     
     def getSFFDatabaseConnection(self):
-        """ Obtains a connection to the qiime_test schema
+        """ Obtains a connection to the qiime_metadata schema
 
         Get a database connection. 
         """
         if self._SFFDatabaseConnection == None:
             try:
-                print 'No active connection - obtaining new connection to qiime_test.'
+                print 'No active connection - obtaining new connection to qiime_metadata.'
                 self._SFFDatabaseConnection = cx_Oracle.Connection('SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
@@ -822,7 +822,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         key_table = ''
         
         # Other required values
-        schema_owner = 'QIIME_TEST'
+        schema_owner = 'QIIME_METADATA'
         statement = ''
         
         # Figure out which table we're talking about
