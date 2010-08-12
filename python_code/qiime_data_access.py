@@ -839,10 +839,12 @@ class QiimeDataAccess( AbstractDataAccess ):
             # Error state
             raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
             
+        extra_table = extra_table.upper()
+        
         # Does table exist already?
         log.append('Checking if table %s exists...' % extra_table)
         named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
-        statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
+        statement = 'select * from all_tables where upper(owner) = :schema_owner and upper(table_name) = :extra_table'
         log.append(statement)
         results = con.cursor().execute(statement, named_params).fetchone()
         
@@ -862,11 +864,13 @@ class QiimeDataAccess( AbstractDataAccess ):
                 log.append(statement)
                 results = con.cursor().execute(statement)
                 con.cursor().execute('commit')
-                            
+                
+        field_name = field_name.upper()
+                
         # Check if the column exists
         log.append('Checking if extra column exists: %s' % field_name)
         named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
-        statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
+        statement = 'select * from all_tab_columns where upper(owner) = :schema_owner and upper(table_name) = :extra_table_name and upper(column_name) = :column_name'
         log.append(statement)
         results = con.cursor().execute(statement, named_params).fetchone()
         
