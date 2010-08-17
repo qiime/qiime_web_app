@@ -60,8 +60,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         if self._webAppUserDatabaseConnection == None:
             try:
-                #self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@microbiome1.colorado.edu:1523/microbe')
-                self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
+                self._webAppUserDatabaseConnection = cx_Oracle.Connection('web_app_user/WW3bApp...@microbiome1.colorado.edu:1523/microbe')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
                 return False;
@@ -85,13 +84,13 @@ class QiimeDataAccess( AbstractDataAccess ):
         return self._ontologyDatabaseConnection
     
     def getSFFDatabaseConnection(self):
-        """ Obtains a connection to the qiime_metadata schema
+        """ Obtains a connection to the qiime_test schema
 
         Get a database connection. 
         """
         if self._SFFDatabaseConnection == None:
             try:
-                print 'No active connection - obtaining new connection to qiime_metadata.'
+                print 'No active connection - obtaining new connection to qiime_test.'
                 self._SFFDatabaseConnection = cx_Oracle.Connection('SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
@@ -303,13 +302,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
 
     #
-    def appendMetaAnalysisStudy(self,meta_ana_id,study_id):
+    def appendStudyInvestigation(self,inv_id,study_id):
         """ Returns a list of study names
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
-            con.cursor().callproc('append_meta_analysis_to_study', [meta_ana_id, \
+            con.cursor().callproc('append_study_investigation', [inv_id, \
                                                                     study_id])
             return True
         except Exception, e:
@@ -317,13 +316,13 @@ class QiimeDataAccess( AbstractDataAccess ):
             return False
     
     #
-    def addMetaAnalysisMapOTUFiles(self, start_job, meta_analysis_id, \
+    def addInvestigationMapOTUFiles(self, start_job, investigation_id, \
                                     mapping_fpath, otu_fpath,zip_fpath):
         try:
             con = self.getDatabaseConnection()
             if start_job:
                 con.cursor().callproc('add_map_and_otu_file_paths', 
-                                                    [meta_analysis_id,\
+                                                    [investigation_id,\
                                                     mapping_fpath,otu_fpath,
                                                     zip_fpath])  
             return True
@@ -331,12 +330,12 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
-    def getMetaAnalysisFilepaths(self, meta_analysis_id):
+    def getInvestigationFilepaths(self, investigation_id):
         try:
             con = self.getDatabaseConnection()
             results=con.cursor()
-            con.cursor().callproc('get_meta_analysis_filepaths', 
-                                                    [meta_analysis_id,\
+            con.cursor().callproc('get_investigation_filepaths', 
+                                                    [investigation_id,\
                                                     results])
             fpaths=[]
             for row in results:
@@ -348,59 +347,79 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
-    def createMetaAnalysis(self,web_app_user_id,meta_analysis_name):
+    def createInvestigation(self,web_app_user_id,inv_name):
         """ Returns a list of study names
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
             db_output=[]
-            meta_analysis_id=0
-            db_output=con.cursor().callproc('create_meta_analysis', 
+            inv_id=0
+            db_output=con.cursor().callproc('create_investigation', 
                                                     [web_app_user_id, \
-                                                     meta_analysis_name,\
-                                                     meta_analysis_id])
+                                                     inv_name,inv_id])
                                                                 
             return db_output[2]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
-    def getStudiesByMetaAnalysis(self,meta_analysis_id):
-        """ Returns a list of study ids by meta-analysis id
+    def getRunPrefixForSample(self,sample_name,study_id):
+        """ Returns a Run Prefix for Sample
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
-            con.cursor().callproc('get_studies_by_meta_analysis', [meta_analysis_id,\
-                                                                results])
-            meta_analysis_name_list = []
+            db_output=[]
+            con.cursor().callproc('get_run_prefix_for_sample', 
+                                                    [sample_name,study_id,\
+                                                     results])
+                                                                
+            run_prefix = ''
             for row in results:
                 if row[0] is None:
                     continue
                 else:
-                    meta_analysis_name_list.append(row)
-            return meta_analysis_name_list
+                    run_prefix=row[0]
+            return run_prefix
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
-    def getMetaAnalysisNames(self,web_app_user_id):
+    def getStudiesByInvestigation(self,investigation_id):
+        """ Returns a list of study ids by investigation id
+        """
+        try:
+            con = self.getDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_studies_by_investigation', [investigation_id,\
+                                                                results])
+            investigation_name_list = []
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    investigation_name_list.append(row)
+            return investigation_name_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    #
+    def getInvestigationNames(self,web_app_user_id):
         """ Returns a list of study names
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
-            con.cursor().callproc('get_meta_analysis_names', [web_app_user_id,\
+            con.cursor().callproc('get_investigation_names', [web_app_user_id,\
                                                                 results])
-            meta_analysis_name_list = []
+            investigation_name_list = []
             for row in results:
                 if row[0] is None:
                     continue
                 else:
-                    meta_analysis_name_list.append(row)
-            return meta_analysis_name_list
+                    investigation_name_list.append(row)
+            return investigation_name_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -822,7 +841,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         key_table = ''
         
         # Other required values
-        schema_owner = 'QIIME_METADATA'
+        schema_owner = 'QIIME_TEST'
         statement = ''
         
         # Figure out which table we're talking about
@@ -839,12 +858,10 @@ class QiimeDataAccess( AbstractDataAccess ):
             # Error state
             raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
             
-        extra_table = extra_table.upper()
-        
         # Does table exist already?
         log.append('Checking if table %s exists...' % extra_table)
         named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
-        statement = 'select * from all_tables where upper(owner) = :schema_owner and upper(table_name) = :extra_table'
+        statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
         log.append(statement)
         results = con.cursor().execute(statement, named_params).fetchone()
         
@@ -864,13 +881,11 @@ class QiimeDataAccess( AbstractDataAccess ):
                 log.append(statement)
                 results = con.cursor().execute(statement)
                 con.cursor().execute('commit')
-                
-        field_name = field_name.upper()
-                
+                            
         # Check if the column exists
         log.append('Checking if extra column exists: %s' % field_name)
         named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
-        statement = 'select * from all_tab_columns where upper(owner) = :schema_owner and upper(table_name) = :extra_table_name and upper(column_name) = :column_name'
+        statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
         log.append(statement)
         results = con.cursor().execute(statement, named_params).fetchone()
         
@@ -1401,14 +1416,14 @@ class QiimeDataAccess( AbstractDataAccess ):
                                          log_str, hist_str, md5_input_file,\
                                          split_lib_run_id,error_flag])
                 if db_output[8]==0:
-                    return True
+                    return True,db_output[7]
                 else:
-                    return False
+                    return False,db_output[7]
             else:
-                return True
+                return True,0
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
+            return False,0
         
     def loadOTUInfo(self, start_job, otu_run_set_id, analysis_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
@@ -1598,15 +1613,15 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
-    def createAnalysis(self):
+    def createAnalysis(self, study_id):
         """ creates a row in the ANALYSIS table 
         """
         try:
             con = self.getSFFDatabaseConnection()
             analysis_id=0
             db_output=con.cursor().callproc('create_analysis',
-                                            [analysis_id])
-            return db_output[0]
+                                            [study_id,analysis_id])
+            return db_output[1]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
@@ -1711,7 +1726,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+
     def getOTUMap(self,sample_name,study_id,otu_threshold,otu_method,\
                   source_name,ref_threshold):
         """ Gets a list otus for a samples
@@ -1732,4 +1747,85 @@ class QiimeDataAccess( AbstractDataAccess ):
             return items
         except Exception, e:
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    #
+    #
+    def getOTUMap2(self,sample_name_study_id):
+        """ Gets a list otus for a samples
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            prokmsa_ids = []
+            sample_ids=[]
+            db_output=con.cursor().callproc('get_otu_map_package.array_return', [sample_name_study_id,\
+                                                  prokmsa_ids])
+            return prokmsa_ids
+        except Exception, e:
+            return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+
+    def checkIfStudyIdExists(self, study_id):
+        """ starts process of importing otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            study_id_cnt=0
+            db_output=con.cursor().callproc('check_if_study_id_exists',
+                                            [study_id,study_id_cnt])
+            if db_output[1]==0:
+                return False
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+    #
+    def getSampleRunPrefixList(self, study_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_sample_run_prefix_list', [study_id, results])
+            sample_list = []
+            for row in results:
+                sample_list.append(row)
+            return sample_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    #
+    def getSeqRunIdFromRunPrefix(self, run_prefix,study_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_seq_run_id_from_run_prefix', [run_prefix,\
+                                                                     study_id,\
+                                                                     results])
+            seq_run_id = []
+            for row in results:
+                seq_run_id.append(row[0])
+            return seq_run_id
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    #
+    def getRunPrefixFromSeqRunId(self,study_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_sff_basename_from_run_id', [study_id,\
+                                                                     results])
+            run_prefix = []
+            for row in results:
+                run_prefix.append(row[0])
+            return run_prefix
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

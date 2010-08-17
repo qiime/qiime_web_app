@@ -251,13 +251,16 @@ def web_app_call_commands_serially(commands,
                 raise WorkflowError, msg
     logger.close()
     
-def submit_processed_data_to_db(fasta_files):
+def submit_processed_data_to_db(fasta_files,metadata_study_id):
     '''
        This function takes the fasta filenames and using that path, determines
        the location of the split-library and picked-otu files.  Once file
        locations have been determined, it moves the files to the DB machine
        and load the files into the DB.
     '''
+    study_id_exists=data_access.checkIfStudyIdExists(metadata_study_id)
+    print "Study ID exists: " + str(study_id_exists)
+    
     alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
     alphabet += alphabet.lower()
     alphabet += "01234567890"
@@ -278,6 +281,13 @@ def submit_processed_data_to_db(fasta_files):
         input_basename, input_ext = splitext(fasta_fname)
         input_dir = split(input_basename)[:-1][0]
         
+        
+        if re.search('0\d$', input_fname).group()==None:
+            sff_basename=input_fname
+        else:
+            sff_basename=input_fname[:-2]
+        
+
         analysis_notes=split(input_basename)[0]
         
         #using the fasta basename, define qual and flow files
@@ -295,7 +305,7 @@ def submit_processed_data_to_db(fasta_files):
         sff_md5 = safe_md5(open(sff_file)).hexdigest()
 
         if analysis_id==0:
-            analysis_id=data_access.createAnalysis()
+            analysis_id=data_access.createAnalysis(metadata_study_id)
         
         sff_exists=data_access.checkIfSFFExists(sff_md5)
         print str(sff_exists)
@@ -315,7 +325,7 @@ def submit_processed_data_to_db(fasta_files):
             if seq_run_id==0:
                 seq_run_id=data_access.createSequencingRun(True,instrument_code,
                                             sff_header['Version'],seq_run_id)
-                valid=data_access.addSFFFile(True,input_fname,
+                valid=data_access.addSFFFile(True,sff_basename,
                                              sff_header['# of Reads'],
                                              sff_header['Header Length'],
                                              sff_header['Key Length'],
@@ -325,7 +335,7 @@ def submit_processed_data_to_db(fasta_files):
                                              sff_header['Key Sequence'],
                                              sff_md5,seq_run_id)
             else:
-                valid=data_access.addSFFFile(True,input_fname,
+                valid=data_access.addSFFFile(True,sff_basename,
                                              sff_header['# of Reads'],
                                              sff_header['Header Length'],
                                              sff_header['Key Length'],
@@ -368,7 +378,8 @@ def submit_processed_data_to_db(fasta_files):
     #Qiime used for the analysis
     svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
     qiime_revision=get_qiime_svn_version()
-    run_date=datetime.now().strftime("%m/%d/%Y/%H/%M/%S")
+    run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
+    print run_date
     full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
     full_log_str = open(full_log_fp, 'U').read()
     log_str = open(full_log_fp, 'U').readlines()
@@ -381,7 +392,8 @@ def submit_processed_data_to_db(fasta_files):
             pick_otus_cmd=substr
     
     #Insert the split-library log information in the DB
-    valid=data_access.loadSplitLibInfo(True,analysis_id,run_date, split_lib_cmd,\
+    valid,split_library_run_id=data_access.loadSplitLibInfo(True,analysis_id,\
+                                     run_date, split_lib_cmd,\
                                      svn_version, split_log_str, \
                                      split_hist_str, split_lib_input_md5sum)
     
@@ -389,9 +401,10 @@ def submit_processed_data_to_db(fasta_files):
         raise ValueError,'Error: Unable to load split-library info to database server!'
     
     print "Finished loading the split-library log information!"
+    '''
     split_lib_fname='%s.fna' % ('sl_seqs'+ tmp_filename)
     print split_lib_fname
-    '''
+    
     #move the resulting seqs.fna file from split-libraries to the DB server
     try:
         cmd_call=scp_file_transfer(23,split_lib_seqs,'wwwuser',\
@@ -421,12 +434,14 @@ def submit_processed_data_to_db(fasta_files):
     9: sequence string (text)
     '''
 
-    types = ['i', 's', 's', 's', 's', 's', 'i', 'i', 's', 's']
+    types = ['i','i', 's', 's', 's', 's', 's', 'i', 'i', 's', 's']
     con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     open_fasta = open(split_lib_seqs)
-
-    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id), cur, types):
+    iterator=0
+    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,1000):
+        print 'running %i' % (iterator)
+        iterator=iterator+1
         valid = data_access.loadFNAFile(True, res)
         if not valid:
             raise ValueError, 'Error: Unable to load FNA file into database!'
@@ -507,10 +522,10 @@ def submit_processed_data_to_db(fasta_files):
     otu_to_seqid = fields_to_dict(open(pick_otus_map, 'U'))
     for otu in otu_to_seqid:
         for sample in otu_to_seqid[otu]:
-            otu_map.append('%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
-                                                reference_set_name))
+            otu_map.append('%s\t%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
+                                                reference_set_name,split_library_run_id))
     
-    types=['i','s','i','s']
+    types=['i','s','i','s','i']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     set_count = 1
@@ -528,8 +543,8 @@ def submit_processed_data_to_db(fasta_files):
     lines=open(pick_otus_failures,'U')
     otu_failures=[]
     for line in lines:
-        otu_failures.append('%s\t%s'% (line.strip('\n'),str(otu_picking_run_id)))
-    types=['s','i']
+        otu_failures.append('%s\t%s\t%s'% (line.strip('\n'),str(otu_picking_run_id),split_library_run_id))
+    types=['s','i','i']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     set_count = 1

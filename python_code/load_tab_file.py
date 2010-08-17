@@ -72,7 +72,7 @@ def input_set_generator(data, cursor, types, buffer_size=10000,
         res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types, type_lookup)
         yield res
 
-def fasta_to_tab_delim(data, seq_run_id):
+def fasta_to_tab_delim(data, seq_run_id,split_library_run_id):
     """Yields FASTA files in tab delim format
 
     Will strip off comments. For instance, the following file
@@ -104,6 +104,7 @@ def fasta_to_tab_delim(data, seq_run_id):
             new_bc = items[3].split('=')[1]
             bc_diffs = items[4].split('=')[1]
 
+            to_yield.append(str(split_library_run_id))
             to_yield.append(str(seq_run_id))
             to_yield.append(sample_id)
 

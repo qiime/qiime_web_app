@@ -132,7 +132,7 @@ class WorkflowTests(TestCase):
         input_fname = splitext(split(self.sff_fp)[-1])[0]
         db_input_fp = join(self.wf_out,input_fname)
 
-        analysis_id=submit_processed_data_to_db(db_input_fp+'.fna')
+        analysis_id=submit_processed_data_to_db(db_input_fp+'.fna',0)
         print 'Analysis ID is: %s' % str(analysis_id)
         print 'Testing the FLOW_DATA loading!'
         exp_sff_md5='314f4000857668d45a413d2e94a755fc'

@@ -38,6 +38,7 @@ script_info['script_usage'] = [("Example:","This is an example of a basic use ca
 script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
 script_info['required_options'] = [\
     make_option('-i','--processed_fasta_fnames',help='This is the processed fasta filepath(s) from process_sff.py'),\
+    make_option('-s','--study_id',help='This is the study id assigned from loading the metadata')\
 ]
 script_info['optional_options'] = [\
 ]
@@ -48,8 +49,9 @@ def main():
        parse_command_line_parameters(**script_info)
     
     fasta_files=opts.processed_fasta_fnames
+    study_id=opts.study_id
 
-    analysis_id=submit_processed_data_to_db(fasta_files=fasta_files)
+    analysis_id=submit_processed_data_to_db(fasta_files=fasta_files,metadata_study_id=study_id)
 
 if __name__ == "__main__":
     main()
