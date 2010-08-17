@@ -7,25 +7,24 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
-%>
 
-<%
 from qiime_data_access import *
-from io import FileIO
 from os import system
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_map
+from load_tab_file import input_set_generator
 sess = Session.Session(req)
-%>
 
-<%
 map_files=[]
 # Create the mapping file based on sample and field selections
 data_access = QiimeDataAccess()
+'''
 if sess.has_key('meta_analysis_id'):
     study_ids=data_access.getStudiesByMetaAnalysis(sess['meta_analysis_id'])
 else:
     study_ids = sess['study_id']
+'''    
+    
 
 otu_table_file_dir=sess['otu_table_file_dir']
 mapping_file_dir=sess['mapping_file_dir']
@@ -36,14 +35,27 @@ form_metadata_fields = form['metadata_fields']
 form_sample_fields = form['samples']
 
 samples_array=[]
+otu_samples_array=[]
+seq_run_to_run_prefix=[]
+seq_run_ids=[]
 if type(form['samples'])==type(form['file_name_prefix']):
     sample=form['samples'].split('_')
-    samples_array.append(list(('_'.join(sample[:-1]),sample[-1])))
+    seq_run_ids.append(sample[-2])
+    samples_array.append(list(('_'.join(sample[:-2]),sample[-2],sample[-1])))
+    otu_samples_array.append('%s\t%s\t%s\t%s\t%s\t%s' % ('_'.join(sample[:-2]),sample[-2],97,'UCLUST_REF',\
+                                'GREENGENES_REFERENCE',97))
 else:
     for s in form['samples']:
         sample=s.split('_')
-        samples_array.append(list(('_'.join(sample[:-1]),sample[-1])))
+        seq_run_ids.append(sample[-2])
+        samples_array.append(list(('_'.join(sample[:-2]),sample[-2],sample[-1])))
 
+seq_runs=list(set(seq_run_ids)) 
+run_prefixes={}
+for run_id in seq_runs:
+    prefix=data_access.getRunPrefixFromSeqRunId(run_id)[0]
+    run_prefixes[run_id]=prefix
+    
 '''
 for sample in form_sample_fields:
     req.write(sample+'<br>')
@@ -52,9 +64,10 @@ for sample in form_sample_fields:
 '''
 field_list=[]
 sample_list=[]
+study_ids=list(set(zip(*samples_array)[2]))
+
 for i in study_ids:
-    study_id=str(i[0])
-    
+    study_id=str(i)
     recorded_fields = data_access.getMetadataFields(study_id)
     database_map = {}
     tables = []
@@ -68,6 +81,7 @@ for i in study_ids:
     # Break out the recorded fields and store as dict: field name and table name
     # field[0] = field_name, field[1] = table_name
     for field in recorded_fields:
+        
         if field[0] in form_metadata_fields:
             # Required fields which much show up first. Skip as they are already in the statement
             if field[0] in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE']:
@@ -84,7 +98,6 @@ for i in study_ids:
             database_map[field[0]] = field[1]
 
     # End for
-
     statement = statement[0:len(statement) - 3]
     statement = '\
     select \n' + statement + ' \n\
@@ -96,7 +109,6 @@ for i in study_ids:
         statement += '\
     inner join "EXTRA_STUDY_' + study_id + '" \n\
     on "STUDY".study_id = "EXTRA_STUDY_' + study_id + '".study_id \n '
-    
     # End if
 
     statement += ' \n\
@@ -109,7 +121,6 @@ for i in study_ids:
         statement += '\
     inner join "EXTRA_SAMPLE_' + study_id + '" \n\
     on "SAMPLE".sample_id = "EXTRA_SAMPLE_' + study_id + '".sample_id \n '
-    
     # End if
     statement += ' \
     inner join "SEQUENCE_PREP" \n\
@@ -132,7 +143,7 @@ for i in study_ids:
     statement += '\
     left join "HOST_SAMPLE" \n\
     on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
-    
+
     # Deal with the rest of the tables. They should all be assocaiated by sample id.
     for table in tables:
         if 'HOST' in table or 'HUMAN' in table:
@@ -149,15 +160,16 @@ for i in study_ids:
     # Finally, write the where clause
     statement += 'where "STUDY".study_id = ' + study_id + ' and ('
     sample_statements=[]
-    for s in samples_array:
-        if study_id==s[1]:
-            sample_statements.append('"SAMPLE".sample_name = \'%s\'' % (str(s[0])))
-    
-    statement +=' or '.join(sample_statements)+')'  
+    for sample_name,seqrun_id,sample_study_id in samples_array:
+        if study_id==sample_study_id:
+            sample_statements.append('("SAMPLE".sample_name = \'%s\' and "SEQUENCE_PREP".run_prefix=\'%s\')' % (str(sample_name),run_prefixes[seqrun_id]))
+
+    statement +=' or '.join(sample_statements)+')'
 
     # Run the statement
     con = data_access.getDatabaseConnection()
     cur = con.cursor()
+    #req.write(str(statement)+'<br><br>')
     results = cur.execute(statement)
 
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
@@ -176,6 +188,8 @@ for i in study_ids:
             to_write+='BarcodeSequence\t'
         elif column[0]=='DESCRIPTION':
             to_write+='Description\t'
+        elif column[0]=='LINKERPRIMERSEQUENCE':
+            to_write+='LinkerPrimerSequence\t'
         else:
             to_write += column[0] + '\t'
     mapping_file.write(to_write[0:len(to_write)-1] + '\n')
@@ -204,12 +218,31 @@ merge_mapping_fpath=os.path.join(mapping_file_dir, file_name_prefix + \
 write_mapping_file(mapping_data,merge_mapping_fpath)
 
 
-
 otu_map_dict={}
 iterator=0
+
+
+'''
+# Finally, write the where clause
+statement += 'where "STUDY".study_id = ' + study_id + ' and ('
+sample_statements=[]
+for sample_name,seqrun_id,sample_study_id in samples_array:
+    if study_id==sample_study_id:
+        sample_statements.append('("SAMPLE".sample_name = \'%s\' and "SEQUENCE_PREP".run_prefix=\'%s\')' % (str(sample_name),run_prefixes[seqrun_id]))
+
+statement +=' or '.join(sample_statements)+')'
+
+# Run the statement
+con = data_access.getSFFDatabaseConnection()
+cur = con.cursor()
+#req.write(str(statement)+'<br><br>')
+results = cur.execute(statement)
+'''
 for t in samples_array:
-    otus=data_access.getOTUMap(t[0],int(t[1]),97,'UCLUST_REF',\
+    # run_prefixes[t[1]]
+    otus=data_access.getOTUMap(t[0],int(t[2]),97,'UCLUST_REF',\
                                 'GREENGENES_REFERENCE',97)
+
     for o in otus:   
         if otu_map_dict.has_key(str(o[0])):
             otu_map_dict[str(o[0])].append(o[1])
@@ -220,6 +253,7 @@ for t in samples_array:
 
 otu_table_fpath=os.path.join(otu_table_file_dir, file_name_prefix + 
                                 '_otu_table.txt')
+                                
 outfile = open(otu_table_fpath, 'w')
 otu_to_taxonomy=None
 outfile.write(make_otu_map(otu_map_dict, otu_to_taxonomy))
