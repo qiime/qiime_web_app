@@ -15,29 +15,33 @@ from qiime.make_otu_table import make_otu_map
 from load_tab_file import input_set_generator
 sess = Session.Session(req)
 
+
 map_files=[]
 # Create the mapping file based on sample and field selections
 data_access = QiimeDataAccess()
-'''
-if sess.has_key('meta_analysis_id'):
-    study_ids=data_access.getStudiesByMetaAnalysis(sess['meta_analysis_id'])
-else:
-    study_ids = sess['study_id']
-'''    
-    
 
+# get the directory location for the files to write
 otu_table_file_dir=sess['otu_table_file_dir']
 mapping_file_dir=sess['mapping_file_dir']
 zip_file_dir=sess['zip_file_dir']
 
+
+# get the form fields from the previous page
 file_name_prefix=form['file_name_prefix']
-form_metadata_fields = form['metadata_fields']
 form_sample_fields = form['samples']
 
+if form.has_key('metadata_fields'):
+    form_metadata_fields = form['metadata_fields']
+else:
+    form_metadata_fields=[]
+
+# get the selected list of samples
 samples_array=[]
 otu_samples_array=[]
 seq_run_to_run_prefix=[]
 seq_run_ids=[]
+
+# sample name passed contains the sample_name, sequencing_run_id and study_id
 if type(form['samples'])==type(form['file_name_prefix']):
     sample=form['samples'].split('_')
     seq_run_ids.append(sample[-2])
@@ -50,20 +54,18 @@ else:
         seq_run_ids.append(sample[-2])
         samples_array.append(list(('_'.join(sample[:-2]),sample[-2],sample[-1])))
 
+# iterate through the unique list of sequence_run_ids and get the corresponding
+# run_prefix and/or sff_basename and insert that into a dictionary
 seq_runs=list(set(seq_run_ids)) 
 run_prefixes={}
 for run_id in seq_runs:
     prefix=data_access.getRunPrefixFromSeqRunId(run_id)[0]
     run_prefixes[run_id]=prefix
     
-'''
-for sample in form_sample_fields:
-    req.write(sample+'<br>')
     
-#raise ValueError
-'''
 field_list=[]
 sample_list=[]
+# get a list of studies using the selected samples
 study_ids=list(set(zip(*samples_array)[2]))
 
 for i in study_ids:
@@ -77,6 +79,7 @@ for i in study_ids:
     statement += '"SEQUENCE_PREP".barcode, \n'
     statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
     statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
+    statement += '"SEQUENCE_PREP".run_prefix as RUN_PREFIX, \n'
 
     # Break out the recorded fields and store as dict: field name and table name
     # field[0] = field_name, field[1] = table_name
@@ -211,38 +214,66 @@ for i in study_ids:
 mapping_files = [open(fp,'U') for fp in map_files]
 no_data_value = 'no_data'
 
+# we created a mapping file for each study, now we combine all the mapping files
 mapping_data = merge_mapping_files(mapping_files,no_data_value=no_data_value)
-
 merge_mapping_fpath=os.path.join(mapping_file_dir, file_name_prefix + \
                                     '_mapping.txt')
+                     
+# write the merged mapping file
 write_mapping_file(mapping_data,merge_mapping_fpath)
 
 
+# Create the otu table
 otu_map_dict={}
 iterator=0
 
-
-'''
+"""
 # Finally, write the where clause
-statement += 'where "STUDY".study_id = ' + study_id + ' and ('
-sample_statements=[]
-for sample_name,seqrun_id,sample_study_id in samples_array:
-    if study_id==sample_study_id:
-        sample_statements.append('("SAMPLE".sample_name = \'%s\' and "SEQUENCE_PREP".run_prefix=\'%s\')' % (str(sample_name),run_prefixes[seqrun_id]))
+otu_statement = '''select gg.prokmsa_id, slrm.sequence_name
+    from split_library_read_map slrm
+    inner join ANALYSIS an on slrm.seq_run_id=an.seq_run_id and slrm.split_library_run_id=an.split_library_run_id   
+    inner join OTU_MAP m on slrm.ssu_sequence_id=m.ssu_sequence_id and an.otu_run_set_id=m.otu_run_set_id
+    inner join OTU o on m.otu_id=o.otu_id
+    inner join OTU_PICKING_RUN p on an.otu_run_set_id=p.otu_run_set_id
+    inner join OTU_PICKING_METHOD b on p.otu_picking_method_id=b.otu_picking_method_id
+    inner join SEQUENCE_SOURCE ss on b.otu_picking_ref_set_name=ss.source_name and b.otu_picking_method_threshold=ss.threshold
+    inner join SOURCE_MAP sm on ss.sequence_source_id=sm.sequence_source_id 
+    inner join GREENGENES_REFERENCE gg on o.ssu_sequence_id=gg.ssu_sequence_id and sm.reference_id=gg.prokmsa_id
+    where b.otu_picking_method_name=\'%s\'
+          and p.threshold=%d
+          and ss.threshold=%d
+          and ss.source_name=\'%s\' and (''' % ('UCLUST_REF',97,97,'GREENGENES_REFERENCE')
 
-statement +=' or '.join(sample_statements)+')'
+sample_otu_statements=[]
+for i in study_ids:
+    study_id=str(i)
+    for sample_name,seqrun_id,sample_study_id in samples_array:
+        if study_id==sample_study_id:
+            sample_otu_statements.append('(slrm.sample_name = \'%s\' and an.seq_run_id=%d)' % (str(sample_name),int(seqrun_id)))
+
+otu_statement+=' or '.join(sample_otu_statements)+')'
 
 # Run the statement
 con = data_access.getSFFDatabaseConnection()
 cur = con.cursor()
 #req.write(str(statement)+'<br><br>')
-results = cur.execute(statement)
-'''
-for t in samples_array:
-    # run_prefixes[t[1]]
-    otus=data_access.getOTUMap(t[0],int(t[2]),97,'UCLUST_REF',\
-                                'GREENGENES_REFERENCE',97)
+results = cur.execute(otu_statement)
 
+for prokmsa_id,sample_name_id in results:
+    if otu_map_dict.has_key(str(prokmsa_id)):
+        otu_map_dict[str(prokmsa_id)].append(sample_name_id)
+    else:
+        otu_map_dict[str(prokmsa_id)]=[]
+        otu_map_dict[str(prokmsa_id)].append(sample_name_id)
+
+"""
+
+# iterate through the list of samples and get the OTU map for each sample
+for otu_sample_name,otu_seq_run_id,otu_study_id in samples_array:
+    otus=data_access.getOTUMap(otu_sample_name,int(otu_seq_run_id),97,\
+                                'UCLUST_REF','GREENGENES_REFERENCE',97)
+    
+    # based on the returned OTU Map, append sample those to an OTU dictionary
     for o in otus:   
         if otu_map_dict.has_key(str(o[0])):
             otu_map_dict[str(o[0])].append(o[1])
@@ -251,26 +282,26 @@ for t in samples_array:
             otu_map_dict[str(o[0])].append(o[1])
     iterator=iterator+1
 
+# Write the OTU table
 otu_table_fpath=os.path.join(otu_table_file_dir, file_name_prefix + 
-                                '_otu_table.txt')
-                                
+                                '_otu_table.txt')     
 outfile = open(otu_table_fpath, 'w')
 otu_to_taxonomy=None
 outfile.write(make_otu_map(otu_map_dict, otu_to_taxonomy))
 outfile.close()
-# All done, go back to the main page
 
+# zip up the OTU table and Mapping file for easy download
 zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '.zip')
 cmd_call='zip -jX %s %s' % (zip_fpath,merge_mapping_fpath)
 system(cmd_call)
 cmd_call='zip -jX %s %s' % (zip_fpath,otu_table_fpath)
 system(cmd_call)
 
-#add to database list
+#add filepaths to DB, so we know where to find the generated files
 valid=data_access.addMetaAnalysisMapOTUFiles(True, sess['meta_analysis_id'], \
                                         merge_mapping_fpath,otu_table_fpath,
                                         zip_fpath)
-                                        
+# All done, go back to the main page                               
 psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
 
 %>

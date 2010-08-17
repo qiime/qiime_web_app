@@ -84,16 +84,13 @@ for item in set(zip(*sample_list)[0]):
                     <option value="javascript:select_none('metadata_fields');">None
                     <option value="Javascript:select_invert('metadata_fields');">Invert
                 </select><br>
-                <select multiple name="metadata_fields" id="metadata_fields" class="required" style="width:250px;">
+                <select multiple name="metadata_fields" id="metadata_fields" style="width:250px;">
 <%
 # iterate through the fields and add them to the HTML select box
 for f in unique_field_list:
     field_name = f[0]
     if field_name in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'RUN_PREFIX','DESCRIPTION']:
-        req.write('<option value="%s" style="display:none" selected>%s</option>' % (field_name, field_name))
-    elif field_name in ['DESCRIPTION']:
-        #do nothing since we are creating our own description column
-        pass
+        pass # these are required and cannot be changed by the user
     else:
         req.write('<option value="%s">%s</option>' % (field_name, field_name))
 

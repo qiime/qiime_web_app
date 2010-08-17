@@ -12,9 +12,7 @@ __status__ = "Production"
 This script adds the users new study to the database, then asks them how they
 want to proceed.
 '''
-%>
 
-<%
 import os
 from qiime_data_access import QiimeDataAccess
 
@@ -23,6 +21,7 @@ sess['meta_analysis_name'] = form['meta_analysis_name']
 sess['study_names']=form['study_names']
 study_dict={}
 
+# get the study_ids for each of the studies
 if type(sess['study_names'])==type(sess['meta_analysis_name']):
     study_ids=sess['study_names'].split(':')
     study_dict[study_ids[0]]=':'.join(study_ids[1:])
@@ -37,30 +36,32 @@ meta_analysis_name = sess['meta_analysis_name']
 meta_analysis_id = QiimeDataAccess().createMetaAnalysis(\
                             sess['web_app_user_id'],sess['meta_analysis_name'])
 
+# map study_ids to meta_analysis_ids in the DB
 for i in study_dict:
     valid= QiimeDataAccess().appendMetaAnalysisStudy(meta_analysis_id,i)
 
 # Add the Investigation id to the session.
 sess['meta_analysis_id'] = meta_analysis_id
 
+# Define meta_analysis folder
 meta_analysis_dir = os.path.join(sess['user_dir'],'meta_analysis_'+str(sess['meta_analysis_id']))
 sess['meta_analysis_dir'] = str(meta_analysis_dir)
 
-# Create new mapping file in filesystem
+# Define mapping file folder
 mapping_file_dir = os.path.join(meta_analysis_dir, 'mapping_files/') 
 sess['mapping_file_dir'] = mapping_file_dir
 
-# Create new otu table file in filesystem
+# Define otu table folder
 otu_table_file_dir = os.path.join(meta_analysis_dir, 'otu_table_files/')
 sess['otu_table_file_dir'] = otu_table_file_dir
 
-# Create new otu table file in filesystem
+# Define zipped meta_analysis folder
 zip_file_dir = os.path.join(meta_analysis_dir, 'zip_files/')
 sess['zip_file_dir'] = zip_file_dir
 sess.save()
 
 
-#See if the Investigation folder exists and if not, creates it.
+#See if the folders exists and if not, creates it.
 try:
     if not os.path.exists(meta_analysis_dir):
         os.mkdir(meta_analysis_dir)

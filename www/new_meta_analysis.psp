@@ -98,6 +98,7 @@ function check_meta_analysis_name()
                 <select validate="required:true" name="study_names" id="study_names" multiple>
                 <option value=""></option>
 <%
+# List all the public studies along with the user's private studies
 study_names = QiimeDataAccess().getPublicStudyNames(sess['web_app_user_id'])
 for study_name in study_names:
     req.write('<option value="' + str(study_name[0]) + ':' + str(study_name[1]) + '">' + str(study_name[1]) + '</option>\n')
