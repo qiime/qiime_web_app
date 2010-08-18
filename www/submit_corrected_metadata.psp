@@ -74,7 +74,7 @@ for item in form:
     # Prep rows will be written once all sample rows are in place
     elif field_type == 'prep' and field_name == 'sample_name':
         prep_fields.append(item)
-        prep_key_fields[row_num] = field_value + ':' + str(row_num)
+        prep_key_fields[row_num] = field_value
     # All other fields will be inserted in step 3
     else:
         all_other_fields.append(item)
