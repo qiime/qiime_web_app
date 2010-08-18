@@ -120,7 +120,15 @@ for item in sorted(list):
         </tr>
         <tr>
             <td>
-                Environmental Package
+                Environmental Package <br><br>
+                <div  style="font-size:12px;">
+                Hint: To select multiple<br>
+                packages, hold down your<br> 
+                your command key (Mac)<br>
+                or control key (Windows)<br> 
+                and click each entry you<br> 
+                wish to select.
+                </div>
             </td>
             <td>
                 <select class="input required" name="environmental_package" name="environmental_package" multiple>
