@@ -1023,8 +1023,10 @@ class QiimeDataAccess( AbstractDataAccess ):
                 named_params = {'key_column_value':key_column_value, 'row_number':row_num}
                 statement = 'select * from %s where %s = :key_column_value and row_number = :row_number' % (table_name, key_column)
             else:
-                log.append(statement)
-                results = con.cursor().execute(statement, named_params).fetchone()
+                named_params = {'key_column_value':key_column_value}
+                statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
+            log.append(statement)
+            results = con.cursor().execute(statement, named_params).fetchone()
                 
             if results == None:
                 log.append('No row found, inserting new row:')
