@@ -61,14 +61,12 @@ class MetadataTable(object):
                     message += '\n"%s": Column name contains invalid characters. Column names must start with a letter and may only contain letters, numbers, and the underscore ("_") character. Spaces are not allowed.' % column
                 if len(message) > 0:
                     errors.append(message)
-    
-            return errors
         except Exception, e:
             errors.append('The file "%s" is in an invalid format. Make sure you didn\'t save it as a binary Excel file. Template files must be in tab-delimited format.' % (data_file))
             return errors
         finally:
             data_file.close()
-            
+            return errors            
 
     def _createColumnHeaders(self, reader, data_access):
         self._log.append('Entering _createColumnHeaders()...')
@@ -79,6 +77,9 @@ class MetadataTable(object):
         # Obtain the list of metadata columns for validation
         column_detail_list = data_access.getColumnDictionary()
         column_details = {}
+        # list of items must match length of list - maybe a way to only grab parts look
+        # for (x, y) in coords:
+            #do whatever with x and y
         for item in column_detail_list:
             # Store off the data type and data length for each column name
             column_details[item[0]] = (item[3], item[4])

@@ -84,13 +84,13 @@ class QiimeDataAccess( AbstractDataAccess ):
         return self._ontologyDatabaseConnection
     
     def getSFFDatabaseConnection(self):
-        """ Obtains a connection to the qiime_test schema
+        """ Obtains a connection to the QIIME_METADATA schema
 
         Get a database connection. 
         """
         if self._SFFDatabaseConnection == None:
             try:
-                print 'No active connection - obtaining new connection to qiime_test.'
+                print 'No active connection - obtaining new connection to QIIME_METADATA.'
                 self._SFFDatabaseConnection = cx_Oracle.Connection('SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
@@ -814,12 +814,12 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def createPrepKey(self, study_id, sample_name):
+    def createPrepKey(self, study_id, sample_name, row_num):
         """ Writes a prep key row to the database
         """
         try:
             con = self.getDatabaseConnection()
-            con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name])
+            con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_num])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -841,7 +841,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         key_table = ''
         
         # Other required values
-        schema_owner = 'QIIME_TEST'
+        schema_owner = 'QIIME_METADATA'
         statement = ''
         
         # Figure out which table we're talking about
@@ -899,7 +899,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         # Return the proper table name
         return extra_table
     
-    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field):
+    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field, row_num):
         """ Writes a metadata value to the database
         """
         
@@ -964,6 +964,10 @@ class QiimeDataAccess( AbstractDataAccess ):
             # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
             field_name = '"%s"' % field_name.upper()
             
+            # If the filed value is 'unknown', switch to 'null' (empty string is the same as null)
+            if str(field_value).upper() == 'UNKNOWN':
+                field_value = ''
+            
             ########################################
             ### For STUDY
             ########################################
@@ -1013,22 +1017,33 @@ class QiimeDataAccess( AbstractDataAccess ):
 
             # If it ain't there, create it
             log.append('Checking if row already exists...')
-            named_params = {'key_column_value':key_column_value}
-            statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
-            log.append(statement)
-            results = con.cursor().execute(statement, named_params).fetchone()
+            
+            # Must append row_num if sequence table
+            if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                named_params = {'key_column_value':key_column_value, 'row_number':row_num}
+                statement = 'select * from %s where %s = :key_column_value and row_number = :row_number' % (table_name, key_column)
+            else:
+                log.append(statement)
+                results = con.cursor().execute(statement, named_params).fetchone()
+                
             if results == None:
                 log.append('No row found, inserting new row:')
-                named_params = {'key_column_value':key_column_value}
-                statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
+                if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                    named_params = {'key_column_value':key_column_value, 'row_number':row_num}
+                    statement = 'insert into %s (%s, row_number) values (:key_column_value, :row_number)' % (table_name, key_column)
+                else:
+                    named_params = {'key_column_value':key_column_value}
+                    statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
                 log.append(statement)
                 con.cursor().execute(statement, named_params)
             
             # Attempt to write the metadata field
             log.append('Writing metadata value...')
             if database_data_type == 'date':
-                statement = 'update %s set %s = %s where %s = %s' % (table_name, field_name, self.convertToOracleHappyName(field_value), key_column, key_column_value)
-            else:
+                field_value = self.convertToOracleHappyName(field_value)
+            if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s' % (table_name, field_name, field_value, key_column, key_column_value, row_num)
+            else:  
                 statement = 'update %s set %s = \'%s\' where %s = %s' % (table_name, field_name, field_value, key_column, key_column_value)
             log.append(statement)
             results = con.cursor().execute(statement)

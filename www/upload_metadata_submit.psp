@@ -39,6 +39,9 @@ def validateFileContents():
         # Do some error checking of the archive's contents
         error_message = ''
         templates = []
+        study_template_found = False
+        sample_template_found = False
+        prep_template_found = False
         
         for fullname in t.namelist():
             # Ignore directories
@@ -55,31 +58,28 @@ def validateFileContents():
             if filename.endswith('.xls') or filename.endswith('.txt'):
                 pass
             else:
-                error_message += 'Error: File names must end with a .xls or .txt extension.\n\n'
                 continue
 
             # Add the file to the list of templates
             templates.append(filename)
 
             # Strip the path off and validate that it's one of the three expected templates
-            if 'study_template' in filename or 'sample_template' in filename or 'prep_template' in filename:
-                pass
-            #if filename.startswith('study_template') or \
-            #    filename.startswith('sample_template') or \
-            #    filename.startswith('prep_template'):
-                # Looks like a valid file
-            #    pass
+            if 'study_template' in filename:
+                study_template_found = True
+            elif 'sample_template' in filename:
+                sample_template_found = True
+            elif 'prep_template' in filename:
+                prep_template_found = True
             else:
-                error_message += 'Error: file does not does not appear to be valid: \n' + filename + '. The file name must contain one of the following: "study_template", "sample_template" or "prep_template".\n\n'
-                break
-            
+                continue
+                            
             # Looks like we're good, write it out to the filesystem
             outfile = open(os.path.join(dir_path, filename), 'w')
             outfile.write(t.read(fullname))
             outfile.flush()
             outfile.close()
 
-            # Check to see if columns are valid in this file. If so, output the first 10 errors...
+            # Check to see if columns are valid in this file. If so, output the first errors...
             mdtable = MetadataTable(os.path.join(dir_path, filename))
             errors = mdtable.validateColumnNames()
             if len(errors) > 0:

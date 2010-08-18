@@ -103,6 +103,10 @@ class BaseColumn(object):
             status = 'bad'
             self.is_invalid(self.column_name, len(self.values))     
         self.values.append((value, status))
+        
+    def _isUnknown(self, value):
+        if str(value).upper() == 'UNKNOWN':
+            return True
 
 class RegExColumn(BaseColumn):
     """ RegExColumn implementation of BaseColumn class
@@ -120,6 +124,9 @@ class RegExColumn(BaseColumn):
     def _validate(self, value, data_access):
         """ return true if number, false otherwise
         """
+        if self._isUnknown(value):
+            return True
+        
         if re.match(self.reg_exp, value) == None:
             return False
         else:
@@ -145,11 +152,13 @@ class ListColumn(BaseColumn):
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
 
-    # Consider refactoring with _validateOntology()
     def _validate(self, value, list_names, data_access):
         """ returns true if value is in list designated by list_name, 
         false otherwise
         """
+        if self._isUnknown(value):
+            return True
+        
         for list_name in list_names:
             if data_access.validateListValue(list_name, value) > 0:
                 return True
@@ -181,6 +190,9 @@ class OntologyColumn(BaseColumn):
         """ returns true if term is in ontology designated by ontology_name, 
         false otherwise 
         """
+        if self._isUnknown(term):
+            return True
+        
         for ontology_name in ontology_names:
             term_values = term.split(':')
             if len(term_values) != 2:
@@ -202,6 +214,9 @@ class TextColumn(BaseColumn):
     def _validate(self, value, data_access):
         """ return true if number, false otherwise
         """
+        if self._isUnknown(value):
+            return True
+        
         if self.maxLength == '':
             return False
         elif len(value) > self.maxLength:

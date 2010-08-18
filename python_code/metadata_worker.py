@@ -98,9 +98,7 @@ class MetadataWorkerThread(threading.Thread):
 
             try:
                 lock.acquire()
-                #result = self.data_access.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
-                #self.req.write('<br/><br/>' + str(item) + ' ------ ' + field_value + ' ------ ' + field_type + '<br/><br/>')
-                result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field)
+                result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field, row_num)
                 if result:
                     self.req.write('<br/><br/>' + result + '<br/><br/>')
                     

@@ -68,13 +68,13 @@ for item in form:
         sample_key_fields[row_num] = field_value
         req.write('* ')
     # Host rows will be written after all samples are in place
-    elif  field_type == 'sample' and field_name == 'host_subject_id':
+    elif field_type == 'sample' and field_name == 'host_subject_id':
         host_fields.append(item)
         host_key_fields[row_num] = field_value
     # Prep rows will be written once all sample rows are in place
     elif field_type == 'prep' and field_name == 'sample_name':
         prep_fields.append(item)
-        prep_key_fields[row_num] = field_value
+        prep_key_fields[row_num] = field_value + ':' + str(row_num)
     # All other fields will be inserted in step 3
     else:
         all_other_fields.append(item)
@@ -84,7 +84,8 @@ req.write('<p style="font-size:12px">Writing Prep Key Values:</p>')
 # Insert the prep key rows now that sample rows all exist
 for item in prep_fields:
     field_value = form[item]
-    data_access.createPrepKey(study_id, field_value)
+    row_num = item.split(':')[1]
+    data_access.createPrepKey(study_id, field_value, row_num)
     req.write('* ')
 
 # Insert the host key rows now that sample rows all exist
