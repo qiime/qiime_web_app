@@ -60,10 +60,7 @@ def validateFileContents():
             else:
                 continue
 
-            # Add the file to the list of templates
-            templates.append(filename)
-
-            # Strip the path off and validate that it's one of the three expected templates
+            # Validate that it's one of the three expected templates
             if 'study_template' in filename:
                 study_template_found = True
             elif 'sample_template' in filename:
@@ -72,12 +69,19 @@ def validateFileContents():
                 prep_template_found = True
             else:
                 continue
+
+            # Add the file to the list of templates
+            templates.append(filename)
                             
             # Looks like we're good, write it out to the filesystem
-            outfile = open(os.path.join(dir_path, filename), 'w')
-            outfile.write(t.read(fullname))
-            outfile.flush()
-            outfile.close()
+            try:
+                outfile = open(os.path.join(dir_path, filename), 'w')
+                outfile.write(t.read(fullname))
+                outfile.flush()
+                outfile.close()
+            except IOError as e:
+                error_message += """Could not open file "%s". The error was: %s""" % (filename, e)
+                continue
 
             # Check to see if columns are valid in this file. If so, output the first errors...
             mdtable = MetadataTable(os.path.join(dir_path, filename))
@@ -94,7 +98,15 @@ def validateFileContents():
 
         # If the zip does not have exactly three templates, raise an error
         if len(templates) != 3:
-            error_message += "Error: Exactly 3 templates must be in the archive. %s files were found.\n\n" % len(templates)
+            error_message += "Error: A valid study, sample, and prep template must be in the archive.\n\n"
+            
+        # Make sure we have one of each template type
+        if not study_template_found:
+            error_message += 'Error: Study tempalte was not found.'
+        if not sample_template_found:
+            error_message += 'Error: Sample template was not found.'
+        if not prep_template_found:
+            error_message += 'Error: Prep template was not found.'
 
         # If there were errors, report them and stop processing
         if error_message != '':
