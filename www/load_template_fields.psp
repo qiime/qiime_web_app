@@ -100,6 +100,10 @@ def outputFields(field_list, prefix, header_text):
 sess["field_list"] = []
 sess.save()
 
+# Write out the submission fields
+field_list = qda.getPackageColumns(-8)
+outputFields(field_list, 'submission', 'SRA Submission Fields')
+
 # Write out the study fields
 field_list = qda.getPackageColumns(-3)
 outputFields(field_list, 'study', 'Study Fields')

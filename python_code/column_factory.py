@@ -86,7 +86,7 @@ class BaseColumn(object):
         self.is_invalid = is_invalid
         
         # List of values in this column
-        self.values = []
+        self.values = []    
         
         # List of invalid indicies in this column
         self._invalid_indicies = []
