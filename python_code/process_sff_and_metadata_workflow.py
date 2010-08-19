@@ -281,8 +281,9 @@ def submit_processed_data_to_db(fasta_files,metadata_study_id):
         input_basename, input_ext = splitext(fasta_fname)
         input_dir = split(input_basename)[:-1][0]
         
-        
-        if re.search('0\d$', input_fname).group()==None:
+        print re.search('0\d$', input_fname)
+        if re.search('0\d$', input_fname)==None or \
+                                re.search('0\d$', input_fname).group()==None:
             sff_basename=input_fname
         else:
             sff_basename=input_fname[:-2]
@@ -390,7 +391,7 @@ def submit_processed_data_to_db(fasta_files,metadata_study_id):
             split_lib_cmd=substr
         elif 'pick_otus.py' in substr:
             pick_otus_cmd=substr
-    
+
     #Insert the split-library log information in the DB
     valid,split_library_run_id=data_access.loadSplitLibInfo(True,analysis_id,\
                                      run_date, split_lib_cmd,\
