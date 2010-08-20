@@ -1824,3 +1824,37 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+    #
+    def checkIfColumnControlledVocab(self, column_name):
+        """ starts process of importing otus
+        """
+        try:
+            con = self.getDatabaseConnection()
+            valid_controlled_column=0
+            db_output=con.cursor().callproc('check_if_column_controlled',
+                                            [column_name.upper(),\
+                                             valid_controlled_column])
+            if db_output[1]==0:
+                return False
+            else:
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+    #
+    #
+    def getValidControlledVocabTerms(self,column_name):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_valid_control_vocab_terms', \
+                                     [column_name.upper(), results])
+            valid_terms = []
+            for row in results:
+                valid_terms.append(row)
+            return valid_terms
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False

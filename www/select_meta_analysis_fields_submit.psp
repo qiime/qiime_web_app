@@ -44,24 +44,32 @@ seq_run_ids=[]
 # sample name passed contains the sample_name, sequencing_run_id and study_id
 if type(form['samples'])==type(form['file_name_prefix']):
     sample=form['samples'].split('_')
-    seq_run_ids.append(sample[-2])
-    samples_array.append(list(('_'.join(sample[:-2]),sample[-2],sample[-1])))
-    otu_samples_array.append('%s\t%s\t%s\t%s\t%s\t%s' % ('_'.join(sample[:-2]),sample[-2],97,'UCLUST_REF',\
-                                'GREENGENES_REFERENCE',97))
+    seq_run_ids.append(sample[-3])
+    samples_array.append(list(('_'.join(sample[:-3]),sample[-3],sample[-2],sample[-1])))
+    
 else:
     for s in form['samples']:
         sample=s.split('_')
-        seq_run_ids.append(sample[-2])
-        samples_array.append(list(('_'.join(sample[:-2]),sample[-2],sample[-1])))
+        seq_run_ids.append(sample[-3])
+        samples_array.append(list(('_'.join(sample[:-3]),sample[-3],sample[-2],sample[-1])))
+
+duplicates=[]
+# iterate through samples array and determine duplicates
+for sample_name,seqrun_id,sample_study_id,duplicate_sample in samples_array:
+    if duplicate_sample=='1':
+        duplicates.append(sample_name)
+unique_duplicates=list(set(duplicates))        
 
 # iterate through the unique list of sequence_run_ids and get the corresponding
 # run_prefix and/or sff_basename and insert that into a dictionary
 seq_runs=list(set(seq_run_ids)) 
 run_prefixes={}
+run_prefix_to_seq_run_id={}
 for run_id in seq_runs:
     prefix=data_access.getRunPrefixFromSeqRunId(run_id)[0]
     run_prefixes[run_id]=prefix
-    
+    run_prefix_to_seq_run_id[prefix]=run_id
+
     
 field_list=[]
 sample_list=[]
@@ -75,24 +83,28 @@ for i in study_ids:
     tables = []
 
     # Start building the statement for writing out the mapping file
+    # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
     statement = '"SAMPLE".sample_name as SampleID, \n'
     statement += '"SEQUENCE_PREP".barcode, \n'
     statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
-    statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
     statement += '"SEQUENCE_PREP".run_prefix as RUN_PREFIX, \n'
+    statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
+    
+    
 
     # Break out the recorded fields and store as dict: field name and table name
     # field[0] = field_name, field[1] = table_name
     for field in recorded_fields:
-        
+  
         if field[0] in form_metadata_fields:
+
             # Required fields which much show up first. Skip as they are already in the statement
             if field[0] in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE']:
                 continue
         
             # Add to select list
             statement += field[1] + '."' + field[0] + '", \n'
-        
+           
             # Add the table to our list if not already there and not one of the required tables
             if field[1] not in tables and field[1] not in ['"STUDY"', '"SAMPLE"', '"SEQUENCE_PREP"']:
                 tables.append(field[1])
@@ -122,7 +134,7 @@ for i in study_ids:
     if '"EXTRA_SAMPLE_' + study_id + '"' in tables:
         tables.remove('"EXTRA_SAMPLE_' + study_id + '"')
         statement += '\
-    inner join "EXTRA_SAMPLE_' + study_id + '" \n\
+    left join "EXTRA_SAMPLE_' + study_id + '" \n\
     on "SAMPLE".sample_id = "EXTRA_SAMPLE_' + study_id + '".sample_id \n '
     # End if
     statement += ' \
@@ -163,12 +175,11 @@ for i in study_ids:
     # Finally, write the where clause
     statement += 'where "STUDY".study_id = ' + study_id + ' and ('
     sample_statements=[]
-    for sample_name,seqrun_id,sample_study_id in samples_array:
+    for sample_name,seqrun_id,sample_study_id,duplicate_sample in samples_array:
         if study_id==sample_study_id:
             sample_statements.append('("SAMPLE".sample_name = \'%s\' and "SEQUENCE_PREP".run_prefix=\'%s\')' % (str(sample_name),run_prefixes[seqrun_id]))
 
     statement +=' or '.join(sample_statements)+')'
-
     # Run the statement
     con = data_access.getDatabaseConnection()
     cur = con.cursor()
@@ -182,6 +193,22 @@ for i in study_ids:
     # All mapping files start with an opening hash
     mapping_file.write('#')
 
+    controlled_vocab_columns={}
+    for i,column in enumerate(cur.description):
+        if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', \
+                      'EXPERIMENT_TITLE']:
+            pass
+        else:
+            valid_controlled_vocab=\
+                        data_access.checkIfColumnControlledVocab(column[0])
+            if valid_controlled_vocab:
+                controlled_vocab_columns[str(column[0])]=i
+        
+    controlled_vocab_lookup={}
+    for column in controlled_vocab_columns:
+        vocab_id_to_valid_term=data_access.getValidControlledVocabTerms(column)
+        controlled_vocab_lookup[controlled_vocab_columns[column]]=dict(vocab_id_to_valid_term)
+    
     # Write the header row
     to_write = ''
     for column in cur.description:
@@ -196,16 +223,33 @@ for i in study_ids:
         else:
             to_write += column[0] + '\t'
     mapping_file.write(to_write[0:len(to_write)-1] + '\n')
-
+    
+    
     for row in results:
         # Can't use something like '\t'.join(row) because not all items in list
         # are string values, hence the explicit loop structure here.
         to_write = ''
-        for column in row:
-            val = str(column)
-            if val == 'None':
-                val = ''
-            to_write += val + '\t'
+        
+        # Order of row goes as follows: SampleID, BarcodeSequence,
+        # LinkerPrimerSequence,Run_Prefix, then Description is at the end
+        if row[0] in unique_duplicates:
+            row=list(row)
+            row[0]=row[0]+'_'+str(run_prefix_to_seq_run_id[row[3]])
+            row=tuple(row)
+
+        for i,column in enumerate(row):
+            if controlled_vocab_lookup.has_key(i):
+                val = str(column)
+                if val == 'None':
+                    new_val = ''
+                else:
+                    new_val=controlled_vocab_lookup[i][int(val)]
+                to_write += new_val + '\t'
+            else:
+                val = str(column)
+                if val == 'None':
+                    val = ''
+                to_write += val + '\t'
         # Write the row minus the last tab
         mapping_file.write(to_write[0:len(to_write)-1] + '\n')
     
@@ -269,17 +313,24 @@ for prokmsa_id,sample_name_id in results:
 """
 
 # iterate through the list of samples and get the OTU map for each sample
-for otu_sample_name,otu_seq_run_id,otu_study_id in samples_array:
+for otu_sample_name,otu_seq_run_id,otu_study_id,duplicate_sample in samples_array:
     otus=data_access.getOTUMap(otu_sample_name,int(otu_seq_run_id),97,\
                                 'UCLUST_REF','GREENGENES_REFERENCE',97)
-    
+
     # based on the returned OTU Map, append sample those to an OTU dictionary
-    for o in otus:   
+    for o in otus:
+        if duplicate_sample=='1':
+            otu_sample_name=o[1].split('_')
+            otu_sample_name[0]+='_%s' % (otu_seq_run_id)
+            new_otu_sample_name='_'.join(otu_sample_name)
+        else:
+            new_otu_sample_name=o[1]
+            
         if otu_map_dict.has_key(str(o[0])):
-            otu_map_dict[str(o[0])].append(o[1])
+            otu_map_dict[str(o[0])].append(new_otu_sample_name)
         else:
             otu_map_dict[str(o[0])]=[]
-            otu_map_dict[str(o[0])].append(o[1])
+            otu_map_dict[str(o[0])].append(new_otu_sample_name)
     iterator=iterator+1
 
 # Write the OTU table

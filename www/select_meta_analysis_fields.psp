@@ -35,11 +35,12 @@ for i in study_ids:
     # get the fields corresponding to this study
     fields=data_access.getMetadataFields(study_id)
     for field in fields:
-        field_list.append(field)
-    
+        if field <> ('',''):
+            field_list.append(field)
+
     # get the sample_id's for this study
     samples_and_run = data_access.getSampleRunPrefixList(study_id)
-    
+
     if samples_and_run==[]:
         pass
     else:
@@ -57,9 +58,10 @@ unique_field_list=list(set(field_list))
 unique_field_list.sort()
 
 # create a list of duplicate samples
+sample_name_list=zip(*sample_list)[0]
 duplicate_samples=[]
-for item in set(zip(*sample_list)[0]):
-    if sample_list.count(item) > 1:
+for item in set(sample_name_list):
+    if sample_name_list.count(item) > 1:
         duplicate_samples.append(item)
 #
 %>
@@ -112,9 +114,9 @@ for f in unique_field_list:
 # iterate through the samples and add them to the HTML select box
 for sample_name,seq_run_id,study_id,study_name in sample_list:
     if sample_name in duplicate_samples:
-        req.write('<option value="%s_%s_%s" selected onmouseover=\"return overlib(\'%s\')\" onmouseout=\'return nd();\'>%s_%s</option>' % (sample_name,seq_run_id,study_id,study_name, sample_name,seq_run_id))
+        req.write('<option value="%s_%s_%s_%s" selected onmouseover=\"return overlib(\'%s\')\" onmouseout=\'return nd();\'>%s_%s</option>' % (sample_name,seq_run_id,study_id,1,study_name, sample_name,seq_run_id))
     else:
-        req.write('<option value="%s_%s_%s" selected onmouseover=\"return overlib(\'%s\')\" onmouseout=\'return nd();\'>%s</option>' % (sample_name,seq_run_id,study_id,study_name, sample_name))
+        req.write('<option value="%s_%s_%s_%s" selected onmouseover=\"return overlib(\'%s\')\" onmouseout=\'return nd();\'>%s</option>' % (sample_name,seq_run_id,study_id,0,study_name, sample_name))
 # End for
 %>
                 </select>
@@ -126,4 +128,5 @@ for sample_name,seq_run_id,study_id,study_name in sample_list:
         </tr>
     </table>
 </form>
+
 
