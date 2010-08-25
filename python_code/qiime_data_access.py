@@ -1858,3 +1858,36 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+
+    def getPublicColumns(self):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_public_study_columns', \
+                                     [results])
+            public_cols = []
+            for row in results:
+                public_cols.append(row)
+            return public_cols
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+    #
+    def getFieldReferenceInfo(self,column_name):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_field_reference_info', \
+                                     [column_name,results])
+            field_reference = []
+            for row in results:
+                field_reference.append(row)
+            return field_reference
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False

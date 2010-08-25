@@ -180,6 +180,8 @@ for i in study_ids:
             sample_statements.append('("SAMPLE".sample_name = \'%s\' and "SEQUENCE_PREP".run_prefix=\'%s\')' % (str(sample_name),run_prefixes[seqrun_id]))
 
     statement +=' or '.join(sample_statements)+')'
+    
+    req.write(statement)
     # Run the statement
     con = data_access.getDatabaseConnection()
     cur = con.cursor()
