@@ -892,7 +892,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         # If column doesn't exist, add it:
         if not results:
             log.append('Creating extra column: %s' % field_name)
-            statement = 'alter table %s add %s clob default \'\'' % (extra_table, field_name)
+            statement = 'alter table %s add %s varchar2(4000) default \'\'' % (extra_table, field_name)
             log.append(statement)
             results = con.cursor().execute(statement)
         
@@ -969,7 +969,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             ########################################
             
             # Study is special - handle separately since row is guaranteed to exist and there can only be one row
-            if table_name == '"STUDY"' or 'EXTRA_STUDY_' in table_name:
+            if table_name in ['"STUDY"', '"SRA_SUBMISSION"'] or 'EXTRA_STUDY_' in table_name:
                 log.append('Updating study field...')
                 named_params = {'field_value':field_value, 'study_id':study_id}
                 statement = 'update %s set %s = :field_value where study_id = :study_id' % (table_name, field_name)

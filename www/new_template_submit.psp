@@ -40,6 +40,9 @@ for field in form:
         # Other form fields will simply be ignored.
         pass
 
+# Manually add the center_name field to the submission file. A hack for now to support SRA submissions...
+submission_fields.append('center_name')
+
 # Get the documentation for the list of fields
 column_dictionary = QiimeDataAccess().getColumnDictionary()
 for entry in column_dictionary:
