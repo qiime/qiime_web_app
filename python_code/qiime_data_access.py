@@ -804,246 +804,263 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def createSampleKey(self, study_id, sample_name):
-        """ Writes a sample key row to the database
-        """
-        try:
-            con = self.getDatabaseConnection()
-            con.cursor().callproc('qiime_assets.sample_insert', [study_id, sample_name])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+            def createSampleKey(self, study_id, sample_name):
+                """ Writes a sample key row to the database
+                """
+                try:
+                    con = self.getDatabaseConnection()
+                    con.cursor().callproc('qiime_assets.sample_insert', [study_id, sample_name])
+                except Exception, e:
+                    print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+                    return False
 
-    def createPrepKey(self, study_id, sample_name):
-        """ Writes a prep key row to the database
-        """
-        try:
-            con = self.getDatabaseConnection()
-            con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+            def createPrepKey(self, study_id, sample_name, row_num):
+                """ Writes a prep key row to the database
+                """
+                try:
+                    con = self.getDatabaseConnection()
+                    con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_num])
+                except Exception, e:
+                    print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+                    return False
 
-    def createHostKey(self, study_id, sample_name, host_subject_id):
-        """ Writes a host key row to the database
-        """
-        try:
-            con = self.getDatabaseConnection()
-            con.cursor().callproc('qiime_assets.host_insert', [study_id, sample_name, host_subject_id])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    
-    def handleExtraData(self, study_id, field_name, field_type, log, con):
-        
-        # Define the names of the 'extra' tables
-        extra_table = ''
-        key_table = ''
-        
-        # Other required values
-        schema_owner = 'QIIME_TEST'
-        statement = ''
-        
-        # Figure out which table we're talking about
-        if field_type == 'study':
-            extra_table = str('extra_study_' + str(study_id)).upper()
-            key_table = 'study'
-        elif field_type == 'sample':
-            extra_table = str('extra_sample_' + str(study_id)).upper()
-            key_table = 'sample'
-        elif field_type == 'prep':
-            extra_table = str('extra_prep_' + str(study_id)).upper()
-            key_table = 'sample'
-        else:
-            # Error state
-            raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
-            
-        # Does table exist already?
-        log.append('Checking if table %s exists...' % extra_table)
-        named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
-        statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
-        log.append(statement)
-        results = con.cursor().execute(statement, named_params).fetchone()
-        
-        # Create if it doesn't exist already
-        if not results:
-            log.append('Creating "extra" table %s...' % extra_table)
-            statement = 'create table %s (%s_id int not null, constraint pk_%s primary key (%s_id), \
-                constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
-                (extra_table, key_table, extra_table, key_table, extra_table, key_table, key_table, key_table)
-            log.append(statement)
-            results = con.cursor().execute(statement)
-        
-            # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
-            if field_type == 'study':
-                log.append('Inserting study extra row...')                        
-                statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
-                log.append(statement)
-                results = con.cursor().execute(statement)
-                con.cursor().execute('commit')
-                            
-        # Check if the column exists
-        log.append('Checking if extra column exists: %s' % field_name)
-        named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
-        statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
-        log.append(statement)
-        results = con.cursor().execute(statement, named_params).fetchone()
-        
-        # If column doesn't exist, add it:
-        if not results:
-            log.append('Creating extra column: %s' % field_name)
-            statement = 'alter table %s add %s varchar2(4000) default \'\'' % (extra_table, field_name)
-            log.append(statement)
-            results = con.cursor().execute(statement)
-        
-        # Return the proper table name
-        return extra_table
-    
-    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field):
-        """ Writes a metadata value to the database
-        """
-        
-        # This is a mess and it's slow right now. In need of serious speed improvements and cleanup.
-        
-        statement = ''
-        log = []
-        pk_name = ''
-        
-        try:
-            
-            con = self.getDatabaseConnection()
-            table_name = None
-            
-            # Find the table name
-            log.append('Locating table name...')
-            table_name = self.findMetadataTable(field_name, study_id)
-            
-            # If table is not found, assume user-defined column and store appropriately
-            if table_name == '' or table_name == None:
-                # If the table was not found, this is a user-added column.
-                table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
-            
-            # Double-quote for database safety.    
-            table_name = '"' + table_name + '"'
-            
-            log.append('Table name found: %s' % (table_name))
-            
-            # Store the field name in the database. These are the field names which will
-            # be used later to generate a mapping file. We collect the names here because
-            # it's an expensive operation to determine post-commit which fields were
-            # actually submitted to the database.
-            log.append('Attempting to store values in study_actual_columns: %s, %s, %s' % (study_id, field_name, table_name))
-            self.addStudyActualColumn(study_id, field_name, table_name);
-            
-            # Get extended field info from the database
-            log.append('Loading field details...')
-            field_details = self.getFieldDetails(field_name)
-            log.append(str(field_details))
-            if field_details == None:
-                log.append('Could not obtain detailed field information. Skipping.')
-                raise Exception
-            else:
-                database_data_type = field_details[1]
-                log.append('Read field database data type as "%s"' % database_data_type)
-            
-            # Figure out if this needs to be an integer ID instead of a text value
-            if database_data_type == 'list':
-                log.append('Field is of type list. Looking up integer value...')
-                named_params = {'field_value':field_value.upper()}
-                statement = 'select vocab_value_id from controlled_vocab_values where upper(term) = :field_value'
+            def createHostKey(self, study_id, sample_name, host_subject_id):
+                """ Writes a host key row to the database
+                """
+                try:
+                    con = self.getDatabaseConnection()
+                    con.cursor().callproc('qiime_assets.host_insert', [study_id, sample_name, host_subject_id])
+                except Exception, e:
+                    print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+                    return False
+
+            def handleExtraData(self, study_id, field_name, field_type, log, con):
+
+                # Define the names of the 'extra' tables
+                extra_table = ''
+                key_table = ''
+
+                # Other required values
+                schema_owner = 'QIIME_METADATA'
+                statement = ''
+
+                # Figure out which table we're talking about
+                if field_type == 'study':
+                    extra_table = str('extra_study_' + str(study_id)).upper()
+                    key_table = 'study'
+                elif field_type == 'sample':
+                    extra_table = str('extra_sample_' + str(study_id)).upper()
+                    key_table = 'sample'
+                elif field_type == 'prep':
+                    extra_table = str('extra_prep_' + str(study_id)).upper()
+                    key_table = 'sample'
+                else:
+                    # Error state
+                    raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
+
+                # Does table exist already?
+                log.append('Checking if table %s exists...' % extra_table)
+                named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
+                statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
                 log.append(statement)
                 results = con.cursor().execute(statement, named_params).fetchone()
-                if results != None:
-                    # If found, set the field_value to its numeric identifier for storage
-                    log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
-                    field_value = results[0]
-                else:
-                    log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.' % (field_name, field_value))
-                    raise Exception
-            
-            # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
-            field_name = '"%s"' % field_name.upper()
-            
-            ########################################
-            ### For STUDY
-            ########################################
-            
-            # Study is special - handle separately since row is guaranteed to exist and there can only be one row
-            if table_name in ['"STUDY"', '"SRA_SUBMISSION"'] or 'EXTRA_STUDY_' in table_name:
-                log.append('Updating study field...')
-                named_params = {'field_value':field_value, 'study_id':study_id}
-                statement = 'update %s set %s = :field_value where study_id = :study_id' % (table_name, field_name)
-                log.append(statement)
-                log.append('field_value = "%s", study_id = "%s"' % (field_value, study_id))
-                results = con.cursor().execute(statement, named_params)
-                con.cursor().execute('commit')
-                log.append('Study updated.')
-                #raise Exception
-                return
-            
-            ########################################
-            ### For other tables
-            ########################################
-            
-            if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
-            '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"'] \
-            or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
-                named_params = {'key_field':key_field, 'study_id':study_id}
-                statement = 'select sample_id from "SAMPLE" where sample_name = :key_field and study_id = :study_id'
-                key_column = 'sample_id'
-                key_table = '"SAMPLE"'
-            elif table_name in ['"HOST"', '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HUMAN_ASSOCIATED"']:
-                named_params = {'key_field':host_key_field}
-                statement = 'select host_id from "HOST" where host_subject_id = :key_field'
-                key_column = 'host_id'
-                key_table = '"HOST"'
-            else:
-                return 'Unknown table found - no action taken. Table name was: "%s". Column name was: "%s"' %  (table_name, field_name)
-            
-            # Find the assocaited key column
-            log.append('Determining if required key row exists...')
-            log.append(statement + '", key_field is ' + key_field + ', study_id is ' + str(study_id))
-            results = con.cursor().execute(statement, named_params).fetchone()
-            if results != None:
-                key_column_value = results[0]
-                log.append('Found key_column_value: %s' % str(key_column_value))
-            else:
-                log.append('Could not determine key. Skipping write for field %s with value "%s".' % (field_name, field_value))
-                raise Exception
 
-            # If it ain't there, create it
-            log.append('Checking if row already exists...')
-            named_params = {'key_column_value':key_column_value}
-            statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
-            log.append(statement)
-            results = con.cursor().execute(statement, named_params).fetchone()
-            if results == None:
-                log.append('No row found, inserting new row:')
-                named_params = {'key_column_value':key_column_value}
-                statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
+                # Create if it doesn't exist already
+                if not results:
+                    log.append('Creating "extra" table %s...' % extra_table)
+                    statement = 'create table %s (%s_id int not null, constraint pk_%s primary key (%s_id), \
+                        constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
+                        (extra_table, key_table, extra_table, key_table, extra_table, key_table, key_table, key_table)
+                    log.append(statement)
+                    results = con.cursor().execute(statement)
+
+                    # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
+                    if field_type == 'study':
+                        log.append('Inserting study extra row...')                        
+                        statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
+                        log.append(statement)
+                        results = con.cursor().execute(statement)
+                        con.cursor().execute('commit')
+
+                # Check if the column exists
+                log.append('Checking if extra column exists: %s' % field_name)
+                named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
+                statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
                 log.append(statement)
-                con.cursor().execute(statement, named_params)
-            
-            # Attempt to write the metadata field
-            log.append('Writing metadata value...')
-            if database_data_type == 'date':
-                statement = 'update %s set %s = %s where %s = %s' % (table_name, field_name, self.convertToOracleHappyName(field_value), key_column, key_column_value)
-            else:
-                statement = 'update %s set %s = \'%s\' where %s = %s' % (table_name, field_name, field_value, key_column, key_column_value)
-            log.append(statement)
-            results = con.cursor().execute(statement)
-            
-            # Finally, commit the changes
-            results = con.cursor().execute('commit')
-            
-        except Exception, e:
-            call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')' % (field_type, key_field, field_name, field_value, study_id)
-            log_string = '<br/>'.join(log)
-            error_msg = 'Exception caught attempting to store field "%s" with value "%s" into \
-                table "%s".<br/>Method signature: %s<br/>Full error log:<br/>%s<br/>Oracle says: %s' % \
-                (field_name, field_value, table_name, call_string, log_string, str(e))
-            print error_msg
-            return error_msg
+                results = con.cursor().execute(statement, named_params).fetchone()
+
+                # If column doesn't exist, add it:
+                if not results:
+                    log.append('Creating extra column: %s' % field_name)
+                    statement = 'alter table %s add %s clob default \'\'' % (extra_table, field_name)
+                    log.append(statement)
+                    results = con.cursor().execute(statement)
+
+                # Return the proper table name
+                return extra_table
+
+            def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field, row_num):
+                """ Writes a metadata value to the database
+                """
+
+                # This is a mess and it's slow right now. In need of serious speed improvements and cleanup.
+
+                statement = ''
+                log = []
+                pk_name = ''
+
+                try:
+
+                    con = self.getDatabaseConnection()
+                    table_name = None
+
+                    # Find the table name
+                    log.append('Locating table name...')
+                    table_name = self.findMetadataTable(field_name, study_id)
+
+                    # If table is not found, assume user-defined column and store appropriately
+                    if table_name == '' or table_name == None:
+                        # If the table was not found, this is a user-added column.
+                        table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
+
+                    # Double-quote for database safety.    
+                    table_name = '"' + table_name + '"'
+
+                    log.append('Table name found: %s' % (table_name))
+
+                    # Store the field name in the database. These are the field names which will
+                    # be used later to generate a mapping file. We collect the names here because
+                    # it's an expensive operation to determine post-commit which fields were
+                    # actually submitted to the database.
+                    log.append('Attempting to store values in study_actual_columns: %s, %s, %s' % (study_id, field_name, table_name))
+                    self.addStudyActualColumn(study_id, field_name, table_name);
+
+                    # Get extended field info from the database
+                    log.append('Loading field details...')
+                    field_details = self.getFieldDetails(field_name)
+                    log.append(str(field_details))
+                    if field_details == None:
+                        log.append('Could not obtain detailed field information. Skipping.')
+                        raise Exception
+                    else:
+                        database_data_type = field_details[1]
+                        log.append('Read field database data type as "%s"' % database_data_type)
+
+                    # Figure out if this needs to be an integer ID instead of a text value
+                    if database_data_type == 'list':
+                        log.append('Field is of type list. Looking up integer value...')
+                        named_params = {'field_value':field_value.upper()}
+                        statement = 'select vocab_value_id from controlled_vocab_values where upper(term) = :field_value'
+                        log.append(statement)
+                        results = con.cursor().execute(statement, named_params).fetchone()
+                        if results != None:
+                            # If found, set the field_value to its numeric identifier for storage
+                            log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
+                            field_value = results[0]
+                        else:
+                            log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.' % (field_name, field_value))
+                            raise Exception
+
+                    # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
+                    field_name = '"%s"' % field_name.upper()
+
+                    # If the filed value is 'unknown', switch to 'null' (empty string is the same as null)
+                    if str(field_value).upper() == 'UNKNOWN':
+                        field_value = ''
+
+                    ########################################
+                    ### For STUDY
+                    ########################################
+
+                    # Study is special - handle separately since row is guaranteed to exist and there can only be one row
+                    if table_name == '"STUDY"' or 'EXTRA_STUDY_' in table_name:
+                        log.append('Updating study field...')
+                        named_params = {'field_value':field_value, 'study_id':study_id}
+                        statement = 'update %s set %s = :field_value where study_id = :study_id' % (table_name, field_name)
+                        log.append(statement)
+                        log.append('field_value = "%s", study_id = "%s"' % (field_value, study_id))
+                        results = con.cursor().execute(statement, named_params)
+                        con.cursor().execute('commit')
+                        log.append('Study updated.')
+                        #raise Exception
+                        return
+
+                    ########################################
+                    ### For other tables
+                    ########################################
+
+                    if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
+                    '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"'] \
+                    or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
+                        named_params = {'key_field':key_field, 'study_id':study_id}
+                        statement = 'select sample_id from "SAMPLE" where sample_name = :key_field and study_id = :study_id'
+                        key_column = 'sample_id'
+                        key_table = '"SAMPLE"'
+                    elif table_name in ['"HOST"', '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HUMAN_ASSOCIATED"']:
+                        named_params = {'key_field':host_key_field}
+                        statement = 'select host_id from "HOST" where host_subject_id = :key_field'
+                        key_column = 'host_id'
+                        key_table = '"HOST"'
+                    else:
+                        return 'Unknown table found - no action taken. Table name was: "%s". Column name was: "%s"' %  (table_name, field_name)
+
+                    # Find the assocaited key column
+                    log.append('Determining if required key row exists...')
+                    log.append(statement + '", key_field is ' + key_field + ', study_id is ' + str(study_id))
+                    results = con.cursor().execute(statement, named_params).fetchone()
+                    if results != None:
+                        key_column_value = results[0]
+                        log.append('Found key_column_value: %s' % str(key_column_value))
+                    else:
+                        log.append('Could not determine key. Skipping write for field %s with value "%s".' % (field_name, field_value))
+                        raise Exception
+
+                    # If it ain't there, create it
+                    log.append('Checking if row already exists...')
+
+                    # Must append row_num if sequence table
+                    if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                        named_params = {'key_column_value':key_column_value, 'row_number':row_num}
+                        statement = 'select * from %s where %s = :key_column_value and row_number = :row_number' % (table_name, key_column)
+                    else:
+                        named_params = {'key_column_value':key_column_value}
+                        statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
+                    log.append(statement)
+                    results = con.cursor().execute(statement, named_params).fetchone()
+
+                    if results == None:
+                        log.append('No row found, inserting new row:')
+                        if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                            named_params = {'key_column_value':key_column_value, 'row_number':row_num}
+                            statement = 'insert into %s (%s, row_number) values (:key_column_value, :row_number)' % (table_name, key_column)
+                        else:
+                            named_params = {'key_column_value':key_column_value}
+                            statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
+                        log.append(statement)
+                        con.cursor().execute(statement, named_params)
+
+                    # Attempt to write the metadata field
+                    log.append('Writing metadata value...')
+                    if database_data_type == 'date':
+                        field_value = self.convertToOracleHappyName(field_value)
+                    if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                        statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s' % (table_name, field_name, field_value, key_column, key_column_value, row_num)
+                    else:  
+                        statement = 'update %s set %s = \'%s\' where %s = %s' % (table_name, field_name, field_value, key_column, key_column_value)
+                    log.append(statement)
+                    results = con.cursor().execute(statement)
+
+                    # Finally, commit the changes
+                    results = con.cursor().execute('commit')
+
+                except Exception, e:
+                    call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')' % (field_type, key_field, field_name, field_value, study_id)
+                    log_string = '<br/>'.join(log)
+                    error_msg = 'Exception caught attempting to store field "%s" with value "%s" into \
+                        table "%s".<br/>Method signature: %s<br/>Full error log:<br/>%s<br/>Oracle says: %s' % \
+                        (field_name, field_value, table_name, call_string, log_string, str(e))
+                    print error_msg
+                    return error_msg
 
             
     #####################################
