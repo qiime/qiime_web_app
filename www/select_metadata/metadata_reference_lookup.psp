@@ -1,0 +1,125 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+from qiime_data_access import *
+from qiime.colors import natsort
+import os
+data_access = QiimeDataAccess()
+
+script_description="""This script writes out information for a given column in 
+the database. It also writes out the select box containing the distinct values
+in that column."""
+
+#Get the values from the form fields
+col=form["col_id"].upper();
+table=form["tab_name"].upper();
+studies=form['studies']
+
+show_values=form["show_values"];
+#check if col is a controlled column
+controlled_col=data_access.checkIfColumnControlledVocab(str(col))
+
+# if the column is not controlled, then we must look in the database
+# for the public values provided in that column
+if not controlled_col:
+    
+    # Handle the different table names, since the inner joins depend on which
+    # table is being traversed
+    if str(table)=='STUDY':
+        statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.study_id=s.study_id where s."PUBLIC"=\'y\'' % (str(col),str(table))
+    elif str(table)=='SAMPLE':
+        statement='select distinct t."%s" from "%s" t where t."PUBLIC"=\'y\'' % (str(col),str(table))
+    elif str(table)=='SEQUENCE_PREP':
+        statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id where s."PUBLIC"=\'y\'' % (str(col),str(table))
+    elif str(table)=='HOST_ASSOC_VERTIBRATE' or str(table)=='HOST_ASSOC_PLANT' or str(table)=='HOST':
+        statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id where s."PUBLIC"=\'y\'' % (str(col),str(table))
+    else:
+        statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id where s."PUBLIC"=\'y\'' % (str(col),str(table))
+    
+    # Run the statement
+    con = data_access.getDatabaseConnection()
+    cur = con.cursor()
+    #req.write(str(statement)+'<br><br>')
+    results = cur.execute(statement)
+    #put the column values into a dictionary so we can run natural sort on the list
+    col_values={}
+    for i in results:
+        col_values[str(i[0])]=str(i[0])
+else:
+    # get the controlled terms
+    results=data_access.getValidControlledVocabTerms(str(col))
+    #put the column values into a dictionary so we can run natural sort on the list
+    col_values={}
+    for i in results:
+        col_values[str(i[1])]=str(i[1])
+
+# sort the column values
+col_values=natsort(col_values)
+
+# get the information regarding the column
+query_results = data_access.getFieldReferenceInfo(col)
+
+# print the results from the above searches
+# print the column name
+req.write('<tr><td><em>Column Name:</em></td><td '+ \
+                'style="color:black;text-decoration:none">' + \
+                str(col)+'</td>')
+
+if show_values=="1":
+    # print the height of the table, which is based on if no results are 
+    # returned in regards to the column information
+    if query_results==[]:
+        req.write('<td rowspan=3>')
+    else:
+        req.write('<td rowspan=5>')
+                
+    # print the column values in a select box
+    table_col_id=str(table) + '####SEP####' + str(col) + '####STUDIES####' + str(studies)
+    req.write('<b>Select Values</b><br>')
+    req.write('<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">')
+    req.write('<option value="javascript:">')
+    req.write('<option value="javascript:select_all_col_values(\'%s\');">All' % (table_col_id))
+    req.write('<option value="javascript:select_none_col_values(\'%s\');">None' % (table_col_id))
+    req.write('<option value="Javascript:select_invert_col_values(\'%s\');">Invert' % (table_col_id))
+    req.write('</select>')
+    req.write('<select id="%s" multiple style="width:300px;" onchange="saveSelection(this.id)">' % (table_col_id))
+    
+    for row in col_values:
+        req.write('<option id="%s" value="%s">%s</option>' % (str(row),str(row),str(row)))
+
+    # close the select box
+    req.write('</select>')
+req.write('</tr>')
+
+# print the table name
+req.write('<tr><td><em>Table Name:</em></td><td '+ \
+                'style="color:black;text-decoration:none">' + \
+                str(table)+'</td></tr>')
+
+# print the Data information
+if query_results==[]:
+    req.write('<tr><td colspan=2 '+ \
+                    'style="color:black;text-decoration:none">' + \
+                    'This is a study-specific column defined by the user, ' +\
+                    'field-specific information is not available.</td></tr>')
+else:
+    req.write('<tr><td><em>Data Type:</em></td><td \
+                    style="color:black;text-decoration:none">' + \
+                    str(query_results[0][0])+'</td></tr>')
+    req.write('<tr><td><em>Description or Value:</em></td><td \
+                    style="color:black;text-decoration:none">' + \
+                    str(query_results[0][1])+'</td></tr>')
+    req.write('<tr><td><em>Definition:</em></td><td \
+                    style="color:black;text-decoration:none">' + \
+                    str(query_results[0][2])+'</td></tr>')
+#
+%>

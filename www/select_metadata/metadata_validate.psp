@@ -1,0 +1,44 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+from ontology_data_access import OntologyDataAccess
+data_access = OntologyDataAccess()
+
+script_description="""This script takes a list of terms and determines if they
+are present in a list of ontologies and returns either 'Valid' or 'Invalid'"""
+
+#Get the values from the form fields
+q=form["ont_terms"];
+ontology_id=form["ont_id"]
+
+#convert the query to uppercase, so there is no case-sensitive issues
+q=q.upper()
+query_terms=q.split(',')
+
+query_results=[]
+results=[]
+
+
+for term in query_terms:
+    if term <> '':
+        #call stored procedure and return rows if the query is an exact match
+        query_results = data_access.validity_of_ontology_term(ontology_id,'\''+str(term)+'\'')
+
+        #if results are empty, then the results is Invalid
+        if query_results==[]:
+            results.append('Invalid')
+        else:
+            results.append('Valid')
+        
+req.write('#'.join(results))
+#
+%>
