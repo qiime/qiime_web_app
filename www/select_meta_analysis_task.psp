@@ -60,7 +60,7 @@ if mapping_otu_files:
 <h4>Tasks:</h4>
         <ul><li>
             <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="select_meta_analysis_fields.psp">
+                <input type="hidden" name="page" id="page" value="select_metadata/index.psp">
                 <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
                 Generate metadata mapping and OTU table file</a>
             </form>

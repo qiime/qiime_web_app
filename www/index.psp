@@ -66,15 +66,14 @@ if form.has_key('username'):
 # end
 %>
 <p/>
-<table>
 <form method="post" action="index.psp">
+<table>
     <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
     <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
     <tr><td colspan="2"><input type="submit" value="Log In"></tr>
     <tr><td colspan="2"><br></td></tr>
-</form>
 </table>
-
+</form>
 <table>
     <tr><td>Are you already registered? <a href="./register_user.psp">Create Account</a></td></tr>
     <tr><td>Forget your password? <a href="./forgot_password.psp">Reset Password</a></td></tr>
