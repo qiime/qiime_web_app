@@ -1818,9 +1818,8 @@ class QiimeDataAccess( AbstractDataAccess ):
             con.cursor().callproc('get_seq_run_id_from_run_prefix', [run_prefix,\
                                                                      study_id,\
                                                                      results])
-            seq_run_id = []
             for row in results:
-                seq_run_id.append(row[0])
+                seq_run_id=row[0]
             return seq_run_id
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
