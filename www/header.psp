@@ -18,10 +18,14 @@ if not (sess.has_key('username')):
 from qiime_data_access import QiimeDataAccess
 
 # Set the image link based on whether or not a study has been selected:
+'''
 if sess['study_name']:
 	link_page = 'select_study_task.psp'
 else:
 	link_page = 'select_study.psp'
+'''
+#setting link_page to select_study, so we can go between meta-analysis and study
+link_page = 'select_study.psp'
 # end
 %>
 
@@ -44,9 +48,12 @@ else:
 	<td>Logged in as <%=sess['username']%></td>
 	<td style="text-align:right;">
 <%
+# turned this off, since it gets confusing when doing meta-analysis
+'''
 if sess['study_name']:
 	req.write('Selected study: %s (%s)' % (sess['study_name'], sess['study_id']))
 # end if
+'''
 %>
 	</td>
 </tr>

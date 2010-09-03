@@ -53,14 +53,16 @@ if not controlled_col:
     #put the column values into a dictionary so we can run natural sort on the list
     col_values={}
     for i in results:
-        col_values[str(i[0])]=str(i[0])
+        if i[0] <> None:
+            col_values[str(i[0])]=str(i[0])
 else:
     # get the controlled terms
     results=data_access.getValidControlledVocabTerms(str(col))
     #put the column values into a dictionary so we can run natural sort on the list
     col_values={}
     for i in results:
-        col_values[str(i[1])]=str(i[1])
+        if i[0] <> None:
+            col_values[str(i[1])]=str(i[1])
 
 # sort the column values
 col_values=natsort(col_values)

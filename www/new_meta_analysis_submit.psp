@@ -18,27 +18,13 @@ from qiime_data_access import QiimeDataAccess
 
 sess = Session.Session(req)
 sess['meta_analysis_name'] = form['meta_analysis_name']
-sess['study_names']=form['study_names']
-study_dict={}
 
-# get the study_ids for each of the studies
-if type(sess['study_names'])==type(sess['meta_analysis_name']):
-    study_ids=sess['study_names'].split(':')
-    study_dict[study_ids[0]]=':'.join(study_ids[1:])
-else:
-    for i in sess['study_names']:
-        study_ids=i.split(':')
-        study_dict[study_ids[0]]=':'.join(study_ids[1:])
-    
 meta_analysis_name = sess['meta_analysis_name']
 
 # Add the new Investigation to the database
 meta_analysis_id = QiimeDataAccess().createMetaAnalysis(\
                             sess['web_app_user_id'],sess['meta_analysis_name'])
 
-# map study_ids to meta_analysis_ids in the DB
-for i in study_dict:
-    valid= QiimeDataAccess().appendMetaAnalysisStudy(meta_analysis_id,i)
 
 # Add the Investigation id to the session.
 sess['meta_analysis_id'] = meta_analysis_id

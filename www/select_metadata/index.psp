@@ -22,7 +22,11 @@ public_columns=data_access.getPublicColumns()
 <script src="select_metadata/metadata_selection.js" type="text/javascript" ></script>
 <script src="select_metadata/jQuery.dualListBox-1.2.js" type="text/javascript"></script> 
 <script language="javascript" type="text/javascript"> 
-    window.onload=$(function() { $.configureBoxes();});
+$(document).ready(function(){
+    
+});
+    window.onload=$(function() {$.configureBoxes();});
+    
     var savedValues=new Array();
     
     function post_Array() {
@@ -34,6 +38,8 @@ public_columns=data_access.getPublicColumns()
         for (i=0;i<listbox_values.options.length;i++){
             form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="####ALL####">';
         }
+        var fname_prefix=document.getElementById("fname_prefix").value;
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="fname_prefix" value="'+fname_prefix+'">'
     }
     
 </script>
@@ -44,7 +50,9 @@ public_columns=data_access.getPublicColumns()
     table.column_values td{
         text-align:left;
         width:300px;
+        border: thin solid white;
     }
+    
     th{
         text-align:center;
     }
@@ -82,8 +90,15 @@ the list of ontologies and function buttons.
 Onsubmit returns false, since the form is not formally submitted and
 it will remove the return key functionality.
 -->
+<br>
 <form onsubmit="return false;">
-<table>
+
+<table bgcolor="#A9D0F5">
+    <tr >
+        <td colspan=3 style="border: 2px solid white;text-align:center">
+            <b>Filename Prefix: </b><input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" />
+        </td>
+    </tr>
     <tr>
         <th>Available Metadata Fields</th>
         <th></th>
@@ -121,7 +136,7 @@ it will remove the return key functionality.
     <tr>
         <!-- Define list input area and ontology select list -->
         <td>
-            <select id="box1View" multiple="multiple" style="height:300px;width:300px;"> >
+            <select id="box1View" multiple="multiple" style="height:200px;width:300px;"> >
                 <!-- Using psp, generate a list of ontologies -->
 <%
 for col in unique_public_columns:
@@ -136,14 +151,14 @@ for col in unique_public_columns:
 %>
                 </select>
             </td> 
-            <td> 
+            <td style="vertical-align: middle"> 
                 <button id="to2" type="button">&nbsp;>&nbsp;</button> 
                 <button id="allTo2" type="button">&nbsp;>>&nbsp;</button> 
                 <button id="allTo1" type="button">&nbsp;<<&nbsp;</button> 
                 <button id="to1" type="button">&nbsp;<&nbsp;</button> 
             </td> 
             <td> 
-                <select id="box2View" multiple="multiple" style="height:300px;width:300px;"> 
+                <select id="box2View" multiple="multiple" style="height:200px;width:300px;"> 
                 </select>
             </td>
         </tr><tr>
@@ -157,17 +172,21 @@ for col in unique_public_columns:
                 <select id="box2Storage"></select> 
             </td>
         </tr>
+        <tr>
+            <td>
+                </form>
+                <form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/generate_mappping_and_otu_table.psp">
+                <input type="submit">
+                </form>
+            </td>
+        </tr>
     </table>
-    
-</form>
-<form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/generate_mappping_and_otu_table.psp">
-<input type="submit">
-</form>
-<br><br>
+
+<br>
 <!-- 
     The following table is where we will be dynamically writing
     the results.
 -->
-<table id='field_ref_table' class="column_values" border=1>
+<table id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
 </table>
 

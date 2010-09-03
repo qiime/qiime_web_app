@@ -18,16 +18,16 @@ data_access = QiimeDataAccess()
 table_col_value={}
 
 for form_key in form:
-    if type(form[form_key])==type([]):
-        for vals in form[form_key]:
-            if table_col_value.has_key(form_key):
-                if vals<>'####ALL####':
+    if form_key<>'fname_prefix':
+        if type(form[form_key])==type([]):
+            for vals in form[form_key]:
+                if table_col_value.has_key(form_key):
+                    if vals<>'####ALL####':
+                        table_col_value[form_key]=str(vals)
+                else:
                     table_col_value[form_key]=str(vals)
-            else:
-                table_col_value[form_key]=str(vals)
-    else:
-        table_col_value[form_key]=str(form[form_key])
-
+        else:
+            table_col_value[form_key]=str(form[form_key])
 
 # Create the mapping file based on sample and field selections
 
@@ -35,58 +35,10 @@ for form_key in form:
 otu_table_file_dir=sess['otu_table_file_dir']
 mapping_file_dir=sess['mapping_file_dir']
 zip_file_dir=sess['zip_file_dir']
-file_name_prefix='test'
+file_name_prefix=form['fname_prefix']
+if file_name_prefix=='':
+    file_name_prefix='default'
 map_files=[]
-'''
-# get the form fields from the previous page
-file_name_prefix=form['file_name_prefix']
-form_sample_fields = form['samples']
-
-if form.has_key('metadata_fields'):
-    form_metadata_fields = form['metadata_fields']
-else:
-    form_metadata_fields=[]
-
-# get the selected list of samples
-samples_array=[]
-otu_samples_array=[]
-seq_run_to_run_prefix=[]
-seq_run_ids=[]
-
-# sample name passed contains the sample_name, sequencing_run_id and study_id
-if type(form['samples'])==type(form['file_name_prefix']):
-    sample=form['samples'].split('_')
-    seq_run_ids.append(sample[-3])
-    samples_array.append(list(('_'.join(sample[:-3]),sample[-3],sample[-2],sample[-1])))
-    
-else:
-    for s in form['samples']:
-        sample=s.split('_')
-        seq_run_ids.append(sample[-3])
-        samples_array.append(list(('_'.join(sample[:-3]),sample[-3],sample[-2],sample[-1])))
-
-duplicates=[]
-# iterate through samples array and determine duplicates
-for sample_name,seqrun_id,sample_study_id,duplicate_sample in samples_array:
-    if duplicate_sample=='1':
-        duplicates.append(sample_name)
-unique_duplicates=list(set(duplicates))        
-
-# iterate through the unique list of sequence_run_ids and get the corresponding
-# run_prefix and/or sff_basename and insert that into a dictionary
-seq_runs=list(set(seq_run_ids)) 
-run_prefixes={}
-run_prefix_to_seq_run_id={}
-for run_id in seq_runs:
-    prefix=data_access.getRunPrefixFromSeqRunId(run_id)[0]
-    run_prefixes[run_id]=prefix
-    run_prefix_to_seq_run_id[prefix]=run_id
-    
-field_list=[]
-sample_list=[]
-# get a list of studies using the selected samples
-study_ids=list(set(zip(*samples_array)[2]))
-'''
     
 #recorded_fields = data_access.getMetadataFields(study_id)
 database_map = {}
@@ -95,9 +47,9 @@ tables = []
 # Start building the statement for writing out the mapping file
 # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
 statement = '"SAMPLE".sample_name as SampleID, \n'
-statement += '"SAMPLE".study_id, \n'
 statement += '"SEQUENCE_PREP".barcode, \n'
 statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
+statement += '"SAMPLE".study_id, \n'
 statement += '"SEQUENCE_PREP".run_prefix as RUN_PREFIX, \n'
 statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
 
@@ -193,17 +145,29 @@ for study_id in unique_study_ids:
 # End if
     study_statement.append('"STUDY".study_id = ' + study_id)
 
-statement += ' where (%s) ' % (' or '.join(study_statement))
+statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\')' % (' or '.join(study_statement))
     
 additional_where_statements=[]
 for i in table_col_value:
+    
     tab_col_studies=i.split('####SEP####')
     tab=tab_col_studies[0]
     col_studies=tab_col_studies[1].split('####STUDIES####')
     column=col_studies[0]
     selected_col_values=table_col_value[i].split(',')
+    controlled_col=data_access.checkIfColumnControlledVocab(str(column))
+    if controlled_col:
+        vocab_terms=data_access.getValidControlledVocabTerms(str(column))
     for col_value in selected_col_values:
-        clipped_col_value=col_value.strip("'")
+        clipped_col_value=str(col_value.strip("'"))
+        if controlled_col:
+            
+            #put the column values into a dictionary so we can run natural sort on the list
+            for i in vocab_terms:
+                if i[1]==str(clipped_col_value):
+                    clipped_col_value=str(i[0])
+                    break
+                   
         if clipped_col_value<>'####ALL####' and clipped_col_value.upper()<>'NONE':
             additional_where_statements.append('"'+tab+'"."'+column+'"=\''+clipped_col_value+'\'')
 
@@ -216,12 +180,11 @@ cur = con.cursor()
 #req.write(str(statement)+'<br><br>')
 results = cur.execute(statement)
 
-
 # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
-mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix), 'w')
+mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map.txt'), 'w')
 
-map_files.append(os.path.join(mapping_file_dir, file_name_prefix))
-req.write('http://localhost:5001/'+map_files[0])
+map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_map.txt')
+#req.write('http://localhost:5001/'+map_filepath)
 # All mapping files start with an opening hash
 mapping_file.write('#')
 
@@ -254,12 +217,21 @@ for column in cur.description:
         to_write+='LinkerPrimerSequence\t'
     else:
         to_write += column[0] + '\t'
+
 mapping_file.write(to_write[0:len(to_write)-1] + '\n')
 
+sample_to_run_prefix=[]
+study_id_and_run_prefix=[]
+samples_list=[]
 for row in results:
     # Can't use something like '\t'.join(row) because not all items in list
     # are string values, hence the explicit loop structure here.
     to_write = ''
+    
+    samples_list.append(str(row[0]))
+    sample_to_run_prefix.append(list((str(row[0]),str(row[4]),str(row[3]))))
+    if list((str(row[3]),str(row[4]))) not in study_id_and_run_prefix:
+        study_id_and_run_prefix.append(list((str(row[3]),str(row[4]))))
     '''
     # Order of row goes as follows: SampleID, BarcodeSequence,
     # LinkerPrimerSequence,Run_Prefix, then Description is at the end
@@ -268,6 +240,7 @@ for row in results:
         row[0]=row[0]+'_'+str(run_prefix_to_seq_run_id[row[3]])
         row=tuple(row)
     '''
+    
     for i,column in enumerate(row):
         if controlled_vocab_lookup.has_key(i):
             val = str(column)
@@ -286,28 +259,16 @@ for row in results:
 
 mapping_file.close()
 
+
+# create a list of duplicate samples
+duplicate_samples=[]
+for item in samples_list:
+    if samples_list.count(item) > 1:
+        duplicate_samples.append(item)
+#
+
 """
-
-mapping_files = [open(fp,'U') for fp in map_files]
-no_data_value = 'no_data'
-
-# we created a mapping file for each study, now we combine all the mapping files
-mapping_data = merge_mapping_files(mapping_files,no_data_value=no_data_value)
-
-merge_mapping_fpath=os.path.join(mapping_file_dir, file_name_prefix + \
-                                    '_mapping.txt')
-                     
-
-# write the merged mapping file
-write_mapping_file(mapping_data,merge_mapping_fpath)
-
-
-# Create the otu table
-otu_map_dict={}
-iterator=0
-
-
-# Finally, write the where clause
+# iterate through the list of samples and get the OTU map for each sample
 otu_statement = '''select gg.prokmsa_id, slrm.sequence_name
     from split_library_read_map slrm
     inner join ANALYSIS an on slrm.seq_run_id=an.seq_run_id and slrm.split_library_run_id=an.split_library_run_id   
@@ -318,45 +279,68 @@ otu_statement = '''select gg.prokmsa_id, slrm.sequence_name
     inner join SEQUENCE_SOURCE ss on b.otu_picking_ref_set_name=ss.source_name and b.otu_picking_method_threshold=ss.threshold
     inner join SOURCE_MAP sm on ss.sequence_source_id=sm.sequence_source_id 
     inner join GREENGENES_REFERENCE gg on o.ssu_sequence_id=gg.ssu_sequence_id and sm.reference_id=gg.prokmsa_id
-    where b.otu_picking_method_name=\'%s\'
+        where b.otu_picking_method_name=\'%s\'
           and p.threshold=%d
           and ss.threshold=%d
           and ss.source_name=\'%s\' and (''' % ('UCLUST_REF',97,97,'GREENGENES_REFERENCE')
-
-sample_otu_statements=[]
-for i in study_ids:
-    study_id=str(i)
-    for sample_name,seqrun_id,sample_study_id in samples_array:
-        if study_id==sample_study_id:
-            sample_otu_statements.append('(slrm.sample_name = \'%s\' and an.seq_run_id=%d)' % (str(sample_name),int(seqrun_id)))
+          
+sample_otu_statements=[]  
+for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
+    sample_otu_statements.append('(slrm.sample_name = \'%s\' and an.seq_run_id=%d)' % (str(otu_sample_name),int(sid_run_prefix_to_seq_run_id[otu_study_id+'_'+otu_run_prefix])))
 
 otu_statement+=' or '.join(sample_otu_statements)+')'
 
+'''
+    otus=data_access.getOTUMap(otu_sample_name,
+                int(sid_run_prefix_to_seq_run_id[otu_study_id+'_'+otu_run_prefix]),
+                97,'UCLUST_REF','GREENGENES_REFERENCE',97)
+''' 
 # Run the statement
 con = data_access.getSFFDatabaseConnection()
 cur = con.cursor()
 #req.write(str(statement)+'<br><br>')
-results = cur.execute(otu_statement)
+otus = cur.execute(otu_statement)
 
-for prokmsa_id,sample_name_id in results:
-    if otu_map_dict.has_key(str(prokmsa_id)):
-        otu_map_dict[str(prokmsa_id)].append(sample_name_id)
+# based on the returned OTU Map, append sample those to an OTU dictionary
+for o in otus:
+    if otu_sample_name in duplicate_samples:
+        otu_sample_name=o[1].split('_')
+        otu_sample_name[0]+='_%s' % (otu_run_prefix)
+        new_otu_sample_name='_'.join(otu_sample_name)
     else:
-        otu_map_dict[str(prokmsa_id)]=[]
-        otu_map_dict[str(prokmsa_id)].append(sample_name_id)
+        new_otu_sample_name=o[1]
+        
+    if otu_map_dict.has_key(str(o[0])):
+        otu_map_dict[str(o[0])].append(new_otu_sample_name)
+    else:
+        otu_map_dict[str(o[0])]=[]
+        otu_map_dict[str(o[0])].append(new_otu_sample_name)
+
 
 """
-"""
+
+#req.write(str(duplicate_samples))
+#req.write(str(sample_to_run_prefix))
+#req.write(str(results))
+otu_map_dict={}
+sid_run_prefix_to_seq_run_id={}
+for study_id,run_prefix_value in study_id_and_run_prefix:
+    seq_run_id_out=data_access.getSeqRunIdFromRunPrefix(run_prefix_value,study_id)
+    sid_run_prefix_to_seq_run_id[study_id+'_'+run_prefix_value]=seq_run_id_out
+#req.write(str(sid_run_prefix_to_seq_run_id))
+
 # iterate through the list of samples and get the OTU map for each sample
-for otu_sample_name,otu_seq_run_id,otu_study_id,duplicate_sample in samples_array:
-    otus=data_access.getOTUMap(otu_sample_name,int(otu_seq_run_id),97,\
-                                'UCLUST_REF','GREENGENES_REFERENCE',97)
-
+for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
+    otus=data_access.getOTUMap(otu_sample_name,
+                int(sid_run_prefix_to_seq_run_id[otu_study_id+'_'+otu_run_prefix]),
+                97,'UCLUST_REF','GREENGENES_REFERENCE',97)
+    
     # based on the returned OTU Map, append sample those to an OTU dictionary
     for o in otus:
-        if duplicate_sample=='1':
+      
+        if otu_sample_name in duplicate_samples:
             otu_sample_name=o[1].split('_')
-            otu_sample_name[0]+='_%s' % (otu_seq_run_id)
+            otu_sample_name[0]+='_%s' % (otu_run_prefix)
             new_otu_sample_name='_'.join(otu_sample_name)
         else:
             new_otu_sample_name=o[1]
@@ -366,29 +350,32 @@ for otu_sample_name,otu_seq_run_id,otu_study_id,duplicate_sample in samples_arra
         else:
             otu_map_dict[str(o[0])]=[]
             otu_map_dict[str(o[0])].append(new_otu_sample_name)
-    iterator=iterator+1
 
 # Write the OTU table
 otu_table_fpath=os.path.join(otu_table_file_dir, file_name_prefix + 
                                 '_otu_table.txt')     
+
 outfile = open(otu_table_fpath, 'w')
 otu_to_taxonomy=None
 outfile.write(make_otu_map(otu_map_dict, otu_to_taxonomy))
 outfile.close()
 
+
 # zip up the OTU table and Mapping file for easy download
 zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '.zip')
-cmd_call='zip -jX %s %s' % (zip_fpath,merge_mapping_fpath)
+cmd_call='zip -jX %s %s' % (zip_fpath,map_filepath)
 system(cmd_call)
 cmd_call='zip -jX %s %s' % (zip_fpath,otu_table_fpath)
 system(cmd_call)
 
 #add filepaths to DB, so we know where to find the generated files
 valid=data_access.addMetaAnalysisMapOTUFiles(True, sess['meta_analysis_id'], \
-                                        merge_mapping_fpath,otu_table_fpath,
+                                        map_filepath,otu_table_fpath,
                                         zip_fpath)
+
+
 # All done, go back to the main page                               
-psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
-"""
+psp.redirect('../fusebox.psp?page=select_meta_analysis_task.psp')
+
 %>
 

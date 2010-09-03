@@ -47,8 +47,7 @@ function showResult(input_textbox,column_id,column_value)
     col_name=col_split_2[0];
     studies=col_split_2[1];
     
-    array_key=table_name+'####SEP####'+col_name;
-
+    array_key=column_value;
 
     //generate a url string where we pass our variables
     var url="select_metadata/metadata_reference_lookup.psp";
@@ -56,14 +55,16 @@ function showResult(input_textbox,column_id,column_value)
     xmlhttp.onreadystatechange=function()
     {
         if (xmlhttp.readyState==4){
+
             //write the list of similar terms from the database  
  document.getElementById('field_ref_table').innerHTML=xmlhttp.responseText;
             document.getElementById('field_ref_table').style.border="1px solid #A5ACB2";
-            
+
+     
             if (array_key in savedValues){
                 var value_select_box = document.getElementById(array_key)
                 for (var i=0;i<value_select_box.length;i++){
-                    if (value_select_box.options[i].value == savedValues[array_key]){
+                    if ('\''+value_select_box.options[i].value+'\''== savedValues[array_key]){
                             value_select_box.options[i].selected=true;
                     }
                 }
@@ -86,13 +87,15 @@ function saveSelection(input_selectbox)
     var selected_values=get_selected(select_box_id)
     
     for (var i in savedValues){
-        if (i==select_box_id.value){
+        
+        if (i==select_box_id.id){
             savedValues[select_box_id.id]=selected_values;
             exist='True';
             break;
         }
     }
     if (exist='False'){
+        
         savedValues[select_box_id.id]=selected_values;
     }
     /*
