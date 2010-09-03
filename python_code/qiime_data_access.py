@@ -892,7 +892,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         # If column doesn't exist, add it:
         if not results:
             log.append('Creating extra column: %s' % field_name)
-            statement = 'alter table %s add %s clob default \'\'' % (extra_table, field_name)
+            statement = 'alter table %s add %s varchar2(4000) default \'\'' % (extra_table, field_name)
             log.append(statement)
             results = con.cursor().execute(statement)
         
