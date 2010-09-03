@@ -223,23 +223,28 @@ mapping_file.write(to_write[0:len(to_write)-1] + '\n')
 sample_to_run_prefix=[]
 study_id_and_run_prefix=[]
 samples_list=[]
+map_file_write=[]
+duplicate_samples=[]
+samples_list=[]
 for row in results:
     # Can't use something like '\t'.join(row) because not all items in list
     # are string values, hence the explicit loop structure here.
     to_write = ''
     
-    samples_list.append(str(row[0]))
     sample_to_run_prefix.append(list((str(row[0]),str(row[4]),str(row[3]))))
+    
     if list((str(row[3]),str(row[4]))) not in study_id_and_run_prefix:
         study_id_and_run_prefix.append(list((str(row[3]),str(row[4]))))
-    '''
-    # Order of row goes as follows: SampleID, BarcodeSequence,
-    # LinkerPrimerSequence,Run_Prefix, then Description is at the end
-    if row[0] in unique_duplicates:
+        
+    if str(row[0]) in samples_list:
+        # Order of row goes as follows: SampleID, BarcodeSequence,
+        # LinkerPrimerSequence,Run_Prefix, then Description is at the end
         row=list(row)
-        row[0]=row[0]+'_'+str(run_prefix_to_seq_run_id[row[3]])
+        row[0]=row[0]+'_'+str(row[4])
         row=tuple(row)
-    '''
+        duplicate_samples.append(str(row[0]))
+    else:    
+        samples_list.append(str(row[0]))
     
     for i,column in enumerate(row):
         if controlled_vocab_lookup.has_key(i):
@@ -260,12 +265,6 @@ for row in results:
 mapping_file.close()
 
 
-# create a list of duplicate samples
-duplicate_samples=[]
-for item in samples_list:
-    if samples_list.count(item) > 1:
-        duplicate_samples.append(item)
-#
 
 """
 # iterate through the list of samples and get the OTU map for each sample
@@ -327,7 +326,6 @@ sid_run_prefix_to_seq_run_id={}
 for study_id,run_prefix_value in study_id_and_run_prefix:
     seq_run_id_out=data_access.getSeqRunIdFromRunPrefix(run_prefix_value,study_id)
     sid_run_prefix_to_seq_run_id[study_id+'_'+run_prefix_value]=seq_run_id_out
-#req.write(str(sid_run_prefix_to_seq_run_id))
 
 # iterate through the list of samples and get the OTU map for each sample
 for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
@@ -337,11 +335,11 @@ for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
     
     # based on the returned OTU Map, append sample those to an OTU dictionary
     for o in otus:
-      
-        if otu_sample_name in duplicate_samples:
-            otu_sample_name=o[1].split('_')
-            otu_sample_name[0]+='_%s' % (otu_run_prefix)
-            new_otu_sample_name='_'.join(otu_sample_name)
+        tmp_sample_name=otu_sample_name
+        if tmp_sample_name+'_'+otu_run_prefix in duplicate_samples:
+            tmp_sample_name=o[1].split('_')
+            tmp_sample_name[0]+='_%s' % (otu_run_prefix)
+            new_otu_sample_name='_'.join(tmp_sample_name)
         else:
             new_otu_sample_name=o[1]
             
