@@ -17,12 +17,15 @@ sess = Session.Session(req)
 data_access = QiimeDataAccess()
 table_col_value={}
 
+unique_cols=[]
+# get the form values
 for form_key in form:
     if form_key<>'fname_prefix':
         if type(form[form_key])==type([]):
             for vals in form[form_key]:
                 if table_col_value.has_key(form_key):
                     if vals<>'####ALL####':
+                        unique_cols.append(form_key)
                         table_col_value[form_key]=str(vals)
                 else:
                     table_col_value[form_key]=str(vals)
@@ -96,6 +99,7 @@ statement += ' \
 inner join "SEQUENCE_PREP" \n\
 on "SAMPLE".sample_id = "SEQUENCE_PREP".sample_id \n '
 
+# Handle Common fields table
 if '"COMMON_FIELDS"' in tables:
     tables.remove('"COMMON_FIELDS"')
     statement += '\
@@ -118,31 +122,9 @@ for table in tables:
         left join ' + table + '\n\
         on "SAMPLE".sample_id = ' + table + '.sample_id\n '
 
+# add the study ids to the statement
 study_statement=[]
 for study_id in unique_study_ids:
-    # Check for existence of extra_study
-    if '"EXTRA_STUDY_' + study_id + '"' in tables:
-        tables.remove('"EXTRA_STUDY_' + study_id + '"')
-        statement += '\
-    inner join "EXTRA_STUDY_' + study_id + '" \n\
-    on "STUDY".study_id = "EXTRA_STUDY_' + study_id + '".study_id \n '
-    # End if
-
-    # Check for existence of extra_sample
-    if '"EXTRA_SAMPLE_' + study_id + '"' in tables:
-        tables.remove('"EXTRA_SAMPLE_' + study_id + '"')
-        statement += '\
-    left join "EXTRA_SAMPLE_' + study_id + '" \n\
-    on "SAMPLE".sample_id = "EXTRA_SAMPLE_' + study_id + '".sample_id \n '
-
-    # Check for existence of extra_sample
-    if '"EXTRA_PREP_' + study_id + '"' in tables:
-        tables.remove('"EXTRA_PREP_' + study_id + '"')
-        statement += '\
-    inner join "EXTRA_PREP_' + study_id + '" \n\
-    on "SAMPLE".sample_id = "EXTRA_PREP_' + study_id + '".sample_id \n '
-
-# End if
     study_statement.append('"STUDY".study_id = ' + study_id)
 
 statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\')' % (' or '.join(study_statement))
@@ -158,6 +140,7 @@ for i in table_col_value:
     controlled_col=data_access.checkIfColumnControlledVocab(str(column))
     if controlled_col:
         vocab_terms=data_access.getValidControlledVocabTerms(str(column))
+    same_col_addition_statements=[]
     for col_value in selected_col_values:
         clipped_col_value=str(col_value.strip("'"))
         if controlled_col:
@@ -169,11 +152,13 @@ for i in table_col_value:
                     break
                    
         if clipped_col_value<>'####ALL####' and clipped_col_value.upper()<>'NONE':
-            additional_where_statements.append('"'+tab+'"."'+column+'"=\''+clipped_col_value+'\'')
-
+            same_col_addition_statements.append('"'+tab+'"."'+column+'"=\''+clipped_col_value+'\'')
+    if same_col_addition_statements<>[]:
+        additional_where_statements.append('%s' % (' or '.join(same_col_addition_statements)))
 if additional_where_statements<>[]:
     statement += ' and (%s) ' % (' and '.join(additional_where_statements)) 
 
+#req.write(statement)
 # Run the statement
 con = data_access.getDatabaseConnection()
 cur = con.cursor()
@@ -188,6 +173,7 @@ map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_map.txt')
 # All mapping files start with an opening hash
 mapping_file.write('#')
 
+# determine if a column is a controlled vaocabulary columnn
 controlled_vocab_columns={}
 for i,column in enumerate(cur.description):
     if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', \
@@ -198,7 +184,8 @@ for i,column in enumerate(cur.description):
                     data_access.checkIfColumnControlledVocab(column[0])
         if valid_controlled_vocab:
             controlled_vocab_columns[str(column[0])]=i
-    
+
+# create a dictionary storing the controlled columns and their values
 controlled_vocab_lookup={}
 for column in controlled_vocab_columns:
     vocab_id_to_valid_term=data_access.getValidControlledVocabTerms(column)
@@ -226,11 +213,11 @@ samples_list=[]
 map_file_write=[]
 duplicate_samples=[]
 samples_list=[]
+
 for row in results:
     # Can't use something like '\t'.join(row) because not all items in list
     # are string values, hence the explicit loop structure here.
     to_write = ''
-    
     sample_to_run_prefix.append(list((str(row[0]),str(row[4]),str(row[3]))))
     
     if list((str(row[3]),str(row[4]))) not in study_id_and_run_prefix:
@@ -264,75 +251,20 @@ for row in results:
 
 mapping_file.close()
 
-
-
-"""
-# iterate through the list of samples and get the OTU map for each sample
-otu_statement = '''select gg.prokmsa_id, slrm.sequence_name
-    from split_library_read_map slrm
-    inner join ANALYSIS an on slrm.seq_run_id=an.seq_run_id and slrm.split_library_run_id=an.split_library_run_id   
-    inner join OTU_MAP m on slrm.ssu_sequence_id=m.ssu_sequence_id and an.otu_run_set_id=m.otu_run_set_id
-    inner join OTU o on m.otu_id=o.otu_id
-    inner join OTU_PICKING_RUN p on an.otu_run_set_id=p.otu_run_set_id
-    inner join OTU_PICKING_METHOD b on p.otu_picking_method_id=b.otu_picking_method_id
-    inner join SEQUENCE_SOURCE ss on b.otu_picking_ref_set_name=ss.source_name and b.otu_picking_method_threshold=ss.threshold
-    inner join SOURCE_MAP sm on ss.sequence_source_id=sm.sequence_source_id 
-    inner join GREENGENES_REFERENCE gg on o.ssu_sequence_id=gg.ssu_sequence_id and sm.reference_id=gg.prokmsa_id
-        where b.otu_picking_method_name=\'%s\'
-          and p.threshold=%d
-          and ss.threshold=%d
-          and ss.source_name=\'%s\' and (''' % ('UCLUST_REF',97,97,'GREENGENES_REFERENCE')
-          
-sample_otu_statements=[]  
-for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
-    sample_otu_statements.append('(slrm.sample_name = \'%s\' and an.seq_run_id=%d)' % (str(otu_sample_name),int(sid_run_prefix_to_seq_run_id[otu_study_id+'_'+otu_run_prefix])))
-
-otu_statement+=' or '.join(sample_otu_statements)+')'
-
-'''
-    otus=data_access.getOTUMap(otu_sample_name,
-                int(sid_run_prefix_to_seq_run_id[otu_study_id+'_'+otu_run_prefix]),
-                97,'UCLUST_REF','GREENGENES_REFERENCE',97)
-''' 
-# Run the statement
-con = data_access.getSFFDatabaseConnection()
-cur = con.cursor()
-#req.write(str(statement)+'<br><br>')
-otus = cur.execute(otu_statement)
-
-# based on the returned OTU Map, append sample those to an OTU dictionary
-for o in otus:
-    if otu_sample_name in duplicate_samples:
-        otu_sample_name=o[1].split('_')
-        otu_sample_name[0]+='_%s' % (otu_run_prefix)
-        new_otu_sample_name='_'.join(otu_sample_name)
-    else:
-        new_otu_sample_name=o[1]
-        
-    if otu_map_dict.has_key(str(o[0])):
-        otu_map_dict[str(o[0])].append(new_otu_sample_name)
-    else:
-        otu_map_dict[str(o[0])]=[]
-        otu_map_dict[str(o[0])].append(new_otu_sample_name)
-
-
-"""
-
-#req.write(str(duplicate_samples))
-#req.write(str(sample_to_run_prefix))
-#req.write(str(results))
+# create a dictionary for getting run_prefix from run_id
 otu_map_dict={}
 sid_run_prefix_to_seq_run_id={}
 for study_id,run_prefix_value in study_id_and_run_prefix:
     seq_run_id_out=data_access.getSeqRunIdFromRunPrefix(run_prefix_value,study_id)
     sid_run_prefix_to_seq_run_id[study_id+'_'+run_prefix_value]=seq_run_id_out
-
+it=0
 # iterate through the list of samples and get the OTU map for each sample
 for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
+    #req.write('<html><p>%i</p></html>'%it)
+    it+=1
     otus=data_access.getOTUMap(otu_sample_name,
                 int(sid_run_prefix_to_seq_run_id[otu_study_id+'_'+otu_run_prefix]),
                 97,'UCLUST_REF','GREENGENES_REFERENCE',97)
-    
     # based on the returned OTU Map, append sample those to an OTU dictionary
     for o in otus:
         tmp_sample_name=otu_sample_name

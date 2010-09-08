@@ -31,12 +31,14 @@ $(document).ready(function(){
     
     function post_Array() {
         var form_object=document.getElementById("metadata_submission") 
-        for (i in savedValues){
-            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+i+'" value="'+savedValues[i]+'">';
-        }
+
         var listbox_values=document.getElementById('box2View');
         for (i=0;i<listbox_values.options.length;i++){
-            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="####ALL####">';
+            if (listbox_values.options[i].value in savedValues){
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="'+savedValues[listbox_values.options[i].value]+'">';
+            }else{
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="####ALL####">';
+            }
         }
         var fname_prefix=document.getElementById("fname_prefix").value;
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="fname_prefix" value="'+fname_prefix+'">'
@@ -65,6 +67,7 @@ $(document).ready(function(){
 
 <%
 
+# create a dictionary containing all public column fields
 unique_public_columns={}
 for i,j in enumerate(public_columns):
     col_key=public_columns[i][1].strip('"')+'####SEP####'+public_columns[i][0]
@@ -73,13 +76,13 @@ for i,j in enumerate(public_columns):
     else:
         unique_public_columns[col_key]=[]
         unique_public_columns[col_key].append(public_columns[i][2])
-#
+
+# iterate through columns and strip off whitespaces
 for col in unique_public_columns:
     studies_to_use=str(unique_public_columns[col]).strip('[]').split(',')
     study_string=[]
     for i in studies_to_use:
         study_string.append(str(i.strip()))
-
 #
 %>
 
@@ -139,6 +142,7 @@ it will remove the return key functionality.
             <select id="box1View" multiple="multiple" style="height:200px;width:300px;"> >
                 <!-- Using psp, generate a list of ontologies -->
 <%
+# write out the public column values as a select box
 for col in unique_public_columns:
     table_name,col_name=col.split('####SEP####')
     studies_to_use=str(unique_public_columns[col]).strip('[]').split(',')
@@ -146,7 +150,9 @@ for col in unique_public_columns:
     for i in studies_to_use:
         study_string.append(str(i.strip()))
         new_study_str='S'.join(study_string)
-    req.write('<option id="'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+    # remove the Public fields
+    if str(col_name) not in ['PUBLIC']:
+        req.write('<option id="'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
 #
 %>
                 </select>
