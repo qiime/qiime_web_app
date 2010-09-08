@@ -1875,14 +1875,14 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def getPublicColumns(self):
+    def getPublicColumns(self,user_id):
         """ Returns a list of metadata fields
         """
         try:
             con = self.getDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('get_public_study_columns', \
-                                     [results])
+                                     [user_id,results])
             public_cols = []
             for row in results:
                 public_cols.append(row)

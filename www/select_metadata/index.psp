@@ -14,7 +14,9 @@ from qiime_data_access import *
 import os
 from qiime.colors import natsort
 data_access = QiimeDataAccess()
-public_columns=data_access.getPublicColumns()
+
+
+public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
 
 %>
 
