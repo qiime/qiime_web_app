@@ -19,7 +19,7 @@ con = cx_Oracle.Connection('qiime_production/odyssey$@microbiome1.colorado.edu/m
 db_values=con.cursor()
 
 column_names={}
-out_directory='/tmp_qiime/'
+out_directory='/home/wwwuser/user_data/'
 
 job_value=0
 job_id=con.cursor().callproc('create_queue_job',(sess['web_app_user_id'],job_value))
