@@ -12,10 +12,10 @@ __status__ = "Production"
 
 from qiime_data_access import *
 import os
-from qiime.colors import natsort
 data_access = QiimeDataAccess()
+from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str
 
-
+# get a list of public columns
 public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
 
 %>
@@ -67,26 +67,6 @@ $(document).ready(function(){
     }
 </style>
 
-<%
-
-# create a dictionary containing all public column fields
-unique_public_columns={}
-for i,j in enumerate(public_columns):
-    col_key=public_columns[i][1].strip('"')+'####SEP####'+public_columns[i][0]
-    if unique_public_columns.has_key(col_key):
-        unique_public_columns[col_key].append(public_columns[i][2])
-    else:
-        unique_public_columns[col_key]=[]
-        unique_public_columns[col_key].append(public_columns[i][2])
-
-# iterate through columns and strip off whitespaces
-for col in unique_public_columns:
-    studies_to_use=str(unique_public_columns[col]).strip('[]').split(',')
-    study_string=[]
-    for i in studies_to_use:
-        study_string.append(str(i.strip()))
-#
-%>
 
 <!-- 
 This form contains the input box for the list of terms, along with
@@ -144,18 +124,8 @@ it will remove the return key functionality.
             <select id="box1View" multiple="multiple" style="height:200px;width:300px;"> >
                 <!-- Using psp, generate a list of ontologies -->
 <%
-# write out the public column values as a select box
-for col in unique_public_columns:
-    table_name,col_name=col.split('####SEP####')
-    studies_to_use=str(unique_public_columns[col]).strip('[]').split(',')
-    study_string=[]
-    for i in studies_to_use:
-        study_string.append(str(i.strip()))
-        new_study_str='S'.join(study_string)
-    # remove the Public fields
-    if str(col_name) not in ['PUBLIC']:
-        req.write('<option id="'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
-#
+#write out the list of public columns
+req.write(unique_cols_to_select_box_str(public_columns))
 %>
                 </select>
             </td> 

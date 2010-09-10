@@ -265,6 +265,7 @@ for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
     otus=data_access.getOTUMap(otu_sample_name,
                 int(sid_run_prefix_to_seq_run_id[otu_study_id+'_'+otu_run_prefix]),
                 97,'UCLUST_REF','GREENGENES_REFERENCE',97)
+
     # based on the returned OTU Map, append sample those to an OTU dictionary
     for o in otus:
         tmp_sample_name=otu_sample_name
@@ -280,7 +281,7 @@ for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
         else:
             otu_map_dict[str(o[0])]=[]
             otu_map_dict[str(o[0])].append(new_otu_sample_name)
-
+            
 # Write the OTU table
 otu_table_fpath=os.path.join(otu_table_file_dir, file_name_prefix + 
                                 '_otu_table.txt')     
