@@ -946,8 +946,11 @@ class QiimeDataAccess( AbstractDataAccess ):
                 database_data_type = field_details[1]
                 log.append('Read field database data type as "%s"' % database_data_type)
             
+            # If the filed value is 'unknown', switch to 'null' (empty string is the same as null)
+            if str(field_value).upper() == 'UNKNOWN':
+                field_value = ''
             # Figure out if this needs to be an integer ID instead of a text value
-            if database_data_type == 'list':
+            elif database_data_type == 'list':
                 log.append('Field is of type list. Looking up integer value...')
                 named_params = {'field_value':field_value.upper()}
                 statement = 'select vocab_value_id from controlled_vocab_values where upper(term) = :field_value'
@@ -963,10 +966,6 @@ class QiimeDataAccess( AbstractDataAccess ):
             
             # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
             field_name = '"%s"' % field_name.upper()
-            
-            # If the filed value is 'unknown', switch to 'null' (empty string is the same as null)
-            if str(field_value).upper() == 'UNKNOWN':
-                field_value = ''
             
             ########################################
             ### For STUDY
@@ -1104,6 +1103,17 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return -1
+
+    def createTorqueJob(self, job_type, job_input, user_id):
+        """ Returns submits a job to the queue and returns the job_id
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            job_id = 0
+            job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, job_id])
+            return job_id[3]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
         
     def getSFFFiles(self, study_id):
         """ Gets a list of SFF files for this study
