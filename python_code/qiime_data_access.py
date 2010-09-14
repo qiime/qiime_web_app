@@ -863,6 +863,8 @@ class QiimeDataAccess( AbstractDataAccess ):
         named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
         statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
         log.append(statement)
+        log.append('schema_owner: %s' % schema_owner)
+        log.append('extra_table: %s' % extra_table)
         results = con.cursor().execute(statement, named_params).fetchone()
         
         # Create if it doesn't exist already
