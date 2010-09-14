@@ -151,6 +151,9 @@ The filename should not contain spaces or non-alphanumeric characters.</p>
     <param name="vc_uploadViewStopUploadButtonText" value="Stop upload"/>
     <param name="vc_uploadViewStopUploadButtonImageUrl" value="/img/media_stop_red.png"/>
     <param name="uc_maxFileLength" value="100000000000"/>
+    <param name="uc_partitionLength" value="16777216"/>
+    <param name="uc_useMd5" value="true"/>
+    <param name="uc_usePartitionMd5" value="true"/>
     <param name="ac_fireAppletInitialized" value="true"/> 
     <param name="uc_fileNamePattern" value='^.+\.((zip))' />
     <param name="ac_fireUploaderFileStatusChanged" value="true"/>
