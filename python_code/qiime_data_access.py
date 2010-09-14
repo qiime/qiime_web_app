@@ -881,6 +881,12 @@ class QiimeDataAccess( AbstractDataAccess ):
                 log.append(statement)
                 results = con.cursor().execute(statement)
                 con.cursor().execute('commit')
+            # If it's a prep table, must create row_number columnjj
+            elif field_type == 'prep':
+                log.append('Adding row_number to extra_prep table...')                        
+                statement = 'alter table %s add row_number integer' % (extra_table)
+                log.append(statement)
+                results = con.cursor().execute(statement)
                             
         # Check if the column exists
         log.append('Checking if extra column exists: %s' % field_name)
