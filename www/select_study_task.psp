@@ -41,7 +41,8 @@ function hideDiv(div_name)
 <%
 def submitJob(study_id, user_id, sff_file, mapping_file):
     # Submit the job to the queue
-    job_id = data_access.createQueueJob(study_id, user_id, mapping_file, sff_file )
+    #job_id = data_access.createQueueJob(study_id, user_id, mapping_file, sff_file )
+    job_id = data_access.createTorqueJob('process_sff', 'input args here', user_id)
     
     # Make sure a legit job_id was created. If not, inform the user there was a problem
     if job_id < 0:
