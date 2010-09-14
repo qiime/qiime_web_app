@@ -884,7 +884,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 results = con.cursor().execute(statement)
 
             if field_type == 'prep':
-                statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_num)' % (extra_table, extra_table, key_table)
+                statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_number)' % (extra_table, extra_table, key_table)
             else:
                 statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
             log.append(statement)
