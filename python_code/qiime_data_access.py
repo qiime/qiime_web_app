@@ -868,12 +868,26 @@ class QiimeDataAccess( AbstractDataAccess ):
         # Create if it doesn't exist already
         if not results:
             log.append('Creating "extra" table %s...' % extra_table)
-            statement = 'create table %s (%s_id int not null, constraint pk_%s primary key (%s_id), \
+            statement = 'create table %s (%s_id int not null, \
                 constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
-                (extra_table, key_table, extra_table, key_table, extra_table, key_table, key_table, key_table)
+                (extra_table, key_table, extra_table, key_table, key_table, key_table)
             log.append(statement)
             results = con.cursor().execute(statement)
-        
+
+            # If it's a prep table, must create row_number column
+            if field_type == 'prep':
+                log.append('Adding row_number to extra_prep table...')                        
+                statement = 'alter table %s add row_number integer' % (extra_table)
+                log.append(statement)
+                results = con.cursor().execute(statement)
+
+            if field_type == 'prep':
+                statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_num)' % (extra_table, extra_table, key_table)
+            else:
+                statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
+            log.append(statement)
+            results = con.cursor().execute(statement)
+                    
             # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
             if field_type == 'study':
                 log.append('Inserting study extra row...')                        
@@ -881,12 +895,6 @@ class QiimeDataAccess( AbstractDataAccess ):
                 log.append(statement)
                 results = con.cursor().execute(statement)
                 con.cursor().execute('commit')
-            # If it's a prep table, must create row_number columnjj
-            elif field_type == 'prep':
-                log.append('Adding row_number to extra_prep table...')                        
-                statement = 'alter table %s add row_number integer' % (extra_table)
-                log.append(statement)
-                results = con.cursor().execute(statement)
                             
         # Check if the column exists
         log.append('Checking if extra column exists: %s' % field_name)
@@ -1034,8 +1042,9 @@ class QiimeDataAccess( AbstractDataAccess ):
             results = con.cursor().execute(statement, named_params).fetchone()
                 
             if results == None:
-                log.append('No row found, inserting new row:')
+                log.append('No row found, inserting new row')
                 if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                    log.append('Row number is %s' % (str(row_num)))
                     named_params = {'key_column_value':key_column_value, 'row_number':row_num}
                     statement = 'insert into %s (%s, row_number) values (:key_column_value, :row_number)' % (table_name, key_column)
                 else:
