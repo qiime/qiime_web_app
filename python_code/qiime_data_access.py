@@ -32,6 +32,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         self._databaseConnection = None
         self._ontologyDatabaseConnection = None
         self._SFFDatabaseConnection = None
+        
     def __del__(self):
         # Make sure we close out our connections when the object goes out of scope
         if self._webAppUserDatabaseConnection:
@@ -42,9 +43,14 @@ class QiimeDataAccess( AbstractDataAccess ):
             
         if self._ontologyDatabaseConnection:
             self._ontologyDatabaseConnection.close()
+            
+        if self._SFFDatabaseConnection:
+            self._SFFDatabaseConnection.close()
     
     def getDatabaseConnection(self):
         """ Obtains a connection to the qiime_production schema
+
+        Get a database connection.
         """
         if self._databaseConnection == None:
             try:
@@ -57,6 +63,8 @@ class QiimeDataAccess( AbstractDataAccess ):
 
     def getWebAppUserDatabaseConnection(self):
         """ Obtains a connection to the web_app_user schema
+
+        Get a database connection.
         """
         if self._webAppUserDatabaseConnection == None:
             try:
@@ -70,9 +78,7 @@ class QiimeDataAccess( AbstractDataAccess ):
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the ontologies schema
 
-        Get a database connection. Note that the consumer is responsible 
-        for closing this connection once obtained. This method is intended
-        to be used internally by this class.
+        Get a database connection.
         """
         if self._ontologyDatabaseConnection == None:
             try:
@@ -84,13 +90,12 @@ class QiimeDataAccess( AbstractDataAccess ):
         return self._ontologyDatabaseConnection
     
     def getSFFDatabaseConnection(self):
-        """ Obtains a connection to the qiime_test schema
+        """ Obtains a connection to the SFF schema
 
         Get a database connection. 
         """
         if self._SFFDatabaseConnection == None:
             try:
-                print 'No active connection - obtaining new connection to qiime_test.'
                 self._SFFDatabaseConnection = cx_Oracle.Connection('SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb')
             except Exception, e:
                 print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
@@ -662,37 +667,31 @@ class QiimeDataAccess( AbstractDataAccess ):
             
             raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
 
+    '''
     def getMetadataByStudyList(self, field_name, study_list):
         """ Returns a list of metadata values based on a study type and list
         """
-        try:
-            metadata_list = []
-            con = self.getDatabaseConnection()
-            column_values = con.cursor()
-            con.cursor().callproc('get_metadata_by_study_list', [field_name, study_list, column_values])
-            for row in column_values:
-                if row[0] is None:
-                    continue
-                metadata_list.append(row[0])
-            return metadata_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+        metadata_list = []
+        con = self.getDatabaseConnection()
+        column_values = con.cursor()
+        con.cursor().callproc('get_metadata_by_study_list', [field_name, study_list, column_values])
+        for row in column_values:
+            if row[0] is None:
+                continue
+            metadata_list.append(row[0])
+        return metadata_list
         
     def getParameterByScript(self, parameter_type, script_type):
         """ Returns a list of metadata values based on a study type and list
         """
-        try:
-            con = self.getDatabaseConnection()
-            values = con.cursor()
-            con.cursor().callproc('get_parameter_by_script', [parameter_type, script_type, values])
-            value_list = []
-            for row in values:
-                value_list.append(row[0])
-            return value_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+        con = self.getDatabaseConnection()
+        values = con.cursor()
+        con.cursor().callproc('get_parameter_by_script', [parameter_type, script_type, values])
+        value_list = []
+        for row in values:
+            value_list.append(row[0])
+        return value_list
+    '''
 
     def getColumnDictionary(self):
         """ Returns the full column dictionary
@@ -1108,7 +1107,8 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
+
+    '''
     def createQueueJob(self, study_id, user_id, mapping_file_path, sff_path):
         """ Returns submits a job to the queue and returns the job_id
         """
@@ -1120,6 +1120,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return -1
+    '''
 
     def createTorqueJob(self, job_type, job_input, user_id):
         """ Returns submits a job to the queue and returns the job_id
@@ -1350,10 +1351,6 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
     
     def get_ontology_terms(self, ontology, query):
         """ Returns a list of ontology terms if the term contains query as a
@@ -1375,10 +1372,6 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
     
     def validity_of_ontology_term(self, ontology, query):
         """ Returns a list of ontology terms if the query is exactly equal to 
@@ -1397,15 +1390,12 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        finally:
-            if (con):
-                con.cursor().close()
-                con.close()
                 
     #####################################
     # Loading
     #####################################
     
+    '''
     def disableTableConstraints(self):
         """ disable the table constraints
         """
@@ -1422,6 +1412,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             err = 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             print err
             raise Exception(err)
+    '''
 
     def loadSplitLibFasta(self,start_job,run_id,fname):
         """ starts process of importing processed split-library data into the DB
