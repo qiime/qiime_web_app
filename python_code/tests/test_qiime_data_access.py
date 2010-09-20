@@ -36,18 +36,15 @@ class QiimeDataAccessTests(unittest.TestCase):
     # The rest of the unit tests
     
     #These two functions are first, because they create a test user acct.
-    def test_registerWebAppUser(self):
-        
+    def test_registerWebAppUser(self):        
         result = self._qiime_data_access.registerWebAppUser('test_user1313', 'calkd1579','calkd1579')
         self.assertFalse(result)
 
     def test_activateWebAppUser(self):
-        
         result = self._qiime_data_access.activateWebAppUser('test_user1313', 'calkd1579')
         self.assertTrue(result)
 
     def test_verifyActivationCode(self):
-        
         result = self._qiime_data_access.verifyActivationCode('test_user1313', 'calkd1579')
         self.assertTrue(result)
         
@@ -360,6 +357,20 @@ class QiimeDataAccessTests(unittest.TestCase):
         
         result = self._qiime_data_access.loadSeqToSourceMap(False,1)
         self.assertFalse(result)
+
+    def test_convertToOracleHappyName_DateOnly(self):
+        """ 
+        """
+        result = self._qiime_data_access.convertToOracleHappyName('11/25/1973')
+        self.assertTrue(result)
+        
+    def test_convertToOracleHappyName_DateAndTime(self):
+        """ 
+        """
+        result = self._qiime_data_access.convertToOracleHappyName('11/25/1973')
+        self.assertTrue(result)
+
+
         
 if __name__ == '__main__':
 	unittest.main()

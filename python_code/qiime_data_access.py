@@ -232,7 +232,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def registerWebAppUser( self, username, password ,activation_code):
+    def registerWebAppUser(self, username, password ,activation_code):
         """ Attempts to register a new user using the supplied username/password
 
         Attempt to register the user. If successful, a dict with user innformation is
@@ -243,8 +243,8 @@ class QiimeDataAccess( AbstractDataAccess ):
             con = self.getWebAppUserDatabaseConnection()
             user_data = con.cursor()
             con.cursor().callproc('web_app_user_insert', [username, crypt_pass,activation_code])
-            row = user_data.fetchone()
-            if row:
+            if user_data.rowcount > 0:
+                row = user_data.fetchone()
                 user_data = {'web_app_user_id':row[0], 'email':row[1], 'password':row[2], 'is_admin':row[3], 'is_locked':row[4], 'last_login':row[5]}
                 return user_data
             else:
@@ -1641,11 +1641,9 @@ class QiimeDataAccess( AbstractDataAccess ):
         try:
             con = self.getSFFDatabaseConnection()
             seq_run_id=0
-            db_output=con.cursor().callproc('get_seq_run_id_using_md5',
-                                            [md5_checksum,seq_run_id])
+            db_output=con.cursor().callproc('get_seq_run_id_using_md5', [md5_checksum,seq_run_id])
             return db_output[1]
         except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
     def createAnalysis(self, study_id):
