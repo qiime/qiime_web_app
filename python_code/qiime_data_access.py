@@ -1660,6 +1660,7 @@ class QiimeDataAccess( AbstractDataAccess ):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
+    '''
     def addSFFFile(self, start_job, sff_filename, number_of_reads,header_length,
                     key_length, number_of_flows, flowgram_code, flow_characters,
                     key_sequence, md5_checksum, seq_run_id):
@@ -1678,6 +1679,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+    '''
     
     def createSequencingRun(self,start_job,instrument_code,version,seq_run_id):
         """ creates a row in the sequencing_run table
