@@ -37,55 +37,6 @@ function hideDiv(div_name)
 
 </script>
 
-<div id="simplediv" style="background-color:#CCCCCC;border:1px solid black;display:none;width:600px;height:500px;position:absolute;top:50;left:50;">
-<%
-def submitJob(study_id, user_id, sff_file, mapping_file):
-    # Submit the job to the queue
-    #job_id = data_access.createQueueJob(study_id, user_id, mapping_file, sff_file )
-    job_id = data_access.createTorqueJob('process_sff', 'input args here', user_id)
-    
-    # Make sure a legit job_id was created. If not, inform the user there was a problem
-    if job_id < 0:
-        req.write('<p/>There was an error creating the job. Please contact the system administratorx.')
-    else:
-        # Redirect to the home page for this study
-        psp.redirect('fusebox.psp?page=select_study_task.psp')
-    
-    # End if
-
-# Gather necessary values to create a new queue job
-study_id = int(sess['study_id'])
-user_id = int(sess['web_app_user_id'])
-filepath = 'none'
-sff_files = data_access.getSFFFiles(study_id)
-mapping_files = data_access.getMappingFiles(study_id)
-
-# Check if this was re-submitted, which means selections have been made
-if 'sff_selection' in form:
-    submitJob(study_id, user_id, form['sff_selection'], form['mapping_selection'])
-
-# If either file collection has more than one file, allow user to select
-elif len(sff_files) > 0 and len(mapping_files) > 0:
-    
-    req.write('<table><tr><td>')
-    req.write('<form method="post" action="submit_job_to_qiime.psp"')
-    req.write('<h3>Select SFF File</h3>\n')
-    for sff in sff_files:
-        req.write('<input type="radio" name="sff_selection" id="sff_selection" value="%s"> %s<br>' % (sff, os.path.basename(sff)))
-    
-    req.write('<h3>Select Mapping File</h3>\n')
-    for sff in mapping_files:
-        req.write('<input type="radio" name="mapping_selection" id="mapping_selection" value="%s"> %s<br>' % (sff, os.path.basename(sff)))
-    
-    req.write('<br/>')
-    req.write('<input type="submit" value="Submit Job">')
-    req.write('</form>')
-    req.write('</td></tr></table>')
-    
-# End if
-%>
-</div>
-
 <br>
 <p>
     <h3>Selected Study: <%=sess['study_name']%></h3>
@@ -172,55 +123,33 @@ else:
 %>
                 </form>
         </li>
-        <li>        
-            
-<%
-if metadata_complete == 'n':
-%>
-Create a mapping file (complete metadata upload first)<br/><br/>
-<%
-elif mapping_file_complete == 'n':
-%>
-            <form id="create_mapping_file" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="create_mapping_file.psp">
-                <a href="" onclick="document.forms['create_mapping_file'].submit(); return false;">
-                Create a mapping file (not complete)</a>
-            <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
-<%
-else:
-%>
-            <form id="create_mapping_file" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="create_mapping_file.psp">
-                <a href="" onclick="document.forms['create_mapping_file'].submit(); return false;">
-                Create a mapping file (complete)</a>
-            <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
-<%
 
-# End if
-%>
-                </form>
-        </li>
         <li>
 
 <%
-#jobs = data_access.getJobInfo(study_id)
-jobs = []
+
+jobs = data_access.getJobInfo(study_id)
 if len(jobs) > 0:
-    # Will only be one row so safe to assume zero index
-    job = jobs[0]
-    job_id = job[0]
-    submission_date = job[1]
-    status = job[2]
+    req.write('Submitted Jobs:')
+    req.write('<ul>')
+    
+    for job in jobs:
+        req.write('<li>')
+        req.write('Job %s: %s' % (job['job_id'], job['job_state_name']))
+        req.write('</li>')
+
+    req.write('</ul>')
+    req.write('</b><br/>')
+
+elif metadata_complete == 'y' and sff_complete == 'y':
     
 %>
+            <form id="submit_job_to_qiime" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="submit_job_to_qiime.psp">
+                <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
+                Submit job to Qiime</a>
+            <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
 
-Job submitted. Current status: <b><%=status%></b>
-
-<%
-elif metadata_complete == 'y' and sff_complete == 'y' and mapping_file_complete == 'y':
-    
-%>
-            <a href="#" onclick="showDiv('simplediv');return false;">Submt job to Qiime</a>
 <%
 else:
     
@@ -232,6 +161,7 @@ else:
 
 %>
         </li>
+        
         <li>
             <form id="delete_study" action="delete_study.psp" method="post">
                 <a href="" onclick="if(confirm('Are you sure you want to remove this study? All associated data will be removed.')) {document.forms['delete_study'].submit(); } return false;">

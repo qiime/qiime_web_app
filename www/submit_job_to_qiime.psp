@@ -12,11 +12,29 @@ __status__ = "Development"
 <%
 from qiime_data_access import QiimeDataAccess
 data_access = QiimeDataAccess()
-sess = Session.Session(req)
 
-def submitJob(study_id, user_id, sff_file, mapping_file):
-    # Submit the job to the queue
-    job_id = data_access.createQueueJob(study_id, user_id, sff_file, mapping_file)
+def submitJob(study_id, user_id, output_dir):
+    # Submit jobs to the queue
+    sff_files = data_access.getSFFFiles(study_id)
+    mapping_files = data_access.getMappingFiles(study_id)
+    split_library_mapping_file = mapping_files[0]
+
+    # Build the input string
+    input_string = ''
+    sff_file_number = 0
+    params = []
+
+    params.append('Mapping=%s' % split_library_mapping_file)
+    params.append('Output=%s' % output_dir)
+    params.append('SFF=%s' % ','.join(sff_files))
+    job_input = '!!'.join(params)
+    
+    #req.write(job_input)
+
+    # Submit the job
+    job_id = data_access.createTorqueJob('ProcessSFFHandler', job_input, user_id, study_id)
+    
+    #req.write(str(job_id))
     
     # Make sure a legit job_id was created. If not, inform the user there was a problem
     if job_id < 0:
@@ -24,38 +42,70 @@ def submitJob(study_id, user_id, sff_file, mapping_file):
     else:
         # Redirect to the home page for this study
         psp.redirect('fusebox.psp?page=select_study_task.psp')
-    
-    # End if
+
 
 # Gather necessary values to create a new queue job
 study_id = int(sess['study_id'])
 user_id = int(sess['web_app_user_id'])
-filepath = 'none'
 sff_files = data_access.getSFFFiles(study_id)
 mapping_files = data_access.getMappingFiles(study_id)
 
-# Check if this was re-submitted, which means selections have been made
-if 'sff_selection' in form:
-    submitJob(study_id, user_id, form['sff_selection'], form['mapping_selection'])
+# Generate a mapping file based on 5 required columns: 'SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'DESCRIPTION'
+data_access = QiimeDataAccess()
+study_id = str(sess['study_id'])
 
-# If either file collection has more than one file, allow user to select
-elif len(sff_files) > 1 or len(mapping_files) > 1:
+# We only want the most minimal mapping file for running split_libraries.py
+statement = """
+select  sa.sample_name as "#SampleID", 
+        sp.barcode as Barcode, 
+        concat(sp.linker, sp.primer) as LinkerPrimerSequence, 
+        sp.experiment_title as Description
+from    study s
+        inner join sample sa
+        on s.study_id = sa.study_id
+        inner join sequence_prep sp
+        on sa.sample_id = sp.sample_id
+where   s.study_id = %s""" % str(study_id)
+
+# Run the statement
+con = data_access.getDatabaseConnection()
+cur = con.cursor()
+results = cur.execute(statement)
+
+# Create new mapping file in filesystem
+mapping_file_dir = sess['mapping_file_dir']
+if not os.path.exists(mapping_file_dir):
+    os.makedirs(mapping_file_dir)
     
-    req.write('<form method="post" action="submit_job_to_qiime.psp"')
-    req.write('<h3>Select SFF File</h3>\n')
-    for sff in sff_files:
-        req.write('<input type="radio" name="sff_selection" id="sff_selection" value="%s"> %s<br>' % (sff, sff))
-    
-    req.write('<h3>Select Mapping File</h3>\n')
-    for sff in mapping_files:
-        req.write('<input type="radio" name="mapping_selection" id="mapping_selection" value="%s"> %s<br>' % (sff, sff))
-    
-    req.write('<br/>')
-    req.write('<input type="submit" value="Submit Job">')
-    
-else:
-    # Submit the job to the queue
-    submitJob(study_id, user_id, sff_files[0], mapping_files[0])
-    
-# End else
+mapping_file = file(os.path.join(mapping_file_dir, 'split_libraries_mapping_file.txt'), 'w')
+
+# Write the header row
+to_write = ''
+for column in cur.description:
+    to_write += column[0] + '\t'
+mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+
+for row in results:
+    # Can't use something like '\t'.join(row) because not all items in list
+    # are string values, hence the explicit loop structure here.
+    to_write = ''
+    for column in row:
+        val = str(column)
+        if val == 'None':
+            val = ''
+        to_write += val + '\t'
+    # Write the row minus the last tab
+    mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+
+mapping_file.close()
+
+# Add to the database list
+data_access.addMappingFile(study_id, mapping_file.name)
+
+# Set the output_dir
+output_dir = sess['study_dir']
+
+# Submit the job to the queue
+submitJob(study_id, user_id, output_dir)
+
 %>

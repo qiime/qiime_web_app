@@ -1122,14 +1122,14 @@ class QiimeDataAccess( AbstractDataAccess ):
             return -1
     '''
 
-    def createTorqueJob(self, job_type, job_input, user_id):
+    def createTorqueJob(self, job_type, job_input, user_id, study_id):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
             con = self.getSFFDatabaseConnection()
             job_id = 0
-            job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, job_id])
-            return job_id[3]
+            job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, study_id, job_id])
+            return job_id[4]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
         
@@ -1167,12 +1167,13 @@ class QiimeDataAccess( AbstractDataAccess ):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
-            con = self.getDatabaseConnection()
+            con = self.getSFFDatabaseConnection()
             results = con.cursor()
             jobs = []
-            con.cursor().callproc('qiime_assets.get_job_info', [study_id, results])
+            con.cursor().callproc('get_job_info', [study_id, results])
             for row in results:
-                jobs.append((row[0], row[1], row[2]))
+                jobs.append({'job_id':row[0], 'job_type_name':row[1], 'job_arguments':row[2], \
+                    'user_id':row[3], 'job_state_name':row[4], 'job_notes':row[5]})
             return jobs
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
