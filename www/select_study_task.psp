@@ -135,7 +135,8 @@ if len(jobs) > 0:
     
     for job in jobs:
         req.write('<li>')
-        req.write('Job %s: %s' % (job['job_id'], job['job_state_name']))
+        req.write('Job %s: %s<br/>Output: ' % (job['job_id'], job['job_state_name']))
+        req.write(job['job_notes'])
         req.write('</li>')
 
     req.write('</ul>')
