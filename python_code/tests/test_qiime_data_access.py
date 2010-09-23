@@ -318,8 +318,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ 
         """
         
-        result = self._qiime_data_access.addSFFFile(False,'test',1,1,1,1,'test',\
-                                                'test','A','test',1)
+        result = self._qiime_data_access.addSFFFile(1, '/dev/null/my.sff')
         self.assertFalse(result)
     #
     def test_createSequencingRun(self):

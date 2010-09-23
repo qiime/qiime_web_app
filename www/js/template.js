@@ -57,11 +57,12 @@ function hasWhiteSpace(value)
     }
 }
 
-function replaceWithCurrent(field_name)
+function replaceWithCurrent(field_name, old_value)
 {
     field_name_parts = field_name.split(':');
     
-    // Loop over form elements. For those elements that have a similar name, replace value
+    // Loop over form elements. For those elements that have a similar name and value, 
+    // replace with value
     for (i = 0; i < document.metadata_form.elements.length; i++)
     {
         e = document.metadata_form.elements[i];
@@ -82,8 +83,11 @@ function replaceWithCurrent(field_name)
         )
         {
             current_field = document.getElementById(field_name);
-            e.value = current_field.value;
-            e.style.background = current_field.style.background;
+            if (e.value == old_value)
+            {
+                e.value = current_field.value;
+                e.style.background = current_field.style.background;    
+            }
         }
     }
 }

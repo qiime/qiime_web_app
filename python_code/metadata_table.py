@@ -262,7 +262,6 @@ class MetadataTable(object):
                         
                         #For fields that are valid:
                         if column.values[y][1] == 'good':
-                            self._log.append('Field is "good"')
                             # If this is a text column, truncate the length of the string to keep the display reasonable
                             if type(column) == TextColumn:
                                 if len(value_output) > max_text_length:
@@ -277,8 +276,8 @@ class MetadataTable(object):
                             self._log.append('Field is "bad"')
                             cell_color = '#EEEEFF'
                             html_table += '<td style="background-color:#DDDDDD;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
-                                <a href="" onclick="replaceWithCurrent(\'%s\');return false;"><div style="font-size:11px">replace all</div></a></td>\n' \
-                                % (cell_color, unique_column_name, unique_column_name, actual_value, column.writeJSValidation(), unique_column_name)
+                                <a href="" onclick="replaceWithCurrent(\'%s\', \'%s\');return false;"><div style="font-size:11px">update all like values</div></a></td>\n' \
+                                % (cell_color, unique_column_name, unique_column_name, actual_value, column.writeJSValidation(), unique_column_name, actual_value)
                         x += 1
                         
                 html_table +='</tr>\n'
