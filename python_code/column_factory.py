@@ -95,7 +95,7 @@ class BaseColumn(object):
         self.reg_exp = ''
         
         # Variable to store whether or not this column exists in the column dictionary
-        self._in_dictionary = in_dictionary
+        self.in_dictionary = in_dictionary
     
     def _addValue(self, value, data_access):
         status = 'good'

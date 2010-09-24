@@ -66,7 +66,18 @@ class MetadataTable(object):
             return errors
         finally:
             data_file.close()
-            return errors            
+            return errors      
+            
+    def getUserDefinedColumns(self):
+        if not len(self._columns):
+            raise ValueError('No columns have yet been added to the collection.')
+            
+        user_defined_columns = []
+        for column in self._columns:
+            if not column.in_dictionary:
+                user_defined_columns.append(column)
+            
+        return user_defined_columns 
 
     def _createColumnHeaders(self, reader, data_access):
         self._log.append('Entering _createColumnHeaders()...')
@@ -224,7 +235,7 @@ class MetadataTable(object):
             while x < column_count:
                 current_column = self._columns[x]
                 self._log.append('Current column is "%s"' % current_column.column_name)
-                if current_column._in_dictionary:
+                if current_column.in_dictionary:
                     html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
                     self._log.append('Column is in dictionary')
                 else:
