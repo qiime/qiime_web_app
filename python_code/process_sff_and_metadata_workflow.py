@@ -32,7 +32,8 @@ from qiime.util import (compute_seqs_per_library_stats,
                         get_qiime_scripts_dir,
                         create_dir)
 from wrap_files_for_md5 import MD5Wrap
-from load_tab_file import input_set_generator, flowfile_inputset_generator, fasta_to_tab_delim
+from load_tab_file import input_set_generator, flowfile_inputset_generator, \
+                            fasta_to_tab_delim
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 
@@ -397,7 +398,7 @@ def submit_processed_data_to_db(fasta_files,metadata_study_id):
                                      run_date, split_lib_cmd,\
                                      svn_version, split_log_str, \
                                      split_hist_str, split_lib_input_md5sum)
-    
+    print "Split-Lib ID: %s" % split_library_run_id
     if not valid:
         raise ValueError,'Error: Unable to load split-library info to database server!'
     
@@ -435,7 +436,7 @@ def submit_processed_data_to_db(fasta_files,metadata_study_id):
     9: sequence string (text)
     '''
 
-    types = ['i','i', 's', 's', 's', 's', 's', 'i', 'i', 's', 's']
+    types = ['i','i', 's', 's', 's', 's', 's', 'i', 'i', 'fc', 's']
     con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     open_fasta = open(split_lib_seqs)
@@ -533,6 +534,7 @@ def submit_processed_data_to_db(fasta_files,metadata_study_id):
     start = time.time()
     for input_set in input_set_generator(otu_map, cur, types,100):
         valid=data_access.loadOTUMap(True, input_set)
+        print "loading OTU mapping data: %s" % set_count
         set_count += 1
     end = time.time()
     print "Total processor time elapsed: %s" % str(end - start)
@@ -551,8 +553,9 @@ def submit_processed_data_to_db(fasta_files,metadata_study_id):
     set_count = 1
     for input_set in input_set_generator(otu_failures, cur, types,100):
         valid=data_access.loadOTUFailures(True, input_set)
+        print "loading otu-map: %s" % set_count
         set_count += 1
-    con.close()
+    
     if not valid:
         raise ValueError, 'Error: Unable to load OTU failures data into database!'
     

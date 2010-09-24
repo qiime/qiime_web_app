@@ -19,8 +19,8 @@ from datetime import datetime
 from hashlib import md5
 
 try:
-    from cx_Oracle import NUMBER, STRING, DATETIME, CLOB
-    type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB}
+    from cx_Oracle import NUMBER, STRING, DATETIME, CLOB,FIXED_CHAR
+    type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB,'fc':FIXED_CHAR}
 except ImportError:
     print "Cannot import cx_Oracle"
     type_lookup_oracle = {}

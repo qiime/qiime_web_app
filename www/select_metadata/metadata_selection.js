@@ -87,7 +87,6 @@ function saveSelection(input_selectbox)
     var selected_values=get_selected(select_box_id)
     
     for (var i in savedValues){
-        
         if (i==select_box_id.id){
             savedValues[select_box_id.id]=selected_values;
             exist='True';
@@ -95,9 +94,9 @@ function saveSelection(input_selectbox)
         }
     }
     if (exist='False'){
-        
         savedValues[select_box_id.id]=selected_values;
     }
+    
     /*
     var select_value_array=new Array();
     select_value_array=savedValues[select_box_id.id].split(',');
@@ -105,6 +104,7 @@ function saveSelection(input_selectbox)
         alert(select_value_array[i])
     }
     */
+    return
 }
 
 
@@ -150,15 +150,59 @@ function setStyle(x)
     document.getElementById(x).style.background="cyan"
 }
 
-/*
-when iterating through list of ontology terms, when removing focus (onblur), 
-this changes the background to cyan
-*/
-function removeStyle(x)
-{
-    document.getElementById(x).style.background="white"
-}
+/* when iterating through list of ontology terms, when removing focus (onblur), this changes the background to cyan */ 
 
+function removeStyle(x) { 
+    document.getElementById(x).style.background="white" 
+} 
+
+/* This function makes only a group of columns from the DB visible */ 
+var box1original=new Array() 
+function select_group(identifier,selObject1,selObject2){ 
+    var listbox_values=document.getElementById(selObject1);
+    var moved_listbox_values=document.getElementById(selObject2); 
+    
+    var box2values=new Array() 
+    for (var i=0;i<moved_listbox_values.options.length;i++){ 
+        box2values[moved_listbox_values.options[i].innerHTML]=null
+    }
+
+    // if the full list has not been saved, then load it into a global variable
+    if (box1original[0] == null){ 
+        for (var i=0;i<listbox_values.options.length;i++){ 
+            box1original[i]=new Array() 
+            box1original[i][0]=listbox_values.options[i].id 
+            box1original[i][1]=listbox_values.options[i].value
+            box1original[i][2]=listbox_values.options[i].innerHTML
+        } 
+    }
+    
+    // Go trhough and write the html for the new option list
+    var iter=0;
+    var option_str=new Array();
+    for (var i=0;i<box1original.length;i++){ 
+        var group=box1original[i][0].split('#ENDGRP#')[0] 
+        var field=box1original[i][2]
+        
+        if (identifier=='ALL'){
+            if (field in box2values){
+                //do nothing
+            }else{
+                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+box1original[i][2]+'</option>';
+                iter=iter+1;
+            }
+        }else if (identifier==group){
+            if (field in box2values){
+                //do nothing
+            }else{
+                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+box1original[i][2]+'</option>';
+                iter=iter+1;
+            }
+        }
+    }
+
+    listbox_values.innerHTML=option_str.join('\n')
+}
 
 /*
 This function gets a list of selected ontologies, concatenates them and formats
@@ -166,6 +210,7 @@ them as a string to be used by PL/SQL
 */
 function get_selected(selObject){
     var arSelected = new Array(); 
+    
     for (i=0;i<selObject.options.length;i++){
         if (selObject.options[i].selected==true){
             arSelected.push('\''+selObject.options[i].value+'\'');
@@ -173,6 +218,7 @@ function get_selected(selObject){
     }
     onts=arSelected.join(',');
     return onts
+    
 }
 /*
 This function takes an array and produces another array with only unique values
@@ -235,16 +281,14 @@ function convert_terms_to_array(ont_term_list){
 //this function resets the default select option and is for the select box
 //above the ontology select field
 function reset_select(selObject){
-    for (i=0;i<selObject.options.length;i++){
-        selObject.options[i].selected=false;
-    }
+    selObject.options[0].selected=true;
 }
 
 //this function selects all from the select options and is for the select box
 //above the ontology select field
 function select_all(listbox_id){
     var listbox_values=document.getElementById(listbox_id);
-    for (i=0;i<listbox_values.options.length;i++){
+    for (var i=0;i<listbox_values.options.length;i++){
         listbox_values.options[i].selected=true;
     }
 }
@@ -253,7 +297,7 @@ function select_all(listbox_id){
 //above the ontology select field
 function select_none(listbox_id){
     var listbox_values=document.getElementById(listbox_id);
-    for (i=0;i<listbox_values.options.length;i++){
+    for (var i=0;i<listbox_values.options.length;i++){
         listbox_values.options[i].selected=false;
     }
 }
@@ -262,7 +306,7 @@ function select_none(listbox_id){
 //select box above the ontology select field
 function select_invert(listbox_id){
     var listbox_values=document.getElementById(listbox_id);
-    for (i=0;i<listbox_values.options.length;i++){
+    for (var i=0;i<listbox_values.options.length;i++){
         if (listbox_values.options[i].selected==true){
             listbox_values.options[i].selected=false;
         }else{
@@ -279,6 +323,7 @@ function select_all_col_values(listbox_id){
         listbox_values.options[i].selected=true;
     }
     saveSelection(listbox_id);
+    return
 }
 
 //this function selects none from the select options and is for the select box
@@ -289,6 +334,7 @@ function select_none_col_values(listbox_id){
         listbox_values.options[i].selected=false;
     }
     saveSelection(listbox_id);
+    return
 }
 
 //this function inverts the selection from the select options and is for the 
@@ -303,4 +349,6 @@ function select_invert_col_values(listbox_id){
         }
     }
     saveSelection(listbox_id);
+
+    return
 }

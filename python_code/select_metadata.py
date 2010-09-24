@@ -14,6 +14,7 @@ __status__ = "Development"
 from qiime.colors import natsort
 from qiime_data_access import *
 data_access = QiimeDataAccess()
+from enums import FieldGrouping
 
 def public_cols_to_dict(public_columns):
     # create a dictionary containing all public column fields
@@ -27,9 +28,31 @@ def public_cols_to_dict(public_columns):
             unique_public_columns[col_key].append(public_columns[i][2])
     
     return unique_public_columns
-    
+
+
+        
 def unique_cols_to_select_box_str(public_columns):
     unique_public_columns=public_cols_to_dict(public_columns)
+    
+    # get submission fields
+    #sra_submission_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_submission_level))[0]))
+    # get study fields
+    study_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.study_level))[0]))
+    # get SRA study fields
+    sra_study_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_study_level))[0]))
+    #vget the prep fields
+    prep_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.prep_level))[0]))
+    # get the SRA sample fields
+    sra_sample_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_sample_level))[0]))
+    # get the required sample fields along with the package-specific fields
+    sample_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sample_level))[0]))
+    # get the SRA experiment fields
+    sra_experiment_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_experiment_level))[0]))
+    
+    study_lists=study_field_list+sra_study_field_list
+    sample_lists=sample_field_list+sra_sample_field_list
+    prep_lists=prep_field_list+sra_experiment_field_list
+    
     select_box=[]
     # write out the public column values as a select box
     for col in unique_public_columns:
@@ -39,9 +62,25 @@ def unique_cols_to_select_box_str(public_columns):
         for i in studies_to_use:
             study_string.append(str(i.strip()))
             new_study_str='S'.join(study_string)
+        
         # remove the Public fields
         if str(col_name) not in ['PUBLIC']:
-            select_box.append('<option id="'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+            
+            '''
+            if col_name in sra_submission_field_list:
+                select_box.append('<option id="'+'SRASuFL#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+            '''
+            if table_name.startswith('EXTRA_'):
+                select_box.append('<option id="'+'CUSTOM#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+            else:
+                if col_name in study_lists:
+                    select_box.append('<option id="'+'STUDY#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                elif col_name in sample_lists:
+                    select_box.append('<option id="'+'SAMPLE#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                elif col_name in prep_lists:
+                    select_box.append('<option id="'+'PREP#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                else:
+                    select_box.append('<option id="'+'ADD#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
     return '\n'.join(select_box)
 
 def print_metadata_info_and_values_table(query_results,show_values,table,col,
@@ -71,10 +110,9 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
         info_table.append('<option value="javascript:select_none_col_values(\'%s\');">None' % (table_col_id))
         info_table.append('<option value="Javascript:select_invert_col_values(\'%s\');">Invert' % (table_col_id))
         info_table.append('</select>')
-        info_table.append('<select id="%s" multiple style="width:300px;" onchange="saveSelection(this.id)">' % (table_col_id))
-
+        info_table.append('<select style="width:300px;" id="%s" multiple onchange="saveSelection(this.id)">' % (table_col_id))
         for row in col_values:
-            info_table.append('<option id="%s" value="%s">%s</option>' % (row,row,row))
+            info_table.append('<option id="%s" value="%s" onmouseover="return overlib(\'%s\',WIDTH, 300);" onmouseout="return nd();">%s</option>' % (row,row,row,row))
 
         # close the select box
         info_table.append('</select>')
@@ -103,7 +141,7 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
                         str(query_results[0][2])+'</td></tr>')
     return ''.join(info_table)
     
-def get_selected_column_values(controlled_col,col,table):
+def get_selected_column_values(controlled_col,col,table,user_id):
     # if the column is not controlled, then we must look in the database
     # for the public values provided in that column
     if not controlled_col:
@@ -111,16 +149,16 @@ def get_selected_column_values(controlled_col,col,table):
         # Handle the different table names, since the inner joins depend on which
         # table is being traversed
         if str(table)=='STUDY':
-            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.study_id=s.study_id where s."PUBLIC"=\'y\'' % (col,table)
+            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.study_id=s.study_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
         elif str(table)=='SAMPLE':
-            statement='select distinct t."%s" from "%s" t where t."PUBLIC"=\'y\'' % (col,table)
+            statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (t."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
         elif str(table)=='SEQUENCE_PREP':
-            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id where s."PUBLIC"=\'y\'' % (col,table)
-        elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST':
-            statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id where s."PUBLIC"=\'y\'' % (str(col),str(table))
+            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
+        elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST' or table=='HUMAN_ASSOCIATED':
+            statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (str(col),str(table),user_id)
         else:
-            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id where s."PUBLIC"=\'y\'' % (col,table)
-
+            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
+            
         # Run the statement
         con = data_access.getDatabaseConnection()
         cur = con.cursor()
@@ -145,3 +183,20 @@ def get_selected_column_values(controlled_col,col,table):
     
     return col_values
     
+    
+def get_table_col_values_from_form(form):
+    ''' get the form values from select_metadata/index.psp '''
+    table_col_value={}
+    for form_key in form:
+        if form_key<>'fname_prefix':
+            if type(form[form_key])==type([]):
+                for vals in form[form_key]:
+                    if table_col_value.has_key(form_key):
+                        if vals<>'####ALL####':
+                            unique_cols.append(form_key)
+                            table_col_value[form_key]=str(vals)
+                    else:
+                        table_col_value[form_key]=str(vals)
+            else:
+                table_col_value[form_key]=str(form[form_key])
+    return table_col_value

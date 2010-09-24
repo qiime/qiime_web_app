@@ -15,7 +15,73 @@ __status__ = "Development"
 from cogent.util.unit_test import TestCase, main
 from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str,\
                             print_metadata_info_and_values_table,\
-                            get_selected_column_values
+                            get_selected_column_values,get_table_col_values_from_form
+
+from types import *
+from exceptions import *
+
+
+
+'''
+The following StringField class was pulled out of the util script in the mod_python 
+library.  A few modifications were made to allow for the generation of a 
+Field class for form posting. Here is one link to this function via the svn
+repository:
+
+https://svn.apache.org/repos/asf/quetzalcoatl/mod_python/trunk/lib/python/mod_python/util.py
+
+This function should be maintained in mod_python 3.3.1 as well:
+
+http://www.apache.org/dist/httpd/modpython/
+
+'''
+
+""" The classes below are a (almost) a drop-in replacement for the
+    standard cgi.py FieldStorage class. They should have pretty much the
+    same functionality.
+
+    These classes differ in that unlike cgi.FieldStorage, they are not
+    recursive. The class FieldStorage contains a list of instances of
+    Field class. Field class is incapable of storing anything in it.
+
+    These objects should be considerably faster than the ones in cgi.py
+    because they do not expect CGI environment, and are
+    optimized specifically for Apache and mod_python.
+"""
+
+class StringField(str):
+    """ This class is basically a string with
+    added attributes for compatibility with std lib cgi.py. Basically, this
+    works the opposite of Field, as it stores its data in a string, but creates
+    a file on demand. Field creates a value on demand and stores data in a file.
+    """
+    filename = None
+    headers = {}
+    ctype = "text/plain"
+    type_options = {}
+    disposition = None
+    disp_options = None
+    name='test'
+    
+    # I wanted __init__(name, value) but that does not work (apparently, you
+    # cannot subclass str with a constructor that takes >1 argument)
+    def __init__(self,value):
+        '''Create StringField instance. You'll have to set name yourself.'''
+        str.__init__(self,value)
+        self.value = value
+
+   
+    def __getattr__(self, name):
+        if name != 'file':
+            raise AttributeError, name
+        self.file = cStringIO.StringIO(self.value)
+        return self.file
+        
+    def __repr__(self):
+        """Return printable representation (to pass unit tests)."""
+        output=self.value.split(':')
+        return "Field(%s,%s)" % (`output[0]`,`output[1]`)
+
 
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:
@@ -129,6 +195,32 @@ class SelectMetadataTests(TestCase):
 
         self.assertEqual(obs,exp_values)
         
+    def test_get_table_col_values_from_form(self):
+        '''
+            test_get_selected_column_values: get a list of column values for a
+            given table and column name
+        '''
+        form1={'fname_prefix': [StringField('fname_prefix:')]}
+        
+        form2={'fname_prefix': [StringField('fname_prefix:')], 
+               'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:####ALL####')}
+        form3={'fname_prefix': [StringField('fname_prefix')], 
+               'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:female')}
+        
+        exp1={}
+        exp2={'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:####ALL####')}
+        exp3={'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:female')}
+        exp_values=['female', 'hermaphrodite', 'male', 'neuter', \
+                    'not determined']
+                
+        obs1=get_table_col_values_from_form(form1)
+        self.assertEqual(obs1,exp1)
+        
+        obs2=get_table_col_values_from_form(form2)
+        self.assertEqual(obs2,exp2)
+
+        obs3=get_table_col_values_from_form(form3)
+        self.assertEqual(obs3,exp3)
         
         
 exp_select_box_str='''\

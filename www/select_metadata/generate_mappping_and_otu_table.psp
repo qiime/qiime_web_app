@@ -13,27 +13,19 @@ from os import system
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_map
 from load_tab_file import input_set_generator
+from select_metadata import get_table_col_values_from_form
 sess = Session.Session(req)
 data_access = QiimeDataAccess()
-table_col_value={}
+
 
 unique_cols=[]
-# get the form values
-for form_key in form:
-    if form_key<>'fname_prefix':
-        if type(form[form_key])==type([]):
-            for vals in form[form_key]:
-                if table_col_value.has_key(form_key):
-                    if vals<>'####ALL####':
-                        unique_cols.append(form_key)
-                        table_col_value[form_key]=str(vals)
-                else:
-                    table_col_value[form_key]=str(vals)
-        else:
-            table_col_value[form_key]=str(form[form_key])
+
 
 # Create the mapping file based on sample and field selections
 
+table_col_value=get_table_col_values_from_form(form)
+
+#raise ValueError
 # get the directory location for the files to write
 otu_table_file_dir=sess['otu_table_file_dir']
 mapping_file_dir=sess['mapping_file_dir']
@@ -41,6 +33,7 @@ zip_file_dir=sess['zip_file_dir']
 file_name_prefix=form['fname_prefix']
 if file_name_prefix=='':
     file_name_prefix='default'
+    
 map_files=[]
     
 #recorded_fields = data_access.getMetadataFields(study_id)

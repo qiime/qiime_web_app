@@ -156,8 +156,9 @@ class Poller(Daemon):
         if state_feedback:
             cur = self.con.cursor()
             for job_name, new_state, notes in state_feedback:
-                #print "job_name: %d, new_state: %s" % (job_name, new_state)
-                cur.callproc('update_torque_job',[job_name, new_state])
+                # the job_notes column is varchar2, limit to last 4000 chars...
+                proc_args = [job_name, new_state, job_notes[-4000:]]
+                cur.callproc('update_torque_job', proc_args)
             self.con.commit()
             cur.close()
 
@@ -172,7 +173,6 @@ class Poller(Daemon):
         cursor.callproc('get_new_torque_jobs',[jobs_cursor])
 
         new_jobs = jobs_cursor.fetchall()
-
         cursor.close()
         jobs_cursor.close()
 
@@ -181,7 +181,7 @@ class Poller(Daemon):
     def submitJobs(self, jobs):
         """Submits a single job, updates self.Jobs"""
         err_jobs = set([])
-        for job_name, job_type, job_input, job_output in jobs:
+        for job_name, job_type, job_args in jobs:
             job_handler = JOB_TYPE_LOOKUP.get(job_type, None)
             
             if job_handler is None:
@@ -190,7 +190,7 @@ class Poller(Daemon):
                 err_jobs.add(job_name)
                 continue
             
-            job = job_handler(job_name, job_input)
+            job = job_handler(job_name, job_args)
             cmd = job()
 
             #### decompose job submission

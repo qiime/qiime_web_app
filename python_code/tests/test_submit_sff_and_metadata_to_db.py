@@ -180,7 +180,7 @@ class WorkflowTests(TestCase):
         
         print 'Testing OTU Data!'
         
-        exp_prokmsa=176564
+        exp_prokmsa=29470
         exp_otu_md5='a990fad228b5eaad9bce75b41ba40564'
         exp_threshold=97
         exp_pick_otu_cmd='python /home/wwwuser/software/Qiime/scripts/pick_otus.py -i /home/wwwuser/qiime_test_dataset/split_libraries/seqs.fna -o /home/wwwuser/qiime_test_dataset//picked_otus --otu_picking_method uclust_ref --similarity 0.97 --uclust_otu_id_prefix otu_ --max_cdhit_memory 400 --suppress_new_clusters --refseqs_fp /home/wwwuser/software/greengenes_core_sets/gg_otus_may2010/inflated_sub_gg/uclust_otus_97/rep_set/gg_97_otus_may2010.fasta --clustering_algorithm furthest --max_e_value 1e-10\n'
@@ -206,6 +206,7 @@ class WorkflowTests(TestCase):
         valid=data_access.deleteTestAnalysis(True,analysis_id)
         if not valid:
             print "Error: Could not delete data from DB!"
+
         
 exp_read_seq='tcagACAGAGTCGGCTCATGCTGCCTCCCGTAGGAGTCTGGGCCGTGTCTCAGTCCCAATGTGGCCGTTTACCCTCTCAGGCCGGCTACGCATCATCGCCTTGGTGGGCCGTTACCTCACCAACTAGCTAATGCGCCGCAGGTCCATCCATGTTCACGCCTTGATGGGCGCTTTAATATACTGAGCATGCGCTCTGTATACCTATCCGGTTTTAGCTACCGTTTCCAGCAGTTATCCCGGACACATGGGCTAGG'
 exp_split_lib_md5='Fasting_subset.fna:fd90ec77f6e426e7eebd5a1c11f3f8ab,Fasting_subset.qual:c992bb0e6dd74b39ec448d87f92a0fb9'

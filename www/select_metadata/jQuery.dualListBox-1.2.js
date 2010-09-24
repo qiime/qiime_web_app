@@ -58,7 +58,7 @@
             allTo2: 'allTo2',
             transferMode: 'move',
             sortBy: 'text',
-            useFilters: true,
+            useFilters: false,
             useCounters: true,
             useSorting: true
         });
