@@ -11,8 +11,8 @@ to them by an index.
 class FieldGrouping:
     sra_submission_level = -8
     sra_study_level = -7
-    sra_sample_level = -6
-    sra_experiment_level = -5
+    sra_sample_level = -5
+    sra_experiment_level = -6
     study_level = -3
     sample_level = -2
     prep_level = -1
