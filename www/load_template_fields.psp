@@ -38,6 +38,7 @@ qda = QiimeDataAccess()
 <%
 from mod_python import *
 from qiime_data_access import *
+from enums import FieldGrouping
 
 def outputFields(field_list, prefix, header_text):
     count = 0
@@ -101,31 +102,31 @@ sess["field_list"] = []
 sess.save()
 
 # Write out the submission fields
-field_list = qda.getPackageColumns(-8)
+field_list = qda.getPackageColumns(FieldGrouping.sra_submission_level)
 outputFields(field_list, 'submission', 'SRA Submission Fields')
 
 # Write out the study fields
-field_list = qda.getPackageColumns(-3)
+field_list = qda.getPackageColumns(FieldGrouping.study_level)
 outputFields(field_list, 'study', 'Study Fields')
 
 # Write out the SRA study fields
-field_list = qda.getPackageColumns(-7)
+field_list = qda.getPackageColumns(FieldGrouping.sra_study_level)
 outputFields(field_list, 'study', 'SRA Study Fields')
 
 # Write out the prep fields
-field_list = qda.getPackageColumns(-1)
+field_list = qda.getPackageColumns(FieldGrouping.prep_level)
 outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
 
 # Write out the SRA sample fields
-field_list = qda.getPackageColumns(-5)
+field_list = qda.getPackageColumns(FieldGrouping.sra_experiment_level)
 outputFields(field_list, 'prep', 'SRA Experiment Fields')
 
 # Write out the required sample fields along with the package-specific fields
-field_list = qda.getPackageColumns(-2)
+field_list = qda.getPackageColumns(FieldGrouping.sample_level)
 outputFields(field_list, 'sample', 'Sample Fields')
 
 # Write out the SRA experiment fields
-field_list = qda.getPackageColumns(-6)
+field_list = qda.getPackageColumns(FieldGrouping.sra_sample_level)
 outputFields(field_list, 'sample', 'SRA Sample Fields')
 
 # Write out the rest of the package fields

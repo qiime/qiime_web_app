@@ -22,6 +22,7 @@ __status__ = "Development"
 from metadata_table import *
 
 templates = sess["templates"]
+
 if templates != None:
     draw_submit = True
     

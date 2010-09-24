@@ -22,6 +22,14 @@ a
     text-align: left;
     vertical-align: middle;
 }
+.header_light_blue
+{
+    background-color: #DDDDFF;
+    border-width: 0px;
+    padding: 5px;
+    text-align: left;
+    vertical-align: middle;
+}
 .meta_td
 {
     padding: 2px;
