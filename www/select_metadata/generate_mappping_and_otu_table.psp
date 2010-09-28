@@ -124,17 +124,20 @@ statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\')' % (' or '.join(study_st
     
 additional_where_statements=[]
 for i in table_col_value:
-    
     tab_col_studies=i.split('####SEP####')
     tab=tab_col_studies[0]
     col_studies=tab_col_studies[1].split('####STUDIES####')
     column=col_studies[0]
-    selected_col_values=table_col_value[i].split(',')
+    
+    selected_col_values=table_col_value[i].split('\',\'')
     controlled_col=data_access.checkIfColumnControlledVocab(str(column))
     if controlled_col:
         vocab_terms=data_access.getValidControlledVocabTerms(str(column))
     same_col_addition_statements=[]
+
     for col_value in selected_col_values:
+        col_value=col_value.strip('\'')
+
         clipped_col_value=str(col_value.strip("'"))
         if controlled_col:
             
@@ -153,6 +156,7 @@ if additional_where_statements<>[]:
 
 #req.write(statement)
 # Run the statement
+
 con = data_access.getDatabaseConnection()
 cur = con.cursor()
 #req.write(str(statement)+'<br><br>')

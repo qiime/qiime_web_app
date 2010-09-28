@@ -29,7 +29,14 @@ def public_cols_to_dict(public_columns):
     
     return unique_public_columns
 
-
+def get_unique_package_column_values(package_cols):
+    #This function filters out hidden fields from the returned package columns
+    columns=[]
+    for i in range(len(package_cols)):
+        if package_cols[i][1]<>'H':
+            columns.append(package_cols[i][0].upper())
+    
+    return columns
         
 def unique_cols_to_select_box_str(public_columns):
     unique_public_columns=public_cols_to_dict(public_columns)
@@ -37,17 +44,17 @@ def unique_cols_to_select_box_str(public_columns):
     # get submission fields
     #sra_submission_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_submission_level))[0]))
     # get study fields
-    study_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.study_level))[0]))
+    study_field_list = get_unique_package_column_values(data_access.getPackageColumns(FieldGrouping.study_level))
     # get SRA study fields
-    sra_study_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_study_level))[0]))
+    sra_study_field_list = get_unique_package_column_values(data_access.getPackageColumns(FieldGrouping.sra_study_level))
     #vget the prep fields
-    prep_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.prep_level))[0]))
+    prep_field_list = get_unique_package_column_values(data_access.getPackageColumns(FieldGrouping.prep_level))
     # get the SRA sample fields
-    sra_sample_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_sample_level))[0]))
+    sra_sample_field_list = get_unique_package_column_values(data_access.getPackageColumns(FieldGrouping.sra_sample_level))
     # get the required sample fields along with the package-specific fields
-    sample_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sample_level))[0]))
+    sample_field_list = get_unique_package_column_values(data_access.getPackageColumns(FieldGrouping.sample_level))
     # get the SRA experiment fields
-    sra_experiment_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_experiment_level))[0]))
+    sra_experiment_field_list = get_unique_package_column_values(data_access.getPackageColumns(FieldGrouping.sra_experiment_level))
     
     study_lists=study_field_list+sra_study_field_list
     sample_lists=sample_field_list+sra_sample_field_list
