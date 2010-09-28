@@ -18,13 +18,17 @@ want to proceed.
 import os
 from qiime_data_access import QiimeDataAccess
 
+data_access = QiimeDataAccess()
 sess = Session.Session(req)
 sess['study_name'] = form['study_name']
 study_name = sess['study_name']
 
 # Add the new study to the database
-study_id = QiimeDataAccess().createStudy(sess['web_app_user_id'], study_name, form['investigation_type'], \
+study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'], \
     form['miens_compliant'], form['submit_to_insdc'])
+    
+# Add the default study_actual column entries
+data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')
 
 # Associate the chosen environmental packages to the study
 for env_package in form['environmental_package']:
