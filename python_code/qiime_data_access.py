@@ -35,17 +35,25 @@ class QiimeDataAccess( AbstractDataAccess ):
         
     def __del__(self):
         # Make sure we close out our connections when the object goes out of scope
-        if self._webAppUserDatabaseConnection:
-            self._webAppUserDatabaseConnection.close()
+        try:
+            if self._webAppUserDatabaseConnection:
+                self._webAppUserDatabaseConnection.close()
             
-        if self._databaseConnection:
-            self._databaseConnection.close()
+            if self._databaseConnection:
+                self._databaseConnection.close()
             
-        if self._ontologyDatabaseConnection:
-            self._ontologyDatabaseConnection.close()
+            if self._ontologyDatabaseConnection:
+                self._ontologyDatabaseConnection.close()
             
-        if self._SFFDatabaseConnection:
-            self._SFFDatabaseConnection.close()
+            if self._SFFDatabaseConnection:
+                self._SFFDatabaseConnection.close()
+ 
+        # It's possible that the calling code already closed the connection. Since
+        # cx_Oracle does not provide a means for explicity testing if a connection
+        # is open, this simply tosses the exception out since nothing actually needs
+        # to be done about it.
+        except:
+            pass
     
     def getDatabaseConnection(self):
         """ Obtains a connection to the qiime_production schema
@@ -522,6 +530,7 @@ class QiimeDataAccess( AbstractDataAccess ):
                 study_info['sff_complete'] = row[14]
                 study_info['mapping_file_complete'] = row[15]
                 study_info['miens_compliant'] = row[16]
+                study_info['can_delete'] = row[17]
             return study_info
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -663,8 +672,16 @@ class QiimeDataAccess( AbstractDataAccess ):
         try:
             con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.add_study_actual_column', [study_id, column_name, table_name])
-        except Exception, e:
+        except Exception, e:            
+            raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
             
+    def addExtraColumnMetadata(self, study_id, table_level, column_name, description, data_type):
+        """ inserts metadata for an "extra" column
+        """
+        try:
+            con = self.getDatabaseConnection()
+            con.cursor().callproc('qiime_assets.extra_column_metadata_insert', [study_id, table_level, column_name, description, data_type])
+        except Exception, e:            
             raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
 
     '''
