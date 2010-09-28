@@ -153,7 +153,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             crypt_pass = crypt(password, username)
-            con = self.getWebAppUserDatabaseConnection()
+            con = self.getDatabaseConnection()
             user_data = con.cursor()
             con.cursor().callproc('authenticate_user', [username, crypt_pass, user_data])
             row = user_data.fetchone()
@@ -173,7 +173,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         If not, the function returns False.
         """
         try:
-            con = self.getWebAppUserDatabaseConnection()
+            con = self.getDatabaseConnection()
             user_data = con.cursor()
             con.cursor().callproc('verify_user_activation_code', [username, activation_code, user_data])
             row = user_data.fetchone()
@@ -192,7 +192,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         If not, the function returns False.
         """
         try:
-            con = self.getWebAppUserDatabaseConnection()
+            con = self.getDatabaseConnection()
             user_data = con.cursor()
 
             con.cursor().callproc('verify_user_activation_code', [username, activation_code, user_data])
@@ -213,7 +213,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         If not, the function returns False.
         """
         try:
-            con = self.getWebAppUserDatabaseConnection()
+            con = self.getDatabaseConnection()
             con.cursor().callproc('deactivate_user_account', [username,activation_code])
             return True
         except Exception, e:
@@ -228,7 +228,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         returned. If not, the function returns False.
         """
         try:
-            con = self.getWebAppUserDatabaseConnection()
+            con = self.getDatabaseConnection()
             availability = con.cursor()
             con.cursor().callproc('check_username_availability', [username, availability])
             row = availability.fetchone()
@@ -248,7 +248,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             crypt_pass = crypt(password, username)
-            con = self.getWebAppUserDatabaseConnection()
+            con = self.getDatabaseConnection()
             user_data = con.cursor()
             con.cursor().callproc('web_app_user_insert', [username, crypt_pass,activation_code])
             if user_data.rowcount > 0:
@@ -270,7 +270,7 @@ class QiimeDataAccess( AbstractDataAccess ):
         """
         try:
             crypt_pass = crypt(password, username)
-            con = self.getWebAppUserDatabaseConnection()
+            con = self.getDatabaseConnection()
             user_data = con.cursor()
             con.cursor().callproc('update_web_app_user_password', [username, crypt_pass])
         except Exception, e:
