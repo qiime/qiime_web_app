@@ -68,18 +68,7 @@ class MetadataTable(object):
             data_file.close()
             return errors      
             
-    def getUserDefinedColumns(self):
-        if not len(self._columns):
-            raise ValueError('No columns have yet been added to the collection.')
-            
-        user_defined_columns = []
-        for column in self._columns:
-            if not column.in_dictionary:
-                user_defined_columns.append(column)
-            
-        return user_defined_columns 
-
-    def _createColumnHeaders(self, reader, data_access):
+    def _createColumnHeaders(self, reader, data_access,):
         self._log.append('Entering _createColumnHeaders()...')
         
         # Get a column factory
@@ -122,7 +111,7 @@ class MetadataTable(object):
             except Exception, e:
                 self._log.append('Could not create column. The reason was:\n%s' % (str(e)))
                 return self._log
-            
+
     def _processRows(self, reader, data_access):
         self._log.append('Entering _processsRows()...')
         
@@ -172,7 +161,22 @@ class MetadataTable(object):
             return self._log
 
     def processMetadataFile(self):
-        self._log.append('Entering processMetadataFile()...')
+        # Build the table with columns and full data
+        self._buildMetadataTable(True)
+
+    def getUserDefinedColumns(self):
+        # Build the table with only column headers
+        self._buildMetadataTable(False)
+
+        user_defined_columns = []
+        for column in self._columns:
+            if not column.in_dictionary:
+                user_defined_columns.append(column)
+
+        return user_defined_columns 
+            
+    def _buildMetadataTable(self, process_all_data):
+        self._log.append('Entering _buildMetadataTable()...')
         
         data_file = None
         reader = None
@@ -191,7 +195,8 @@ class MetadataTable(object):
         self._createColumnHeaders(reader, data_access)
         
         # Fill in the rest of the data values for each row
-        self._processRows(reader, data_access)
+        if process_all_data:
+            self._processRows(reader, data_access)
 
     def _addColumn(self, column):
         self._columns.append(column)

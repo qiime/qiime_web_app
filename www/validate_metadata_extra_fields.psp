@@ -36,17 +36,6 @@ if templates != None:
         try:
             log.append('Creating metadata table for file "%s"' % template)
             table = MetadataTable(template)
-            log.append('Reading metadata file...')
-            error_log = table.processMetadataFile()
-            
-            #loaded_templates.append(table)
-            
-            # If errors were found, report them here and skip file
-            if error_log:
-                for entry in error_log:
-                    req.write(entry + '<br/>')
-                break
-            
             user_defined_columns = table.getUserDefinedColumns()
             
             # Skip this file if no user-defined columns are present
@@ -62,7 +51,7 @@ if templates != None:
             
             req.write('<table>')
             req.write('<th>Column Name</th><th>Description of Column</th><th>Type of Data</th>')
-            for column in table.getUserDefinedColumns():
+            for column in user_defined_columns:
                 req.write('<tr>')
                 
                 req.write('<td>\n')
@@ -98,7 +87,8 @@ if templates != None:
         req.write('<input type="submit" value="Continue"><br/>')
         req.write('<p/>')
     else:
-        req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
+        pass
+        #req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
         
     # End if
 
