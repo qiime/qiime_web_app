@@ -87,8 +87,7 @@ if templates != None:
         req.write('<input type="submit" value="Continue"><br/>')
         req.write('<p/>')
     else:
-        pass
-        #req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
+        req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
         
     # End if
 
