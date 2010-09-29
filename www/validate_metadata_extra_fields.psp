@@ -1,0 +1,110 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%@ include file="header.psp" %>
+<script type="text/javascript" src="js/template.js"></script>
+
+<script type='text/javascript'>
+    //Set the validation for each form field
+    $(document).ready(function(){$("#extra_form").validate();});
+</script>
+
+<form id="no_custom_fields" name="no_custom_fields" method="post" action="validate_metadata.psp"></form>
+
+<h2>Please tell us about your new columns:</h2>
+<form target="_top" name="extra_form" id="extra_form" method="post" action="validate_metadata_extra_fields_submit.psp">
+
+<%
+from metadata_table import *
+
+templates = sess["templates"]
+if templates != None:
+    
+    # Variable to keep track of how many templates required adjustments. If zero, skip to next page
+    templates_with_extras = 0
+    
+    for template in templates:
+        log = []
+        try:
+            log.append('Creating metadata table for file "%s"' % template)
+            table = MetadataTable(template)
+            log.append('Reading metadata file...')
+            error_log = table.processMetadataFile()
+            
+            #loaded_templates.append(table)
+            
+            # If errors were found, report them here and skip file
+            if error_log:
+                for entry in error_log:
+                    req.write(entry + '<br/>')
+                break
+            
+            user_defined_columns = table.getUserDefinedColumns()
+            
+            # Skip this file if no user-defined columns are present
+            if not len(user_defined_columns):
+                continue
+            else:
+                templates_with_extras += 1
+                
+            template_filename = os.path.basename(template)
+                
+            req.write('<h3 class="header_light_blue"> User-defined columns found in file: %s</h3>' % template_filename)
+            log.append('Listing user-defined columns...')
+            
+            req.write('<table>')
+            req.write('<th>Column Name</th><th>Description of Column</th><th>Type of Data</th>')
+            for column in table.getUserDefinedColumns():
+                req.write('<tr>')
+                
+                req.write('<td>\n')
+                req.write('<input class="required" minlength="3" type="text" maxlength="30" style="width:200" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
+                req.write('</td>\n')
+                
+                req.write('<td>\n')
+                req.write('<input type="text" class="required" style="width:400" name="column_description!!%s!!%s" id="column_description!!%s!!%s" value="">\n' % (template_filename, column.column_name, template_filename, column.column_name))
+                req.write('</td>\n')
+                
+                req.write('<td>\n')
+                req.write('<select name="data_type!!%s!!%s" id="data_type!!%s!!%s">\n' % (template_filename, column.column_name, template_filename, column.column_name))
+                req.write('<option value="text">anything (e.g. "text is good", 5, 4.23)</option>\n')
+                req.write('<option value="number">number (e.g. 123, 4.54)</option>\n')
+                req.write('<option value="range">number range (e.g. 4-6, 5.3-5.5)</option>\n')
+                req.write('<option value="date">date (e.g. 10/31/2010 14:45:00, 4/1/2010)</option>\n')
+                req.write('</select>\n')
+                req.write('</td>\n')
+                
+                req.write('</tr>\n')
+            req.write('</table>\n')
+                    
+        except Exception, e:
+            for entry in log:
+                req.write(entry + '<br/>')
+            req.write(str(e) + '<p/>')
+            req.write('<p/>Please send a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
+            draw_submit = False
+            break
+    
+    if templates_with_extras:
+        req.write('<p/>')
+        req.write('<input type="submit" value="Continue"><br/>')
+        req.write('<p/>')
+    else:
+        req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
+        
+    # End if
+
+# End if
+%>
+
+</form>
+
+<%@ include file="footer.psp" %>

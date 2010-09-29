@@ -1,0 +1,88 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from qiime_data_access import QiimeDataAccess
+
+data_access = QiimeDataAccess()
+sess = Session.Session(req)
+study_id = sess['study_id']
+
+# The storage structure to hold form values
+# e.g. 'original_column_name':original_column_name, 'new_name':value, 'description':description, 'data_type':data_type
+columns = {}
+
+# Figure out which columns were renamed and fix the files
+for item in form:
+
+    # Skip the form field if it's not in the correct format
+    parts = item.split('!!')
+    if len(parts) != 3:
+        continue
+    
+    field_type = parts[0]
+    template_name = parts[1]
+    original_column_name = parts[2]
+    value = form[item]
+    full_filename = ''
+    
+    # Fill out what we can in our dict
+    if original_column_name not in columns:
+        columns[original_column_name] = {'new_column_name':'', 'template_name':template_name, 'data_type':'', 'description':''}
+
+    # Deal with column names
+    if field_type == 'column_name':
+        
+        # Add value to the dict
+        columns[original_column_name]['new_column_name'] = value
+        
+        # Figure ouf if name was changed. If so, update file
+        if original_column_name != value:
+            
+            # Get the full filename
+            for t in sess['templates']:
+                if os.path.basename(t) == template_name:
+                    full_filename = t
+                    
+            # Write the new column names over the old
+            if full_filename == '':
+                raise ValueError('Template filename was not found')
+                
+            f = open(full_filename, 'r')
+            contents = f.read().replace(original_column_name, value)
+            f.close()
+            f = open(full_filename, 'w')
+            f.write(contents)
+            f.close()
+            
+    elif field_type == 'column_description':
+        columns[original_column_name]['description'] = value
+    elif field_type == 'data_type':
+        columns[original_column_name]['data_type'] = value
+
+# Write the additional column info into the database
+table_level = ''
+for column in columns:
+    details = columns[column]
+    if 'prep' in details['template_name']:
+        table_level = 'sequence_prep'
+    elif 'sample' in details['template_name']:
+        table_level = 'sample'
+    elif 'study' in details['template_name']:
+        table_level = 'study'
+        
+    data_access.addExtraColumnMetadata(study_id, table_level, \
+        details['new_column_name'], details['description'], details['data_type'])
+    
+# Redirect to the data validation page
+psp.redirect('validate_metadata.psp')
+
+%>
