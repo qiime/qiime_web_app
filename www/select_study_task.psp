@@ -19,6 +19,7 @@ study_info = data_access.getStudyInfo(study_id)
 metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
 mapping_file_complete = study_info['mapping_file_complete']
+can_delete = study_info['can_delete']
 %>
 
 <script language="javascript">
@@ -135,8 +136,9 @@ if len(jobs) > 0:
     
     for job in jobs:
         req.write('<li>')
-        req.write('Job %s: %s<br/>Output: ' % (job['job_id'], job['job_state_name']))
-        req.write(job['job_notes'])
+        req.write('Job %s: %s' % (job['job_id'], job['job_state_name']))
+        if job['job_notes'] != None:
+            req.write('<br/>Output: ' + job['job_notes'])
         req.write('</li>')
 
     req.write('</ul>')
@@ -162,6 +164,12 @@ else:
 
 %>
         </li>
+
+<%
+if can_delete == 'y':
+    # indent
+    
+%>
         
         <li>
             <form id="delete_study" action="delete_study.psp" method="post">
@@ -169,6 +177,10 @@ else:
                 Remove study from database</a>
             </form>
         </li>
+<%
+# End if can_delete
+
+%>
     </ul>
     <b>Tools:</b>
     <ul>
