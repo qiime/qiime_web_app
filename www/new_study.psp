@@ -142,10 +142,13 @@ for item in sorted(list):
                 </select>
             </td>
         </tr>
+        <input type="hidden" name="miens_compliant" id="miens_compliant" value="y">
+        <!--
         <tr>
             <td>
                 MIENS Compliant?
             </td>
+            
             <td>
                 <select class="input required" name="miens_compliant" id="miens_compliant">
                     <option value=""></option>
@@ -154,6 +157,7 @@ for item in sorted(list):
                 </select>
             </td>
         </tr>
+        -->
         <tr>
             <td>Submit to INSDC?
             </td>
