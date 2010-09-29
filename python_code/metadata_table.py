@@ -28,11 +28,13 @@ class MetadataTable(object):
     each type of column.
     """
 
-    def __init__(self, metadataFile):
+    def __init__(self, metadataFile, study_id):
         self._invalid_rows = []
         self._columns = []
         self._log = []
         self._metadataFile = metadataFile
+        self._data_access = QiimeDataAccess()
+        self._study_id = study_id
     
     def getInvalidRows(self):
         return self._invalid_rows
@@ -68,14 +70,14 @@ class MetadataTable(object):
             data_file.close()
             return errors      
             
-    def _createColumnHeaders(self, reader, data_access,):
+    def _createColumnHeaders(self, reader, process_all_data):
         self._log.append('Entering _createColumnHeaders()...')
         
         # Get a column factory
         column_factory = ColumnFactory(self._is_invalid)
         
         # Obtain the list of metadata columns for validation
-        column_detail_list = data_access.getColumnDictionary()
+        column_detail_list = self._data_access.getColumnDictionary()
         column_details = {}
         # list of items must match length of list - maybe a way to only grab parts look
         # for (x, y) in coords:
@@ -103,16 +105,27 @@ class MetadataTable(object):
                 # Column not in dictionary - was added by user. Capture this field and store as metadata and
                 # request a new text column from the column factory.
                 else:
-                    self._log.append('Column does not exist in dictionary. Assuming user-defined column.')
-                    result = column_factory.createColumn(column, 'text', '8000', False)
+                    # Only check if these are in the database if a full processing run is requested
+                    if process_all_data:
+                        # Figure out the data type of for each column
+                        extra_column_details = self._data_access.getExtraColumnMetadata(self._study_id)
+                        if not extra_column_details:
+                            raise ValueError('Expected extra_column_details however none were found.')
+                        data_type = extra_column_details[column]['data_type']
+                        if not data_type:
+                            raise ValueError('Expected data type for extra column however none was found.')
+                        result = column_factory.createColumn(column, data_type, '8000', False)
+                    else:
+                        result = column_factory.createColumn(column, 'text', '8000', False)
+
                     if result:
                         self._addColumn(result)
                         
             except Exception, e:
                 self._log.append('Could not create column. The reason was:\n%s' % (str(e)))
-                return self._log
+                raise Exception(str(e))
 
-    def _processRows(self, reader, data_access):
+    def _processRows(self, reader):
         self._log.append('Entering _processsRows()...')
         
         # Read the column values
@@ -153,7 +166,7 @@ class MetadataTable(object):
                     
                     # Add the current value to the appropriate metadata table column
                     self._log.append('Adding new value to metadata column %s: "%s"' % (self._columns[i].column_name, column.strip()))
-                    self._columns[i]._addValue(column.strip(), data_access)
+                    self._columns[i]._addValue(column.strip(), self._data_access)
                     i += 1
                     
         except Exception, e:
@@ -188,15 +201,12 @@ class MetadataTable(object):
             log.append('Error opening metadata file "%s". The error was:\n%s' % (self._metadataFile, str(e)))
             return self._log
 
-        # One instance of the data access class for the function
-        data_access = QiimeDataAccess()
-
         # Read the column headers and create columns for each column name in the file
-        self._createColumnHeaders(reader, data_access)
+        self._createColumnHeaders(reader, process_all_data)
         
         # Fill in the rest of the data values for each row
         if process_all_data:
-            self._processRows(reader, data_access)
+            self._processRows(reader)
 
     def _addColumn(self, column):
         self._columns.append(column)

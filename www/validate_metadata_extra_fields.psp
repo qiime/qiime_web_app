@@ -26,6 +26,8 @@ __status__ = "Development"
 from metadata_table import *
 
 templates = sess["templates"]
+study_id = sess['study_id']
+
 if templates != None:
     
     # Variable to keep track of how many templates required adjustments. If zero, skip to next page
@@ -35,8 +37,10 @@ if templates != None:
         log = []
         try:
             log.append('Creating metadata table for file "%s"' % template)
-            table = MetadataTable(template)
+            table = MetadataTable(template, study_id)        
             user_defined_columns = table.getUserDefinedColumns()
+            #for col in table._columns:
+            #    req.write(str(col.column_name) + '<br/>')
             
             # Skip this file if no user-defined columns are present
             if not len(user_defined_columns):
@@ -65,7 +69,7 @@ if templates != None:
                 req.write('<td>\n')
                 req.write('<select name="data_type!!%s!!%s" id="data_type!!%s!!%s">\n' % (template_filename, column.column_name, template_filename, column.column_name))
                 req.write('<option value="text">anything (e.g. "text is good", 5, 4.23)</option>\n')
-                req.write('<option value="number">number (e.g. 123, 4.54)</option>\n')
+                req.write('<option value="numeric">number (e.g. 123, 4.54)</option>\n')
                 req.write('<option value="range">number range (e.g. 4-6, 5.3-5.5)</option>\n')
                 req.write('<option value="date">date (e.g. 10/31/2010 14:45:00, 4/1/2010)</option>\n')
                 req.write('</select>\n')

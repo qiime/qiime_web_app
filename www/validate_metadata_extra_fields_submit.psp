@@ -68,6 +68,9 @@ for item in form:
     elif field_type == 'data_type':
         columns[original_column_name]['data_type'] = value
 
+# Clear out the existing extra_column_metadata rows
+data_access.deleteExtraColumnMetadata(study_id)
+
 # Write the additional column info into the database
 table_level = ''
 for column in columns:

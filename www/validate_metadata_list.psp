@@ -31,7 +31,7 @@ if templates != None:
         log = []
         try:
             log.append('Creating metadata table for file "%s"' % template)
-            table = MetadataTable(template)
+            table = MetadataTable(template, sess['study_id'])
             log.append('Reading metadata file...')
             error_log = table.processMetadataFile()
             

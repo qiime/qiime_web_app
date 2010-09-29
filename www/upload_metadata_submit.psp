@@ -18,7 +18,7 @@ from subprocess import PIPE,Popen
 from qiime_data_access import QiimeDataAccess
 from metadata_table import MetadataTable
 
-def validateFileContents():
+def validateFileContents(study_id):
     # A nested FieldStorage instance holds the file
     fileitem = form['file']
     
@@ -84,7 +84,7 @@ def validateFileContents():
                 continue
 
             # Check to see if columns are valid in this file. If so, output the first errors...
-            mdtable = MetadataTable(os.path.join(dir_path, filename))
+            mdtable = MetadataTable(os.path.join(dir_path, filename), study_id)
             errors = mdtable.validateColumnNames()
             if len(errors) > 0:
                 i = 0
@@ -137,16 +137,21 @@ if form.has_key('file') and form['file'].filename:
     except ImportError:
         pass
 
+# A couple of items we will need below
+sess = Session.Session(req)
+study_id = sess['study_id']
+data_access = QiimeDataAccess()
+
 # Validate zip file contents. If valid, get list of template files back and
 # validate their contents
-templates = validateFileContents()
+templates = validateFileContents(study_id)
+
 if templates != None:
     fullnames = []
     for template in templates:
         fullnames.append(os.path.join(form['output_dir'], template))
         
-    sess = Session.Session(req)
-    sess["templates"] = fullnames
+    sess['templates'] = fullnames
     sess.save()
 
 %>

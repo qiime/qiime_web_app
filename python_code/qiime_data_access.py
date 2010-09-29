@@ -682,7 +682,31 @@ class QiimeDataAccess( AbstractDataAccess ):
             con = self.getDatabaseConnection()
             con.cursor().callproc('qiime_assets.extra_column_metadata_insert', [study_id, table_level, column_name, description, data_type])
         except Exception, e:            
-            raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
+            raise Exception('Exception caught in addExtraColumnMetadata(): %s.\nThe error is: %s' % (type(e), e))
+            
+    def getExtraColumnMetadata(self, study_id):
+        """ Retrieves all metadata for extra columns
+        """
+        try:
+            con = self.getDatabaseConnection()
+            results = con.cursor()
+            extra_columns = {}
+            con.cursor().callproc('qiime_assets.get_study_extra_columns', [study_id, results])
+            for row in results:
+                extra_columns[row[1]] = {'table_level':row[0], 'description':row[2], 'data_type':row[3]}
+            return extra_columns
+        except Exception, e:            
+            raise Exception('Exception caught in getExtraColumnMetadata(): %s.\nThe error is: %s' % (type(e), e))
+            
+    def deleteExtraColumnMetadata(self, study_id):
+        """ Deletes all metadata for extra columns
+        """
+        try:
+            con = self.getDatabaseConnection()
+            con.cursor().callproc('qiime_assets.delete_study_extra_columns', [study_id])
+        except Exception, e:            
+            raise Exception('Exception caught in deleteExtraColumnMetadata(): %s.\nThe error is: %s' % (type(e), e))
+    
 
     '''
     def getMetadataByStudyList(self, field_name, study_list):
