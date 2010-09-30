@@ -17,10 +17,11 @@ $(document).ready(function(){
 
 
 <%
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 import os
 
-data_access = QiimeDataAccess()
+data_access = data_access_factory(DataAccessType.qiime_production)
 study_id = sess['study_id']
 field_list = data_access.getMetadataFields(study_id)
 sample_list = data_access.getSampleList(study_id)

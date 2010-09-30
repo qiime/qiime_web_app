@@ -10,9 +10,10 @@ __maintainer__ = ["Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 import os
-data_access = QiimeDataAccess()
+data_access = data_access_factory(DataAccessType.qiime_production)
 from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str
 from enums import FieldGrouping
 

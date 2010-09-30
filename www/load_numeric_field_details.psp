@@ -21,8 +21,9 @@ column_name = form["column_name"]
 <th class="meta_th">Details</th>
 
 <%
-from qiime_data_access import *
-field_details = QiimeDataAccess().getFieldDetails(column_name)
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+field_details = data_access_factory(DataAccessType.qiime_production).getFieldDetails(column_name)
 req.write('<tr>\n')
 req.write('<td>%s</td>' % field_details[0])
 req.write('<td>%s</td>' % field_details[1])

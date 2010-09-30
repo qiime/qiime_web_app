@@ -18,8 +18,9 @@ from load_tab_file import input_set_generator
 from cogent.parse.fasta import MinimalFastaParser
 from os.path import split
 import cx_Oracle
-from qiime_data_access import QiimeDataAccess
-data_access = QiimeDataAccess()
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
 
 
 options_lookup = get_options_lookup()

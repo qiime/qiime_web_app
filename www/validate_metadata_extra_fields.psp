@@ -37,17 +37,15 @@ if templates != None:
         log = []
         try:
             log.append('Creating metadata table for file "%s"' % template)
-            table = MetadataTable(template, study_id)        
+            table = MetadataTable(template, study_id)
             user_defined_columns = table.getUserDefinedColumns()
-            #for col in table._columns:
-            #    req.write(str(col.column_name) + '<br/>')
             
             # Skip this file if no user-defined columns are present
             if not len(user_defined_columns):
                 continue
             else:
                 templates_with_extras += 1
-                
+            
             template_filename = os.path.basename(template)
                 
             req.write('<h3 class="header_light_blue"> User-defined columns found in file: %s</h3>' % template_filename)

@@ -15,7 +15,8 @@ if not (sess.has_key('username')):
 	psp.redirect('index.psp')
 
 # Imports
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 # Set the image link based on whether or not a study has been selected:
 '''

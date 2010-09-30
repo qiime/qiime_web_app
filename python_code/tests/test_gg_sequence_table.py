@@ -11,7 +11,8 @@ d) make sure we have the correct sequence and metadata
 """
 
 from cogent.util.unit_test import TestCase, main
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
@@ -22,7 +23,7 @@ __maintainer__ = ["Daniel McDonald"]
 __email__ = "mcdonadt@colorado.edu"
 __status__ = "Production"
 
-qda = QiimeDataAccess()
+qda = data_access_factory(DataAccessType.qiime_production)
 
 
 class LoadDBGreenGenesReferenceTable(TestCase):

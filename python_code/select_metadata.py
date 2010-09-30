@@ -12,8 +12,9 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
  
 from qiime.colors import natsort
-from qiime_data_access import *
-data_access = QiimeDataAccess()
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
 from enums import FieldGrouping
 
 def public_cols_to_dict(public_columns):

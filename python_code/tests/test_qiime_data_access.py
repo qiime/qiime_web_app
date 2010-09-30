@@ -5,7 +5,8 @@ Unit tests for qiime_data_access.py
 """
 
 import unittest
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
@@ -28,7 +29,7 @@ class QiimeDataAccessTests(unittest.TestCase):
 
     # Set up and tear downdown
     def setUp(self):
-        self._qiime_data_access = QiimeDataAccess()
+        self._qiime_data_access = data_access_factory(DataAccessType.qiime_production)
 
     def tearDown(self):
         result = self._qiime_data_access.deactivateWebAppUser('test_user1313', 'calkd1579')

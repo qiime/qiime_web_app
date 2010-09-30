@@ -28,8 +28,9 @@ from process_sff_and_metadata_workflow import (run_process_sff_through_pick_otus
 from qiime.workflow import (call_commands_serially,
 no_status_updates,WorkflowError,print_commands)
 
-from qiime_data_access import QiimeDataAccess
-data_access = QiimeDataAccess()
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:
 ##  http://code.activestate.com/recipes/534115-function-timeout/

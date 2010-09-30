@@ -15,8 +15,9 @@ This script is the upload handler for uploading the SFF files using JumpLoader'
 import os
 import zipfile
 from subprocess import PIPE,Popen
-from qiime_data_access import QiimeDataAccess
-data_access = QiimeDataAccess()
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
 
 #determine if a file has been passed
 if form.has_key('file') and form['file'].filename:

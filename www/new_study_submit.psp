@@ -16,9 +16,10 @@ want to proceed.
 
 <%
 import os
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
-data_access = QiimeDataAccess()
+data_access = data_access_factory(DataAccessType.qiime_production)
 sess = Session.Session(req)
 sess['study_name'] = form['study_name']
 study_name = sess['study_name']
@@ -33,7 +34,7 @@ data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')
 # Associate the chosen environmental packages to the study
 for env_package in form['environmental_package']:
     #req.write('study_id: ' + str(study_id) + ', env_package: ' + env_package + '<p>')
-    QiimeDataAccess().createStudyPackage(study_id, env_package)
+    data_access.createStudyPackage(study_id, env_package)
 
 # Add the study id to the session.
 sess['study_id'] = study_id

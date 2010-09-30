@@ -11,7 +11,7 @@ __status__ = 'Development'
 %>
 
 <%
-qda = QiimeDataAccess()
+qda = data_access_factory(DataAccessType.qiime_production)
 %>
 
 <script type='text/javascript' src='js/template.js'></script>
@@ -37,7 +37,8 @@ qda = QiimeDataAccess()
 
 <%
 from mod_python import *
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 from enums import FieldGrouping
 
 def outputFields(field_list, prefix, header_text):

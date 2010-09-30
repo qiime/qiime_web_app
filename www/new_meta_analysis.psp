@@ -44,8 +44,9 @@ $(document).ready(function(){
 var meta_analysis_names=new Array();
 
 <%
-from qiime_data_access import QiimeDataAccess
-qda = QiimeDataAccess()
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+qda = data_access_factory(DataAccessType.qiime_production)
 
 # get a list of studies from the database
 meta_analysis_names = qda.getMetaAnalysisNames(sess['web_app_user_id'])

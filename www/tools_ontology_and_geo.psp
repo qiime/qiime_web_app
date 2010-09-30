@@ -10,8 +10,9 @@ __maintainer__ = ["Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
-from qiime_data_access import QiimeDataAccess
-data_access = QiimeDataAccess()
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
 ontology_list = data_access.get_list_of_ontologies()
 %>
 

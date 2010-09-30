@@ -15,7 +15,8 @@ __status__ = "Development"
 
 import threading
 import mod_python
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 from metadata_table import *
 from threading import Lock
 
@@ -46,7 +47,7 @@ class MetadataWorkerThread(threading.Thread):
     
     def run(self):
         
-        da = QiimeDataAccess()
+        da = data_access_factory(DataAccessType.qiime_production)
         
         for item in self.item_list:
             try:

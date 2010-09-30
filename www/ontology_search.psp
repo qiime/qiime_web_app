@@ -10,8 +10,9 @@ __maintainer__ = ["Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
-from qiime_data_access import QiimeDataAccess
-data_access = QiimeDataAccess()
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
 
 script_description="""This script takes a single term and determines if they
 are substrings a values in a list of ontologies and returns a list"""

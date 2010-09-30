@@ -10,10 +10,11 @@ __status__ = "Production"
 %>
 
 <%
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 # Grab some required values for this page
-data_access = QiimeDataAccess()
+data_access = data_access_factory(DataAccessType.qiime_production)
 %>
 
 <script language="javascript">

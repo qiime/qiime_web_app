@@ -16,3 +16,7 @@ class FieldGrouping:
     study_level = -3
     sample_level = -2
     prep_level = -1
+
+class DataAccessType:
+    qiime_production = 1
+    qiime_test = 2

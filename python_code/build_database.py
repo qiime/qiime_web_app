@@ -15,12 +15,13 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
 import os
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 def buildDatabase():
     try:
         # Clear existing database
-        con = QiimeDataAccess().getTestDatabaseConnection()        
+        con = data_access_factory(DataAccessType.qiime_production).getTestDatabaseConnection()        
         sqlCommand = 'alter session set ddl_lock_timeout=2'
         con.cursor().execute(sqlCommand)
         sqlCommand = 'select \'DROP \'|| object_type || \' \"\' || object_name || \'\"\' || DECODE(OBJECT_TYPE,\'TABLE\',\' CASCADE CONSTRAINTS\',\'\') from user_objects'

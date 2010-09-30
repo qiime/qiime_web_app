@@ -1,7 +1,8 @@
 <%
 
 from datetime import datetime
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 from zipfile import ZipFile
 import os
 
@@ -41,7 +42,7 @@ for field in form:
         pass
 
 # Get the documentation for the list of fields
-column_dictionary = QiimeDataAccess().getColumnDictionary()
+column_dictionary = data_access_factory(DataAccessType.qiime_production).getColumnDictionary()
 for entry in column_dictionary:
     if entry[0] in study_fields or entry[0] in sample_fields or entry[0] in prep_fields:
         documentation_fields.append(entry)
@@ -79,7 +80,7 @@ try:
     with open(sess['document_root'] + study_file_name, 'w') as f:
         f.write('\t'.join(study_fields))
         # Grab the known study fields and add to the file
-        #study_info = QiimeDataAccess().getStudyInfo(sess['study_id'])
+        #study_info = data_access_factory(DataAccessType.qiime_production).getStudyInfo(sess['study_id'])
         #f.write('\n')
         # Hmm, tricky. How to tell where to write values? 
     req.write('<li><a href=\'%s\'>%s</a>' % (study_file_name, 'Study Template</li>'))

@@ -13,7 +13,8 @@ __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 from column_factory import *
 import csv
 import re
@@ -33,7 +34,7 @@ class MetadataTable(object):
         self._columns = []
         self._log = []
         self._metadataFile = metadataFile
-        self._data_access = QiimeDataAccess()
+        self._data_access = data_access_factory(DataAccessType.qiime_production)
         self._study_id = study_id
     
     def getInvalidRows(self):
@@ -74,7 +75,7 @@ class MetadataTable(object):
         self._log.append('Entering _createColumnHeaders()...')
         
         # Get a column factory
-        column_factory = ColumnFactory(self._is_invalid)
+        column_factory = ColumnFactory(self._is_invalid, self._data_access)
         
         # Obtain the list of metadata columns for validation
         column_detail_list = self._data_access.getColumnDictionary()

@@ -17,14 +17,15 @@ __status__ = "Production"
 
 import unittest
 from metadata_table import *
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 # Callback for invalid rows
 def is_invalid(column_name, row_index):
     return column_name, row_index
 
 # Global data access
-qda = QiimeDataAccess()
+qda = data_access_factory(DataAccessType.qiime_production)
 
 class MetadtaTableTests(unittest.TestCase):
     """ Unit tests for the MetadataTable and related classes

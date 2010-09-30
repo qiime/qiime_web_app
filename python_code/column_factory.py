@@ -13,19 +13,21 @@ __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 import re
 
 class ColumnFactory(object):
     """ Factory class for producing metadata columns
     """
     
-    def __init__(self, is_invalid):
+    def __init__(self, is_invalid, data_access):
         self._is_invalid = is_invalid
+        self._data_access = data_access
 
     def _columnExists(self, column_name):
         found = False
-        column_detail_list = QiimeDataAccess().getColumnDictionary()
+        column_detail_list = data_access_factory(DataAccessType.qiime_production).getColumnDictionary()
         for row in column_detail_list:
             if row[0].upper() == column_name:
                 found = True
@@ -35,9 +37,9 @@ class ColumnFactory(object):
 
     def _getControlledVocabs(self, column_name, datatype):
         if datatype == 'list':
-            return QiimeDataAccess().getControlledVocabs(column_name)
+            return self._data_access.getControlledVocabs(column_name)
         elif datatype == 'ontology':
-            return QiimeDataAccess().getOntologies(column_name)
+            return self._data_access.getOntologies(column_name)
 
     def createColumn(self, column_name, datatype, length, in_dictionary):
         """ Creates a column of the right type based on the column name

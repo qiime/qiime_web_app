@@ -10,14 +10,15 @@ __status__ = "Production"
 %>
 
 <%
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 from io import FileIO
 sess = Session.Session(req)
 %>
 
 <%
 # Create the mapping file based on sample and field selections
-data_access = QiimeDataAccess()
+data_access = data_access_factory(DataAccessType.qiime_production)
 study_id = str(sess['study_id'])
 form_metadata_fields = form['metadata_fields']
 recorded_fields = data_access.getMetadataFields(study_id)

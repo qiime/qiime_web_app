@@ -20,7 +20,8 @@ import sys, time
 from daemon import Daemon
 import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-from qiime_data_access import *
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 class QueueDaemon(Daemon):
     def run(self):
@@ -33,7 +34,7 @@ class QueueDaemon(Daemon):
         #print 'Starting service...'
         #server.serve_forever()
         
-        data_access = QiimeDataAccess()
+        data_access = data_access_factory(DataAccessType.qiime_production)
         
         while True:
             # Sleep...

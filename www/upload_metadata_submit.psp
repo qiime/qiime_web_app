@@ -15,7 +15,8 @@ This script is the upload handler for uploading metadata files using JumpLoader'
 import os
 import zipfile
 from subprocess import PIPE,Popen
-from qiime_data_access import QiimeDataAccess
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 from metadata_table import MetadataTable
 
 def validateFileContents(study_id):
@@ -140,7 +141,7 @@ if form.has_key('file') and form['file'].filename:
 # A couple of items we will need below
 sess = Session.Session(req)
 study_id = sess['study_id']
-data_access = QiimeDataAccess()
+data_access = data_access_factory(DataAccessType.qiime_production)
 
 # Validate zip file contents. If valid, get list of template files back and
 # validate their contents
