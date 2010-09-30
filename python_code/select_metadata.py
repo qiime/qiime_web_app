@@ -168,7 +168,7 @@ def get_selected_column_values(controlled_col,col,table,user_id):
             statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
             
         # Run the statement
-        con = data_access.getDatabaseConnection()
+        con = data_access.getMetadataDatabaseConnection()
         cur = con.cursor()
         #req.write(str(statement)+'<br><br>')
         results = cur.execute(statement)

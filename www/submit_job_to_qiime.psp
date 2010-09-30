@@ -69,7 +69,7 @@ from    study s
 where   s.study_id = %s""" % str(study_id)
 
 # Run the statement
-con = data_access.getDatabaseConnection()
+con = data_access.getMetadataDatabaseConnection()
 cur = con.cursor()
 results = cur.execute(statement)
 
