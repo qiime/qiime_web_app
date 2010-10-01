@@ -15,8 +15,8 @@ __status__ = "Pre-release"
 
 PYTHON_BIN="/usr/bin/python2.6"
 QIIME_WEBAPP_BASE = "/home/wwwuser/projects/QIIME-webdev/qiime_web_app/python_code/scripts"
-QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "process_sff_and_metadata_for_db.py"
-QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE +"submit_sff_and_metadata_to_db.py"
+QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_and_metadata_for_db.py"
+QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_and_metadata_to_db.py"
 
 class HandlerException(Exception):
     pass
