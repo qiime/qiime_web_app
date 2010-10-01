@@ -30,7 +30,7 @@ no_status_updates,WorkflowError,print_commands)
 
 from data_access_connections import data_access_factory
 from enums import DataAccessType
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(DataAccessType.qiime_test)
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:
 ##  http://code.activestate.com/recipes/534115-function-timeout/

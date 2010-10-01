@@ -37,6 +37,18 @@ if taxonomy=='PHPR':
     taxonomy_class='PHPR_tax_string'
 elif taxonomy=='NCBI':
     taxonomy_class='ncbi_tax_string_format_2'
+elif taxonomy=='Silva':
+    taxonomy_class='Silva_tax_string_format_2'
+elif taxonomy=='Hugenholtz':
+    taxonomy_class='Hugenholtz_tax_string_format_2'
+elif taxonomy=='Ludwig':
+    taxonomy_class='Ludwig_tax_string_format_2'
+elif taxonomy=='Pace':
+    taxonomy_class='Pace_tax_string_format_2'
+elif taxonomy=='RDP':
+    taxonomy_class='RDP_tax_string_format_2'
+elif taxonomy=='HOMD':
+    taxonomy_class='HOMD_tax_string_format_2'
 else:
     taxonomy_class=None
 

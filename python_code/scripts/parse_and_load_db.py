@@ -3,7 +3,7 @@
 from sys import argv
 from cogent.util.misc import unzip
 from optparse import OptionParser, make_option
-from cx_Oracle import connect, NUMBER, STRING
+from cx_Oracle import connect, NUMBER, STRING, FIXED_CHAR
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
@@ -33,7 +33,7 @@ options = [make_option('--input',dest='input',default=None,type='string',\
            make_option('--buffer-size', dest='buffer_size',default=10000,
                type='int',help="Parsing buffer size")]
 
-type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING}
+type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING,'fc':FIXED_CHAR}
 type_lookup_mock = {'i':int,'f':float,'s':str}
 def unzip_and_cast_to_cxoracle_types(data, cursor, types):
     """Unzips data and casts each field to the corresponding oracle type
@@ -54,6 +54,8 @@ def unzip_and_cast_to_cxoracle_types(data, cursor, types):
         elif t == 'f':
             tmp = map(float, f)
         elif t == 's':
+            tmp = f
+        else:
             tmp = f
         res.append(cursor.arrayvar(type_lookup[t], tmp))
     return res 
@@ -123,6 +125,7 @@ def main(args_in=argv):
     set_count = 1
     cur = con.cursor()
     for input_set in input_set_generator(lines, cur, types, buffer_size):
+        print input_set
         if verbose:
             print "Sending off set count %d..." % set_count
         cur.callproc(stored_proc, input_set)

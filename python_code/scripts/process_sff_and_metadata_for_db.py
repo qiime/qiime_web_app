@@ -14,6 +14,7 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs
+from os.path import exists
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
@@ -41,13 +42,13 @@ script_info['script_usage'] = [("Example:","This is an example of a basic use ca
 script_info['output_description']= "The output of this script produces the FNA, QUAL, and flowgram files, the output of split_libraries.py and pick_otus.py."
 script_info['required_options'] = [\
     make_option('-i','--sff_fname',help='This is the input sff filepath(s)'),\
+    make_option('-s','--study_id',help='This is the study id assigned by the web-interface'),\
     make_option('-m', '--map_fname', dest='map_fname', \
       help='This is the metadata mapping file'), \
     make_option('-p','--parameter_fp',\
              help='path to the parameter file [REQUIRED]')
 ]
 script_info['optional_options'] = [\
-    options_lookup['output_dir'],
     make_option('-f','--force',action='store_true',\
            dest='force',help='Force overwrite of existing output directory'+\
            ' (note: existing files in output_dir will not be removed)'+\
@@ -68,8 +69,17 @@ def main():
     option_parser, opts, args =\
        parse_command_line_parameters(**script_info)
     
+    study_id = opts.study_id
+
+    for i in range(1,25):
+        output_dir='/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,i)
+        if not exists(output_dir):
+            break
+        else:
+            continue
+            
+    print output_dir
     sff_fname=opts.sff_fname
-    output_dir = opts.output_dir
     map_fname = opts.map_fname
     verbose = opts.verbose
     print_only = opts.print_only
