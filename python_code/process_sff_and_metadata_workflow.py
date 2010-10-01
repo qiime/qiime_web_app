@@ -37,14 +37,7 @@ from load_tab_file import input_set_generator, flowfile_inputset_generator, \
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 
-try:
-    from data_access_connections import data_access_factory
-from enums import DataAccessType
-    import cx_Oracle
-    data_access = data_access_factory(DataAccessType.qiime_production)
-except ImportError:
-    print "NOT IMPORTING QIIMEDATAACCESS"
-    pass
+
 
 from cogent.util.misc import safe_md5
 
@@ -253,7 +246,7 @@ def web_app_call_commands_serially(commands,
                 raise WorkflowError, msg
     logger.close()
     
-def submit_processed_data_to_db(fasta_files,metadata_study_id):
+def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
     '''
        This function takes the fasta filenames and using that path, determines
        the location of the split-library and picked-otu files.  Once file

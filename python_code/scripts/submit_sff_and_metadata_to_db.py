@@ -38,6 +38,7 @@ script_info['script_usage'] = [("Example:","This is an example of a basic use ca
 script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
 script_info['required_options'] = [\
     make_option('-i','--processed_fasta_fnames',help='This is the processed fasta filepath(s) from process_sff.py'),\
+    make_option('-t','--submit_to_test_db',action='store_true',help='By setting this parameter, the data will be submitted to the test database.',default=False),\
     make_option('-s','--study_id',help='This is the study id assigned from loading the metadata')\
 ]
 script_info['optional_options'] = [\
@@ -48,10 +49,22 @@ def main():
     option_parser, opts, args =\
        parse_command_line_parameters(**script_info)
     
+    try:
+        from data_access_connections import data_access_factory
+        from enums import DataAccessType
+        import cx_Oracle
+        if opts.submit_to_test_db:
+            data_access = data_access_factory(DataAccessType.qiime_test)
+        else:
+            data_access = data_access_factory(DataAccessType.qiime_production)
+    except ImportError:
+        print "NOT IMPORTING QIIMEDATAACCESS"
+        pass
+        
     fasta_files=opts.processed_fasta_fnames
     study_id=opts.study_id
 
-    analysis_id=submit_processed_data_to_db(fasta_files=fasta_files,metadata_study_id=study_id)
+    analysis_id=submit_processed_data_to_db(data_access,fasta_files=fasta_files,metadata_study_id=study_id)
 
 if __name__ == "__main__":
     main()
