@@ -1,0 +1,100 @@
+# qiime_parameters.txt
+# WARNING: DO NOT EDIT OR DELETE Qiime/qiime_parameters.txt. Users should copy this file and edit copies of it.
+
+# Split libraries parameters
+split_libraries:min-seq-length	150
+split_libraries:max-seq-length	1000
+split_libraries:trim-seq-length	False
+split_libraries:min-qual-score	25
+split_libraries:max-ambig	0
+split_libraries:max-homopolymer	6
+split_libraries:max-primer	0
+split_libraries:barcode-type	10	
+split_libraries:max-barcode-errors	1.5
+split_libraries:start-numbering	1
+split_libraries:remove_unassigned	True
+split_libraries:disable_bc_correction	False
+split_libraries:qual_score_window	50
+split_libraries:disable_primers	False
+split_libraries:reverse_primers	disable
+
+# OTU picker parameters
+pick_otus:otu_picking_method	uclust_ref
+pick_otus:clustering_algorithm	furthest
+pick_otus:max_cdhit_memory	400
+pick_otus:refseqs_fp	/home/wwwuser/software/greengenes_core_sets/gg_otus_9aug2010/inflated_sub_gg/uclust_otus_97/rep_set/gg_97_otus_9aug2010.fasta
+pick_otus:blast_db
+pick_otus:similarity	0.97
+pick_otus:max_e_value	1e-10
+pick_otus:prefix_prefilter_length
+pick_otus:trie_prefilter
+pick_otus:prefix_length
+pick_otus:suffix_length
+pick_otus:optimal_uclust
+pick_otus:exact_uclust
+pick_otus:user_sort
+pick_otus:suppress_presort_by_abundance_uclust
+pick_otus:suppress_new_clusters	True
+
+# Parallel options
+parallel:jobs_to_start	1
+parallel:retain_temp_files	False
+parallel:seconds_to_sleep	60
+
+# Representative set picker parameters
+pick_rep_set:rep_set_picking_method	most_abundant
+pick_rep_set:sort_by	otu
+
+# Multiple sequence alignment parameters
+align_seqs:template_fp
+align_seqs:alignment_method	pynast
+align_seqs:pairwise_alignment_method	uclust
+align_seqs:blast_db
+align_seqs:min_length	150
+align_seqs:min_percent_id	75.0
+
+# Alignment filtering (prior to tree-building) parameters
+filter_alignment:lane_mask_fp
+filter_alignment:allowed_gap_frac	 0.999999
+filter_alignment:remove_outliers	False
+filter_alignment:threshold	3.0
+
+# Taxonomy assignment parameters
+assign_taxonomy:id_to_taxonomy_fp
+assign_taxonomy:reference_seqs_fp
+assign_taxonomy:assignment_method	rdp
+assign_taxonomy:blast_db
+assign_taxonomy:confidence	0.8
+assign_taxonomy:e_value	0.001
+
+# Phylogenetic tree building parameters
+make_phylogeny:tree_method	fasttree
+make_phylogeny:root_method	tree_method_default
+
+# Beta diversity parameters
+beta_diversity:metrics	weighted_unifrac,unweighted_unifrac
+
+# Make 3D plot parameters
+make_3d_plots:custom_axes
+make_3d_plots:ellipsoid_smoothness   1
+
+# Rarefaction parameters
+multiple_rarefactions:num-reps	5
+multiple_rarefactions:depth
+multiple_rarefactions:lineages_included	False
+
+# Even-depth rarefaction parameters
+multiple_rarefactions_even_depth:num-reps	100
+
+# Alpha diversity parameters
+alpha_diversity:metrics	PD_whole_tree,chao1,observed_species
+
+# Make rarefaction plots parameters
+make_rarefaction_plots:imagetype	png
+make_rarefaction_plots:resolution	75
+make_rarefaction_plots:background_color	white
+make_rarefaction_plots:prefs_path
+
+# Collate alpha
+collate_alpha:example_path
+
