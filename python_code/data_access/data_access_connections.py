@@ -91,20 +91,6 @@ class AbstractDataAccessConnections(object):
                 
         return self._metadataDatabaseConnection
 
-    def getWebAppUserDatabaseConnection(self):
-        """ Obtains a connection to the web_app_user schema
-
-        Get a database connection.
-        """
-        if self._webAppUserDatabaseConnection == None:
-            try:
-                self._webAppUserDatabaseConnection = cx_Oracle.Connection(self._webAbbUserDatabaseConnectionString)
-            except Exception, e:
-                print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
-                return False;
-
-        return self._webAppUserDatabaseConnection
-
     def getOntologyDatabaseConnection(self):
         """ Obtains a connection to the ontologies schema
 
