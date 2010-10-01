@@ -370,7 +370,12 @@ class QiimeDataAccessTests(unittest.TestCase):
         result = self._qiime_data_access.convertToOracleHappyName('11/25/1973')
         self.assertTrue(result)
 
-
+    def test_getOTUGG97Taxonomy(self):
+        """
+        """
+        result=self._qiime_data_access.getOTUGG97Taxonomy(0,'test')
+        self.assertFalse(result)
+        
         
 if __name__ == '__main__':
 	unittest.main()
