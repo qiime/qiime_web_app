@@ -153,7 +153,7 @@ class TestDataAccessConnections(AbstractDataAccessConnections):
 
     def __init__(self):
         # Set up the initial values
-        super(QiimeDataAccessConnections, self).__init__()
+        super(TestDataAccessConnections, self).__init__()
         
         # Now define the actual connection strings
         self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@webdev.microbio.me:1521/dbdev'
