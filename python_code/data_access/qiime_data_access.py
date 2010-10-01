@@ -522,6 +522,26 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+            
+    def addSFFFileInfo(self, start_job, sff_filename, number_of_reads,header_length,
+                    key_length, number_of_flows, flowgram_code, flow_characters,
+                    key_sequence, md5_checksum, seq_run_id):
+        """ appends the SFF info into the SFF_FILE table
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                db_output=con.cursor().callproc('add_sff_file',
+                                                [sff_filename, number_of_reads,
+                                                 header_length,key_length, 
+                                                 number_of_flows, flowgram_code, 
+                                                 flow_characters, key_sequence, 
+                                                 md5_checksum,seq_run_id])
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False            
 
     def addMappingFile(self, study_id, mapping_file_path):
         """ adds a new mapping file to the study
