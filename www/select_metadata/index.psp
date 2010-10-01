@@ -48,6 +48,8 @@ $(document).ready(function(){
         }
         var fname_prefix=document.getElementById("fname_prefix").value;
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="fname_prefix" value="'+fname_prefix+'">'
+        var taxonomy_class=document.getElementById("taxonomy").value;
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="taxonomy" value="'+taxonomy_class+'">'
     }
     
 </script>
@@ -85,7 +87,12 @@ it will remove the return key functionality.
 <table bgcolor="#A9D0F5">
     <tr >
         <td colspan=3 style="border: 2px solid white;text-align:center">
-            <b>Filename Prefix: </b><input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" />
+            <b>Filename Prefix: </b><input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" /><br>
+            <b>Select Taxonomy: </b><select id="taxonomy" name="taxonomy">
+                                        <option>None
+                                        <option>PHPR
+                                        <option>NCBI
+                                    </select>
         </td>
     </tr>
     <tr>

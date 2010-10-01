@@ -32,6 +32,16 @@ otu_table_file_dir=sess['otu_table_file_dir']
 mapping_file_dir=sess['mapping_file_dir']
 zip_file_dir=sess['zip_file_dir']
 file_name_prefix=form['fname_prefix']
+taxonomy=form['taxonomy']
+if taxonomy=='PHPR':
+    taxonomy_class='PHPR_tax_string'
+elif taxonomy=='NCBI':
+    taxonomy_class='ncbi_tax_string_format_2'
+else:
+    taxonomy_class=None
+
+
+
 if file_name_prefix=='':
     file_name_prefix='default'
     
@@ -53,9 +63,11 @@ statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
 study_id_array=[]
 # Break out the recorded fields and store as dict: field name and table name
 # field[0] = field_name, field[1] = table_name
+
 for i in table_col_value:
     tab_col_studies=i.split('####SEP####')
     tab=tab_col_studies[0]
+    
     col_studies=tab_col_studies[1].split('####STUDIES####')
     column=col_studies[0]
     studies=col_studies[1].split('S')
@@ -279,13 +291,25 @@ for otu_sample_name,otu_run_prefix,otu_study_id in sample_to_run_prefix:
         else:
             otu_map_dict[str(o[0])]=[]
             otu_map_dict[str(o[0])].append(new_otu_sample_name)
-            
+otu_id_list=list(set(otu_map_dict.keys()))
+
+
+if taxonomy_class:
+    otu_to_taxonomy={}
+    for i in otu_id_list:
+        otu_taxonomy=data_access.getOTUGG97Taxonomy(i,taxonomy_class)
+        otu_to_taxonomy[i]=otu_taxonomy
+    
+else:
+    otu_to_taxonomy=None
+  
+
 # Write the OTU table
 otu_table_fpath=os.path.join(otu_table_file_dir, file_name_prefix + 
                                 '_otu_table.txt')     
 
 outfile = open(otu_table_fpath, 'w')
-otu_to_taxonomy=None
+
 outfile.write(make_otu_map(otu_map_dict, otu_to_taxonomy))
 outfile.close()
 

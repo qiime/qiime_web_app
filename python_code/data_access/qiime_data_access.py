@@ -1818,6 +1818,22 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def getOTUGG97Taxonomy(self,otu_id,taxonomy_name):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            column_values=con.cursor()
+            taxonomy_str=con.cursor().callproc('get_otu_id_to_gg_97_taxonomy', 
+                                    [int(otu_id), taxonomy_name,column_values])
+            query_results=[]
+            for row in column_values:
+                return row[0]
+        
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
     #
     def checkIfColumnControlledVocab(self, column_name):
         """ starts process of importing otus
