@@ -48,9 +48,6 @@ class AbstractDataAccessConnections(object):
     #####################################
     
     def __init__(self):
-        self._webAppUserDatabaseConnection = None
-        self._webAppUserDatabaseConnectionString = ''
-        
         self._metadataDatabaseConnection = None
         self._metadataDatabaseConnectionString = ''
         
@@ -63,9 +60,6 @@ class AbstractDataAccessConnections(object):
     def __del__(self):
         # Make sure we close out our connections when the object goes out of scope
         try:
-            if self._webAppUserDatabaseConnection:
-                self._webAppUserDatabaseConnection.close()
-            
             if self._metadataDatabaseConnection:
                 self._metadataDatabaseConnection.close()
             
@@ -156,7 +150,6 @@ class QiimeDataAccessConnections(AbstractDataAccessConnections):
         super(QiimeDataAccessConnections, self).__init__()
         
         # Now define the actual connection strings
-        self._webAppUserDatabaseConnectionString = 'web_app_user/WW3bApp...@microbiome1.colorado.edu:1523/microbe'
         self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
         self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
         self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb'
@@ -177,8 +170,7 @@ class TestDataAccessConnections(AbstractDataAccessConnections):
         super(QiimeDataAccessConnections, self).__init__()
         
         # Now define the actual connection strings
-        self._webAppUserDatabaseConnectionString = 'web_app_user/WW3bApp...@microbiome1.colorado.edu:1523/microbe'
-        self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
-        self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
-        self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb'
+        self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@webdev.microbio.me:1521/dbdev'
+        self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@webdev.microbio.me:1521/dbdev'
+        self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@webdev.microbio.me:1521/dbdev'
 
