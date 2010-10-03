@@ -30,7 +30,7 @@ no_status_updates,WorkflowError,print_commands)
 
 from data_access_connections import data_access_factory
 from enums import DataAccessType
-data_access = data_access_factory(DataAccessType.qiime_test)
+data_access = data_access_factory(DataAccessType.qiime_production)
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:
 ##  http://code.activestate.com/recipes/534115-function-timeout/
@@ -133,7 +133,7 @@ class WorkflowTests(TestCase):
         input_fname = splitext(split(self.sff_fp)[-1])[0]
         db_input_fp = join(self.wf_out,input_fname)
 
-        analysis_id=submit_processed_data_to_db(db_input_fp+'.fna',0)
+        analysis_id=submit_processed_data_to_db(data_access,db_input_fp+'.fna',0)
         print 'Analysis ID is: %s' % str(analysis_id)
         print 'Testing the FLOW_DATA loading!'
         exp_sff_md5='314f4000857668d45a413d2e94a755fc'
@@ -181,7 +181,7 @@ class WorkflowTests(TestCase):
         
         print 'Testing OTU Data!'
         
-        exp_prokmsa=29470
+        exp_prokmsa=55576
         exp_otu_md5='a990fad228b5eaad9bce75b41ba40564'
         exp_threshold=97
         exp_pick_otu_cmd='python /home/wwwuser/software/Qiime/scripts/pick_otus.py -i /home/wwwuser/qiime_test_dataset/split_libraries/seqs.fna -o /home/wwwuser/qiime_test_dataset//picked_otus --otu_picking_method uclust_ref --similarity 0.97 --uclust_otu_id_prefix otu_ --max_cdhit_memory 400 --suppress_new_clusters --refseqs_fp /home/wwwuser/software/greengenes_core_sets/gg_otus_may2010/inflated_sub_gg/uclust_otus_97/rep_set/gg_97_otus_may2010.fasta --clustering_algorithm furthest --max_e_value 1e-10\n'

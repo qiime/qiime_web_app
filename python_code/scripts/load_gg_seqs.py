@@ -6,28 +6,45 @@ import cx_Oracle
 
 def unzip_and_cast_to_cxoracle_types(data, cursor):
     ids,acc,dec,coreset,seq,checksum = unzip(data)
-    ids = cursor.arrayvar(cx_Oracle.NUMBER, map(int, ids))
+    ids = cursor.arrayvar(cx_Oracle.STRING, ids)
     acc = cursor.arrayvar(cx_Oracle.STRING, acc)
     dec = cursor.arrayvar(cx_Oracle.STRING, dec)
     coreset = cursor.arrayvar(cx_Oracle.NUMBER, map(int, coreset))
     seq = cursor.arrayvar(cx_Oracle.STRING, seq)
-    checksum = cursor.arrayvar(cx_Oracle.STRING, checksum)
+    checksum = cursor.arrayvar(cx_Oracle.FIXED_CHAR, checksum)
     return ids,acc,dec,coreset,seq,checksum
 
 def input_set_generator(data, cursor):
     buffer = []
+    redundant_buffer = []
+    buffer_hashes = set([])
     for line in data:
         if line.startswith('#'):
             continue
-        buffer.append(line.strip().split('\t'))
+        fields = line.strip().split('\t')
+        if fields[-1] in buffer_hashes:
+            redundant_buffer.append(fields)
+        else:
+            buffer_hashes.add(fields[-1])
+            buffer.append(fields)
 
         if len(buffer) > 500:
             res = unzip_and_cast_to_cxoracle_types(buffer, cursor) 
             buffer = []
+            buffer_hashes = set([])
             yield res
+
+            if redundant_buffer:
+                res = unzip_and_cast_to_cxoracle_types(redundant_buffer,cursor) 
+                redundant_buffer = []
+                yield res
+
 
     if buffer:
         res = unzip_and_cast_to_cxoracle_types(buffer, cursor) 
+        yield res
+    if redundant_buffer:
+        res = unzip_and_cast_to_cxoracle_types(redundant_buffer, cursor) 
         yield res
 
 def main():

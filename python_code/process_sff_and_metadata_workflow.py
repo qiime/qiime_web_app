@@ -145,8 +145,11 @@ def run_process_sff_through_pick_otus(sff_input_fp, mapping_fp, output_dir,
         input_basename, input_ext = splitext(split(denoised_seqs_fp)[1])
     
     # Prep the OTU picking command
-    otu_picking_method = params['pick_otus']['otu_picking_method']
-    pick_otu_dir = '%s/picked_otus' % (output_dir)
+    otu_picking_method = params['pick_otus']['otu_picking_method'].upper()
+    otu_picking_similarity = int(float(params['pick_otus']['similarity'])*100)
+
+    pick_otu_dir = '%s/picked_otus_%s_%s' % (output_dir,otu_picking_method,
+                                                otu_picking_similarity)
     otu_fp = '%s/%s_otus.txt' % (pick_otu_dir,input_basename)
     #We will most likely remove blast otu picking
     if parallel and otu_picking_method == 'blast':
@@ -490,9 +493,9 @@ def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
     else:
         reference_set_name='Not a Reference Set'
     
-    pick_otus_map = join(input_dir, 'picked_otus', 'seqs_otus.txt')
-    pick_otus_failures = join(input_dir, 'picked_otus', 'seqs_failures.txt')
-    pick_otus_log = join(input_dir, 'picked_otus', 'seqs_otus.log')
+    pick_otus_map = join(input_dir, 'picked_otus_%s_%s' % (pOTUs_method,pOTUs_threshold), 'seqs_otus.txt')
+    pick_otus_failures = join(input_dir, 'picked_otus_%s_%s' % (pOTUs_method,pOTUs_threshold), 'seqs_failures.txt')
+    pick_otus_log = join(input_dir, 'picked_otus_%s_%s' % (pOTUs_method,pOTUs_threshold), 'seqs_otus.log')
     otus_log_str = open(pick_otus_log).read()
     split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
     
@@ -618,9 +621,9 @@ def submit_otu_data_to_db(data_access,fasta_files, analysis_id):
     else:
         reference_set_name='Not a Reference Set'
     
-    pick_otus_map = join(input_dir, 'picked_otus', 'seqs_otus.txt')
-    pick_otus_failures = join(input_dir, 'picked_otus', 'seqs_failures.txt')
-    pick_otus_log = join(input_dir, 'picked_otus', 'seqs_otus.log')
+    pick_otus_map = join(input_dir, 'picked_otus_%s_%s'%(pOTUs_method,pOTUs_threshold), 'seqs_otus.txt')
+    pick_otus_failures = join(input_dir, 'picked_otus_%s_%s'%(pOTUs_method,pOTUs_threshold), 'seqs_failures.txt')
+    pick_otus_log = join(input_dir, 'picked_otus_%s_%s'%(pOTUs_method,pOTUs_threshold), 'seqs_otus.log')
     otus_log_str = open(pick_otus_log).read()
     split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
     

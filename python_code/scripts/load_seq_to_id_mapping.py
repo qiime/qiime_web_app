@@ -56,8 +56,8 @@ def main():
     threshold=fname[1]
     print threshold
     con = cx_Oracle.connect(user='SFF',
-                           password='454SFF454',
-                           dsn='microbiome1.colorado.edu:1523/microbe')
+                           password='SFF454SFF',
+                           dsn='quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
     
     prokmsas=[]
     for prok_id in fasta_file:
@@ -66,7 +66,7 @@ def main():
         
     cur = con.cursor()
 
-    data_types=['i','i','s']
+    data_types=['s','i','s']
     for input_set in input_set_generator(prokmsas, cur,data_types):
         valid=data_access.loadSeqToSourceMap(True,input_set)
         if not valid:
