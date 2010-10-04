@@ -69,7 +69,7 @@ if form.has_key('file') and form['file'].filename:
                             req.write("Error: the SFF file could not be parsed!")
                         data_access.addSFFFile(form['study_id'], outfname)
                     except Exception, e:
-                        req.write("Error: there was a problem parsing the SFF file. Requested path: %s. The error was: %s" (dir_path, % str(e)))
+                        req.write("Error: there was a problem parsing the SFF file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
                         
         #if the zip does not have any sff files, raise an error
         if contains_sff==False:
