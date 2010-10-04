@@ -68,8 +68,8 @@ if form.has_key('file') and form['file'].filename:
                         if not int(process.wait())==0:
                             req.write("Error: the SFF file could not be parsed!")
                         data_access.addSFFFile(form['study_id'], outfname)
-                    except:
-                        req.write("Error: there was a problem parsing the SFF and/or inserting job in the queue!")
+                    except Exception, e:
+                        req.write("Error: there was a problem parsing the SFF: %s" % str(e))
                         
         #if the zip does not have any sff files, raise an error
         if contains_sff==False:
