@@ -1215,6 +1215,35 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
+            
+    def checkRunPrefixBarcodeLengths(self, study_id, run_prefix):
+        """ Checks to make sure all barcode lengths are the same for a given run_prefix
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_run_prefix_bc_lengths', [study_id, run_prefix, results])
+            barcode_length = 0
+
+            # Make sure we get only one result back. If more than one length is returned, we must
+            # raise an error:
+            rows = results.fetchall()
+            if len(rows) != 1:
+                raise ValueError('All barcodes must be of the same length for a given run_prefix.')
+            
+            # Figure out if the length is one of the expected barcde lengths:
+            barcode_length = rows[0][0]
+            acceptable_barcode_lengths = ['8', '10', '12']
+            if str(barcode_length) not in acceptable_barcode_lengths:
+                raise ValueError('Barcode lengths must be one of the following: ' + ', '.join(acceptable_barcode_lengths))
+
+            # Looks like we're good! Return the length
+            return barcode_length
+            
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
                     
     #####################################
     # Ontologies and Lists
