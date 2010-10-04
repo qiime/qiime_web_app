@@ -23,22 +23,6 @@ mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
 %>
 
-<script language="javascript">
-
-function showDiv(div_name)
-{
-    var ele = document.getElementById(div_name);
-    ele.style.display = "block";
-}
-
-function hideDiv(div_name)
-{
-    var ele = document.getElementById(div_name);
-    ele.style.display = "none";
-}
-
-</script>
-
 <br>
 <p>
     <h3>Selected Study: <%=sess['study_name']%></h3>
@@ -136,11 +120,11 @@ if len(jobs) > 0:
     req.write('<ul>')
     
     for job in jobs:
-        req.write('<li>')
+        req.write('<li><pre>')
         req.write('Job %s: %s' % (job['job_id'], job['job_state_name']))
         if job['job_notes'] != None:
             req.write('<br/>Output: ' + job['job_notes'])
-        req.write('</li>')
+        req.write('</pre></li>')
 
     req.write('</ul>')
     req.write('</b><br/>')
@@ -153,6 +137,7 @@ elif metadata_complete == 'y' and sff_complete == 'y':
                 <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
                 Submit job to Qiime</a>
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
+            </form>
 
 <%
 else:

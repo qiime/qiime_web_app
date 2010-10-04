@@ -12,101 +12,123 @@ __status__ = "Development"
 <%
 from data_access_connections import data_access_factory
 from enums import DataAccessType
-data_access = data_access_factory(DataAccessType.qiime_production)
+import os
 
-def submitJob(study_id, user_id, output_dir):
-    # Submit jobs to the queue
-    sff_files = data_access.getSFFFiles(study_id)
-    mapping_files = data_access.getMappingFiles(study_id)
-    split_library_mapping_file = mapping_files[0]
-
-    # Build the input string
-    input_string = ''
-    sff_file_number = 0
+def submitJob(study_id, user_id, output_dir, mapping_file, sff_files, data_access):
+    # Set up the parameters
     params = []
-
-    params.append('Mapping=%s' % split_library_mapping_file)
+    params.append('Mapping=%s' % mapping_file)
     params.append('Output=%s' % output_dir)
     params.append('SFF=%s' % ','.join(sff_files))
     job_input = '!!'.join(params)
-    
-    #req.write(job_input)
 
     # Submit the job
     job_id = data_access.createTorqueJob('ProcessSFFHandler', job_input, user_id, study_id)
     
-    #req.write(str(job_id))
-    
     # Make sure a legit job_id was created. If not, inform the user there was a problem
     if job_id < 0:
         req.write('<p/>There was an error creating the job. Please contact the system administratorx.')
-    else:
-        # Redirect to the home page for this study
-        psp.redirect('fusebox.psp?page=select_study_task.psp')
 
+def writeMappingFiles(study_id, data_access):
+    # Get a list of result sets, one per run_prefix found in the stuyd
+    mapping_file_header, result_sets = data_access.getSplitLibrariesMappingFileData(study_id)
+    
+    # For each result set returned, create a mapping file
+    for run_prefix in result_sets:
+        # Unpack the result set
+        results = result_sets[run_prefix]
+        
+        # Create new mapping file in filesystem
+        mapping_file_dir = sess['mapping_file_dir']
+        if not os.path.exists(mapping_file_dir):
+            os.makedirs(mapping_file_dir)
+
+        # Create the new mapping file for this run_prefix
+        mapping_file = file(os.path.join(mapping_file_dir, '%s__split_libraries_mapping_file.txt' % run_prefix), 'w')
+
+        # Write the header row
+        mapping_file.write(mapping_file_header + '\n')
+
+        # Write out out the rows for this file
+        for row in results:
+            # Can't use something like '\t'.join(row) because not all items in list
+            # are string values, hence the explicit loop structure here.
+            to_write = ''
+            for column in row:
+                val = str(column)
+                if val == 'None':
+                    val = ''
+                to_write += val + '\t'
+                
+            # Write the row minus the last tab
+            mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+
+        mapping_file.close()
+
+        # Add to the database list
+        data_access.addMappingFile(study_id, mapping_file.name)
+        
+    # Finally, return a list of all created mapping files
+    mapping_files = data_access.getMappingFiles(study_id)
+    return mapping_files
+
+def submitJobsToQiime(study_id, user_id, output_dir):
+    # Instantiate one copy of data access for this process
+    data_access = data_access_factory(DataAccessType.qiime_production)
+    
+    # Get the SFF files associated to this study
+    sff_files = data_access.getSFFFiles(study_id)
+    
+    # Generate the mapping files
+    mapping_files = writeMappingFiles(study_id, data_access)
+    
+    # Figure out which mapping file pairs with each SFF file
+    file_map = {}
+    for mapping_file in mapping_files:
+        # Skip the mapping file if it's not of the correct naming format
+        if len(mapping_file.split('__')) != 2:
+            continue
+            
+        run_prefix = os.path.basename(mapping_file).split('__')[0]
+        matching_sff_files = []
+        
+        for sff_file in sff_files:
+            sff_file_basename = os.path.splitext(os.path.basename(sff_file))[0]
+            
+            # If the run_prefix matches the SFF file name exactly, assume only
+            # one SFF for this run
+            if run_prefix == os.path.splitext(sff_file_basename)[0]:
+                matching_sff_files.append(sff_file)
+                file_map[mapping_file] = matching_sff_files
+                continue
+                
+            # If the run_prefix is contained in the file name, find all that match
+            # and submit them together with the current mapping file
+            elif run_prefix in sff_file_basename:
+                # If it's the first item for this mapping file name, assign the list
+                if not file_map.get(mapping_file):
+                    file_map[mapping_file] = matching_sff_files
+                file_map[mapping_file].append(sff_file)
+            # If we get here, there are extra SFF files with no matching mapping file. 
+            # For now, do nothing... may need to add some handling code at a later date.
+            else:
+                pass
+    
+    # raise Exception(str(file_map))
+    # Submit jobs to the queue
+    for mapping_file in file_map:
+        submitJob(study_id, user_id, output_dir, mapping_file, file_map[mapping_file], data_access)
 
 # Gather necessary values to create a new queue job
 study_id = int(sess['study_id'])
 user_id = int(sess['web_app_user_id'])
-sff_files = data_access.getSFFFiles(study_id)
-mapping_files = data_access.getMappingFiles(study_id)
-
-# Generate a mapping file based on 5 required columns: 'SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'DESCRIPTION'
-data_access = data_access_factory(DataAccessType.qiime_production)
-study_id = str(sess['study_id'])
-
-# We only want the most minimal mapping file for running split_libraries.py
-statement = """
-select  sa.sample_name as "#SampleID", 
-        sp.barcode as Barcode, 
-        concat(sp.linker, sp.primer) as LinkerPrimerSequence, 
-        sp.experiment_title as Description
-from    study s
-        inner join sample sa
-        on s.study_id = sa.study_id
-        inner join sequence_prep sp
-        on sa.sample_id = sp.sample_id
-where   s.study_id = %s""" % str(study_id)
-
-# Run the statement
-con = data_access.getMetadataDatabaseConnection()
-cur = con.cursor()
-results = cur.execute(statement)
-
-# Create new mapping file in filesystem
-mapping_file_dir = sess['mapping_file_dir']
-if not os.path.exists(mapping_file_dir):
-    os.makedirs(mapping_file_dir)
-    
-mapping_file = file(os.path.join(mapping_file_dir, 'split_libraries_mapping_file.txt'), 'w')
-
-# Write the header row
-to_write = ''
-for column in cur.description:
-    to_write += column[0] + '\t'
-mapping_file.write(to_write[0:len(to_write)-1] + '\n')
-
-for row in results:
-    # Can't use something like '\t'.join(row) because not all items in list
-    # are string values, hence the explicit loop structure here.
-    to_write = ''
-    for column in row:
-        val = str(column)
-        if val == 'None':
-            val = ''
-        to_write += val + '\t'
-    # Write the row minus the last tab
-    mapping_file.write(to_write[0:len(to_write)-1] + '\n')
-
-mapping_file.close()
-
-# Add to the database list
-data_access.addMappingFile(study_id, mapping_file.name)
-
-# Set the output_dir
 output_dir = sess['study_dir']
 
-# Submit the job to the queue
-submitJob(study_id, user_id, output_dir)
+# Submit the jobs
+submitJobsToQiime(study_id, user_id, output_dir)
 
+# Redirect to the home page for this study
+psp.redirect('fusebox.psp?page=select_study_task.psp')
 %>
+
+

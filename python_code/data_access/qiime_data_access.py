@@ -1178,7 +1178,44 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def getSplitLibrariesMappingFileData(self, study_id):
+        """ Returns a collection of data sets, one for each run_prefix in the study
         
+        This funciton generates a collection of result sets for producing the minimal
+        mapping file required by split_libraries.py. There will be one result set for
+        each run_prefix found in the study. Each result set consists of only the few 
+        required fields for split_libraries.py to run.
+        """
+        
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            result_sets = {}
+            con.cursor().callproc('qiime_assets.get_split_libarary_data', [study_id, results])
+
+            mapping_file_header = ''
+            for column in results.description:
+                mapping_file_header += column[0] + '\t'
+            
+            for row in results:
+                run_prefix = row[4]
+                
+                # If this is the first time we've seen this run_prefix, create a new list 
+                # to hold the rows
+                if run_prefix not in result_sets:
+                    result_sets[run_prefix] = []
+                
+                # Add the row to the right run_prefix heading
+                result_sets[run_prefix].append(row)
+                
+            #raise Exception(str(result_sets))
+                                    
+            return mapping_file_header, result_sets
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+                    
     #####################################
     # Ontologies and Lists
     #####################################

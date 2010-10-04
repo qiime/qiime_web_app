@@ -175,10 +175,12 @@ class PollerTestHandlerErr(JobHandler):
         self._notes = '\n'.join(stderr_lines)
         return True
 
+# after this handler completes successfully, we have to add another job to the queue for 
+# LoadSffAndMetadataHandler (Job Type of ??)
 class ProcessSFFHandler(JobHandler):
     """Handler for process_sff_and_metadata_for_db.py"""
-    _base_cmd = ' '.join([PYTHON_BIN,QIIME_PROCESS_SFF,\
-                        "-i %(SFF)s -m %(Mapping)s -o %(Output)s"])
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF,\
+                        "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s"])
     _base_args = {'SFF':None, 'Mapping':None, 'Output':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
@@ -189,6 +191,7 @@ class ProcessSFFHandler(JobHandler):
         else:
             return False
 
+# when calling for the test database, use the -t option
 class LoadSFFAndMetadataHandler(JobHandler):
     """Handler for submit_sff_and_metadata_to_db.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_SFF_METADATA_TO_DB, \

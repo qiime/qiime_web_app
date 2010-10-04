@@ -46,7 +46,7 @@ script_info['required_options'] = [\
     make_option('-m', '--map_fname', dest='map_fname', \
       help='This is the metadata mapping file'), \
     make_option('-p','--parameter_fp',\
-             help='path to the parameter file [REQUIRED]')
+             help='path to the parameter file [REQUIRED]. E.g. /python_code/')
 ]
 script_info['optional_options'] = [\
     make_option('-f','--force',action='store_true',\
