@@ -48,7 +48,7 @@ script_info['version'] = __version__
 def main():
     option_parser, opts, args =\
        parse_command_line_parameters(**script_info)
-    
+
     try:
         from data_access_connections import data_access_factory
         from enums import DataAccessType

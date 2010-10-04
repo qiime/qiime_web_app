@@ -256,6 +256,10 @@ def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
        locations have been determined, it moves the files to the DB machine
        and load the files into the DB.
     '''
+    con = data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
+    cur = con.cursor()
     study_id_exists=data_access.checkIfStudyIdExists(metadata_study_id)
     print "Study ID exists: " + str(study_id_exists)
     
@@ -436,9 +440,11 @@ def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
     types = ['i','i', 's', 's', 's', 's', 's', 'i', 'i', 'fc', 's']
     con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
+    cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
+    cur = con.cursor()
     open_fasta = open(split_lib_seqs)
     iterator=0
-    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,1000):
+    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,100):
         print 'running %i' % (iterator)
         iterator=iterator+1
         valid = data_access.loadFNAFile(True, res)
@@ -526,6 +532,8 @@ def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
     
     types=['i','s','i','s','i']
     con=data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
     cur = con.cursor()
     set_count = 1
     start = time.time()

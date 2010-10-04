@@ -50,6 +50,13 @@ try:
     sess['otu_table_file_dir'] = otu_table_file_dir
     sess.save()
     
+    # Create new zip file in filesystem
+    otu_table_file_dir = os.path.join(meta_analysis_dir, 'zip_files/')
+    if not os.path.exists(zip_file_dir):
+        os.mkdir(zip_file_dir)    
+    sess['zip_file_dir'] = zip_file_dir
+    sess.save()
+    
 except Exception, e:
     req.write('<h1>Error: The Meta-Analysis directory could not be created.</h1>')
     req.write(str(e))

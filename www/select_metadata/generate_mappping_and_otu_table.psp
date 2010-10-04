@@ -107,7 +107,7 @@ unique_study_ids=list(set(study_id_array))
 statement = statement[0:len(statement) - 3]
 statement = '\
 select \n' + statement + ' \n\
-from "STUDY" '
+from "STUDY" inner join user_study us on "STUDY".study_id=us.study_id '
 
 statement += ' \n\
 inner join "SAMPLE" \n\
@@ -145,7 +145,7 @@ study_statement=[]
 for study_id in unique_study_ids:
     study_statement.append('"STUDY".study_id = ' + study_id)
 
-statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\')' % (' or '.join(study_statement))
+statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\' or us.web_app_user_id=%s)' % (' or '.join(study_statement),sess['web_app_user_id'])
     
 additional_where_statements=[]
 for i in table_col_value:
@@ -310,6 +310,8 @@ if taxonomy_class:
     otu_to_taxonomy={}
     for i in otu_id_list:
         otu_taxonomy=data_access.getOTUGG97Taxonomy(i,taxonomy_class)
+        if otu_taxonomy==None:
+            otu_taxonomy='NA;'
         otu_to_taxonomy[i]=otu_taxonomy
     
 else:

@@ -32,7 +32,7 @@ from enums import DataAccessType
 <%
 
 #This is the location where the user directories are written
-output_dir='/home/wwwuser/user_data/'
+output_dir='/tmp_qiime/'
 
 if form.has_key('username'):
     # begin
