@@ -181,7 +181,7 @@ class ProcessSFFHandler(JobHandler):
     """Handler for process_sff_and_metadata_for_db.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF,\
                         "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s"])
-    _base_args = {'SFF':None, 'Mapping':None, 'Output':None}
+    _base_args = {'SFF':None, 'Mapping':None, 'ParamFile':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""
