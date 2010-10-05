@@ -1197,7 +1197,7 @@ class QiimeDataAccess(object):
             mapping_file_header = ''
             for column in results.description:
                 # Skip run_prefix for mapping file
-                if column == 'run_prefix':
+                if column[0].upper() == 'RUN_PREFIX':
                     continue
                 mapping_file_header += column[0] + '\t'
             
