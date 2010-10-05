@@ -125,7 +125,6 @@ def main(args_in=argv):
     set_count = 1
     cur = con.cursor()
     for input_set in input_set_generator(lines, cur, types, buffer_size):
-        print input_set
         if verbose:
             print "Sending off set count %d..." % set_count
         cur.callproc(stored_proc, input_set)

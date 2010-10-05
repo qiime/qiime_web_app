@@ -31,8 +31,14 @@ table_col_value=get_table_col_values_from_form(form)
 otu_table_file_dir=sess['otu_table_file_dir']
 mapping_file_dir=sess['mapping_file_dir']
 zip_file_dir=sess['zip_file_dir']
+otu_table_file_dir_db=sess['otu_table_file_dir_db']
+mapping_file_dir_db=sess['mapping_file_dir_db']
+zip_file_dir_db=sess['zip_file_dir_db']
 file_name_prefix=form['fname_prefix']
 taxonomy=form['taxonomy']
+
+
+
 if taxonomy=='PHPR':
     taxonomy_class='PHPR_tax_string'
 elif taxonomy=='NCBI':
@@ -191,6 +197,8 @@ results = cur.execute(statement)
 mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map.txt'), 'w')
 
 map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_map.txt')
+map_filepath_db=os.path.join(mapping_file_dir_db, file_name_prefix+'_map.txt')
+
 #req.write('http://localhost:5001/'+map_filepath)
 # All mapping files start with an opening hash
 mapping_file.write('#')
@@ -321,6 +329,8 @@ else:
 # Write the OTU table
 otu_table_fpath=os.path.join(otu_table_file_dir, file_name_prefix + 
                                 '_otu_table.txt')     
+otu_table_fpath_db=os.path.join(otu_table_file_dir_db, file_name_prefix + 
+                                '_otu_table.txt')
 
 outfile = open(otu_table_fpath, 'w')
 
@@ -330,6 +340,7 @@ outfile.close()
 
 # zip up the OTU table and Mapping file for easy download
 zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '.zip')
+zip_fpath_db=os.path.join(zip_file_dir_db, file_name_prefix + '.zip')
 cmd_call='zip -jX %s %s' % (zip_fpath,map_filepath)
 system(cmd_call)
 cmd_call='zip -jX %s %s' % (zip_fpath,otu_table_fpath)
@@ -337,8 +348,8 @@ system(cmd_call)
 
 #add filepaths to DB, so we know where to find the generated files
 valid=data_access.addMetaAnalysisMapOTUFiles(True, sess['meta_analysis_id'], \
-                                        map_filepath,otu_table_fpath,
-                                        zip_fpath)
+                                        map_filepath_db,otu_table_fpath_db,
+                                        zip_fpath_db)
 
 
 # All done, go back to the main page                               

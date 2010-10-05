@@ -32,7 +32,7 @@ from enums import DataAccessType
 <%
 
 #This is the location where the user directories are written
-output_dir='/tmp_qiime/'
+output_dir='/tmp_qiime/user_data'
 
 if form.has_key('username'):
     # begin
@@ -47,6 +47,7 @@ if form.has_key('username'):
         
         #User directories
         sess['user_dir'] = os.path.join(output_dir, 'user_'+str(sess['web_app_user_id']))
+        sess['db_root']=os.path.join('/tmp_qiime/', 'user_'+str(sess['web_app_user_id']))
         try:
             if not os.path.exists(sess['user_dir']):
                 os.mkdir(sess['user_dir'])
