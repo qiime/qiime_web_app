@@ -9,6 +9,10 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
 '''This script is the SFF upload page, which uses the JumpLoader java applet.'''
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
 %>
 
 <script type="text/javascript">
@@ -161,3 +165,17 @@ The filename should not contain spaces or non-alphanumeric characters.</p>
 </applet>
 </div>
 </td></tr></table>
+
+<h3>Existing SFF Files:</h3>
+<ul>
+<%
+study_id = sess['study_id']
+sff_files = data_access.getSFFFiles(study_id)
+for sff_file in sff_files:
+    file_base = os.path.basename(sff_file)
+    req.write('<li>%s <a href="clear_sff_file.psp?filename=%s">(remove file)</a></li>' % (file_base, file_base))
+%>
+</ul>
+
+
+

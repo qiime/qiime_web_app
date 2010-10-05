@@ -67,7 +67,7 @@ for study_name in study_names:
             <form id="associate_sff_to_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="upload_sff.psp">
                 <a href="" onclick="document.forms['associate_sff_to_study'].submit(); return false;">
-                Upload SFF files to this study
+                Add or remove SFF files for this study
 <%
 if sff_complete == 'n':
     
@@ -121,7 +121,7 @@ if len(jobs) > 0:
     
     for job in jobs:
         req.write('<li><pre>')
-        req.write('Job %s: %s' % (job['job_id'], job['job_state_name']))
+        req.write('Job %s: %s <a href="clear_job.psp?job_id=%s">(clear job)</a>' % (job['job_id'], job['job_state_name'], job['job_id']))
         if job['job_notes'] != None:
             req.write('<br/>Output: ' + job['job_notes'])
         req.write('</pre></li>')

@@ -1,0 +1,36 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+"""
+This script clears sff files from the database.
+"""
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+
+def clearSFFFile(study_id, sff_file):
+    # Get a copy of data_acess
+    data_access = data_access_factory(DataAccessType.qiime_production)
+
+    # Clear the job
+    data_access.clearSFFFile(study_id, sff_file)
+
+# Gather variables
+sff_file = form['filename']
+sess = Session.Session(req)
+study_id = int(sess['study_id'])
+
+# Clear the job
+clearSFFFile(study_id, sff_file)
+
+# Redirect to the sff upload page
+psp.redirect('fusebox.psp?page=upload_sff.psp')
+
+%>

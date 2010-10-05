@@ -1,0 +1,34 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+"""
+This script is the upload handler for uploading metadata files using JumpLoader'
+"""
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+
+
+def clearJob(job_id):
+    # Get a copy of data_acess
+    data_access = data_access_factory(DataAccessType.qiime_production)
+
+    # Clear the job
+    data_access.clearTorqueJob(job_id)
+
+
+# Clear the job
+job_id = int(form['job_id'])
+clearJob(job_id)
+
+# Redirect to the home page for this study
+psp.redirect('fusebox.psp?page=select_study_task.psp')
+
+%>

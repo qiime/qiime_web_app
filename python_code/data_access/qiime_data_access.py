@@ -1229,8 +1229,10 @@ class QiimeDataAccess(object):
             # Make sure we get only one result back. If more than one length is returned, we must
             # raise an error:
             rows = results.fetchall()
-            if len(rows) != 1:
-                raise ValueError('All barcodes must be of the same length for a given run_prefix.')
+            if len(rows) == 0:
+                raise ValueError('No barcodes were found for the given run prefix: %s' % run_prefix)
+            if len(rows) > 1:
+                raise ValueError('All barcodes must be of the same length for a given run_prefix. Multiple barcode lengths found for run prefix: %s' % run_prefix)
             
             # Figure out if the length is one of the expected barcde lengths:
             barcode_length = rows[0][0]
@@ -1244,6 +1246,29 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
+
+    def clearTorqueJob(self, job_id):
+        """ Removes a job from the torque_jobs table
+        """
+        
+        try:
+            con = self.getSFFDatabaseConnection()
+            con.cursor().callproc('clear_torque_job', [job_id])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
+    def clearSFFFile(self, study_id, sff_file):
+        """ Removes an sff file from the database
+        """
+        
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.clear_sff_file', [study_id, sff_file])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
                     
     #####################################
     # Ontologies and Lists
