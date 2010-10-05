@@ -105,35 +105,274 @@ Once you have clicked "Generate Templates", you will be redirected to another pa
 Ontology Lookup and Georeferencing Tool
 ---------------------------------------
 
+When filling out the MIENs-compliant metadata templates, some fields require ontological terminology.  To learn about which fields require ontological terminology, the user should refer to the field_reference template file. To aid in filling out these columns, we have developed an Ontology Lookup and GeoReferencing Tool. Initially, the user should fill in these fields with the terms they would associate to this field. To access this tool, the user should click on the Ontology Lookup and Georeferencing Utility link. 
+
 .. image:: ../images/QWA_Ontology_Geo_1.png
     :align: center
     :width: 600 px
     
+The user will be redirected to the Ontology Lookup Tool.
+
+.. image:: ../images/QWA_Ontology_Geo_2.png
+    :align: center
+    :width: 600 px
+
+The first step for using the Ontology Lookup Tool is to select and copy the column from there template (" |apple| +C" key on Mac or "CTRL+C" on PC). 
+
+    
+.. image:: ../images/QWA_Ontology_Geo_3.png
+    :align: center
+    :width: 600 px
+
+Then the user should click on the Input Data select-box and paste the column (" |apple| +V" key on Mac or "CTRL+V" on PC).
+
+.. |apple| unicode:: U+02318 .. apple command
+    :trim:
+
+.. image:: ../images/QWA_Ontology_Geo_4.png
+    :align: center
+    :width: 600 px
+
+Once the users column has been pasted, the user should select which Ontology they want to search for their terms (i.e. FMA, ENVO, GAZ, etc.).
+
+.. image:: ../images/QWA_Ontology_Geo_5.png
+    :align: center
+    :width: 600 px
+
+Once the ontology(s) have been selected the user should click on the button "Input Data".
+
+.. image:: ../images/QWA_Ontology_Geo_6.png
+    :align: center
+    :width: 600 px
+
+The user should notice that there are a new input boxes created below, where their list of terms should have been dereplicated.
+
+.. image:: ../images/QWA_Ontology_Geo_7.png
+    :align: center
+    :width: 600 px
+
+Now that the terms have been dereplicated, the user should click on each input box, which will produce a list (up to 20 terms) below the input box where the user must should select the term that best describes their initial term.  If you get no results, then you may want to try another term, by typing in the input box, until you find the term that best relates to your sample.  Note: some ontology terms can only be defined at the resolution allowed by the ontology (e.g. Rat feces can only be defined as feces).
+
+.. image:: ../images/QWA_Ontology_Geo_8.png
+    :align: center
+    :width: 600 px
+    
+Once all the terms have been updated, you should see checks next to each term, if so, then click "Output Data", where a new a window will pop-up and the user can select/copy and paste that list back into their template.  If there are no checkmarks, then the user will need to modify the term in the input boxes, until they get checkmarks.
+
+.. image:: ../images/QWA_Ontology_Geo_9.png
+    :align: center
+    :width: 600 px
+    
+A new pop-up window will be produced where the use can select and copy the list (" |apple| +C" key on Mac or "CTRL+C" on PC).
+
+.. image:: ../images/QWA_Ontology_Geo_10.png
+    :align: center
+    :width: 300 px
+
+Once the list has been copied the user can paste it back into their template, using " |apple| +V" key on Mac or "CTRL+V" on PC. 
+
+.. image:: ../images/QWA_Ontology_Geo_11.png
+    :align: center
+    :width: 600 px
+
+    
+To use the Georeferencing tool, the user should select the "Latitude/Longitude/Elevation" link.
+
+.. image:: ../images/QWA_Ontology_Geo_12.png
+    :align: center
+    :width: 600 px
+
+In the Georeferencing tool, the user can create a list of Latitudes, Longitudes, and Elevations.  First the user should type in a location in the "Enter Location" box.
+
+.. image:: ../images/QWA_Ontology_Geo_13.png
+    :align: center
+    :width: 600 px
+
+Next the user should click on the "Verify Location" button, which will create a tooltip on the map below of the location.  The user should verify that the location is correct, since locations like "Columbus" can mean "Columbus, OH" or "Columbus, GA", for which you will need to be more specific.  Note: If you can only describe your samples at the location of a country, you can specify only a country.
+
+.. image:: ../images/QWA_Ontology_Geo_14.png
+    :align: center
+    :width: 600 px
+
+Once you location is correct, the user needs input the the number of rows in their template. 
+
+.. image:: ../images/QWA_Ontology_Geo_15.png
+    :align: center
+    :width: 600 px
+
+Next the user should select which field they would like to output (Lat/Long/Elev).
+
+.. image:: ../images/QWA_Ontology_Geo_16.png
+    :align: center
+    :width: 600 px
+
+To create the list of Lat/Long/Elev the user needs to click on the "Output Data" button", which will produce a pop-up containing the appropriate data, which can be selected and copied (" |apple| +C" key on Mac or "CTRL+C" on PC).
+
+.. image:: ../images/QWA_Ontology_Geo_17.png
+    :align: center
+    :width: 300 px
+
+Then, the user can paste the list into their template (" |apple| +V" key on Mac or "CTRL+V" on PC).
+
+.. image:: ../images/QWA_Ontology_Geo_18.png
+    :align: center
+    :width: 600 px
+    
+    
 Upload MIENs-Compliant Templates 
 -----------------------------------------
 
+To upload your MIENs-compliant metadata files, you must first zip the templates into a single archive. Then you must select the link Upload metadata to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
+
+.. image:: ../images/QWA_Upload_Meta_1.png
+    :align: center
+    :width: 600 px
+
+Once redirected, you may see an applet permission pop-up, where the user should click on the "Allow" button.  The reason for this message is that the browser is trying to verify the use of the java applet.  Once the applet has loaded, the user can drag-n-drop their MIENs-compliant template archive onto the applet, or click on the "Add..." button.
+
+.. image:: ../images/QWA_Upload_Meta_2.png
+    :align: center
+    :width: 600 px
+
+If the user selects "Add..." a window should pop-up.  In this window the user should locate their zipped file and select it.
+
+.. image:: ../images/QWA_Upload_Meta_3.png
+    :align: center
+    :width: 400 px
+
+Once the zipped file is selected the user should click "Open".
+
+.. image:: ../images/QWA_Upload_Meta_4.png
+    :align: center
+    :width: 400 px
+
+Once the file shows up in the applet window, the user should click on "Start Upload" button on the bottom left corner of the applet.
+
+.. image:: ../images/QWA_Upload_Meta_5.png
+    :align: center
+    :width: 600 px
+
+If there are columns in the metadata templates that are user specific, then a page will ask the user to describe these new columns.
+
+.. image:: ../images/QWA_Upload_Meta_6.png
+    :align: center
+    :width: 600 px
+
+After describing the column, the user should select the type of data in that will be found in that column.
+
+.. image:: ../images/QWA_Upload_Meta_7.png
+    :align: center
+    :width: 600 px
+
+Once the user has filled in the description and selected the data-type for each user-specified column, you should click on the "Continue" button.
+
+.. image:: ../images/QWA_Upload_Meta_8.png
+    :align: center
+    :width: 600 px
+    
+The user will now be redirected to another page where each template is loaded into an HTML table.  If there are errors, the user will observe an input box in the column denoting the user needs to update and correct the specified fields.  The user should click on the input box and update the field.
+
+.. image:: ../images/QWA_Upload_Meta_9.png
+    :align: center
+    :width: 600 px
+
+Once corrected, the user should not that the background of the input box will turn green.
+
+.. image:: ../images/QWA_Upload_Meta_10.png
+    :align: center
+    :width: 600 px
+
+After making all the corrections, the user should scroll to the bottom of the page and click on the "Submit Metadata" button.
+
+.. image:: ../images/QWA_Upload_Meta_11.png
+    :align: center
+    :width: 600 px
+
+This will redirect the user to another page, where they can observe the loading progress and if successful, they we see a fun fireworks animation.
+
+.. image:: ../images/QWA_Upload_Meta_12.png
+    :align: center
+    :width: 600 px
+
 Upload SFFs
 ------------
+
+To upload your SFF files, you must first zip one or more SFFs into a single archive, depending on the SFFs listed in the RUN_PREFIX of your MIENs-compliant metadata templates.  First you must select the link Upload SFF files to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
 
 .. image:: ../images/QWA_Upload_SFF_1.png
     :align: center
     :width: 600 px
 
+Once redirected, you may see an applet permission pop-up, where the user should click on the "Allow" button.  The reason for this message is that the browser is trying to verify the use of the java applet.  Once the applet has loaded, the user can drag-n-drop their SFF archive onto the applet, or click on the "Add..." button.
+
 .. image:: ../images/QWA_Upload_SFF_2.png
     :align: center
     :width: 600 px
+
+Once the file shows up in the applet window, the user should click on "Start Upload" button on the bottom left corner of the applet.
 
 .. image:: ../images/QWA_Upload_SFF_3.png
     :align: center
     :width: 600 px
 
+If there are no errors and the files upload correctly, the user will be redirected to the "Select Task" page.  If the job fails, there could be several reasons, such as the SFF files in the zip archive are corrupt or missing from the archive.
+
 
 Create Meta-Analysis
 --------------------
 
+Now that a user would like to compare their samples with other samples in the database or if the user would just like to compare public samples in the datbase, they must first create a Meta-Analysis. The user should click on the "Create a New Meta-Analysis" link, which will redirect the user to a page containing a single input box.
+
+.. image:: ../images/QWA_Create_MetaAnalysis_1.png
+    :align: center
+    :width: 600 px
+
+First, you should type in a Meta-Analysis Name. Note: this name is a unique identifier for the user.
+
+.. image:: ../images/QWA_Create_MetaAnalysis_2.png
+    :align: center
+    :width: 600 px
+
+Then, the user should click the "Next" button, which will redirect the user to the Meta-Analysis frontpage.
+
+.. image:: ../images/QWA_Create_MetaAnalysis_3.png
+    :align: center
+    :width: 600 px
+
 Generate Sequences File, OTU Table and QIIME-Formatted Metadata File
 ---------------------------------------------------------------------
 
+If the user was redirected to the main Meta-Analysis frontpage, then they can skip the next step.  If the user has already created their Meta-Analysis, they can generate a sequences file (FASTA), OTU table, and QIIME-Formatted mapping file by selecting a Meta-Analysis from the select box for "Select Previous Meta-Analysis" on the "Select Task" home page, which will redirect the user to the Meta-Analysis frontpage.
+
+.. image:: ../images/QWA_Generate_OTU_1.png
+    :align: center
+    :width: 600 px
+
+Next, the user should click on the link "Generate OTU table and metadata file"????, which will redirect the user to the sample selection page.
+
+.. image:: ../images/QWA_Generate_OTU_2.png
+    :align: center
+    :width: 600 px
+
+On the sample selection page, the user should first give a filename prefix to the files they will produce.  You should also, specify the taxonomic assignment that you would like to be represented in the OTU table. 
+
+.. image:: ../images/QWA_Generate_OTU_3.png
+    :align: center
+    :width: 600 px
+
+You can select the fields you would like outputted by selecting a field in the left select-box and either double-clicking that field or clicking on the ">" button to move it to the right select-box.
+
+.. image:: ../images/QWA_Generate_OTU_4.png
+    :align: center
+    :width: 600 px
+
+When the user selects a field in the left select-box they should notice a gray table appear below which gives information about that particular field, however; when they select a field in the right select-box, they will see an additional column containing values found for that particular field.  From the Values box, the user should select values that correspond to the types of samples they would like to compare.  If no values are selected, then all samples will be taken.
+
+.. image:: ../images/QWA_Generate_OTU_5.png
+    :align: center
+    :width: 600 px
+
+If the user would like to reduce the number of fields and select samples based on specific fields, they can select one of the categories for the fields (e.g. Study, package-specific, etc.).
 
 
 
