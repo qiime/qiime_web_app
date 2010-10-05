@@ -98,18 +98,17 @@ def submitJobsToQiime(study_id, user_id):
         param_file = '/home/wwwuser/projects/QIIME-webdev/qiime_web_app/python_code/parameter_files/%s__custom_parameters_uclust_ref_gg97.txt' % str(barcode_length)
         
         for sff_file in sff_files:
-            sff_file_basename = os.path.splitext(os.path.basename(sff_file))[0]
-            
+            sff_file_basename = os.path.splitext(os.path.basename(sff_file))[0].upper()
             # If the run_prefix matches the SFF file name exactly, assume only
             # one SFF for this run
-            if run_prefix == os.path.splitext(sff_file_basename)[0]:
+            if run_prefix.upper() == os.path.splitext(sff_file_basename)[0].upper():
                 matching_sff_files.append(sff_file)
                 file_map[mapping_file] = matching_sff_files
                 continue
                 
             # If the run_prefix is contained in the file name, find all that match
             # and submit them together with the current mapping file
-            elif run_prefix in sff_file_basename:
+            elif run_prefix.upper() in sff_file_basename:
                 # If it's the first item for this mapping file name, assign the list
                 if not file_map.get(mapping_file):
                     file_map[mapping_file] = matching_sff_files

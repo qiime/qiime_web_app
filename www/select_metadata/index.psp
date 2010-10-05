@@ -90,14 +90,13 @@ it will remove the return key functionality.
             <b>Filename Prefix: </b><input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" /><br>
             <b>Select Taxonomy: </b><select id="taxonomy" name="taxonomy">
                                         <option>None
-                                        <option>HOMD
+                                        <option>G2_chip
                                         <option>Hugenholtz
                                         <option>Ludwig
                                         <option>NCBI
                                         <option>Pace
                                         <option>PHPR
                                         <option>RDP
-                                        <option>Silva
                                     </select>
         </td>
     </tr>
