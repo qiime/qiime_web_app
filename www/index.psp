@@ -13,6 +13,7 @@ __status__ = "Production"
 from mod_python import Session
 from data_access_connections import data_access_factory
 from enums import DataAccessType
+import os
 %>
 
 <html>
@@ -32,7 +33,7 @@ from enums import DataAccessType
 <%
 
 #This is the location where the user directories are written
-output_dir='/tmp_qiime/user_data'
+output_dir='/home/wwwuser/user_data'
 
 if form.has_key('username'):
     # begin
