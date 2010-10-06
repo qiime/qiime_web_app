@@ -40,6 +40,9 @@ class JobHandler(object):
     # delimiter of the key/value pairs packed into the INPUT column in the
     # TORQUE_JOBS table
     _input_delimiter = "!!"
+    
+    # for chaining jobs
+    _next_job_handler = None
 
     def __init__(self, ora_job_name, input_str):
         self.OracleJobName = ora_job_name
@@ -181,6 +184,7 @@ class ProcessSFFHandler(JobHandler):
     """Handler for process_sff_and_metadata_for_db.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s"])
     _base_args = {'SFF':None, 'Mapping':None, 'ParamFile':None, 'StudyID':None}
+    _next_job_handler = 'TestLoadSFFAndMetadataHandler'
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""
@@ -191,6 +195,20 @@ class ProcessSFFHandler(JobHandler):
             return False
 
 # when calling for the test database, use the -t option
+class TestLoadSFFAndMetadataHandler(JobHandler):
+    """Handler for submit_sff_and_metadata_to_db.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_SFF_METADATA_TO_DB, \
+            "-i %(ProcessedFastaFilepath)s -s %(StudyId)s -t"])
+    _base_args = {'ProcessedFastaFiles':None, 'StudyId':None}
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+            
 class LoadSFFAndMetadataHandler(JobHandler):
     """Handler for submit_sff_and_metadata_to_db.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_SFF_METADATA_TO_DB, \

@@ -37,7 +37,9 @@ TORQUE_STATE_LOOKUP = {'R':'RUNNING',
                        'H':'HALTED'}
 JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'PollerTestHandlerErr':PollerTestHandlerErr,
-                   'ProcessSFFHandler':ProcessSFFHandler}
+                   'ProcessSFFHandler':ProcessSFFHandler,
+                   'TestLoadSFFAndMetadataHandler':TestLoadSFFAndMetadataHandler,
+                   'LoadSFFAndMetadataHandler':LoadSFFAndMetadataHandler}
 
 class Poller(Daemon):
     """Polls TORQUE_JOBS for new jobs, submits, updates status"""
@@ -121,6 +123,10 @@ class Poller(Daemon):
         else:
             sys.stdout.write('Job %s completed successfully\n'% job_name)
             exit_status = 'COMPLETED_OKAY'
+            
+            # Check for next job in chain. If so, call it
+            if job._next_job_handler:
+                pass
                 
         return exit_status
 

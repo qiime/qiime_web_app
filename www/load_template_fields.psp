@@ -114,14 +114,6 @@ outputFields(field_list, 'study', 'Study Fields')
 field_list = qda.getPackageColumns(FieldGrouping.sra_study_level)
 outputFields(field_list, 'study', 'SRA Study Fields')
 
-# Write out the prep fields
-field_list = qda.getPackageColumns(FieldGrouping.prep_level)
-outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
-
-# Write out the SRA sample fields
-field_list = qda.getPackageColumns(FieldGrouping.sra_experiment_level)
-outputFields(field_list, 'prep', 'SRA Experiment Fields')
-
 # Write out the required sample fields along with the package-specific fields
 field_list = qda.getPackageColumns(FieldGrouping.sample_level)
 outputFields(field_list, 'sample', 'Sample Fields')
@@ -129,6 +121,14 @@ outputFields(field_list, 'sample', 'Sample Fields')
 # Write out the SRA experiment fields
 field_list = qda.getPackageColumns(FieldGrouping.sra_sample_level)
 outputFields(field_list, 'sample', 'SRA Sample Fields')
+
+# Write out the prep fields
+field_list = qda.getPackageColumns(FieldGrouping.prep_level)
+outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
+
+# Write out the SRA sample fields
+field_list = qda.getPackageColumns(FieldGrouping.sra_experiment_level)
+outputFields(field_list, 'prep', 'SRA Experiment Fields')
 
 # Write out the rest of the package fields
 packages = qda.getStudyPackages(sess['study_id'])
