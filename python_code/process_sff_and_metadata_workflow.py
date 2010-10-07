@@ -444,6 +444,7 @@ def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
     cur = con.cursor()
     open_fasta = open(split_lib_seqs)
     iterator=0
+    
     for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,100):
         print 'running %i' % (iterator)
         iterator=iterator+1
@@ -530,7 +531,7 @@ def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
             otu_map.append('%s\t%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
                                                 reference_set_name,split_library_run_id))
     
-    types=['i','s','i','s','i']
+    types=['s','s','i','s','i']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
@@ -638,8 +639,7 @@ def submit_otu_data_to_db(data_access,fasta_files, analysis_id):
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
     otu_run_set_id=0
     #Insert the otu-picking log information in the DB
-    print str((True,
-                                  otu_run_set_id, 
+    print str((True,otu_run_set_id, 
                                   analysis_id, run_date,
                                   pOTUs_method, pOTUs_threshold,
                                   svn_version, pick_otus_cmd, otus_log_str,
@@ -667,7 +667,7 @@ def submit_otu_data_to_db(data_access,fasta_files, analysis_id):
             otu_map.append('%s\t%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
                                                 reference_set_name,split_library_run_id))
     
-    types=['i','s','i','s','i']
+    types=['s','s','i','s','i']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     set_count = 1

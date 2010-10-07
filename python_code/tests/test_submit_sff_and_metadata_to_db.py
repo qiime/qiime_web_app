@@ -30,7 +30,7 @@ no_status_updates,WorkflowError,print_commands)
 
 from data_access_connections import data_access_factory
 from enums import DataAccessType
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(DataAccessType.qiime_test)
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:
 ##  http://code.activestate.com/recipes/534115-function-timeout/
@@ -238,7 +238,7 @@ split_libraries:reverse_primers	disable
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:max_cdhit_memory	400
-pick_otus:refseqs_fp	/home/wwwuser/software/greengenes_core_sets/gg_otus_9aug2010/inflated_sub_gg/uclust_otus_97/rep_set/gg_97_otus_9aug2010.fasta
+pick_otus:refseqs_fp	/home/wwwuser/gg_otus/uclust_otus_97_sel4cni_unmasked/rep_set/gg_97_otus_6oct2010.fasta
 pick_otus:blast_db
 pick_otus:similarity	0.97
 pick_otus:max_e_value	1e-10

@@ -51,7 +51,7 @@ def main():
     lines = open(argv[1])
     con = cx_Oracle.connect(user='SFF',
                             password='SFF454SFF',
-                            dsn='quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
+                            dsn='webdev/dbdev')
     cur = con.cursor()
     ref_set_id = 7 #cur.var(cx_Oracle.NUMBER, 7)
     for input_set in input_set_generator(lines, cur):

@@ -110,8 +110,8 @@ unique_study_ids=list(set(study_id_array))
 
 statement = statement[0:len(statement) - 3]
 statement = '\
-select \n' + statement + ' \n\
-from "STUDY" inner join user_study us on "STUDY".study_id=us.study_id '
+select distinct \n' + statement + ' \n\
+from "STUDY" inner join user_study us on "STUDY".study_id=us.study_id inner join sff.analysis anal on "STUDY".study_id=anal.study_id'
 
 statement += ' \n\
 inner join "SAMPLE" \n\
@@ -190,6 +190,7 @@ con = data_access.getMetadataDatabaseConnection()
 cur = con.cursor()
 #req.write(str(statement)+'<br><br>')
 results = cur.execute(statement)
+
 
 # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
 mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map.txt'), 'w')

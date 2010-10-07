@@ -37,6 +37,8 @@ make_option('-i','--input_file',help='the input fasta file, where the sequence i
  #options_lookup['input_fasta']
 ]
 script_info['optional_options'] = [\
+    make_option('-t','--submit_to_test_db',action='store_true',help='By setting this parameter, the data will be submitted to the test database.',default=False),\
+
  # Example optional option
  #make_option('-o','--output_dir',help='the output directory [default: %default]'),\
 ]
@@ -55,15 +57,23 @@ def main():
         reference_dataset='GREENGENES_REFERENCE'
     threshold=fname[1]
     print threshold
-    con = cx_Oracle.connect(user='SFF',
-                           password='SFF454SFF',
-                           dsn='quarterbarrel.microbio.me:1521/qiimedb.microbio.me')
-    
+    try:
+        from data_access_connections import data_access_factory
+        from enums import DataAccessType
+        import cx_Oracle
+        if opts.submit_to_test_db:
+            data_access = data_access_factory(DataAccessType.qiime_test)
+        else:
+            data_access = data_access_factory(DataAccessType.qiime_production)
+    except ImportError:
+        print "NOT IMPORTING QIIMEDATAACCESS"
+        pass
+        
     prokmsas=[]
     for prok_id in fasta_file:
         prokmsas.append('%s\t%s\t%s' % (str(prok_id),str(threshold),
                                             reference_dataset))
-        
+    con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
 
     data_types=['s','i','s']

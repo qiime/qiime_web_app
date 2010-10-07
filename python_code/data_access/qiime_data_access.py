@@ -2015,3 +2015,16 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+
+    def loadOTUsFromFasta(self, start_job, input_set):
+        """ starts process of importing otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                db_output=con.cursor().callproc('load_otus_from_fasta.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
