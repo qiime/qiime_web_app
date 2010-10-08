@@ -31,8 +31,10 @@ import os
 </table>
 
 <%
+# Get the session
+sess = Session.Session(req)
 
-#This is the location where the user directories are written
+# This is the location where the user directories are written
 output_dir='/home/wwwuser/user_data'
 
 if form.has_key('username'):
@@ -40,7 +42,6 @@ if form.has_key('username'):
     qiimeDataAccess = data_access_factory(DataAccessType.qiime_production)
     user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
     if ( user_data and user_data['verified']=='y'):
-        sess = Session.Session(req)
         sess['username'] = form["username"]
         sess['is_admin'] = user_data['is_admin']
         sess['web_app_user_id'] = user_data['web_app_user_id']
@@ -65,6 +66,9 @@ if form.has_key('username'):
         req.write('<script language=\"javascript\">document.login_form.submit();</script>')
     else:
         req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+else:
+    # If the form was just loaded, clear the session
+    sess.invalidate()
 
 # end
 %>
