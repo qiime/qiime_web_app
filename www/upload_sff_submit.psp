@@ -36,14 +36,15 @@ if form.has_key('file') and form['file'].filename:
         # strip leading path from file name to avoid directory traversal attacks
         fname = form['output_fname']+fileitem.filename.strip().replace(" ","")
         dir_path = os.path.join(os.path.dirname(req.filename), form['output_dir'])
+        zip_file_name = os.path.join(dir_path, fname)
         
         # write the zipped file on the server
-        zippedf = open(os.path.join(dir_path, fname), 'wb')
+        zippedf = open(zip_file_name, 'wb')
         zippedf.write(fileitem.file.read())
         zippedf.close()
     
         # create a zipfile object
-        t=zipfile.ZipFile(os.path.join(dir_path, fname),'r')
+        t = zipfile.ZipFile(zip_file_name,'r')
         
         contains_sff = False
         # iterate through the list of files in the zipped file
@@ -52,21 +53,27 @@ if form.has_key('file') and form['file'].filename:
             # if the name is a folder, create a directory
             if not f.endswith('/'):
                 # Write a file
-                filename=os.path.split(f)[-1].lower()
+                filename = os.path.basename(f)
                 if filename.endswith('.sff') and not filename.startswith('.'):
-                    outfname=os.path.join(dir_path, filename)
-                    outfile = open(outfname, 'wb')
-                    outfile.write(t.read(f))
-                    outfile.flush()
-                    outfile.close()
+                    # Unzip the file using the system's unzip command. Python has a bug which prevents
+                    # it from successfully unzipping a files larger than 1 GB in size
+                    outfname = os.path.join(dir_path, filename)
+                    process = Popen(['unzip', '-u', zip_file_name, f, '-d', os.path.dirname(outfname)], stdout=PIPE, stderr=PIPE, shell=False)
+                    stdout_value, stderr_value = process.communicate()
+                    #req.write(repr(stdout_value) + '\n\n')
+                    #req.write(repr(stderr_value) + '\n\n')
+                    
+                    # If stderr_value isn't empty, output the error
+                    if stderr_value:
+                        req.write('An error was logged: %s' % stderr_value)
                     
                     # determine if the file written is an sff, in which the sffinfo
                     # is called on the file.
                     contains_sff = True
                     try: 
-                        process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
-                        if not int(process.wait())==0:
-                            req.write("Error: the SFF file could not be parsed!")
+                        #process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
+                        #if not int(process.wait())==0:
+                        #    req.write("Error: the SFF file could not be parsed!")
                         data_access.addSFFFile(form['study_id'], outfname)
                     except Exception, e:
                         req.write("Error: there was a problem parsing the SFF file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
