@@ -270,8 +270,8 @@ class MetadataTable(object):
             y = 0
             
             while y < row_count:
+
                 x = 0
-                
                 # Do a pass to determine row color:
                 row_color = '#FFFFFF'
                 while x < column_count:
@@ -279,9 +279,11 @@ class MetadataTable(object):
                         if column.values[y][1] == 'good':
                             continue
                         else:
-                            row_color = '#FFDDDD'
-                            break                        
-                
+                            row_color = '#AAAAAA'
+                            break
+                    x += 1
+
+                x = 0                
                 html_table += '<tr style="background-color:%s;">\n' % (row_color)
                 
                 while x < column_count:
@@ -308,13 +310,13 @@ class MetadataTable(object):
                                 
                             hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
                             cell_color = '#FFFFFF'
-                            html_table += '<td style=\"background-color:%s;\">%s%s</td>\n' % (cell_color, hidden_field_text, value_output)
+                            html_table += '<td>%s%s</td>\n' % (hidden_field_text, value_output)
                         
                         # For fields that are not valid
                         else:
                             self._log.append('Field is "bad"')
                             cell_color = '#EEEEFF'
-                            html_table += '<td style="background-color:#DDDDDD;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
+                            html_table += '<td style="background-color:#FFFF00;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
                                 <a href="" onclick="replaceWithCurrent(\'%s\', \'%s\');return false;"><div style="font-size:11px">update all like values</div></a></td>\n' \
                                 % (cell_color, unique_column_name, unique_column_name, actual_value, column.writeJSValidation(), unique_column_name, actual_value)
                         x += 1
