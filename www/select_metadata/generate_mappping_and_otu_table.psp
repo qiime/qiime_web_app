@@ -316,7 +316,7 @@ otu_id_list=list(set(otu_map_dict.keys()))
 if taxonomy_class:
     otu_to_taxonomy={}
     for i in otu_id_list:
-        otu_taxonomy=data_access.getOTUGG97Taxonomy(i,taxonomy_class)
+        otu_taxonomy=data_access.getOTUGG97Taxonomy(str(i),taxonomy_class)
         if otu_taxonomy==None:
             otu_taxonomy='NA;'
         otu_to_taxonomy[i]=otu_taxonomy

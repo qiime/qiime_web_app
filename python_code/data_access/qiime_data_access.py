@@ -1940,7 +1940,7 @@ class QiimeDataAccess(object):
             con = self.getSFFDatabaseConnection()
             column_values=con.cursor()
             taxonomy_str=con.cursor().callproc('get_otu_id_to_gg_97_taxonomy', 
-                                    [int(otu_id), taxonomy_name,column_values])
+                                    [str(otu_id), taxonomy_name,column_values])
             query_results=[]
             for row in column_values:
                 return row[0]

@@ -446,6 +446,7 @@ def submit_processed_data_to_db(data_access,fasta_files,metadata_study_id):
     iterator=0
     
     for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,100):
+        print res
         print 'running %i' % (iterator)
         iterator=iterator+1
         valid = data_access.loadFNAFile(True, res)
