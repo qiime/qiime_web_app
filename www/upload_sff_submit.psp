@@ -71,9 +71,9 @@ if form.has_key('file') and form['file'].filename:
                     # is called on the file.
                     contains_sff = True
                     try: 
-                        #process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
-                        #if not int(process.wait())==0:
-                        #    req.write("Error: the SFF file could not be parsed!")
+                        process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
+                        if not int(process.wait())==0:
+                            req.write("Error: the SFF file could not be parsed!")
                         data_access.addSFFFile(form['study_id'], outfname)
                     except Exception, e:
                         req.write("Error: there was a problem parsing the SFF file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
@@ -81,6 +81,5 @@ if form.has_key('file') and form['file'].filename:
         #if the zip does not have any sff files, raise an error
         if contains_sff==False:
             req.write("Error: This zip does not contain any SFF files!")
-
-#
+            
 %>

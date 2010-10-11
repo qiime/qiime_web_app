@@ -271,7 +271,19 @@ class MetadataTable(object):
             
             while y < row_count:
                 x = 0
-                html_table += '<tr>\n'
+                
+                # Do a pass to determine row color:
+                row_color = '#FFFFFF'
+                while x < column_count:
+                    for column in self._columns:
+                        if column.values[y][1] == 'good':
+                            continue
+                        else:
+                            row_color = '#FFDDDD'
+                            break                        
+                
+                html_table += '<tr style="background-color:%s;">\n' % (row_color)
+                
                 while x < column_count:
                     for column in self._columns:
     
