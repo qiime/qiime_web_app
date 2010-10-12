@@ -58,16 +58,17 @@ if sess['study_name']:
 %>
     </td>
     <td style="text-align: right">
-        <a href="fusebox.psp?page=select_study.psp">[home]</a> 
+        <a href="docs/index.html" target="_blank">help</a> | 
+        <a href="fusebox.psp?page=select_study.psp">home</a> |  
 <%
 if sess.get('study_id'):
     req.write('<a href="fusebox.psp">[study options]</a> ')
 
 %>
-        <a href="fusebox.psp?page=new_study.psp">[new study]</a> 
-        <a href="fusebox.psp?page=new_meta_analysis.psp">[new meta-analysis]</a> 
-        <a href="fusebox.psp?page=tools_ontology_and_geo.psp">[tools]</a> 
-        <a href="index.psp">[log out]</a>
+        <a href="fusebox.psp?page=new_study.psp">new study</a> | 
+        <a href="fusebox.psp?page=new_meta_analysis.psp">new meta-analysis</a> | 
+        <a href="fusebox.psp?page=tools_ontology_and_geo.psp">tools</a> | 
+        <a href="index.psp">log out</a>
     </td>
 </tr>
 </table>
