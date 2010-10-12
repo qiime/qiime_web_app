@@ -62,7 +62,7 @@ if sess['study_name']:
         <a href="fusebox.psp?page=select_study.psp">home</a> |  
 <%
 if sess.get('study_id'):
-    req.write('<a href="fusebox.psp">[study options]</a> ')
+    req.write('<a href="fusebox.psp">study options</a> | ')
 
 %>
         <a href="fusebox.psp?page=new_study.psp">new study</a> | 
