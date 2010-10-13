@@ -1218,6 +1218,19 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
+
+    def clearSplitLibrariesMappingFiles(self, study_id):
+        """ Clears split lib mapping files by study id
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.clear_split_lib_map_files', [study_id])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
             
     def checkRunPrefixBarcodeLengths(self, study_id, run_prefix):
         """ Checks to make sure all barcode lengths are the same for a given run_prefix
