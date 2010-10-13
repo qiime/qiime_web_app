@@ -166,17 +166,5 @@ The filename should not contain spaces or non-alphanumeric characters.</p>
 </div>
 </td></tr></table>
 
-<h3>Existing SFF Files:</h3>
-<ul>
-<%
-study_id = sess['study_id']
-sff_files = data_access.getSFFFiles(study_id)
-for sff_file in sff_files:
-    file_base = os.path.basename(sff_file)
-    req.write('<li>%s <a href="clear_sff_file.psp?filename=%s">(remove file)</a></li>' % (file_base, file_base))
-
-%>
-</ul>
-
 
 

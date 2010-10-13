@@ -31,6 +31,6 @@ study_id = int(sess['study_id'])
 clearSFFFile(study_id, sff_file)
 
 # Redirect to the sff upload page
-psp.redirect('fusebox.psp?page=upload_sff.psp')
+psp.redirect('fusebox.psp?page=select_study_task.psp')
 
 %>

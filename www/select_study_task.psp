@@ -70,15 +70,19 @@ for study_name in study_names:
                 Add or remove SFF files for this study
 <%
 if sff_complete == 'n':
-    
-%>        
-(not complete) </a><img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
-<%
+    req.write('(not complete) </a><img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
 else:
-    
-%>
-(complete)</a> <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
-<%
+    req.write('</a><img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
+    req.write('<p/>')
+    req.write('<ul>')
+
+    study_id = sess['study_id']
+    sff_files = data_access.getSFFFiles(study_id)
+    for sff_file in sff_files:
+        file_base = os.path.basename(sff_file)
+        req.write('<li>%s <a href="clear_sff_file.psp?filename=%s">(remove file)</a></li>' % (file_base, file_base))
+
+    req.write('</ul>')
 
 # End if
 %>
@@ -101,7 +105,7 @@ else:
             <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="upload_metadata.psp">
                 <a href="" onclick="if (confirm('Warning, this will remove all existing metadata for this study. Do you want to continue?')) {document.forms['associate_metadata_to_study'].submit();} return false;">
-                Upload metadata to this study (complete)</a>
+                Upload metadata to this study</a>
             <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
 
