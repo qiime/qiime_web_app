@@ -132,8 +132,16 @@ class MetadataTable(object):
         # Read the column values
         try:
             for row in reader:
-                self._log.append('Reading header row:')
+                self._log.append('Reading row:')
                 #self._log.append(str(row))
+
+                # If row is entirely whitespace, get rid of it
+                data_found = False
+                for item in row:
+                    if item.strip():
+                        data_found = True
+                if not data_found:
+                    continue
                 
                 # Skip any rows starting with white space
                 if len(row) == 0:
