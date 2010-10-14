@@ -133,7 +133,7 @@ class MetadataTable(object):
         try:
             for row in reader:
                 self._log.append('Reading header row:')
-                self._log.append(str(row))
+                #self._log.append(str(row))
                 
                 # Skip any rows starting with white space
                 if len(row) == 0:
@@ -145,17 +145,22 @@ class MetadataTable(object):
                     continue
 
                 # If a row is incomplete, probably means end of file whitespace
-                if len(row) < len(self._columns):
-                    self._log.append('Skipping row due to insufficient number of columns')
-                    continue
+                #if len(row) < len(self._columns):
+                #    self._log.append('Skipping row due to insufficient number of columns')
+                #    continue
 
                 # There is data but not enough to fill the columns - pad out data
+                self._log.append('row_length: %s' % str(len(row)))
+                self._log.append('header_length: %s' % str(len(self._columns)))
                 if len(row) > 1 and len(row) < len(self._columns):
                     self._log.append('Row contains data but insufficient number of columns. Assuming blanks for remaining column values.')
                     i = 0
-                    while i < len(self._columns) - len(row):
-                        row.append('\t')
+                    orig_row_length = len(row)
+                    while i < (len(self._columns) - orig_row_length):
+                        row.append('')
                         i += 1
+
+                #self._log.append(str(row))
                 
                 i = 0
                 for column in row:
