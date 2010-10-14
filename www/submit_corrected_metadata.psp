@@ -42,6 +42,7 @@ all_other_fields = []
 
 # Make one pass to shuffle all fields into the right buckets
 req.write('<p style="font-size:12px">Writing Sample Key Values:</p>')
+key_field_errors = []
 
 for item in form:
     parts = item.split(':')
@@ -65,15 +66,27 @@ for item in form:
     
     # Sample key rows can be inserted now
     if  field_type == 'sample' and field_name == 'sample_name':
+        if field_value == '' or field_value == None:
+            req.write('<br/>ERROR: Key value is blank (%s)<br/>' % str(item))
+            key_field_errors.append(item)
+ 
         data_access.createSampleKey(study_id, field_value)
         sample_key_fields[row_num] = field_value
         req.write('* ')
     # Host rows will be written after all samples are in place
     elif field_type == 'sample' and field_name == 'host_subject_id':
+        if field_value == '' or field_value == None:
+            req.write('<br/>ERROR: Key value is blank (%s)<br/>' % str(item))
+            key_field_errors.append(item)
+
         host_fields.append(item)
         host_key_fields[row_num] = field_value
     # Prep rows will be written once all sample rows are in place
     elif field_type == 'prep' and field_name == 'sample_name':
+        if field_value == '' or field_value == None:
+            req.write('<br/>ERROR: Key value is blank (%s -- "%s" )<br/>' % (str(item), form[item]))
+            key_field_errors.append(item)        
+
         prep_fields.append(item)
         prep_key_fields[row_num] = field_value
     # All other fields will be inserted in step 3
