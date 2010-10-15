@@ -77,6 +77,7 @@ class WorkflowTests(TestCase):
          prefix='qiime_wf_mapping',suffix='.txt')
         fasting_mapping_f = open(self.fasting_mapping_fp,'w')
         fasting_mapping_f.write(fasting_map)
+        
         fasting_mapping_f.close()
         self.files_to_remove.append(self.fasting_mapping_fp)
         
@@ -124,27 +125,71 @@ class WorkflowTests(TestCase):
         run_process_sff_through_split_lib(0,sff_input_fp=self.sff_fp,\
          mapping_fp=self.fasting_mapping_fp,\
          output_dir=self.wf_out, \
-         denoise=False,\
          command_handler=call_commands_serially,\
          params=self.params,\
          qiime_config=self.qiime_config,\
-         parallel=False,\
          convert_to_flx=False,\
+         write_to_all_fasta=False,\
          status_update_callback=no_status_updates)
          
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
         
         split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
                                     'seqs.fna')
-        
+                                    
+        sff_fp = join(self.wf_out,'Fasting_subset.sff')
+        sff_seqs_fp = join(self.wf_out,'Fasting_subset.fna')
+        sff_qual_fp = join(self.wf_out,'Fasting_subset.qual')
+        sff_flow_fp = join(self.wf_out,'Fasting_subset.txt')
+        new_map_fp = join(self.wf_out,'Fasting_subset_mapping.txt')
         # check that the two final output files have non-zero size
         self.assertTrue(getsize(split_lib_seqs_fp) > 0)
+        self.assertTrue(getsize(sff_fp) > 0)
+        self.assertTrue(getsize(sff_qual_fp) > 0)
+        self.assertTrue(getsize(sff_flow_fp) > 0)
         
+        new_map_str=open(new_map_fp,'U').read()
+        
+        self.assertTrue(new_map_str,exp_new_fasting_map)
         # Check that the log file is created and has size > 0
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)
 
 
+    def test_run_process_sff_through_split_lib_FLX(self):
+        """run_process_sff_through_pick_otus runs without error: Convert to FLX"""
+        run_process_sff_through_split_lib(0,sff_input_fp=self.sff_fp,\
+         mapping_fp=self.fasting_mapping_fp,\
+         output_dir=self.wf_out, \
+         command_handler=call_commands_serially,\
+         params=self.params,\
+         qiime_config=self.qiime_config,\
+         convert_to_flx=True,\
+         write_to_all_fasta=False,\
+         status_update_callback=no_status_updates)
+         
+        input_file_basename = splitext(split(self.sff_fp)[1])[0]
+        
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
+                                    'seqs.fna')
+                                    
+        sff_fp = join(self.wf_out,'Fasting_subset_FLX.sff')
+        sff_seqs_fp = join(self.wf_out,'Fasting_subset_FLX.fna')
+        sff_qual_fp = join(self.wf_out,'Fasting_subset_FLX.qual')
+        sff_flow_fp = join(self.wf_out,'Fasting_subset_FLX.txt')
+        new_map_fp = join(self.wf_out,'Fasting_subset_mapping.txt')
+        # check that the two final output files have non-zero size
+        self.assertTrue(getsize(split_lib_seqs_fp) > 0)
+        self.assertTrue(getsize(sff_fp) > 0)
+        self.assertTrue(getsize(sff_qual_fp) > 0)
+        self.assertTrue(getsize(sff_flow_fp) > 0)
+        
+        new_map_str=open(new_map_fp,'U').read()
+        
+        self.assertTrue(new_map_str,exp_new_fasting_map)
+        # Check that the log file is created and has size > 0
+        log_fp = glob(join(self.wf_out,'log*.txt'))[0]
+        self.assertTrue(getsize(log_fp) > 0)
 
 qiime_parameters_f = """# qiime_parameters.txt
 # WARNING: DO NOT EDIT OR DELETE Qiime/qiime_parameters.txt. Users should copy this file and edit copies of it.
@@ -205,7 +250,18 @@ PCx635	ACCGCAGAGTCA	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._635
 PCx636	ACGGTGAGTGTC	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._636
 """
 
-
+exp_new_fasting_map = """#SampleID	BarcodeSequence	LinkerPrimerSequence	Treatment	DOB	Description
+#Example mapping file for the QIIME analysis package.  These 9 samples are from a study of the effects of exercise and diet on mouse cardiac physiology (Crawford, et al, PNAS, 2009).
+PCx354-Fasting_subset	AGCACGAGCCTA	CATGCTGCCTCCCGTAGGAGT	Control	20061218	Control_mouse__I.D._354
+PCx355-Fasting_subset	AACTCGTCGATG	CATGCTGCCTCCCGTAGGAGT	Control	20061218	Control_mouse__I.D._355
+PCx356-Fasting_subset	ACAGACCACTCA	CATGCTGCCTCCCGTAGGAGT	Control	20061126	Control_mouse__I.D._356
+PCx481-Fasting_subset	ACCAGCGACTAG	CATGCTGCCTCCCGTAGGAGT	Control	20070314	Control_mouse__I.D._481
+PCx593-Fasting_subset	AGCAGCACTTGT	CATGCTGCCTCCCGTAGGAGT	Control	20071210	Control_mouse__I.D._593
+PCx607-Fasting_subset	AACTGTGCGTAC	CATGCTGCCTCCCGTAGGAGT	Fast	20071112	Fasting_mouse__I.D._607
+PCx634-Fasting_subset	ACAGAGTCGGCT	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._634
+PCx635-Fasting_subset	ACCGCAGAGTCA	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._635
+PCx636-Fasting_subset	ACGGTGAGTGTC	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._636
+"""
 
 if __name__ == "__main__":
     main()

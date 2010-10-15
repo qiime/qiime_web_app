@@ -43,7 +43,7 @@ from cogent.util.misc import safe_md5
 
 ## Begin task-specific workflow functions
 def run_process_sff_through_split_lib(study_id,sff_input_fp, mapping_fp, output_dir, 
-    denoise, command_handler, params, qiime_config,parallel=False,
+    command_handler, params, qiime_config,
     convert_to_flx=False, write_to_all_fasta=False,
     status_update_callback=print_to_stdout):
     """ NOTE: Parts of this function are a directly copied from the
@@ -112,7 +112,7 @@ def run_process_sff_through_split_lib(study_id,sff_input_fp, mapping_fp, output_
     id_map={}
     description_map={}
     for i in data:
-        suffix='----%s----%s' % (str(study_id),str(input_basename))
+        suffix='-%s' % (str(input_basename))
         i[0]+=suffix
         id_map[i[0]]={}
         description_map[i[0]]=i[-1]

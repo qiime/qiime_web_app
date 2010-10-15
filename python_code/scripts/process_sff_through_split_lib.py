@@ -34,8 +34,7 @@ following steps:
 
     1) Process SFFs to generate .fna, .qual and flowgram file. (process_sff.py)
     2) De-multiplex sequences. (split_libraries.py)
-    3) Optionally denoise the sequences (set sff_input_fp=True);
-    4) Pick OTUs
+
 """
 script_info['script_usage'] = [("Example:","This is an example of a basic use case",
 "%prog -i 454_Reads.sff -m mapping.txt -p custom_parameters.txt -o Output_Directory")]
@@ -56,12 +55,6 @@ script_info['optional_options'] = [\
     make_option('-w','--print_only',action='store_true',\
            dest='print_only',help='Print the commands but don\'t call them -- '+\
            'useful for debugging [default: %default]',default=False),\
-    make_option('-d','--denoise',action='store_true',\
-           dest='denoise',help='Denoise the supplied dataset'+\
-           '[default: %default]',default=False),\
-    make_option('-a','--parallel',action='store_true',\
-           dest='parallel',default=False,\
-           help='Run in parallel where available [default: %default]'),\
     make_option('-t','--convert_to_flx',action='store_true',\
            dest='convert_to_flx',default=False,\
            help='Convert the SFF to FLX length reads [default: %default]'),\
@@ -89,12 +82,9 @@ def main():
     map_fname = opts.map_fname
     verbose = opts.verbose
     print_only = opts.print_only
-    parallel = opts.parallel
-    denoise=opts.denoise
     write_to_all_fasta=opts.write_to_all_fasta
     convert_to_flx=opts.convert_to_flx
-    if parallel: 
-        raise_error_on_parallel_unavailable()
+
 
     try:
        parameter_f = open(opts.parameter_fp)
@@ -129,11 +119,9 @@ def main():
      sff_input_fp=sff_fname,\
      mapping_fp=map_fname,\
      output_dir=output_dir,\
-     denoise=denoise,\
      command_handler=command_handler,\
      params=parse_qiime_parameters(parameter_f),\
      qiime_config=qiime_config,\
-     parallel=parallel,\
      convert_to_flx=convert_to_flx,\
      write_to_all_fasta=write_to_all_fasta,\
      status_update_callback=status_update_callback)
