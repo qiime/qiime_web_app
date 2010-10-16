@@ -97,34 +97,45 @@ class WorkflowTests(TestCase):
                     self.params, self.qiime_config, False,\
                     no_status_updates)
         
+        #load the split lib fasta file and check if it is valid
         cat_split_lib_fp=join(self.wf_out,'all_split_lib_seqs.fna')
         cat_split_lib=open(cat_split_lib_fp).read()
         original_fasta=open(self.fna_original_fp).read()
         
         self.assertEqual(cat_split_lib,original_fasta)
         
+        #load the study_run_prefix dictionary and make sure it is valid
         study_run_prefix_dict=eval(open(join(self.wf_out,'studies_run_prefix_dict.txt')).read())
         exp_study_run_prefix={'0': ['FLX']}
         
         self.assertEqual(study_run_prefix_dict,exp_study_run_prefix)
         
+        #load the exact match OTUs and check if they are valid
         exact_otus_fp=join(self.wf_out,'pick_otus_exact','all_split_lib_seqs_otus.txt')
         obs_exact_otus=open(exact_otus_fp).read()
+        
         self.assertEqual(obs_exact_otus,exp_exact_otus)
         
+        #load the trie filtered OTUs and check if they are valid
         trie_otus_fp=join(self.wf_out,'pick_otus_trie','all_split_lib_seqs_exact_rep_otus.txt')
         obs_trie_otus=open(trie_otus_fp).read()
+        
         self.assertEqual(obs_trie_otus,exp_trie_otus)
         
+        #load the uclust_ref picked OTUs and check if they are valid
         uclust_ref_otus_fp=join(self.wf_out,'picked_otus_UCLUST_REF_97',
                             'all_split_lib_seqs_exact_rep_trie_rep_otus.txt')
         obs_uclust_ref_otus=open(uclust_ref_otus_fp).read()
+        
         self.assertEqual(obs_uclust_ref_otus,exp_uclust_ref_otus)
         
+        #load the merged OTUs and check if they are valid
         all_otus_fp=uclust_ref_otus_fp=join(self.wf_out,
                                             'exact_trie_uclust_ref_otus.txt')
         obs_all_otus=open(all_otus_fp).read()
+        
         self.assertEqual(obs_all_otus,exp_all_otus)
+        
         # Check that the log file is created and has size > 0
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)
@@ -136,34 +147,45 @@ class WorkflowTests(TestCase):
                     self.params, self.qiime_config, True,\
                     no_status_updates)
         
+        #load the split lib fasta file and check if it is valid
         cat_split_lib_fp=join(self.wf_out,'all_split_lib_seqs.fna')
         cat_split_lib=open(cat_split_lib_fp).read()
         original_fasta=open(self.fna_original_fp).read()
-        
+
         self.assertEqual(cat_split_lib,original_fasta)
-        
+
+        #load the study_run_prefix dictionary and make sure it is valid
         study_run_prefix_dict=eval(open(join(self.wf_out,'studies_run_prefix_dict.txt')).read())
         exp_study_run_prefix={'0': ['FLX']}
-        
+
         self.assertEqual(study_run_prefix_dict,exp_study_run_prefix)
-        
+
+        #load the exact match OTUs and check if they are valid
         exact_otus_fp=join(self.wf_out,'pick_otus_exact','all_split_lib_seqs_otus.txt')
         obs_exact_otus=open(exact_otus_fp).read()
+
         self.assertEqual(obs_exact_otus,exp_exact_otus)
-        
+
+        #load the trie filtered OTUs and check if they are valid
         trie_otus_fp=join(self.wf_out,'pick_otus_trie','all_split_lib_seqs_exact_rep_otus.txt')
         obs_trie_otus=open(trie_otus_fp).read()
-        self.assertEqual(obs_trie_otus,exp_trie_otus)
+
+        self.assertEqual(obs_trie_otus,exp_trie_otus)   
         
+        #load the uclust_ref picked OTUs and check if they are valid
         uclust_ref_otus_fp=join(self.wf_out,'picked_otus_UCLUST_REF_97',
                             'all_split_lib_seqs_exact_rep_trie_rep_otus.txt')
         obs_uclust_ref_otus=open(uclust_ref_otus_fp).read()
+        
         self.assertEqual(obs_uclust_ref_otus,exp_uclust_ref_otus_parallel)
         
+        #load the merged OTUs and check if they are valid
         all_otus_fp=uclust_ref_otus_fp=join(self.wf_out,
                                             'exact_trie_uclust_ref_otus.txt')
         obs_all_otus=open(all_otus_fp).read()
+        
         self.assertEqual(obs_all_otus,exp_all_otus_parallel)
+        
         # Check that the log file is created and has size > 0
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)
