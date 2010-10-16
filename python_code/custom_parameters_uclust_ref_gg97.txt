@@ -37,7 +37,7 @@ pick_otus:suppress_presort_by_abundance_uclust
 pick_otus:suppress_new_clusters	True
 pick_otus:uclust_stable_sort	True
 # Parallel options
-parallel:jobs_to_start	1
+parallel:jobs_to_start	2
 parallel:retain_temp_files	False
 parallel:seconds_to_sleep	60
 

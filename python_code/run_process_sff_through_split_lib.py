@@ -112,7 +112,7 @@ def run_process_sff_through_split_lib(study_id,sff_input_fp, mapping_fp, output_
     id_map={}
     description_map={}
     for i in data:
-        suffix='-%s' % (str(input_basename))
+        suffix='.%s' % (str(input_basename))
         i[0]+=suffix
         id_map[i[0]]={}
         description_map[i[0]]=i[-1]
