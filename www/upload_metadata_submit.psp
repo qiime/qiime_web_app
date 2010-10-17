@@ -12,122 +12,12 @@ __status__ = "Development"
 This script is the upload handler for uploading metadata files using JumpLoader'
 """
 
-import os
-import zipfile
-from subprocess import PIPE,Popen
-from data_access_connections import data_access_factory
-from enums import DataAccessType
-from metadata_table import MetadataTable
-
-def validateFileContents(study_id):
-    # A nested FieldStorage instance holds the file
-    fileitem = form['file']
-    
-    # Test if the file was uploaded
-    if fileitem.filename:
-        # strip leading path from file name to avoid directory traversal attacks
-        fname = form['output_fname']+fileitem.filename.strip().replace(" ","")
-        dir_path = os.path.join(os.path.dirname(req.filename), form['output_dir'])
-
-        # write the zipped file on the server
-        zippedf = open(os.path.join(dir_path, fname), 'wb')
-        zippedf.write(fileitem.file.read())
-        zippedf.close()
-    
-        # create a zipfile object
-        t = zipfile.ZipFile(os.path.join(dir_path, fname),'r')
-        
-        # Do some error checking of the archive's contents
-        error_message = ''
-        templates = []
-        study_template_found = False
-        sample_template_found = False
-        prep_template_found = False
-        
-        for fullname in t.namelist():
-            # Ignore directories
-            if fullname.endswith('/'):
-                continue
-
-            filename = os.path.basename(fullname).lower()
-            # Ignore files that start with '.' - seem to be an artifact of the built-in
-            # Mac file compression option within the Finder
-            if filename.startswith('.'):
-                continue
-
-            # Make sure ends with .xls or .txt
-            if filename.endswith('.xls') or filename.endswith('.txt'):
-                pass
-            else:
-                continue
-
-            # Validate that it's one of the three expected templates
-            if 'study_template' in filename:
-                study_template_found = True
-            elif 'sample_template' in filename:
-                sample_template_found = True
-            elif 'prep_template' in filename:
-                prep_template_found = True
-            else:
-                continue
-
-            # Add the file to the list of templates
-            templates.append(filename)
-                            
-            # Looks like we're good, write it out to the filesystem
-            try:
-                outfile = open(os.path.join(dir_path, filename), 'w')
-                outfile.write(t.read(fullname))
-                outfile.flush()
-                outfile.close()
-            except IOError as e:
-                error_message += """Could not open file "%s". The error was: %s""" % (filename, e)
-                continue
-
-            # Check to see if columns are valid in this file. If so, output the first errors...
-            mdtable = MetadataTable(os.path.join(dir_path, filename), study_id)
-            errors = mdtable.validateColumnNames()
-            if len(errors) > 0:
-                i = 0
-                error_message += 'Error: The following errors were found:\n'
-                for error in errors:
-                    error_message += error + '\n\n'
-                    if i > 5:
-                        error_message += '... Error report truncated. Please fix all such errors in your templates.'
-                        break
-                    i += 1
-
-        # If the zip does not have exactly three templates, raise an error
-        if len(templates) != 3:
-            error_message += "Error: A valid study, sample, and prep template must be in the archive.\n\n"
-            
-        # Make sure we have one of each template type
-        if not study_template_found:
-            error_message += 'Error: Study tempalte was not found.'
-        if not sample_template_found:
-            error_message += 'Error: Sample template was not found.'
-        if not prep_template_found:
-            error_message += 'Error: Prep template was not found.'
-
-        # If there were errors, report them and stop processing
-        if error_message != '':
-            req.write(error_message)
-            return None
-                            
-        # Delete the old files
-        files = os.listdir(dir_path)
-        for file_name in files:
-            if file_name.endswith('.xls') or file_name.endswith('.zip'):
-                if os.path.basename(file_name) not in templates:
-                    os.remove(os.path.join(dir_path, file_name))
-                    
-        # Assuming all went well, return the list of templates
-        return templates
-
 """----------------------------------------------------------------------------
 Process the uploaded archive. If valid, write files out to the filesystem
 and validate the contents of each.
 ----------------------------------------------------------------------------"""
+
+from upload_metadata_submit import validateFileContents
 
 # Some code for Windows systems
 if form.has_key('file') and form['file'].filename:
@@ -141,17 +31,16 @@ if form.has_key('file') and form['file'].filename:
 # A couple of items we will need below
 sess = Session.Session(req)
 study_id = sess['study_id']
-data_access = data_access_factory(DataAccessType.qiime_production)
 
 # Validate zip file contents. If valid, get list of template files back and
 # validate their contents
-templates = validateFileContents(study_id)
+templates = validateFileContents(study_id, sess, form, req)
 
-if templates != None:
+if templates != None:    
+    # Set the template names into our session variable
     fullnames = []
     for template in templates:
         fullnames.append(os.path.join(form['output_dir'], template))
-        
     sess['templates'] = fullnames
     sess.save()
 

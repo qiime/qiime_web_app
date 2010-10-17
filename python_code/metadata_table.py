@@ -89,6 +89,7 @@ class MetadataTable(object):
 
         # Create the header columns
         headers = reader.next()
+        self._log.append('Column headers: %s<br/>' % str(headers))
         for column in headers:
             self._log.append('Checking if column "%s" exists in column dictionary...' % column)
             try:
@@ -152,23 +153,16 @@ class MetadataTable(object):
                     self._log.append('Skipping row due to leading white space')
                     continue
 
-                # If a row is incomplete, probably means end of file whitespace
-                #if len(row) < len(self._columns):
-                #    self._log.append('Skipping row due to insufficient number of columns')
-                #    continue
-
                 # There is data but not enough to fill the columns - pad out data
                 self._log.append('row_length: %s' % str(len(row)))
                 self._log.append('header_length: %s' % str(len(self._columns)))
                 if len(row) > 1 and len(row) < len(self._columns):
                     self._log.append('Row contains data but insufficient number of columns. Assuming blanks for remaining column values.')
-                    i = 0
+                    j = 0
                     orig_row_length = len(row)
-                    while i < (len(self._columns) - orig_row_length):
+                    while j < (len(self._columns) - orig_row_length):
                         row.append('')
                         i += 1
-
-                #self._log.append(str(row))
                 
                 i = 0
                 for column in row:
@@ -184,8 +178,7 @@ class MetadataTable(object):
                     i += 1
                     
         except Exception, e:
-            self._log.append('Error adding data to column %s. Maximum column index for this metadata table is %s. The error was: \n<p/>%s' % (str(i), str(len(self._columns) - 1), str(e)))
-            return self._log
+            raise Exception( 'Error in _processRows: %s. \nError Log:\n%s' % (str(e), self._log) )
 
     def processMetadataFile(self):
         # Build the table with columns and full data
@@ -209,18 +202,23 @@ class MetadataTable(object):
         reader = None
         
         try:
+            self._log.append('Opening data file...')
             data_file = open(self._metadataFile, "rU")
-            reader = csv.reader(data_file,  delimiter='\t')    
-        except Exception, e:
-            log.append('Error opening metadata file "%s". The error was:\n%s' % (self._metadataFile, str(e)))
-            return self._log
+            self._log.append('Obtaining reader...')
+            reader = csv.reader(data_file,  delimiter='\t')
 
-        # Read the column headers and create columns for each column name in the file
-        self._createColumnHeaders(reader, process_all_data)
+            # Read the column headers and create columns for each column name in the file
+            self._log.append('Creating column headers...')
+            self._createColumnHeaders(reader, process_all_data)
         
-        # Fill in the rest of the data values for each row
-        if process_all_data:
-            self._processRows(reader)
+            # Fill in the rest of the data values for each row
+            if process_all_data:
+                self._log.append('Processing all rows...')
+                self._processRows(reader)
+            
+        except Exception, e:
+            self._log.append('Error opening metadata file "%s". The error was:\n%s' % (self._metadataFile, str(e)))
+            raise Exception('Error: Could not build metadata table.\nError Log: %s\nThe error is: %s' % (self._log, str(e)))            
 
     def _addColumn(self, column):
         self._columns.append(column)

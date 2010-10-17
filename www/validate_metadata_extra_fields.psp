@@ -9,7 +9,6 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 %>
 
-<%@ include file="header.psp" %>
 <script type="text/javascript" src="js/template.js"></script>
 
 <script type='text/javascript'>
@@ -57,7 +56,7 @@ if templates != None:
                 req.write('<tr>')
                 
                 req.write('<td>\n')
-                req.write('<input class="required" minlength="3" type="text" maxlength="30" style="width:200" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
+                req.write(column.column_name + '\n<input type="hidden" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
                 req.write('</td>\n')
                 
                 req.write('<td>\n')
@@ -97,5 +96,3 @@ if templates != None:
 %>
 
 </form>
-
-<%@ include file="footer.psp" %>

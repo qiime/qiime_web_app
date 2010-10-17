@@ -33,29 +33,18 @@ if templates != None:
             log.append('Creating metadata table for file "%s"' % template)
             table = MetadataTable(template, sess['study_id'])
             log.append('Reading metadata file...')
-            error_log = table.processMetadataFile()
-            
-            # If errors were found, report them here and skip file
-            if error_log:
-                for entry in error_log:
-                    req.write(entry + '<br/>')
-                break
-            
+            table.processMetadataFile()
             log.append('Printing HTML table...')
-            htmlTable, error_log = table.printHTMLTable()
-            
-            # If errors were found, report them and skip to next file
-            if error_log:
-                for entry in error_log:
-                    req.write(entry + '<br/>')
-                break
-            
+            htmlTable, error_log = table.printHTMLTable()            
             req.write(htmlTable)
             req.write('<p/>')
         
         except Exception, e:
+            req.write('An error has occurred:<br/>')
             for entry in log:
                 req.write(entry + '<br/>')
+            
+            req.write('<br/>The Exception was:')
             req.write(str(e) + '<p/>')
             req.write('<p/>Please email your metadata archive and a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
             draw_submit = False

@@ -46,6 +46,7 @@ for item in form:
         columns[original_column_name]['new_column_name'] = value
         
         # Figure ouf if name was changed. If so, update file
+        """
         if original_column_name != value:
             
             # Get the full filename
@@ -59,10 +60,12 @@ for item in form:
                 
             f = open(full_filename, 'r')
             contents = f.read().replace(original_column_name, value)
+            #req.write('<pre>' + contents + '</pre>')
             f.close()
             f = open(full_filename, 'w')
             f.write(contents)
             f.close()
+        """
             
     elif field_type == 'column_description':
         columns[original_column_name]['description'] = value

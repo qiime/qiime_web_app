@@ -151,7 +151,7 @@ function setCompleteBox()
 
 </script>
 
-<form name="upload_complete" id="upload_complete" method="post" action="validate_metadata_extra_fields.psp">
+<form name="upload_complete" id="upload_complete" method="post" action="fusebox.psp?page=validate_metadata_extra_fields.psp">
 </form>
 
 <table>
