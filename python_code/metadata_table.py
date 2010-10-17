@@ -162,7 +162,7 @@ class MetadataTable(object):
                     orig_row_length = len(row)
                     while j < (len(self._columns) - orig_row_length):
                         row.append('')
-                        i += 1
+                        j += 1
                 
                 i = 0
                 for column in row:
