@@ -9,8 +9,6 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 %>
 
-<script type="text/javascript" src="js/template.js"></script>
-
 <script type='text/javascript'>
     //Set the validation for each form field
     $(document).ready(function(){$("#extra_form").validate();});
