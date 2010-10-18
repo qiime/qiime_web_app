@@ -28,8 +28,6 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 
 # Remove any existing metadata before upload. 0 = delete all but study specific data
 data_access.deleteStudy(study_id, 0)
-data_access.deleteStudy(study_id, 0)
-data_access.deleteStudy(study_id, 0)
 
 sample_key_fields = {}
 prep_key_fields = {}
