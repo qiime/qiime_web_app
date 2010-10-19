@@ -14,7 +14,7 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs
-from os.path import exists
+from os.path import exists,splitext,split
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
@@ -69,13 +69,9 @@ def main():
        parse_command_line_parameters(**script_info)
     
     study_id = opts.study_id
-
-    for i in range(1,25):
-        output_dir = '/home/wwwdevuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,i)
-        if not exists(output_dir):
-            break
-        else:
-            continue
+    run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[3]
+    
+    output_dir = '/home/wwwdevuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
             
     print output_dir
     sff_fname=opts.sff_fname
@@ -96,14 +92,7 @@ def main():
     try:
        makedirs(output_dir)
     except OSError:
-        if opts.force:
-            pass
-        else:
-            # Since the analysis can take quite a while, I put this check
-            # in to help users avoid overwriting previous output.
-            print "Output directory already exists. Please choose "+\
-            "a different directory, or force overwrite with -f."
-            exit(1)
+        pass
 
     if print_only:
         command_handler = print_commands
@@ -116,6 +105,7 @@ def main():
         status_update_callback = no_status_updates
 
     run_process_sff_through_split_lib(study_id=study_id,\
+     run_prefix=run_prefix,\
      sff_input_fp=sff_fname,\
      mapping_fp=map_fname,\
      output_dir=output_dir,\
