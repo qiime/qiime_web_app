@@ -13,8 +13,7 @@ from commands import getoutput
 import os
 from time import sleep
 import cx_Oracle
-from handler import PollerTestHandlerOkay, PollerTestHandlerErr, \
-        ProcessSFFHandler, JobExistsError, JobNotExistsError
+from handler import *
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2010, The QIIME project"
