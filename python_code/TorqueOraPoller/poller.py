@@ -113,7 +113,8 @@ class Poller(Daemon):
         stdout_file = '%s/%d.o%s' % (os.environ['HOME'],job_name, pbs_job_id)
         if not stdout_file:
             raise IOError('Could not create output file. Please check permissions. Process will abort.')
-	stdout_lines = open(stdout_file).readlines()
+        
+        stdout_lines = open(stdout_file).readlines()
         stderr_file = '%s/%d.e%s' % (os.environ['HOME'],job_name, pbs_job_id)
         stderr_lines = open(stderr_file).readlines()
         err = job.checkJobOutput(stdout_lines, stderr_lines)
