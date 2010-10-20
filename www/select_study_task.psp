@@ -9,6 +9,8 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
 
+<script type="text/javascript" src="js/jobs.js"></script>
+
 <%
 from data_access_connections import data_access_factory
 from enums import DataAccessType
@@ -120,18 +122,24 @@ else:
 
 jobs = data_access.getJobInfo(study_id)
 if len(jobs) > 0:
-    req.write('Submitted Jobs:')
-    req.write('<ul>')
-    
-    for job in jobs:
-        req.write('<li><pre>')
-        req.write('Job %s: %s <a href="clear_job.psp?job_id=%s">(clear job)</a>' % (job['job_id'], job['job_state_name'], job['job_id']))
-        if job['job_notes'] != None:
-            req.write('<br/>Output: ' + job['job_notes'])
-        req.write('</pre></li>')
+    # indent
+%>
 
-    req.write('</ul>')
-    req.write('</b><br/>')
+            Submitted Jobs:
+            <br/>
+            <ul>
+                <div name="job_status_div" id="job_status_div">
+                    <!-- Contents will be replaced by javascript dynamically -->
+                    Checking status...
+                </div>
+                <script type="text/javascript">
+                    checkJobStatus();
+                    var timer = setInterval( "checkJobStatus();", 5000 );
+                </script>
+            </ul>
+            <br/>
+
+<%
 
 elif metadata_complete == 'y' and sff_complete == 'y':
     
