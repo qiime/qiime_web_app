@@ -16,7 +16,7 @@ from optparse import make_option
 from os import makedirs
 from qiime.util import load_qiime_config
 from qiime.util import load_qiime_config
-from load_sff_through_split_lib_to_db import submit_sff_and_split_lib
+from load_sff_through_split_lib_to_db import load_otu_mapping
 
 
 qiime_config = load_qiime_config()
@@ -62,7 +62,7 @@ def main():
         
     input_dir=opts.input_otu_dir
 
-    analysis_id=submit_sff_and_split_lib(data_access,input_dir=input_dir)
+    load_otu_mapping(data_access,input_dir)
 
 if __name__ == "__main__":
     main()

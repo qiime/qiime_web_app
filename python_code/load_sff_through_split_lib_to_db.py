@@ -223,7 +223,6 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     iterator=0
     
     for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,100):
-        print res
         print 'running %i' % (iterator)
         iterator=iterator+1
         valid = data_access.loadFNAFile(True, res)
@@ -234,12 +233,15 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
 
     end = time.time()
     print 'Total processor time elapsed: %s' % str(end - start)
+    
     print 'Finished loading split_library FNA file.'
 
+    print 'End of function' 
+
+    return analysis_id
 
 
-
-def load_otu_mapping(data_access,fasta_files,metadata_study_id):
+def load_otu_mapping(data_access,input_dir):
     # For OTU Tables
     #read in the workflow log file and determine timestamp and svn version of
     #Qiime used for the analysis
@@ -247,17 +249,22 @@ def load_otu_mapping(data_access,fasta_files,metadata_study_id):
     qiime_revision=get_qiime_svn_version()
     run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
     print run_date
+    print glob(join(input_dir, 'log*.txt'))
     full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
     full_log_str = open(full_log_fp, 'U').read()
     log_str = open(full_log_fp, 'U').readlines()
     #from the workflow log file get the split-library and pick-otus cmds
+    combined_pick_otus_cmd=[]
     for substr in log_str:
         if 'pick_otus.py' in substr:
             pick_otus_cmd=substr
+            combined_pick_otus_cmd.append(substr)
     print pick_otus_cmd
+    
+    pick_otu_log_str=''.join(combined_pick_otus_cmd)
     #define the picked OTU file paths using the original fasta input 
     #directory
-    pattern=re.compile("--similarity (\d+)\.(\d+)")
+    pattern=re.compile("-s (\d+)\.(\d+)")
     pOTUs_threshold_str='.'.join(pattern.search(pick_otus_cmd).groups())
     
     if pOTUs_threshold_str=='0.97':
@@ -269,10 +276,10 @@ def load_otu_mapping(data_access,fasta_files,metadata_study_id):
     else:
         pOTUs_threshold='NULL'
     
-    pattern=re.compile("--otu_picking_method (\w+)")
+    pattern=re.compile("-m (\w+)")
     pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
     
-    pattern=re.compile("--refseqs_fp ([a-zA-Z0-9_/.]+)")
+    pattern=re.compile("-r ([a-zA-Z0-9_/.]+)")
     ref_set_fname=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
     ref_set, ref_set_ext = splitext(split(ref_set_fname)[-1])
     ref_set_name,ref_set_threshold,generic_name,ref_set_date=ref_set.split('_')
@@ -285,15 +292,18 @@ def load_otu_mapping(data_access,fasta_files,metadata_study_id):
     pick_otus_map = join(input_dir, 'exact_trie_uclust_ref_otus.txt')
     #pick_otus_failures = join(input_dir, 'picked_otus_%s_%s' % (pOTUs_method,pOTUs_threshold), 'seqs_failures.txt')
     #pick_otus_log = join(input_dir, 'picked_otus_%s_%s' % (pOTUs_method,pOTUs_threshold), 'seqs_otus.log')
-    otus_log_str = log_str
+    otus_log_str = pick_otu_log_str # using the full log for this
+    
+    split_lib_seqs = join(input_dir, 'all_split_lib_seqs.fna')
+    study_run_prefix_dict = eval(open(join(input_dir, 'studies_run_prefix_dict.txt')).read())
+
     split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
     
     #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
     otu_run_set_id=0
     #Insert the otu-picking log information in the DB
-    valid,new_otu_run_set_id,otu_picking_run_id=data_access.loadOTUInfo(True,
-                                  otu_run_set_id, 
-                                  analysis_id, run_date,
+    valid,new_otu_run_set_id,otu_picking_run_id=data_access.loadAllOTUInfo(True,
+                                  otu_run_set_id, run_date,
                                   pOTUs_method, pOTUs_threshold,
                                   svn_version, pick_otus_cmd, otus_log_str,
                                   split_lib_seqs_md5,reference_set_name,
@@ -302,18 +312,20 @@ def load_otu_mapping(data_access,fasta_files,metadata_study_id):
         raise ValueError, 'Error: Unable to load OTU run data into database!'
     else:
         print "Finished registering OTU run!"
-        
-    otu_map_fname='%s.txt' % (('otu_map_'+ tmp_filename))
-    otu_failures_fname='%s.txt' % (('otu_failures_'+ tmp_filename))
+    
+    for i in study_run_prefix_dict:
+        for j in study_run_prefix_dict[i]:
+            data_access.updateAnalysisWithOTURun(True, otu_picking_run_id,\
+                                                 new_otu_run_set_id,i,j)
     
     otu_map=[]
     otu_to_seqid = fields_to_dict(open(pick_otus_map, 'U'))
     for otu in otu_to_seqid:
         for sample in otu_to_seqid[otu]:
-            otu_map.append('%s\t%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
-                                                reference_set_name,split_library_run_id))
+            otu_map.append('%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
+                                                reference_set_name))
     
-    types=['s','s','i','s','i']
+    types=['s','s','i','s']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
@@ -321,7 +333,7 @@ def load_otu_mapping(data_access,fasta_files,metadata_study_id):
     set_count = 1
     start = time.time()
     for input_set in input_set_generator(otu_map, cur, types,100):
-        valid=data_access.loadOTUMap(True, input_set)
+        valid=data_access.loadOTUMapAll(True, input_set)
         print "loading OTU mapping data: %s" % set_count
         set_count += 1
     end = time.time()
@@ -331,16 +343,18 @@ def load_otu_mapping(data_access,fasta_files,metadata_study_id):
     else:
         print 'Loaded the OTU map!'
     
+    pick_otus_failures = join(input_dir, 'exact_trie_uclust_ref_otus_failures.txt')
+    
     lines=open(pick_otus_failures,'U')
     otu_failures=[]
     for line in lines:
-        otu_failures.append('%s\t%s\t%s'% (line.strip('\n'),str(otu_picking_run_id),split_library_run_id))
-    types=['s','i','i']
+        otu_failures.append('%s\t%s'% (line.strip('\n'),str(otu_picking_run_id)))
+    types=['s','i']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     set_count = 1
     for input_set in input_set_generator(otu_failures, cur, types,100):
-        valid=data_access.loadOTUFailures(True, input_set)
+        valid=data_access.loadOTUFailuresAll(True, input_set)
         print "loading otu-map: %s" % set_count
         set_count += 1
     
@@ -348,155 +362,11 @@ def load_otu_mapping(data_access,fasta_files,metadata_study_id):
         raise ValueError, 'Error: Unable to load OTU failures data into database!'
     
     print 'Successfully loaded the OTU failures into the database!'
+    
     
     print 'End of function' 
 
-    return analysis_id
-
-def submit_otu_data_to_db(data_access,fasta_files, analysis_id):
-    run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
-    #Qiime used for the analysis
-    svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
-    qiime_revision=get_qiime_svn_version()
-    print run_date
-    #split the fasta filenames and determine filepaths
-    fasta_filenames=fasta_files.split(',')
-    fasta_qual_files=[]
-    for fasta_fname in fasta_filenames:
-        input_fname, input_ext = splitext(split(fasta_fname)[-1])
-        input_basename, input_ext = splitext(fasta_fname)
-        input_dir = split(input_basename)[:-1][0]
-        #using the fasta basename, define qual and flow files
-        qual_fname=join(input_basename+'.qual')
-        flow_fname=join(input_basename+'.txt')
-        fasta_qual_files.append(fasta_fname)
-        fasta_qual_files.append(qual_fname)
-        
-        
-        
-    split_lib_seqs = join(input_dir, 'split_libraries', 'seqs.fna')
-    split_lib_input_md5sum=safe_md5(MD5Wrap(fasta_qual_files)).hexdigest()
-    full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
-    full_log_str = open(full_log_fp, 'U').read()
-    log_str = open(full_log_fp, 'U').readlines()
     
-    #from the workflow log file get the split-library and pick-otus cmds
-    for substr in log_str:
-        if 'pick_otus.py' in substr:
-            pick_otus_cmd=substr
-    
-    #define the picked OTU file paths using the original fasta input 
-    #directory
-    pattern=re.compile("--similarity (\d+)\.(\d+)")
-    pOTUs_threshold_str='.'.join(pattern.search(pick_otus_cmd).groups())
-    
-    if pOTUs_threshold_str=='0.97':
-        pOTUs_threshold='97'
-    elif pOTUs_threshold_str=='0.98':
-        pOTUs_threshold='98'
-    elif pOTUs_threshold_str=='0.99':
-        pOTUs_threshold='99'
-    else:
-        pOTUs_threshold='NULL'
-    
-    pattern=re.compile("--otu_picking_method (\w+)")
-    pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
-    
-    pattern=re.compile("--refseqs_fp ([a-zA-Z0-9_/.]+)")
-    ref_set_fname=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
-    ref_set, ref_set_ext = splitext(split(ref_set_fname)[-1])
-    ref_set_name,ref_set_threshold,generic_name,ref_set_date=ref_set.split('_')
-    
-    if ref_set_name=='GG':
-        reference_set_name='GREENGENES_REFERENCE'
-    else:
-        reference_set_name='Not a Reference Set'
-    
-    pick_otus_map = join(input_dir, 'picked_otus_%s_%s'%(pOTUs_method,pOTUs_threshold), 'seqs_otus.txt')
-    pick_otus_failures = join(input_dir, 'picked_otus_%s_%s'%(pOTUs_method,pOTUs_threshold), 'seqs_failures.txt')
-    pick_otus_log = join(input_dir, 'picked_otus_%s_%s'%(pOTUs_method,pOTUs_threshold), 'seqs_otus.log')
-    otus_log_str = open(pick_otus_log).read()
-    split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
-    
-    #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
-    otu_run_set_id=0
-    #Insert the otu-picking log information in the DB
-    print str((True,otu_run_set_id, 
-                                  analysis_id, run_date,
-                                  pOTUs_method, pOTUs_threshold,
-                                  svn_version, pick_otus_cmd, otus_log_str,
-                                  split_lib_seqs_md5,reference_set_name,
-                                  ref_set_threshold))
-    valid,new_otu_run_set_id,otu_picking_run_id=data_access.loadOTUInfo(True,
-                                  otu_run_set_id, 
-                                  analysis_id, run_date,
-                                  pOTUs_method, pOTUs_threshold,
-                                  svn_version, pick_otus_cmd, otus_log_str,
-                                  split_lib_seqs_md5,reference_set_name,
-                                  ref_set_threshold)
-    if not valid:
-        raise ValueError, 'Error: Unable to load OTU run data into database!'
-    else:
-        print "Finished registering OTU run!"
-        
-    otu_map_fname='%s.txt' % (('otu_map_'+ tmp_filename))
-    otu_failures_fname='%s.txt' % (('otu_failures_'+ tmp_filename))
-    
-    otu_map=[]
-    otu_to_seqid = fields_to_dict(open(pick_otus_map, 'U'))
-    for otu in otu_to_seqid:
-        for sample in otu_to_seqid[otu]:
-            otu_map.append('%s\t%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
-                                                reference_set_name,split_library_run_id))
-    
-    types=['s','s','i','s','i']
-    con=data_access.getSFFDatabaseConnection()
-    cur = con.cursor()
-    set_count = 1
-    start = time.time()
-    for input_set in input_set_generator(otu_map, cur, types,100):
-        valid=data_access.loadOTUMap(True, input_set)
-        print "loading OTU mapping data: %s" % set_count
-        set_count += 1
-    end = time.time()
-    print "Total processor time elapsed: %s" % str(end - start)
-    if not valid:
-        raise ValueError, 'Error: Unable to load OTU MAP data into database!'
-    else:
-        print 'Loaded the OTU map!'
-    
-    lines=open(pick_otus_failures,'U')
-    otu_failures=[]
-    for line in lines:
-        otu_failures.append('%s\t%s\t%s'% (line.strip('\n'),str(otu_picking_run_id),split_library_run_id))
-    types=['s','i','i']
-    con=data_access.getSFFDatabaseConnection()
-    cur = con.cursor()
-    set_count = 1
-    for input_set in input_set_generator(otu_failures, cur, types,100):
-        valid=data_access.loadOTUFailures(True, input_set)
-        print "loading otu-map: %s" % set_count
-        set_count += 1
-    
-    if not valid:
-        raise ValueError, 'Error: Unable to load OTU failures data into database!'
-    
-    print 'Successfully loaded the OTU failures into the database!'
-
-            
-def check_scp():
-    """Raise error if scp is not in $PATH """
-    if not app_path('scp'):
-        raise ApplicationNotFoundError,\
-        "scp is not in $PATH. Is it installed? Have you added it to $PATH?"
-         
-def scp_file_transfer(port,filepath,username,host,location):
-    """Transfers files to another server."""
-    check_scp()
-    cmd_call='scp -P %d %s %s@%s:%s' % (port,filepath,username,host,location)
-    print 'scp command is: %s' % cmd_call
-    system(cmd_call)
-    return cmd_call
     
 def cp_files(filepath,location):
     """Transfers files to another server."""

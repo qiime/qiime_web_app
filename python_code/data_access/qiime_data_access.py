@@ -1597,6 +1597,36 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
+    #The following is the OTU Info tool used
+    def loadAllOTUInfo(self, start_job, otu_run_set_id, run_date,
+                    pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
+                    otus_log_str,split_lib_seqs_md5,ref_set_name,
+                    ref_set_threshold):
+        """ loads the information pertaining to an OTU picking runls
+
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag=1
+            otu_picking_run_id=0
+            if start_job:
+                db_output=con.cursor().callproc(\
+                        'REGISTER_OTU_PICK_RUN_ALL',[otu_run_set_id, run_date, \
+                                pOTUs_method, \
+                                pOTUs_threshold, svn_version, pick_otus_cmd, \
+                                otus_log_str,split_lib_seqs_md5,ref_set_name, \
+                                ref_set_threshold, error_flag, \
+                                otu_picking_run_id])
+                if db_output[10]==0:
+                    return True,db_output[0],db_output[11]
+                else:
+                    return False,db_output[0],db_output[11]
+            else:
+                return True,0
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
     def getTestData(self, start_job,analysis_id, sample_id):
         """ Returns the data from the TEST data from DB
         """
@@ -1726,6 +1756,20 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+    #
+    def loadOTUFailuresAll(self, start_job, input_set):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc('load_otu_failures_all_package.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
             
     def checkIfSFFExists(self, md5_checksum):
         """ determine if the SFF is already in the DB
@@ -1835,7 +1879,20 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-            
+    #
+    def loadOTUMapAll(self, start_job, input_set):
+        """ starts process of importing otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                db_output=con.cursor().callproc('load_otu_map_all_package.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False  
+                  
     def loadSeqToSourceMap(self, start_job, input_set):
         """ starts process of importing otus
         """
@@ -2037,6 +2094,21 @@ class QiimeDataAccess(object):
             if start_job:
                 db_output=con.cursor().callproc('load_otus_from_fasta.array_insert',
                                                 input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def updateAnalysisWithOTURun(self, start_job, otu_pick_run_id,\
+                                 otu_run_set_id,study_id,run_prefix):
+        """ starts process of importing otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            if start_job:
+                con.cursor().callproc('update_analysis_with_otu_run', \
+                                         [otu_pick_run_id,otu_run_set_id,\
+                                          study_id,run_prefix])
                 return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))

@@ -257,7 +257,13 @@ class QiimeDataAccessTests(unittest.TestCase):
 
         result = self._qiime_data_access.loadOTUInfo(False,1,1,1,1,1,1,1,1,1,'test', 97)
         self.assertTrue(result)
-        
+    
+    def test_loadOTUInfo(self):
+        """ 
+        """
+
+        result = self._qiime_data_access.loadAllOTUInfo(False,1,1,1,1,1,1,1,1,'test', 97)
+        self.assertTrue(result)
     def test_getTestFlowData(self):
         """ 
         """
@@ -293,6 +299,14 @@ class QiimeDataAccessTests(unittest.TestCase):
         result = self._qiime_data_access.loadOTUFailures(False,1)
         self.assertFalse(result)
 
+    #
+    def test_loadOTUFailuresAll(self):
+        """ 
+        """
+        
+        result = self._qiime_data_access.loadOTUFailuresAll(False,1)
+        self.assertFalse(result)
+        
     def test_checkIfSFFExists(self):
         """ 
         """
