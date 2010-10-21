@@ -69,7 +69,7 @@ tables = []
 
 # Start building the statement for writing out the mapping file
 # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
-statement = '"SAMPLE".sample_name as SampleID, \n'
+statement = '"SAMPLE".sample_name||\'.\'||"SEQUENCE_PREP".run_prefix as SampleID, \n'
 statement += '"SEQUENCE_PREP".barcode, \n'
 statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
 statement += '"SAMPLE".study_id, \n'
@@ -85,6 +85,7 @@ for i in table_col_value:
     tab=tab_col_studies[0]
     
     col_studies=tab_col_studies[1].split('####STUDIES####')
+    
     column=col_studies[0]
     studies=col_studies[1].split('S')
     for study_id in studies:
@@ -109,9 +110,15 @@ for i in table_col_value:
 unique_study_ids=list(set(study_id_array))
 
 statement = statement[0:len(statement) - 3]
-statement = '\
-select distinct \n' + statement + ' \n\
-from "STUDY" inner join user_study us on "STUDY".study_id=us.study_id'######inner join sff.analysis anal on "STUDY".study_id=anal.study_id'
+user_id=int(sess['web_app_user_id'])
+if user_id==12171:
+    statement = '\
+    select distinct \n' + statement + ' \n\
+    from "STUDY" '######inner join sff.analysis anal on "STUDY".study_id=anal.study_id'
+else:
+    statement = '\
+    select distinct \n' + statement + ' \n\
+    from "STUDY" inner join user_study us on "STUDY".study_id=us.study_id'######inner join sff.analysis anal on "STUDY".study_id=anal.study_id'
 
 statement += ' \n\
 inner join "SAMPLE" \n\
@@ -149,7 +156,10 @@ study_statement=[]
 for study_id in unique_study_ids:
     study_statement.append('"STUDY".study_id = ' + study_id)
 
-statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\' or us.web_app_user_id=%s)' % (' or '.join(study_statement),sess['web_app_user_id'])
+if user_id==12171:
+    statement += ' where (%s)' % (' or '.join(study_statement))
+else:
+    statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\' or us.web_app_user_id=%s)' % (' or '.join(study_statement),user_id)
     
 additional_where_statements=[]
 for i in table_col_value:
@@ -188,6 +198,7 @@ if additional_where_statements<>[]:
 
 con = data_access.getMetadataDatabaseConnection()
 cur = con.cursor()
+
 #req.write(str(statement)+'<br><br>')
 results = cur.execute(statement)
 
@@ -333,7 +344,7 @@ otu_table_fpath_db=os.path.join(otu_table_file_dir_db, file_name_prefix +
 
 outfile = open(otu_table_fpath, 'w')
 
-outfile.write(make_otu_map(otu_map_dict, otu_to_taxonomy))
+outfile.write(make_otu_table(otu_map_dict, otu_to_taxonomy))
 outfile.close()
 
 

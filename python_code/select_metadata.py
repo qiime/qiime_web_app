@@ -156,16 +156,28 @@ def get_selected_column_values(controlled_col,col,table,user_id):
 
         # Handle the different table names, since the inner joins depend on which
         # table is being traversed
-        if str(table)=='STUDY':
-            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.study_id=s.study_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
-        elif str(table)=='SAMPLE':
-            statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (t."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
-        elif str(table)=='SEQUENCE_PREP':
-            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
-        elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST' or table=='HUMAN_ASSOCIATED':
-            statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (str(col),str(table),user_id)
+        if int(user_id)==12171:
+            if str(table)=='STUDY':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.study_id=s.study_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
+            elif str(table)=='SAMPLE':
+                statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
+            elif str(table)=='SEQUENCE_PREP':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
+            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST' or table=='HUMAN_ASSOCIATED':
+                statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (str(col),str(table))
+            else:
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
         else:
-            statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
+            if str(table)=='STUDY':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.study_id=s.study_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
+            elif str(table)=='SAMPLE':
+                statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (t."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
+            elif str(table)=='SEQUENCE_PREP':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
+            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST' or table=='HUMAN_ASSOCIATED':
+                statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (str(col),str(table),user_id)
+            else:
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
             
         # Run the statement
         con = data_access.getMetadataDatabaseConnection()
