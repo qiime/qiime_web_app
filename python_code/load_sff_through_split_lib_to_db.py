@@ -251,12 +251,13 @@ def load_otu_mapping(data_access,input_dir):
     print run_date
     print glob(join(input_dir, 'log*.txt'))
     full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
+    full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
     full_log_str = open(full_log_fp, 'U').read()
     log_str = open(full_log_fp, 'U').readlines()
     #from the workflow log file get the split-library and pick-otus cmds
     combined_pick_otus_cmd=[]
     for substr in log_str:
-        if 'pick_otus.py' in substr:
+        if 'parallel_pick_otus_uclust_ref.py' in substr:
             pick_otus_cmd=substr
             combined_pick_otus_cmd.append(substr)
     print pick_otus_cmd
@@ -277,8 +278,8 @@ def load_otu_mapping(data_access,input_dir):
         pOTUs_threshold='NULL'
     
     pattern=re.compile("-m (\w+)")
-    pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
-    
+    #pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
+    pOTUs_method='UCLUST_REF'
     pattern=re.compile("-r ([a-zA-Z0-9_/.]+)")
     ref_set_fname=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
     ref_set, ref_set_ext = splitext(split(ref_set_fname)[-1])
