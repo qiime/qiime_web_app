@@ -185,7 +185,7 @@ req.write(unique_cols_to_select_box_str(public_columns))
         <tr>
             <td>
                 </form>
-                <form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/generate_mappping_and_otu_table.psp">
+                <form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/submit_otu_mapping_job.psp">
                 <input type="submit">
                 </form>
             </td>
