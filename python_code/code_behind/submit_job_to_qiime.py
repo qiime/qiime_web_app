@@ -32,6 +32,17 @@ def submitJob(study_id, user_id, param_file, mapping_file, sff_files, data_acces
     if job_id < 0:
         raise Exception('There was an error creating the job. Please contact the system administrator.')
 
+#
+def submitQiimeJob(study_id, user_id, job_type, job_input, data_access):
+    # Submit the job
+    job_id = data_access.createTorqueJob(job_type, job_input, user_id, study_id)
+    
+    # Make sure a legit job_id was created. If not, inform the user there was a problem
+    if job_id < 0:
+        raise Exception('There was an error creating the job. Please contact the system administrator.')
+    
+    return job_id
+
 def writeMappingFiles(study_id, data_access, mapping_file_dir):
     # Get a list of result sets, one per run_prefix found in the stuyd
     mapping_file_header, result_sets = data_access.getSplitLibrariesMappingFileData(study_id)

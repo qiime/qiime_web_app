@@ -38,7 +38,8 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'PollerTestHandlerErr':PollerTestHandlerErr,
                    'ProcessSFFHandler':ProcessSFFHandler,
                    'TestLoadSFFAndMetadataHandler':TestLoadSFFAndMetadataHandler,
-                   'LoadSFFAndMetadataHandler':LoadSFFAndMetadataHandler}
+                   'LoadSFFAndMetadataHandler':LoadSFFAndMetadataHandler,
+                   'makeMappingAndOTUFiles':makeMappingAndOTUFiles}
 
 class Poller(Daemon):
     """Polls TORQUE_JOBS for new jobs, submits, updates status"""

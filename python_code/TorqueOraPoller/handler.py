@@ -17,6 +17,7 @@ PYTHON_BIN="/usr/bin/python2.6"
 QIIME_WEBAPP_BASE = "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/scripts"
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_and_metadata_for_db.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_and_metadata_to_db.py"
+QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 
 class HandlerException(Exception):
     pass
@@ -208,6 +209,19 @@ class TestLoadSFFAndMetadataHandler(JobHandler):
             return True
         else:
             return False
+
+class makeMappingAndOTUFiles(JobHandler):
+    """Handler for make_mapping_file_and_otu_table.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAPPING_OTU_TABLE, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --tax_class %(tax_class)s --fname_prefix %(fname_prefix)s"])
+    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None, 'tax_class':None,'fname_prefix':None}
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
             
 class LoadSFFAndMetadataHandler(JobHandler):
     """Handler for submit_sff_and_metadata_to_db.py"""
@@ -227,5 +241,6 @@ def load_sff_and_metadata(input, output):
     """Wraps the QIIME-webapp submission of sff and metadata to db script"""
     str_fmt = "%s %s/submit_sff_and_metadata_to_db.py -i %s -s 0"
     cmd_str = str_fmt % (PYTHON_BIN, QIIME_WEBAPP_BASE, input)
+
 
 
