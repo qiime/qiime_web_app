@@ -102,8 +102,6 @@ function validateTextLength(sender, column_name, max_length)
         return;
     }
     
-    alert("Sender is: " + sender.value);
-
     // Is the term too long?
     if (sender.value.length > max_length)
     {
