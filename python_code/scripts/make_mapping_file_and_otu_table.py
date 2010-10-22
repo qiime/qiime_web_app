@@ -15,7 +15,6 @@ from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs
 from qiime.util import load_qiime_config
-from qiime.util import load_qiime_config
 from generate_mapping_and_otu_table import write_mapping_and_otu_table
 
 
