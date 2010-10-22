@@ -54,10 +54,7 @@ def main():
         from data_access_connections import data_access_factory
         from enums import DataAccessType
         import cx_Oracle
-        if opts.submit_to_test_db:
-            data_access = data_access_factory(DataAccessType.qiime_test)
-        else:
-            data_access = data_access_factory(DataAccessType.qiime_production)
+        data_access = data_access_factory(DataAccessType.qiime_production)
     except ImportError:
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
