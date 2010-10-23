@@ -15,7 +15,7 @@ from qiime.make_otu_table import make_otu_table
 from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
 
-def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonomy_class, file_name_prefix):
+def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonomy_class, file_name_prefix,user_id):
     unique_cols=[]
     # Create the mapping file based on sample and field selections
 
@@ -77,7 +77,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
     unique_study_ids=list(set(study_id_array))
 
     statement = statement[0:len(statement) - 3]
-    user_id=int(sess['web_app_user_id'])
+
     if user_id==12171:
         statement = '\
         select distinct \n' + statement + ' \n\
