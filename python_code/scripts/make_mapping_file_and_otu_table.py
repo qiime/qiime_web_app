@@ -66,8 +66,8 @@ def main():
     web_fp=opts.web_fp
     tax_class=opts.tax_class
     file_name_prefix=opts.fname_prefix
-    user_id=opts.user_id
-    meta_id=opts.meta_id
+    user_id=int(opts.user_id)
+    meta_id=int(opts.meta_id)
     
     
     write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, tax_class, file_name_prefix,user_id,meta_id)
