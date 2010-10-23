@@ -10,6 +10,7 @@ __status__ = "Production"
 from data_access_connections import data_access_factory
 from enums import DataAccessType
 from os import system,path
+import os
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_table
 from load_tab_file import input_set_generator
