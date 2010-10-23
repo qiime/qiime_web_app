@@ -16,7 +16,7 @@ from qiime.make_otu_table import make_otu_table
 from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
 
-def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonomy_class, file_name_prefix,user_id):
+def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonomy_class, file_name_prefix,user_id,meta_id):
     unique_cols=[]
     # Create the mapping file based on sample and field selections
 

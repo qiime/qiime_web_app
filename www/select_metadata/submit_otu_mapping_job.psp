@@ -84,6 +84,7 @@ params.append('query=%s' % tmp_filename.strip())
 params.append('tax_class=%s' % taxonomy_class)
 params.append('fname_prefix=%s' % file_name_prefix)
 params.append('user_id=%s' % user_id)
+params.append('meta_id=%s' % study_id)
 job_input='!!'.join(params)
 job_type='makeMappingAndOTUFiles'
 

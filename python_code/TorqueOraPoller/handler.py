@@ -212,8 +212,8 @@ class TestLoadSFFAndMetadataHandler(JobHandler):
 
 class makeMappingAndOTUFiles(JobHandler):
     """Handler for make_mapping_file_and_otu_table.py"""
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAPPING_OTU_TABLE, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --tax_class %(tax_class)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s"])
-    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None, 'tax_class':None,'fname_prefix':None,'user_id':None}
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAPPING_OTU_TABLE, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --tax_class %(tax_class)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s"])
+    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None, 'tax_class':None,'fname_prefix':None,'user_id':None,'meta_id':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""

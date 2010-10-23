@@ -42,6 +42,7 @@ script_info['required_options'] = [\
     make_option('-t','--tax_class',help='this is the taxonomy assignment to use.'),\
     make_option('-p','--fname_prefix',help='this is the prefix to append to the users files'),\
     make_option('-u','--user_id',help='this is the user id'),\
+    make_option('-m','--meta_id',help='this is the meta analysis id'),\
 ]
 script_info['optional_options'] = [\
 ]
@@ -66,7 +67,10 @@ def main():
     tax_class=opts.tax_class
     file_name_prefix=opts.fname_prefix
     user_id=opts.user_id
-    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, tax_class, file_name_prefix,user_id)
+    meta_id=opts.meta_id
+    
+    
+    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, tax_class, file_name_prefix,user_id,meta_id)
 
 if __name__ == "__main__":
     main()
