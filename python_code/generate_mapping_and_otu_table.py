@@ -325,7 +325,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
     system(cmd_call)
 
     #add filepaths to DB, so we know where to find the generated files
-    valid=data_access.addMetaAnalysisMapOTUFiles(True, sess['meta_analysis_id'], \
+    valid=data_access.addMetaAnalysisMapOTUFiles(True, meta_id, \
                                             map_filepath_db,otu_table_fpath_db,
                                             zip_fpath_db)
 
