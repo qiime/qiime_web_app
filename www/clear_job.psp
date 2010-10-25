@@ -27,8 +27,11 @@ def clearJob(job_id):
 # Clear the job
 job_id = int(form['job_id'])
 clearJob(job_id)
-
-# Redirect to the home page for this study
-psp.redirect('fusebox.psp?page=select_study_task.psp')
-
+job_typename = str(form['job_typename'])
+if job_typename=='makeMappingAndOTUFiles':
+    psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
+else:
+    # Redirect to the home page for this study
+    psp.redirect('fusebox.psp?page=select_study_task.psp')
+#
 %>

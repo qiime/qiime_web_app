@@ -17,11 +17,12 @@ from enums import DataAccessType
 sess = Session.Session(req)
 data_access = data_access_factory(DataAccessType.qiime_production)
 study_id = int(sess['study_id'])
-jobs = data_access.getJobInfo(study_id)
+job_type_id = int(form['job_type_id'])
+jobs = data_access.getJobInfo(study_id,job_type_id)
 
 for job in jobs:
     req.write('<li><pre>\n')
-    req.write('Job %s: %s <a href="clear_job.psp?job_id=%s">(clear job)</a>' % (job['job_id'], job['job_state_name'], job['job_id']))
+    req.write('Job %s: %s <a href="clear_job.psp?job_id=%s&job_typename=%s">(clear job)</a>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id']))
     if job['job_notes'] != None:
         req.write('<br/>Output: ' + job['job_notes'])
     req.write('</pre></li>\n')

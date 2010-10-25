@@ -35,7 +35,7 @@ function GetXmlHttpObject()
     return null;
 }
 
-function checkJobStatus()
+function checkJobStatus(job_type_id)
 {
     // check if browser can perform xmlhttp
     xmlhttp = GetXmlHttpObject()
@@ -45,7 +45,7 @@ function checkJobStatus()
         return;
     }
     
-    var url = "check_job_status.psp";
+    var url = "check_job_status.psp?job_type_id="+job_type_id;
 
     xmlhttp.onreadystatechange=function()
     {

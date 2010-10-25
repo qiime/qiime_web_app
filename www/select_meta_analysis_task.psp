@@ -8,7 +8,7 @@ __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
-
+<script type="text/javascript" src="js/jobs.js"></script>
 <%
 from data_access_connections import data_access_factory
 from enums import DataAccessType
@@ -34,7 +34,11 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 <%
 # get the meta_analysis ID from the session
 meta_analysis_id=sess['meta_analysis_id']
-
+sess['study_id']=meta_analysis_id
+sess['job_type_id']=4
+job_type_id=4
+study_id=sess['study_id']
+sess.save()
 # retrieve the paths to the mapping and OTU tables already created
 mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
 %>
@@ -55,6 +59,25 @@ if mapping_otu_files:
         req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
         req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td></tr>' % (files[2],os.path.basename(files[2])))
     req.write('</table>')
+    
+    jobs = data_access.getJobInfo(study_id,job_type_id)
+    if len(jobs) > 0:
+
+        req.write('''\
+        Submitted Jobs:\
+        <br/>\
+        <ul>\
+            <div name="job_status_div" id="job_status_div">\
+                <!-- Contents will be replaced by javascript dynamically -->\
+                Checking status...\
+            </div>\
+            <script type="text/javascript">\
+                checkJobStatus(4);\
+                var timer = setInterval( "checkJobStatus(4);", 5000 );\
+            </script>\
+        </ul>\
+        <br/>\
+        ''')
 #
 %>
 <br>

@@ -104,13 +104,16 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
     on "SAMPLE".sample_id = "COMMON_FIELDS".sample_id \n'
 
     # Handle host tables
-    statement += '\
-    left join "HOST_SAMPLE" \n\
-    on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
+    if '"HOST_SAMPLE"' in tables:
+        tables.remove('"HOST_SAMPLE"')
+        statement += '\
+        left join "HOST_SAMPLE" \n\
+        on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
 
     # Deal with the rest of the tables. They should all be assocaiated by sample id.
     for table in tables:
-        if 'HOST' in table or 'HUMAN' in table:
+        print table
+        if table=='"HOST"':
             statement += '\
             left join ' + table + '\n\
             on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
@@ -173,7 +176,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
 
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
     mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map.txt'), 'w')
-
+    merge_mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map_merge.txt'), 'w')
     map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_map.txt')
     map_filepath_db=os.path.join(mapping_file_dir_db, file_name_prefix+'_map.txt')
 
@@ -258,7 +261,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
         mapping_file.write(to_write[0:len(to_write)-1] + '\n')
 
     mapping_file.close()
-
+    
     # create a dictionary for getting run_prefix from run_id
     otu_map_dict={}
     sid_run_prefix_to_seq_run_id={}

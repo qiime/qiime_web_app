@@ -163,7 +163,9 @@ def get_selected_column_values(controlled_col,col,table,user_id):
                 statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
             elif str(table)=='SEQUENCE_PREP':
                 statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
-            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST' or table=='HUMAN_ASSOCIATED':
+            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST_SAMPLE' or table=='HUMAN_ASSOCIATED':
+                statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.sample_id=h.sample_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (str(col),str(table))
+            elif str(table)=='HOST':
                 statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (str(col),str(table))
             else:
                 statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
@@ -174,7 +176,9 @@ def get_selected_column_values(controlled_col,col,table,user_id):
                 statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (t."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
             elif str(table)=='SEQUENCE_PREP':
                 statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)
-            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST' or table=='HUMAN_ASSOCIATED':
+            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST_SAMPLE' or table=='HUMAN_ASSOCIATED':
+                statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.sample_id=h.sample_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (str(col),str(table),user_id)
+            elif str(table)=='HOST':
                 statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (str(col),str(table),user_id)
             else:
                 statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id inner join sff.analysis an on st.study_id=an.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and st.metadata_complete=\'y\'' % (col,table,user_id)

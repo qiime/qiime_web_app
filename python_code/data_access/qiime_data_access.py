@@ -1167,17 +1167,17 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
         
-    def getJobInfo(self, study_id):
+    def getJobInfo(self, study_id,job_type):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
             con = self.getSFFDatabaseConnection()
             results = con.cursor()
             jobs = []
-            con.cursor().callproc('get_job_info', [study_id, results])
+            con.cursor().callproc('get_job_info', [study_id,job_type,results])
             for row in results:
                 jobs.append({'job_id':row[0], 'job_type_name':row[1], 'job_arguments':row[2], \
-                    'user_id':row[3], 'job_state_name':row[4], 'job_notes':row[5]})
+                    'user_id':row[3], 'job_state_name':row[4], 'job_notes':row[5],'job_type_id':row[6]})
             return jobs
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
