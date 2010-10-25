@@ -700,7 +700,8 @@ class QiimeDataAccess(object):
                 expected_values = row[1]
                 description = row[2]
                 data_type = row[3]
-                data_length = row[4]
+                max_length = row[4]
+                min_length = row[5]
                 
                 if row[1] == None:
                     expected_values == ''
@@ -709,9 +710,11 @@ class QiimeDataAccess(object):
                 elif row[3] == None:
                     data_type = ''
                 elif row[4] == None:
-                    data_length = ''
+                    max_length = ''
+                elif row[5] == None:
+                    min_length = ''
                     
-                list_item = (column_name, expected_values, description, data_type, data_length)
+                list_item = (column_name, expected_values, description, data_type, max_length, min_length)
                 column_dictionary.append(list_item)
             return column_dictionary
         except Exception, e:
@@ -997,13 +1000,14 @@ class QiimeDataAccess(object):
             ########################################
             
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
-            '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"'] \
+            '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"', \
+            '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HOST_SAMPLE"', '"HUMAN_ASSOCIATED"'] \
             or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_field':key_field, 'study_id':study_id}
                 statement = 'select sample_id from "SAMPLE" where sample_name = :key_field and study_id = :study_id'
                 key_column = 'sample_id'
                 key_table = '"SAMPLE"'
-            elif table_name in ['"HOST"', '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HUMAN_ASSOCIATED"']:
+            elif table_name in ['"HOST"']:
                 named_params = {'key_field':host_key_field}
                 statement = 'select host_id from "HOST" where host_subject_id = :key_field'
                 key_column = 'host_id'
