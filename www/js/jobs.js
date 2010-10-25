@@ -58,4 +58,40 @@ function checkJobStatus(job_type_id)
     // perform a GET 
     xmlhttp.open("GET", url, true);
     xmlhttp.send(null);
+}
+
+
+// This function is for showing the mapping and OTU tables when using meta-analysis
+function checkMetaAnalysisStatus()
+{
+ // check if browser can perform xmlhttp
+ xmlhttp2 = GetXmlHttpObject()
+ if (xmlhttp2==null)
+ {
+     alert ("Your browser does not support XML HTTP Request");
+     return;
  }
+
+ var url = "check_meta_analysis_status.psp";
+
+ xmlhttp2.onreadystatechange=function()
+ {
+     if (xmlhttp2.readyState==4)
+     {
+         document.getElementById("meta_status_div").innerHTML = xmlhttp2.responseText;
+     }
+ }
+
+ // perform a GET 
+ xmlhttp2.open("GET", url, true);
+ xmlhttp2.send(null);
+}
+
+// This function is for showing the mapping and OTU tables when using meta-analysis
+function VerifyDeletion(input_url)
+{
+    var r=confirm("Are you sure you want to delete this data?");
+    if (r==true)
+        window.location=input_url
+
+}

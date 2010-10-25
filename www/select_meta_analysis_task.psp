@@ -9,6 +9,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
 <script type="text/javascript" src="js/jobs.js"></script>
+
 <%
 from data_access_connections import data_access_factory
 from enums import DataAccessType
@@ -39,48 +40,12 @@ sess['job_type_id']=4
 job_type_id=4
 study_id=sess['study_id']
 sess.save()
-# retrieve the paths to the mapping and OTU tables already created
-mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
 %>
 
 <div id="simplediv" style="background-color:#CCCCCC;border:1px solid black;display:none;width:600px;height:500px;position:absolute;top:50;left:50;">
 </div>
 <p>
 <h3>Selected Meta-Analysis: <%=sess['meta_analysis_name']%></h3>
-<%
-# print a llst of the mapping and otu files already generated for this 
-# meta_analysis
-if mapping_otu_files:
-    # write the file paths into an HTML table
-    req.write('<table>')
-    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;text-align:center;" colspan="3"><b>Previously Generated Files</b></td></tr>')
-    for files in mapping_otu_files:
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[0],os.path.basename(files[0])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td></tr>' % (files[2],os.path.basename(files[2])))
-    req.write('</table>')
-    
-    jobs = data_access.getJobInfo(study_id,job_type_id)
-    if len(jobs) > 0:
-
-        req.write('''\
-        Submitted Jobs:\
-        <br/>\
-        <ul>\
-            <div name="job_status_div" id="job_status_div">\
-                <!-- Contents will be replaced by javascript dynamically -->\
-                Checking status...\
-            </div>\
-            <script type="text/javascript">\
-                checkJobStatus(%s);\
-                var timer = setInterval( "checkJobStatus(%s);", 5000 );\
-            </script>\
-        </ul>\
-        <br/>\
-        ''' % (job_type_id,job_type_id))
-#
-%>
-<br>
 <h4>Tasks:</h4>
         <ul><li>
             <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
@@ -91,3 +56,48 @@ if mapping_otu_files:
         </li>
     </ul>
 </p>
+<br>
+<%
+jobs = data_access.getJobInfo(study_id,job_type_id)
+if len(jobs) > 0:
+
+    req.write('''
+    <table>
+    <tr bgcolor="#CCCCCC"><td style="font-size: 12px;text-align:center;"><b>Jobs</b></td></tr>
+    <tr bgcolor="#CCCCCC"><td>
+        <div name="job_status_div" id="job_status_div">\
+            <!-- Contents will be replaced by javascript dynamically -->\
+            Checking status...\
+        </div>\
+        <script type="text/javascript">\
+            checkJobStatus(%s);\
+            var timer = setInterval( "checkJobStatus(%s);", 5000 );\
+        </script>\
+    </td>
+    </tr>
+    </table>\
+    ''' % (job_type_id,job_type_id))
+
+# print a llst of the mapping and otu files already generated for this 
+# meta_analysis
+# retrieve the paths to the mapping and OTU tables already created
+mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
+if mapping_otu_files:
+    # write the file paths into an HTML table
+
+    req.write('''<tr>
+    <div name="meta_status_div" id="meta_status_div">\
+        <!-- Contents will be replaced by javascript dynamically -->\
+        Checking status...\
+    </tr></div>\
+    <script type="text/javascript">\
+        checkMetaAnalysisStatus();\
+        var timer = setInterval( "checkMetaAnalysisStatus();", 5000 );\
+    </script>\
+''')
+    
+
+
+#
+%>
+

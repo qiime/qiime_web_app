@@ -1278,6 +1278,17 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
 
+    def clearMetaFiles(self, map_fname,otu_fname,zip_fname):
+        """ Removes a job from the torque_jobs table
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('clear_meta_analysis_files', [map_fname,otu_fname,zip_fname])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
     def clearSFFFile(self, study_id, sff_file):
         """ Removes an sff file from the database
         """

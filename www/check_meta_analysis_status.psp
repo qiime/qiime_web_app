@@ -1,0 +1,33 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+
+# Grab some required values for this page
+sess = Session.Session(req)
+data_access = data_access_factory(DataAccessType.qiime_production)
+meta_analysis_id = int(sess['meta_analysis_id'])
+mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
+req.write('<br><br><table>')
+req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 12px;text-align:center;" colspan="4"><b>Generated Files</b></td></tr>')
+req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;text-align:center;"><b>Mapping Files</b></td><td style="font-size: 11px;text-align:center;"><b>OTU Tables</b></td><td style="font-size: 11px;text-align:center;"><b>Zipped Files</b></td><td bgcolor="#FAAFBE" style="font-size: 11px;text-align:center;"><b>Remove Files</b></td></tr>')
+
+for files in mapping_otu_files:
+    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[0],os.path.basename(files[0])))
+    req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
+    req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" style="target="_blank">%s</a></b></td>' % (files[2],os.path.basename(files[2])))
+    req.write('<td bgcolor="#FAAFBE" style="font-size: 10px;text-align:center;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?map_fname=%s&otu_fname=%s&zip_fname=%s\')">(clear files)</a></td></tr>' % (files[0],files[1],files[2]))
+
+req.write('</table>')
+#
+%>
