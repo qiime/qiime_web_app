@@ -72,12 +72,12 @@ if mapping_otu_files:
                 Checking status...\
             </div>\
             <script type="text/javascript">\
-                checkJobStatus(4);\
-                var timer = setInterval( "checkJobStatus(4);", 5000 );\
+                checkJobStatus(%s);\
+                var timer = setInterval( "checkJobStatus(%s);", 5000 );\
             </script>\
         </ul>\
         <br/>\
-        ''')
+        ''' % (job_type_id,job_type_id))
 #
 %>
 <br>

@@ -120,7 +120,7 @@ else:
 
 <%
 
-jobs = data_access.getJobInfo(study_id)
+jobs = data_access.getJobInfo(study_id, 3)
 if len(jobs) > 0:
     # indent
 %>
@@ -133,8 +133,8 @@ if len(jobs) > 0:
                     Checking status...
                 </div>
                 <script type="text/javascript">
-                    checkJobStatus();
-                    var timer = setInterval( "checkJobStatus();", 5000 );
+                    checkJobStatus(3);
+                    var timer = setInterval( "checkJobStatus(3);", 5000 );
                 </script>
             </ul>
             <br/>

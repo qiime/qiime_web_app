@@ -22,7 +22,7 @@ jobs = data_access.getJobInfo(study_id,job_type_id)
 
 for job in jobs:
     req.write('<li><pre>\n')
-    req.write('Job %s: %s <a href="clear_job.psp?job_id=%s&job_typename=%s">(clear job)</a>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id']))
+    req.write('Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(clear job)</a>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id']))
     if job['job_notes'] != None:
         req.write('<br/>Output: ' + job['job_notes'])
     req.write('</pre></li>\n')
