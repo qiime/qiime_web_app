@@ -14,14 +14,13 @@ __status__ = "Development"
 <script type="text/javascript">
 function updateStatus(currentItem, totalFieldCount)
 {
-    // Build our output message
+    // Build our output
     var pcent = parseInt((currentItem / totalFieldCount) * 100);
-    var message = "Writing " + currentItem + " of " + totalFieldCount + " items...<br/>";
+    var message = "Writing " + currentItem + " of " + totalFieldCount + " items (" + pcent + "%)<br/>";
     
     // Write the message
     document.getElementById("status").innerHTML = message;
     document.getElementById("progress").style.width = pcent;
-    
 }
 </script>
 
@@ -142,7 +141,7 @@ def _callback(self, message):
     req.write(message)
 
 # Write out the divs
-req.write('<div name="status" id="status" style="font-size:12px">Please wait...</div>')
+req.write('<div name="status" id="status" style="font-size:12px"></div>')
 req.write('<div class="progress-container">')
 req.write('<div style="width: 0%" name="progress" id="progress"></div>')
 req.write('</div>')
@@ -184,7 +183,7 @@ if with_errors:
     # Update the database flag for the failed upload
     data_access.updateMetadataFlag(study_id, 'n')
 else:
-    req.write('<h3>Upload Completed!</h3>')
+    req.write('<p/><h3>Upload Completed!</h3>')
     req.write('<p style="font-size:8px">yahoo!</p>')
     req.write('<img src="img/firework3.gif"/>')
     

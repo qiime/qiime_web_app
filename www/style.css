@@ -65,6 +65,7 @@ a
 
 /* Progress bar stuff */
 div.progress-container {
+  background-color: #DDDDDD;
   border: 1px solid #ccc; 
   width: 400px; 
   height: 20px;
@@ -77,6 +78,8 @@ div.progress-container {
 div.progress-container > div {
   background-color: #3333FF; 
   height: 100%;
+  width: 100%;
+  text-align: center;
 }
 /* End progress bar stuff */
 
