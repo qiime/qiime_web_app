@@ -19,8 +19,8 @@ from datetime import datetime
 from hashlib import md5
 
 try:
-    from cx_Oracle import NUMBER, STRING, DATETIME, CLOB,FIXED_CHAR
-    type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB,'fc':FIXED_CHAR}
+    from cx_Oracle import NUMBER, STRING, DATETIME, CLOB,FIXED_CHAR,NATIVE_FLOAT
+    type_lookup_oracle = {'i':NUMBER,'f':NUMBER,'s':STRING, 'd':DATETIME, 'c':CLOB,'fc':FIXED_CHAR,'bf':NATIVE_FLOAT}
 except ImportError:
     print "Cannot import cx_Oracle"
     type_lookup_oracle = {}
@@ -37,7 +37,7 @@ def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
     for t,f in zip(types, unzip(data)):
         if t == 'i':
             tmp = map(int, f)
-        elif t == 'f':
+        elif t == 'f'  or t == 'bf' :
             tmp = map(float, f)
         # yes, this method is absolutely fucking ugly right now
         elif t == 'c':

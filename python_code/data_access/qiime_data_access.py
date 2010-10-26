@@ -2155,3 +2155,18 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+    #
+    #
+    def loadBetaDivDistances(self, start_job, input_set):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            error_flag=1
+            if start_job:
+                db_output=con.cursor().callproc('load_beta_distance_matrix.array_insert',
+                                                input_set)
+                return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
