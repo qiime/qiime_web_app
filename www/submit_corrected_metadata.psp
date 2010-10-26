@@ -32,6 +32,7 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from metadata_worker import *
 import threading
+import copy
 from time import sleep
 
 # Get our data_access instance
@@ -206,33 +207,41 @@ if len(host_fields) > 0:
 # To hold the current bucket of metadata values
 item_list = []
 threads = []
-thread_count = 1
+thread_count = 10
 
 # Sets the number of metadata fields to be processed by each thread
-bucket_size = len(all_other_fields) / thread_count
+item_count = len(all_other_fields)
+current_item = 0
+bucket_size = item_count / thread_count
 
 # Define the thread callback
-def _callback(self, message):
-    req.write(message)
+def _updateCallback():
+    global current_item
+    global item_count
+    current_item += 1
+    req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' % (current_item, item_count))
+    
+def _errorCallback(e):
+    global with_errors
+    with_errors = True
+    req.write(str(e) + '<p/>')
 
 # Go workers go!
 req.write('<p style="font-size:9px">')
-delimiter = 0
 for item in all_other_fields:
-    # Fill a bucket and pass off to worker
+    item_list.append(item)
     if len(item_list) == bucket_size:
-        t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ', data_access)
+        t = MetadataWorkerThread(req, form, copy.deepcopy(item_list), sample_key_fields, prep_key_fields, \
+            host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback)
         threads.append(t)
         t.start()
         item_list = []
-        delimiter += 1
-    else:
-        item_list.append(item)
+        
 
 # If there are any items left, process those last
 if len(item_list) > 0:
-    delimiter += 1
-    t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ', data_access)
+    t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, \
+        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback)
     threads.append(t)
     t.start()
 
@@ -244,6 +253,7 @@ req.write('</p>')
 if with_errors:
     req.write('<h3>Upload Completed With Errors</h3>')
     req.write('<p style="font-size:12px">You should review the errors above, make the appropriate adjustments to your metadata files, then re-submit them to your study.</p>')
+    req.write('<a href="fusebox.psp?page=upload_metadata.psp">Upload corrected metadata</a>')
     
     # Update the database flag for the failed upload
     data_access.updateMetadataFlag(study_id, 'n')

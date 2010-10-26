@@ -873,63 +873,71 @@ class QiimeDataAccess(object):
         else:
             # Error state
             raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
+        
+        try:
+            lock = Lock()
+            lock.acquire()
             
-        # Does table exist already?
-        log.append('Checking if table %s exists...' % extra_table)
-        named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
-        statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
-        log.append(statement)
-        log.append('schema_owner: %s' % schema_owner)
-        log.append('extra_table: %s' % extra_table)
-        results = con.cursor().execute(statement, named_params).fetchone()
-        
-        # Create if it doesn't exist already
-        if not results:
-            log.append('Creating "extra" table %s...' % extra_table)
-            statement = 'create table %s (%s_id int not null, \
-                constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
-                (extra_table, key_table, extra_table, key_table, key_table, key_table)
+            # Does table exist already?
+            log.append('Checking if table %s exists...' % extra_table)
+            named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
+            statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
             log.append(statement)
-            results = con.cursor().execute(statement)
-
-            # If it's a prep table, must create row_number column
-            if field_type == 'prep':
-                log.append('Adding row_number to extra_prep table...')                        
-                statement = 'alter table %s add row_number integer' % (extra_table)
+            log.append('schema_owner: %s' % schema_owner)
+            log.append('extra_table: %s' % extra_table)
+            results = con.cursor().execute(statement, named_params).fetchone()
+        
+            # Create if it doesn't exist already
+            if not results:
+                log.append('Creating "extra" table %s...' % extra_table)
+                statement = 'create table %s (%s_id int not null, \
+                    constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
+                    (extra_table, key_table, extra_table, key_table, key_table, key_table)
                 log.append(statement)
                 results = con.cursor().execute(statement)
 
-            if field_type == 'prep':
-                statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_number)' % (extra_table, extra_table, key_table)
-            else:
-                statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
-            log.append(statement)
-            results = con.cursor().execute(statement)
+                # If it's a prep table, must create row_number column
+                if field_type == 'prep':
+                    log.append('Adding row_number to extra_prep table...')                        
+                    statement = 'alter table %s add row_number integer' % (extra_table)
+                    log.append(statement)
+                    results = con.cursor().execute(statement)
+
+                if field_type == 'prep':
+                    statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_number)' % (extra_table, extra_table, key_table)
+                else:
+                    statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
+                log.append(statement)
+                results = con.cursor().execute(statement)
                     
-            # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
-            if field_type == 'study':
-                log.append('Inserting study extra row...')                        
-                statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
+                # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
+                if field_type == 'study':
+                    log.append('Inserting study extra row...')                        
+                    statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
+                    log.append(statement)
+                    results = con.cursor().execute(statement)
+                    con.cursor().execute('commit')
+                            
+            # Check if the column exists
+            log.append('Checking if extra column exists: %s' % field_name)
+            named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
+            statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
+            log.append(statement)
+            results = con.cursor().execute(statement, named_params).fetchone()
+        
+            # If column doesn't exist, add it:
+            if not results:
+                log.append('Creating extra column: %s' % field_name)
+                statement = 'alter table %s add "%s" varchar2(4000) default \'\'' % (extra_table, field_name.upper())
                 log.append(statement)
                 results = con.cursor().execute(statement)
-                con.cursor().execute('commit')
-                            
-        # Check if the column exists
-        log.append('Checking if extra column exists: %s' % field_name)
-        named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
-        statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
-        log.append(statement)
-        results = con.cursor().execute(statement, named_params).fetchone()
         
-        # If column doesn't exist, add it:
-        if not results:
-            log.append('Creating extra column: %s' % field_name)
-            statement = 'alter table %s add "%s" varchar2(4000) default \'\'' % (extra_table, field_name.upper())
-            log.append(statement)
-            results = con.cursor().execute(statement)
-        
-        # Return the proper table name
-        return extra_table
+            # Return the proper table name
+            return extra_table
+        except Exception, e:
+            raise Exception(str(e))
+        finally:
+            lock.release()
     
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field, row_num):
         """ Writes a metadata value to the database
@@ -942,16 +950,20 @@ class QiimeDataAccess(object):
         pk_name = ''
         
         try:
+            # Get our database connection
+            con = self.getMetadataDatabaseConnection()
+            
+            # Set the timeout
+            con.cursor().execute('alter session set ddl_lock_timeout=100')            
+            
             # Lock the table search/create so that only one thread can check or create at a time.
             lock = Lock()
             lock.acquire()
-            
-            
-            con = self.getMetadataDatabaseConnection()
-            table_name = None
+            log.append('Lock acquired')
             
             # Find the table name
             log.append('Locating table name...')
+            table_name = None
             table_name = self.findMetadataTable(field_name, study_id)
             
             # If table is not found, assume user-defined column and store appropriately
@@ -1090,21 +1102,17 @@ class QiimeDataAccess(object):
             # Finally, commit the changes
             results = con.cursor().execute('commit')
             
-            
-            
-            # Release the lock
-            lock.release()
-            
-            
-            
         except Exception, e:
             call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')' % (field_type, key_field, field_name, field_value, study_id)
             log_string = '<br/>'.join(log)
             error_msg = 'Exception caught attempting to store field "%s" with value "%s" into \
                 table "%s".<br/>Method signature: %s<br/>Full error log:<br/>%s<br/>Oracle says: %s' % \
                 (field_name, field_value, table_name, call_string, log_string, str(e))
-            print error_msg
-            return error_msg
+            raise Exception(error_msg)
+        finally:
+            # Release the lock
+            lock.release()
+            log.append('Lock released')
 
             
     #####################################
