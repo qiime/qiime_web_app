@@ -13,13 +13,13 @@ from os import system,path
 import os
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_table
+from qiime.parse import parse_mapping_file
 from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
 
 def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonomy_class, file_name_prefix,user_id,meta_id):
     unique_cols=[]
     # Create the mapping file based on sample and field selections
-
     # get the directory location for the files to write
     otu_table_file_dir=path.join(fs_fp,'otu_table_files')
     mapping_file_dir=path.join(fs_fp,'mapping_files')
@@ -42,7 +42,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
     statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
     statement += '"SAMPLE".study_id, \n'
     statement += '"SEQUENCE_PREP".run_prefix as RUN_PREFIX, \n'
-    statement += '"SEQUENCE_PREP".experiment_title as Description, \n'
+
 
     study_id_array=[]
     # Break out the recorded fields and store as dict: field name and table name
@@ -60,7 +60,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
             study_id_array.append(study_id)
     
         # Required fields which much show up first. Skip as they are already in the statement
-        if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE']:
+        if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE','DESCRIPTION','RUN_PREFIX']:
             continue
 
         # Add to select list
@@ -76,8 +76,8 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
         # End for
 
     unique_study_ids=list(set(study_id_array))
-
-    statement = statement[0:len(statement) - 3]
+    
+    statement += '"SEQUENCE_PREP".experiment_title as Description \n'
 
     if user_id==12171:
         statement = '\
@@ -112,7 +112,6 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
 
     # Deal with the rest of the tables. They should all be assocaiated by sample id.
     for table in tables:
-        print table
         if table=='"HOST"':
             statement += '\
             left join ' + table + '\n\
@@ -169,20 +168,19 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
 
     con = data_access.getMetadataDatabaseConnection()
     cur = con.cursor()
-
+    print statement
     #req.write(str(statement)+'<br><br>')
     results = cur.execute(statement)
 
 
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
-    mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map.txt'), 'w')
-    merge_mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map_merge.txt'), 'w')
+    tmp_mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map_tmp.txt'), 'w')
     map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_map.txt')
     map_filepath_db=os.path.join(mapping_file_dir_db, file_name_prefix+'_map.txt')
 
     #req.write('http://localhost:5001/'+map_filepath)
     # All mapping files start with an opening hash
-    mapping_file.write('#')
+    tmp_mapping_file.write('#')
 
     # determine if a column is a controlled vaocabulary columnn
     controlled_vocab_columns={}
@@ -202,7 +200,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
         vocab_id_to_valid_term=data_access.getValidControlledVocabTerms(column)
         controlled_vocab_lookup[controlled_vocab_columns[column]]=dict(vocab_id_to_valid_term)
 
-    # Write the header row
+
     to_write = ''
     for column in cur.description:
         if column[0]=='SAMPLEID':
@@ -216,7 +214,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
         else:
             to_write += column[0] + '\t'
 
-    mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+    tmp_mapping_file.write(to_write[0:len(to_write)-1] + '\n')
 
     sample_to_run_prefix=[]
     study_id_and_run_prefix=[]
@@ -258,10 +256,46 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
                     val = ''
                 to_write += val + '\t'
         # Write the row minus the last tab
-        mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+        tmp_mapping_file.write(to_write[0:len(to_write)-1] + '\n')
 
-    mapping_file.close()
+    tmp_mapping_file.close()
+
+    open_tmp_mapping_file=open(os.path.join(mapping_file_dir, file_name_prefix+'_map_tmp.txt')).readlines()
+    mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map.txt'), 'w')
+    mapping_lines = []
+    all_headers = {}
+    result = []
     
+    # iterate over mapping files, parsing each
+    data, current_headers, current_comments = \
+       parse_mapping_file(open_tmp_mapping_file,strip_quotes=False)
+    all_headers.update(dict.fromkeys(current_headers))
+    for d in data:
+        current_values = {}
+        for i,v in enumerate(d):
+            if v !='':
+                current_values[current_headers[i]] = v
+        mapping_lines.append(current_values)
+    
+    # remove and place the fields whose order is important
+    del all_headers['SampleID']
+    del all_headers['BarcodeSequence']
+    del all_headers['LinkerPrimerSequence']
+    del all_headers['Description']
+    all_headers = ['SampleID','BarcodeSequence','LinkerPrimerSequence'] \
+     + list(all_headers) + ['Description']
+    
+    # generate the mapping file lines containing all fields
+    result.append('#' + '\t'.join(all_headers))
+    for mapping_line in mapping_lines:
+        result.append('\t'.join(\
+         [mapping_line.get(h,'') for h in all_headers if h!='']))
+    
+    test=result
+    #test=merge_mapping_files([merged_file])
+    mapping_file.write('\n'.join(test))
+    mapping_file.close()
+ 
     # create a dictionary for getting run_prefix from run_id
     otu_map_dict={}
     sid_run_prefix_to_seq_run_id={}
@@ -294,7 +328,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
                 otu_map_dict[str(o[0])].append(new_otu_sample_name)
     otu_id_list=list(set(otu_map_dict.keys()))
 
-
+   
     if taxonomy_class:
         otu_to_taxonomy={}
         for i in otu_id_list:

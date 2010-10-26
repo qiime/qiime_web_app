@@ -72,7 +72,7 @@ function checkMetaAnalysisStatus()
      return;
  }
 
- var url = "check_meta_analysis_status.psp";
+ var url2 = "check_meta_analysis_status.psp";
 
  xmlhttp2.onreadystatechange=function()
  {
@@ -83,7 +83,7 @@ function checkMetaAnalysisStatus()
  }
 
  // perform a GET 
- xmlhttp2.open("GET", url, true);
+ xmlhttp2.open("POST", url2, true);
  xmlhttp2.send(null);
 }
 

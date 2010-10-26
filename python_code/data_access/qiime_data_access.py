@@ -288,6 +288,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
     def createMetaAnalysis(self,web_app_user_id,inv_name):
         """ Returns a list of study names
         """
@@ -1995,6 +1996,7 @@ class QiimeDataAccess(object):
             con.cursor().callproc('get_seq_run_id_from_run_prefix', [run_prefix,\
                                                                      study_id,\
                                                                      results])
+            seq_run_id=0
             for row in results:
                 seq_run_id=row[0]
             return seq_run_id

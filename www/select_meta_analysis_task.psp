@@ -80,23 +80,17 @@ if len(jobs) > 0:
 
 # print a llst of the mapping and otu files already generated for this 
 # meta_analysis
-# retrieve the paths to the mapping and OTU tables already created
-mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
-if mapping_otu_files:
-    # write the file paths into an HTML table
 
-    req.write('''<tr>
-    <div name="meta_status_div" id="meta_status_div">\
-        <!-- Contents will be replaced by javascript dynamically -->\
-        Checking status...\
-    </tr></div>\
-    <script type="text/javascript">\
-        checkMetaAnalysisStatus();\
-        var timer = setInterval( "checkMetaAnalysisStatus();", 5000 );\
-    </script>\
-''')
-    
+# write the file paths into an HTML table
 
+req.write('''<div name="meta_status_div" id="meta_status_div">\
+    <!-- Contents will be replaced by javascript dynamically -->\
+    Checking status...\
+</div>\
+<script type="text/javascript">\
+    checkMetaAnalysisStatus();\
+    var timer2 = setInterval( "checkMetaAnalysisStatus();", 5000 );\
+</script>''')
 
 #
 %>
