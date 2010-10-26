@@ -13,7 +13,17 @@ __status__ = "Development"
 <script type="text/javascript">
 function updateStatus(currentItem, totalFieldCount)
 {
-    document.getElementById("status").innerHTML = "Writing " + currentItem + " of " + totalFieldCount + " items...";
+    # Build our output message
+    var pcent = parseInt((currentItem / totalFieldCount) * 100);
+    var message = "Writing " + currentItem + " of " + totalFieldCount + " items...<br/>";
+    for(int i = 0; i < pcent; i++)
+    {
+        message += "#";
+    }
+    message += pcent + " %";
+    
+    # Write the message
+    document.getElementById("status").innerHTML = message;
 }
 </script>
 
