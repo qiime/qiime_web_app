@@ -386,6 +386,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+
+    '''
     def getPublicStudyNames(self,web_app_user_id):
         """ Returns a list of study names
         """
@@ -404,6 +406,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+    '''
             
     def getUserStudyNames(self, user_id, is_admin):
         """ Returns a list of study names
@@ -2091,14 +2094,15 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def getPublicColumns(self,user_id):
+    def getPublicColumns(self, user_id):
         """ Returns a list of metadata fields
         """
         try:
+            user_details = self.getUserDetails(user_id)
+            is_admin = user_details['is_admin']
             con = self.getMetadataDatabaseConnection()
             results = con.cursor()
-            con.cursor().callproc('get_public_study_columns', \
-                                     [user_id,results])
+            con.cursor().callproc('get_public_study_columns', [user_id, is_admin, results])
             public_cols = []
             for row in results:
                 public_cols.append(row)
