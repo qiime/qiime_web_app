@@ -108,7 +108,7 @@ class MetadataWorkerThread(threading.Thread):
                     self.req.write('<br/><br/>' + result + '<br/><br/>')
                 
                 #self.req.write('/ ')
-                self.req.write('<script type="text/javascript">updateStatus(%s, %s);</script>' % (current_item, item_count))
+                self.req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' % (current_item, item_count))
             except Exception, e:
                 self.req.write(str(e) + '<p/>')
             finally:
