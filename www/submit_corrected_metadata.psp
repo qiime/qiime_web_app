@@ -10,6 +10,12 @@ __status__ = "Development"
 %>
 
 <h3>Please wait while values are written to the database...</h3>
+<script type="text/javascript">
+function updateStatus(currentItem, totalFieldCount)
+{
+    document.getElementById("status").innerHTML = "Writing " + currentItem + " of " + totalFieldCount + " items...";
+}
+</script>
 
 <%
 # The obligatory data access import
@@ -127,15 +133,19 @@ bucket_size = len(all_other_fields) / thread_count
 def _callback(self, message):
     req.write(message)
 
+# Write out the div
+req.write('<div name="status" id="status">Please wait...</div>')
+
 # Go workers go!
 req.write('<p style="font-size:9px">')
 delimiter = 0
+total_field_count = len(all_other_fields)
 for item in all_other_fields:
     # Fill a bucket and pass off to worker
     if len(item_list) == bucket_size:
         t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ', data_access)
         threads.append(t)
-        req.write('^ ')
+        #req.write('^ ')
         t.start()
         item_list = []
         delimiter += 1
@@ -147,7 +157,7 @@ if len(item_list) > 0:
     delimiter += 1
     t = MetadataWorkerThread(req, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, study_name, study_id, str(delimiter) + ' ', data_access)
     threads.append(t)
-    req.write('^<br/>')
+    #req.write('^<br/>')
     t.start()
 
 for t in threads:

@@ -48,9 +48,13 @@ class MetadataWorkerThread(threading.Thread):
     def run(self):
         
         da = data_access_factory(DataAccessType.qiime_production)
+        item_count = len(self.item_list)
+        current_item = 0
         
         for item in self.item_list:
             try:
+                # Increment our current item counter
+                current_item += 1
             
                 # Reset the key_field
                 key_field = None
@@ -102,8 +106,9 @@ class MetadataWorkerThread(threading.Thread):
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, self.study_id, host_key_field, row_num)
                 if result:
                     self.req.write('<br/><br/>' + result + '<br/><br/>')
-                    
-                self.req.write(self.delimiter)
+                
+                self.req.write('/')
+                self.req.write('<script type="text/javascript">updateStatus(%s, %s);</script>' % (current_item, item_count))
             except Exception, e:
                 self.req.write(str(e) + '<p/>')
             finally:
