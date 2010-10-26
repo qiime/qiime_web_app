@@ -384,13 +384,13 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
             
-    def getUserStudyNames(self, user_id):
+    def getUserStudyNames(self, user_id, is_admin):
         """ Returns a list of study names
         """
         try:
             con = self.getMetadataDatabaseConnection()
             study_names = con.cursor()
-            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id, study_names])
+            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id, is_admin, study_names])
             study_name_list = []
             for row in study_names:
                 if row[0] is None:

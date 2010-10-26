@@ -34,7 +34,7 @@ $(document).ready(function(){
                 <option value=""></option>
 
 <%
-study_names = data_access_factory(DataAccessType.qiime_production).getUserStudyNames(sess['web_app_user_id'])
+study_names = data_access_factory(DataAccessType.qiime_production).getUserStudyNames(sess['web_app_user_id'], sess["is_admin"])
 for study_name in study_names:
     req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + study_name[1] + '</option>\n')
 # en
