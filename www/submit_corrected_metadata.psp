@@ -25,50 +25,6 @@ function updateStatus(currentItem, totalFieldCount, divPrefix)
 }
 </script>
 
-<!-- Divs for sample -->
-<div name="sample_container" id="sample_container" style="visibility:hidden;position:static;">
-    <p style="font-size:12px">Sample Key Values:</p>
-    <div name="sample_status" id="sample_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="sample_progress" id="sample_progress">
-        </div>
-    </div>
-    <br/><br/>
-</div>
-
-
-<!-- Divs for prep -->
-<div name="prep_container" id="prep_container" style="visibility:hidden;position:static;">
-    <p style="font-size:12px">Prep Key Values:</p>
-    <div name="prep_status" id="prep_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="prep_progress" id="prep_progress">
-        </div>
-    </div>
-    <br/><br/>
-</div>
-
-<!-- Divs for host -->
-<div name="host_container" id="host_container" style="visibility:hidden;position:static;">
-    <p style="font-size:12px">Host Key Values:</p>
-    <div name="host_status" id="host_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="host_progress" id="host_progress">
-        </div>
-    </div>
-    <br/><br/>
-</div>
-
-<!-- Divs for the rest of the fields -->
-<div name="the_rest_container" id="the_rest_container" style="visibility:hidden;position:static;">
-    <p style="font-size:12px">Metadata Values (this may take a while):</p>
-    <div name="the_rest_status" id="the_rest_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="the_rest_progress" id="the_rest_progress">
-        </div>
-    </div>
-    <br/><br/>
-</div>
 
 <%
 # The obligatory data access import
@@ -153,6 +109,67 @@ for item in form:
     # All other fields will be inserted in step 3
     else:
         all_other_fields.append(item)
+
+# de-indent
+%>
+
+<!-- Divs for sample -->
+<div name="sample_container" id="sample_container" style="visibility:hidden;">
+    <p style="font-size:12px">Sample Key Values:</p>
+    <div name="sample_status" id="sample_status" style="font-size:12px"></div>
+    <div class="progress-container">
+        <div style="width: 0%" name="sample_progress" id="sample_progress">
+        </div>
+    </div>
+    <br/><br/>
+</div>
+
+
+<!-- Divs for prep -->
+<div name="prep_container" id="prep_container" style="visibility:hidden;">
+    <p style="font-size:12px">Prep Key Values:</p>
+    <div name="prep_status" id="prep_status" style="font-size:12px"></div>
+    <div class="progress-container">
+        <div style="width: 0%" name="prep_progress" id="prep_progress">
+        </div>
+    </div>
+    <br/><br/>
+</div>
+
+<%
+if len(host_fields) > 0:
+    # Indent
+%>
+    
+<!-- Divs for host -->
+<div name="host_container" id="host_container" style="visibility:hidden;">
+    <p style="font-size:12px">Host Key Values:</p>
+    <div name="host_status" id="host_status" style="font-size:12px"></div>
+    <div class="progress-container">
+        <div style="width: 0%" name="host_progress" id="host_progress">
+        </div>
+    </div>
+    <br/><br/>
+</div>
+
+<%
+
+# end if
+%>
+
+
+<!-- Divs for the rest of the fields -->
+<div name="the_rest_container" id="the_rest_container" style="visibility:hidden;">
+    <p style="font-size:12px">Metadata Values (this may take a while):</p>
+    <div name="the_rest_status" id="the_rest_status" style="font-size:12px"></div>
+    <div class="progress-container">
+        <div style="width: 0%" name="the_rest_progress" id="the_rest_progress">
+        </div>
+    </div>
+    <br/><br/>
+</div>
+
+<%
 
 # Insert the sample key rows
 item_count = len(sample_fields)

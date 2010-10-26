@@ -65,18 +65,17 @@ a
 
 /* Progress bar stuff */
 div.progress-container {
-  background-color: #DDDDDD;
+  background-color: #AAAAAA;
   border: 1px solid #ccc; 
-  width: 400px; 
+  width: 500px; 
   height: 20px;
   margin: 2px 5px 2px 0; 
   padding: 1px; 
   float: left; 
-  background: white;
 }
 
 div.progress-container > div {
-  background-color: #3333FF; 
+  background-color: #006699; 
   height: 100%;
   width: 100%;
   text-align: center;
