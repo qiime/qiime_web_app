@@ -83,7 +83,7 @@ class QiimeDataAccess(object):
             crypt_pass = crypt(password, username)
             con = self.getMetadataDatabaseConnection()
             user_data = con.cursor()
-            con.cursor().callproc('authenticate_user', [username, crypt_pass, user_data])
+            con.cursor().callproc('qiime_assets.authenticate_user', [username, crypt_pass, user_data])
             row = user_data.fetchone()
             if row:
                 user_data = {'web_app_user_id':row[0], 'email':row[1], 'password':row[2], 'is_admin':row[3], 'is_locked':row[4], 'last_login':row[5],'verified':row[6]}
