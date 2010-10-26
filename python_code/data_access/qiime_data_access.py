@@ -93,6 +93,27 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def getUserDetails(self, user_id):
+        """ Attempts to validate authenticate the supplied username/password
+
+        Attempt to authenticate the user against the list of users in
+        web_app_user table. If successful, a dict with user innformation is
+        returned. If not, the function returns False.
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_user_details', [user_id, results])
+            row = results.fetchone()
+            if row:
+                user_data = {'email':row[0], 'is_admin':row[1], 'is_locked':row[2], 'last_login':row[3]}
+                return user_data
+            else:
+                return False
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
 
     def verifyActivationCode( self, username, activation_code ):
         """ Attempts to activate user's account

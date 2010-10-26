@@ -34,6 +34,12 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
     #recorded_fields = data_access.getMetadataFields(study_id)
     database_map = {}
     tables = []
+    
+    # Get the user details
+    user_details = data_access.getUserDetails(user_id)
+    if not user_details:
+        raise ValueError('No details found for this user')
+    is_admin = user_details['is_admin']
 
     # Start building the statement for writing out the mapping file
     # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
@@ -78,8 +84,8 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
     unique_study_ids=list(set(study_id_array))
     
     statement += '"SEQUENCE_PREP".experiment_title as Description \n'
-
-    if user_id==12171:
+    
+    if is_admin:
         statement = '\
         select distinct \n' + statement + ' \n\
         from "STUDY" '######inner join sff.analysis anal on "STUDY".study_id=anal.study_id'
@@ -126,7 +132,7 @@ def write_mapping_and_otu_table(data_access,table_col_value,fs_fp,web_fp,taxonom
     for study_id in unique_study_ids:
         study_statement.append('"STUDY".study_id = ' + study_id)
 
-    if user_id==12171:
+    if is_admin:
         statement += ' where (%s)' % (' or '.join(study_statement))
     else:
         statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\' or us.web_app_user_id=%s)' % (' or '.join(study_statement),user_id)

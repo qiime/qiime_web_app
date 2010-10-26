@@ -37,7 +37,12 @@ zip_file_dir_db=sess['zip_file_dir_db']
 file_name_prefix=form['fname_prefix']
 taxonomy=form['taxonomy']
 
-
+# Get the user details
+user_id = int(sess['web_app_user_id'])
+user_details = data_access.getUserDetails(user_id)
+if not user_details:
+    raise ValueError('No details found for this user')
+is_admin = user_details['is_admin']
 
 if taxonomy=='PHPR':
     taxonomy_class='PHPR_tax_string'
@@ -110,8 +115,8 @@ for i in table_col_value:
 unique_study_ids=list(set(study_id_array))
 
 statement = statement[0:len(statement) - 3]
-user_id=int(sess['web_app_user_id'])
-if user_id==12171:
+
+if is_admin:
     statement = '\
     select distinct \n' + statement + ' \n\
     from "STUDY" '######inner join sff.analysis anal on "STUDY".study_id=anal.study_id'
@@ -156,7 +161,7 @@ study_statement=[]
 for study_id in unique_study_ids:
     study_statement.append('"STUDY".study_id = ' + study_id)
 
-if user_id==12171:
+if is_admin:
     statement += ' where (%s)' % (' or '.join(study_statement))
 else:
     statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\' or us.web_app_user_id=%s)' % (' or '.join(study_statement),user_id)

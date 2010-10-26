@@ -153,10 +153,16 @@ def get_selected_column_values(controlled_col,col,table,user_id):
     # if the column is not controlled, then we must look in the database
     # for the public values provided in that column
     if not controlled_col:
+        
+        # Get the user details
+        user_details = data_access.getUserDetails(user_id)
+        if not user_details:
+            raise ValueError('No details found for this user')
+        is_admin = user_details['is_admin']
 
         # Handle the different table names, since the inner joins depend on which
         # table is being traversed
-        if int(user_id)==12171:
+        if is_admin:
             if str(table)=='STUDY':
                 statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.study_id=s.study_id inner join study st on s.study_id=st.study_id inner join sff.analysis an on st.study_id=an.study_id where st.metadata_complete=\'y\'' % (col,table)
             elif str(table)=='SAMPLE':
