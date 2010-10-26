@@ -49,7 +49,7 @@ a
 {
     padding: 2px;
     border: 1px solid black;
-    background-color:#DDDDDD;    
+    background-color:#DDDDDD;
 }
 .metadata_table
 {
@@ -61,3 +61,23 @@ a
     background-color:#FFFFFF;
     border: 1px solid black;
 }
+
+
+/* Progress bar stuff */
+div.progress-container {
+  border: 1px solid #ccc; 
+  width: 400px; 
+  height: 20px;
+  margin: 2px 5px 2px 0; 
+  padding: 1px; 
+  float: left; 
+  background: white;
+}
+
+div.progress-container > div {
+  background-color: #3333FF; 
+  height: 100%;
+}
+/* End progress bar stuff */
+
+

@@ -10,20 +10,18 @@ __status__ = "Development"
 %>
 
 <h3>Please wait while values are written to the database...</h3>
+
 <script type="text/javascript">
 function updateStatus(currentItem, totalFieldCount)
 {
-    # Build our output message
+    // Build our output message
     var pcent = parseInt((currentItem / totalFieldCount) * 100);
     var message = "Writing " + currentItem + " of " + totalFieldCount + " items...<br/>";
-    for(int i = 0; i < pcent; i++)
-    {
-        message += "#";
-    }
-    message += pcent + " %";
     
-    # Write the message
+    // Write the message
     document.getElementById("status").innerHTML = message;
+    document.getElementById("progress").style.width = pcent;
+    
 }
 </script>
 
@@ -143,8 +141,12 @@ bucket_size = len(all_other_fields) / thread_count
 def _callback(self, message):
     req.write(message)
 
-# Write out the div
-req.write('<div name="status" id="status">Please wait...</div>')
+# Write out the divs
+req.write('<div name="status" id="status" style="font-size:12px">Please wait...</div>')
+req.write('<div class="progress-container">')
+req.write('<div style="width: 0%" name="progress" id="progress"></div>')
+req.write('</div>')
+
 
 # Go workers go!
 req.write('<p style="font-size:9px">')
