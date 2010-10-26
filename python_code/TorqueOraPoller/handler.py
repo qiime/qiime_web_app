@@ -18,6 +18,7 @@ QIIME_WEBAPP_BASE = "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/scri
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_and_metadata_for_db.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_and_metadata_to_db.py"
 QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
+QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
 
 class HandlerException(Exception):
     pass
@@ -228,6 +229,19 @@ class LoadSFFAndMetadataHandler(JobHandler):
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_SFF_METADATA_TO_DB, \
             "-i %(ProcessedFastaFilepath)s -s %(StudyId)s"])
     _base_args = {'ProcessedFastaFiles':None, 'StudyId':None}
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+
+class makeMappingFileandPCoAPlots(JobHandler):
+    """Handler for make_mapping_file_and_otu_table.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAPPING_OTU_TABLE, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --beta_metric %(beta_metric)s --rarefied_at %(rarefied_at)s"])
+    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None,'fname_prefix':None,'user_id':None,'meta_id':None,'beta_metric':None,'rarefied_at':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""

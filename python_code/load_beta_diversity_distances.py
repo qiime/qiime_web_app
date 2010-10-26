@@ -45,10 +45,12 @@ def load_bdiv_distances(data_access,bdiv_fpath):
     metric_used='_'.join(file_split_name[0:2])
     rarefied=file_split_name[-1]
     data_to_load=[]
+    sample_1_and_2=[]
     for i,samp1 in enumerate(samples):
-        for j,samp2 in enumerate(samples):
-            if '\t'.join(list((samp2,samp1,str(distmtx[i,j]),metric_used,str(rarefied)))) not in data_to_load:
-                data_to_load.append('\t'.join(list((samp1,samp2,str(distmtx[i,j]),metric_used,str(rarefied)))))
+        print samp1
+        for j,samp2 in enumerate(samples[:i+1]):
+            data_to_load.append('\t'.join(list((samples[i],samples[j],str(distmtx[i,j]),metric_used,str(rarefied)))))
+            
     
     ''' 
     The output values and types for each value are as follows:
@@ -63,7 +65,7 @@ def load_bdiv_distances(data_access,bdiv_fpath):
     types = ['s','s', 'bf', 's', 'i']
 
     iterator=0
-    for res in input_set_generator(data_to_load, cur, types,100):
+    for res in input_set_generator(data_to_load, cur, types,10000):
         print 'running %i' % (iterator)
         iterator=iterator+1
         valid = data_access.loadBetaDivDistances(True, res)
