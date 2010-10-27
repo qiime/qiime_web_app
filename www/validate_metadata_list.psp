@@ -22,6 +22,7 @@ __status__ = "Development"
 from metadata_table import *
 
 templates = sess["templates"]
+forward = True
 
 if templates != None:
     draw_submit = True
@@ -35,8 +36,19 @@ if templates != None:
             log.append('Reading metadata file...')
             table.processMetadataFile()
             log.append('Printing HTML table...')
-            htmlTable, error_log = table.printHTMLTable()            
-            req.write(htmlTable)
+            html_table, error_log, visible_elements = table.printHTMLTable()
+            req.write(str(html_table))
+
+            if not visible_elements:
+                req.write('No corrections necessary.')
+            else:
+                forward = False
+            
+            if error_log:
+                draw_submit = False
+                for line in error_log:
+                    req.write(line + '<br/>\n')
+
             req.write('<p/>')
         
         except Exception, e:
@@ -50,7 +62,9 @@ if templates != None:
             draw_submit = False
             break
     
-    if draw_submit:
+    if forward:
+        req.write('<script type="text/javascript">document.forms["metadata_form"].submit();</script>')
+    elif draw_submit and not forward:
         req.write('<p/>')
         req.write('<input type="submit" id="metadata_submit" value="Submit Metadata"><br/>')
         req.write('<p/>')

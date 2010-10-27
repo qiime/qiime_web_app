@@ -228,12 +228,113 @@ class MetadataTable(object):
         for row in self._invalid_rows:
             print row
 
+    def renderInvisibleTable(self, file_type, column_count, row_count):
+        # Variables
+        html_table = ''
+        y = 0
+        
+        while y < row_count:
+            x = 0
+            while x < column_count:
+                for column in self._columns:
+                    unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
+                    actual_value = str(column.values[y][0])
+                    hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
+                    html_table += hidden_field_text
+                    x += 1
+            y += 1
+            
+        return html_table
+        
+    def renderVisibleTable(self, file_type, column_count, row_count, rows_to_draw):
+        html_table = '<table class="metadata_table">'
+        
+        # Print the column headers
+        self._log.append('Print column headers...')
+        x = 0
+        while x < column_count:
+            current_column = self._columns[x]
+            self._log.append('Current column is "%s"' % current_column.column_name)
+            if current_column.in_dictionary:
+                html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
+                self._log.append('Column is in dictionary')
+            else:
+                html_table += '<th class="meta_th" style="background:#00FFFF">' + self._columns[x].column_name + '</th>\n'
+                self._log.append('Column is not in dictionary - assuming user-defined column.')
+            x += 1
+    
+        # Max length for text columns
+        max_text_length = 50
+        
+        # Row color
+        row_color = '#FFFFFF'
+    
+        # Index for rows
+        y = 0
+        while y < row_count:
+            x = 0
+            
+            if y not in rows_to_draw:
+                while x < column_count:
+                    for column in self._columns:
+                        unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
+                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
+                        html_table += hidden_field_text
+                        x += 1
+                continue
+            
+            html_table += '<tr style="background-color:%s;">\n' % (row_color)
+            while x < column_count:
+                for column in self._columns:
+
+                    # Create a unique column name for processing later
+                    unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
+                    self._log.append('Unique column name: "%s"' % (unique_column_name))
+
+                    # This is the output value for the HTML page. It may be truncated for display if the
+                    # text is very long.
+                    value_output = str(column.values[y][0])
+
+                    # This will always hold the full value of the field. Used for submission to database.
+                    actual_value = str(column.values[y][0])
+                    self._log.append('Actual value: "%s"' % (actual_value))
+                
+                    #For fields that are valid:
+                    if column.values[y][1] == 'good':
+                        # If this is a text column, truncate the length of the string to keep the display reasonable
+                        if type(column) == TextColumn:
+                            if len(value_output) > max_text_length:
+                                value_output = value_output[:max_text_length] + '...'
+
+                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
+                        cell_color = '#FFFFFF'
+                        html_table += '<td>%s%s</td>\n' % (hidden_field_text, value_output)
+                        
+                    # For fields that are not valid
+                    else:
+                        cell_color = '#EEEEFF'
+                        html_table += '<td style="background-color:#FFFF00;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
+                            <a href="" onclick="replaceWithCurrent(\'%s\', \'%s\');return false;"><div style="font-size:11px">update all like values</div></a></td>\n' \
+                            % (cell_color, unique_column_name, unique_column_name, actual_value, column.writeJSValidation(), unique_column_name, actual_value)
+                    x += 1
+                
+            html_table +='</tr>\n'
+            y += 1 
+    
+        html_table += '</table>\n'
+        
+        return html_table
+
     def printHTMLTable(self):
         # Log which function we're in
         self._log.append('Entering printHTMLTable()...')
         
         # Return variables
         html_table = ''
+        visible_elements = False
+        
+        # Rows to visibly draw
+        rows_to_draw = []
 
         try:
             # Determine the type of file we're dealing with
@@ -248,99 +349,36 @@ class MetadataTable(object):
             else:
                 self._log.append('Could not determine type of file: "%s". Exiting.' % self._metadataFile)
                 return None, log
-            
             self._log.append('File type is "%s"' % file_type)
-            
-            html_table = '<table class="metadata_table">'
-            
+
             column_count = len(self._columns)
             row_count = len(self._columns[0].values)
-    
-            # Print the column headers
-            self._log.append('Print column headers...')
-            x = 0
-            while x < column_count:
-                current_column = self._columns[x]
-                self._log.append('Current column is "%s"' % current_column.column_name)
-                if current_column.in_dictionary:
-                    html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
-                    self._log.append('Column is in dictionary')
-                else:
-                    html_table += '<th class="meta_th" style="background:#00FFFF">' + self._columns[x].column_name + '</th>\n'
-                    self._log.append('Column is not in dictionary - assuming user-defined column.')
-                x += 1
-            
-            #####################################
-            # Print the table rows
-            #####################################
-            
-            # Max length for text columns
-            max_text_length = 50
-            
-            # Index for rows
-            y = 0
-            
-            while y < row_count:
 
+            # Figure out if there are any rows to visibly draw            
+            y = 0
+            while y < row_count:
                 x = 0
-                # Do a pass to determine row color:
-                row_color = '#FFFFFF'
                 while x < column_count:
                     for column in self._columns:
                         if column.values[y][1] == 'good':
                             continue
                         else:
-                            row_color = '#AAAAAA'
+                            rows_to_draw.append(y)
                             break
                     x += 1
-
-                x = 0                
-                html_table += '<tr style="background-color:%s;">\n' % (row_color)
-                
-                while x < column_count:
-                    for column in self._columns:
-    
-                        # Create a unique column name for processing later
-                        unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
-                        self._log.append('Unique column name: "%s"' % (unique_column_name))
-    
-                        # This is the output value for the HTML page. It may be truncated for display if the
-                        # text is very long.
-                        value_output = str(column.values[y][0])
-    
-                        # This will always hold the full value of the field. Used for submission to database.
-                        actual_value = str(column.values[y][0])
-                        self._log.append('Actual value: "%s"' % (actual_value))
-                        
-                        #For fields that are valid:
-                        if column.values[y][1] == 'good':
-                            # If this is a text column, truncate the length of the string to keep the display reasonable
-                            if type(column) == TextColumn:
-                                if len(value_output) > max_text_length:
-                                    value_output = value_output[:max_text_length] + '...'
-                                
-                            hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
-                            cell_color = '#FFFFFF'
-                            html_table += '<td>%s%s</td>\n' % (hidden_field_text, value_output)
-                        
-                        # For fields that are not valid
-                        else:
-                            self._log.append('Field is "bad"')
-                            cell_color = '#EEEEFF'
-                            html_table += '<td style="background-color:#FFFF00;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
-                                <a href="" onclick="replaceWithCurrent(\'%s\', \'%s\');return false;"><div style="font-size:11px">update all like values</div></a></td>\n' \
-                                % (cell_color, unique_column_name, unique_column_name, actual_value, column.writeJSValidation(), unique_column_name, actual_value)
-                        x += 1
-                        
-                html_table +='</tr>\n'
-                y += 1 
+                y += 1
             
-            html_table += '</table>\n'
+            # If there are no rows to write, simply output all of the fields as hidden form variables
+            if not rows_to_draw:
+                html_table = self.renderInvisibleTable(file_type, column_count, row_count)
+            else:
+                html_table = self.renderVisibleTable(file_type, column_count, row_count, rows_to_draw)
+                visible_elements = True
 
             # Return the table and an empty error log
-            return html_table, None
+            return html_table, None, visible_elements
         
         except Exception, e:            
             self._log.append('Error caught in printHTMLTable: %s' % str(e))
-            return html_table, self._log
+            return html_table, self._log, False
 
