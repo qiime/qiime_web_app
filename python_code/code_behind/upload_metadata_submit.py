@@ -41,7 +41,7 @@ def validateFileContents(study_id, sess, form, req):
         t = zipfile.ZipFile(os.path.join(dir_path, fname),'r')
         
         # Do some error checking of the archive's contents
-        error_message = ''
+        errors = []
         templates = []
         study_template_found = False
         sample_template_found = False
@@ -84,39 +84,36 @@ def validateFileContents(study_id, sess, form, req):
                 outfile.flush()
                 outfile.close()
             except IOError as e:
-                error_message += """Could not open file "%s". The error was: %s""" % (filename, e)
+                errors.append("""Could not open file "%s". The error was: %s""" % (filename, e))
                 continue
 
-            # Check to see if columns are valid in this file. If so, output the first errors...
+            # Check to see if columns are valid in this file
             mdtable = MetadataTable(os.path.join(dir_path, filename), study_id)
-            errors = mdtable.validateColumnNames()
-            if len(errors) > 0:
-                i = 0
-                error_message += 'Error: The following errors were found:\n'
-                for error in errors:
-                    error_message += error + '\n\n'
-                    if i > 5:
-                        error_message += '... Error report truncated. Please fix all such errors in your templates.'
-                        break
-                    i += 1
+            table_errors = mdtable.validateColumnNames()
+            if len(table_errors) > 0:
+                for error in table_errors:
+                    errors.append(error)
 
         # If the zip does not have exactly three templates, raise an error
         if len(templates) != 3:
-            error_message += "Error: A valid study, sample, and prep template must be in the archive.\n\n"
+            errors.append('Error: A valid study, sample, and prep template must be in the archive.')
             
         # Make sure we have one of each template type
         if not study_template_found:
-            error_message += 'Error: Study tempalte was not found.'
+            errors.append('Error: Study tempalte was not found.')
         if not sample_template_found:
-            error_message += 'Error: Sample template was not found.'
+            errors.append('Error: Sample template was not found.')
         if not prep_template_found:
-            error_message += 'Error: Prep template was not found.'
+            errors.append('Error: Prep template was not found.')
 
         # If there were errors, report them and stop processing. Note that writing to the req 
         # object is the signal for the JumpLoader to flag and error
-        if error_message != '':
-            req.write(error_message)
-            return None
+        if errors:
+            for error in errors:
+                req.write('<h3>The following errors were found:</h3><ul>')
+                req.write('<li style="color:#FF0000">%s</li>\n' % error)
+                req.write('</ul>')
+                return None
                             
         # Delete the old files
         files = os.listdir(dir_path)

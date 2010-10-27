@@ -59,13 +59,13 @@ class MetadataTable(object):
                 message = ''
                 # Check the length of the column
                 if len(column) > max_column_length:
-                    message += '"%s": Column name is too long. Names must be %s characters or less.' % (column, str(max_column_length))
+                    message += '"%s": Column name is too long. Names must be %s characters or less.<br/>' % (column, str(max_column_length))
                 if re.match(expression, column) == None:
-                    message += '\n"%s": Column name contains invalid characters. Column names must start with a letter and may only contain letters, numbers, and the underscore ("_") character. Spaces are not allowed.' % column
+                    message += '\n"%s": Column name contains invalid characters. Column names must start with a letter and may only contain letters, numbers, and the underscore ("_") character. Spaces are not allowed.<br/>' % column
                 if len(message) > 0:
                     errors.append(message)
         except Exception, e:
-            errors.append('The file "%s" is in an invalid format. Make sure you didn\'t save it as a binary Excel file. Template files must be in tab-delimited format.' % (data_file))
+            errors.append('The file "%s" is in an invalid format. Make sure you didn\'t save it as a binary Excel file. Template files must be in tab-delimited format.<br/>' % (data_file))
             return errors
         finally:
             data_file.close()

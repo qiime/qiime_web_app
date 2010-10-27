@@ -915,9 +915,6 @@ class QiimeDataAccess(object):
             raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
         
         try:
-            lock = Lock()
-            lock.acquire()
-            
             # Does table exist already?
             log.append('Checking if table %s exists...' % extra_table)
             named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
@@ -934,29 +931,33 @@ class QiimeDataAccess(object):
                     constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
                     (extra_table, key_table, extra_table, key_table, key_table, key_table)
                 log.append(statement)
-                results = con.cursor().execute(statement)
-
-                # If it's a prep table, must create row_number column
-                if field_type == 'prep':
-                    log.append('Adding row_number to extra_prep table...')                        
-                    statement = 'alter table %s add row_number integer' % (extra_table)
-                    log.append(statement)
+                try:
                     results = con.cursor().execute(statement)
 
-                if field_type == 'prep':
-                    statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_number)' % (extra_table, extra_table, key_table)
-                else:
-                    statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
-                log.append(statement)
-                results = con.cursor().execute(statement)
+                    # If it's a prep table, must create row_number column
+                    if field_type == 'prep':
+                        log.append('Adding row_number to extra_prep table...')                        
+                        statement = 'alter table %s add row_number integer' % (extra_table)
+                        log.append(statement)
+                        results = con.cursor().execute(statement)
+
+                    if field_type == 'prep':
+                        statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_number)' % (extra_table, extra_table, key_table)
+                    else:
+                        statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
+                    log.append(statement)
+                    results = con.cursor().execute(statement)
                     
-                # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
-                if field_type == 'study':
-                    log.append('Inserting study extra row...')                        
-                    statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
-                    log.append(statement)
-                    results = con.cursor().execute(statement)
-                    con.cursor().execute('commit')
+                    # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
+                    if field_type == 'study':
+                        log.append('Inserting study extra row...')                        
+                        statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
+                        log.append(statement)
+                        results = con.cursor().execute(statement)
+                        con.cursor().execute('commit')
+                except:
+                    # Not a great solution... but for now, it allows different threads to execute
+                    pass
                             
             # Check if the column exists
             log.append('Checking if extra column exists: %s' % field_name)
