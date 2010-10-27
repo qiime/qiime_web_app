@@ -931,33 +931,29 @@ class QiimeDataAccess(object):
                     constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
                     (extra_table, key_table, extra_table, key_table, key_table, key_table)
                 log.append(statement)
-                try:
-                    results = con.cursor().execute(statement)
+                results = con.cursor().execute(statement)
 
-                    # If it's a prep table, must create row_number column
-                    if field_type == 'prep':
-                        log.append('Adding row_number to extra_prep table...')                        
-                        statement = 'alter table %s add row_number integer' % (extra_table)
-                        log.append(statement)
-                        results = con.cursor().execute(statement)
-
-                    if field_type == 'prep':
-                        statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_number)' % (extra_table, extra_table, key_table)
-                    else:
-                        statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
+                # If it's a prep table, must create row_number column
+                if field_type == 'prep':
+                    log.append('Adding row_number to extra_prep table...')                        
+                    statement = 'alter table %s add row_number integer' % (extra_table)
                     log.append(statement)
                     results = con.cursor().execute(statement)
+
+                if field_type == 'prep':
+                    statement = 'alter table %s add constraint pk_%s primary key (%s_id, row_number)' % (extra_table, extra_table, key_table)
+                else:
+                    statement = 'alter table %s add constraint pk_%s primary key (%s_id)' % (extra_table, extra_table, key_table)
+                log.append(statement)
+                results = con.cursor().execute(statement)
                     
-                    # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
-                    if field_type == 'study':
-                        log.append('Inserting study extra row...')                        
-                        statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
-                        log.append(statement)
-                        results = con.cursor().execute(statement)
-                        con.cursor().execute('commit')
-                except:
-                    # Not a great solution... but for now, it allows different threads to execute
-                    pass
+                # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
+                if field_type == 'study':
+                    log.append('Inserting study extra row...')                        
+                    statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
+                    log.append(statement)
+                    results = con.cursor().execute(statement)
+                    con.cursor().execute('commit')
                             
             # Check if the column exists
             log.append('Checking if extra column exists: %s' % field_name)
@@ -977,8 +973,6 @@ class QiimeDataAccess(object):
             return extra_table
         except Exception, e:
             raise Exception(str(e))
-        finally:
-            lock.release()
     
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field, row_num):
         """ Writes a metadata value to the database

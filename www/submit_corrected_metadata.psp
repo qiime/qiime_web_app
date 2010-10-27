@@ -207,7 +207,7 @@ if len(host_fields) > 0:
 # To hold the current bucket of metadata values
 item_list = []
 threads = []
-thread_count = 1
+thread_count = 10
 
 # Sets the number of metadata fields to be processed by each thread
 item_count = len(all_other_fields)
