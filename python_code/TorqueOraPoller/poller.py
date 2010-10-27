@@ -27,7 +27,8 @@ __status__ = "Pre-release"
 POLL_INTERVAL = 5
 STATUS_INTERVAL = 12
 QSTAT_NORMAL = "/usr/bin/qstat | grep %s"
-QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s'
+SUBMIT_QUEUE = 'amdq'
+QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s -q ' + SUBMIT_QUEUE
 
 TORQUE_STATE_LOOKUP = {'R':'RUNNING',
                        'C':'COMPLETING',
@@ -41,6 +42,11 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'LoadSFFAndMetadataHandler':LoadSFFAndMetadataHandler,
                    'makeMappingAndOTUFiles':makeMappingAndOTUFiles,
                    'makeMappingFileandPCoAPlots':makeMappingFileandPCoAPlots}
+
+class FileDoesNotExistError(IOError):
+    pass
+class CannotOpenFileError(IOError):
+    pass
 
 class Poller(Daemon):
     """Polls TORQUE_JOBS for new jobs, submits, updates status"""
@@ -57,6 +63,7 @@ class Poller(Daemon):
         self.con = cx_Oracle.connect(user='SFF',password='SFF454SFF',\
                                      dsn='quarterbarrel:1521/qiimedb')
         self.username = os.environ['USER']
+        self.home = os.environ['HOME']
         self.Jobs = {} # pbs job id -> job object
         iter_count = 0
 
@@ -107,18 +114,52 @@ class Poller(Daemon):
             poll_result[pbs_job_id] = TORQUE_STATE_LOOKUP[state]
         return poll_result
 
+    def _readfile(self, home, job_name, pbs_job_id, filetype):
+        """Returns lines from a file or raises if error
+        
+        Raises IOError if an incorrect filetype is specified
+        Raises FileDoesNotExistError if the file does not exist
+        Raises CannotOpenFileError if unable to open a file
+        """
+        # construct expected filename
+        if filetype == 'stdout':
+            filename = '%s/%d.o%s' % (home, job_name, pbs_job_id)
+        elif filetype == 'stderr':
+            filename = '%s/%d.e%s' % (home, job_name, pbs_job_id)
+        else:
+            raise IOError, "Unknown filetype"
+
+        # check if the file actually exists
+        if not os.path.isfile(filename):
+            raise FileDoesNotExistError, "File %s does not exist"
+
+        # if it exists, attempt to open
+        try:
+            lines = open(filename).readlines()
+        except:
+            raise CannotOpenFileError, "Unable to open %s"
+
+        return lines
+
     def _job_completed_or_errored(self, job):
         """Check err status"""
         job_name = job.OracleJobName
-        pbs_job_id = job.getTorqueJobId()
+        pbs_id = job.getTorqueJobId()
+    
+        # try to read stdout
+        try:
+            stdout_lines = self._readfile(self.home, job_name, pbs_id, 'stdout')
+        except IOError, e:
+            sys.stderr.write('Job %s errored out with %s\n' % (job_name, e))
+            return 'COMPLETED_ERROR'
 
-        stdout_file = '%s/%d.o%s' % (os.environ['HOME'],job_name, pbs_job_id)
-        if not stdout_file:
-            raise IOError('Could not create output file. Please check permissions. Process will abort.')
-        
-        stdout_lines = open(stdout_file).readlines()
-        stderr_file = '%s/%d.e%s' % (os.environ['HOME'],job_name, pbs_job_id)
-        stderr_lines = open(stderr_file).readlines()
+        # try to read stderr
+        try:
+            stderr_lines = self._readfile(self.home, job_name, pbs_id, 'stderr')
+        except IOError, e:
+            sys.stderr.write('Job %s errored out with %s\n' % (job_name, e))
+            return 'COMPLETED_ERROR'
+ 
         err = job.checkJobOutput(stdout_lines, stderr_lines)
 
         if err:
