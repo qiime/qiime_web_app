@@ -218,7 +218,7 @@ def get_table_col_values_from_form(form):
     ''' get the form values from select_metadata/index.psp '''
     table_col_value={}
     for form_key in form:
-        if form_key<>'fname_prefix' and form_key<>'taxonomy':
+        if form_key<>'fname_prefix' and form_key<>'taxonomy' and form_key<>'beta_metric' and form_key<>'rarefied_at':
             if type(form[form_key])==type([]):
                 for vals in form[form_key]:
                     if table_col_value.has_key(form_key):

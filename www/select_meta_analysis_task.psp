@@ -36,8 +36,8 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 # get the meta_analysis ID from the session
 meta_analysis_id=sess['meta_analysis_id']
 sess['study_id']=meta_analysis_id
-sess['job_type_id']=4
-job_type_id=4
+sess['job_type_id']=5
+job_type_id=5
 study_id=sess['study_id']
 sess.save()
 %>
@@ -51,7 +51,7 @@ sess.save()
             <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="select_metadata/index.psp">
                 <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
-                Generate metadata mapping and OTU table file</a>
+                Generate metadata mapping and PCoA Plots</a>
             </form>
         </li>
     </ul>

@@ -292,11 +292,34 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     #
+    def addMappingPCoAFiles(self, start_job, meta_id, \
+                                            map_filepath_db,dist_fpath_db,\
+                                            prefs_fp_db,\
+                                            pc_fp_db,\
+                                            discrete_3d_fpath_db,\
+                                            continuous_3d_fpath_db,\
+                                            zip_fpath_db):
+        try:
+            con = self.getMetadataDatabaseConnection()
+            if start_job:
+                con.cursor().callproc('add_map_and_pcoa_file_paths', 
+                                                   [meta_id, \
+                                                    map_filepath_db,dist_fpath_db,\
+                                                    prefs_fp_db,\
+                                                    pc_fp_db,\
+                                                    discrete_3d_fpath_db,\
+                                                    continuous_3d_fpath_db,\
+                                                    zip_fpath_db])  
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
     def getMetaAnalysisFilepaths(self, meta_analysis_id):
         try:
             con = self.getMetadataDatabaseConnection()
             results=con.cursor()
-            con.cursor().callproc('get_meta_analysis_filepaths', 
+            con.cursor().callproc('get_meta_anal_pcoa_filepaths', 
                                                     [meta_analysis_id,\
                                                     results])
             fpaths=[]
@@ -309,7 +332,24 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+    #
+    def getMetaAnalPCoAFilepaths(self, meta_analysis_id):
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results=con.cursor()
+            con.cursor().callproc('get_meta_anal_pcoa_filepaths', 
+                                                    [meta_analysis_id,\
+                                                    results])
+            fpaths=[]
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    fpaths.append(row)
+            return fpaths
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
     def createMetaAnalysis(self,web_app_user_id,inv_name):
         """ Returns a list of study names
         """
@@ -2186,13 +2226,13 @@ class QiimeDataAccess(object):
         """
         try:
             con = self.getSFFDatabaseConnection()
-            distance=-1.0
+            distance=0.0000
             if start_job:
                 db_output=con.cursor().callproc('get_beta_div_distance', \
                                                 [sample_name1,sample_name2,\
                                                 metric,rarefied,distance])
-                if db_output[4]==-1.0:
-                    return 'argh'
+                if db_output[4]==None:
+                    return 'not_found'
                 else:
                     return db_output[4]
                     

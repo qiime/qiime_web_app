@@ -16,22 +16,20 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from os import system
 
-def clearMetaFiles(map_fname,otu_fname,zip_fname):
+def clearMetaFiles(map_fname,dist_fname,zip_fname):
     # Get a copy of data_acess
     data_access = data_access_factory(DataAccessType.qiime_production)
 
     # Clear the job
-    data_access.clearMetaFiles(map_fname,otu_fname,zip_fname)
+    data_access.clearMetaFiles(map_fname,dist_fname,zip_fname)
 
 
 # Clear the job
 map_fname = form['map_fname']
-otu_fname = form['otu_fname']
+dist_fname = form['dist_fname']
 zip_fname = form['zip_fname']
-clearMetaFiles(map_fname,otu_fname,zip_fname)
-system('rm %s' % map_fname)
-system('rm %s' % otu_fname)
-system('rm %s' % zip_fname)
+clearMetaFiles(map_fname,dist_fname,zip_fname)
+
 
 
 psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')

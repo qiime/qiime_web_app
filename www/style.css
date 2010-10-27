@@ -77,7 +77,6 @@ div.progress-container {
 div.progress-container > div {
   background-color: #006699; 
   height: 100%;
-  width: 100%;
   text-align: center;
 }
 /* End progress bar stuff */

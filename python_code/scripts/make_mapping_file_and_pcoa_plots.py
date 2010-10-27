@@ -15,7 +15,7 @@ from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs
 from qiime.util import load_qiime_config
-from generate_mapping_and_otu_table import write_mapping_and_otu_table
+from generate_mapping_and_pcoa_plots import write_mapping_and_pcoa_plots
 
 
 qiime_config = load_qiime_config()
@@ -71,7 +71,7 @@ def main():
     beta_metric=opts.beta_metric
     rarefied_at=int(opts.rarefied_at)
     
-    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,beta_metric,rarefied_at)
+    write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,beta_metric,rarefied_at)
 
 if __name__ == "__main__":
     main()
