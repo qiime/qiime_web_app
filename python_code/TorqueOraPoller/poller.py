@@ -43,6 +43,7 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'makeMappingAndOTUFiles':makeMappingAndOTUFiles,
                    'makeMappingFileandPCoAPlots':makeMappingFileandPCoAPlots}
 
+
 class FileDoesNotExistError(IOError):
     pass
 class CannotOpenFileError(IOError):
