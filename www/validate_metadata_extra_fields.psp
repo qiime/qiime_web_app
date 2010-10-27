@@ -16,51 +16,48 @@ __status__ = "Development"
 
 <form id="no_custom_fields" name="no_custom_fields" method="post" action="validate_metadata.psp"></form>
 
-<h2>Please tell us about your new columns:</h2>
-<form target="_top" name="extra_form" id="extra_form" method="post" action="validate_metadata_extra_fields_submit.psp">
-
 <%
 from metadata_table import *
 
 templates = sess["templates"]
 study_id = sess['study_id']
 
-if templates != None:
-    
-    # Variable to keep track of how many templates required adjustments. If zero, skip to next page
-    templates_with_extras = 0
-    
-    for template in templates:
+# Preprocess the files to see if we have extras. Forward if not
+templates_with_extras = {}
+for template in templates:
+    table = MetadataTable(template, study_id)
+    user_defined_columns = table.getUserDefinedColumns()
+    if len(user_defined_columns):
+        templates_with_extras[template] = user_defined_columns
+
+if not templates_with_extras:
+    req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
+else:
+    req.write('<h2>Please tell us about your new columns:</h2>')
+    req.write('<form target="_top" name="extra_form" id="extra_form" method="post" action="validate_metadata_extra_fields_submit.psp">')
+
+    for template in templates_with_extras:
         log = []
         try:
-            log.append('Creating metadata table for file "%s"' % template)
-            table = MetadataTable(template, study_id)
-            user_defined_columns = table.getUserDefinedColumns()
-            
-            # Skip this file if no user-defined columns are present
-            if not len(user_defined_columns):
-                continue
-            else:
-                templates_with_extras += 1
-            
+            user_defined_columns = templates_with_extras[template]
             template_filename = os.path.basename(template)
-                
+            
             req.write('<h3 class="header_light_blue"> User-defined columns found in file: %s</h3>' % template_filename)
             log.append('Listing user-defined columns...')
-            
+        
             req.write('<table>')
             req.write('<th>Column Name</th><th>Description of Column</th><th>Type of Data</th>')
             for column in user_defined_columns:
                 req.write('<tr>')
-                
+            
                 req.write('<td>\n')
                 req.write(column.column_name + '\n<input type="hidden" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
                 req.write('</td>\n')
-                
+            
                 req.write('<td>\n')
                 req.write('<input type="text" class="required" style="width:400" name="column_description!!%s!!%s" id="column_description!!%s!!%s" value="">\n' % (template_filename, column.column_name, template_filename, column.column_name))
                 req.write('</td>\n')
-                
+            
                 req.write('<td>\n')
                 req.write('<select name="data_type!!%s!!%s" id="data_type!!%s!!%s">\n' % (template_filename, column.column_name, template_filename, column.column_name))
                 req.write('<option value="text">anything (e.g. "text is good", 5, 4.23)</option>\n')
@@ -69,10 +66,10 @@ if templates != None:
                 req.write('<option value="date">date (e.g. 10/31/2010 14:45:00, 4/1/2010)</option>\n')
                 req.write('</select>\n')
                 req.write('</td>\n')
-                
+            
                 req.write('</tr>\n')
             req.write('</table>\n')
-                    
+                
         except Exception, e:
             for entry in log:
                 req.write(entry + '<br/>')
@@ -80,17 +77,17 @@ if templates != None:
             req.write('<p/>Please send a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
             draw_submit = False
             break
-    
+
     if templates_with_extras:
         req.write('<p/>')
         req.write('<input type="submit" value="Continue"><br/>')
         req.write('<p/>')
     else:
         req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
-        
-    # End if
+
+    req.write('</form>')
 
 # End if
 %>
 
-</form>
+
