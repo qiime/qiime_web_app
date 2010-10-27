@@ -374,7 +374,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '_' + unique_name + '.zip')
     zip_fpath_db=os.path.join(zip_file_dir_db, file_name_prefix + '_' + unique_name+ '.zip')
     
-    cmd_call='zip %s %s' % (zip_fpath,map_filepath)
+    cmd_call='cd %s; zip %s %s' % (mapping_file_dir,zip_fpath,map_filepath.split('/')[-1])
     system(cmd_call)
     #cmd_call='zip -Xj  %s %s' % (zip_fpath,dist_fpath)
     #system(cmd_call)
@@ -384,7 +384,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     #system(cmd_call)
     #cmd_call='zip -r %s %s' % (zip_fpath,discrete_3d_dir)
     #system(cmd_call)
-    cmd_call='zip -r %s %s' % (zip_fpath,pcoa_file_dir)
+    cmd_call='cd %s; zip -r %s %s' % (pcoa_file_dir_loc,zip_fpath,pcoa_file_dir.split('/')[-1])
     system(cmd_call)
     
     t2 = clock()
