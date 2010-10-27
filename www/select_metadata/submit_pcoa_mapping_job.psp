@@ -1,0 +1,83 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh","Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+import os
+from os import system
+from cogent.app.util import get_tmp_filename
+from os.path import split,join
+from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
+from qiime.make_otu_table import make_otu_table
+from load_tab_file import input_set_generator
+from select_metadata import get_table_col_values_from_form
+sess = Session.Session(req)
+data_access = data_access_factory(DataAccessType.qiime_production)
+
+from submit_job_to_qiime import submitQiimeJob
+
+# Create the mapping file based on sample and field selections
+
+table_col_value=get_table_col_values_from_form(form)
+
+#raise ValueError
+# get the directory location for the files to write
+pcoa_file_dir=sess['pcoa_file_dir'].strip()
+pcoa_file_dir_db=sess['pcoa_file_dir_db'].strip()
+
+filesystem_path='/'.join(pcoa_file_dir.split('/')[:-2])
+web_server_path='/'.join(pcoa_file_dir_db.split('/')[:-2])
+
+query_folder=join(filesystem_path,'queries')
+if not os.path.exists(query_folder):
+    os.mkdir(query_folder)
+
+study_id=sess['meta_analysis_id']
+
+user_id=int(sess['web_app_user_id'])
+
+file_name_prefix=form['fname_prefix']
+
+beta_metric=form['beta_metric']
+rarefied_at=form['rarefied_at']
+
+if file_name_prefix=='':
+    file_name_prefix='default'
+    
+tmp_filename = get_tmp_filename(tmp_dir=query_folder, prefix="qiime_otu_mapping_", suffix=".txt")
+
+fout=open(tmp_filename,'w')
+fout.write(str(table_col_value))
+fout.close()
+
+params=[]
+params.append('fs_fp=%s' % filesystem_path)
+params.append('web_fp=%s' % web_server_path)
+params.append('query=%s' % tmp_filename.strip())
+params.append('fname_prefix=%s' % file_name_prefix)
+params.append('user_id=%s' % user_id)
+params.append('meta_id=%s' % study_id)
+params.append('beta_metric=%s' % beta_metric)
+params.append('rarefied_at=%s' % rarefied_at)
+job_input='!!'.join(params)
+job_type='makeMappingFileandPCoAPlots'
+
+# Submit the jobs
+try:
+    # Attempt the submission
+    submitQiimeJob(study_id, user_id, job_type, job_input, data_access)
+    # Redirect to the home page for this study
+    psp.redirect('../fusebox.psp?page=select_meta_analysis_task.psp')
+except Exception, e:
+    req.write(str(e))
+
+
+%>
+
