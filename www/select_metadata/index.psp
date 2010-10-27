@@ -48,8 +48,14 @@ $(document).ready(function(){
         }
         var fname_prefix=document.getElementById("fname_prefix").value;
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="fname_prefix" value="'+fname_prefix+'">'
+        /*
         var taxonomy_class=document.getElementById("taxonomy").value;
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="taxonomy" value="'+taxonomy_class+'">'
+        */
+        var beta_metric=document.getElementById("beta_metric").value;
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="beta_metric" value="'+beta_metric+'">'
+        var rarefied_at=document.getElementById("rarefied_at").value;
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="rarefied_at" value="'+rarefied_at+'">'
     }
     
 </script>
@@ -87,7 +93,19 @@ it will remove the return key functionality.
 <table bgcolor="#A9D0F5">
     <tr >
         <td colspan=3 style="border: 2px solid white;text-align:center">
-            <b>Filename Prefix: </b><input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" /><br>
+            <b>Filename Prefix: </b><input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" />
+            <br>
+            <b>Metric: </b><select id="beta_metric" name="beta_metric">
+                                <option>weighted_unifrac
+                                <option>unweighted_unifrac
+                            </select>
+            &nbsp;&nbsp;<b>Rarefied at: </b><select id="rarefied_at" name="rarefied_at">
+                                <option>0
+                                <option>1000
+                             <select>
+
+            <!--TURNED OFF SINCE WE ARE NOT MAKING OTU TABLE
+            <br>
             <b>Select Taxonomy: </b><select id="taxonomy" name="taxonomy">
                                         <option>None
                                         <option>G2_chip
@@ -98,6 +116,7 @@ it will remove the return key functionality.
                                         <option>PHPR
                                         <option>RDP
                                     </select>
+            -->
         </td>
     </tr>
     <tr>
@@ -185,7 +204,7 @@ req.write(unique_cols_to_select_box_str(public_columns))
         <tr>
             <td>
                 </form>
-                <form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/submit_otu_mapping_job.psp">
+                <form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/submit_pcoa_mapping_job.psp">
                 <input type="submit">
                 </form>
             </td>

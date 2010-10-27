@@ -36,6 +36,12 @@ zip_file_dir = os.path.join(meta_analysis_dir, 'zip_files/')
 sess['zip_file_dir'] = zip_file_dir
 zip_file_dir_db = os.path.join(meta_analysis_dir_db, 'zip_files/')
 sess['zip_file_dir_db'] = zip_file_dir_db
+# Define otu table folder
+pcoa_file_dir = os.path.join(meta_analysis_dir, 'pcoa_files/')
+sess['pcoa_file_dir'] = pcoa_file_dir
+pcoa_file_dir_db = os.path.join(meta_analysis_dir_db, 'pcoa_files/')
+sess['pcoa_file_dir_db'] = pcoa_file_dir_db
+
 sess.save()
 
 #See if the study folder exists and if not, creates it.
@@ -59,6 +65,10 @@ try:
     if not os.path.exists(zip_file_dir):
         os.mkdir(zip_file_dir)    
 
+    # Create new zip file in filesystem
+    pcoa_file_dir = os.path.join(meta_analysis_dir, 'pcoa_files/')
+    if not os.path.exists(pcoa_file_dir):
+        os.mkdir(pcoa_file_dir)
     
 except Exception, e:
     req.write('<h1>Error: The Meta-Analysis directory could not be created.</h1>')
