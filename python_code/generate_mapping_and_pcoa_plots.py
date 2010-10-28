@@ -22,7 +22,8 @@ from qiime.parse import parse_mapping_file,parse_qiime_parameters
 from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
 from qiime.format import format_matrix
-from qiime.workflow import print_commands,call_commands_serially,\
+from run_process_sff_through_split_lib import web_app_call_commands_serially
+from qiime.workflow import print_commands,\
                            print_to_stdout, no_status_updates,generate_log_fp,\
                            get_params_str, WorkflowError,WorkflowLogger
 from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
@@ -32,6 +33,8 @@ from cogent.util.misc import get_random_directory_name
 qiime_config = load_qiime_config()
             
 def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,beta_metric,rarefied_at):
+    
+    total1 = clock()
     unique_cols=[]
     # Create the mapping file based on sample and field selections
     # get the directory location for the files to write
@@ -194,7 +197,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
             if clipped_col_value<>'####ALL####' and clipped_col_value.upper()<>'NONE':
                 same_col_addition_statements.append('"'+tab+'"."'+column+'"=\''+clipped_col_value+'\'')
         if same_col_addition_statements<>[]:
-            additional_where_statements.append('%s' % (' or '.join(same_col_addition_statements)))
+            additional_where_statements.append('(%s)' % (' or '.join(same_col_addition_statements)))
     if additional_where_statements<>[]:
         statement += ' and (%s) ' % (' and '.join(additional_where_statements)) 
 
@@ -323,7 +326,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     result.append('#' + '\t'.join(all_headers))
     for mapping_line in mapping_lines:
         result.append('\t'.join(\
-         [mapping_line.get(h,'') for h in all_headers if h!='']))
+         [mapping_line.get(h,'NA') for h in all_headers if h!='']))
     
     #test=merge_mapping_files([merged_file])
     mapping_file.write('\n'.join(result))
@@ -334,23 +337,65 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     
     t1 = clock()
     
-    distances=[]
-    sample_labels=[]
-    for sample_name1,otu_run_prefix1,otu_study_id1 in sample_to_run_prefix:
-        data_row=[]
+    query=[]
+    for i,sample_name1 in enumerate(samples_list):
+        for j,sample_name2 in enumerate(samples_list[:i+1]):
+            query.append('\t'.join([sample_name1,sample_name2,'999999999999',beta_metric,str(rarefied_at)]))
+    
+    con = data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    types = ['s','s', 'bf', 's', 'i']
+
+    iterator=0
+    listofall={}
+    
+    data_rows_lookup={}
+    for i in samples_list:
+        data_rows_lookup[i]={}
+    for res in input_set_generator(query, cur, types,10000):
+        print 'running %i' % (iterator)
+        iterator=iterator+1
+        valid = data_access.getBetaDivDistancesArray(True, res)
+        if valid != []:
+            for i,samp1 in enumerate(valid[0]):
+                data_rows_lookup[samp1][valid[1][i]]=valid[2][i]
         
-        for sample_name2,otu_run_prefix2,otu_study_id2 in sample_to_run_prefix:
+
+    '''
+    data_rows_lookup={}
+    for i in samples_list:
+        data_rows_lookup[i]={}
+    
+    for i,sample_name1 in enumerate(samples_list):
+        for j,sample_name2 in enumerate(samples_list[:i+1]):
             data_found=data_access.getBetaDivDistances(True,sample_name1,sample_name2,
                                                      beta_metric,rarefied_at)
+            data_rows_lookup[sample_name1][sample_name2]=data_found
             
-            if data_found!= 'not_found':
-                data_row.append(data_found)
-        if data_row != []:
-            sample_labels.append(sample_name1)
-            distances.append(data_row)
+    '''
+    distances=[]
+    sample_labels=[]
+    for i in samples_list:
+        row_data=[]
+        for j in samples_list:
+            if (data_rows_lookup[i].has_key(j) and data_rows_lookup[i][j]!=None):
+                row_data.append(data_rows_lookup[i][j])
+                if i not in sample_labels:
+                    sample_labels.append(i)
+            elif (data_rows_lookup[j].has_key(i) and data_rows_lookup[j][i]!=None):
+                row_data.append(data_rows_lookup[j][i])
+                if i not in sample_labels:
+                    sample_labels.append(i)
+                    
+
+        if row_data !=[]:
+            distances.append(row_data)     
+
+    #sample_labels.append(sample_name1)
+    #distances.append(data_row)
     
     distance_matrix=format_matrix(distances,sample_labels,sample_labels)
-    
+    #print distance_matrix
     dist_fpath=os.path.join(pcoa_file_dir, file_name_prefix+'_%s.txt' % beta_metric)
     dist_fpath_db=os.path.join(pcoa_file_dir_db, file_name_prefix+'_%s.txt' % beta_metric)
     distance_mat_file = file(dist_fpath, 'w')
@@ -398,7 +443,8 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
                                             discrete_3d_fpath_db,
                                             continuous_3d_fpath_db,
                                             zip_fpath_db)
-    
+    total2 = clock()
+    print 'total time: %s' % (total2-total1)
     
 def run_principal_coords_through_3d_plots(dist_fpath,mapping_fp,output_dir,beta_diversity_metric,pcoa_file_dir_db):  
     """ Run the data preparation steps of Qiime 
@@ -428,7 +474,7 @@ def run_principal_coords_through_3d_plots(dist_fpath,mapping_fp,output_dir,beta_
     mapping_fields = ','.join(mapping_file_header)
     
     # Build the 3d prefs file generator command
-    prefs_fp = get_tmp_filename(output_dir, suffix=".pref")
+    prefs_fp = get_tmp_filename(output_dir, suffix=".pref").strip()
     prefs_fp_db=os.path.join(pcoa_file_dir_db,os.path.split(prefs_fp)[-1])
     prefs_cmd = \
      '%s %s/make_prefs_file.py -m %s -o %s' %\
@@ -500,7 +546,7 @@ def run_principal_coords_through_3d_plots(dist_fpath,mapping_fp,output_dir,beta_
         beta_diversity_metric,continuous_3d_command)])
 
     # Call the command handler on the list of commands
-    call_commands_serially(commands, print_to_stdout, logger)
+    web_app_call_commands_serially(commands, print_to_stdout, logger)
 
     return prefs_fp_db,pc_fp_db,discrete_3d_dir_db,continuous_3d_dir_db,\
            prefs_fp,pc_fp,discrete_3d_dir,continuous_3d_dir 
