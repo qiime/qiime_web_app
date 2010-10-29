@@ -52,6 +52,11 @@ zip_file_dir = os.path.join(meta_analysis_dir, 'zip_files/')
 sess['zip_file_dir'] = zip_file_dir
 zip_file_dir_db = os.path.join(meta_analysis_dir_db, 'zip_files/')
 sess['zip_file_dir_db'] = zip_file_dir_db
+# Define zipped meta_analysis folder
+pcoa_file_dir = os.path.join(meta_analysis_dir, 'pcoa_files/')
+sess['pcoa_file_dir'] = pcoa_file_dir
+pcoa_file_dir_db = os.path.join(meta_analysis_dir_db, 'pcoa_files/')
+sess['pcoa_file_dir_db'] = pcoa_file_dir_db
 sess.save()
 
 
@@ -74,6 +79,8 @@ try:
         os.mkdir(otu_table_file_dir)
     if not os.path.exists(zip_file_dir):
         os.mkdir(zip_file_dir)
+    if not os.path.exists(pcoa_file_dir):
+        os.mkdir(pcoa_file_dir)
 except Exception, e:
     req.write('<h1>Error: The Investigation directory could not be created.</h1>')
     req.write(str(e))

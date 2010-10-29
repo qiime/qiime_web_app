@@ -15,7 +15,7 @@ from os import system,path,makedirs
 import os
 from random import choice
 
-from time import strftime,clock
+from time import strftime,clock,time
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_table
 from qiime.parse import parse_mapping_file,parse_qiime_parameters
@@ -34,7 +34,7 @@ qiime_config = load_qiime_config()
             
 def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,beta_metric,rarefied_at):
     
-    total1 = clock()
+    total1 = time()
     unique_cols=[]
     # Create the mapping file based on sample and field selections
     # get the directory location for the files to write
@@ -61,7 +61,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     
     map_files=[]
     
-    t1 = clock()
+    t1 = time()
     
     #recorded_fields = data_access.getMetadataFields(study_id)
     database_map = {}
@@ -332,10 +332,10 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     mapping_file.write('\n'.join(result))
     mapping_file.close()
     
-    t2 = clock()
+    t2 = time()
     print 'Making map file: %s' % (t2 - t1)
     
-    t1 = clock()
+    t1 = time()
     
     query=[]
     for i,sample_name1 in enumerate(samples_list):
@@ -402,19 +402,22 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     distance_mat_file.write(distance_matrix)
     distance_mat_file.close()
     
-    t2 = clock()
+    t2 = time()
     print 'Making distance mtx file: %s' % (t2 - t1)
-    
+    t1=time()
     prefs_fp_db,pc_fp_db,discrete_3d_dir_db,continuous_3d_dir_db,\
            prefs_fp,pc_fp,discrete_3d_dir,continuous_3d_dir=\
         run_principal_coords_through_3d_plots(dist_fpath,map_filepath,\
                         pcoa_file_dir,beta_metric,pcoa_file_dir_db)
-
+    
+    t2 = time()
+    print 'pcoa plotting: %s' % (t2-t1)
+    
     pc_filename=pc_fp_db.split('/')[-1]
     discrete_3d_fpath_db=os.path.join(discrete_3d_dir_db,pc_filename+'_3D.html')
     continuous_3d_fpath_db=os.path.join(continuous_3d_dir_db,pc_filename+'_3D.html')
 
-    t1 = clock()
+    t1 = time()
     # zip up the OTU table and Mapping file for easy download
     zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '_' + unique_name + '.zip')
     zip_fpath_db=os.path.join(zip_file_dir_db, file_name_prefix + '_' + unique_name+ '.zip')
@@ -432,7 +435,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     cmd_call='cd %s; zip -r %s %s' % (pcoa_file_dir_loc,zip_fpath,pcoa_file_dir.split('/')[-1])
     system(cmd_call)
     
-    t2 = clock()
+    t2 = time()
     print 'Zipping files: %s' % (t2 - t1)
     
     #add filepaths to DB, so we know where to find the generated files
@@ -443,7 +446,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
                                             discrete_3d_fpath_db,
                                             continuous_3d_fpath_db,
                                             zip_fpath_db)
-    total2 = clock()
+    total2 = time()
     print 'total time: %s' % (total2-total1)
     
 def run_principal_coords_through_3d_plots(dist_fpath,mapping_fp,output_dir,beta_diversity_metric,pcoa_file_dir_db):  
