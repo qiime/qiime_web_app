@@ -14,7 +14,6 @@ __status__ = "Production"
 
 import cx_Oracle
 from crypt import crypt
-from data_access import AbstractDataAccess
 from threading import Lock
 from time import sleep
 

@@ -11,4 +11,6 @@ __status__ = "Production"
 
 <%
 req.write(req.document_root())
+import cx_Oracle
+req.write('yay!')
 %>
