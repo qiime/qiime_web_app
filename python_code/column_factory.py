@@ -41,7 +41,7 @@ class ColumnFactory(object):
         elif datatype == 'ontology':
             return self._data_access.getOntologies(column_name)
 
-    def createColumn(self, column_name, datatype, length, in_dictionary):
+    def createColumn(self, column_name, datatype, max_length, min_length, in_dictionary):
         """ Creates a column of the right type based on the column name
         """
         _column = None
@@ -68,7 +68,7 @@ class ColumnFactory(object):
             regex = '^((((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|([1-2][0-9]))))[\-\/\s]?\d{2}(([02468][048])|([13579][26])))|(((((0?[13578])|(1[02]))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\-\/\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\-\/\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))[\-\/\s]?\d{2}(([02468][1235679])|([13579][01345789]))))(\s(((0?[1-9])|(1[0-9])|(2[0-3]))\:([0-5][0-9])((\s)|(\:([0-5][0-9])))))?$'
             _column = RegExColumn(column_name, self._is_invalid, in_dictionary, regex)
         elif datatype == 'text':
-            _column = TextColumn(column_name, self._is_invalid, in_dictionary, length)
+            _column = TextColumn(column_name, self._is_invalid, in_dictionary, max_length, min_length)
         elif datatype == 'list':
             _column = ListColumn(column_name, self._is_invalid, in_dictionary, _controlled_vocab_list)
         elif datatype == 'ontology':
@@ -99,11 +99,12 @@ class BaseColumn(object):
         # Variable to store whether or not this column exists in the column dictionary
         self.in_dictionary = in_dictionary
     
-    def _addValue(self, value, data_access):
+    def _addValue(self, value, data_access, validate_contents):
         status = 'good'
-        if not self._validate(value, data_access):
-            status = 'bad'
-            self.is_invalid(self.column_name, len(self.values))     
+        if validate_contents:
+            if not self._validate(value, data_access):
+                status = 'bad'
+                self.is_invalid(self.column_name, len(self.values))     
         self.values.append((value, status))
         
     def _isUnknown(self, value):
@@ -141,11 +142,12 @@ class ListColumn(BaseColumn):
         super(ListColumn, self).__init__(column_name, is_invalid, in_dictionary)
         self.list_names = list_names
         
-    def _addValue(self, value, data_access):
+    def _addValue(self, value, data_access, validate_contents):
         status = 'good'
-        if not self._validate(value, self.list_names, data_access):
-            status = 'bad'
-            self.is_invalid(self.column_name, len(self.values))
+        if validate_contents:
+            if not self._validate(value, self.list_names, data_access):
+                status = 'bad'
+                self.is_invalid(self.column_name, len(self.values))
         self.values.append((value, status))
         
     def writeJSValidation(self):
@@ -175,15 +177,16 @@ class OntologyColumn(BaseColumn):
         super(OntologyColumn, self).__init__(column_name, is_invalid, in_dictionary)
         self.ontology_names = ontology_names
 
-    def _addValue(self, value, data_access):
+    def _addValue(self, value, data_access, validate_contents):
         status = 'good'
-        if not self._validate(value, self.ontology_names, data_access):
-            status = 'bad'
-            self.is_invalid(self.column_name, len(self.values))
+        if validate_contents:
+            if not self._validate(value, self.ontology_names, data_access):
+                status = 'bad'
+                self.is_invalid(self.column_name, len(self.values))
         self.values.append((value, status))
         
     def writeJSValidation(self):
-        function_string = 'findListTerms(this, \'%s\')' % self.column_name 
+        function_string = "findListTerms(this, '{column_name}')".format(column_name = self.column_name)
         validation_string = ' onclick="%s;" ' % (function_string)
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
@@ -209,9 +212,10 @@ class OntologyColumn(BaseColumn):
 class TextColumn(BaseColumn):
     """ Text implementation of BaseColumn class
     """
-    def __init__(self, column_name, is_invalid, in_dictionary, length):
+    def __init__(self, column_name, is_invalid, in_dictionary, max_length, min_length):
         super(TextColumn, self).__init__(column_name, is_invalid, in_dictionary)
-        self.maxLength = length
+        self.max_length = max_length
+        self.min_length = min_length
         
     def _validate(self, value, data_access):
         """ return true if number, false otherwise
@@ -219,15 +223,19 @@ class TextColumn(BaseColumn):
         if self._isUnknown(value):
             return True
         
-        if self.maxLength == '':
+        if (self.max_length == '') or (self.min_length == ''):
             return False
-        elif len(value) > self.maxLength:
+        elif (len(value) > self.max_length) or (len(value) < self.min_length):
             return False
         else:
             return True
         
     def writeJSValidation(self):
-        function_string = 'validateTextLength(this, \'%s\', \'%s\')' % (self.column_name, self.maxLength)
+        function_string = "validateTextLength(this, '{column_name}', '{max_length}', '{min_length}')".format(\
+            column_name = self.column_name, \
+            max_length = self.max_length, \
+            min_length = self.min_length)
         validation_string = ' onclick="%s;" ' % (function_string)
         validation_string += ' onkeyup="%s;" ' % (function_string)
         return validation_string
+        

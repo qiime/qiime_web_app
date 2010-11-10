@@ -92,7 +92,7 @@ function replaceWithCurrent(field_name, old_value)
     }
 }
 
-function validateTextLength(sender, column_name, max_length)
+function validateTextLength(sender, column_name, max_length, min_length)
 {
     // check if browser can perform xmlhttp
     xmlhttp=GetXmlHttpObject()
@@ -104,6 +104,10 @@ function validateTextLength(sender, column_name, max_length)
     
     // Is the term too long?
     if (sender.value.length > max_length)
+    {
+        sender.style.background = invalid_color;
+    }
+    else if (sender.value.length < min_length)
     {
         sender.style.background = invalid_color;
     }

@@ -28,7 +28,7 @@ class MetadataTable(object):
     of a metadata file along with the validation associated with
     each type of column.
     """
-
+    
     def __init__(self, metadataFile, study_id):
         self._invalid_rows = []
         self._columns = []
@@ -36,47 +36,77 @@ class MetadataTable(object):
         self._metadataFile = metadataFile
         self._data_access = data_access_factory(DataAccessType.qiime_production)
         self._study_id = study_id
+
+    #############################################
+    # Getter and setter methods
+    #############################################
+    
+    def getColumnNames(self):
+        if self._columns == None:
+            self._buildMetadataTable(False, False)
+        return self._columns;
     
     def getInvalidRows(self):
         return self._invalid_rows
+        
+    def getUserDefinedColumns(self):
+        # Build the table with only column headers
+        self._buildMetadataTable(False, False)
+        user_defined_columns = []
+        for column in self._columns:
+            if not column.in_dictionary:
+                user_defined_columns.append(column)
+        return user_defined_columns 
+    
+    def getColumn(self, column_name):
+        column = None
+        
+        if len(self._columns) == 0:
+            self._buildMetadataTable(True, False)
+        
+        # Find the column
+        for c in self._columns:
+            if c.column_name.lower() == column_name.lower():
+                column = c
+                break
+                        
+        # If the column was not found, return an error
+        if not column:
+            raise ValueError('Could not locate column with column name "%s"' % column_name)
+            
+        return column;
+
+    #############################################
+    # Private methods
+    #############################################
         
     def _is_invalid(self, column_name, invalid_row):
         """ A callback that is fired when an invalid field has been found
         """
         self._invalid_rows.append((column_name, invalid_row))
-
-    def validateColumnNames(self):
-        global _metadataFile
+        
+    def checkForDuplicateColumns(self, headers):
         errors = []
-        expression = '^[A-Za-z][A-Za-z0-9_]*$'
-        max_column_length = 30
+        names = []
+        dupes = []
         
-        try:
-            data_file = open(self._metadataFile, "rU")
-            reader = csv.reader(data_file,  delimiter='\t')
-            headers = reader.next()
-            for column in headers:
-                message = ''
-                # Check the length of the column
-                if len(column) > max_column_length:
-                    message += '"%s": Column name is too long. Names must be %s characters or less.<br/>' % (column, str(max_column_length))
-                if re.match(expression, column) == None:
-                    message += '\n"%s": Column name contains invalid characters. Column names must start with a letter and may only contain letters, numbers, and the underscore ("_") character. Spaces are not allowed.<br/>' % column
-                if len(message) > 0:
-                    errors.append(message)
-        except Exception, e:
-            errors.append('The file "%s" is in an invalid format. Make sure you didn\'t save it as a binary Excel file. Template files must be in tab-delimited format.<br/>' % (data_file))
-            return errors
-        finally:
-            data_file.close()
-            return errors      
+        for column in headers:
+            if column in names:
+                dupes.append(column)
+            else:
+                names.append(column)
             
-    def _createColumnHeaders(self, reader, process_all_data):
-        self._log.append('Entering _createColumnHeaders()...')
+            for column in dupes:
+                errors.append('Column names must be unique within the sample file: %s' % column)
+                
+        return errors
         
+    def _createColumnHeaders(self, reader, process_all_data, validate_contents):
+        self._log.append('Entering _createColumnHeaders()...')
+
         # Get a column factory
         column_factory = ColumnFactory(self._is_invalid, self._data_access)
-        
+
         # Obtain the list of metadata columns for validation
         column_detail_list = self._data_access.getColumnDictionary()
         column_details = {}
@@ -85,30 +115,47 @@ class MetadataTable(object):
             #do whatever with x and y
         for item in column_detail_list:
             # Store off the data type and data length for each column name
-            column_details[item[0]] = (item[3], item[4])
+            # item[3] = data_type
+            # item[4] = max_length
+            # item[5] = min_length
+            column_details[item[0]] = (item[3], item[4], item[5])
 
         # Create the header columns
         headers = reader.next()
+        
+        # Make sure there are no duplicates
+        errors = self.checkForDuplicateColumns(headers)
+        if errors:
+            return errors
+            
+        # Check for bad columns
+        errors, bad_columns = self.validateColumnNames()
+        
         self._log.append('Column headers: %s<br/>' % str(headers))
         for column in headers:
+            
+            # Skip known bad columns
+            if column in bad_columns:
+                continue
+                
             self._log.append('Checking if column "%s" exists in column dictionary...' % column)
             try:
                 # If column exists in dictionary, pass the name to the column factory and get back
                 # a valid column object
                 if column in column_details:
                     self._log.append('Column exists in dictionary.')
-                    result = column_factory.createColumn(column, column_details[column][0], column_details[column][1], True)
+                    result = column_factory.createColumn(column, column_details[column][0], column_details[column][1], column_details[column][2], True)
                     if result:
                         self._addColumn(result)
                     else:
                         self._log.append('Column creation failed for \'' + column + '\' however the column does exist in the column dictionary')
                         return self._log
-                    
+
                 # Column not in dictionary - was added by user. Capture this field and store as metadata and
                 # request a new text column from the column factory.
                 else:
                     # Only check if these are in the database if a full processing run is requested
-                    if process_all_data:
+                    if process_all_data and validate_contents:
                         # Figure out the data type of for each column
                         extra_column_details = self._data_access.getExtraColumnMetadata(self._study_id)
                         if not extra_column_details:
@@ -116,20 +163,21 @@ class MetadataTable(object):
                         data_type = extra_column_details[column]['data_type']
                         if not data_type:
                             raise ValueError('Expected data type for extra column however none was found.')
-                        result = column_factory.createColumn(column, data_type, '8000', False)
+                        result = column_factory.createColumn(column, data_type, '8000', 0, False)
                     else:
-                        result = column_factory.createColumn(column, 'text', '8000', False)
+                        result = column_factory.createColumn(column, 'text', '8000', 0, False)
 
                     if result:
                         self._addColumn(result)
-                        
-            except Exception, e:
-                self._log.append('Could not create column. The reason was:\n%s' % (str(e)))
-                raise Exception(str(e))
 
-    def _processRows(self, reader):
+            except Exception, e:
+                message = 'Could not create column. The reason was:\n%s' % (str(e))
+                self._log.append(message)
+                raise Exception(message)
+
+    def _processRows(self, reader, validate_contents):
         self._log.append('Entering _processsRows()...')
-        
+
         # Read the column values
         try:
             for row in reader:
@@ -143,7 +191,7 @@ class MetadataTable(object):
                         data_found = True
                 if not data_found:
                     continue
-                
+
                 # Skip any rows starting with white space
                 if len(row) == 0:
                     print 'Skipping row due to zero lengh'
@@ -163,7 +211,7 @@ class MetadataTable(object):
                     while j < (len(self._columns) - orig_row_length):
                         row.append('')
                         j += 1
-                
+
                 i = 0
                 for column in row:
                     # Some files contain extra whitespace characters beyond the bounds of the last column.
@@ -171,36 +219,21 @@ class MetadataTable(object):
                     if (i > len(self._columns) - 1):
                         self._log.append('Extra whitespace found beyond column list boundary. Ignoring...')
                         continue
-                    
+
                     # Add the current value to the appropriate metadata table column
                     self._log.append('Adding new value to metadata column %s: "%s"' % (self._columns[i].column_name, column.strip()))
-                    self._columns[i]._addValue(column.strip(), self._data_access)
+                    self._columns[i]._addValue(column.strip(), self._data_access, validate_contents)
                     i += 1
-                    
+
         except Exception, e:
             raise Exception( 'Error in _processRows: %s. \nError Log:\n%s' % (str(e), self._log) )
-
-    def processMetadataFile(self):
-        # Build the table with columns and full data
-        self._buildMetadataTable(True)
-
-    def getUserDefinedColumns(self):
-        # Build the table with only column headers
-        self._buildMetadataTable(False)
-
-        user_defined_columns = []
-        for column in self._columns:
-            if not column.in_dictionary:
-                user_defined_columns.append(column)
-
-        return user_defined_columns 
             
-    def _buildMetadataTable(self, process_all_data):
+    def _buildMetadataTable(self, process_all_data, validate_contents):
         self._log.append('Entering _buildMetadataTable()...')
-        
+
         data_file = None
         reader = None
-        
+
         try:
             self._log.append('Opening data file...')
             data_file = open(self._metadataFile, "rU")
@@ -209,13 +242,17 @@ class MetadataTable(object):
 
             # Read the column headers and create columns for each column name in the file
             self._log.append('Creating column headers...')
-            self._createColumnHeaders(reader, process_all_data)
-        
+            
+            errors = self._createColumnHeaders(reader, process_all_data, validate_contents)
+            if errors:
+                message = 'Errors were found while processing column headers: %s' % ', '.join(errors)
+                raise Exception(message)
+
             # Fill in the rest of the data values for each row
             if process_all_data:
                 self._log.append('Processing all rows...')
-                self._processRows(reader)
-            
+                self._processRows(reader, validate_contents)
+
         except Exception, e:
             self._log.append('Error opening metadata file "%s". The error was:\n%s' % (self._metadataFile, str(e)))
             raise Exception('Error: Could not build metadata table.\nError Log: %s\nThe error is: %s' % (self._log, str(e)))            
@@ -227,7 +264,47 @@ class MetadataTable(object):
         print 'Invalid Rows:'
         for row in self._invalid_rows:
             print row
+    
+    #############################################
+    # Public methods
+    #############################################
 
+    def validateColumnNames(self):
+        global _metadataFile
+        bad_columns = []
+        errors = []
+        expression = '^[A-Za-z][A-Za-z0-9_]*$'
+        max_column_length = 30
+        
+        try:
+            data_file = open(self._metadataFile, "rU")
+            reader = csv.reader(data_file,  delimiter='\t')
+            headers = reader.next()
+            for column in headers:
+                bad = False
+                # Check the length of the column
+                if len(column) > max_column_length:
+                    errors.append('"%s": Column name is too long. Names must be %s characters or less.<br/>' % (column, str(max_column_length)))
+                    bad = True
+                # Check for invalid characters
+                if re.match(expression, column) == None:
+                    errors.append('\n"%s": Column name contains invalid characters. Column names must start with a letter and may only contain letters, numbers, and the underscore ("_") character. Spaces are not allowed.<br/>' % column)
+                    bad = True
+                # If the column fails initial validation, add to the bad list. These
+                # will not be checked for further errors until name is fixed.
+                if bad:
+                    bad_columns.append(column)
+                    
+        except Exception, e:
+            errors.append('The file "%s" is in an invalid format. Make sure you didn\'t save it as a binary Excel file. Template files must be in tab-delimited format.<br/>' % (data_file))
+        finally:
+            data_file.close()
+            return errors, bad_columns
+
+    def processMetadataFile(self):
+        # Build the table with columns and full data
+        self._buildMetadataTable(True, True)
+    
     def renderInvisibleTable(self, file_type, column_count, row_count):
         # Variables
         html_table = ''
@@ -301,21 +378,32 @@ class MetadataTable(object):
                 
                     #For fields that are valid:
                     if column.values[y][1] == 'good':
+                        self._log.append('Field value is valid.')
                         # If this is a text column, truncate the length of the string to keep the display reasonable
                         if type(column) == TextColumn:
                             if len(value_output) > max_text_length:
                                 value_output = value_output[:max_text_length] + '...'
 
-                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
+                        hidden_field_text = '<input type="hidden" id="{unique_column_name}" name="{unique_column_name}" value="{actual_value}">\n'.format(unique_column_name = unique_column_name, actual_value = actual_value)
                         cell_color = '#FFFFFF'
                         html_table += '<td>%s%s</td>\n' % (hidden_field_text, value_output)
                         
                     # For fields that are not valid
                     else:
+                        self._log.append('Field value is invalid')
                         cell_color = '#EEEEFF'
-                        html_table += '<td style="background-color:#FFFF00;"><input style="background-color:%s;" type="text" id="%s" name="%s" value="%s" %s> <br/> \
-                            <a href="" onclick="replaceWithCurrent(\'%s\', \'%s\');return false;"><div style="font-size:11px">update all like values</div></a></td>\n' \
-                            % (cell_color, unique_column_name, unique_column_name, actual_value, column.writeJSValidation(), unique_column_name, actual_value)
+                        html_table += '\<td style="background-color:#FFFF00;">\
+                            <input style="background-color:{cell_color};" type="text" id="{unique_column_name}" name="{unique_column_name}" value="{actual_value}" {js_validation}> \
+                            <br/> \
+                            <a href="" onclick="replaceWithCurrent(\'{unique_column_name}\', \'{actual_value}\');return false;">\
+                            <div style="font-size:11px">update all like values\
+                            </div>\
+                            </a>\
+                            </td>'.format(\
+                                cell_color = cell_color, \
+                                unique_column_name = unique_column_name, \
+                                actual_value = actual_value, \
+                                js_validation = column.writeJSValidation())
                     x += 1
                 
             html_table +='</tr>\n'
