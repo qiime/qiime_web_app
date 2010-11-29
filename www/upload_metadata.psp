@@ -46,29 +46,35 @@ function appletInitialized( uploader )
 }
 
 /*When file status changes, check if the upload was successful*/
-var valid=new Array();
-var invalid=0;
-var complete=false
-function uploaderFileStatusChanged( uploader, file ) 
+var valid = new Array();
+var invalid = 0;
+var complete = false
+
+function uploaderFileStatusChanged(uploader, file)
 {
-    var filecount=uploader.getFileCount()
-    var index=file.getIndex()
+    if (file.getStatus() == file.STATUS_FAILED)
+    {
+        alert('failed');
+    }
+    
+    var filecount = uploader.getFileCount()
+    var index = file.getIndex()
     if (file.getResponseContent() != null && file.getResponseContent() != '')
     {
         document.getElementById('complete').innerHTML = file.getResponseContent();
         //alert(file.getResponseContent())
     }
     else
-    {    
-        if (index<(filecount-1))
+    {
+        if (index < (filecount - 1))
         {
-            if( file.isFinished() && file.getType() == 0 ) 
+            if(file.isFinished() && file.getType() == 0)
             {
-                valid[index]=true;
+                valid[index] = true;
             }
             else
             {
-                valid[index]=false;
+                valid[index] = false;
             }
         }
         else
@@ -90,7 +96,7 @@ function uploaderFileStatusChanged( uploader, file )
         }
         if (complete)
         {
-            for (var i=0;i<valid.length;i++)
+            for (var i=0; i < valid.length; i++)
             {
                 if (valid[i])
                 {
@@ -98,10 +104,10 @@ function uploaderFileStatusChanged( uploader, file )
                 }
                 else
                 {
-                    invalid=invalid+1;
+                    invalid = invalid + 1;
                 }
             }
-            if (invalid==0)
+            if (invalid == 0)
             {
                 document.getElementById( "applet" ).innerHTML='';
                 setCompleteBox();
@@ -164,21 +170,26 @@ The filename should not contain spaces or non-alphanumeric characters.</p>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="250" width="600" mayscript>
+
     <param name="vc_uploadListViewName" value="_compact"/>
     <param name="vc_lookAndFeel" value="crossPlatform"/>
     <param name="vc_uploadViewStartUploadButtonText" value="Start upload"/>
     <param name="vc_uploadViewStartUploadButtonImageUrl" value="/img/media_play_green.png"/>
     <param name="vc_uploadViewStopUploadButtonText" value="Stop upload"/>
     <param name="vc_uploadViewStopUploadButtonImageUrl" value="/img/media_stop_red.png"/>
+    
     <param name="uc_maxFileLength" value="100000000000"/>
     <param name="uc_partitionLength" value="16777216"/>
     <param name="uc_useMd5" value="true"/>
     <param name="uc_usePartitionMd5" value="true"/>
-    <param name="ac_fireAppletInitialized" value="true"/> 
-    <param name="uc_fileNamePattern" value='^.+\.((zip))' />
-    <param name="ac_fireUploaderFileStatusChanged" value="true"/>
     <param name="uc_uploadUrl" value="upload_metadata_submit.psp">
+    <param name="uc_fileNamePattern" value='^.+\.((zip))' />
+    
+    <param name="ac_fireAppletInitialized" value="true"/> 
+    <param name="ac_fireUploaderFileStatusChanged" value="true"/>
+
 </applet>
+
 </div>
 </td></tr>
 <tr><td>
