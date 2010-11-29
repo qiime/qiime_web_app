@@ -2248,3 +2248,16 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+            
+    def getFoundOTUArray(self, md5_list):
+        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            otu_results = con.cursor().arrayvar(cx_Oracle.NUMBER , len(md5_list))
+            md5_results = con.cursor().arrayvar(cx_Oracle.STRING , len(md5_list))
+            results = con.cursor().callproc('otu_check.check_existing_otus', [md5_list, otu_results, md5_results])
+            return results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
