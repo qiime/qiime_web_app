@@ -355,9 +355,11 @@ class MetadataTable(object):
                 while x < column_count:
                     for column in self._columns:
                         unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
+                        actual_value = str(column.values[y][0])
                         hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
                         html_table += hidden_field_text
                         x += 1
+                y += 1 
                 continue
             
             html_table += '<tr style="background-color:%s;">\n' % (row_color)

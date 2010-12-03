@@ -56,7 +56,7 @@ for study_name in study_names:
             </form>
         </li>
     </ul>
-    <b>Study Tasks:</b>
+    <b>Manage Study:</b>
     <ul>
         <li>
             <form id="create_new_template" action="fusebox.psp" method="post">
@@ -145,8 +145,9 @@ elif metadata_complete == 'y' and sff_complete == 'y':
     
 %>
             <form id="submit_job_to_qiime" action="submit_job_to_qiime.psp" method="post">
-                <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
-                Submit job to Qiime</a>
+                <!--<a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
+                Submit job to Qiime</a>-->
+                Submit job to Qiime (currently disabled)
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
 
@@ -160,6 +161,12 @@ else:
 # End if
 
 %>
+        </li>
+        <li>
+            <form id="download_data" action="fusebox.psp?page=data_request_submit.psp" method="post">
+                <a href="" onclick="document.forms['download_data'].submit(); return false;">
+                Download Study Data</a>
+            </form>
         </li>
 
 <%
