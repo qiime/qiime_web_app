@@ -162,12 +162,14 @@ else:
 
 %>
         </li>
+        <!--
         <li>
             <form id="download_data" action="fusebox.psp?page=data_request_submit.psp" method="post">
                 <a href="" onclick="document.forms['download_data'].submit(); return false;">
                 Download Study Data</a>
             </form>
         </li>
+        -->
 
 <%
 if can_delete == 'y':
