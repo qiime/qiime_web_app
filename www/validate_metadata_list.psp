@@ -37,11 +37,11 @@ if templates != None:
             table.processMetadataFile()
             log.append('Printing HTML table...')
             html_table, error_log, visible_elements = table.printHTMLTable()
+            req.write(str(html_table))
 
             if not visible_elements:
                 req.write('No corrections necessary.')
             else:
-                req.write(str(html_table))
                 forward = False
             
             if error_log:
