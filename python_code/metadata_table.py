@@ -316,7 +316,7 @@ class MetadataTable(object):
                 for column in self._columns:
                     unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
                     actual_value = str(column.values[y][0])
-                    hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
+                    hidden_field_text = """<input type="hidden" id="%s" name="%s" value="%s">\n""" % (unique_column_name, unique_column_name, actual_value)
                     html_table += hidden_field_text
                     x += 1
             y += 1
@@ -356,7 +356,7 @@ class MetadataTable(object):
                     for column in self._columns:
                         unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
                         actual_value = str(column.values[y][0])
-                        hidden_field_text = '<input type=\"hidden\" id=\"%s\" name=\"%s\" value=\"%s\">\n' % (unique_column_name, unique_column_name, actual_value)
+                        hidden_field_text = """<input type="hidden" id="%s" name="%s" value="%s">\n""" % (unique_column_name, unique_column_name, actual_value)
                         html_table += hidden_field_text
                         x += 1
                 y += 1 
@@ -394,7 +394,7 @@ class MetadataTable(object):
                     else:
                         self._log.append('Field value is invalid')
                         cell_color = '#EEEEFF'
-                        html_table += '\<td style="background-color:#FFFF00;">\
+                        html_table += '<td style="background-color:#FFFF00;">\
                             <input style="background-color:{cell_color};" type="text" id="{unique_column_name}" name="{unique_column_name}" value="{actual_value}" {js_validation}> \
                             <br/> \
                             <a href="" onclick="replaceWithCurrent(\'{unique_column_name}\', \'{actual_value}\');return false;">\
