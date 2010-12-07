@@ -77,8 +77,8 @@ for item in form:
     # change the name the user typed when creating their study. This value
     # may show up in some legacy files or could be added by the user at a
     # later time. 
-    if field_name.upper() == 'PROJECT_NAME':
-        continue
+    #if field_name.upper() == 'PROJECT_NAME':
+    #    continue
     
     # Sample rows
     if  field_type == 'sample' and field_name == 'sample_name':
