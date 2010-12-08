@@ -140,7 +140,7 @@ def logErrors(master_list, new_list):
     if not new_list:
         return
         
-    if not master_list:
+    if master_list == None:
         raise ValueError('Master exception list is None.')
         
     for error in new_list:
