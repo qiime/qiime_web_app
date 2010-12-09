@@ -26,6 +26,7 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_acce
     i = 0
     while i < len(found_otus):
         otu_id = found_otus[i]
+        print otu_id
         md5 = found_otus_seq_md5[i]    
         i += 1
         
@@ -48,18 +49,17 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_acce
     for md5 in md5_sequence_map:
         seq_id = md5_seq_id_map[md5]
         sequence = md5_sequence_map[md5]
-        line = '{id}\n{sequence}\n'.format(id = seq_id, sequence = sequence)
+        line = '>{id}\n{sequence}\n'.format(id = seq_id, sequence = sequence)
         leftovers_fasta_file.write(line)
    
     # Clear containers for next round
     md5_list = []
     md5_sequence_map.clear()
     
-def find_otus(input_fasta, output_dir):
-    #input_fasta_file = open('/Users/wendel/Dropbox/new_otu_step/seqs.fna', 'r')
+def find_otus(input_fasta, leftover_fasta, otu_map):
     input_fasta_file = open(input_fasta, 'r')
-    leftovers_fasta_file = open(join(output_dir, 'leftover_sequences.fasta'), 'w')
-    otu_map_file = open(join(output_dir, 'otu_map.txt'), 'w')
+    leftovers_fasta_file = open(leftover_fasta, 'w')
+    otu_map_file = open(otu_map, 'w')
 
     # OTU map will be a dict of lists: otu_id, [list of sequence names]
     otu_map = {}
@@ -68,7 +68,6 @@ def find_otus(input_fasta, output_dir):
     md5_sequence_map = {}
     md5_seq_id_map = {}
     md5_list = []
-
 
     # Collection count for database submission. This is the size of the array we will
     # pass to oracle for bulk lookups of existing sequences
@@ -83,7 +82,9 @@ def find_otus(input_fasta, output_dir):
         i += 1
     
         # Collect the values we'll be needing
-        seq_id = rec[0]
+        
+        # First value is the arbitrary otu_id assigned by exact match filter
+        seq_id = rec[0].split()[0] 
         sequence = str(rec[1])
         m = md5(sequence).hexdigest()
         md5_list.append(m)

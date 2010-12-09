@@ -22,7 +22,7 @@ split_libraries:reverse_primers	disable
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:max_cdhit_memory	400
-pick_otus:refseqs_fp	/home/wwwuser/gg_otus/uclust_otus_97/rep_set/gg_97_otus_1oct2010.fasta
+pick_otus:refseqs_fp	/home/wwwuser/gg_otus/uclust_otus_97/rep_set/gg_97_otus_29nov2010.fasta
 pick_otus:blast_db
 pick_otus:similarity	0.97
 pick_otus:max_e_value	1e-10

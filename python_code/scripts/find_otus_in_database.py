@@ -15,8 +15,8 @@ from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable, create_dir
 from run_find_otus_in_database import find_otus
-from os import mkdir
-from os.path import exists, join, isdir
+from os import *
+from os.path import *
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -37,14 +37,17 @@ script_info['script_usage'] = [("Example:","This is an example of a basic use ca
 script_info['output_description']= "This script produces an otu_map.txt file and a leftover_sequences.fna file."
 script_info['required_options'] = [\
     make_option('-i','--input_fasta',help='This is the path to the input fasta file.'),\
-    make_option('-o','--output_directory', help='This is the path to the output directory')
+    make_option('-f','--leftover_fasta', help='This is the path where the leftover fasta file will be created'),\
+    make_option('-m','--otu_map', help='This is the path where the otu_map file will be created')
 ]
 script_info['version'] = __version__
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
     input_fasta = opts.input_fasta
-    output_directory = opts.output_directory
+    leftover_fasta = opts.leftover_fasta
+    otu_map = opts.otu_map
+    output_directory = split(leftover_fasta)[0]
     
     # Attempt to create the output dir if it doesn't exist
     if not isdir(output_directory):
@@ -55,7 +58,7 @@ def main():
             return
     
     # Do eeet!
-    find_otus(input_fasta, output_directory)
+    find_otus(input_fasta, leftover_fasta, otu_map)
     
 if __name__ == "__main__":
     main()

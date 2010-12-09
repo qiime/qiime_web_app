@@ -16,7 +16,7 @@ from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
-from os import system,popen,listdir
+from os import system, popen, listdir, mkdir
 from glob import glob
 import re
 from random import choice
@@ -36,6 +36,7 @@ from wrap_files_for_md5 import MD5Wrap
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 from cogent.util.misc import safe_md5
+from run_find_otus_in_database import find_otus
 
 
 ## Begin task-specific workflow functions
@@ -82,57 +83,41 @@ def run_chain_pick_otus(fasta_files, output_dir, command_handler, params, qiime_
     cat_split_lib_files_cmd=cat_files(fasta_files,concated_seqs_fpath)
     commands.append([('Concat sequences', cat_split_lib_files_cmd)])
     
+    ###Starting the Chain OTU picking###
 
-    ###Starting the Choin OTU picking###
     # Perform exact match pre-filtering
     exact_match_otus_dir=join(output_dir,'pick_otus_exact')
     pick_otus_cmd = '%s %s/pick_otus.py -m prefix_suffix -i %s -o %s -p 5000' %\
-     (python_exe_fp, script_dir, concated_seqs_fpath, exact_match_otus_dir)
+        (python_exe_fp, script_dir, concated_seqs_fpath, exact_match_otus_dir)
     
     commands.append([('Pick OTUs: Exact match', pick_otus_cmd)])
     
     # Pick Rep set from exact match pre-filtering
     exact_match_basename=splitext(split(concated_seqs_fpath)[-1])[0]
     exact_otu_fp=join(exact_match_otus_dir,exact_match_basename+'_otus.txt')
+    exact_match_fna = join(exact_match_otus_dir,exact_match_basename) + '_exact_rep.fna'
     otu_maps_to_merge.append(exact_otu_fp)
     
-    pick_rep_set_exact_cmd = '%s %s/pick_rep_set.py -i %s -f %s -o %s_exact_rep.fna ' %\
-    (python_exe_fp, script_dir, exact_otu_fp, concated_seqs_fpath, \
-     join(exact_match_otus_dir,exact_match_basename))
+    pick_rep_set_exact_cmd = '%s %s/pick_rep_set.py -i %s -f %s -o %s ' %\
+        (python_exe_fp, script_dir, exact_otu_fp, concated_seqs_fpath, exact_match_fna)
 
     commands.append([('Pick Rep Set: Exact match', pick_rep_set_exact_cmd)])
-    
-    # Perform trie pre-filtering
-    exact_match_fasta_fp=join(exact_match_otus_dir,exact_match_basename+'_exact_rep.fna')
-    trie_otus_dir=join(output_dir,'pick_otus_trie')
-    pick_otus_cmd = '%s %s/pick_otus.py -i %s -o %s -m trie' %\
-     (python_exe_fp, script_dir, exact_match_fasta_fp, trie_otus_dir)
-    
-    commands.append([('Pick OTUs: Trie prefilter', pick_otus_cmd)])
-    
-    # Pick Rep set from trie pre-filtering
-    trie_basename=splitext(split(exact_match_fasta_fp)[-1])[0]
-    trie_otu_fp=join(trie_otus_dir,trie_basename+'_otus.txt')
-    otu_maps_to_merge.append(trie_otu_fp)
-    
-    pick_rep_set_exact_cmd = '%s %s/pick_rep_set.py -i %s -f %s -o %s_trie_rep.fna' %\
-    (python_exe_fp, script_dir, trie_otu_fp, exact_match_fasta_fp, \
-     join(trie_otus_dir,trie_basename))
 
-    commands.append([('Pick Rep Set: Trie prefilter', pick_rep_set_exact_cmd)])
+    # Do exact-match database pre-filtering
+    leftover_fasta = join(output_dir, 'leftover.fasta')
+    db_otu_map = join(output_dir, 'otu_map.txt')
+    web_app_scripts_dir = join(split(realpath(__file__))[0], 'scripts')
+    find_db_otus_command = '%s %s/find_otus_in_database.py -i %s -f %s -m %s ' %\
+        (python_exe_fp, web_app_scripts_dir, exact_match_fna, leftover_fasta, db_otu_map)
+        
+    commands.append([('Find Database OTU Hits', find_db_otus_command)])
     
     # Prep the UCLUST_REF OTU picking command
     otu_picking_method = params['pick_otus']['otu_picking_method'].upper()
     otu_picking_similarity = int(float(params['pick_otus']['similarity'])*100)
-
-    trie_fasta_fp=join(trie_otus_dir,trie_basename+'_trie_rep.fna')
-    
-    pick_otu_dir = '%s/picked_otus_%s_%s' % (output_dir,otu_picking_method,
-                                                otu_picking_similarity)
-                                                
-    uclust_otu_fp = join(pick_otu_dir,splitext(split(trie_fasta_fp)[-1])[0]+'_otus.txt')
-    
-    otu_maps_to_merge.append(uclust_otu_fp)
+    pick_otu_dir = '%s/picked_otus_%s_%s' % (output_dir,otu_picking_method, otu_picking_similarity)                       
+    uclust_otu_fp = join(pick_otu_dir,splitext(split(leftover_fasta)[-1])[0]+'_otus.txt')
+    uclust_failure_fp = join(pick_otu_dir,splitext(split(leftover_fasta)[-1])[0]+'_failures.txt')
 
     params_list=[]
     params_list.append('-s '+params['pick_otus']['similarity'])
@@ -158,13 +143,13 @@ def run_chain_pick_otus(fasta_files, output_dir, command_handler, params, qiime_
         except KeyError:
             pass
         '''
-            
+        
         params_list.append('-O '+params['parallel']['jobs_to_start'])
         params_list.append('-Z '+params['parallel']['seconds_to_sleep'])
 
         # Build the OTU picking command
         pick_otus_cmd = '%s %s/parallel_pick_otus_uclust_ref.py -i %s -o %s -T %s' %\
-         (python_exe_fp, script_dir, trie_fasta_fp, pick_otu_dir, ' '.join(params_list))
+         (python_exe_fp, script_dir, leftover_fasta, pick_otu_dir, ' '.join(params_list))
     else:
         '''
         try:
@@ -176,19 +161,39 @@ def run_chain_pick_otus(fasta_files, output_dir, command_handler, params, qiime_
         params_list.append('-m '+params['pick_otus']['otu_picking_method'])
         # Build the OTU picking command
         pick_otus_cmd = '%s %s/pick_otus.py -i %s -o %s %s' %\
-         (python_exe_fp, script_dir, trie_fasta_fp, pick_otu_dir, ' '.join(params_list))
+         (python_exe_fp, script_dir, leftover_fasta, pick_otu_dir, ' '.join(params_list))
     
     commands.append([('Pick OTUs: uclust_ref', pick_otus_cmd)])
     
-    merged_otus_fp=join(output_dir,'exact_trie_uclust_ref_otus.txt')
+    # Must now merge the otu file produced from database matching and the file
+    # produced by uclust_ref - they are of the same kind but need to be mashed together
+    combined_otu_file = join(output_dir, 'combined_otu_map.txt')
+    otu_map_files = [db_otu_map, uclust_otu_fp]
+    otu_maps_to_merge.append(combined_otu_file)
+    combine_otu_maps_cmd = '%s %s/combine_otu_map_files.py -i %s -o %s' %\
+          (python_exe_fp, web_app_scripts_dir, ','.join(otu_map_files), combined_otu_file)
+        
+    commands.append([('Combine OTU maps', combine_otu_maps_cmd)])
+    
+    # Run merge_otu_maps.py on the newly combined file and the originally produced otu map
+    merged_otus_fp = join(output_dir,'exact_uclust_ref_otus.txt')
     merge_otus_cmd = '%s %s/merge_otu_maps.py -i %s -o %s' %\
           (python_exe_fp, script_dir, ','.join(otu_maps_to_merge), merged_otus_fp)
+          
     commands.append([('Merge OTUs', merge_otus_cmd)])
-        
+    
+    # Deal with failures produced in uclust_ref
+    all_failures_fp = join(output_dir,'all_failures.txt')
+    merge_otus_failures_cmd = '%s %s/merge_otu_maps.py -f %s -i %s -o %s' %\
+          (python_exe_fp, script_dir, uclust_failure_fp, exact_otu_fp, all_failures_fp)
+          
+    commands.append([('Merge OTUs - Failures', merge_otus_failures_cmd)])
+    
     # Call the command handler on the list of commands
-    command_handler(commands,status_update_callback,logger=logger)
+    command_handler(commands, status_update_callback, logger=logger)
     
 #
+
 def get_fasta_files(fasta_dir):
     """ Gets a list of fasta files from directory
     """
@@ -203,29 +208,39 @@ def get_fasta_files(fasta_dir):
 
     return full_path_fasta_filename
     
-def web_app_call_commands_serially(commands,
-                           status_update_callback,
-                           logger):
+def web_app_call_commands_serially(commands, status_update_callback, logger):
     """Run list of commands, one after another """
+    log_file = 'stdout.tmp'
     
     for c in commands:
         for e in c:
+            print '\n'
+            print 'Command Description: %s' % e[0]
+            print 'Command: %s' % e[1]
             status_update_callback('%s\n%s' % e)
             logger.write('# %s command \n%s\n\n' % e)
-            proc = Popen(e[1],shell=True,universal_newlines=True,\
-                         stdout=PIPE,stderr=STDOUT)
+            # For now, stdout set to None. There is a known bug in Python that will deadlock
+            # the process if enough output is generated by the child process and the outputs
+            # are piped back to the parent. See http://docs.python.org/library/subprocess.html.
+            subprocess_output = open(log_file, 'w')
+            proc = Popen(e[1], shell=True, universal_newlines=True, stdout=subprocess_output, stderr=STDOUT)
             return_value = proc.wait()
+            subprocess_output.close()
+            print 'Return Value Was: %s' % str(return_value)
             if return_value != 0:
+                subprocess_output = open(log_file, 'r')
+                print 'Output file is:'
+                print subprocess_output.read()
                 msg = "\n\n*** ERROR RAISED DURING STEP: %s\n" % e[0] +\
-                 "Command run was:\n %s\n" % e[1] +\
-                 "Command returned exit status: %d\n" % return_value +\
-                 "Stdout/stderr:\n%s\n" % proc.stdout.read()
+                    "Command run was:\n %s\n" % e[1] +\
+                    "Command returned exit status: %d\n" % return_value +\
+                    "Stdout/stderr:\n%s\n" % subprocess_output.read()
                 logger.write(msg)
                 logger.close()
+                subprocess_output.close()
                 raise WorkflowError, msg
     logger.close()
     
-
 def check_scp():
     """Raise error if scp is not in $PATH """
     if not app_path('scp'):
