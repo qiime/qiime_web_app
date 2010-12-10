@@ -145,9 +145,9 @@ elif metadata_complete == 'y' and sff_complete == 'y':
     
 %>
             <form id="submit_job_to_qiime" action="submit_job_to_qiime.psp" method="post">
-                <!--<a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
-                Submit job to Qiime</a>-->
-                Submit job to Qiime (currently disabled)
+                <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
+                Submit job to Qiime</a>
+                <!--Submit job to Qiime (currently disabled)-->
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
 
