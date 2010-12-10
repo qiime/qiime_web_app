@@ -16,6 +16,7 @@ __status__ = "Pre-release"
 PYTHON_BIN="/usr/bin/python2.6"
 QIIME_WEBAPP_BASE = "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/scripts"
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_and_metadata_for_db.py"
+QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_and_metadata_to_db.py"
 QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
@@ -187,6 +188,21 @@ class ProcessSFFHandler(JobHandler):
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s"])
     _base_args = {'SFF':None, 'Mapping':None, 'ParamFile':None, 'StudyID':None}
     _next_job_handler = 'TestLoadSFFAndMetadataHandler'
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+
+# Command for picking OTUs
+class ProcessPickOTUHandler(JobHandler):
+    """Handler for pick_otus.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PICK_OTU, "-i %(FastaFile)s -p %(ParamFile)s -o %(OutputDir)s -f"])
+    _base_args = {'FastaFile':None, 'ParamFile':None, 'OutputDir':None}
+    _next_job_handler = ''
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""
