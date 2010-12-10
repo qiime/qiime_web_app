@@ -70,7 +70,7 @@ def main():
     
     study_id = opts.study_id
     run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[3]
-    
+    print run_prefix
     output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
             
     print output_dir

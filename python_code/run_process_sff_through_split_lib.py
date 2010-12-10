@@ -27,7 +27,7 @@ from qiime.workflow import WorkflowLogger
 from os.path import *
 from qiime.parse import fields_to_dict
 from qiime.workflow import print_commands,call_commands_serially,\
-                           print_to_stdout, no_status_updates,generate_log_fp,\
+                           print_to_stdout, no_status_updates,\
                            get_params_str, WorkflowError
 from qiime.util import (compute_seqs_per_library_stats, 
                         get_qiime_scripts_dir,
@@ -40,7 +40,14 @@ from hashlib import md5
 
 from cogent.util.misc import safe_md5
 
-
+def generate_log_fp(output_dir,
+                    basefile_name='log',
+                    suffix='txt',
+                    timestamp_pattern='%Y%m%d%H%M%S'):
+    timestamp = datetime.now().strftime(timestamp_pattern)
+    filename = '%s.%s' % (basefile_name,suffix)
+    return join(output_dir,filename)
+    
 ## Begin task-specific workflow functions
 def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     mapping_fp, output_dir, 

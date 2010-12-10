@@ -110,7 +110,7 @@ def submitJobsToQiime(study_id, user_id, mapping_file_dir):
         
         # Find the proper params file
         barcode_length = data_access.checkRunPrefixBarcodeLengths(study_id, run_prefix)
-        param_file = '/home/wwwuser/projects/QIIME-webdev/qiime_web_app/python_code/parameter_files/%s__custom_parameters_uclust_ref_gg97.txt' % str(barcode_length)
+        param_file = '/home/wwwuser/projects/Qiime/qiime_web_app/python_code/parameter_files/%s__custom_parameters_uclust_ref_gg97.txt' % str(barcode_length)
         
         for sff_file in sff_files:
             sff_file_basename = os.path.splitext(os.path.basename(sff_file))[0].upper()

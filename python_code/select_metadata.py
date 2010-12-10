@@ -217,6 +217,7 @@ def get_selected_column_values(controlled_col,col,table,user_id):
 def get_table_col_values_from_form(form):
     ''' get the form values from select_metadata/index.psp '''
     table_col_value={}
+    unique_cols=[]
     for form_key in form:
         if form_key<>'fname_prefix' and form_key<>'taxonomy' and form_key<>'beta_metric' and form_key<>'rarefied_at':
             if type(form[form_key])==type([]):
