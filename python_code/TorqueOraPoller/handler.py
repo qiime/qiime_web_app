@@ -18,6 +18,7 @@ QIIME_WEBAPP_BASE = "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/scri
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_and_metadata_for_db.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/process_sff_through_split_lib.py"
+QIIME_SUBMIT_OTU_MAPPING_TO_DB = QIIME_WEBAPP_BASE  + "/submit_otu_mapping_to_db.py"
 QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
 
@@ -211,6 +212,37 @@ class ProcessPickOTUHandler(JobHandler):
             return True
         else:
             return False
+
+# Command for writing OTU mapping data to database
+class LoadOTUMappingHandler(JobHandler):
+    """Handler for submit_otu_mapping_to_db.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_OTU_MAPPING_TO_DB, "-i %(InputDir)s"])
+    _base_args = {'InputDir':None}
+    _next_job_handler = ''
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+
+# Command for writing OTU mapping data to test database
+class TestLoadOTUMappingHandler(JobHandler):
+    """Handler for submit_otu_mapping_to_db.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_OTU_MAPPING_TO_DB, "-i %(InputDir)s -t %(TestDBFlag)s"])
+    _base_args = {'InputDir':None, 'TestDBFlag':True}
+    _next_job_handler = ''
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+
 
 # when calling for the test database, use the -t option
 class TestLoadSFFAndMetadataHandler(JobHandler):
