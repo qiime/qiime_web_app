@@ -17,7 +17,7 @@ PYTHON_BIN="/usr/bin/python2.6"
 QIIME_WEBAPP_BASE = "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/scripts"
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_and_metadata_for_db.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
-QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_and_metadata_to_db.py"
+QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/process_sff_through_split_lib.py"
 QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
 
@@ -184,8 +184,8 @@ class PollerTestHandlerErr(JobHandler):
 # after this handler completes successfully, we have to add another job to the queue for 
 # LoadSffAndMetadataHandler (Job Type of ??)
 class ProcessSFFHandler(JobHandler):
-    """Handler for process_sff_and_metadata_for_db.py"""
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s"])
+    """Handler for process_sff_through_split_lib.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s -f"])
     _base_args = {'SFF':None, 'Mapping':None, 'ParamFile':None, 'StudyID':None}
     _next_job_handler = 'TestLoadSFFAndMetadataHandler'
 
