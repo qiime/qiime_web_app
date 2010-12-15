@@ -467,12 +467,12 @@ class QiimeDataAccess(object):
             
     def getUserAndPublicStudyNames(self, user_id, is_admin):
         public_studies = self.getUserStudyNames(0, is_admin)
-        user_studies = self.getUserStudyNames(user_id, is_admin)
-        for item in user_studies:
-            if item not in public_studies:
-                public_studies.append(item)
+        all_studies = self.getUserStudyNames(user_id, is_admin)
+        for item in public_studies:
+            if item not in all_studies:
+                all_studies.append(item)
                 
-        return public_studies
+        return sorted(all_studies, key=lambda item: str(item[1]).lower())
         
     def getStudyByName(self, study_name):
         """ Returns a list of metadata values based on a study type and list
