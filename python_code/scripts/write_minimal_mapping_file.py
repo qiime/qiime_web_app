@@ -43,6 +43,7 @@ script_info['required_options'] = [\
 ]
 script_info['optional_options'] = [\
     make_option('-t','--get_from_test_db',action='store_true',help='By setting this parameter, the data will be submitted to the test database.',default=False),\
+    make_option('-f','--write_full_mapping',action='store_true',help='By setting this parameter, you can write out all metadata for study.',default=False),\
 ]
 script_info['version'] = __version__
 
@@ -75,9 +76,26 @@ def main():
         pass
         
     study_id=opts.study_id
+    write_full_mapping=opts.write_full_mapping
     
     con = data_access.getMetadataDatabaseConnection()
     cur = con.cursor()
+    column_table=data_access.getMetadataFields(study_id)
+    new_cat_column_table=[]
+    new_tables=[]
+    for i in column_table:
+        col_name=i[1]+'.'+i[0]
+        if col_name not in ['"SEQUENCE_PREP".RUN_PREFIX',\
+                            '"SEQUENCE_PREP".BARCODE','"SEQUENCE_PREP".LINKER', \
+                            '"SEQUENCE_PREP".PRIMER','"SAMPLE".STUDY_ID',\
+                            '"SEQUENCE_PREP".RUN_PREFIX',\
+                            '"SEQUENCE_PREP".EXPERIMENT_TITLE',
+                            '"SAMPLE".PUBLIC']:
+            new_cat_column_table.append(i[1]+'.'+i[0])
+        if i[1] not in ['"STUDY"', '"USER_STUDY"','"SAMPLE"','"SEQUENCE_PREP"']\
+            and i[1] not in new_tables:
+            new_tables.append(i[1])
+    
     #req.write(str(statement)+'<br><br>')
     run_prefixes = cur.execute('select distinct sp.RUN_PREFIX from SEQUENCE_PREP sp \
     inner join "SAMPLE" s on s.sample_id=sp.sample_id where s.study_id=%s' % (study_id))
@@ -85,20 +103,55 @@ def main():
     
         # Start building the statement for writing out the mapping file
         # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
-        statement = '("SAMPLE".sample_name||\'.\'||"SEQUENCE_PREP".run_prefix) as SampleID, \n'
-        statement += '"SEQUENCE_PREP".barcode, \n'
-        statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
-        statement += '"SAMPLE".study_id, \n'
-        statement += '"SEQUENCE_PREP".run_prefix as RUN_PREFIX, \n'
-        statement += '"SEQUENCE_PREP".experiment_title as Description \n'
+        statement = '("SAMPLE".SAMPLE_NAME||\'.\'||"SEQUENCE_PREP".RUN_PREFIX) as SampleID, \n'
+        statement += '"SEQUENCE_PREP".BARCODE, \n'
+        statement += 'concat("SEQUENCE_PREP".LINKER, "SEQUENCE_PREP".PRIMER) as LinkerPrimerSequence, \n'
+        statement += '"SAMPLE".STUDY_ID, \n'
+        statement += '"SEQUENCE_PREP".RUN_PREFIX as RUN_PREFIX, \n'
+        
+        if write_full_mapping:
+            for col_tab in new_cat_column_table:
+                statement += '%s, \n' % (col_tab)
+        
+        statement += '"SEQUENCE_PREP".EXPERIMENT_TITLE as Description \n'
     
         statement = '\n\
         select distinct \n' + statement + ' \n\
-        from "STUDY" inner join user_study us on "STUDY".study_id=us.study_id \n\
+        from "STUDY" \
+        inner join "USER_STUDY" us on "STUDY".study_id=us.study_id \n\
         inner join "SAMPLE" on "STUDY".study_id = "SAMPLE".study_id \n\
-        inner join "SEQUENCE_PREP" on "SAMPLE".sample_id = "SEQUENCE_PREP".sample_id \n\
-        where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
+        inner join "SEQUENCE_PREP" on "SAMPLE".sample_id = "SEQUENCE_PREP".sample_id \n'
+        
+        if write_full_mapping:
+            # Handle Common fields table
+            if '"COMMON_FIELDS"' in new_tables:
+                new_tables.remove('"COMMON_FIELDS"')
+                statement += '\
+                inner join "COMMON_FIELDS" \n\
+                on "SAMPLE".sample_id = "COMMON_FIELDS".sample_id \n'
 
+            # Deal with the rest of the tables. They should all be assocaiated by sample id.
+            for table in new_tables:
+                if table=='"HOST"':
+                    try:
+                        new_tables.remove('"HOST_SAMPLE"')
+                    except:
+                        pass
+                    statement += '\
+                    inner join "HOST_SAMPLE" \n\
+                    on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
+                    statement += '\
+                    inner join ' + table + '\n\
+                    on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
+                else:
+                    statement += '\
+                    inner join ' + table + '\n\
+                    on "SAMPLE".sample_id = ' + table + '.sample_id\n '
+                    
+        statement += '\n\
+        where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
+        
+        print statement
         con = data_access.getMetadataDatabaseConnection()
         cur = con.cursor()
         #req.write(str(statement)+'<br><br>')
@@ -157,8 +210,6 @@ def main():
                 to_write += val + '\t'
             # Write the row minus the last tab
             mapping_fp.write(to_write[0:len(to_write)-1] + '\n')
-
-    
 
     
 if __name__ == "__main__":

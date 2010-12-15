@@ -69,7 +69,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     
     """
     if write_to_all_fasta:
-        split_lib_fastas='/home/wwwuser/user_data/studies/all_split_lib_fastas'
+        split_lib_fastas='/tmp/studies/all_split_lib_fastas'
         create_dir(split_lib_fastas)
     # Prepare some variables for the later steps
     sff_filenames=sff_input_fp.split(',')

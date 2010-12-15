@@ -14,6 +14,13 @@ __status__ = "Production"
     <b>Study Options:</b>
     <ul>
         <li>
+            <form id="study_summary" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="./study_summary/index.psp">
+                <a href="" onclick="document.forms['study_summary'].submit(); return false;">
+                Get Study Summary and Raw Data</a>
+            </form>
+        </li>
+        <li>
             <form id="create_new_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="./new_study.psp">
                 <a href="" onclick="document.forms['create_new_study'].submit(); return false;">

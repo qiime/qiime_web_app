@@ -36,11 +36,11 @@ from wrap_files_for_md5 import MD5Wrap
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 from cogent.util.misc import safe_md5
-from run_find_otus_in_database import find_otus
+
 
 
 ## Begin task-specific workflow functions
-def run_chain_pick_otus(fasta_files, output_dir, command_handler, params, qiime_config, parallel=False,
+def run_chain_pick_otus(fasta_file, output_dir, command_handler, params, qiime_config, parallel=False,
     status_update_callback=print_to_stdout):
     """ NOTE: Parts of this function are a directly copied from the
         run_qiime_data_preparation function from the workflow.py library file 
@@ -52,7 +52,7 @@ def run_chain_pick_otus(fasta_files, output_dir, command_handler, params, qiime_
     """
 
     # Prepare some variables for the later steps
-    split_lib_fasta_filenames=fasta_files.split(',')
+    #split_lib_fasta_filenames=fasta_files.split(',')
     otu_maps_to_merge=[]
     commands = []
 
@@ -62,6 +62,8 @@ def run_chain_pick_otus(fasta_files, output_dir, command_handler, params, qiime_
     logger = WorkflowLogger(generate_log_fp(output_dir),
                             params=params,
                             qiime_config=qiime_config)
+    
+    '''
     study_run_prefix_dict={}
     for i in split_lib_fasta_filenames:
         basename,extension=splitext(i)
@@ -82,24 +84,24 @@ def run_chain_pick_otus(fasta_files, output_dir, command_handler, params, qiime_
     concated_seqs_fpath=join(output_dir,'all_split_lib_seqs.fna')
     cat_split_lib_files_cmd=cat_files(fasta_files,concated_seqs_fpath)
     commands.append([('Concat sequences', cat_split_lib_files_cmd)])
-    
+    '''
     ###Starting the Chain OTU picking###
 
     # Perform exact match pre-filtering
     exact_match_otus_dir=join(output_dir,'pick_otus_exact')
     pick_otus_cmd = '%s %s/pick_otus.py -m prefix_suffix -i %s -o %s -p 5000' %\
-        (python_exe_fp, script_dir, concated_seqs_fpath, exact_match_otus_dir)
+        (python_exe_fp, script_dir, fasta_file, exact_match_otus_dir)
     
     commands.append([('Pick OTUs: Exact match', pick_otus_cmd)])
     
     # Pick Rep set from exact match pre-filtering
-    exact_match_basename=splitext(split(concated_seqs_fpath)[-1])[0]
+    exact_match_basename=splitext(split(fasta_file)[-1])[0]
     exact_otu_fp=join(exact_match_otus_dir,exact_match_basename+'_otus.txt')
     exact_match_fna = join(exact_match_otus_dir,exact_match_basename) + '_exact_rep.fna'
     otu_maps_to_merge.append(exact_otu_fp)
     
     pick_rep_set_exact_cmd = '%s %s/pick_rep_set.py -i %s -f %s -o %s ' %\
-        (python_exe_fp, script_dir, exact_otu_fp, concated_seqs_fpath, exact_match_fna)
+        (python_exe_fp, script_dir, exact_otu_fp, fasta_file, exact_match_fna)
 
     commands.append([('Pick Rep Set: Exact match', pick_rep_set_exact_cmd)])
 

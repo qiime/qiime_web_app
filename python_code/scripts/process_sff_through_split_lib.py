@@ -14,14 +14,17 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs
-from os.path import exists,splitext,split
+from os.path import exists,splitext,split,join
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
-from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
+from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable,\
+                       create_dir
 from run_process_sff_through_split_lib import run_process_sff_through_split_lib,\
                                            web_app_call_commands_serially
 from qiime.workflow import print_commands,\
                            print_to_stdout, no_status_updates
+from run_chain_pick_otus import run_chain_pick_otus
+
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -69,10 +72,12 @@ def main():
        parse_command_line_parameters(**script_info)
     
     study_id = opts.study_id
-    run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[3]
+    run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[0]
     print run_prefix
-    output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
-            
+    #output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
+    output_dir = '/tmp/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
+    
+          
     print output_dir
     sff_fname=opts.sff_fname
     map_fname = opts.map_fname
@@ -80,7 +85,6 @@ def main():
     print_only = opts.print_only
     write_to_all_fasta=opts.write_to_all_fasta
     convert_to_flx=opts.convert_to_flx
-
 
     try:
        parameter_f = open(opts.parameter_fp)
@@ -103,18 +107,26 @@ def main():
         status_update_callback = print_to_stdout
     else:
         status_update_callback = no_status_updates
-
+        
+    params=parse_qiime_parameters(parameter_f)
     run_process_sff_through_split_lib(study_id=study_id,\
      run_prefix=run_prefix,\
      sff_input_fp=sff_fname,\
      mapping_fp=map_fname,\
      output_dir=output_dir,\
      command_handler=command_handler,\
-     params=parse_qiime_parameters(parameter_f),\
+     params=params,\
      qiime_config=qiime_config,\
      convert_to_flx=convert_to_flx,\
      write_to_all_fasta=write_to_all_fasta,\
      status_update_callback=status_update_callback)
+     
+    resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
+    otu_output_dir=join(output_dir,'gg_97_otus')
+    create_dir(otu_output_dir)
+    run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
+                        params, qiime_config, parallel=False, \
+                        status_update_callback=status_update_callback)
 
 if __name__ == "__main__":
     main()

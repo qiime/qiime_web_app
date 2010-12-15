@@ -26,7 +26,6 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_acce
     i = 0
     while i < len(found_otus):
         otu_id = found_otus[i]
-        print otu_id
         md5 = found_otus_seq_md5[i]    
         i += 1
         
