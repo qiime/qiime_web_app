@@ -464,6 +464,15 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def getUserAndPublicStudyNames(self, user_id, is_admin):
+        public_studies = self.getUserStudyNames(0, is_admin)
+        user_studies = self.getUserStudyNames(user_id, is_admin)
+        for item in user_studies:
+            if item not in public_studies:
+                public_studies.append(item)
+                
+        return public_studies
         
     def getStudyByName(self, study_name):
         """ Returns a list of metadata values based on a study type and list
