@@ -12,7 +12,7 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from hashlib import md5
 from os.path import join
-from cogent.util.misc import safe_md5
+
 
 def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file):
     # Get our list of found items
@@ -86,7 +86,7 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
         # First value is the arbitrary otu_id assigned by exact match filter
         seq_id = rec[0].split()[0] 
         sequence = str(rec[1])
-        m = safe_md5(sequence).hexdigest()
+        m = md5(sequence).hexdigest()
         md5_list.append(m)
         md5_sequence_map[m] = sequence
         md5_seq_id_map[m] = seq_id

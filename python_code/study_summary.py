@@ -19,15 +19,16 @@ from enums import FieldGrouping
         
 
 def print_study_info_and_values_table(query_results):
-    
+    ''' This function write the Study summary information below the select-box'''
+
     info_table=[]
-    # print the results from the above searches
-    # print the column name
     
+    # pull out the study_id for the selected study
     study_ids=set(zip(*query_results)[0])
     for i in study_ids:
         study_id=str(i)
-        
+    
+    #pull the different fields for a given study
     project_names=set(zip(*query_results)[1])
     study_titles=set(zip(*query_results)[2])
     study_abstracts=set(zip(*query_results)[3])
@@ -35,6 +36,7 @@ def print_study_info_and_values_table(query_results):
     sffs=list(set(zip(*query_results)[5]))
     seq_run_ids=list(set(zip(*query_results)[6]))
     numreads=set(zip(*query_results)[7])
+    
     
     samples={}
     read_counts=[]
