@@ -36,6 +36,8 @@ function showResult(input_textbox,column_id,column_value)
         return;
     }
 
+    // Reset the table while loading
+    document.getElementById('field_ref_table').innerHTML = "Loading...";
     
     col_split_1=column_id.split('_');
     study_id=col_split_1[0];
