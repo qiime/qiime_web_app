@@ -2,26 +2,30 @@ body
 {
     font-family:"Helvetica", "Arial", serif;
 }
+
 td
 {
     vertical-align: top;
     text-align: left;
     padding: 5px;
 }
+
 a
 {
     text-decoration: none;
     color: #3333BB;
 }
+
 .header_table
 {
     width: 100%;
-    background-color: #DDDDDD;
+    background-color: #EEEEEE;
     border-width: 0px;
     padding: 5px;
     text-align: left;
     vertical-align: middle;
 }
+
 .header_light_blue
 {
     background-color: #DDDDFF;
@@ -30,6 +34,7 @@ a
     text-align: left;
     vertical-align: middle;
 }
+
 .meta_td
 {
     padding: 2px;
@@ -37,6 +42,7 @@ a
     background-color: #FFFFFF;
     border: 1px solid black;
 }
+
 .meta_th
 {
     padding: 5px;
@@ -51,6 +57,7 @@ a
     border: 1px solid black;
     background-color:#DDDDDD;
 }
+
 .metadata_table
 {
     vertical-align: top;
@@ -61,7 +68,6 @@ a
     background-color:#FFFFFF;
     border: 1px solid black;
 }
-
 
 /* Progress bar stuff */
 div.progress-container {

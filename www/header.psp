@@ -45,18 +45,6 @@ link_page = 'select_study.psp'
 </form>
 <a href="#" onclick="send_me_home.submit();"><img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 /></a>
 <table class="header_table">
-<tr>
-	<td>Logged in as <%=sess['username']%></td>
-	<td style="text-align:right;">
-<%
-# turned this off, since it gets confusing when doing meta-analysis
-'''
-if sess['study_name']:
-	req.write('Selected study: %s (%s)' % (sess['study_name'], sess['study_id']))
-# end if
-'''
-%>
-    </td>
     <td style="text-align: right">
         <a href="docs/index.html" target="_blank">help</a> | 
         <a href="fusebox.psp?page=select_study.psp">home</a> |  

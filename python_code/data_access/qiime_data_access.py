@@ -1688,6 +1688,29 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
 
+    # Write OTU failures to a new fasta file for otu selection
+    def writeOTUFailures(self, output_fasta_file):
+        """ Gets and writes any failed OTUs to a new fasta file
+
+        """
+        output_file = None
+        
+        try:
+            output_file = open(output_fasta_file, 'w')
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_otu_failures', [results])
+            for item in results:
+                output_file.write(item[0] + '\n') # Sequence identifier
+                output_file.write(item[1] + '\n') # Sequence string
+            
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+        finally:
+            if output_file:
+                output_file.close()
+
     #The following is the OTU Info tool used
     def loadAllOTUInfo(self, start_job, otu_run_set_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
@@ -2263,9 +2286,13 @@ class QiimeDataAccess(object):
         """
         try:
             con = self.getSFFDatabaseConnection()
-            otu_results = con.cursor().arrayvar(cx_Oracle.NUMBER , len(md5_list))
-            md5_results = con.cursor().arrayvar(cx_Oracle.STRING , len(md5_list))
-            results = con.cursor().callproc('otu_check.check_existing_otus', [md5_list, otu_results, md5_results])
+            cur = con.cursor()
+            
+            # Convert input list to proper type:
+            input_array = cur.arrayvar(cx_Oracle.FIXED_CHAR, md5_list)
+            otu_results = cur.arrayvar(cx_Oracle.NUMBER , len(md5_list))
+            md5_results = cur.arrayvar(cx_Oracle.STRING , len(md5_list))
+            results = cur.callproc('otu_check.check_existing_otus', [input_array, otu_results, md5_results])
             return results
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))

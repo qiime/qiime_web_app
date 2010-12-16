@@ -9,5 +9,24 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 -->
 
+<br/><br/>
+
+<table class="header_table">
+    <tr>
+    	<td style="font-size: 12px;">Logged in as <%=sess['username']%></td>
+    	<td style="text-align:right; font-size: 12px;">
+<%
+# turned this off, since it gets confusing when doing meta-analysis
+
+if sess['study_name']:
+	req.write('%s (%s)' % (sess['study_name'], sess['study_id']))
+# end if
+
+%>
+        </td>
+    </tr>
+</table>
+
+
 </body>
 </html>

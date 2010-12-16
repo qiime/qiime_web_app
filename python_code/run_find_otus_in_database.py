@@ -12,6 +12,7 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from hashlib import md5
 from os.path import join
+import gc
 
 
 def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file):
@@ -54,7 +55,8 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_acce
    
     # Clear containers for next round
     md5_list = []
-    md5_sequence_map.clear()
+    md5_sequence_map = {}
+    gc.collect()
     
 def find_otus(input_fasta, leftover_fasta, otu_map):
     input_fasta_file = open(input_fasta, 'r')
