@@ -18,6 +18,7 @@ import gc
 def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file):
     # Get our list of found items
     results = data_access.getFoundOTUArray(md5_list)
+    
     if results == None:
         return
     

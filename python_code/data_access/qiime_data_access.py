@@ -2290,8 +2290,8 @@ class QiimeDataAccess(object):
             
             # Convert input list to proper type:
             input_array = cur.arrayvar(cx_Oracle.FIXED_CHAR, md5_list)
-            otu_results = cur.arrayvar(cx_Oracle.NUMBER , len(md5_list))
-            md5_results = cur.arrayvar(cx_Oracle.STRING , len(md5_list))
+            otu_results = cur.arrayvar(cx_Oracle.STRING , len(md5_list))
+            md5_results = cur.arrayvar(cx_Oracle.FIXED_CHAR , len(md5_list))
             results = cur.callproc('otu_check.check_existing_otus', [input_array, otu_results, md5_results])
             return results
         except Exception, e:

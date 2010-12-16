@@ -40,7 +40,7 @@ script_info['script_usage'] = [("Example:","This is an example of a basic use ca
 "%prog -i 454_Reads.sff -m mapping.txt -p custom_parameters.txt -o Output_Directory")]
 script_info['output_description']= "The output of this script produces the FNA, QUAL, and flowgram files, the output of split_libraries.py and pick_otus.py."
 script_info['required_options'] = [\
-    make_option('-i','--split_lib_seqs',help='This is the input split-lib sequence filepath(s)'),\
+    make_option('-i','--split_lib_seqs',help='This is the input split-lib sequence filepath'),\
     make_option('-p','--parameter_fp',\
              help='path to the parameter file [REQUIRED]. E.g. /python_code/')
 ]
@@ -63,7 +63,7 @@ def main():
     option_parser, opts, args =\
        parse_command_line_parameters(**script_info)
 
-
+    fasta_file = opts.split_lib_seqs
     verbose = opts.verbose
     print_only = opts.print_only
     parallel = opts.parallel
@@ -80,13 +80,6 @@ def main():
     else:
         dir_path='./'
         
-    
-    if isdir(opts.split_lib_seqs):
-        fasta_files = ','.join(get_fasta_files(opts.split_lib_seqs))
-    else:
-        fasta_files = opts.split_lib_seqs
-    
-
     if parallel: 
         raise_error_on_parallel_unavailable()
 
@@ -122,7 +115,7 @@ def main():
     new_output_dir=join(dir_path,'chain_picked_otus')
     create_dir(new_output_dir)
     
-    run_chain_pick_otus(fasta_files=fasta_files,\
+    run_chain_pick_otus(fasta_file=fasta_file,\
      output_dir=new_output_dir,\
      command_handler=command_handler,\
      params=parse_qiime_parameters(parameter_f),\
