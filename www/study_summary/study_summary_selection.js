@@ -11,10 +11,7 @@ __status__ = "Production"
 
 */
 
-
-
 var xmlhttp
-
 
 /* 
     This is the AJAX function which produces the list of terms below each input
@@ -51,7 +48,7 @@ function showResult(input_textbox,column_id,column_value)
     xmlhttp.onreadystatechange=function()
     {
         if (xmlhttp.readyState==4){
-            //write the list of similar terms from the database  
+            //write the list of terms from the database  
             document.getElementById('field_ref_table').innerHTML=xmlhttp.responseText;
             document.getElementById('field_ref_table').style.border="1px solid #A5ACB2";
         }
@@ -61,34 +58,6 @@ function showResult(input_textbox,column_id,column_value)
     xmlhttp.send(null)
    
 
-}
-
-function saveSelection(input_selectbox)
-{
-    var select_box_id=document.getElementById(input_selectbox)
-    //var select_box_object=document.getElementById(select_box_id)
-    var exists='False';
-    var selected_values=get_selected(select_box_id)
-    
-    for (var i in savedValues){
-        if (i==select_box_id.id){
-            savedValues[select_box_id.id]=selected_values;
-            exist='True';
-            break;
-        }
-    }
-    if (exist='False'){
-        savedValues[select_box_id.id]=selected_values;
-    }
-    
-    /*
-    var select_value_array=new Array();
-    select_value_array=savedValues[select_box_id.id].split(',');
-    for (var i in select_value_array){
-        alert(select_value_array[i])
-    }
-    */
-    return
 }
 
 

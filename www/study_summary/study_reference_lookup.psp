@@ -19,36 +19,36 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 from study_summary import print_study_info_and_values_table
 
 
-script_description="""This script writes out information for a given column in 
-the database. It also writes out the select box containing the distinct values
-in that column."""
+script_description="""This script writes out information for a given study in 
+the database. It also lists out information regarding the SFFs and samples."""
 
-'''
+
 # Check to make sure session is valid. If not, redirect to login
 sess = Session.Session(req)
 if not (sess.has_key('username')):
 	sess.invalidate()
 	psp.redirect('../index.psp')
-'''
+
 
 #Get the values from the form fields
 study_id=str(form["study_id"]);
 study_name=str(form["study_name"]);
-try:
-    analysis_data=[]
-    con = data_access.getSFFDatabaseConnection()
-    results = con.cursor()
 
-    con.cursor().callproc('get_qiime_sff_db_summary', 
-                            [study_id,results])
+#Try to get the summary info from the DB and write to the page.
+try:
+    #Get summary info from DB
+    analysis_data=[]
+    results=data_access.getQiimeSffDbSummary(study_id)
     for row in results:
         analysis_data.append(row)
+        
+    #Write the output to the screen
     req.write(print_study_info_and_values_table(analysis_data))
 
 except:
-    req.write('<h3>'+str(study_name)+':</h3><em style="color:red;"> No data currently available!</em>')
-
-
+    #if all the data is not present, the report that data is not available
+    req.write('<h3>'+str(study_name) + \
+            ':</h3><em style="color:red;"> No data currently available!</em>')
 
 #
 %>
