@@ -38,17 +38,14 @@ def print_study_info_and_values_table(query_results):
     
     samples={}
     read_counts=[]
-    con = data_access.getSFFDatabaseConnection()
-    results = con.cursor()
 
     for i,sff in enumerate(sffs):
-        con.cursor().callproc('get_qiime_sff_read_counts', 
-                                [seq_run_ids[i],results])
+        
+        results=data_access.getQiimeSffReadCounts(seq_run_ids[i])
         for row in results:
             read_counts.append(row[0])
             
-        con.cursor().callproc('get_qiime_sff_samples', 
-                                [study_id,seq_run_ids[i],results])
+        results=data_access.getQiimeSffSamples(study_id,seq_run_ids[i])
         samples[seq_run_ids[i]]=[]
         for row in results:
             samples[seq_run_ids[i]].append(row[0])
@@ -58,8 +55,7 @@ def print_study_info_and_values_table(query_results):
         sff_sample_count[sff]=[]
         for j in samples[seq_run_ids[i]]:
             results=0
-            query_results=con.cursor().callproc('get_qiime_sff_samples_count', 
-                                    [j,results])
+            query_results=data_access.getQiimeSffSamplesCount(j)
             sff_sample_count[sff].append(list((j,query_results[1])))
     
     for i in project_names:

@@ -107,7 +107,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ Unit test method for getStudyUserNames 
         """
         
-        study_names = self._qiime_data_access.getUserStudyNames(12169)
+        study_names = self._qiime_data_access.getUserStudyNames(12169,0)
         self.assertTrue(study_names)
         
     def test_getStudyNames(self):
@@ -389,7 +389,28 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         result=self._qiime_data_access.getOTUGG97Taxonomy(0,'test')
         self.assertFalse(result)
+    
+    #
+    def test_getQiimeSffSamples(self):
+        """
+        """
         
+        result=self._qiime_data_access.getQiimeSffSamples(0,0)
+        for exp in result:
+            self.assertEqual(exp,None)
+    #
+    def test_getQiimeSffReadCounts(self):
+        """
+        """
+        result=self._qiime_data_access.getQiimeSffReadCounts(0)
+        for exp in result:
+            self.assertEqual(exp[0],0)
+    #
+    def test_getQiimeSffSamplesCount(self):
+        """
+        """
+        result=self._qiime_data_access.getQiimeSffSamplesCount('test')
+        self.assertEqual(result[1],0)
         
 if __name__ == '__main__':
 	unittest.main()

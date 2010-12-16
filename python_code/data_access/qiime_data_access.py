@@ -2270,3 +2270,42 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+    
+    def getQiimeSffSamples(self, study_id,seq_run_id):
+        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_qiime_sff_samples', \
+                                    [study_id,seq_run_id,results])
+            return results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def getQiimeSffReadCounts(self,seq_run_id):
+        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_qiime_sff_read_counts', \
+                                    [seq_run_id,results])
+            return results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
+
+    def getQiimeSffSamplesCount(self,sample):
+        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = 0
+            query_results=con.cursor().callproc('get_qiime_sff_samples_count', \
+                                    [str(sample),results])
+            return query_results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
