@@ -411,6 +411,16 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         result=self._qiime_data_access.getQiimeSffSamplesCount('test')
         self.assertEqual(result[1],0)
+    #
+    def test_getQiimeSffDbSummary(self):
+        """
+        """
         
+        result=self._qiime_data_access.getQiimeSffDbSummary(0)
+        for exp in result:
+            self.assertEqual(exp,None)
+            
+            
+            
 if __name__ == '__main__':
 	unittest.main()

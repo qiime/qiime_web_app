@@ -2309,3 +2309,16 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+    #
+    def getQiimeSffDbSummary(self,study_id):
+        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_qiime_sff_db_summary', \
+                                    [study_id,results])
+            return results
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False
