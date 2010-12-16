@@ -12,13 +12,10 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from hashlib import md5
 from os.path import join
-import gc
-
 
 def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file):
     # Get our list of found items
     results = data_access.getFoundOTUArray(md5_list)
-    
     if results == None:
         return
     
@@ -53,12 +50,7 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_acce
         sequence = md5_sequence_map[md5]
         line = '>{id}\n{sequence}\n'.format(id = seq_id, sequence = sequence)
         leftovers_fasta_file.write(line)
-   
-    # Clear containers for next round
-    md5_list = []
-    md5_sequence_map = {}
-    gc.collect()
-    
+
 def find_otus(input_fasta, leftover_fasta, otu_map):
     input_fasta_file = open(input_fasta, 'r')
     leftovers_fasta_file = open(leftover_fasta, 'w')
@@ -98,6 +90,10 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
         if i == items_to_submit_to_db:
             process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file)
             i = 0
+
+            # Clear containers for next round
+            md5_list = []
+            md5_sequence_map.clear()
 
     # If there are leftovers, process the last batch
     if i > 1:
