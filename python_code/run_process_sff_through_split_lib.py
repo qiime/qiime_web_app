@@ -90,8 +90,8 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         # Copy the SFF into the processed files directory
         copied_sff=split(sff_input_fp)[-1]
         sff_input_fp_copy=join(output_dir, copied_sff)
-        copy_sff_cmd='cp %s %s' % (sff_input_fp,sff_input_fp_copy)
-        commands.append([('CopySFF', copy_sff_cmd)])
+        #copy_sff_cmd='cp %s %s' % (sff_input_fp,sff_input_fp_copy)
+        #commands.append([('CopySFF', copy_sff_cmd)])
         
         #Generate filenames for split_libraries
         input_dir, input_filename = split(sff_input_fp)
@@ -99,14 +99,14 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
             process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
-                (python_exe_fp, script_dir, sff_input_fp_copy,
+                (python_exe_fp, script_dir, sff_input_fp,
                  output_dir)
             split_lib_fasta_input_files.append(join(output_dir,input_basename + '_FLX.fna'))
             split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
             denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
         else:
             process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
-            (python_exe_fp, script_dir, sff_input_fp_copy,
+            (python_exe_fp, script_dir, sff_input_fp,
              output_dir)
             split_lib_fasta_input_files.append(join(output_dir,input_basename + '.fna'))
             split_lib_qual_input_files.append(join(output_dir,input_basename + '.qual'))

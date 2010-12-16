@@ -31,7 +31,7 @@ def combine_otu_files(otu_map_files, output_otu_map):
         for line in current_file:
             items = line.split('\t')
             key = items[0]
-            print str(otu_map)
+            #print str(otu_map)
             if key not in otu_map:
                 otu_map[key] = []
     
