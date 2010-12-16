@@ -32,7 +32,7 @@ $(document).ready(function(){
 body {
 	margin: 0; padding: 0;
 	font: 10px normal Arial, Helvetica, sans-serif;
-	background: #fff url(body_bg.gif) repeat-x;
+	background: #ddd url(body_bg.gif) repeat-x;
 }
 .container {
 	width: 960px;
@@ -40,7 +40,7 @@ body {
 	position: relative;
 }
 #header {
-	background: url(img/wordpressheader.png) no-repeat left top;
+	background: url(img/wordpressheader.png) no-repeat center top;
 	padding-top: 120px;
 }
 #header .disclaimer {
@@ -58,8 +58,9 @@ ul.topnav {
 	margin: 0;
 	float: left;
 	width: 920px;
-	background: #ddd;
+	background: #222;
 	font-size: 1.2em;
+	background: url(topnav_bg.gif) repeat-x;
 }
 ul.topnav li {
 	float: left;
@@ -69,13 +70,13 @@ ul.topnav li {
 }
 ul.topnav li a{
 	padding: 10px 5px;
-	color: #000;
+	color: #fff;
 	display: block;
 	text-decoration: none;
 	float: left;
 }
 ul.topnav li a:hover{
-    background: #aaa;
+	background: url(topnav_hover.gif) no-repeat center top;
 }
 ul.topnav li span { /*--Drop down trigger styles--*/
 	width: 17px;
@@ -88,7 +89,7 @@ ul.topnav li ul.subnav {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
 	left: 0; top: 35px;
-	background: #fff;
+	background: #333;
 	margin: 0; padding: 0;
 	display: none;
 	float: left;
@@ -126,7 +127,7 @@ html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
 <div class="container">
 
     <div id="header">
-    	 <div class="disclaimer">QIIME Web Application</div>
+    	 <div class="disclaimer">Sexy Drop Down Menu Tutorial by <a href="http://www.SohTanaka.com">Soh Tanaka</a>.</div>
         <ul class="topnav">
             <li><a href="#">Home</a></li>
             <li>
