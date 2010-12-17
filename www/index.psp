@@ -59,7 +59,6 @@ $(document).ready(function(){
 
 <body>
 <div class="container">
-
     <div id="header">
     	 <div class="disclaimer">Please Log In</div>
     </div>
