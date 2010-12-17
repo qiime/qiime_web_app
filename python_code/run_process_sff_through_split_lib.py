@@ -84,6 +84,11 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     split_lib_fasta_input_files=[]
     split_lib_qual_input_files=[]
     denoise_flow_input_files=[]
+    
+    copied_mapping=split(mapping_fp)[-1]
+    mapping_input_fp_copy=join(output_dir, copied_mapping)
+    copy_mapping_cmd='cp %s %s' % (mapping_fp,mapping_input_fp_copy)
+    commands.append([('CopyMapping', copy_mapping_cmd)])
     for sff_input_fp in sff_filenames:
         ##### GENERATE THE MD5 HERE AND STORE IN THE DATABASE AFTER FILE SUCCESSFULLY PROCESSED
         
