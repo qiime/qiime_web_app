@@ -15,7 +15,7 @@ html, body {
 	margin: 0 auto;
 	background: #fff;
 	padding: 8px;
-	border: 2px coral solid;
+	border: 2px black solid;
 	font: 15px normal Arial, Helvetica, sans-serif;
 }
 
@@ -40,7 +40,7 @@ ul.topnav {
 	width: 920px;
 	background: #222;
 	font-size: 1.2em;
-	background: url(topnav_bg.gif) repeat-x;
+	background: url(img/topnav_bg.gif) repeat-x;
 }
 ul.topnav li {
 	float: left;
@@ -56,13 +56,13 @@ ul.topnav li a{
 	float: left;
 }
 ul.topnav li a:hover{
-	background: url(topnav_hover.gif) no-repeat center top;
+	background: url(img/topnav_hover.gif) no-repeat center top;
 }
 ul.topnav li span { /*--Drop down trigger styles--*/
 	width: 17px;
 	height: 35px;
 	float: left;
-	background: url(subnav_btn.gif) no-repeat center top;
+	background: url(img/subnav_btn.gif) no-repeat center top;
 }
 ul.topnav li span.subhover {background-position: center bottom; cursor: pointer;} /*--Hover effect for trigger--*/
 ul.topnav li ul.subnav {
@@ -90,11 +90,11 @@ ul.topnav li ul.subnav li{
 html ul.topnav li ul.subnav li a {
 	float: left;
 	width: 245px;
-	background: #333 url(dropdown_linkbg.gif) no-repeat 10px center;
+	background: #333 url(img/dropdown_linkbg.gif) no-repeat 10px center;
 	padding-left: 20px;
 }
 html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
-	background: #222 url(dropdown_linkbg.gif) no-repeat 10px center; 
+	background: #222 url(img/dropdown_linkbg.gif) no-repeat 10px center; 
 }
 #header img {
 	margin: 20px 0 10px;
