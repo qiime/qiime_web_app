@@ -15,6 +15,8 @@ from enums import DataAccessType
 data_access = data_access_factory(DataAccessType.qiime_production)
 %>
 
+<h3>SFF Upload</h3>
+
 <script type="text/javascript">
 
 var study_dir = \'<%=sess['study_dir']%>\'+'/'
@@ -125,7 +127,7 @@ function resizeApplet() {
 
 function setCompleteBox()
 {
-    upload_complete.submit();
+    document.forms['upload_complete'].submit();
 }
 
 </script>
@@ -143,7 +145,7 @@ function setCompleteBox()
 <tr><td>
 <div id='applet'>
 <!--this is the jumploader applet-->
-<p><b>SFF Upload: Please upload only zipped files.</b><br/>
+<b>SFF Upload: Please upload only zipped files.</b><br/>
 The filename should not contain spaces or non-alphanumeric characters.</p>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 

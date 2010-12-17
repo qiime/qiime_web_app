@@ -25,8 +25,6 @@ mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
 %>
 
-<br>
-<p>
     <h3>Selected Study: <%=sess['study_name']%></h3>
     <br/>
 
@@ -42,7 +40,7 @@ can_delete = study_info['can_delete']
         <li>
             <form id="user_study" action="select_user_study_submit.psp" method="post">
                 Select an Existing Study:
-                <select validate="required:true" name="study_names" id="study_names" onchange="user_study.submit();">
+                <select validate="required:true" name="study_names" id="study_names" onchange="document.forms['user_study'].submit();">
 <%
 study_names = data_access_factory(DataAccessType.qiime_production).getUserStudyNames(sess['web_app_user_id'], sess["is_admin"])
 for study_name in study_names:

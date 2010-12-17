@@ -11,6 +11,8 @@ __status__ = "Production"
 '''This script is the SFF upload page, which uses the JumpLoader java applet.'''
 %>
 
+<h3>Metadata Upload</h3>
+
 <script type="text/javascript">
 
 var study_dir = \'<%=sess['study_dir']%>\'+'/'
@@ -153,7 +155,7 @@ function resizeApplet()
 
 function setCompleteBox()
 {
-    upload_complete.submit();
+    document.forms['upload_complete'].submit();
 }
 
 </script>

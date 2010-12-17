@@ -16,24 +16,12 @@ qda = data_access_factory(DataAccessType.qiime_production)
 
 <script type='text/javascript' src='js/template.js'></script>
 
-<p/>
+<h3>Select Template Fileds</h3>
 
 <form action='new_template_submit.psp' target='_blank'>
 <table id='package_fields'>
 
-<th style='text-align:left'>Include in Template?</th>
-<th style='text-align:left'>Field Name</th>
-<th style='text-align:left'>Data Type</th>
-<th style='text-align:left'>Description/Expected Values</th>
-<th style='text-align:left'>Details</th>
 
-<tr>
-    <td width='200px'></td>
-    <td width='250px'></td>
-    <td width='100px'></td>
-    <td width='200px'></td>
-    <td></td>
-</tr>
 
 <%
 from mod_python import *

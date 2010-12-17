@@ -30,33 +30,90 @@ link_page = 'select_study.psp'
 # end
 %>
 
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <title>Qiime</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="style.css" type="text/css">
 <script type="text/javascript" src="./js/qiime.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
-<link rel="stylesheet" href="style.css" type="text/css">
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
+<script type="text/javascript"> 
+$(document).ready(function(){
+
+	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("ul.topnav li span").click(function() { //When trigger is clicked...
+		
+		//Following events are applied to the subnav itself (moving subnav up and down)
+		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+		$(this).parent().hover(function() {
+		}, function(){	
+			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+		});
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+
+});
+</script>
+
 </head>
+
 <body>
-<form target="_parent" id="send_me_home" name="send_me_home" action="fusebox.psp" method="post">
-    <input type="hidden" id="page" name="page" value="<%=link_page%>">
-</form>
-<a href="#" onclick="send_me_home.submit();"><img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 /></a>
-<table class="header_table">
-    <td style="text-align: right">
-        <a href="docs/index.html" target="_blank">help</a> | 
-        <a href="fusebox.psp?page=select_study.psp">home</a> |  
+<div class="container">
+
+    <div id="header">
+    	 <div class="disclaimer">Logged in as <%=sess['username']%></div>
+        <ul class="topnav">
+            <li>
+                <a href="fusebox.psp?page=select_study.psp">Home</a>
+            </li>
 <%
 if sess.get('study_id'):
-    req.write('<a href="fusebox.psp" target="_parent">study options</a> | ')
+    # Indent
+%>
+            <li>
+                <a href="fusebox.psp" target="_parent">Manage Study Data</a>
+
+                <ul class="subnav">
+                    <li><a href="fusebox.psp?page=new_study.psp" target="_parent">Create New Study</a></li>
+                    <li><a href="fusebox.psp?page=load_template_fields.psp" target="_parent">Generate MIENS Tempaltes</a></li>
+                    <li><a href="fusebox.psp?page=upload_sff.psp" target="_parent">Add/Remove SFF Files</a></li>
+                    <li><a href="fusebox.psp?page=upload_metadata.psp" target="_parent">Upload Metadata</a></li>
+                </ul>
+            </li>
+<%
+# End if
 
 %>
-        <a href="fusebox.psp?page=new_study.psp" target="_parent">new study</a> | 
-        <a href="fusebox.psp?page=new_meta_analysis.psp" target="_parent">new meta-analysis</a> | 
-        <a href="fusebox.psp?page=tools_ontology_and_geo.psp" target="_parent">tools</a> | 
-        <a href="index.psp" target="_parent">log out</a>
-    </td>
-</tr>
-</table>
+            <li>
+                <a href="fusebox.psp?page=new_meta_analysis.psp" target="_parent">Meta Analysis</a>
+                <ul class="subnav">
+                    <li><a href="fusebox.psp?page=new_meta_analysis.psp" target="_parent">Create New Meta-Analysis</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="fusebox.psp?page=tools_ontology_and_geo.psp" target="_parent">Tools</a>
+                <ul class="subnav">
+                    <li><a href="fusebox.psp?page=tools_ontology.psp" target="_parent">Ontology Lookup Service</a></li>
+                    <li><a href="fusebox.psp?page=tools_geo.psp" target="_parent">Georeference Utility</a></li>
+                </ul>
+            </li>
+            <li><a href="docs/index.html" target="_blank">Help</a></li>
+            <li><a href="index.psp" target="_parent">Log Out</a></li>
+        </ul>
+    </div>
+</div>
+<div class="content">
+<br/><br/>
+<hr/>

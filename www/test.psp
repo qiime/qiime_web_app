@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Sexy Drop Down Menu with CSS &amp; jQuery - Tutorial by Soh Tanaka - www.SohTanaka.com</title>
+<title>Qiime</title>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
 <script type="text/javascript"> 
 $(document).ready(function(){
@@ -32,20 +32,21 @@ $(document).ready(function(){
 body {
 	margin: 0; padding: 0;
 	font: 10px normal Arial, Helvetica, sans-serif;
-	background: #ddd url(body_bg.gif) repeat-x;
+	background: #ddd;
 }
 .container {
 	width: 960px;
 	margin: 0 auto;
 	position: relative;
+	background: #000;
 }
 #header {
-	background: url(img/wordpressheader.png) no-repeat center top;
-	padding-top: 120px;
+	background: url(img/qiime_logo.jpg) no-repeat left top;
+	padding-top: 140px;
 }
 #header .disclaimer {
 	color: #999;
-	padding: 100px 0 7px 0;
+	padding: 125px 0 7px 0;
 	text-align: right;
 	display: block;
 	position: absolute;
@@ -127,11 +128,11 @@ html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
 <div class="container">
 
     <div id="header">
-    	 <div class="disclaimer">Sexy Drop Down Menu Tutorial by <a href="http://www.SohTanaka.com">Soh Tanaka</a>.</div>
+    	 <div class="disclaimer">QIIME Web</a>.</div>
         <ul class="topnav">
             <li><a href="#">Home</a></li>
             <li>
-                <a href="#">Tutorials</a>
+                <a href="#">Manage Study Data</a>
 
                 <ul class="subnav">
                     <li><a href="#">Sub Nav Link</a></li>
@@ -143,7 +144,7 @@ html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
                 </ul>
             </li>
             <li>
-                <a href="#">Resources</a>
+                <a href="#">Meta Analysis</a>
                 <ul class="subnav">
                     <li><a href="#">Sub Nav Link</a></li>
                     <li><a href="#">Sub Nav Link</a></li>
@@ -154,11 +155,15 @@ html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
                     <li><a href="#">Sub Nav Link</a></li>
                 </ul>
             </li>
-            <li><a href="#">About Us</a></li>
-
-            <li><a href="#">Advertise</a></li>
-            <li><a href="#">Submit</a></li>
-            <li><a href="#">Contact Us</a></li>
+            <li>
+                <a href="#">Tools</a>
+                <ul class="subnav">
+                    <li><a href="#">Ontology Lookup Service</a></li>
+                    <li><a href="#">Georeference Utility</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Help</a></li>
+            <li><a href="#">Log Out</a></li>
         </ul>
     </div>
 </div>
