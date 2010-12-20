@@ -57,6 +57,7 @@ pcoa_file_dir = os.path.join(meta_analysis_dir, 'pcoa_files/')
 sess['pcoa_file_dir'] = pcoa_file_dir
 pcoa_file_dir_db = os.path.join(meta_analysis_dir_db, 'pcoa_files/')
 sess['pcoa_file_dir_db'] = pcoa_file_dir_db
+sess['study_id'] = None
 sess.save()
 
 
@@ -89,4 +90,14 @@ except Exception, e:
 psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
 
 %>
+
+<!-- An oddball redirect to force the menu to redraw -->
+<form id="redirect_to_new_analysis" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="select_meta_analysis_task.psp">
+</form>
+
+<script language="text/javascript">
+    alert('yo!');
+    document.forms['redirect_to_new_analysis'].submit();
+</script>
 

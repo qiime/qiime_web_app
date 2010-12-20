@@ -35,10 +35,8 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 <%
 # get the meta_analysis ID from the session
 meta_analysis_id=sess['meta_analysis_id']
-sess['study_id']=meta_analysis_id
 sess['job_type_id']=5
 job_type_id=5
-study_id=sess['study_id']
 sess.save()
 %>
 
@@ -58,7 +56,7 @@ sess.save()
 </p>
 <br>
 <%
-jobs = data_access.getJobInfo(study_id,job_type_id)
+jobs = data_access.getJobInfo(meta_analysis_id,job_type_id)
 if len(jobs) > 0:
 
     req.write('''
