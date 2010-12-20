@@ -54,7 +54,7 @@ for study_name in study_names:
         <li>
             <form id="user_meta_analysis" action="select_meta_analysis_submit.psp" method="post">
                 Select Previous Meta-Analyses:
-                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="user_meta_analysis.submit(); return false;">
+                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="document.forms['user_meta_analysis'].submit(); return false;">
                 <option value=""></option>
 <%
 meta_analysis_names = data_access_factory(DataAccessType.qiime_production).getMetaAnalysisNames(sess['web_app_user_id'])

@@ -13,7 +13,6 @@ __status__ = "Production"
 import os
 sess = Session.Session(req)
 parts = form['meta_analysis_names'].split(':')
-sess['study_id']=0
 sess['meta_analysis_id'] = parts[0]
 sess['meta_analysis_name'] = parts[1]
 # Define meta_analysis folder
@@ -41,7 +40,7 @@ pcoa_file_dir = os.path.join(meta_analysis_dir, 'pcoa_files/')
 sess['pcoa_file_dir'] = pcoa_file_dir
 pcoa_file_dir_db = os.path.join(meta_analysis_dir_db, 'pcoa_files/')
 sess['pcoa_file_dir_db'] = pcoa_file_dir_db
-
+sess['study_id'] = None
 sess.save()
 
 #See if the study folder exists and if not, creates it.

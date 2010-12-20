@@ -16,7 +16,7 @@ qda = data_access_factory(DataAccessType.qiime_production)
 
 <script type='text/javascript' src='js/template.js'></script>
 
-<h3>Select Template Fileds</h3>
+<h3>Select Template Fields</h3>
 
 <form action='new_template_submit.psp' target='_blank'>
 <table id='package_fields'>
