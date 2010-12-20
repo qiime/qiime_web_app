@@ -16,9 +16,19 @@ from enums import DataAccessType
 # Grab some required values for this page
 sess = Session.Session(req)
 data_access = data_access_factory(DataAccessType.qiime_production)
-study_id = int(sess['study_id'])
+job_locator_id = 0
+study_id = sess['study_id']
+meta_analysis_id = sess['meta_analysis_id']
+
+if study_id:
+    job_locator_id = int(study_id)
+elif meta_analysis_id:
+    job_locator_id = int(meta_analysis_id)
+else:
+    raise('Could not determine job identifier. study_id and meta_analysis_id are both empty.')
+
 job_type_id = int(form['job_type_id'])
-jobs = data_access.getJobInfo(study_id,job_type_id)
+jobs = data_access.getJobInfo(job_locator_id, job_type_id)
 
 for job in jobs:
     req.write('<li>\n')
