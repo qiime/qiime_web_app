@@ -16,6 +16,7 @@ parts = form['study_names'].split(':')
 sess['study_id'] = parts[0]
 sess['study_name'] = parts[1]
 sess['study_dir'] = os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
+sess['meta_analysis_id']=0
 sess.save()
 
 #See if the study folder exists and if not, creates it.
