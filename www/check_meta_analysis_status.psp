@@ -21,14 +21,14 @@ meta_analysis_id = int(sess['meta_analysis_id'])
 mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
 if mapping_otu_files:
     req.write('<br><br><table>')
-    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 12px;text-align:center;" colspan="8"><b>Generated Files</b></td></tr>')
-    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;text-align:center;"><b>Mapping Files</b></td><td style="font-size: 11px;text-align:center;"><b>OTU Tables</b></td><td style="font-size: 11px;text-align:center;"><b>Zipped Files</b></td><td bgcolor="#FAAFBE" style="font-size: 11px;text-align:center;"><b>Remove Files</b></td></tr>')
+    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 12px;" colspan="8"><b>Generated Files</b></td></tr>')
+    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Mapping Files</b></td><td style="font-size: 11px;"><b>OTU Tables</b></td><td style="font-size: 11px;"><b>Zipped Files</b></td><td bgcolor="#FAAFBE" style="font-size: 11px;"><b>Remove Files</b></td></tr>')
 
     for files in mapping_otu_files:
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[0],os.path.basename(files[0])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[2],os.path.basename(files[2])))
-        req.write('<td bgcolor="#FAAFBE" style="font-size: 10px;text-align:center;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?map_fname=%s&otu_fname=%s&zip_fname=%s\')">(clear files)</a></td></tr>' % (files[0],files[1],files[2]))
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[0],os.path.basename(files[0])))
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[2],os.path.basename(files[2])))
+        req.write('<td bgcolor="#FAAFBE" style="font-size: 10px;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?map_fname=%s&otu_fname=%s&zip_fname=%s\')">(clear files)</a></td></tr>' % (files[0],files[1],files[2]))
 
     req.write('</table>')
 #
@@ -39,26 +39,37 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 meta_analysis_id = int(sess['meta_analysis_id'])
 filepaths = data_access.getMetaAnalPCoAFilepaths(meta_analysis_id)
 if filepaths:
+    
+    
     req.write('<br><br><table>')
-    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 12px;text-align:center;" colspan="7"><b>Generated Files</b></td></tr>')
-    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;text-align:center;"><b>Mapping Files</b></td>')
-    req.write('<td style="font-size: 11px;text-align:center;"><b>Distance Matrices</b></td>')
-    req.write('<td style="font-size: 11px;text-align:center;"><b>Prefs Files</b></td>')
-    req.write('<td style="font-size: 11px;text-align:center;"><b>Principal Coords</b></td>')
-    #req.write('<td style="font-size: 11px;text-align:center;"><b>Discrete 3D Plots</b></td>')
-    req.write('<td style="font-size: 11px;text-align:center;"><b>Continuous 3D Plots</b></td>')
-    req.write('<td style="font-size: 11px;text-align:center;"><b>Zipped Files</b></td>')
-    req.write('<td bgcolor="#FAAFBE" style="font-size: 11px;text-align:center;"><b>Remove Files</b></td></tr>')
+    req.write('<tr><td style="font-size: 12px;text-align:left;" colspan="2"><b>Generated Files</b></td></tr>')
+    
 
-    for files in filepaths:
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[2],os.path.basename(files[2])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[3],os.path.basename(files[3])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[4],os.path.basename(files[4])))
-        #req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[5],os.path.basename(files[5])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[6],os.path.basename(files[6])))
-        req.write('<td style="font-size: 10px;text-align:center;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[7],os.path.basename(files[7])))
-        req.write('<td bgcolor="#FAAFBE" style="font-size: 10px;text-align:center;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?map_fname=%s&dist_fname=%s&zip_fname=%s\')">(clear files)</a></td></tr>' % (files[1],files[2],files[7]))
+    for file_set in filepaths:
+        mapping_file = (file_set[1], os.path.basename(file_set[1]))
+        distance_matrix_file = (file_set[2], os.path.basename(file_set[2]))
+        prefs_file = (file_set[3], os.path.basename(file_set[3]))
+        principal_coords_file = (file_set[4], os.path.basename(file_set[4]))
+        continuous_3d_plot_file = (file_set[6], os.path.basename(file_set[6]))
+        zipped_file =  (file_set[7], os.path.basename(file_set[7]))
+        meta_analysis_name = file_set[8]
+        
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Mapping Files</b></td>')
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (mapping_file[0], mapping_file[1]))
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Distance Matrices</b></td>')
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (distance_matrix_file[0], distance_matrix_file[1]))
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Prefs Files</b></td>')
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (prefs_file[0], prefs_file[1]))
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Principal Coords</b></td>')
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (principal_coords_file[0], principal_coords_file[1]))
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Continuous 3D Plots</b></td>')
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (continuous_3d_plot_file[0], continuous_3d_plot_file[1]))
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Zipped Files</b></td>')
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (zipped_file[0], zipped_file[1]))
+        req.write('<tr bgcolor="#D0F5A9"><td bgcolor="#FAAFBE" style="font-size: 11px;"><b>Remove Files</b></td>')
+        req.write('<td bgcolor="#FAAFBE" style="font-size: 10px;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?map_fname=%s&dist_fname=%s&zip_fname=%s\')">(clear files)</a></td></tr>' % (mapping_file[0], distance_matrix_file[0], zipped_file[0]))
+        req.write('<tr><td colspan="2">&nbsp;</td></tr>')
+
 
     req.write('</table>')
 #

@@ -183,7 +183,7 @@ a
 div.progress-container {
   background-color: #AAAAAA;
   border: 1px solid #ccc; 
-  width: 500px; 
+  width: 99%; 
   height: 20px;
   margin: 2px 5px 2px 0; 
   padding: 1px; 
@@ -191,7 +191,7 @@ div.progress-container {
 }
 
 div.progress-container > div {
-  background-color: #006699; 
+  background-color: #D0F5A9; 
   height: 100%;
   text-align: center;
 }
