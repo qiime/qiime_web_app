@@ -18,8 +18,11 @@ sess = Session.Session(req)
 data_access = data_access_factory(DataAccessType.qiime_production)
 job_locator_id = 0
 study_id = sess['study_id']
-meta_analysis_id = sess['meta_analysis_id']
-
+try: 
+	meta_analysis_id = sess['meta_analysis_id']
+except:
+	meta_analysis_id=False
+	
 if study_id:
     job_locator_id = int(study_id)
 elif meta_analysis_id:
