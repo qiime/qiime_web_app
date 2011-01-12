@@ -48,11 +48,11 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     '''
     con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
-    cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
+    #print 'Rebuilding PK_SPLIT_LIBRARY_READ_MAP...'
+    #cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
     cur = con.cursor()
     study_id_exists=data_access.checkIfStudyIdExists(metadata_study_id)
     print "Study ID exists: " + str(study_id_exists)
-    
     alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
     alphabet += alphabet.lower()
     alphabet += "01234567890"
@@ -66,20 +66,18 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     
     #valid = data_access.disableTableConstraints()
     print "Disabled table constraints"
-    
+
     #split the fasta filenames and determine filepaths
     for fasta_fname in fasta_filenames:
         input_fname, input_ext = splitext(split(fasta_fname)[-1])
         input_basename, input_ext = splitext(fasta_fname)
         input_dir = split(input_basename)[:-1][0]
         
-        print re.search('0\d$', input_fname)
-        if re.search('0\d$', input_fname)==None or \
-                                re.search('0\d$', input_fname).group()==None:
+        if re.search('0\d$', input_fname)==None or re.search('0\d$', input_fname).group()==None:
             sff_basename=input_fname
         else:
             sff_basename=input_fname[:-2]
-        
+        print 'sff_basename: %s' % sff_basename
 
         analysis_notes=split(input_basename)[0]
         
@@ -96,14 +94,18 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
         #sff_file = join(rev[rev.find('/'):][::-1], input_fname + '.sff')
         sff_file=input_basename+'.sff'
         sff_md5 = safe_md5(open(sff_file)).hexdigest()
+        
+        print 'MD5 is: %s' % str(sff_md5)
 
         if analysis_id==0:
             analysis_id=data_access.createAnalysis(metadata_study_id)
         
         sff_exists=data_access.checkIfSFFExists(sff_md5)
-        print str(sff_exists)
+        print 'sff in database? %s' % str(sff_exists)
         
+        #if True:
         if not sff_exists:
+            print 'flow_fname: %s' % flow_fname
             sff_header=get_header_info(open(flow_fname))
             
             if sff_header['# of Flows']=='400':
@@ -114,7 +116,7 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
                 instrument_code='Titanium'
             else:
                 instrument_code='UNKNOWN'
-            print instrument_code
+            print 'Instrument Code: %s' % instrument_code
             if seq_run_id==0:
                 seq_run_id=data_access.createSequencingRun(True,instrument_code,
                                             sff_header['Version'],seq_run_id)
@@ -140,14 +142,21 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
 
             con=data_access.getSFFDatabaseConnection()
             cur = con.cursor()
-            for res in flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id,sff_md5,100):
+            print 'Writing flow file data to database.'
+            flow_results = flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id,sff_md5,1000)
+            current_item = 0
+            for res in flow_results:
                 start = time.time()
                 valid=data_access.loadSFFData(True,res)
                 end = time.time()
-                print "Total processor time elapsed: %s" % str(end - start)
+                print "(flow iteration: %s) Total processor time elapsed: %s" % (current_item, str(end - start))
+                current_item += 1
             print time.time()
         else:
             seq_run_id=data_access.getSeqRunIDUsingMD5(sff_md5)
+    
+    print 'sequence_run_id is: %s' % str(seq_run_id)
+            
     print fasta_qual_files
     split_lib_input_md5sum=safe_md5(MD5Wrap(fasta_qual_files)).hexdigest()
     print split_lib_input_md5sum
@@ -217,15 +226,18 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     types = ['i','i', 's', 's', 's', 's', 's', 'i', 'i', 'fc', 's']
     con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
-    cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
+    #print 'Rebuilding PK_SPLIT_LIBRARY_READ_MAP...'
+    #cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
     cur = con.cursor()
     open_fasta = open(split_lib_seqs)
     iterator=0
     
-    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,100):
+    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,1000):
+        #print str(res)
         print 'running %i' % (iterator)
         iterator=iterator+1
         valid = data_access.loadFNAFile(True, res)
+        break
         if not valid:
             raise ValueError, 'Error: Unable to load FNA file into database!'
 
@@ -241,67 +253,24 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     return analysis_id
 
 
-def load_otu_mapping(data_access,input_dir):
+def load_otu_mapping(data_access, input_dir):
     # For OTU Tables
     #read in the workflow log file and determine timestamp and svn version of
     #Qiime used for the analysis
+    pick_otus_cmd = ''
+    pOTUs_threshold = '97'
+    ref_set_threshold = '97'
+    pOTUs_method='UCLUST_REF'
+    reference_set_name='GREENGENES_REFERENCE'
+    otus_log_str = ''
+    otu_run_set_id = 0
     svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
     qiime_revision=get_qiime_svn_version()
-    run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
-    print run_date
-    print glob(join(input_dir, 'log*.txt'))
-    full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
-    full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
-    full_log_str = open(full_log_fp, 'U').read()
-    log_str = open(full_log_fp, 'U').readlines()
-    #from the workflow log file get the split-library and pick-otus cmds
-    combined_pick_otus_cmd=[]
-    for substr in log_str:
-        if 'parallel_pick_otus_uclust_ref.py' in substr:
-            pick_otus_cmd=substr
-            combined_pick_otus_cmd.append(substr)
-    print pick_otus_cmd
-    
-    pick_otu_log_str=''.join(combined_pick_otus_cmd)
-    #define the picked OTU file paths using the original fasta input 
-    #directory
-    pattern=re.compile("-s (\d+)\.(\d+)")
-    pOTUs_threshold_str='.'.join(pattern.search(pick_otus_cmd).groups())
-    
-    if pOTUs_threshold_str=='0.97':
-        pOTUs_threshold='97'
-    elif pOTUs_threshold_str=='0.98':
-        pOTUs_threshold='98'
-    elif pOTUs_threshold_str=='0.99':
-        pOTUs_threshold='99'
-    else:
-        pOTUs_threshold='NULL'
-    
-    pattern=re.compile("-m (\w+)")
-    #pOTUs_method=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
-    pOTUs_method='UCLUST_REF'
-    pattern=re.compile("-r ([a-zA-Z0-9_/.]+)")
-    ref_set_fname=''.join(pattern.search(pick_otus_cmd).groups()).strip().upper()
-    ref_set, ref_set_ext = splitext(split(ref_set_fname)[-1])
-    ref_set_name,ref_set_threshold,generic_name,ref_set_date=ref_set.split('_')
-    
-    if ref_set_name=='GG':
-        reference_set_name='GREENGENES_REFERENCE'
-    else:
-        reference_set_name='Not a Reference Set'
-    
-    pick_otus_map = join(input_dir, 'exact_trie_uclust_ref_otus.txt')
-    #pick_otus_failures = join(input_dir, 'picked_otus_%s_%s' % (pOTUs_method,pOTUs_threshold), 'seqs_failures.txt')
-    #pick_otus_log = join(input_dir, 'picked_otus_%s_%s' % (pOTUs_method,pOTUs_threshold), 'seqs_otus.log')
-    otus_log_str = pick_otu_log_str # using the full log for this
-    
-    split_lib_seqs = join(input_dir, 'all_split_lib_seqs.fna')
-    study_run_prefix_dict = eval(open(join(input_dir, 'studies_run_prefix_dict.txt')).read())
-
+    run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")    
+    pick_otus_map = join(input_dir, 'exact_uclust_ref_otus.txt')
+    split_lib_seqs = join(input_dir, 'leftover.fasta')
     split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
     
-    #print run_date, split_lib_cmd, svn_version, split_log_str, split_hist_str, comb_checksums
-    otu_run_set_id=0
     #Insert the otu-picking log information in the DB
     valid,new_otu_run_set_id,otu_picking_run_id=data_access.loadAllOTUInfo(True,
                                   otu_run_set_id, run_date,
@@ -314,60 +283,58 @@ def load_otu_mapping(data_access,input_dir):
     else:
         print "Finished registering OTU run!"
     
-    for i in study_run_prefix_dict:
-        for j in study_run_prefix_dict[i]:
-            data_access.updateAnalysisWithOTURun(True, otu_picking_run_id,\
-                                                 new_otu_run_set_id,i,j)
-    
     otu_map=[]
     otu_to_seqid = fields_to_dict(open(pick_otus_map, 'U'))
     for otu in otu_to_seqid:
         for sample in otu_to_seqid[otu]:
-            otu_map.append('%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id,
-                                                reference_set_name))
+            otu_map.append('%s\t%s\t%s\t%s' % (otu,sample,new_otu_run_set_id, reference_set_name))
+    print 'Finished setting otu_map.'
     
-    types=['s','s','i','s']
-    con=data_access.getSFFDatabaseConnection()
+    types = ['s','s','i','s']
+    con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
-    cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
+    #print 'Starting PK_SPLIT_LIBRARY_READ_MAP index rebuild...'
+    #cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
+    print 'Fisnished rebuilding index PK_SPLIT_LIBRARY_READ_MAP.'
     cur = con.cursor()
     set_count = 1
     start = time.time()
-    for input_set in input_set_generator(otu_map, cur, types,100):
-        valid=data_access.loadOTUMapAll(True, input_set)
-        print "loading OTU mapping data: %s" % set_count
+    
+    print 'Starting otu map loading...'
+    for input_set in input_set_generator(otu_map, cur, types, 1000):
+        print "loading OTU mapping input set: %s" % set_count
+        valid = data_access.loadOTUMapAll(True, input_set)
+        
+        if not valid:
+            raise ValueError, 'Error: Unable to load OTU MAP data into database!'
+            
         set_count += 1
+        
+    print 'Successfully loaded the OTU map into the database!'
     end = time.time()
     print "Total processor time elapsed: %s" % str(end - start)
-    if not valid:
-        raise ValueError, 'Error: Unable to load OTU MAP data into database!'
-    else:
-        print 'Loaded the OTU map!'
     
-    pick_otus_failures = join(input_dir, 'exact_trie_uclust_ref_otus_failures.txt')
+    pick_otus_failures = join(input_dir, 'all_failures.txt')
     
-    lines=open(pick_otus_failures,'U')
-    otu_failures=[]
+    lines = open(pick_otus_failures,'U')
+    otu_failures = []
     for line in lines:
         otu_failures.append('%s\t%s'% (line.strip('\n'),str(otu_picking_run_id)))
     types=['s','i']
     con=data_access.getSFFDatabaseConnection()
     cur = con.cursor()
     set_count = 1
-    for input_set in input_set_generator(otu_failures, cur, types,100):
-        valid=data_access.loadOTUFailuresAll(True, input_set)
-        print "loading otu-map: %s" % set_count
+    
+    for input_set in input_set_generator(otu_failures, cur, types, 10000):
+        valid = data_access.loadOTUFailuresAll(True, input_set)
+        if not valid:
+            raise ValueError, 'Error: Unable to load OTU failures data into database!'
+        print "loading OTU failure set: %s" % set_count
         set_count += 1
     
-    if not valid:
-        raise ValueError, 'Error: Unable to load OTU failures data into database!'
-    
     print 'Successfully loaded the OTU failures into the database!'
-    
-    
     print 'End of function' 
 
-    
     
 def cp_files(filepath,location):
     """Transfers files to another server."""
