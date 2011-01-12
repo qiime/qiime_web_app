@@ -14,9 +14,10 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs
+from os.path import split, join
 from qiime.util import load_qiime_config
 from qiime.util import load_qiime_config
-from load_sff_through_split_lib_to_db import submit_sff_and_split_lib
+from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, load_otu_mapping
 
 
 qiime_config = load_qiime_config()
@@ -61,10 +62,20 @@ def main():
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
         
-    fasta_files=opts.processed_fasta_fnames
-    study_id=opts.study_id
-
-    analysis_id=submit_sff_and_split_lib(data_access,fasta_files=fasta_files,metadata_study_id=study_id)
+    fasta_files = opts.processed_fasta_fnames
+    study_id = opts.study_id
+    
+    print 'Starting sff and fasta data load...'
+    analysis_id = submit_sff_and_split_lib(data_access,fasta_files=fasta_files,metadata_study_id=study_id)
+    print 'Finished loading sff and fasta data!'
+    
+    # Load the otu data. Assuming only one fasta file as this is how the rest of the code
+    # is currently written.
+    input_dir = join(split(fasta_files)[0], 'chain_picked_otus')
+    print input_dir
+    print 'Starting OTU data load...'
+    load_otu_mapping(data_access, input_dir)
+    print 'Finished OTU data load!'
 
 if __name__ == "__main__":
     main()
