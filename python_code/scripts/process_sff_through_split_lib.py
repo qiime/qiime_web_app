@@ -24,7 +24,9 @@ from run_process_sff_through_split_lib import run_process_sff_through_split_lib,
 from qiime.workflow import print_commands,\
                            print_to_stdout, no_status_updates
 from run_chain_pick_otus import run_chain_pick_otus
-
+from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, load_otu_mapping
+from data_access_connections import data_access_factory
+from enums import DataAccessType
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -74,11 +76,9 @@ def main():
     study_id = opts.study_id
     run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[0]
     print run_prefix
-    output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
+    #output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
     #output_dir = '/tmp/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
     
-          
-    print output_dir
     sff_fname=opts.sff_fname
     map_fname = opts.map_fname
     verbose = opts.verbose
@@ -86,15 +86,19 @@ def main():
     write_to_all_fasta=opts.write_to_all_fasta
     convert_to_flx=opts.convert_to_flx
 
+    output_dir = split(sff_fname)[0]
+
     try:
-       parameter_f = open(opts.parameter_fp)
+        parameter_f = open(opts.parameter_fp)
     except IOError:
         raise IOError,\
         "Can't open parameters file (%s). Does it exist? Do you have read access?"\
         % opts.parameter_fp
 
     try:
-       makedirs(output_dir)
+        print 'output dir is: %s ' % output_dir 
+        makedirs(output_dir)
+        print 'made output dir'
     except OSError:
         pass
 
@@ -108,6 +112,7 @@ def main():
     else:
         status_update_callback = no_status_updates
         
+    # Process the SFF file
     params=parse_qiime_parameters(parameter_f)
     run_process_sff_through_split_lib(study_id=study_id,\
      run_prefix=run_prefix,\
@@ -120,13 +125,19 @@ def main():
      convert_to_flx=convert_to_flx,\
      write_to_all_fasta=write_to_all_fasta,\
      status_update_callback=status_update_callback)
-     
+   
+    # Chain pick OTUs
     resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
     otu_output_dir=join(output_dir,'gg_97_otus')
     create_dir(otu_output_dir)
     run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
                         params, qiime_config, parallel=False, \
                         status_update_callback=status_update_callback)
+  
+    # Load the data into the database
+    data_access = data_access_factory(DataAccessType.qiime_production)
+    submit_sff_and_split_lib(data_access, sff_fname, study_id)
+    load_otu_mapping(data_access, output_dir)
 
 if __name__ == "__main__":
     main()

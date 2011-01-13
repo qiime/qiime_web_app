@@ -267,8 +267,9 @@ def load_otu_mapping(data_access, input_dir):
     svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
     qiime_revision=get_qiime_svn_version()
     run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")    
-    pick_otus_map = join(input_dir, 'exact_uclust_ref_otus.txt')
-    split_lib_seqs = join(input_dir, 'leftover.fasta')
+    pick_otus_map = join(input_dir, 'gg_97_otus', 'exact_uclust_ref_otus.txt')
+    #split_lib_seqs = join(input_dir, 'leftover.fasta')
+    split_lib_seqs = join(input_dir, 'split_libraries', 'seqs.fna')
     split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
     
     #Insert the otu-picking log information in the DB
@@ -314,7 +315,7 @@ def load_otu_mapping(data_access, input_dir):
     end = time.time()
     print "Total processor time elapsed: %s" % str(end - start)
     
-    pick_otus_failures = join(input_dir, 'all_failures.txt')
+    pick_otus_failures = join(input_dir, 'gg_97_otus', 'all_failures.txt')
     
     lines = open(pick_otus_failures,'U')
     otu_failures = []
@@ -343,7 +344,7 @@ def cp_files(filepath,location):
     print 'cp command is: %s' % cmd_call
     system(cmd_call)
     return cmd_call
-    
+
 def zip_files(filepath1,filepath2,directory,location):
     """Transfers files to another server."""
     check_zip()

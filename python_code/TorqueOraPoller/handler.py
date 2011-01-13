@@ -186,7 +186,7 @@ class PollerTestHandlerErr(JobHandler):
 # LoadSffAndMetadataHandler (Job Type of ??)
 class ProcessSFFHandler(JobHandler):
     """Handler for process_sff_through_split_lib.py"""
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s -fca"])
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s -fc"])
     _base_args = {'SFF':None, 'Mapping':None, 'ParamFile':None, 'StudyID':None}
     _next_job_handler = ''
 

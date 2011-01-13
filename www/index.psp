@@ -93,8 +93,10 @@ if form.has_key('username'):
         sess['study_name'] = ''
         
         #User directories
-        sess['user_dir'] = os.path.join(output_dir, 'user_'+str(sess['web_app_user_id']))
-        sess['db_root']=os.path.join('/tmp_qiime/', 'user_'+str(sess['web_app_user_id']))
+        #sess['user_dir'] = os.path.join(output_dir, 'user_'+str(sess['web_app_user_id']))
+        #sess['db_root']=os.path.join('/tmp_qiime/', 'user_'+str(sess['web_app_user_id']))
+        sess['user_dir'] = os.path.join(output_dir, 'studies')
+        sess['db_root'] = output_dir
         try:
             if not os.path.exists(sess['user_dir']):
                 os.mkdir(sess['user_dir'])

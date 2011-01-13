@@ -71,7 +71,8 @@ def main():
     
     # Load the otu data. Assuming only one fasta file as this is how the rest of the code
     # is currently written.
-    input_dir = join(split(fasta_files)[0], 'chain_picked_otus')
+    #input_dir = join(split(fasta_files)[0], 'gg_97_otus')
+    input_dir = split(fasta_files)[0]
     print input_dir
     print 'Starting OTU data load...'
     load_otu_mapping(data_access, input_dir)
