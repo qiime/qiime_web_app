@@ -1893,7 +1893,7 @@ class QiimeDataAccess(object):
             sff_exists=0
             db_output=con.cursor().callproc('check_if_sff_file_exists',
                                             [str(md5_checksum),sff_exists])
-            if db_output[1]==1:
+            if db_output[1] > 0:
                 return True
             else:
                 return False
@@ -1998,6 +1998,7 @@ class QiimeDataAccess(object):
         """ starts process of importing otus
         """
         try:
+            #print str(input_set)
             con = self.getSFFDatabaseConnection()
             if start_job:
                 db_output=con.cursor().callproc('load_otu_map_all_package.array_insert',

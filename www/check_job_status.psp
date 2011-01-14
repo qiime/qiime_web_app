@@ -23,6 +23,11 @@ try:
 except:
 	meta_analysis_id=False
 	
+if 'meta_analysis_id' in sess:
+    meta_analysis_id = sess['meta_analysis_id']
+if 'study_id' in sess:
+    study_id = sess['study_id']
+
 if study_id:
     job_locator_id = int(study_id)
 elif meta_analysis_id:

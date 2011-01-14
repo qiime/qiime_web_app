@@ -87,6 +87,7 @@ def main():
     convert_to_flx=opts.convert_to_flx
 
     output_dir = split(sff_fname)[0]
+    print 'output_dir is: %s' % output_dir
 
     try:
         parameter_f = open(opts.parameter_fp)
@@ -127,6 +128,7 @@ def main():
      status_update_callback=status_update_callback)
    
     # Chain pick OTUs
+    # Chain Pick OTUS
     resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
     otu_output_dir=join(output_dir,'gg_97_otus')
     create_dir(otu_output_dir)
