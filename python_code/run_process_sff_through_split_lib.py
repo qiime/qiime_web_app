@@ -166,6 +166,9 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
    
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
+
+    # Return the fasta file paths
+    return split_lib_fasta_input_files
     
     
 def web_app_call_commands_serially(commands,

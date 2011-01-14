@@ -91,8 +91,11 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
         ## Get the location and name of the SFF file, get it's MD5. .SFF is one 
         # directory up from the other files
         rev = dirname(fasta_fname)[::-1]
-        #sff_file = join(rev[rev.find('/'):][::-1], input_fname + '.sff')
-        sff_file=input_basename+'.sff'
+        
+        sff_file_dir = split(input_dir)[0]
+        sff_file = join(sff_file_dir, input_fname + '.sff')
+        #sff_file = input_basename+'.sff'
+        
         sff_md5 = safe_md5(open(sff_file)).hexdigest()
         
         print 'MD5 is: %s' % str(sff_md5)

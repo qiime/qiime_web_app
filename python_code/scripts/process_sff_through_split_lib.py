@@ -76,8 +76,7 @@ def main():
     study_id = opts.study_id
     run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[0]
     print run_prefix
-    #output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
-    #output_dir = '/tmp/studies/study_%s/processed_data_%s/' % (study_id,run_prefix)
+    output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id, run_prefix)
     
     sff_fname=opts.sff_fname
     map_fname = opts.map_fname
@@ -85,9 +84,6 @@ def main():
     print_only = opts.print_only
     write_to_all_fasta=opts.write_to_all_fasta
     convert_to_flx=opts.convert_to_flx
-
-    output_dir = split(sff_fname)[0]
-    print 'output_dir is: %s' % output_dir
 
     try:
         parameter_f = open(opts.parameter_fp)
@@ -115,7 +111,7 @@ def main():
         
     # Process the SFF file
     params=parse_qiime_parameters(parameter_f)
-    run_process_sff_through_split_lib(study_id=study_id,\
+    fasta_file_paths = run_process_sff_through_split_lib(study_id=study_id,\
      run_prefix=run_prefix,\
      sff_input_fp=sff_fname,\
      mapping_fp=map_fname,\
@@ -127,7 +123,6 @@ def main():
      write_to_all_fasta=write_to_all_fasta,\
      status_update_callback=status_update_callback)
    
-    # Chain pick OTUs
     # Chain Pick OTUS
     resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
     otu_output_dir=join(output_dir,'gg_97_otus')
@@ -138,7 +133,9 @@ def main():
   
     # Load the data into the database
     data_access = data_access_factory(DataAccessType.qiime_production)
-    submit_sff_and_split_lib(data_access, sff_fname, study_id)
+
+    # Get all of the fasta files
+    submit_sff_and_split_lib(data_access, ','.join(fasta_file_paths), study_id)
     load_otu_mapping(data_access, output_dir)
 
 if __name__ == "__main__":
