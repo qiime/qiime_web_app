@@ -16,6 +16,7 @@ from os.path import join
 def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file):
     # Get our list of found items
     results = data_access.getFoundOTUArray(md5_list)
+    
     if results == None:
         return
     
@@ -25,6 +26,7 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_acce
     # If found in DB, add to our OTU map. If not, write to our new FASTA file.
     i = 0
     while i < len(found_otus):
+        
         otu_id = found_otus[i]
         md5 = found_otus_seq_md5[i]    
         i += 1

@@ -2294,6 +2294,7 @@ class QiimeDataAccess(object):
             otu_results = cur.arrayvar(cx_Oracle.STRING , len(md5_list))
             md5_results = cur.arrayvar(cx_Oracle.FIXED_CHAR , len(md5_list))
             results = cur.callproc('otu_check.check_existing_otus', [input_array, otu_results, md5_results])
+            print otu_results
             return results
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))

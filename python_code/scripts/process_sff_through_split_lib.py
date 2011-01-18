@@ -21,7 +21,7 @@ from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable,\
                        create_dir
 from run_process_sff_through_split_lib import run_process_sff_through_split_lib,\
                                            web_app_call_commands_serially
-from qiime.workflow import print_commands,\
+from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates
 from run_chain_pick_otus import run_chain_pick_otus
 from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, load_otu_mapping
@@ -102,7 +102,7 @@ def main():
     if print_only:
         command_handler = print_commands
     else:
-        command_handler = web_app_call_commands_serially
+        command_handler = call_commands_serially
 
     if verbose:
         status_update_callback = print_to_stdout
