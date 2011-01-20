@@ -132,11 +132,11 @@ def main():
                         status_update_callback=status_update_callback)
   
     # Load the data into the database
-    data_access = data_access_factory(DataAccessType.qiime_production)
+    # data_access = data_access_factory(DataAccessType.qiime_production)
 
     # Get all of the fasta files
-    submit_sff_and_split_lib(data_access, ','.join(fasta_file_paths), study_id)
-    load_otu_mapping(data_access, output_dir)
+    # submit_sff_and_split_lib(data_access, ','.join(fasta_file_paths), study_id)
+    # load_otu_mapping(data_access, output_dir)
 
 if __name__ == "__main__":
     main()
