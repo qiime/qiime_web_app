@@ -256,7 +256,7 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     return analysis_id
 
 
-def load_otu_mapping(data_access, input_dir):
+def load_otu_mapping(data_access, input_dir, analysis_id):
     # For OTU Tables
     #read in the workflow log file and determine timestamp and svn version of
     #Qiime used for the analysis
@@ -281,7 +281,7 @@ def load_otu_mapping(data_access, input_dir):
                                   pOTUs_method, pOTUs_threshold,
                                   svn_version, pick_otus_cmd, otus_log_str,
                                   split_lib_seqs_md5,reference_set_name,
-                                  ref_set_threshold)
+                                  ref_set_threshold, analysis_id)
     if not valid:
         raise ValueError, 'Error: Unable to load OTU run data into database!'
     else:

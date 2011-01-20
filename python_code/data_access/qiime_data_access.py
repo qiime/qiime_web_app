@@ -1715,7 +1715,7 @@ class QiimeDataAccess(object):
     def loadAllOTUInfo(self, start_job, otu_run_set_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
                     otus_log_str,split_lib_seqs_md5,ref_set_name,
-                    ref_set_threshold):
+                    ref_set_threshold, analysis_id):
         """ loads the information pertaining to an OTU picking runls
 
         """
@@ -1725,7 +1725,7 @@ class QiimeDataAccess(object):
             otu_picking_run_id=0
             if start_job:
                 db_output=con.cursor().callproc(\
-                        'REGISTER_OTU_PICK_RUN_ALL',[otu_run_set_id, run_date, \
+                        'REGISTER_OTU_PICK_RUN_ALL',[analysis_id, otu_run_set_id, run_date, \
                                 pOTUs_method, \
                                 pOTUs_threshold, svn_version, pick_otus_cmd, \
                                 otus_log_str,split_lib_seqs_md5,ref_set_name, \

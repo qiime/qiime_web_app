@@ -75,7 +75,7 @@ def main():
     input_dir = split(fasta_files)[0]
     print input_dir
     print 'Starting OTU data load...'
-    load_otu_mapping(data_access, input_dir)
+    load_otu_mapping(data_access, input_dir, analysis_id)
     print 'Finished OTU data load!'
 
 if __name__ == "__main__":
