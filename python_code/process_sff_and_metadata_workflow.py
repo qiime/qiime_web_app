@@ -18,7 +18,7 @@ from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
 from os import system,popen
 from glob import glob
-import re
+import re, sys
 from random import choice
 from datetime import datetime
 from time import strftime
@@ -234,6 +234,9 @@ def web_app_call_commands_serially(commands,
     
     for c in commands:
         for e in c:
+            # Flush the buffers
+            sys.stdout.flush()
+            sys.stderr.flush()
             status_update_callback('%s\n%s' % e)
             logger.write('# %s command \n%s\n\n' % e)
             proc = Popen(e[1],shell=True,universal_newlines=True,\

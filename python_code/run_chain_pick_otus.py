@@ -18,7 +18,7 @@ from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
 from os import system, popen, listdir, mkdir
 from glob import glob
-import re
+import re, sys
 from random import choice
 from datetime import datetime
 from time import strftime
@@ -222,6 +222,9 @@ def web_app_call_commands_serially(commands, status_update_callback, logger):
     
     for c in commands:
         for e in c:
+            # Flush the buffers on each iteration
+            sys.stdout.flush()
+            sys.stderr.flush()
             print '\n'
             print 'Command Description: %s' % e[0]
             print 'Command: %s' % e[1]
