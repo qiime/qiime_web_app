@@ -74,6 +74,11 @@ $(document).ready(function(){
 
     <div id="header">
     	 <div class="disclaimer">Logged in as <%=sess['username']%></div>
+    	 
+    	 <table border="0px" width="100%" background="img/topnav_bg_tall.gif">
+    	    <tr width="100%">
+    	        <td width="100%">
+    	                
         <ul class="topnav">
             <li>
                 <a href="fusebox.psp?page=select_study.psp">Home</a>
@@ -112,6 +117,7 @@ if sess.get('study_id'):
             <li><a href="docs/index.html" target="_blank">Help</a></li>
             <li><a href="index.psp" target="_parent">Log Out</a></li>
         </ul>
+        </td></tr></table>
     </div>
 </div>
 <div class="content">

@@ -36,13 +36,17 @@ html, body {
 
 ul.topnav {
 	list-style: none;
-	padding: 0 20px;
-	margin: 0 auto;
+	padding-left: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	margin-left: 0px;
+	margin-top: 0px;
+	margin-bottom: 0px;
 	float: left;
 	/*width: 920px;*/
-	background: #222;
+	/*background: #222;*/
 	font-size: 1.2em;
-	background: url(img/topnav_bg.gif) repeat-x;
+	/*background: url(img/topnav_bg.gif) repeat-x;*/
 }
 ul.topnav li {
 	float: left;
