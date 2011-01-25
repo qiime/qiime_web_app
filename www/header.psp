@@ -75,7 +75,7 @@ $(document).ready(function(){
     <div id="header">
     	 <div class="disclaimer">Logged in as <%=sess['username']%></div>
     	 
-    	 <table border="0px" width="100%" background="img/topnav_bg_tall.gif">
+    	 <table border="0px" width="100%" background="img/topnav_bg_tall.gif" cellspacing="0" cellpadding="0">
     	    <tr width="100%">
     	        <td width="100%">
     	                
@@ -121,5 +121,3 @@ if sess.get('study_id'):
     </div>
 </div>
 <div class="content">
-<br/><br/>
-<hr/>
