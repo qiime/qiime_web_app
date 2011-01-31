@@ -1731,10 +1731,10 @@ class QiimeDataAccess(object):
                                 otus_log_str,split_lib_seqs_md5,ref_set_name, \
                                 ref_set_threshold, error_flag, \
                                 otu_picking_run_id])
-                if db_output[10]==0:
-                    return True,db_output[0],db_output[11]
+                if db_output[11]==0:
+                    return True,db_output[1],db_output[12]
                 else:
-                    return False,db_output[0],db_output[11]
+                    return False,db_output[1],db_output[12]
             else:
                 return True,0
         except Exception, e:

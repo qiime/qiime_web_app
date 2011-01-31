@@ -34,7 +34,8 @@ def validateStudyFile(filename):
     # Can only one row in study template (2 rows total with header)
     f = open(filename, 'U')
     for line in f:
-        i += 1
+        if len(str(line).strip()):
+            i += 1
     f.close()
     
     if i > 2:

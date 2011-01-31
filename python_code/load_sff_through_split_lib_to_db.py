@@ -276,6 +276,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     split_lib_seqs_md5=safe_md5(open(split_lib_seqs)).hexdigest()
     
     #Insert the otu-picking log information in the DB
+    print 'calling loadAllOTUInfo with analysis_id %s' % str(analysis_id)
     valid,new_otu_run_set_id,otu_picking_run_id=data_access.loadAllOTUInfo(True,
                                   otu_run_set_id, run_date,
                                   pOTUs_method, pOTUs_threshold,

@@ -111,6 +111,7 @@ def main():
         
     # Process the SFF file
     params=parse_qiime_parameters(parameter_f)
+    print 'Running run_process_sff_through_split_lib...'
     fasta_file_paths = run_process_sff_through_split_lib(study_id=study_id,\
      run_prefix=run_prefix,\
      sff_input_fp=sff_fname,\
@@ -122,21 +123,27 @@ def main():
      convert_to_flx=convert_to_flx,\
      write_to_all_fasta=write_to_all_fasta,\
      status_update_callback=status_update_callback)
+    print 'Completed run_process_sff_through_split_lib.'
    
     # Chain Pick OTUS
     resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
     otu_output_dir=join(output_dir,'gg_97_otus')
     create_dir(otu_output_dir)
+    print 'Running run_chain_pick_otus...'
     run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
                         params, qiime_config, parallel=False, \
                         status_update_callback=status_update_callback)
-  
+    print 'Completed run_chain_pick_otus.'
+
     # Load the data into the database
     data_access = data_access_factory(DataAccessType.qiime_production)
 
     # Get all of the fasta files
+    print 'Submitting SFF data to database...'
     analysis_id = submit_sff_and_split_lib(data_access, ','.join(fasta_file_paths), study_id)
+    print 'Submitting OTU data to database...'
     load_otu_mapping(data_access, output_dir, analysis_id)
+    print 'Completed database loading.'
 
 if __name__ == "__main__":
     main()
