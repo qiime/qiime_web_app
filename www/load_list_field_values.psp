@@ -22,7 +22,7 @@ field_id = form["field_id"]
 <tr><td>
 
 <%
-js = 'field = top.frames[\'top\'].document.getElementById(\'' + field_id + '\'); \n';
+js = 'field = top.frames[\'validation_list\'].document.getElementById(\'' + field_id + '\'); \n';
 js += 'field.value = this.value; \n'
 js += 'field.style.background = \'#88FF88\'; \n'
 

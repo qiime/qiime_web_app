@@ -11,8 +11,8 @@ __status__ = "Development"
 
 
 <frameset rows="*,225px" border="1" framespacing="3">
-    <frame src="validate_metadata_list.psp"/ id="top" name="top" noresize>
-    <frame src="validate_metadata_info.psp"/ id="bottom" name="bottom" noresize>
+    <frame src="validate_metadata_list.psp"/ id="validation_list" name="validation_list" noresize>
+    <frame src="validate_metadata_info.psp"/ id="validation_details" name="validation_details" noresize>
 </frameset>
 
 
