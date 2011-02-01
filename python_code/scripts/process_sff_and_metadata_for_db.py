@@ -2,13 +2,13 @@
 # File created on 11 Jun 2010
 from __future__ import division
 
-__author__ = "Jesse Stombaugh"
-__copyright__ = "Copyright 2010, The QIIME WebApp project"
-__credits__ = ["Jesse Stombaugh"]
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2011, The QIIME WebApp project"
+__credits__ = ["Doug Wendel"]
 __license__ = "GPL"
 __version__ = "dev"
-__maintainer__ = "Jesse Stombaugh"
-__email__ = "jesse.stombaugh@colorado.edu"
+__maintainer__ = "Doug Wendel"
+__email__ = "wendel@colorado.edu"
 __status__ = "Development"
  
 from qiime.util import parse_command_line_parameters, get_options_lookup
@@ -18,27 +18,18 @@ from os.path import exists
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
-from process_sff_and_metadata_workflow import run_process_sff_through_pick_otus,\
-web_app_call_commands_serially
-from qiime.workflow import print_commands,\
-                           print_to_stdout, no_status_updates
+from run_sample_export import export_samples
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Process SFF and metadata through picking OTUs"
+script_info['brief_description'] = "Exports samples to a fasta file."
 script_info['script_description'] = """\
-This script takes an SFF file and a mapping file and performs the \
-following steps:
-
-    1) Process SFFs to generate .fna, .qual and flowgram file. (process_sff.py)
-    2) De-multiplex sequences. (split_libraries.py)
-    3) Optionally denoise the sequences (set sff_input_fp=True);
-    4) Pick OTUs
+This script takes in a list of sample names and writes the to a new fasta file \
 """
 script_info['script_usage'] = [("Example:","This is an example of a basic use case",
-"%prog -i 454_Reads.sff -m mapping.txt -p custom_parameters.txt -o Output_Directory")]
+"%prog -s 454_Reads.sff -m mapping.txt -p custom_parameters.txt -o Output_Directory")]
 script_info['output_description']= "The output of this script produces the FNA, QUAL, and flowgram files, the output of split_libraries.py and pick_otus.py."
 script_info['required_options'] = [\
     make_option('-i','--sff_fname',help='This is the input sff filepath(s)'),\

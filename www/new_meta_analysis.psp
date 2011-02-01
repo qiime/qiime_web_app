@@ -12,6 +12,9 @@ __status__ = "Production"
 This page is used to create a new meta_analysis in the database (i.e. the user 
 wants to select studies and its associated data.
 '''
+
+if 'meta_login' in form and form['meta_login'] == 'I_want_in!':
+    # Indent
 %>
 
 <script type='text/javascript'>
@@ -44,17 +47,21 @@ $(document).ready(function(){
 var meta_analysis_names=new Array();
 
 <%
-from data_access_connections import data_access_factory
-from enums import DataAccessType
-qda = data_access_factory(DataAccessType.qiime_production)
+    # Check to see if a login has been performed. This is quite a 
+    # hack for now, will be removed once feature is open for 
+    # general use.
 
-# get a list of studies from the database
-meta_analysis_names = qda.getMetaAnalysisNames(sess['web_app_user_id'])
+    from data_access_connections import data_access_factory
+    from enums import DataAccessType
+    qda = data_access_factory(DataAccessType.qiime_production)
 
-# iterate through the studies and write them into a javascript array
-for i in range(len(meta_analysis_names)):
-    req.write('meta_analysis_names['+str(i)+']="'+str(meta_analysis_names[i][1])+'"\n');
-#
+    # get a list of studies from the database
+    meta_analysis_names = qda.getMetaAnalysisNames(sess['web_app_user_id'])
+
+    # iterate through the studies and write them into a javascript array
+    for i in range(len(meta_analysis_names)):
+        req.write('meta_analysis_names['+str(i)+']="'+str(meta_analysis_names[i][1])+'"\n');
+    #
 %>
 
 //Check that the user-defined meta_analysis name is not in the database
@@ -100,4 +107,23 @@ function check_meta_analysis_name()
         </tr>
     </table>
 </form>
+
+<%
+
+else:
+    # Indent
+%>
+<br/>
+<form action="fusebox.psp?page=new_meta_analysis.psp" method="post">
+Password for Meta-Analysis: <input type="password" name="meta_login" id="meta_login" value="">
+<br/>
+<br/>
+<input type="submit" value="Authenticate for Meta-Analysis">
+</form>
+
+<%
+# End indent
+
+%>
+
 
