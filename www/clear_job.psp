@@ -14,15 +14,35 @@ This script is the upload handler for uploading metadata files using JumpLoader'
 
 from data_access_connections import data_access_factory
 from enums import DataAccessType
-
+from commands import getoutput
+import re
 
 def clearJob(job_id):
     # Get a copy of data_acess
     data_access = data_access_factory(DataAccessType.qiime_production)
 
-    # Clear the job
+    # Clear the job from the database
     data_access.clearTorqueJob(job_id)
-
+    
+    # Clear the job from the torque queue
+    prev_item = ''
+    torque_job_id = ''
+    queue_content = getoutput('qstat')
+    items = queue_content.split(' ')
+    for item in items:
+        if item == '':
+            continue
+        if item == str(job_id):
+            torque_job_id = prev_item
+            break
+        if 'growler' in item:
+            cleaned_item = re.sub('\n', '', item)
+            cleaned_item = re.sub('-*', '', cleaned_item)
+            prev_item = cleaned_item
+    
+    if torque_job_id != '':
+        clear_cmd = 'qdel %s' % torque_job_id
+        result = getoutput(clear_cmd)
 
 # Clear the job
 job_id = int(form['job_id'])
