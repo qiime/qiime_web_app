@@ -49,7 +49,7 @@ for job in jobs:
     else:
         display_text = 'Job %s: %s ' % (job['job_id'], job['job_state_name'])
         
-    req.write('Job %s: %s' % (job['job_id'], display_text))
+    req.write(display_text)
     if job['job_notes'] != None:
         req.write('<br/>Output: ' + job['job_notes'])
 
