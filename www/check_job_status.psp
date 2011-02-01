@@ -39,7 +39,17 @@ job_type_id = int(form['job_type_id'])
 jobs = data_access.getJobInfo(job_locator_id, job_type_id)
 
 for job in jobs:
-    req.write('Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(clear job)</a>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id']))
+    completed_status = 'COMPLETED_OKAY'
+    display_text = 'not set'
+    
+    if job['job_state_name'] != completed_status:
+        display_text = '<a href="clear_job.psp?job_id=%s&job_type_id=%s">(clear job)</a>' % (job['job_id'],job['job_type_id'])
+    elif job['job_state_name'] == completed_status and int(sess['is_admin']) == 1:
+        display_text = '<a href="clear_job.psp?job_id=%s&job_type_id=%s">(admin option: clear job)</a>' % (job['job_id'],job['job_type_id'])
+    else:
+        display_text = completed_status
+        
+    req.write('Job %s: %s' % (job['job_id'], display_text))
     if job['job_notes'] != None:
         req.write('<br/>Output: ' + job['job_notes'])
 
