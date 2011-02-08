@@ -252,7 +252,8 @@ class QiimeDataAccess(object):
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_sequences_for_fasta_fulldb', [results])
             for row in results:
-                yield [row[0], row[1]]
+                # sequence_name, sequence_string, md5_checksum
+                yield [row[0], row[1], row[2]]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             
