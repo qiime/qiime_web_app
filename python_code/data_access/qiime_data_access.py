@@ -229,6 +229,45 @@ class QiimeDataAccess(object):
     # Study
     #####################################
 
+    def getSampleIDsFromStudy(self, study_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_sample_ids_from_study', [study_id, results])
+            metadata_fields = []
+            for row in results:
+                metadata_fields.append(row[0])
+            return metadata_fields
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+    def getSequencesFromSample(self, study_id, sample_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_sequences_for_fasta', [study_id, sample_id, results])
+            seqs = {}
+            for row in results:
+                seqs[row[0]] = row[1]
+            return seqs
+            
+            #con = self.getMetadataDatabaseConnection()
+            #cur = con.cursor()
+            #sample_id_array = cur.arrayvar(cx_Oracle.NUMBER, sample_ids)
+            #sequence_names_array = cur.arrayvar(cx_Oracle.STRING , len(sample_ids))
+            #sequence_strings_array = cur.arrayvar(cx_Oracle.STRING , len(sample_ids))
+            #results = cur.callproc('get_sequences_for_fasta_pkg.get_sequences_for_fasta', \
+            #    [study_id, sample_id_array, sequence_names_array, sequence_strings_array])
+            #return results            
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False    
+
     def deleteStudy(self, study_id, full_delete):
         """ Removes a study from the database
         
@@ -2294,7 +2333,6 @@ class QiimeDataAccess(object):
             otu_results = cur.arrayvar(cx_Oracle.STRING , len(md5_list))
             md5_results = cur.arrayvar(cx_Oracle.FIXED_CHAR , len(md5_list))
             results = cur.callproc('otu_check.check_existing_otus', [input_array, otu_results, md5_results])
-            print otu_results
             return results
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
