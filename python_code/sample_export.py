@@ -11,7 +11,30 @@ from cogent.parse.fasta import *
 from data_access_connections import data_access_factory
 from enums import DataAccessType
 
+def export_full_db_to_fasta(output_fasta_name):
+    """
+    Exports the entire sequence collection to fasta
+    
+    This function exports the entire database to fasta format. It does not care
+    about public/private nor does it depend on any linkages to other metadata.
+    """
+    output_fasta = open(output_fasta_name, 'w')
+    data_access = data_access_factory(DataAccessType.qiime_production)
+    
+    seqs = data_access.getSequencesFullDatabase()
+    for seq in seqs:
+        sequence_name, sequence_string = seq[0], seq[1]
+        output_fasta.write('>%s\n%s\n' % (sequence_name, sequence_string))
+        print 'Exporting sequence: %s' % sequence_name
+        
+
 def export_db_to_fasta(output_fasta_name):
+    """
+    Exports sequences to fasta that have corresponding metadata
+    
+    This function exports all sequences to fasta which have corresponding metadata
+    in the metadata schema. It will skip the rest. It DOES export private samples.
+    """
     output_fasta = open(output_fasta_name, 'w')
     data_access = data_access_factory(DataAccessType.qiime_production)
     
@@ -19,6 +42,8 @@ def export_db_to_fasta(output_fasta_name):
     results = data_access.getUserStudyNames(12161, 1)
     for study_id, study_name in results:
         print '------------------------ Exporting data from study ID: %s' % study_id
+        print study_name
+        print '\n\n'
         export_fasta_from_study(study_id, output_fasta)
 
 def export_fasta_from_study(study_id, output_fasta):

@@ -243,6 +243,18 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+    
+    def getSequencesFullDatabase(self):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_sequences_for_fasta_fulldb', [results])
+            for row in results:
+                yield [row[0], row[1]]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             
     def getSequencesFromSample(self, study_id, sample_id):
         """ Returns a list of metadata fields
@@ -254,16 +266,7 @@ class QiimeDataAccess(object):
             seqs = {}
             for row in results:
                 seqs[row[0]] = row[1]
-            return seqs
-            
-            #con = self.getMetadataDatabaseConnection()
-            #cur = con.cursor()
-            #sample_id_array = cur.arrayvar(cx_Oracle.NUMBER, sample_ids)
-            #sequence_names_array = cur.arrayvar(cx_Oracle.STRING , len(sample_ids))
-            #sequence_strings_array = cur.arrayvar(cx_Oracle.STRING , len(sample_ids))
-            #results = cur.callproc('get_sequences_for_fasta_pkg.get_sequences_for_fasta', \
-            #    [study_id, sample_id_array, sequence_names_array, sequence_strings_array])
-            #return results            
+            return seqs            
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False    
