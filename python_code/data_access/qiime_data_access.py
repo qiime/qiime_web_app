@@ -490,13 +490,13 @@ class QiimeDataAccess(object):
             return False
     '''
             
-    def getUserStudyNames(self, user_id, is_admin):
+    def getUserStudyNames(self, user_id, is_admin, portal_type):
         """ Returns a list of study names
         """
         try:
             con = self.getMetadataDatabaseConnection()
             study_names = con.cursor()
-            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id, is_admin, study_names])
+            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id, is_admin, portal_type, study_names])
             study_name_list = []
             for row in study_names:
                 if row[0] is None:
@@ -579,15 +579,16 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
-    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc):
+    
+    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type):
         """ Returns a list of metadata values based on a study type and list
         """
         try:
             con = self.getMetadataDatabaseConnection()
             study_id = 0
-            study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, study_id])
-            return study_id[5]
+            study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, \
+                investigation_type, miens_compliant, submit_to_insdc, portal_type, study_id])
+            return study_id[6]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

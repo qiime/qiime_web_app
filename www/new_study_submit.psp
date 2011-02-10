@@ -23,11 +23,12 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 sess = Session.Session(req)
 sess['study_name'] = form['study_name']
 study_name = sess['study_name']
+portal_type = sess['portal_type']
 
 # Add the new study to the database
 study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'], \
-    form['miens_compliant'], form['submit_to_insdc'])
-    
+    form['miens_compliant'], form['submit_to_insdc'], portal_type)
+
 # Add the default study_actual column entries
 data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')
 

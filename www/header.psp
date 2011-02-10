@@ -95,7 +95,7 @@ if sess.get('study_id'):
                     <li><a href="fusebox.psp?page=load_template_fields.psp" target="_parent">Generate MIMARKS Tempaltes</a></li>
 
 <%
-    if sess['referrer'] == 'qiime':
+    if sess['portal_type'] == 'qiime':
         req.write('<li><a href="fusebox.psp?page=upload_sff.psp" target="_parent">Add/Remove SFF Files</a></li>')
     
     # End if
@@ -107,7 +107,7 @@ if sess.get('study_id'):
 <%
 # End if
 
-if sess['referrer'] == 'qiime':
+if sess['portal_type'] == 'qiime':
     # Indent
 %>
             <li>

@@ -20,11 +20,11 @@ sess = Session.Session(req)
 
 # Set the correct host and referrer
 #req.write(str(req.headers_in))
-sess['referrer'] = 'qiime'
-#sess['referrer'] = 'qiime'
+sess['portal_type'] = 'qiime'
+#sess['portal_type'] = 'qiime'
 sess.save()
 
-if sess['referrer'] == 'emp':
+if sess['portal_type'] == 'emp':
     sess['stylesheet'] = 'style/emp.css'
     sess['title'] = 'Earth Microbiome Project'
 else:
