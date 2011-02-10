@@ -146,7 +146,7 @@ function setCompleteBox()
 <div id='applet'>
 <!--this is the jumploader applet-->
 <b>SFF Upload: Please upload only zipped files.</b><br/>
-The filename should not contain spaces or non-alphanumeric characters.</p>
+The filename should not contain spaces or non-alphanumeric characters.<p/>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="250" width="600" mayscript>

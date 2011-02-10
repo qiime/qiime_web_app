@@ -29,7 +29,7 @@ __status__ = "Production"
         </li>
         <li>
             <form id="user_study" action="select_user_study_submit.psp" method="post">
-                Select an Existing Study:
+                Select an Existing Study:<br/>
                 <select validate="required:true" name="study_names" id="study_names" onchange="document.forms['user_study'].submit();  return false;">
                 <option value=""></option>
 <%
@@ -42,6 +42,13 @@ for study_name in study_names:
             </form>
             </li>
         </ul>
+        
+<%
+if sess['referrer'] == 'qiime':
+    # Indent
+    
+%>        
+        
         <b>Perform Meta-Analysis:</b>
         <ul>
             <li>
@@ -57,12 +64,18 @@ for study_name in study_names:
                 <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="document.forms['user_meta_analysis'].submit(); return false;">
                 <option value=""></option>
 <%
-meta_analysis_names = data_access_factory(DataAccessType.qiime_production).getMetaAnalysisNames(sess['web_app_user_id'])
-for meta_analysis_name in meta_analysis_names:
-    req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
-# end
+    meta_analysis_names = data_access_factory(DataAccessType.qiime_production).getMetaAnalysisNames(sess['web_app_user_id'])
+    for meta_analysis_name in meta_analysis_names:
+        req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
+    # end
 %>
                 </select>
+                
+<%
+# End if
+
+%>
+                
             </form>
             </li>
     </ul>

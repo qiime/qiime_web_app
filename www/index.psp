@@ -14,6 +14,24 @@ from mod_python import Session
 from data_access_connections import data_access_factory
 from enums import DataAccessType
 import os
+
+# Get the session
+sess = Session.Session(req)
+
+# Set the correct host and referrer
+#req.write(str(req.headers_in))
+sess['referrer'] = 'qiime'
+#sess['referrer'] = 'qiime'
+sess.save()
+
+if sess['referrer'] == 'emp':
+    sess['stylesheet'] = 'style/emp.css'
+    sess['title'] = 'Earth Microbiome Project'
+else:
+    sess['stylesheet'] = 'style/qiime.css'
+    sess['title'] = 'Qiime'
+
+sess.save()
 %>
 
 
@@ -21,10 +39,10 @@ import os
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Qiime</title>
+<title><%=sess['title']%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" href="style.css" type="text/css">
+<link rel="stylesheet" href="<%=sess['stylesheet']%>" type="text/css">
 <script type="text/javascript" src="./js/qiime.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
@@ -76,9 +94,6 @@ $(document).ready(function(){
 </table>
 
 <%
-# Get the session
-sess = Session.Session(req)
-
 # This is the location where the user directories are written
 output_dir='/home/wwwuser/user_data'
 

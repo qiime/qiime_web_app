@@ -104,13 +104,13 @@ function check_study_name()
 list = qda.getListValues('Investigation Type')
 for item in sorted(list):
     item_text = item[1]
-    if item[1] == 'miens-survey':
-        # Our own annotation, done here so that we do not alter the MIENS fields in the database
+    if item[1] == 'mimarks-survey':
+        # Our own annotation, done here so that we do not alter the MIMARKS fields in the database
         
         item_text += ' (e.g. 16S rRNA)'
         req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
     else:
-        # Our own annotation, done here so that we do not alter the MIENS fields in the database
+        # Our own annotation, done here so that we do not alter the MIMARKS fields in the database
         if item[1] in ['bacteria_archaea', 'plasmid', 'virus', 'organelle']:
             item_text += ' (complete genome)'
         req.write('<option value=\"%s\">%s</option>\n' % (item[0], item_text))
@@ -147,7 +147,7 @@ for item in sorted(list):
         <!--
         <tr>
             <td>
-                MIENS Compliant?
+                MIMARKS Compliant?
             </td>
             
             <td>

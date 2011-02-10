@@ -39,7 +39,7 @@ can_delete = study_info['can_delete']
         </li>
         <li>
             <form id="user_study" action="select_user_study_submit.psp" method="post">
-                Select an Existing Study:
+                Select an Existing Study:<br/>
                 <select validate="required:true" name="study_names" id="study_names" onchange="document.forms['user_study'].submit();">
 <%
 study_names = data_access_factory(DataAccessType.qiime_production).getUserStudyNames(sess['web_app_user_id'], sess["is_admin"])
@@ -60,34 +60,47 @@ for study_name in study_names:
             <form id="create_new_template" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="load_template_fields.psp">
                 <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
-                Generate a MIENS-compliant metadata template</a>
+                Generate a MIMARKS-compliant metadata template</a>
             </form>
         </li>
+        
+<%
+if sess['referrer'] == 'qiime':
+    # Indent
+    
+%>
+        
         <li>
             <form id="associate_sff_to_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="upload_sff.psp">
                 <a href="" onclick="document.forms['associate_sff_to_study'].submit(); return false;">
                 Add or remove SFF files for this study
 <%
-if sff_complete == 'n':
-    req.write('(not complete) </a><img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
-else:
-    req.write('</a><img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
-    req.write('<p/>')
-    req.write('<ul>')
+    if sff_complete == 'n':
+        req.write('(not complete) </a><img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
+    else:
+        req.write('</a><img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
+        req.write('<p/>')
+        req.write('<ul>')
 
-    study_id = sess['study_id']
-    sff_files = data_access.getSFFFiles(study_id)
-    for sff_file in sff_files:
-        file_base = os.path.basename(sff_file)
-        req.write('<li>%s <a href="clear_sff_file.psp?filename=%s">(remove file)</a></li>' % (file_base, file_base))
+        study_id = sess['study_id']
+        sff_files = data_access.getSFFFiles(study_id)
+        for sff_file in sff_files:
+            file_base = os.path.basename(sff_file)
+            req.write('<li>%s <a href="clear_sff_file.psp?filename=%s">(remove file)</a></li>' % (file_base, file_base))
 
-    req.write('</ul>')
+        req.write('</ul>')
 
-# End if
+    # End if
 %>
                 </form>
         </li>
+        
+<%
+# End if
+
+%>
+        
         <li>        
 <%
 if metadata_complete == 'n':
@@ -114,13 +127,17 @@ else:
                 </form>
         </li>
 
+<%
+if sess['referrer'] == 'qiime':
+    # Indent
+    
+%>
         <li>
 
 <%
-
-jobs = data_access.getJobInfo(study_id, 3)
-if len(jobs) > 0:
-    # indent
+    jobs = data_access.getJobInfo(study_id, 3)
+    if len(jobs) > 0:
+        # indent
 %>
 
             Submitted Jobs:
@@ -138,9 +155,8 @@ if len(jobs) > 0:
             <br/>
 
 <%
-
-elif metadata_complete == 'y' and sff_complete == 'y':
-    
+    elif metadata_complete == 'y' and sff_complete == 'y':
+        # Indent
 %>
             <form id="submit_job_to_qiime" action="submit_job_to_qiime.psp" method="post">
                 <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
@@ -150,16 +166,24 @@ elif metadata_complete == 'y' and sff_complete == 'y':
             </form>
 
 <%
-else:
-    
+    else:
+        # Indent
+        
 %>
             Submit Job to Qiime (complete SFF and metadata upload first)
             <br/><br/>
 <%
-# End if
+    # End if
+    
 
 %>
         </li>
+        
+<%
+# End if
+
+%>
+        
         <!--
         <li>
             <form id="download_data" action="fusebox.psp?page=data_request_submit.psp" method="post">

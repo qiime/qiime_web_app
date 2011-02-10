@@ -34,7 +34,7 @@ def export_full_db_to_fasta(output_fasta_name, distinct_list):
             else:
                 print 'Duplicate checksum found for sequence name: %s. Skipping...' % sequence_name
         else:
-            output_fasta.write('>%s\n%s\n' % (sequence_name, sequence_string))
+            #output_fasta.write('>%s\n%s\n' % (sequence_name, sequence_string))
             print 'Exporting sequence: %s' % sequence_name
         
 
