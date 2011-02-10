@@ -1,0 +1,1327 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf350
+{\fonttbl\f0\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs24 \cf0 /*\
+Theme Name:theme - EMP based on katana\
+Description: A free premium wordpress theme from jinsona designs.\
+Author: jinsona designs altered by Beth Cerny\
+Author URI: www.web2feel.com\
+\
+*/\
+html, body, div, span, applet, object, iframe,\
+h1, h2, h3, h4, h5, h6, p,\
+blockquote, pre, a, abbr, acronym, address, big,\
+cite, code, del, dfn, em, font, img,\
+ins, kbd, q, s, samp, small, strike, sub, sup, tt, var, dl, dt, dd, ol, ul, li,\
+fieldset, form, label, legend,\
+table, caption, tbody, tfoot, thead, tr, th, td,\
+center, u, b, i, marquee \{\
+	margin: 0px;\
+	padding: 0px;\
+\}\
+\
+body \{\
+	margin:0 auto;\
+	padding:0px 0px 0px 0px;\
+	/*background:#010101 url(images/body.png);*/\
+	background-color:#FFF;\
+	font-family: Tahoma, Verdana, sans-serif;\
+	color:#161514;\
+	font-size:13px;\
+	\}\
+img \{\
+	border:0;\
+	margin: 0 0;\
+	\}\
+a \{\
+	color:#7db337;\
+	text-decoration:none;\
+	outline:none;\
+	\}\
+a:hover \{\
+	color:#bbb;\
+	text-decoration:none\
+		\}\
+h1, h2, h3, h4, h5, h6 \{\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	\
+	\}\
+blockquote \{\
+	padding:10px 10px 10px 10px;\
+	color:#444;\
+	font-style: normal;\
+\
+	\}\
+.clear \{\
+	clear:both;\
+	\}\
+\
+table\{\
+  margin: 10px 0 10px;\
+\}\
+\
+table td, table th\{\
+  text-align: left;\
+  padding: .4em .8em;\
+\}\
+\
+table th\{\
+  background: #ccc ;\
+  color: #444;\
+ /* text-transform: uppercase;*/\
+  font-weight: normal;\
+\
+\}\
+\
+table td\{\
+  background: #e4e4e4;\
+\}\
+\
+table tr.even td\{\
+  background: #eee;\
+\}\
+\
+table tr:hover td\{\
+  background: #FFF9DF;\
+\}\
+img.centered  \{\
+	display: block;\
+	margin-left: auto;\
+	margin-right: auto;\
+	margin-bottom: 10px;\
+	padding: 0px;\
+	\}\
+	\
+img.alignnone \{\
+	padding: 5px 5px;\
+	margin: 0px 0px 10px 0px;\
+	display: inline;\
+	background:#fff;\
+	border: 1px solid #DDDDDD;\
+	\}\
+\
+img.alignright \{\
+	padding: 5px 5px;\
+	margin: 10px 0px 10px 10px;\
+	display: inline;\
+	background:#fff;\
+		border: 1px solid #DDDDDD;\
+	\}\
+\
+img.alignleft \{\
+	padding: 5px 5px;\
+	margin: 10px 10px 10px 0px;\
+	display: inline;\
+	background:#fff;\
+	border: 1px solid #DDDDDD;\
+	\}\
+	\
+.aligncenter \{\
+	display: block;\
+	margin-left: auto;\
+	margin-right: auto;\
+	margin-bottom: 10px;\
+	\}\
+\
+.alignright \{\
+	float: right;\
+	margin: 0px 0px 10px 10px;\
+	\}\
+\
+.alignleft \{\
+	float: left;\
+	margin: 0px 10px 10px 0px;\
+	\}\
+	\
+.wp-caption \{\
+	border: 1px solid #DDDDDD;\
+	text-align: center;\
+	background-color: #ffffff;\
+	padding: 4px 0px 5px 0px;\
+	margin: 5px 5px ;\
+	\}\
+\
+.wp-caption img \{\
+	margin: 0px 0px 5px 0px;\
+	padding: 0px;\
+	border: 0px;\
+	\
+	\}\
+\
+.wp-caption p.wp-caption-text \{\
+	margin: 0px;\
+	padding: 0px 0px 0px 0px;\
+	font-size: 11px;\
+	font-weight: normal;\
+	line-height: 12px;\
+	\}\
+\
+/* The Outer cover */\
+\
+#wrapper \{\
+	width:1000px;\
+	margin:0 auto;\
+background-color:#fff;\
+\
+	\}\
+#casing \{\
+	padding:0px 0px 10px 0px;\
+	/*background:url(images/wrap.png) ;*/\
+	background-color:#f3f3f3;\
+	float:left;\
+	width:1000px;\
+	margin-bottom: 0px;\
+	\}		\
+	\
+	\
+	\
+/* The Header */\
+\
+#top \{\
+	height:120px;\
+	margin:auto;\
+	background:url(images/top2.png);\
+	width:1000px;\
+	position:relative;\
+	\
+	\}\
+.blogname \{\
+	width:600px;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	margin:25px 0 0 0px;\
+	height:60px;\
+	text-align:left;\
+	float:left;\
+	\}\
+.blogname h1  \{\
+	font-size:20px;\
+	padding:0 0 0px 0;\
+	font-weight:normal;\
+	color:#fff;\
+\
+\
+\
+	\}\
+.blogname h1  a:link, .blogname h1  a:visited\{ \
+	color: #111; \
+	display:block;\
+	margin:10px 0 0 0px;\
+	\}\
+	\
+.blogname h1  a:hover \{ \
+	color: #111; \
+	\}\
+.blogname h2 \{\
+	margin:0px 0px 0px 0px;\
+	font-size:16px;\
+	font-weight:normal;\
+	color: #684116; \
+\
+	\}\
+.head\{\
+	height:198px;\
+	width:1000px;\
+	background:url(images/head.jpg);\
+\}\
+\
+/* The Search */\
+\
+\
+#search \{\
+\
+	width:310px;\
+	padding:10px 5px ;\
+	float:right;\
+	margin-right:0px;\
+	height:24px;\
+	margin-left:10px;\
+	display:inline;\
+\}\
+#search form \{\
+	margin: 0;\
+	padding: 0;\
+\}\
+\
+#search fieldset \{\
+	margin: 0;\
+	padding: 0;\
+	border: none;\
+\}\
+\
+#search p \{\
+	margin: 0;\
+	font-size: 85%;\
+\}\
+\
+#s \{\
+	width:210px;\
+	margin:0px 0px 0px 0px;\
+	padding: 2px 5px 3px 5px;\
+	border:none;\
+	font: normal 100% Tahoma, Verdana, sans-serif;\
+	color:#444;\
+	float:left;\
+	background:#ddd;\
+	border:1px solid #bbb;\
+	display:inline;\
+\}\
+input#searchsubmit\{\
+	float:left;\
+	display:inline;\
+	margin:0px 0px 0px 5px;\
+	height:24px;\
+	background:#E53F0C;\
+	color:#fff;\
+	border:none;\
+\}\
+\
+/*  menu*/\
+	\
+#catmenucontainer\{\
+	height:40px;\
+	display:block;\
+	padding:0px 0 0px 0px;\
+	font: 13px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	font-weight:normal;\
+	\
+	\}\
+		\
+#catmenu\{\
+	margin: 0px;\
+	padding: 0px 0px;\
+	background:#252525 url(images/menu.png) repeat-x;\
+	height:40px;\
+	overflow:hidden;\
+	\}\
+	\
+#catmenu ul \{\
+	float: left;\
+	list-style: none;\
+	margin: 0px;\
+	padding: 0px 10px;\
+	\}\
+	\
+#catmenu li \{\
+	float: left;\
+	list-style: none;\
+	margin: 0px;\
+	padding: 0px;\
+	\}\
+	\
+	\
+#catmenu li a, #catmenu li a:link, #catmenu li a:visited \{\
+	color:#fff;\
+	text-shadow:1px 1px 1px #962604;\
+	display: block;\
+	margin: 0px;\
+	padding: 13px 10px 12px 10px;\
+\
+	\}\
+\
+#catmenu li a:hover, #catmenu li a:active \{\
+	/*background:#E53F0C ;*/\
+	background:#8ac53d;\
+	color: #fff;\
+	text-shadow:1px 1px 1px #4F1605;\
+    margin: 0px;\
+	padding: 13px 10px 12px 10px;\
+	text-decoration: none;\
+	\}\
+	\
+#catmenu li li a, #catmenu li li a:link, #catmenu li li a:visited \{\
+	/*background:#E53F0C ;*/\
+	background:#8ac53d;\
+	width: 150px;\
+	color:#fff;\
+	text-shadow:1px 1px 1px #962604;\
+	font-weight: normal;\
+	float: none;\
+	margin: 0px;\
+	padding: 9px 10px 10px 10px;\
+	border-bottom: 1px solid #fff;\
+\
+	\}\
+	\
+#catmenu li li a:hover, #catmenu li li a:active \{\
+	/*background:#E53F0C ;*/\
+	background:#8ac53d;\
+	color: #fff;\
+	text-shadow:1px 1px 1px #4F1605;\
+	padding: 9px 10px 10px 10px;\
+	\}\
+\
+#catmenu li ul \{\
+	z-index: 9999;\
+	position: absolute;\
+	left: -999em;\
+	height: auto;\
+	width: 170px;\
+	margin: -2px 0 0 0;\
+	padding: 0px;\
+	background:#999;\
+	\}\
+\
+#catmenu li li \{ \
+	\}\
+\
+#catmenu li ul a \{ \
+	width: 140px;\
+	\}\
+\
+#catmenu li ul a:hover, #catmenu li ul a:active \{ \
+color: #fff;\
+background:#999;\
+	\}\
+\
+#catmenu li ul ul \{\
+	margin: -35px 0 0 170px;\
+	background:#999;\
+	\}\
+\
+#catmenu li:hover ul ul, #catmenu li:hover ul ul ul, \
+#catmenu li.sfhover1 ul ul, #catmenu li.sfhover1 ul ul ul \{\
+	left: -999em;\
+	color: #fff;\
+	background:#8ac53d;\
+	\}\
+\
+#catmenu li:hover ul, #catmenu li li:hover ul, \
+#catmenu li li li:hover ul, #catmenu li.sfhover ul, \
+#catmenu li li.sfhover1 ul, #catmenu li li li.sfhover1 ul \{\
+	left: auto;\
+	color: #fff;\
+	background:#8ac53d;\
+	\}\
+\
+#catmenu li:hover, #catmenu li.sfhover1 \{ \
+background:#8ac53d;\
+	position: static;\
+	\}\
+\
+#catmenu ul li.current_page_item \{\
+	/*background:#E53F0C ;*/\
+	\
+	background:#8ac53d;\
+	color: #FFF;\
+	/* color: #FF602F; */\
+	text-shadow:1px 1px 1px #4F1605;\
+	\
+	\}\
+\
+	\
+#catmenu ul li.current_page_ancestor\{ \
+	/*background:#E53F0C ;*/\
+	background:#8ac53d;\
+	color: #FFF;\
+	/* color: #FF602F; */\
+	text-shadow:1px 1px 1px #4F1605;\
+	\}\
+	\
+	/*Page menu*/\
+\
+\
+#foxmenucontainer\{\
+	height:40px;\
+	display:block;\
+	padding:0px 0 0px 0px;\
+	font: 12px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	font-weight:normal;\
+	/*text-transform:uppercase;*/\
+	background:url(images/catmen.png) repeat-x;\
+\
+	\}\
+#menu\{\
+	margin: 0px;\
+	padding: 0px;\
+	width:1000px;\
+	height:40px;\
+	overflow:hidden;\
+	\}\
+	\
+#menu ul \{\
+	float: left;\
+	list-style: none;\
+	margin: 0px;\
+	padding: 0px;\
+	\}\
+	\
+#menu li \{\
+	float: left;\
+	list-style: none;\
+	margin: 0px;\
+	padding: 0px;\
+	\}\
+	\
+#menu li a, #menu li a:link, #menu li a:visited \{\
+	color:#be5a04;\
+	display: block;\
+	margin: 0px;\
+	padding: 13px 10px 12px 10px;\
+	\}\
+\
+#menu li a:hover, #menu li a:active \{\
+\
+	color: #fff;\
+    margin: 0px;\
+	padding: 13px 10px 12px 10px;\
+	text-decoration: none;\
+	background:#623d15;\
+	\}\
+	\
+#menu li li a, #menu li li a:link, #menu li li a:visited \{\
+	background:#242424;\
+	width: 150px;\
+	color:#f8bf10;\
+	font-weight: normal;\
+	float: none;\
+	margin: 0px;\
+	padding: 8px 10px 8px 10px;\
+	border-bottom: 1px solid #2e2e2e;\
+\
+	\}\
+	\
+#menu li li a:hover, #menu li li a:active \{\
+	background: #111;\
+	color: #fff;\
+	padding: 8px 10px 8px 10px;\
+	\}\
+\
+#menu li ul \{\
+	z-index: 9999;\
+	position: absolute;\
+	left: -999em;\
+	height: auto;\
+	width: 170px;\
+	margin: 0px;\
+	padding: 0px;\
+	\}\
+\
+#menu li li \{ \
+	\}\
+\
+#menu li ul a \{ \
+	width: 140px;\
+	\}\
+\
+#menu li ul a:hover, #menu li ul a:active \{ \
+	\}\
+\
+#menu li ul ul \{\
+	margin: -32px 0 0 170px;\
+	\}\
+\
+#menu li:hover ul ul, #menu li:hover ul ul ul, \
+#menu li.sfhover ul ul, #menu li.sfhover ul ul ul \{\
+	left: -999em;\
+	\}\
+\
+#menu li:hover ul, #menu li li:hover ul, \
+#menu li li li:hover ul, #menu li.sfhover ul, \
+#menu li li.sfhover ul, #menu li li li.sfhover ul \{\
+	left: auto;\
+	\}\
+\
+#menu li:hover, #menu li.sfhover \{ \
+	position: static;\
+	\}\
+	\
+/* Main Content*/	\
+\
+\
+#content \{\
+	float:left;\
+	width: 640px;\
+	height:100%;\
+	padding:10px 0px 0px 15px;\
+	display:inline;\
+	overflow:hidden;\
+	\}\
+	\
+.title\{\
+	margin: 0 0 0 0px;\
+	padding: 0px 0px 0px 0px;\
+	font-size:16px;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+\
+\}	\
+\
+.date \{\
+	font-size:10px;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	padding:3px 5px 3px 0px;\
+   	color:#ca680b;\
+	text-transform: uppercase;\
+	background:#dfdbda;\
+	margin:5px 10px;\
+\
+	\}\
+	\
+.author\{\
+	color:#656565;\
+	padding:3px 5px 3px 5px;\
+	margin-left:5px;\
+	text-shadow:1px 1px 1px #fff;\
+\
+\}\
+.clock\{\
+	color:#656565;\
+	padding:3px 5px 3px 5px;\
+	margin-left:5px;\
+	text-shadow:1px 1px 1px #fff;\
+\}	\
+\
+.single \{\
+	width:625px;\
+	margin: 10px 5px 20px 0px;\
+	height:100%;\
+	color:#666;\
+	font: 13px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	background:#f3f3f3;\
+	padding:5px;\
+	/*border:1px solid #ddd;*/\
+	\
+	\}\
+\
+.single  h2 \{\
+	margin: 0px 0 0px 0;\
+	padding: 10px 0px 10px 5px;\
+	text-align: left;\
+	font: 20px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	font-weight:normal;\
+	overflow:hidden;\
+	\
+\
+	\}\
+\
+.single  h2 a, .single  h2 a:link, .single  h2 a:visited  \{\
+	color:#7db337;\
+	background-color: transparent;\
+	font: 20px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	\}\
+.single  h2 a:hover  \{\
+	color: #228fc4;\
+	background-color: transparent;\
+	font: 20px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	\}	\
+\
+\
+.comm\{\
+	color:#fff;\
+	padding:3px 5px 3px 5px;\
+	margin-left:5px;\
+\
+\}\
+\
+.comm a:link,\
+.comm a:visited \{\
+	color:#656565;\
+		text-shadow:1px 1px 1px #fff;\
+\}\
+.comm a:hover\{\
+	color:#656565;\
+		text-shadow:1px 1px 1px #fff;\
+\}\
+\
+\
+.singleinfo \{\
+\
+	font:10px Tahoma, Verdana, sans-serif;\
+	/*text-transform:uppercase;*/s\
+	color:#B98302;\
+	padding:5px 0px;\
+			\}\
+	\
+\
+.category\{\
+	padding:5px 0 5px 5px;\
+	color:#000;\
+\}\
+\
+.category a:link,.category a:visited\{\
+	color:#D13914;\
+\
+	\}\
+	\
+.category a:hover\{\
+	color:#000;\
+	\}\
+.cover \{\
+	margin:0 0;\
+	padding: 0px 10px ;\
+	\
+	\}	\
+.entry \{\
+	margin:0 0;\
+	padding: 0px 0px ;\
+	font:12px Tahoma, Verdana, sans-serif;\
+	\
+	\}	\
+	\
+.entry a:link,\
+.entry a:visited \{\
+\
+	background-color: transparent;\
+\}\
+.entry a:hover \{\
+	color:#E53F0C;\
+	background-color: transparent;\
+	text-decoration: none;\
+\}\
+\
+.entry ul, .entry ol\{\
+  margin: .4em 0 1em;\
+  line-height: 150%;\
+\}\
+\
+\
+.entry ul li, .entry ol li\{\
+  list-style-position:outside;\
+  margin-left: 1.6em;\
+\}\
+\
+.entry p\{\
+	margin:5px 0px;\
+	padding:5px 0px;\
+	line-height:22px;\
+\
+\}\
+\
+\
+/* right column */\
+.right\{\
+	\
+	float:right;\
+	width:325px;\
+	padding:20px 0px 0px 0;\
+	display:inline;\
+	margin-right:15px;\
+	overflow:hidden;\
+\}\
+.blokbox,.twitbox\{\
+	float:left;\
+	width:323px;\
+	background:#fff;\
+		margin-bottom:10px;\
+	border:1px solid #ddd;\
+	\}\
+.blok\{\
+	padding:5px 0px 0px 0px;\
+	float:left;\
+\
+\}\
+.fentry img\{\
+	max-width:100px;\
+\
+	padding-left:6px;\
+	padding-bottom:5px;\
+	float:left;\
+	\
+\}\
+	\
+h2.bloktitl \{\
+	width:325px;\
+	color:#999;\
+	font-size:16px;\
+	/*background:#523211;*/\
+	height:25px;\
+	padding-top:10px;\
+	padding-left:10px;\
+	border-bottom: #999 solid 3px;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	font-weight: normal;\
+	\}\
+p.twitter-message\{\
+	color:#666;\
+	padding:10px;\
+	border-bottom:1px solid #eee;\
+\}\
+\
+a.twitter-link\{\
+	color:#D53E13;\
+\}\
+\
+a.twitter-user\{\
+ 	color:#0c7391;\
+\}\
+\
+.sidebar\{\
+	float:left;\
+	width:323px;\
+	background:#fff;\
+		margin-bottom:10px;\
+	border:1px solid #ddd;\
+\}\
+.sidebar2\{\
+	float:left;\
+	width:323px;\
+	background:#fff;\
+		margin-bottom:10px;\
+	border:1px solid #ddd;\
+	\
+\}\
+h3.sidetitl\{\
+	width:325px;\
+	color:#777;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	font-weight: normal;\
+	/*background:#523211;*/\
+	height:25px;\
+	padding-top:5px;\
+	padding-left:10px;\
+	border-bottom: #999 solid 1px;\
+	font-size: 16px;\
+\}\
+/* The Sidebar */\
+\
+.sidebox1\{\
+	float:left;\
+	width:180px;\
+	background:#fff;\
+	padding-bottom:10px;\
+	font-size:12px;\
+	font-family: Tahoma, Verdana, sans-serif;\
+	margin:10px 0px 0px 0px;\
+	color:#444;\
+	\}\
+.sidebox2\{\
+	float:right;\
+	width:130px;\
+	background:#fff;\
+	padding-bottom:10px;\
+	font-size:12px;\
+	font-family: Tahoma, Verdana, sans-serif;\
+	margin:10px 0px 0px 0px;\
+	color:#444;\
+	\}\
+.sidebox1 ul,.sidebox2 ul \{\
+	list-style-type: none;\
+	margin:  0px;\
+	padding: 0px 5px 5px 5px ;\
+\
+	\}\
+.sidebox1 li,.sidebox2 li\{\
+	list-style-type: none;\
+	margin: 0 ;\
+	padding: 0;\
+\
+	\}\
+.sidebox2 ul ul  \{\
+	list-style-type: none;\
+	margin: 0;\
+	padding: 0px 0px 10px 0px;\
+	background-repeat:no-repeat;\
+		\}\
+\
+.sidebox1 ul ul ul ,.sidebox2 ul ul ul\{\
+	list-style-type: none;\
+	margin: 0;\
+	padding: 0;\
+	border:0;\
+	\}\
+\
+.sidebox1 ul ul ul ul ,.sidebox2 ul ul ul ul\{\
+	list-style-type: none;\
+	margin: 0;\
+	padding: 0;\
+	border:0;\
+\
+	\}\
+	\
+.sidebox1 ul li \{\
+	height:100%;\
+	line-height:18px;\
+	clear: left;	\
+	width: 170px;\
+	list-style-type: none;\
+	\}\
+\
+.sidebox2 ul li \{\
+	height:100%;\
+	line-height:18px;\
+	clear: left;	\
+	width: 120px;\
+	list-style-type: none;\
+	\}\
+	\
+.sidebox1 ul li a:link, .sidebox1 ul li a:visited,.sidebox2 ul li a:link, .sidebox2 ul li a:visited  \{\
+\
+	color:#6f6f6f;\
+	border-bottom:1px dotted #ddd;\
+	text-decoration: none;\
+	padding: 5px 0px 5px 5px;\
+	display:block;\
+\
+	\}\
+\
+.sidebox1 ul li a:hover ,.sidebox2 ul li a:hover\{\
+\
+	color: #F6AD0F;\
+	\}\
+\
+.sidebox1 p ,.sidebox2 p\{\
+	padding: 7px 10px;\
+	margin:0;\
+	\}\
+\
+.sidebox1 table,.sidebox2 table \{\
+	width:100%;\
+	text-align:center;\
+	color:#787d7f;\
+	\}	\
+	\
+	\
+/*calendar*/\
+\
+#wp-calendar\{\
+	width: 100%;\
+	padding: 0px 5px;\
+\
+\}\
+#calendar_wrap\{\
+	width:270px;\
+	background:#fff url(images/side.png) repeat-x;\
+	border:1px solid #ccc;\
+	margin:0px auto;\
+\}\
+\
+#wp-calendar caption\{\
+	padding: 10px 5px 5px 5px ;\
+	font-size:16px;\
+	color:#843400;\
+	font-weight:bold;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	/*text-transform:uppercase;*/\
+\}\
+\
+\
+#wp-calendar th, #wp-calendar td\{\
+	padding: 5px;\
+	text-align:center;\
+	color:#fff;\
+	background:#843400;\
+\}\
+\
+#wp-calendar td a\{\
+\
+	padding: 0px;\
+	border:none;\
+	color:#843400;\
+\}\
+#wp-calendar td\{\
+	background:transparent;\
+	border:none;\
+	color:#444;\
+\}\
+#wp-calendar td, table#wp-calendar th\{\
+	padding: 2px 0;\
+\}		\
+	\
+	\
+/* --- FOOTER --- */\
+\
+#footer \{\
+	height:100px;\
+	padding:10px 0 0 0px;\
+	color:#DADADA;\
+	font-size:11px;\
+	font-weight:normal;\
+	letter-spacing:1px;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	float:left;\
+	width:100%;\
+	background:url(images/footer.png) no-repeat;\
+	text-shadow:1px 1px 1px #5F1600;\
+	\}\
+\
+#footer a:link , #footer a:visited\{\
+		color:#DADADA;\
+	\}\
+\
+#footer a:hover \{\
+	color:#fff;\
+	\}\
+\
+.fleft\{\
+	float:left;\
+	text-align:left;\
+	margin-left:10px;\
+	margin-top:10px;\
+	line-height:16px;\
+\}\
+.fright\{\
+	float:right;\
+	text-align:right;\
+	margin-right:10px;\
+		margin-top:10px;\
+	line-height:16px;\
+\}\
+/* The Navigation */\
+\
+#navigation\{	\
+	margin:10px 0px 0px 0px;\
+	padding:0px 5px 10px 0px;\
+	width:700px;\
+	\}\
+\
+	\
+/* The Attachment */\
+\
+.contentCenter \{\
+	text-align:center;\
+	\}\
+\
+/* The Page Title */\
+\
+h2.pagetitle \{\
+	padding:10px 0px;\
+	font-size:20px;\
+	text-align:center;\
+	color:#555;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	\}\
+ h2.pagetitle a \{\
+	color:#555;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+ \}\
+#comment\{\
+\
+	height:100%;\
+	padding:0px 0px 0px 0px;\
+	margin:0px 0px;\
+	width:635px;\
+\
+	\}\
+	\
+#comnums  h3\{\
+	padding:10px 10px;\
+	margin:10px 0px 10px 0px;\
+	font-size:20px;\
+	font-weight:normal;\
+	color:#444;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+\
+\
+\
+	\} 	\
+	\
+#respond\{\
+\
+	height:100%;\
+	padding:0px 5px;\
+	margin:5px 0px 5px 5px;\
+	background:#fff ;\
+	border:1px solid #ddd;\
+\
+\
+\}	\
+#respond h3\{\
+	padding:10px 10px 5px 10px;\
+	margin:5px 0px;\
+	font-size:22px;\
+	font-weight:normal;\
+	color:#555;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	\}\
+#commentform \{\
+	padding:0px 10px 10px 10px;\
+	margin:0px 0px 0px 0px;\
+	color:#BFAFA7;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	\}\
+.cancel-comment-reply\{\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	margin-left:10px;\
+	padding:0px 0px;\
+\
+\}	\
+#commentform p \{	\
+	color:#777;\
+	padding:5px 0px;\
+	font-size:10px;\
+	\}\
+#commentform input \{\
+	background:#E4E4E4;\
+	border:1px solid #ccc;\
+	color:#444;\
+	padding:3px 10px;\
+\
+	\}\
+#commentform textarea \{\
+	background:#eee;\
+	border:1px solid #ccc;\
+	color:#333;\
+	width:95%;\
+	padding:5px 5px;\
+\
+	\}\
+.comments input#submit \{\
+	\
+	padding:2px 5px;\
+	background:#E53F0C;\
+	border:1px solid #ccc;\
+	border-radius: 5px;\
+	-moz-border-radius: 5px;\
+	-webkit-border-radius: 5px;\
+	color:#fff;\
+	font-family: "Century Gothic", Tahoma, Verdana, sans-serif;\
+	\}\
+\
+	\
+ol.commentlist \{ \
+	list-style:none; \
+	margin:0; \
+	padding:0; \
+	text-indent:0; \
+\
+	\}\
+.comment-body\{\
+	margin-left:80px;\
+	padding:10px 10px; \
+	background:#fff ;\
+\
+	\
+\}	\
+ol.commentlist li \{ \
+\
+	margin:20px 0 20px 0px; \
+	padding:5px 0px 5px 0px; \
+	position:relative;\
+\
+ \}\
+ \
+ol.commentlist li div.comment-author \{ \
+	padding:0 10px 0 0; \
+	color:#C00808; \
+\}\
+\
+ol.commentlist li div.vcard \{ \
+	font:10px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	text-transform:uppercase;\
+	color:#444; \
+	position: absolute;\
+	top:5px;\
+	left:0px;\
+	height:100px;\
+\}\
+\
+ol.commentlist li span.says  \{ \
+	display:none;\
+\
+\}\
+\
+ol.commentlist li div.vcard cite.fn \{ \
+\
+	font-style:normal;\
+	position: absolute;\
+	width:70px;\
+	text-align:center;\
+	background:#fff;\
+	padding:2px 0px;\
+	top:75px;\
+	left:0px;\
+\}\
+\
+ol.commentlist li div.vcard cite.fn a:link \{ \
+\
+	color:#444;\
+\}\
+\
+ol.commentlist li div.vcard img.avatar \{ \
+	border:5px solid #fff; \
+	margin:0px; \
+	padding: 0px; \
+\}\
+\
+ol.commentlist li div.comment-meta \{ \
+	display:none;\
+\
+\}\
+\
+ol.commentlist li p \{ \
+	font:normal 12px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	margin:0 0 1em;\
+	line-height:22px;\
+	color:#666;\
+	padding:5px 5px;\
+ \}\
+ \
+ol.commentlist li ul \{ \
+	font:normal 12px/1.4 helvetica,arial,sans-serif; \
+	list-style:square; \
+	margin:0 0 1em;\
+	padding:0; \
+	text-indent:0;\
+ \
+ \}\
+ \
+ol.commentlist li div.reply \{  \
+\
+	font:10px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	text-transform:uppercase;\
+	padding:0px 0px;  \
+	text-align:right; \
+	margin:0px 5px 5px 0px;\
+	\
+\
+\
+ \}\
+\
+ \
+\
+ol.commentlist li div.reply a \{ \
+\
+	color:#fff; \
+	text-decoration:none; \
+	text-transform:uppercase; \
+	padding:3px 10px;\
+	background:#E53F0C ;\
+	border-radius: 5px;\
+	-moz-border-radius: 5px;\
+	-webkit-border-radius: 5px;\
+\
+\
+\
+\}\
+\
+\
+\
+ol.commentlist li ul.children \{ \
+	list-style:none; \
+	margin:1em 0 0; \
+	text-indent:0; \
+\}\
+\
+ol.commentlist li ul.children li.depth-2 \{ \
+\
+	margin:0 0 0px 90px; \
+\
+\}\
+\
+\
+\
+ol.commentlist li ul.children li.depth-3 \{ \
+\
+	margin:0 0 0px 90px; \
+\
+\}\
+\
+\
+\
+ol.commentlist li ul.children li.depth-4 \{\
+\
+	margin:0 0 0px 90px; \
+\
+ \}\
+\
+\
+\
+ol.commentlist li.even \{ \
+\
+	\
+\}\
+\
+ol.commentlist li.odd \{ \
+\
+ \}\
+ \
+ol.commentlist li.pingback div.vcard \{ \
+	padding:0 0px 0 0; \
+	color:#C00808; \
+	\
+\}\
+\
+		\
+ol.pinglist \{ \
+	list-style:none; \
+	margin:0; \
+	padding:0; \
+	text-indent:0; \
+\
+	\}\
+ol.pinglist .comment-body\{\
+\
+	margin:0px 0px;\
+	padding:10px 10px; \
+	background:#060606 url(images/title.png) top repeat-x;\
+\
+	\
+\}	\
+ol.pinglist li \{ \
+\
+	margin:10px 0 10px 0px; \
+	padding:10px 0px 10px 0px; \
+	position:relative;\
+\
+ \}\
+ \
+\
+\
+ol.pinglist li div.vcard \{ \
+	font-weight:bold;\
+	color:#fff;\
+	display:block;\
+\}\
+\
+\
+ol.pinglist li span.says  \{ \
+	display:none;\
+\
+\}\
+\
+ol.pinglist li div.vcard cite.fn \{ \
+\
+\
+\}\
+\
+ol.pinglist li div.vcard cite.fn a:link \{ \
+\
+	color:#fff;\
+\}\
+\
+\
+ol.pinglist li div.comment-meta \{ \
+	padding:5px 0px;\
+	float:left;\
+\}\
+\
+ol.pinglist li div.comment-meta a:link \{ \
+	\
+\}\
+\
+ol.pinglist li p \{ \
+	font:normal 12px "Century Gothic", Tahoma, Verdana, sans-serif;\
+	margin:0 0 1em;\
+	line-height:18px;\
+	color:#464646;\
+	padding:5px 5px;\
+ \}\
+ \
+ol.pinglist li ul \{ \
+	font:normal 12px/1.4 helvetica,arial,sans-serif; \
+	list-style:square; \
+	margin:0 0 1em;\
+	padding:0; \
+	text-indent:0;\
+ \
+ \}\
+ \
+ol.pinglist li div.reply \{  \
+\
+display:none;\
+\
+\
+ \}\
+\
+.widebanner\{\
+\
+	height:60px;\
+	margin-top:10px;\
+	padding:10px 0px;\
+	background:url(images/ad1.jpg) repeat-x;\
+	text-align:center;\
+\}\
+}
