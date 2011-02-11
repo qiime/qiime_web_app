@@ -20,18 +20,26 @@ sess = Session.Session(req)
 
 # Set the correct host and referrer
 #req.write(str(req.headers_in))
-sess['portal_type'] = 'qiime'
-#sess['portal_type'] = 'qiime'
-sess.save()
 
-if sess['portal_type'] == 'emp':
-    sess['stylesheet'] = 'style/emp.css'
-    sess['title'] = 'Earth Microbiome Project'
-else:
-    sess['stylesheet'] = 'style/qiime.css'
-    sess['title'] = 'Qiime'
+def setPortalType():
+    if 'portal_type' in form:
+        sess['portal_type'] = form['portal_type']
+    else:
+        sess['portal_type'] = 'qiime'
+    sess.save()
 
-sess.save()
+    if sess['portal_type'] == 'emp':
+        sess['stylesheet'] = 'style/emp.css'
+        sess['title'] = 'Earth Microbiome Project'
+    elif sess['portal_type'] == 'qiime':
+        sess['stylesheet'] = 'style/qiime.css'
+        sess['title'] = 'Qiime'
+    else:
+        sess['stylesheet'] = 'style/qiime.css'
+        sess['title'] = 'Qiime'
+    sess.save()
+    
+setPortalType()
 %>
 
 
@@ -131,11 +139,12 @@ if form.has_key('username'):
 else:
     # If the form was just loaded, clear the session
     sess.invalidate()
+    setPortalType()
 
 # end
 %>
 <p/>
-<form method="post" action="index.psp">
+<form method="post" action="index.psp?portal_type=<%=sess['portal_type']%>">
 <table>
     <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
     <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
