@@ -1,0 +1,89 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "dev"
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+
+# Grab the sesison object if the header was not included
+if 'sess' not in locals():
+    if 'sess' not in globals():
+        sess = Session.Session(req)
+    
+# Figure out if the user is logged in or not
+if not (sess.has_key('web_app_user_id')):
+    web_app_user_id = 0
+else:
+    web_app_user_id = int(sess['web_app_user_id'])
+
+if not (sess.has_key('is_admin')):
+    is_admin = 0
+else:
+    is_admin = int(sess['is_admin'])
+
+# Draw the page header if user_id is not found. This happens in the case where
+# an anonymous user has accessed the download link prior to logging in
+if web_app_user_id == 0:
+    #Indent
+%>
+
+<html>
+<head>
+<link rel="stylesheet" href="style/qiime.css" type="text/css">
+<title>Request a Data Download</title>
+</head>
+<body>
+<img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 />
+<table class="header_table">
+<tr><td>Request a Data Download</td></tr>
+</table>
+
+<%
+# Unindent
+
+%>
+
+<h3>Request a Data Download</h3>
+
+<p>
+    <table>
+        <form id="data_request" action="data_request_submit.psp" method="post">
+            <tr><td>Your Name:</td><td><input type="text" id="name" name="name"/></td></tr>
+            <tr><td>Organaztion:</td><td><input type="text" id="organization" name="organization"/></td></tr>
+            <tr><td>Email (must be valid):</td><td><input type="email" id="email" name="email"/></td></tr>
+            <tr><td>Select a Study:</td><td>
+            <select validate="required:true" name="study_names" id="study_names">
+            <option value=""></option>
+<%
+data_access = data_access_factory(DataAccessType.qiime_production)
+req.write(str(data_access))
+study_names = data_access.getUserStudyNames(web_app_user_id, is_admin)
+req.write(str(study_names))
+
+for study_name in study_names:
+    req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + study_name[1] + '</option>\n')
+# end
+%>
+            </select></td></tr>
+            <tr><td colspan="2"><input type="submit" value="Submit Data Request"></td></td>
+        </form>        
+    </table>
+
+<%
+if web_app_user_id == 0:
+    #Indent
+%>
+
+</body>
+</html>
+
+<%
+# Unindent
+
+%>

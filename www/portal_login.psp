@@ -1,0 +1,47 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+'''This script is the portal login page'''
+
+from mod_python import Session
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+import os
+
+# Get the session
+sess = Session.Session(req)
+
+# Set the correct host and referrer
+#req.write(str(req.headers_in))
+
+def setPortalType():
+    if 'portal_type' in form:
+        sess['portal_type'] = form['portal_type']
+    else:
+        sess['portal_type'] = 'qiime'
+        
+    sess.save()
+
+    if sess['portal_type'] == 'emp':
+        sess['stylesheet'] = 'style/emp.css'
+        sess['title'] = 'Earth Microbiome Project'
+    elif sess['portal_type'] == 'qiime':
+        sess['stylesheet'] = 'style/qiime.css'
+        sess['title'] = 'Qiime'
+    else:
+        sess['stylesheet'] = 'style/qiime.css'
+        sess['title'] = 'Qiime'
+    sess.save()
+
+req.write(str(form))
+    
+#setPortalType()
+%>
+
