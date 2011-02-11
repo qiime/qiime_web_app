@@ -15,18 +15,45 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 import os
 
-# Get the session
-sess = Session.Session(req)
 
 # Set the correct host and referrer
 #req.write(str(req.headers_in))
 
 def setPortalType():
-    if 'portal_type' in form:
-        sess['portal_type'] = form['portal_type']
-    else:
-        sess['portal_type'] = 'qiime'
+    # Get request parameters
+    parameters = util.FieldStorage(req)
+    if len(parameters) == 0:
+        req.write('Error: No variables supplied.')
+        return
         
+    portal_type = parameters.get("portal_type", None)    
+    username = parameters.get("username", None)
+    is_admin = parameters.get("is_admin", None)
+    
+    error = ''
+    
+    if portal_type:
+        sess['portal_type'] = portal_type
+    else:
+        error += 'Error: Portal type must be specified.</br>'
+
+    if username:
+        sess['username'] = username
+    else:
+        error += 'Error: No username specified.<br/>'
+        
+    if is_admin:
+        sess['is_admin'] = is_admin
+    else:
+        error += 'Error: Admin level must be supplied.</br>'
+        
+    if error:
+        req.write(error)
+        return
+        
+    #sess['web_app_user_id'] = user_data['web_app_user_id']
+    sess['study_name'] = ''
+    sess['document_root'] = req.document_root() + '/qiime/'
     sess.save()
 
     if sess['portal_type'] == 'emp':
@@ -40,8 +67,13 @@ def setPortalType():
         sess['title'] = 'Qiime'
     sess.save()
 
-req.write(str(form))
-    
-#setPortalType()
+    psp.redirect('fusebox.psp?page=select_study.psp')
+
+
+# Get the session
+sess = Session.Session(req)
+
+# Set up the session and redirect if all looks good    
+setPortalType()
 %>
 
