@@ -74,10 +74,11 @@ def setPortalType():
         req.write('Authenciation failed.')
         return
     
+    output_dir='/home/wwwuser/user_data'
     sess['study_name'] = ''
     sess['document_root'] = req.document_root() + '/qiime/'
     sess['user_dir'] = os.path.join(output_dir, 'studies')
-    sess['db_root'] = '/home/wwwuser/user_data'
+    sess['db_root'] = output_dir
     sess.save()
 
     if sess['portal_type'] == 'emp':
