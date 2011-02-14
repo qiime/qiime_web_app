@@ -34,7 +34,7 @@ if not templates_with_extras:
     req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
 else:
     req.write('<h2>Please tell us about your new columns:</h2>')
-    req.write('<form target="%s>" name="extra_form" id="extra_form" method="post" action="validate_metadata_extra_fields_submit.psp">' % (sess['frame_target']))
+    req.write('<form target="%s" name="extra_form" id="extra_form" method="post" action="validate_metadata_extra_fields_submit.psp">' % (sess['frame_target']))
 
     for template in templates_with_extras:
         log = []
