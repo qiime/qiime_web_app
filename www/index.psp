@@ -114,12 +114,12 @@ if form.has_key('username'):
         sess['is_admin'] = user_data['is_admin']
         sess['web_app_user_id'] = user_data['web_app_user_id']
         sess['study_name'] = ''
+        sess['frame_target'] = '_parent'
         
         #User directories
-        #sess['user_dir'] = os.path.join(output_dir, 'user_'+str(sess['web_app_user_id']))
-        #sess['db_root']=os.path.join('/tmp_qiime/', 'user_'+str(sess['web_app_user_id']))
         sess['user_dir'] = os.path.join(output_dir, 'studies')
         sess['db_root'] = output_dir
+        
         try:
             if not os.path.exists(sess['user_dir']):
                 os.mkdir(sess['user_dir'])

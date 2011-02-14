@@ -99,20 +99,20 @@ if sess.get('study_id'):
     # Indent
 %>
             <li>
-                <a href="fusebox.psp" target="_parent">Manage Study Data</a>
+                <a href="fusebox.psp" target="<%=sess['frame_target']%>">Manage Study Data</a>
 
                 <ul class="subnav">
-                    <li><a href="fusebox.psp?page=new_study.psp" target="_parent">Create New Study</a></li>
-                    <li><a href="fusebox.psp?page=load_template_fields.psp" target="_parent">Generate MIMARKS Tempaltes</a></li>
+                    <li><a href="fusebox.psp?page=new_study.psp" target="<%=sess['frame_target']%>">Create New Study</a></li>
+                    <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIMARKS Tempaltes</a></li>
 
 <%
     if sess['portal_type'] == 'qiime':
-        req.write('<li><a href="fusebox.psp?page=upload_sff.psp" target="_parent">Add/Remove SFF Files</a></li>')
+        req.write('<li><a href="fusebox.psp?page=upload_sff.psp" target="%s">Add/Remove SFF Files</a></li>' % (sess['frame_target']))
     
     # End if
 %>
                     
-                    <li><a href="fusebox.psp?page=upload_metadata.psp" target="_parent">Upload Metadata</a></li>
+                    <li><a href="fusebox.psp?page=upload_metadata.psp" target="<%=sess['frame_target']%>">Upload Metadata</a></li>
                 </ul>
             </li>
 <%
@@ -122,9 +122,9 @@ if sess['portal_type'] == 'qiime':
     # Indent
 %>
             <li>
-                <a href="fusebox.psp?page=new_meta_analysis.psp" target="_parent">Meta Analysis</a>
+                <a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Meta Analysis</a>
                 <ul class="subnav">
-                    <li><a href="fusebox.psp?page=new_meta_analysis.psp" target="_parent">Create New Meta-Analysis</a></li>
+                    <li><a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Create New Meta-Analysis</a></li>
                 </ul>
             </li>
 <%
@@ -132,14 +132,14 @@ if sess['portal_type'] == 'qiime':
 # End if
 %>
             <li>
-                <a href="fusebox.psp?page=tools_ontology_and_geo.psp" target="_parent">Tools</a>
+                <a href="fusebox.psp?page=tools_ontology_and_geo.psp" target="<%=sess['frame_target']%>">Tools</a>
                 <ul class="subnav">
-                    <li><a href="fusebox.psp?page=tools_ontology.psp" target="_parent">Ontology Lookup Service</a></li>
-                    <li><a href="fusebox.psp?page=tools_geo.psp" target="_parent">Georeference Utility</a></li>
+                    <li><a href="fusebox.psp?page=tools_ontology.psp" target="<%=sess['frame_target']%>">Ontology Lookup Service</a></li>
+                    <li><a href="fusebox.psp?page=tools_geo.psp" target="<%=sess['frame_target']%>">Georeference Utility</a></li>
                 </ul>
             </li>
             <li><a href="docs/index.html" target="_blank">Help</a></li>
-            <li><a href="index.psp" target="_parent">Log Out</a></li>
+            <li><a href="index.psp" target="<%=sess['frame_target']%>">Log Out</a></li>
         </ul>
         </td></tr></table>
     </div>

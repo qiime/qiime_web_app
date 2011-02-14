@@ -213,9 +213,9 @@ if can_delete == 'y':
     <b>Tools:</b>
     <ul>
         <li>
-            <form id="open_ontolgoy_geo_tools" action="fusebox.psp" method="post" target="_parent">
+            <form id="open_ontolgoy_geo_tools" action="fusebox.psp" method="post" target="<%=sess['frame_target']%>">
                 <input type="hidden" name="page" id="page" value="tools_ontology_and_geo.psp">
-                <a href="" onclick="document.forms['open_ontolgoy_geo_tools'].submit(); return false;" target="_parent">
+                <a href="" onclick="document.forms['open_ontolgoy_geo_tools'].submit(); return false;" target="<%=sess['frame_target']%>">
                 Ontology Lookup and Georeferencing Utility</a>
             </form>
         </li>

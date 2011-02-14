@@ -81,12 +81,15 @@ def setPortalType():
     if sess['portal_type'] == 'emp':
         sess['stylesheet'] = 'style/emp.css'
         sess['title'] = 'Earth Microbiome Project'
+        sess['frame_target'] = 'qiime_frame'
     elif sess['portal_type'] == 'qiime':
         sess['stylesheet'] = 'style/qiime.css'
         sess['title'] = 'Qiime'
+        sess['frame_target'] = '_parent'
     else:
         sess['stylesheet'] = 'style/qiime.css'
         sess['title'] = 'Qiime'
+        sess['frame_target'] = '_parent'
     sess.save()
 
     psp.redirect('fusebox.psp?page=select_study.psp')
