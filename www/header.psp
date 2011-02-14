@@ -28,6 +28,8 @@ else:
 #setting link_page to select_study, so we can go between meta-analysis and study
 link_page = 'select_study.psp'
 # end
+
+portal_type = sess['portal_type']
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -73,9 +75,9 @@ $(document).ready(function(){
 <div class="container">
 
 <% 
-if sess['portal_type'] == 'emp':
+if portal_type == 'emp':
     req.write('<div')
-elif sess['portal_type'] == 'qiime':
+elif portal_type == 'qiime':
     req.write('<div id="header">')
     req.write('<div class="disclaimer">Logged in as %s</div>' % sess['username'])
 else:
@@ -106,7 +108,7 @@ if sess.get('study_id'):
                     <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIMARKS Tempaltes</a></li>
 
 <%
-    if sess['portal_type'] == 'qiime':
+    if portal_type == 'qiime':
         req.write('<li><a href="fusebox.psp?page=upload_sff.psp" target="%s">Add/Remove SFF Files</a></li>' % (sess['frame_target']))
     
     # End if
@@ -118,7 +120,7 @@ if sess.get('study_id'):
 <%
 # End if
 
-if sess['portal_type'] == 'qiime':
+if portal_type == 'qiime':
     # Indent
 %>
             <li>
@@ -138,8 +140,17 @@ if sess['portal_type'] == 'qiime':
                     <li><a href="fusebox.psp?page=tools_geo.psp" target="<%=sess['frame_target']%>">Georeference Utility</a></li>
                 </ul>
             </li>
+<%
+if portal_type == 'qiime':
+    # Indent
+    
+%>
             <li><a href="docs/index.html" target="_blank">Help</a></li>
             <li><a href="index.psp" target="<%=sess['frame_target']%>">Log Out</a></li>
+<%
+# End indent
+
+%>
         </ul>
         </td></tr></table>
     </div>
