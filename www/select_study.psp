@@ -7,12 +7,19 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
+
+portal_type = sess['portal_type']
 %>
 
 <br>
 <p>
     <b>Study Options:</b>
     <ul>
+<%
+if portal_type == 'qiime':
+    # Indent
+    
+%>
         <li>
             <form id="study_summary" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="./study_summary/index.psp">
@@ -20,6 +27,12 @@ __status__ = "Production"
                 Get Study Summary and Raw Data</a>
             </form>
         </li>
+        
+<%
+# End indent
+
+%>
+        
         <li>
             <form id="create_new_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="./new_study.psp">
