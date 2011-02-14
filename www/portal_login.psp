@@ -72,6 +72,7 @@ def setPortalType():
     else:
         # Login failed
         req.write('Authenciation failed.')
+        return
     
     sess['study_name'] = ''
     sess['document_root'] = req.document_root() + '/qiime/'
