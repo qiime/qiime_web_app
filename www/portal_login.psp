@@ -77,7 +77,7 @@ def setPortalType():
     sess['study_name'] = ''
     sess['document_root'] = req.document_root() + '/qiime/'
     sess['user_dir'] = os.path.join(output_dir, 'studies')
-    sess['db_root'] = output_dir
+    sess['db_root'] = '/home/wwwuser/user_data'
     sess.save()
 
     if sess['portal_type'] == 'emp':
