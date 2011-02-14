@@ -26,9 +26,10 @@ def setPortalType():
         req.write('Error: No variables supplied.')
         return
         
-    portal_type = parameters.get("portal_type", None)    
-    username = parameters.get("username", None)
-    is_admin = parameters.get("is_admin", None)
+    portal_type = parameters.get('portal_type', None)    
+    username = parameters.get('username', None)
+    password = parameters.get('password', None)
+    is_admin = parameters.get('is_admin', None)
     
     error = ''
     
@@ -41,7 +42,12 @@ def setPortalType():
         sess['username'] = username
     else:
         error += 'Error: No username specified.<br/>'
-        
+
+    if password:
+        sess['password'] = password
+    else:
+        error += 'Error: No password specified.<br/>'
+
     if is_admin:
         sess['is_admin'] = is_admin
     else:
@@ -50,8 +56,23 @@ def setPortalType():
     if error:
         req.write(error)
         return
-        
-    #sess['web_app_user_id'] = user_data['web_app_user_id']
+    
+    # Find or create the appropriate login information:
+    data_access = data_access_factory(DataAccessType.qiime_production)
+    user_data = data_access.authenticateWebAppUser( username, password )
+    
+    if user_data:
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+    elif portal_type == 'emp':
+        # Login failed so create this user
+        user_data = data_access.registerWebAppUser(username, password, 'emp_registration')
+
+    if user_data:
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+    else:
+        # Login failed
+        req.write('Authenciation failed.')
+    
     sess['study_name'] = ''
     sess['document_root'] = req.document_root() + '/qiime/'
     sess.save()

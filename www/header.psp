@@ -72,8 +72,19 @@ $(document).ready(function(){
 <body>
 <div class="container">
 
-    <div id="header">
-    	 <div class="disclaimer">Logged in as <%=sess['username']%></div>
+<% 
+if sess['portal_type'] == 'emp':
+    req.write('<div')
+elif sess['portal_type'] == 'qiime':
+    req.write('<div id="header">')
+    req.write('<div class="disclaimer">Logged in as %s</div>' % sess['username'])
+else:
+    req.write('<div>')
+# End indent
+%>
+
+
+    	 
     	 
     	 <table border="0px" width="100%" background="img/topnav_bg_tall.gif" cellspacing="0" cellpadding="0">
     	    <tr width="100%">

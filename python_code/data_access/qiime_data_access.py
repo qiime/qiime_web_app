@@ -198,13 +198,8 @@ class QiimeDataAccess(object):
             crypt_pass = crypt(password, username)
             con = self.getMetadataDatabaseConnection()
             user_data = con.cursor()
-            con.cursor().callproc('web_app_user_insert', [username, crypt_pass,activation_code])
-            if user_data.rowcount > 0:
-                row = user_data.fetchone()
-                user_data = {'web_app_user_id':row[0], 'email':row[1], 'password':row[2], 'is_admin':row[3], 'is_locked':row[4], 'last_login':row[5]}
-                return user_data
-            else:
-                return False
+            con.cursor().callproc('web_app_user_insert', [username, crypt_pass, activation_code])
+            return self.authenticateWebAppUser(username, password)
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
