@@ -21,9 +21,9 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 
 #Get list of public and user studies
 if sess["is_admin"] != 1:
-    public_studies=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"])
+    public_studies=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
 else:
-    public_studies=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"])
+    public_studies=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type')
 #
 %>
 

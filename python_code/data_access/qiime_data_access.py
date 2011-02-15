@@ -503,9 +503,9 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
             
-    def getUserAndPublicStudyNames(self, user_id, is_admin):
-        public_studies = self.getUserStudyNames(0, is_admin)
-        all_studies = self.getUserStudyNames(user_id, is_admin)
+    def getUserAndPublicStudyNames(self, user_id, is_admin, portal_type):
+        public_studies = self.getUserStudyNames(0, is_admin, portal_type)
+        all_studies = self.getUserStudyNames(user_id, is_admin, portal_type)
         for item in public_studies:
             if item not in all_studies:
                 all_studies.append(item)
