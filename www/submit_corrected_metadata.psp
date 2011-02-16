@@ -82,6 +82,16 @@ for name in files:
     for line in f:
         vals = line.split('::')
         validated_values[str(vals[0]).strip()] = str(vals[1]).strip()
+        
+# Add any corrected values passed in the form...
+for item in form:
+    parts = item.split(':')
+    
+    # Not a metadata field if length of parts is wrong
+    if len(parts) != 4:
+        continue
+    else:
+        validated_values[item] = form[item]
 
 # Make one pass to shuffle all fields into the right buckets
 for item in validated_values:
