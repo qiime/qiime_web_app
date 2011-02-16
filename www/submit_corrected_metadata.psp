@@ -213,6 +213,8 @@ update_intervals = 100
 item_count = len(sample_fields)
 current_item = 0
 batch_size = item_count / update_intervals
+if batch_size == 0:
+    batch_size = 1
 for item in sample_fields:
     current_item += 1
     field_value = validated_values[item]
@@ -223,7 +225,9 @@ for item in sample_fields:
 # Insert the prep key rows now that sample rows all exist
 item_count = len(prep_fields)
 current_item = 0
-batch_size = item_count / update_intervals 
+batch_size = item_count / update_intervals
+if batch_size == 0:
+    batch_size = 1 
 for item in prep_fields:
     current_item += 1
     field_value = validated_values[item]
@@ -235,6 +239,8 @@ for item in prep_fields:
 # Insert the host key rows now that sample rows all exist
 item_count = len(host_fields)
 batch_size = item_count / update_intervals
+if batch_size == 0:
+    batch_size = 1
 current_item = 0
 if len(host_fields) > 0:
     for item in host_fields:
@@ -259,9 +265,12 @@ bucket_size = item_count / thread_count
 
 # Define the thread callback
 def _updateCallback():
+    global update_intervals
     global current_item
     global item_count
     batch_size = item_count / update_intervals
+    if batch_size == 0:
+        batch_size = 1
     current_item += 1
     if current_item % batch_size == 0 or (item_count - current_item) < 100:
         req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' % (current_item, item_count))
