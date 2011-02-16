@@ -206,27 +206,35 @@ if len(host_fields) > 0:
 
 <%
 
+# Define the update interval size
+update_intervals = 100
+
 # Insert the sample key rows
 item_count = len(sample_fields)
 current_item = 0
+batch_size = item_count / update_intervals
 for item in sample_fields:
     current_item += 1
     field_value = validated_values[item]
     data_access.createSampleKey(study_id, field_value)
-    req.write('<script type="text/javascript">updateStatus(%s, %s, "sample");</script>' % (current_item, item_count))
+    if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
+        req.write('<script type="text/javascript">updateStatus(%s, %s, "sample");</script>' % (current_item, item_count))
 
 # Insert the prep key rows now that sample rows all exist
 item_count = len(prep_fields)
 current_item = 0
+batch_size = item_count / update_intervals 
 for item in prep_fields:
     current_item += 1
     field_value = validated_values[item]
     row_num = item.split(':')[1]
     data_access.createPrepKey(study_id, field_value, row_num)
-    req.write('<script type="text/javascript">updateStatus(%s, %s, "prep");</script>' % (current_item, item_count))
+    if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
+        req.write('<script type="text/javascript">updateStatus(%s, %s, "prep");</script>' % (current_item, item_count))
 
 # Insert the host key rows now that sample rows all exist
 item_count = len(host_fields)
+batch_size = item_count / update_intervals
 current_item = 0
 if len(host_fields) > 0:
     for item in host_fields:
@@ -236,7 +244,8 @@ if len(host_fields) > 0:
         field_value = validated_values[item]
         sample_name = sample_key_fields[row_num]
         data_access.createHostKey(study_id, sample_name, field_value)
-        req.write('<script type="text/javascript">updateStatus(%s, %s, "host");</script>' % (current_item, item_count))
+        if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
+            req.write('<script type="text/javascript">updateStatus(%s, %s, "host");</script>' % (current_item, item_count))
 
 # To hold the current bucket of metadata values
 item_list = []
@@ -252,8 +261,10 @@ bucket_size = item_count / thread_count
 def _updateCallback():
     global current_item
     global item_count
+    batch_size = item_count / update_intervals
     current_item += 1
-    req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' % (current_item, item_count))
+    if current_item % batch_size == 0 or (item_count - current_item) < 100:
+        req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' % (current_item, item_count))
     
 def _errorCallback(e):
     global with_errors
