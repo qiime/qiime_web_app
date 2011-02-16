@@ -81,7 +81,7 @@ for name in files:
     f = open(name, 'r')
     for line in f:
         vals = line.split('::')
-        validated_values[vals[0]] = vals[1]
+        validated_values[str(vals[0]).strip()] = str(vals[1]).strip()
 
 # Make one pass to shuffle all fields into the right buckets
 for item in validated_values:
