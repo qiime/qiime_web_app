@@ -305,23 +305,22 @@ class MetadataTable(object):
         # Build the table with columns and full data
         self._buildMetadataTable(True, True)
     
-    def renderInvisibleTable(self, file_type, column_count, row_count):
-        # Variables
-        html_table = ''
+    def fillValidItems(self, file_type, column_count, row_count, rows_to_draw, validated_items):
         y = 0
-        
         while y < row_count:
+            # If this is a visible row (i.e. it has errors), skip it...
+            if y in rows_to_draw:
+                y += 1
+                continue
+            
             x = 0
             while x < column_count:
                 for column in self._columns:
                     unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
                     actual_value = str(column.values[y][0])
-                    hidden_field_text = """<input type="hidden" id="%s" name="%s" value="%s">\n""" % (unique_column_name, unique_column_name, actual_value)
-                    html_table += hidden_field_text
+                    validated_items[unique_column_name] = actual_value
                     x += 1
             y += 1
-            
-        return html_table
         
     def renderVisibleTable(self, file_type, column_count, row_count, rows_to_draw):
         html_table = '<table class="metadata_table">'
@@ -336,7 +335,8 @@ class MetadataTable(object):
                 html_table += '<th class="meta_th">' + self._columns[x].column_name + '</th>\n'
                 self._log.append('Column is in dictionary')
             else:
-                html_table += '<th class="meta_th" style="background:#00FFFF">' + self._columns[x].column_name + '</th>\n'
+                html_table += '<th class="meta_th" style="background:#00FFFF">' + \
+                    self._columns[x].column_name + '</th>\n'
                 self._log.append('Column is not in dictionary - assuming user-defined column.')
             x += 1
     
@@ -349,18 +349,13 @@ class MetadataTable(object):
         # Index for rows
         y = 0
         while y < row_count:
-            x = 0
             
+            # Skip all rows that are already valid
             if y not in rows_to_draw:
-                while x < column_count:
-                    for column in self._columns:
-                        unique_column_name = file_type + ':' + str(y) + ':' + str(x) + ':' + column.column_name
-                        actual_value = str(column.values[y][0])
-                        hidden_field_text = """<input type="hidden" id="%s" name="%s" value="%s">\n""" % (unique_column_name, unique_column_name, actual_value)
-                        html_table += hidden_field_text
-                        x += 1
-                y += 1 
+                y += 1
                 continue
+                
+            x = 0            
             
             html_table += '<tr style="background-color:%s;">\n' % (row_color)
             while x < column_count:
@@ -386,7 +381,10 @@ class MetadataTable(object):
                             if len(value_output) > max_text_length:
                                 value_output = value_output[:max_text_length] + '...'
 
-                        hidden_field_text = '<input type="hidden" id="{unique_column_name}" name="{unique_column_name}" value="{actual_value}">\n'.format(unique_column_name = unique_column_name, actual_value = actual_value)
+                        hidden_field_text = '<input type="hidden" id="{unique_column_name}"\
+                            name="{unique_column_name}" value="{actual_value}">\n'.format(unique_column_name = \
+                            unique_column_name, actual_value = actual_value)
+                            
                         cell_color = '#FFFFFF'
                         html_table += '<td>%s%s</td>\n' % (hidden_field_text, value_output)
                         
@@ -395,9 +393,11 @@ class MetadataTable(object):
                         self._log.append('Field value is invalid')
                         cell_color = '#EEEEFF'
                         html_table += '<td style="background-color:#FFFF00;">\
-                            <input style="background-color:{cell_color};" type="text" id="{unique_column_name}" name="{unique_column_name}" value="{actual_value}" {js_validation}> \
+                            <input style="background-color:{cell_color};" type="text" id="{unique_column_name}" \
+                            name="{unique_column_name}" value="{actual_value}" {js_validation}> \
                             <br/> \
-                            <a href="" onclick="replaceWithCurrent(\'{unique_column_name}\', \'{actual_value}\');return false;">\
+                            <a href="" onclick="replaceWithCurrent(\'{unique_column_name}\', \
+                            \'{actual_value}\');return false;">\
                             <div style="font-size:11px">update all like values\
                             </div>\
                             </a>\
@@ -425,6 +425,9 @@ class MetadataTable(object):
         
         # Rows to visibly draw
         rows_to_draw = []
+        
+        # Dict of validated items
+        validated_items = {}
 
         try:
             # Determine the type of file we're dealing with
@@ -458,15 +461,16 @@ class MetadataTable(object):
                     x += 1
                 y += 1
             
-            # If there are no rows to write, simply output all of the fields as hidden form variables
-            if not rows_to_draw:
-                html_table = self.renderInvisibleTable(file_type, column_count, row_count)
-            else:
+            # Fill in validated_items. These are not rendered - only written to file later.
+            self.fillValidItems(file_type, column_count, row_count, rows_to_draw, validated_items)
+            
+            # If there are rows to draw (i.e. there are validation errors), render the HTML...
+            if rows_to_draw:
                 html_table = self.renderVisibleTable(file_type, column_count, row_count, rows_to_draw)
                 visible_elements = True
 
             # Return the table and an empty error log
-            return html_table, None, visible_elements
+            return validated_items, html_table, None, visible_elements
         
         except Exception, e:            
             self._log.append('Error caught in printHTMLTable: %s' % str(e))

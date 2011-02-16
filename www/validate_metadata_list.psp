@@ -19,6 +19,7 @@ __status__ = "Development"
 <input type="hidden" id="page" name="page" value="submit_corrected_metadata.psp"/>
 
 <%
+from hashlib import md5
 from metadata_table import *
 
 templates = sess["templates"]
@@ -31,17 +32,26 @@ if templates != None:
         req.write('<h3>Results for file: ' + os.path.basename(template) + '</h3>')
         log = []
         try:
+            tmp_filename = '/tmp/t_html_%s.html' % md5(template).hexdigest()
+            req.write('<input type="hidden" id="{0}" name="{0}" value="{1}">'.format(template, tmp_filename))
             log.append('Creating metadata table for file "%s"' % template)
             table = MetadataTable(template, sess['study_id'])
             log.append('Reading metadata file...')
             table.processMetadataFile()
             log.append('Printing HTML table...')
-            html_table, error_log, visible_elements = table.printHTMLTable()
-            req.write(str(html_table))
+            validated_items, html_table, error_log, visible_elements = table.printHTMLTable()
+
+            # Write out our valid items to file...
+            f = open(tmp_filename, 'w')
+            for item in validated_items:
+                f.write('%s::%s\n' % (item, validated_items[item]))
+            f.close()
 
             if not visible_elements:
                 req.write('No corrections necessary.')
             else:
+                # Write out the HTML table - will only contain 
+                req.write(str(html_table))
                 forward = False
             
             if error_log:

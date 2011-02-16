@@ -79,7 +79,13 @@ if portal_type == 'emp':
     req.write('<div')
 elif portal_type == 'qiime':
     req.write('<div id="header">')
-    req.write('<div class="disclaimer">Logged in as %s</div>' % sess['username'])
+    if sess['is_admin'] == 1:
+        study_id = ''
+        if sess.has_key('study_id'):
+            study_id = sess['study_id']
+        req.write('<div class="disclaimer">Logged in as %s. Study ID: %s</div>' % (sess['username'], study_id))
+    else:
+        req.write('<div class="disclaimer">Logged in as %s</div>' % sess['username'])
 else:
     req.write('<div>')
 # End indent
