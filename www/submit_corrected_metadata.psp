@@ -43,7 +43,8 @@ study_name = sess['study_name']
 study_id = sess['study_id']
 
 # Remove any existing metadata before upload. 0 = delete all but study specific data
-data_access.deleteStudy(study_id, 0)
+if study_id != 389:
+    data_access.deleteStudy(study_id, 0)
 
 # Variables to collect our data
 sample_key_fields = {}
