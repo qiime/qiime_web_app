@@ -1042,7 +1042,6 @@ class QiimeDataAccess(object):
             con.cursor().execute('alter session set ddl_lock_timeout=100')            
             
             # Lock the table search/create so that only one thread can check or create at a time.
-            #lock = thread.allocate_lock()
             lock.acquire()
             log.append('Lock acquired')
             
@@ -1056,10 +1055,6 @@ class QiimeDataAccess(object):
                 # If the table was not found, this is a user-added column.
                 table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
             
-            # Release the lock
-            lock.release()
-            log.append('Lock released')
-            
             # Double-quote for database safety.
             table_name = '"' + table_name + '"'
             
@@ -1069,8 +1064,7 @@ class QiimeDataAccess(object):
             # be used later to generate a mapping file. We collect the names here because
             # it's an expensive operation to determine post-commit which fields were
             # actually submitted to the database.
-            log.append('Attempting to store values in study_actual_columns: %s, %s, %s'\
-                % (study_id, field_name, table_name))
+            log.append('Attempting to store values in study_actual_columns: %s, %s, %s' % (study_id, field_name, table_name))
             self.addStudyActualColumn(study_id, field_name, table_name);
             
             # Get extended field info from the database
@@ -1096,12 +1090,10 @@ class QiimeDataAccess(object):
                 results = con.cursor().execute(statement, named_params).fetchone()
                 if results != None:
                     # If found, set the field_value to its numeric identifier for storage
-                    log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".'\
-                        % (field_value, results[0]))
+                    log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
                     field_value = results[0]
                 else:
-                    log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.'\
-                        % (field_name, field_value))
+                    log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.' % (field_name, field_value))
                     raise Exception
             
             # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
@@ -1202,10 +1194,9 @@ class QiimeDataAccess(object):
                 (field_name, field_value, table_name, call_string, log_string, str(e))
             raise Exception(error_msg)
         finally:
-            pass
             # Release the lock
-            #lock.release()
-            #log.append('Lock released')
+            lock.release()
+            log.append('Lock released')
 
             
     #####################################
