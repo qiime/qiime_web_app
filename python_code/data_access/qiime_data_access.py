@@ -1042,7 +1042,7 @@ class QiimeDataAccess(object):
             con.cursor().execute('alter session set ddl_lock_timeout=100')            
             
             # Lock the table search/create so that only one thread can check or create at a time.
-            lock.acquire()
+            #lock.acquire()
             log.append('Lock acquired')
             
             # Find the table name
@@ -1064,7 +1064,8 @@ class QiimeDataAccess(object):
             # be used later to generate a mapping file. We collect the names here because
             # it's an expensive operation to determine post-commit which fields were
             # actually submitted to the database.
-            log.append('Attempting to store values in study_actual_columns: %s, %s, %s' % (study_id, field_name, table_name))
+            log.append('Attempting to store values in study_actual_columns: %s, %s, %s'\
+                % (study_id, field_name, table_name))
             self.addStudyActualColumn(study_id, field_name, table_name);
             
             # Get extended field info from the database
@@ -1090,10 +1091,12 @@ class QiimeDataAccess(object):
                 results = con.cursor().execute(statement, named_params).fetchone()
                 if results != None:
                     # If found, set the field_value to its numeric identifier for storage
-                    log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".' % (field_value, results[0]))
+                    log.append('Value found in controlled_vocab_values. Old field value: "%s", new field value: "%s".'\
+                        % (field_value, results[0]))
                     field_value = results[0]
                 else:
-                    log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.' % (field_name, field_value))
+                    log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.'\
+                        % (field_name, field_value))
                     raise Exception
             
             # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
@@ -1134,7 +1137,8 @@ class QiimeDataAccess(object):
                 key_column = 'host_id'
                 key_table = '"HOST"'
             else:
-                return 'Unknown table found - no action taken. Table name was: "%s". Column name was: "%s"' %  (table_name, field_name)
+                return 'Unknown table found - no action taken. Table name was: "%s". Column name was: "%s"'\
+                    % (table_name, field_name)
             
             # Find the assocaited key column
             log.append('Determining if required key row exists...')
@@ -1144,7 +1148,8 @@ class QiimeDataAccess(object):
                 key_column_value = results[0]
                 log.append('Found key_column_value: %s' % str(key_column_value))
             else:
-                log.append('Could not determine key. Skipping write for field %s with value "%s".' % (field_name, field_value))
+                log.append('Could not determine key. Skipping write for field %s with value "%s".'\
+                    % (field_name, field_value))
                 raise Exception
 
             # If it ain't there, create it
@@ -1153,7 +1158,8 @@ class QiimeDataAccess(object):
             # Must append row_num if sequence table
             if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_column_value':key_column_value, 'row_number':row_num}
-                statement = 'select * from %s where %s = :key_column_value and row_number = :row_number' % (table_name, key_column)
+                statement = 'select * from %s where %s = :key_column_value and row_number = :row_number'\
+                    % (table_name, key_column)
             else:
                 named_params = {'key_column_value':key_column_value}
                 statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
@@ -1165,7 +1171,8 @@ class QiimeDataAccess(object):
                 if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
                     log.append('Row number is %s' % (str(row_num)))
                     named_params = {'key_column_value':key_column_value, 'row_number':row_num}
-                    statement = 'insert into %s (%s, row_number) values (:key_column_value, :row_number)' % (table_name, key_column)
+                    statement = 'insert into %s (%s, row_number) values (:key_column_value, :row_number)'\
+                        % (table_name, key_column)
                 else:
                     named_params = {'key_column_value':key_column_value}
                     statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
@@ -1177,9 +1184,11 @@ class QiimeDataAccess(object):
             if database_data_type == 'date':
                 field_value = self.convertToOracleHappyName(field_value)
             if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
-                statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s' % (table_name, field_name, field_value, key_column, key_column_value, row_num)
+                statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s'\
+                    % (table_name, field_name, field_value, key_column, key_column_value, row_num)
             else:  
-                statement = 'update %s set %s = \'%s\' where %s = %s' % (table_name, field_name, field_value, key_column, key_column_value)
+                statement = 'update %s set %s = \'%s\' where %s = %s'\
+                    % (table_name, field_name, field_value, key_column, key_column_value)
             log.append(statement)
             results = con.cursor().execute(statement)
             
@@ -1187,7 +1196,8 @@ class QiimeDataAccess(object):
             results = con.cursor().execute('commit')
             
         except Exception, e:
-            call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')' % (field_type, key_field, field_name, field_value, study_id)
+            call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')'\
+                % (field_type, key_field, field_name, field_value, study_id)
             log_string = '<br/>'.join(log)
             error_msg = 'Exception caught attempting to store field "%s" with value "%s" into \
                 table "%s".<br/>Method signature: %s<br/>Full error log:<br/>%s<br/>Oracle says: %s' % \
@@ -1195,7 +1205,7 @@ class QiimeDataAccess(object):
             raise Exception(error_msg)
         finally:
             # Release the lock
-            lock.release()
+            #lock.release()
             log.append('Lock released')
 
             

@@ -257,7 +257,7 @@ if len(host_fields) > 0:
 # To hold the current bucket of metadata values
 item_list = []
 threads = []
-thread_count = 10
+thread_count = 1
 
 # Sets the number of metadata fields to be processed by each thread
 item_count = len(all_other_fields)
@@ -276,7 +276,7 @@ def _updateCallback():
     global item_count
     
     # Get a lock
-    lock.acquire()
+    #lock.acquire()
     
     batch_size = item_count / update_intervals
     if batch_size == 0:
@@ -287,45 +287,41 @@ def _updateCallback():
             % (current_item, item_count))
         
     # Release the lock
-    lock.release()
+    #lock.release()
     
 def _errorCallback(e):
     global lock
     global with_errors
     
     # Get a lock
-    lock.acquire()
+    #lock.acquire()
     
     with_errors = True
     req.write(str(e) + '<p/>')
     
     # Release the lock
-    lock.release()
+    #lock.release()
 
 # Go workers go!
-req.write('<p style="font-size:9px">')
 for item in all_other_fields:
     item_list.append(item)
     if len(item_list) == bucket_size:
-        t = MetadataWorkerThread(req, validated_values, copy.deepcopy(item_list), sample_key_fields, \
+        t = MetadataWorkerThread(validated_values, copy.deepcopy(item_list), sample_key_fields, \
             prep_key_fields, host_key_fields, study_name, study_id, data_access, _updateCallback,\
             _errorCallback, lock)
         threads.append(t)
         t.start()
         item_list = []
         
-
 # If there are any items left, process those last
 if len(item_list) > 0:
-    t = MetadataWorkerThread(req, validated_values, item_list, sample_key_fields, prep_key_fields, \
+    t = MetadataWorkerThread(validated_values, item_list, sample_key_fields, prep_key_fields, \
         host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback, lock)
     threads.append(t)
     t.start()
 
 for t in threads:
     t.join()
-
-req.write('</p>')
 
 if with_errors:
     req.write('<h3>Upload Completed With Errors</h3>')
