@@ -257,7 +257,7 @@ if len(host_fields) > 0:
 # To hold the current bucket of metadata values
 item_list = []
 threads = []
-thread_count = 1
+thread_count = 10
 
 # Sets the number of metadata fields to be processed by each thread
 item_count = len(all_other_fields)
@@ -270,26 +270,32 @@ lock = thread.allocate_lock()
 # Define the thread callback
 def _updateCallback():
     # Get a lock
-    lock.acquire()
-    
+    global lock    
     global update_intervals
     global current_item
     global item_count
+    
+    # Get a lock
+    lock.acquire()
+    
     batch_size = item_count / update_intervals
     if batch_size == 0:
         batch_size = 1
     current_item += 1
     if current_item % batch_size == 0 or (item_count - current_item) < 100:
-        req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' % (current_item, item_count))
+        req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' \
+            % (current_item, item_count))
         
     # Release the lock
     lock.release()
     
 def _errorCallback(e):
+    global lock
+    global with_errors
+    
     # Get a lock
     lock.acquire()
     
-    global with_errors
     with_errors = True
     req.write(str(e) + '<p/>')
     
@@ -302,7 +308,8 @@ for item in all_other_fields:
     item_list.append(item)
     if len(item_list) == bucket_size:
         t = MetadataWorkerThread(req, validated_values, copy.deepcopy(item_list), sample_key_fields, \
-            prep_key_fields, host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback)
+            prep_key_fields, host_key_fields, study_name, study_id, data_access, _updateCallback,\
+            _errorCallback, lock)
         threads.append(t)
         t.start()
         item_list = []
@@ -311,7 +318,7 @@ for item in all_other_fields:
 # If there are any items left, process those last
 if len(item_list) > 0:
     t = MetadataWorkerThread(req, validated_values, item_list, sample_key_fields, prep_key_fields, \
-        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback)
+        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback, lock)
     threads.append(t)
     t.start()
 
@@ -328,6 +335,9 @@ if with_errors:
     # Update the database flag for the failed upload
     data_access.updateMetadataFlag(study_id, 'n')
 else:
+    if sess['is_admin'] == 1:
+        req.write('<p/><h3>Thread count: %s</h3>' % thread_count)
+        
     req.write('<p/><h3>Upload Completed!</h3>')
     req.write('<p style="font-size:8px">yahoo!</p>')
     req.write('<img src="img/firework3.gif"/>')

@@ -1021,7 +1021,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             raise Exception(str(e))
     
-    def writeMetadataValue(self, field_type, key_field, field_name, field_value, study_id, host_key_field, row_num):
+    def writeMetadataValue(self, field_type, key_field, field_name, field_value, \
+        study_id, host_key_field, row_num, lock):
         """ Writes a metadata value to the database
         """
         
@@ -1039,7 +1040,7 @@ class QiimeDataAccess(object):
             con.cursor().execute('alter session set ddl_lock_timeout=100')            
             
             # Lock the table search/create so that only one thread can check or create at a time.
-            lock = Lock()
+            #lock = thread.allocate_lock()
             lock.acquire()
             log.append('Lock acquired')
             
