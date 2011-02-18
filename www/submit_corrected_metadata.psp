@@ -32,6 +32,7 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from metadata_worker import *
 import threading
+import thread
 import copy
 from time import sleep
 
@@ -263,8 +264,14 @@ item_count = len(all_other_fields)
 current_item = 0
 bucket_size = item_count / thread_count
 
+# A lock
+lock = thread.allocate_lock()
+
 # Define the thread callback
 def _updateCallback():
+    # Get a lock
+    lock.acquire()
+    
     global update_intervals
     global current_item
     global item_count
@@ -274,11 +281,20 @@ def _updateCallback():
     current_item += 1
     if current_item % batch_size == 0 or (item_count - current_item) < 100:
         req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' % (current_item, item_count))
+        
+    # Release the lock
+    lock.release()
     
 def _errorCallback(e):
+    # Get a lock
+    lock.acquire()
+    
     global with_errors
     with_errors = True
     req.write(str(e) + '<p/>')
+    
+    # Release the lock
+    lock.release()
 
 # Go workers go!
 req.write('<p style="font-size:9px">')
