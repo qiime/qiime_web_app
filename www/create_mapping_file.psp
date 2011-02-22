@@ -82,7 +82,8 @@ for f in field_list:
             <select multiple name="samples" id="samples" class="required">
 <%
 for s in sample_list:
-    req.write('<option value="%s" selected>%s</option>' % (s, s))
+    sample_name = sample_list[s]
+    req.write('<option value="%s" selected>%s</option>' % (sample_name, sample_name))
 
 # End for
 %>

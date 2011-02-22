@@ -69,13 +69,14 @@ def export_fasta_from_study(study_id, output_fasta):
     
     # Get all samples for this study
     sample_ids = data_access.getSampleIDsFromStudy(study_id)
-    export_fasta_from_samples(study_id, sample_ids, output_fasta)
+    for sample_id in sample_ids:
+        export_fasta_from_sample(study_id, sample_id, output_fasta)
     
     # Close the file if opened in this function
     if file_opened_here:
         output_fasta.close()
         
-def export_fasta_from_samples(study_id, sample_ids, output_fasta):
+def export_fasta_from_sample(study_id, sample_id, output_fasta):
     # If name passed is a string, open the file. Otherwise ignore as the file
     # has already been opened by the parent
     file_opened_here = False
@@ -85,13 +86,11 @@ def export_fasta_from_samples(study_id, sample_ids, output_fasta):
     
     # Get our copy of data_access
     data_access = data_access_factory(DataAccessType.qiime_production)
-
-    for sample_id in sample_ids:
-        seqs = data_access.getSequencesFromSample(study_id, sample_id)
-        print '------------------------------ Seqs for sample ID: %s' % str(sample_id)
-        for seq in seqs:
-            output_fasta.write('>%s\n%s\n' % (seq, seqs[seq]))
-            print seq
+    seqs = data_access.getSequencesFromSample(study_id, sample_id)
+    print '------------------------------ Seqs for sample ID: %s' % str(sample_id)
+    for seq in seqs:
+        output_fasta.write('>%s\n%s\n' % (seq, seqs[seq]))
+        print seq
 
     # Close the file if opened in this function
     if file_opened_here:

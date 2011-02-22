@@ -922,6 +922,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+
+
         
     def createSampleKey(self, study_id, sample_name):
         """ Writes a sample key row to the database

@@ -90,8 +90,8 @@ sess["field_list"] = []
 sess.save()
 
 # Write out the submission fields
-field_list = qda.getPackageColumns(FieldGrouping.sra_submission_level)
-outputFields(field_list, 'submission', 'SRA Submission Fields')
+#field_list = qda.getPackageColumns(FieldGrouping.sra_submission_level)
+#outputFields(field_list, 'submission', 'SRA Submission Fields')
 
 # Write out the study fields
 field_list = qda.getPackageColumns(FieldGrouping.study_level)
