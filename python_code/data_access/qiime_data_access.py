@@ -551,7 +551,6 @@ class QiimeDataAccess(object):
             con.cursor().callproc('qiime_assets.get_study_info', [study_id, results])
             study_info = {}
             for row in results:
-                print row
                 study_info['submit_to_insdc'] = row[0]
                 study_info['investigation_type'] = row[1]
                 study_info['project_name'] = row[2]
@@ -718,9 +717,9 @@ class QiimeDataAccess(object):
             con = self.getMetadataDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_sample_list', [study_id, results])
-            sample_list = []
-            for row in results:
-                sample_list.append(row[0])
+            sample_list = {}
+            for sample_name, sample_id in results:
+                sample_list[sample_id] = sample_name
             return sample_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -735,12 +734,30 @@ class QiimeDataAccess(object):
         except Exception, e:            
             raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
             
+    def getStudyActualColumns(self, study_id):
+        """ inserts a selected metadata column name into the database
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            extra_columns = {}
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_study_actual_columns', [study_id, results])
+            #for row in results:
+            for column_name, table_name in results:
+                #extra_columns[row[0]] = row[1]
+                extra_columns[column_name] = table_name
+            
+            return extra_columns
+        except Exception, e:            
+            raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
+            
     def addExtraColumnMetadata(self, study_id, table_level, column_name, description, data_type):
         """ inserts metadata for an "extra" column
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.extra_column_metadata_insert', [study_id, table_level, column_name, description, data_type])
+            con.cursor().callproc('qiime_assets.extra_column_metadata_insert', [study_id, table_level, 
+                column_name, description, data_type])
         except Exception, e:            
             raise Exception('Exception caught in addExtraColumnMetadata(): %s.\nThe error is: %s' % (type(e), e))
             
@@ -850,38 +867,37 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+    
+    fields = {}
     def findMetadataTable(self, column_name, study_id):
         """ Finds the target metadata table for the supplied column name
         """
+        
         try:
             table = ''
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.find_metadata_table', [column_name, results])
+            column_name = column_name.upper()
 
-            for row in results:
-                # If it's a study table, find the right one
-                if row[0].upper().startswith('EXTRA_'):
-                    elements = row[0].split('_')
-                    # Compare the study_id for each. If they don't match, continue
-                    if elements[2] != str(study_id):
-                        continue
-                    else:
-                        table = row[0]
-                # Not an extra table, just assign the table name
-                else:
-                    table = row[0]
-            
-            # If we find an 'extra' table, make sure it's for the right study. If
-            # not, return '' so a new extra table will be created.
-            if table.upper().startswith('EXTRA_'):
-                elements = table.split('_')
-                if elements[2] != str(study_id):
-                    return ''
+            # Fill out the field list if it's the first call
+            if len(self.fields) == 0:
+                con = self.getMetadataDatabaseConnection()
+                results = con.cursor()
+                con.cursor().callproc('qiime_assets.find_metadata_table', [results])
+                for tab_name, col_name in results:
+                    if col_name not in self.fields:
+                        self.fields[col_name] = []                        
+                    self.fields[col_name].append(tab_name)
+
+            # If there's only one hit we can assign it
+            if len(self.fields[column_name]) == 1:
+                table = self.fields[column_name][0]            
+            # More than one table was found with this column name. Find the correct one
+            # based on the study id
+            else:
+                for table_name in self.fields[column_name]:
+                    if str(study_id) in table_name:
+                        table = table_name
                 
             return table
-
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
