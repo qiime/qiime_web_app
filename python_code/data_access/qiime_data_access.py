@@ -869,6 +869,9 @@ class QiimeDataAccess(object):
                     self.fields[col_name].append(tab_name)
 
             # If there's only one hit we can assign it
+            if column_name not in self.fields:
+                return None
+            
             if len(self.fields[column_name]) == 1:
                 table = self.fields[column_name][0]
             # More than one table was found with this column name. Find the correct one
