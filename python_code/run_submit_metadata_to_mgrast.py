@@ -125,7 +125,8 @@ def submit_metadata_for_study(key, study_id):
             # Skip the prep and study columns
             if table_category in ['prep', 'study']:
                 continue
-            
+                
+            #print table_name, column_name, sample_id
             column_value = data_access.getSampleColumnValue(sample_id, table_name, column_name)
             sample_file.write('            <{0}>{1}</{0}>\n'.format(column_name, column_value))
             

@@ -657,9 +657,18 @@ class QiimeDataAccess(object):
             column_name = column_name.upper()
                 
             value = None
-            statement = 'select "%s" from "%s" where sample_id = %s' % \
-                (column_name, table_name, sample_id)
-            #print statement
+            statement = ''
+            
+            if table_name == 'HOST':
+                statement = 'select %s from host h inner join host_sample hs on h.host_id = hs.host_id inner join sample s on hs.sample_id = s.sample_id where s.sample_id = %s' %\
+                    (column_name, sample_id)
+            elif table_name == 'HOST_SAMPLE':
+                statement = 'select %s from host_sample hs inner join sample s on hs.sample_id = s.sample_id where s.sample_id = %s' %\
+                    (column_name, sample_id)
+            else:
+                statement = 'select "%s" from "%s" where sample_id = %s' % \
+                    (column_name, table_name, sample_id)
+
             con = self.getMetadataDatabaseConnection()
             results = con.cursor().execute(statement).fetchone()
             value = results[0]
