@@ -264,19 +264,11 @@ item_count = len(all_other_fields)
 current_item = 0
 bucket_size = item_count / thread_count
 
-# A lock
-lock = thread.allocate_lock()
-
 # Define the thread callback
 def _updateCallback():
-    # Get a lock
-    global lock    
     global update_intervals
     global current_item
     global item_count
-    
-    # Get a lock
-    #lock.acquire()
     
     batch_size = item_count / update_intervals
     if batch_size == 0:
@@ -285,22 +277,12 @@ def _updateCallback():
     if current_item % batch_size == 0 or (item_count - current_item) < 100:
         req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' \
             % (current_item, item_count))
-        
-    # Release the lock
-    #lock.release()
     
 def _errorCallback(e):
-    global lock
     global with_errors
-    
-    # Get a lock
-    #lock.acquire()
     
     with_errors = True
     req.write(str(e) + '<p/>')
-    
-    # Release the lock
-    #lock.release()
 
 # Go workers go!
 for item in all_other_fields:
@@ -308,7 +290,7 @@ for item in all_other_fields:
     if len(item_list) == bucket_size:
         t = MetadataWorkerThread(validated_values, copy.deepcopy(item_list), sample_key_fields, \
             prep_key_fields, host_key_fields, study_name, study_id, data_access, _updateCallback,\
-            _errorCallback, lock)
+            _errorCallback)
         threads.append(t)
         t.start()
         item_list = []
@@ -316,7 +298,7 @@ for item in all_other_fields:
 # If there are any items left, process those last
 if len(item_list) > 0:
     t = MetadataWorkerThread(validated_values, item_list, sample_key_fields, prep_key_fields, \
-        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback, lock)
+        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback)
     threads.append(t)
     t.start()
 

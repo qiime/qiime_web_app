@@ -876,6 +876,7 @@ class QiimeDataAccess(object):
         try:
             table = ''
             column_name = column_name.upper()
+            column_name.replace('"', '')
 
             # Fill out the field list if it's the first call
             if len(self.fields) == 0:
@@ -889,7 +890,7 @@ class QiimeDataAccess(object):
 
             # If there's only one hit we can assign it
             if len(self.fields[column_name]) == 1:
-                table = self.fields[column_name][0]            
+                table = self.fields[column_name][0]
             # More than one table was found with this column name. Find the correct one
             # based on the study id
             else:
@@ -923,8 +924,6 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-
-        
     def createSampleKey(self, study_id, sample_name):
         """ Writes a sample key row to the database
         """
@@ -1024,9 +1023,12 @@ class QiimeDataAccess(object):
                             
             # Check if the column exists
             log.append('Checking if extra column exists: %s' % field_name)
-            named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name}
+            named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table,\
+                'column_name':field_name.upper()}
             statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
             log.append(statement)
+            log.append('schema_owner: %s, extra_table_name: %s, column_name: %s' %
+                (schema_owner, extra_table, field_name))
             results = con.cursor().execute(statement, named_params).fetchone()
         
             # If column doesn't exist, add it:
@@ -1042,7 +1044,7 @@ class QiimeDataAccess(object):
             raise Exception(str(e))
     
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, \
-        study_id, host_key_field, row_num, lock):
+        study_id, host_key_field, row_num):
         """ Writes a metadata value to the database
         """
         
