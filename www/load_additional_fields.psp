@@ -24,7 +24,7 @@ def writeTerms(search_term, sess):
     
     column_dictionary = data_access_factory(DataAccessType.qiime_production).getColumnDictionary()
     for column in column_dictionary:
-        if column[0] == None or column[2] == None:
+        if column[0] == None or column[2] == None or column[6] == 0:
             continue
 
         # If already displayed, don't list in additional fields

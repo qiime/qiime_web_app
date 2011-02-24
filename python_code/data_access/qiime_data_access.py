@@ -820,6 +820,7 @@ class QiimeDataAccess(object):
                 data_type = row[3]
                 max_length = row[4]
                 min_length = row[5]
+                active = row[6]
                 
                 if row[1] == None:
                     expected_values == ''
@@ -831,8 +832,10 @@ class QiimeDataAccess(object):
                     max_length = ''
                 elif row[5] == None:
                     min_length = ''
+                elif row[6] == None:
+                    min_length = ''
                     
-                list_item = (column_name, expected_values, description, data_type, max_length, min_length)
+                list_item = (column_name, expected_values, description, data_type, max_length, min_length, active)
                 column_dictionary.append(list_item)
             return column_dictionary
         except Exception, e:
@@ -905,7 +908,8 @@ class QiimeDataAccess(object):
             con.cursor().callproc('qiime_assets.get_field_details', [field_name, results])
 
             for row in results:
-                value_list.append((row[0], row[1], row[2], row[3]))
+                # column_name, data_type, desc_or_value, definition, active
+                value_list.append((row[0], row[1], row[2], row[3], row[4]))
                 
             if len(value_list) == 0:
                 # If not found in the dictionary, assume this is a user-created column
