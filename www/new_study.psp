@@ -159,6 +159,7 @@ for item in sorted(list):
             </td>
         </tr>
         -->
+        <!---
         <tr>
             <td>Submit to INSDC?
             </td>
@@ -170,11 +171,13 @@ for item in sorted(list):
                 </select>
             </td>
         </tr>
+        --->
         <tr>
             <td>
                 <input type="submit" value="Next"/>
             </td>
         </tr>
     </table>
+    <input type="hidden"  name="submit_to_insdc" id="submit_to_insdc" value = "n">
 </form>
 
