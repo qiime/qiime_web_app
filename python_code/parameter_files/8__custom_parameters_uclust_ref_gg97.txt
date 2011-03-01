@@ -14,14 +14,14 @@ split_libraries:max-barcode-errors	1.5
 split_libraries:start-numbering	1
 split_libraries:remove_unassigned	True
 split_libraries:disable_bc_correction	False
-split_libraries:qual_score_window	50
+split_libraries:qual_score_window	0
 split_libraries:disable_primers	False
 split_libraries:reverse_primers	disable
 
 # OTU picker parameters
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
-pick_otus:refseqs_fp	/home/wwwuser/software/gg_otus_29nov2010/rep_set/gg_97_otus_29nov2010.fasta
+pick_otus:refseqs_fp	/home/wwwuser/software/gg_otus_4feb2011/rep_set/gg_97_otus_4feb2011.fasta
 pick_otus:suppress_new_clusters	True
 pick_otus:uclust_stable_sort	True
 pick_otus:similarity	0.97

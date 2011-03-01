@@ -62,7 +62,12 @@ def main():
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
         
-    table_col_value=eval(open(opts.query).read())
+    query_dict=eval(open(opts.query).read())
+    table_col_value={}
+    for i in query_dict:
+        if i not in ['otu_table','mapping_file','pcoa_plot']:
+            table_col_value[i]=query_dict[i]
+            
     fs_fp=opts.fs_fp
     web_fp=opts.web_fp
     file_name_prefix=opts.fname_prefix

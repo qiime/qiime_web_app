@@ -27,7 +27,6 @@ def input_set_generator(data, cursor):
         else:
             buffer_hashes.add(fields[-1])
             buffer.append(fields)
-
         if len(buffer) > 500:
             res = unzip_and_cast_to_cxoracle_types(buffer, cursor) 
             buffer = []
@@ -51,7 +50,7 @@ def main():
     lines = open(argv[1])
     con = cx_Oracle.connect(user='SFF',
                             password='SFF454SFF',
-                            dsn='webdev/dbdev')
+                            dsn='quarterbarrel.microbio.me:1521/qiimedb')
     cur = con.cursor()
     ref_set_id = 7 #cur.var(cx_Oracle.NUMBER, 7)
     for input_set in input_set_generator(lines, cur):

@@ -57,6 +57,7 @@ fout=open(tmp_filename,'w')
 fout.write(str(table_col_value))
 fout.close()
 
+
 params=[]
 params.append('fs_fp=%s' % filesystem_path)
 params.append('web_fp=%s' % web_server_path)

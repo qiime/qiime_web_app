@@ -3,6 +3,7 @@ function reset_select(selObject){
     for (i=0;i<selObject.options.length;i++){
         selObject.options[i].selected=false;
     }
+    selObject.options[0].selected=true;
 }
 
 function select_all(listbox_id){

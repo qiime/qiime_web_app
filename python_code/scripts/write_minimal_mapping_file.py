@@ -103,7 +103,7 @@ def main():
     
         # Start building the statement for writing out the mapping file
         # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
-        statement = '("SAMPLE".SAMPLE_NAME||\'.\'||"SEQUENCE_PREP".RUN_PREFIX) as SampleID, \n'
+        statement = '("SAMPLE".SAMPLE_NAME||\'.\'||"SEQUENCE_PREP".ROW_NUMBER) as SampleID, \n'
         statement += '"SEQUENCE_PREP".BARCODE, \n'
         statement += 'concat("SEQUENCE_PREP".LINKER, "SEQUENCE_PREP".PRIMER) as LinkerPrimerSequence, \n'
         statement += '"SAMPLE".STUDY_ID, \n'
@@ -113,7 +113,7 @@ def main():
             for col_tab in new_cat_column_table:
                 statement += '%s, \n' % (col_tab)
         
-        statement += '"SEQUENCE_PREP".EXPERIMENT_TITLE as Description \n'
+        statement += '"SEQUENCE_PREP".EXPERIMENT_TITLE as Description_new \n'
     
         statement = '\n\
         select distinct \n' + statement + ' \n\
@@ -151,7 +151,7 @@ def main():
         statement += '\n\
         where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
         
-        print statement
+        #print statement
         con = data_access.getMetadataDatabaseConnection()
         cur = con.cursor()
         #req.write(str(statement)+'<br><br>')
@@ -174,6 +174,8 @@ def main():
             elif column[0]=='BARCODE':
                 to_write+='BarcodeSequence\t'
             elif column[0]=='DESCRIPTION':
+                to_write+='Description_duplicate\t'
+            elif column[0]=='DESCRIPTION_NEW':
                 to_write+='Description\t'
             elif column[0]=='LINKERPRIMERSEQUENCE':
                 to_write+='LinkerPrimerSequence\t'

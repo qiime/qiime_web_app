@@ -265,7 +265,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     ref_set_threshold = '97'
     pOTUs_method='UCLUST_REF'
     reference_set_name='GREENGENES_REFERENCE'
-    otus_log_str = ''
+    otus_log_str = open(join(input_dir, 'gg_97_otus', 'log.txt')).read()
     otu_run_set_id = 0
     svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
     qiime_revision=get_qiime_svn_version()
