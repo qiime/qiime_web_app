@@ -14,15 +14,6 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from sample_export import export_fasta_from_sample
 
-
-
-
-
-############### NEED TO DO A REVERSE LOOKUP ON ID VALUES BEFORE SUBMITTING TO MG-RAST
-
-
-
-
 def submit_metadata_for_study(key, study_id):
     """This function takes the input options from the user and generates a url
     and request header for submitting to the MG-RAST cgi script"""
@@ -34,10 +25,15 @@ def submit_metadata_for_study(key, study_id):
     # host = 'dunkirk.mcs.anl.gov'
     host = 'test.metagenomics.anl.gov'
     
-    study_cgi_path = '/~wilke/service/%s/study' % key
-    sample_cgi_path = '/~wilke/service/%s/sample' % key
-    prep_cgi_path = '/~wilke/service/%s/preparation' % key
-    sequence_cgi_path = '/~wilke/service/%s/reads' % key
+    #study_cgi_path = '/~wilke/service/%s/study' % key
+    #sample_cgi_path = '/~wilke/service/%s/sample' % key
+    #prep_cgi_path = '/~wilke/service/%s/preparation' % key
+    #sequence_cgi_path = '/~wilke/service/%s/reads' % key
+    
+    study_cgi_path = '/service/%s/study' % key
+    sample_cgi_path = '/service/%s/sample' % key
+    prep_cgi_path = '/service/%s/preparation' % key
+    sequence_cgi_path = '/service/%s/reads' % key
     
     study_file_path = '/tmp/mgrast_study_metadata_%s.xml' % study_id
     sample_file_path = '/tmp/mgrast_sample_metadata_%s.xml' % study_id
