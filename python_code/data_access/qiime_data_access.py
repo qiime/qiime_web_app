@@ -648,6 +648,20 @@ class QiimeDataAccess(object):
     #####################################
     # Metadata
     #####################################
+    
+    def getListFieldValue(vocab_value_id):
+        """ Returns a list env_package types associated to this study
+        """
+        try:
+            value = ''
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_list_field_value', [vocab_value_id, results])
+            for row in results:
+                value = row[0]
+            return value
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
 
     def getSampleColumnValue(self, sample_id, table_name, column_name):
         """ Returns a field value
@@ -672,6 +686,13 @@ class QiimeDataAccess(object):
             con = self.getMetadataDatabaseConnection()
             results = con.cursor().execute(statement).fetchone()
             value = results[0]
+            
+            # Figure out if this is a list column. If so, do a reverse-lookup to get the text value
+            field_details = self.getFieldDetails(column_name)
+            database_data_type = field_details[1]
+            if database_data_type == 'list':
+                value = self.getListFieldValue(value)
+            
             return value
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -691,6 +712,13 @@ class QiimeDataAccess(object):
             con = self.getMetadataDatabaseConnection()
             results = con.cursor().execute(statement).fetchone()
             value = results[0]
+            
+            # Figure out if this is a list column. If so, do a reverse-lookup to get the text value
+            field_details = self.getFieldDetails(column_name)
+            database_data_type = field_details[1]
+            if database_data_type == 'list':
+                value = self.getListFieldValue(value)
+
             return value
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
