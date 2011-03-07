@@ -87,10 +87,10 @@ def export_fasta_from_sample(study_id, sample_id, output_fasta):
     # Get our copy of data_access
     data_access = data_access_factory(DataAccessType.qiime_production)
     seqs = data_access.getSequencesFromSample(study_id, sample_id)
-    print '------------------------------ Seqs for sample ID: %s' % str(sample_id)
+    #print '------------------------------ Seqs for sample ID: %s' % str(sample_id)
     for seq in seqs:
         output_fasta.write('>%s\n%s\n' % (seq, seqs[seq]))
-        print seq
+        #print seq
 
     # Close the file if opened in this function
     if file_opened_here:
