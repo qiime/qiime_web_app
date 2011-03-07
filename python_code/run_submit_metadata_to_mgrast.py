@@ -31,7 +31,8 @@ def submit_metadata_for_study(key, study_id):
     data_access = data_access_factory(DataAccessType.qiime_production)
 
     # Some vars
-    host = 'dunkirk.mcs.anl.gov'
+    # host = 'dunkirk.mcs.anl.gov'
+    host = 'test.metagenomics.anl.gov'
     
     study_cgi_path = '/~wilke/service/%s/study' % key
     sample_cgi_path = '/~wilke/service/%s/sample' % key
@@ -168,6 +169,7 @@ def submit_metadata_for_study(key, study_id):
         conn.close()
         
         # Find the MG-RAST project id for this newly created study
+        mgrast_sample_id = ''
         if '<sample_id>' in data:
             mgrast_sample_id = data[data.find('<sample_id>')+len('<sample_id>'):data.find('</sample_id>')]
         else:
