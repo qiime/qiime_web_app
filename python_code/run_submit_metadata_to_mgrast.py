@@ -242,7 +242,7 @@ def submit_metadata_for_study(key, study_id):
             sequence_file.write("     <sample_id namespace='qiime'>%s</sample_id>\n" % sample_id)
             sequence_file.write("     <sample_id namespace='mgrast'>%s</sample_id>\n" % mgrast_sample_id)
             sequence_file.write('     <row_number>%s</row_number>\n' % row_number)
-            sequence_file.write('     <sequences>\n')
+            sequence_file.write("     <sequences type='16s'>\n")
 
             # For each column for this sample, write the value to the sample file
             output_fasta_path = fasta_base_path + 'sequences_%s_%s.fasta' % (sample_id, row_number)
