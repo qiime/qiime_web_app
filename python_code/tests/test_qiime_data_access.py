@@ -420,6 +420,20 @@ class QiimeDataAccessTests(unittest.TestCase):
         for exp in result:
             self.assertEqual(exp,None)
             
+    #
+    def test_loadBetaDivDistances(self):
+        """
+        """
+        
+        result=self._qiime_data_access.loadBetaDivDistances(0,'test')
+        self.assertEqual(result,None)
+    #
+    def test_loadOTUTable(self):
+        """
+        """
+        
+        result=self._qiime_data_access.loadOTUTable(0,'test')
+        self.assertEqual(result,None)
             
             
 if __name__ == '__main__':

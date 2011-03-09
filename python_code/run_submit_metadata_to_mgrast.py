@@ -23,8 +23,8 @@ def submit_metadata_for_study(key, study_id):
 
     # Some vars
     # host = 'dunkirk.mcs.anl.gov'
-    # host = 'test.metagenomics.anl.gov'
-    host = 'www.metagenomics.anl.gov'
+    #host = 'dev.metagenomics.anl.gov'
+    host = 'metagenomics.anl.gov'
     
     #study_cgi_path = '/~wilke/service/%s/study' % key
     #sample_cgi_path = '/~wilke/service/%s/sample' % key
@@ -64,7 +64,11 @@ def submit_metadata_for_study(key, study_id):
     del study_info['project_id']
     
     for item in study_info:
-        study_file.write('        <{0}>{1}</{0}>\n'.format(item, study_info[item]))
+        value = study_info[item]
+        value = str(value).replace('<', '__lessthan__')
+        value = str(value).replace('>', '__greaterthan__')
+        value = str(value).replace('$', '__dollarsign__')
+        study_file.write('        <{0}>{1}</{0}>\n'.format(item, value))
     
     study_file.write('    </metadata>\n')
     study_file.write('</study>\n')
@@ -75,7 +79,7 @@ def submit_metadata_for_study(key, study_id):
     file_contents = study_file.read()
     study_file.close()
 
-    #print file_contents
+    print file_contents
 
     # Submit the study file data
     headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
@@ -141,6 +145,9 @@ def submit_metadata_for_study(key, study_id):
                 
             #print table_name, column_name, sample_id
             column_value = data_access.getSampleColumnValue(sample_id, table_name, column_name)
+            column_value = str(column_value).replace('<', '__lessthan__')
+            column_value = str(column_value).replace('>', '__greaterthan__')
+            column_value = str(column_value).replace('$', '__dollarsign__')
             sample_file.write('            <{0}>{1}</{0}>\n'.format(column_name, column_value))
             
         sample_file.write('        </metadata>\n')
@@ -153,7 +160,7 @@ def submit_metadata_for_study(key, study_id):
         file_contents = sample_file.read()
         sample_file.close()
         
-        #print file_contents
+        print file_contents
 
         # Send the file to MG-RAST
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
@@ -204,6 +211,9 @@ def submit_metadata_for_study(key, study_id):
                     continue
                     
                 column_value = data_access.getPrepColumnValue(sample_id, row_number, table_name, column_name)
+                column_value = str(column_value).replace('<', '__lessthan__')
+                column_value = str(column_value).replace('>', '__greaterthan__')
+                column_value = str(column_value).replace('$', '__dollarsign__')
                 prep_file.write('            <{0}>{1}</{0}>\n'.format(column_name, column_value))
             
             prep_file.write('        </metadata>\n')
@@ -216,7 +226,7 @@ def submit_metadata_for_study(key, study_id):
             file_contents = prep_file.read()
             prep_file.close()
         
-            #print file_contents
+            print file_contents
 
             # Send the file to MG-RAST
             headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}

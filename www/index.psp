@@ -104,7 +104,8 @@ $(document).ready(function(){
 <%
 # This is the location where the user directories are written
 output_dir='/home/wwwuser/user_data'
-
+# link_path_dir='/tmp_qiime'
+link_path_dir = 'studies'
 if form.has_key('username'):
     # begin
     qiimeDataAccess = data_access_factory(DataAccessType.qiime_production)
@@ -118,7 +119,7 @@ if form.has_key('username'):
         
         #User directories
         sess['user_dir'] = os.path.join(output_dir, 'studies')
-        sess['db_root'] = output_dir
+        sess['db_root'] = link_path_dir
         
         try:
             if not os.path.exists(sess['user_dir']):

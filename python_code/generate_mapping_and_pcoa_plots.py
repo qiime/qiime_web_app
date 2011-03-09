@@ -75,7 +75,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
 
     # Start building the statement for writing out the mapping file
     # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
-    statement = '"SAMPLE".sample_name||\'.\'||"SEQUENCE_PREP".run_prefix as SampleID, \n'
+    statement = '"SAMPLE".sample_name||\'.\'||"SEQUENCE_PREP".sequence_prep_id as SampleID, \n'
     statement += '"SEQUENCE_PREP".barcode, \n'
     statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
     statement += '"SAMPLE".study_id, \n'

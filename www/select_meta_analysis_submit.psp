@@ -18,7 +18,7 @@ sess['meta_analysis_name'] = parts[1]
 # Define meta_analysis folder
 meta_analysis_dir = os.path.join(sess['user_dir'],'meta_analysis_'+str(sess['meta_analysis_id']))
 sess['meta_analysis_dir'] = str(meta_analysis_dir)
-meta_analysis_dir_db= os.path.join('/tmp_qiime','studies','meta_analysis_'+str(sess['meta_analysis_id']))
+meta_analysis_dir_db= os.path.join(sess['db_root'],'studies','meta_analysis_'+str(sess['meta_analysis_id']))
 sess['meta_analysis_dir_db'] = str(meta_analysis_dir_db)
 # Define mapping file folder
 mapping_file_dir = os.path.join(meta_analysis_dir, 'mapping_files/') 

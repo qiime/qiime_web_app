@@ -103,7 +103,7 @@ def main():
     
         # Start building the statement for writing out the mapping file
         # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
-        statement = '("SAMPLE".SAMPLE_NAME||\'.\'||"SEQUENCE_PREP".ROW_NUMBER) as SampleID, \n'
+        statement = '("SAMPLE".SAMPLE_NAME||\'.\'||"SEQUENCE_PREP".SEQUENCE_PREP_ID) as SampleID, \n'
         statement += '"SEQUENCE_PREP".BARCODE, \n'
         statement += 'concat("SEQUENCE_PREP".LINKER, "SEQUENCE_PREP".PRIMER) as LinkerPrimerSequence, \n'
         statement += '"SAMPLE".STUDY_ID, \n'

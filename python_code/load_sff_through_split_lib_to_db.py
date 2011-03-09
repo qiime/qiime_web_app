@@ -13,7 +13,7 @@ __status__ = "Development"
 
 import time 
 from subprocess import Popen, PIPE, STDOUT
-from qiime.parse import parse_mapping_file
+from qiime.parse import parse_mapping_file,parse_otu_table
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
 from os import system,popen
@@ -146,7 +146,7 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
             con=data_access.getSFFDatabaseConnection()
             cur = con.cursor()
             print 'Writing flow file data to database.'
-            flow_results = flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id,sff_md5,1000)
+            flow_results = flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id,sff_md5,buffer_size=1000)
             current_item = 0
             for res in flow_results:
                 start = time.time()
@@ -235,12 +235,13 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     open_fasta = open(split_lib_seqs)
     iterator=0
     
-    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,split_library_run_id), cur, types,1000):
+    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,\
+                                    split_library_run_id), cur, types,\
+                                    buffer_size=500):
         #print str(res)
         print 'running %i' % (iterator)
         iterator=iterator+1
         valid = data_access.loadFNAFile(True, res)
-        break
         if not valid:
             raise ValueError, 'Error: Unable to load FNA file into database!'
 
@@ -306,7 +307,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     start = time.time()
     
     print 'Starting otu map loading...'
-    for input_set in input_set_generator(otu_map, cur, types, 1000):
+    for input_set in input_set_generator(otu_map, cur, types, buffer_size=1000):
         print "loading OTU mapping input set: %s" % set_count
         valid = data_access.loadOTUMapAll(True, input_set)
         
@@ -330,7 +331,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     cur = con.cursor()
     set_count = 1
     
-    for input_set in input_set_generator(otu_failures, cur, types, 10000):
+    for input_set in input_set_generator(otu_failures, cur, types, buffer_size=10000):
         valid = data_access.loadOTUFailuresAll(True, input_set)
         if not valid:
             raise ValueError, 'Error: Unable to load OTU failures data into database!'
@@ -338,6 +339,35 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
         set_count += 1
     
     print 'Successfully loaded the OTU failures into the database!'
+    
+    print 'Loading OTU Table into the database!'
+    pick_otus_table = join(input_dir, 'gg_97_otus','exact_uclust_ref_otu_table.txt')
+    otu_table_lines=open(pick_otus_table).readlines()
+    sample_ids, otu_ids, otu_table, lineages = parse_otu_table(otu_table_lines)
+    # convert OTU table to tab-delimited list
+    otu_table_load=[]
+    for i,otu in enumerate(otu_ids):
+        for j,sample in enumerate(sample_ids):
+            if otu_table[i][j]>0:
+                otu_table_load.append("%s\t%s\t%s\t%s" % \
+                                (otu,sample,new_otu_run_set_id,otu_table[i][j]))
+
+    # get DB connection
+    con = data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    
+    # load otu table into DB
+    data_types=['s','s','i','i']   
+    set_count = 0      
+    for input_set in input_set_generator(otu_table_load, cur,data_types,\
+                                         buffer_size=1000):
+        valid=data_access.loadOTUTable(True,input_set)
+        if not valid:
+            raise ValueError, 'Error: Unable to load OTU table!'
+        print "loading OTU Table: %s" % set_count
+        set_count += 1
+    
+    print 'Successfully loaded the OTU Table into the database!'
     print 'End of function' 
 
     

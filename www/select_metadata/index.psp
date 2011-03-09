@@ -197,23 +197,25 @@ req.write(unique_cols_to_select_box_str(public_columns))
         </tr><tr>
             <td>
                 <span id="box1Counter" class="countLabel"></span> 
-                <select id="box1Storage"></select>
+                <!--<select id="box1Storage"></select>-->
             </td>
             <td></td>
             <td>
                 <span id="box2Counter" class="countLabel"></span> 
-                <select id="box2Storage"></select> 
+                <!--<select id="box2Storage"></select>-->
             </td>
         </tr>
         <tr>
             <td>
                 </form>
                 <form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/submit_pcoa_mapping_job.psp">
+                    <!--
                     <input type="checkbox" name="mapping_file" id="mapping_file" checked="true">I want a mapping file</input><br/>
                     <input type="checkbox" name="otu_table" id="otu_table" checked="true">I want the OTU table</input><br/>
                     <input type="checkbox" name="pcoa_plot" id="pcoa_plot" checked="true">I want the alpha diversity table</input><br/>
                     <input type="checkbox" name="pcoa_plot" id="pcoa_plot" checked="true">I want the beta diversity table</input><br/>
                     <input type="checkbox" name="pcoa_plot" id="pcoa_plot" checked="true">I want the PCoA plot</input><br/>
+                    -->
                     <br/><input type="submit">
                 </form>
             </td>

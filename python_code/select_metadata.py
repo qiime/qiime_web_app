@@ -21,12 +21,15 @@ def public_cols_to_dict(public_columns):
     # create a dictionary containing all public column fields
     unique_public_columns={}
     for i,j in enumerate(public_columns):
-        col_key=public_columns[i][1].strip('"')+'####SEP####'+public_columns[i][0]
-        if unique_public_columns.has_key(col_key):
-            unique_public_columns[col_key].append(public_columns[i][2])
+        if public_columns[i][1].strip('"').startswith('EXTRA_PREP') or public_columns[i][1].strip('"').startswith('EXTRA_SAMPLE'):
+            continue
         else:
-            unique_public_columns[col_key]=[]
-            unique_public_columns[col_key].append(public_columns[i][2])
+            col_key=public_columns[i][1].strip('"')+'####SEP####'+public_columns[i][0]
+            if unique_public_columns.has_key(col_key):
+                unique_public_columns[col_key].append(public_columns[i][2])
+            else:
+                unique_public_columns[col_key]=[]
+                unique_public_columns[col_key].append(public_columns[i][2])
     
     return unique_public_columns
 
