@@ -22,16 +22,13 @@ script_info['brief_description'] = "This script submits metadata to MG-RAST base
 script_info['script_description'] = "This script takes a study_id and an MG-RAST web service key and performs metadata submission to the MG-RAST system."
 script_info['script_usage'] = [("Example","python submit_data_to_mgrast.py -s 12345")]
 script_info['required_options'] = [\
- make_option('-s','--study_id',help='The study id to be exported')
-]
-script_info['optional_options'] = [\
+make_option('-s','--study_id', help='The study id to be exported')
 ]
 script_info['version'] = __version__
 
 
 def main():
-    option_parser, opts, args =\
-       parse_command_line_parameters(**script_info)
+    option_parser, opts, args = parse_command_line_parameters(**script_info)
 
     #define the variables
     study_id = opts.study_id
