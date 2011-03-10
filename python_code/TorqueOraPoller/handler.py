@@ -16,6 +16,7 @@ __status__ = "Pre-release"
 PYTHON_BIN="/usr/bin/python2.6"
 QIIME_WEBAPP_BASE = "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/scripts"
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_through_split_lib.py"
+QIIME_EXPORT_MGRAST = QIIME_WEBAPP_BASE + "/submit_metadata_to_mgrast.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_through_metadata_to_db.py"
 QIIME_SUBMIT_OTU_MAPPING_TO_DB = QIIME_WEBAPP_BASE  + "/submit_otu_mapping_to_db.py"
@@ -203,6 +204,21 @@ class ProcessPickOTUHandler(JobHandler):
     """Handler for pick_otus.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_PICK_OTU, "-i %(FastaFile)s -p %(ParamFile)s -o %(OutputDir)s -f"])
     _base_args = {'FastaFile':None, 'ParamFile':None, 'OutputDir':None}
+    _next_job_handler = ''
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+
+# Exports study metadata and sequences to MG-RAST
+class ExportToMGRASTHandler(JobHandler):
+    """Handler for submit_metadata_to_mgrast.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_EXPORT_MGRAST, "-s %(StudyID)s"])
+    _base_args = {'StudyID':None}
     _next_job_handler = ''
 
     def checkJobOutput(self, stdout_lines, stderr_lines):

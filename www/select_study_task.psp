@@ -211,31 +211,16 @@ if len(jobs) > 0 and is_admin == 1:
             <br/>
 
 <%
-# End if
-
+else:
+    # Indent
+    
 %>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
         <li>
-            <form id="download_data" action="fusebox.psp?page=data_request_submit.psp" method="post">
-                <a href="" onclick="document.forms['download_data'].submit(); return false;">
+        <form id="submit_export_to_mgrast" action="submit_export_to_mgrast.psp" method="post">
+                <a href="" onclick="document.forms['submit_export_to_mgrast'].submit(); return false;">
                 Export Data to MG-RAST</a>
+            <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
         </li>
 
