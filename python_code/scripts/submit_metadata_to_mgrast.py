@@ -21,6 +21,7 @@ script_info = {}
 script_info['brief_description'] = "This script submits metadata to MG-RAST based on a study_id"
 script_info['script_description'] = "This script takes a study_id and an MG-RAST web service key and performs metadata submission to the MG-RAST system."
 script_info['script_usage'] = [("Example","python submit_data_to_mgrast.py -s 12345")]
+script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
 script_info['required_options'] = [\
 make_option('-s','--study_id', help='The study id to be exported')
 ]
