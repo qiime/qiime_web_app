@@ -169,7 +169,8 @@ if form.has_key('username'):
     elif available and not good_password:
         # if the username is available but the password is bad, let the user
         # know
-        req.write('<div style="color:red;"><p><b>Invalid Password!</b> Your password must contain at least 2 of following and have a length greater than 6 characters:</p><ul><li>non-alphanumeric characters </li><li> upper-case alphanumeric characters </li><li> lower-case alphanumeric characters </li><li> numbers </li></ul><p>For Example: "Password","password1" or "password*"</p></div>')
+        #req.write('<div style="color:red;"><p><b>Invalid Password!</b> Your password must contain at least 2 of following and have a length greater than 6 characters:</p><ul><li>non-alphanumeric characters </li><li> upper-case alphanumeric characters </li><li> lower-case alphanumeric characters </li><li> numbers </li></ul><p>For Example: "Password","password1" or "password*"</p></div>')
+        req.write('<div style="color:red;"><p><b>Invalid Password!</b></p></div>')
 %>
         <form id="new_user" method="post" action="register_user.psp">
             <table>
