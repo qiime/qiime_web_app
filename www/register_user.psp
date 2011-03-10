@@ -126,8 +126,8 @@ def validate_password(passwd):
         if len([x for x in passwd if x.isdigit()]) > 0: conditions_met += 1
         if len([x for x in passwd if not x.isalnum()]) > 0: conditions_met += 1
     result = False
-    if conditions_met >= 2: result = True
-    return conditions_met
+    if conditions_met >= 1: result = True
+    return result
 
 # if the form was submitted and contains a username, then we want to 
 # check the availability of the username and then register the user and send
