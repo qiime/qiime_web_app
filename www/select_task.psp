@@ -17,7 +17,7 @@ __status__ = "Production"
             <form id="create_new_template" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="new_template.psp">
                 <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
-                Generate a MIMARKS-compliant metadata template</a>
+                Generate a MIENS-compliant metadata template</a>
             </form>
         </li>
     </ul>

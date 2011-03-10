@@ -45,13 +45,26 @@ function checkJobStatus(job_type_id)
         return;
     }
     
+    div_name = ''
+    switch(job_type_id)
+    {
+        case 3:
+            div_name = "job_status_div";
+            break;
+        case 6:
+            div_name = "mg_rast_status_div";
+            break;
+        default:
+            break;
+    }
+    
     var url = "check_job_status.psp?job_type_id="+job_type_id;
 
     xmlhttp.onreadystatechange=function()
     {
         if (xmlhttp.readyState==4)
         {
-            document.getElementById("job_status_div").innerHTML = xmlhttp.responseText;
+            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
         }
     }
     

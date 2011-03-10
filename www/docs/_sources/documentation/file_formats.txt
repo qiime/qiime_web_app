@@ -112,7 +112,7 @@ The mapping file format is tab-delimited text. This must be plain text, therefor
 
 Each column header MUST contain alphanumeric (a-z, A-Z and 1-9) and/or underscore ("_") characters only, where the header MUST start with letter. All other characters (e.g. $, \*, \^, etc) are not supported at this time and use of those characters may cause problems downstream in the QIIME pipeline. Sample IDs, descriptions, and metadata fields additionally allow the use of plus(+), minus(-), period(.), and percent (%) characters.
 
-Currently, the user has the ability to define their own column headers, however; QIIME will be adopting the MIMARKS standard, therefore all column headings MUST correspond the proper MIMARKS nomenclature (http://gensc.org/gc_wiki/index.php/MIENS). The following details the current mapping file guidelines:
+Currently, the user has the ability to define their own column headers, however; QIIME will be adopting the MIENS standard, therefore all column headings MUST correspond the proper MIENS nomenclature (http://gensc.org/gc_wiki/index.php/MIENS). The following details the current mapping file guidelines:
 
 1. The first column header must be "#SampleID", and the data in this column must contain unique (short and meaningful) sample identifiers containing only alphanumeric, period (".") and/or underscore ("_") characters.
 2. The second column header must be "BarcodeSequence", where each value in that column corresponds to the barcode used for each sample.  Only IUPAC DNA characters are acceptable.

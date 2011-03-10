@@ -18,6 +18,7 @@ from enums import DataAccessType
 # Grab some required values for this page
 data_access = data_access_factory(DataAccessType.qiime_production)
 study_id = int(sess['study_id'])
+is_admin = int(sess['is_admin'])
 study_info = data_access.getStudyInfo(study_id)
 metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
@@ -60,7 +61,7 @@ for study_name in study_names:
             <form id="create_new_template" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="load_template_fields.psp">
                 <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
-                Generate a MIMARKS-compliant metadata template</a>
+                Generate a MIENS-compliant metadata template</a>
             </form>
         </li>
         
@@ -180,20 +181,68 @@ if sess['portal_type'] == 'qiime':
         </li>
         
 <%
+
 # End if
 
 %>
+
+
+
+
+
+<%
+jobs = data_access.getJobInfo(study_id, 6)
+if len(jobs) > 0 and is_admin == 1:
+    # indent
+%>
+
+            Exporting to MG-RAST...
+            <br/>
+            <ul>
+                <div name="mg_rast_statis_div" id="mg_rast_statis_div">
+                    <!-- Contents will be replaced by javascript dynamically -->
+                    Checking status...
+                </div>
+                <script type="text/javascript">
+                    checkJobStatus(6);
+                    var timer = setInterval( "checkJobStatus(6);", 5000 );
+                </script>
+            </ul>
+            <br/>
+
+<%
+# End if
+
+%>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         
-        <!--
         <li>
             <form id="download_data" action="fusebox.psp?page=data_request_submit.psp" method="post">
                 <a href="" onclick="document.forms['download_data'].submit(); return false;">
-                Download Study Data</a>
+                Export Data to MG-RAST</a>
             </form>
         </li>
-        -->
+
 
 <%
+# End if
+
 if can_delete == 'y':
     # indent
     
