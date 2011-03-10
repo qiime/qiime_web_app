@@ -21,7 +21,7 @@ def exportStudyToMGRAST(study_id, user_id):
     data_access = data_access_factory(DataAccessType.qiime_production)
 
     # Submit the job
-    job_id = data_access.createTorqueJob(6, 'StudyID=%s' % study_id, user_id, study_id)
+    job_id = data_access.createTorqueJob('ExportToMGRASTHandler', 'StudyID=%s' % study_id, user_id, study_id)
     
     # Make sure a legit job_id was created. If not, inform the user there was a problem
     if job_id < 0:
