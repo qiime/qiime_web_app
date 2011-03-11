@@ -52,7 +52,7 @@ function checkJobStatus(job_type_id)
             div_name = "job_status_div";
             break;
         case 6:
-            div_name = "mg_rast_status_div";
+            div_name = "mg_rast_statis_div";
             break;
         default:
             break;
