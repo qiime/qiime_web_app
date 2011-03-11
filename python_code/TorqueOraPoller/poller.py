@@ -247,6 +247,7 @@ class Poller(Daemon):
             
             job = job_handler(job_name, job_args)
             cmd = job()
+            sys.stdout.write('Job command: %s' % cmd)
 
             #### decompose job submission
             # submit job

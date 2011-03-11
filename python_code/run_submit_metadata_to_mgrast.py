@@ -24,7 +24,8 @@ def submit_metadata_for_study(key, study_id):
     # Some vars
     # host = 'dunkirk.mcs.anl.gov'
     #host = 'dev.metagenomics.anl.gov'
-    host = 'www.metagenomics.anl.gov'
+    #host = 'metagenomics.anl.gov'
+    host = '140.221.76.10'
     
     #study_cgi_path = '/~wilke/service/%s/study' % key
     #sample_cgi_path = '/~wilke/service/%s/sample' % key
