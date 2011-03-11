@@ -24,7 +24,7 @@ def submit_metadata_for_study(key, study_id):
     # Some vars
     # host = 'dunkirk.mcs.anl.gov'
     #host = 'dev.metagenomics.anl.gov'
-    host = 'metagenomics.anl.gov'
+    host = 'www.metagenomics.anl.gov'
     
     #study_cgi_path = '/~wilke/service/%s/study' % key
     #sample_cgi_path = '/~wilke/service/%s/sample' % key
@@ -79,7 +79,7 @@ def submit_metadata_for_study(key, study_id):
     file_contents = study_file.read()
     study_file.close()
 
-    print file_contents
+    #print file_contents
 
     # Submit the study file data
     headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
@@ -160,7 +160,7 @@ def submit_metadata_for_study(key, study_id):
         file_contents = sample_file.read()
         sample_file.close()
         
-        print file_contents
+        #print file_contents
 
         # Send the file to MG-RAST
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
@@ -226,7 +226,7 @@ def submit_metadata_for_study(key, study_id):
             file_contents = prep_file.read()
             prep_file.close()
         
-            print file_contents
+            #print file_contents
 
             # Send the file to MG-RAST
             headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
