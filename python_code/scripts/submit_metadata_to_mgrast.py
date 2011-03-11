@@ -32,7 +32,8 @@ def main():
     study_id = opts.study_id
     
     # call the main function
-    result = submit_metadata_for_study(study_id)
+    key = 'y7x2G29QEbuEyTYbLr7pjavtA'
+    result = submit_metadata_for_study(key, study_id)
     
         
 if __name__ == "__main__":
