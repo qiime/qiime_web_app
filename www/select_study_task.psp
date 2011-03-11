@@ -195,7 +195,7 @@ jobs = data_access.getJobInfo(study_id, 6)
 if len(jobs) > 0 and is_admin == 1:
     # indent
 %>
-
+        </li>
             Exporting to MG-RAST...
             <br/>
             <ul>
@@ -209,6 +209,7 @@ if len(jobs) > 0 and is_admin == 1:
                 </script>
             </ul>
             <br/>
+        </li>
 
 <%
 else:
