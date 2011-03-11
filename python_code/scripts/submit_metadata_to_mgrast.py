@@ -13,28 +13,25 @@ __status__ = "Development"
  
 
 from optparse import make_option
-from qiime.util import parse_command_line_parameters, get_options_lookup
+from qiime.util import parse_command_line_parameters
 from run_submit_metadata_to_mgrast import submit_metadata_for_study
-options_lookup = get_options_lookup()
 
 script_info = {}
 script_info['brief_description'] = "This script submits metadata to MG-RAST based on a study_id"
 script_info['script_description'] = "This script takes a study_id and an MG-RAST web service key and performs metadata submission to the MG-RAST system."
-script_info['script_usage'] = [("Example","python submit_data_to_mgrast.py -s 12345")]
+script_info['script_usage'] = [("Example","This is an example usage", "python submit_data_to_mgrast.py -s 12345")]
 script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
-script_info['required_options'] = [\
-make_option('-s','--study_id', help='The study id to be exported')
-]
+script_info['required_options'] = [make_option('-s','--study_id', help='The study id to be exported')]
+script_info['optional_options'] = []
 script_info['version'] = __version__
-
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
 
-    #define the variables
+    # define the variables
     study_id = opts.study_id
     
-    #call the main function
+    # call the main function
     result = submit_metadata_for_study(study_id)
     
         
