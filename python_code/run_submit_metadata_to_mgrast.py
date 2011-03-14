@@ -28,6 +28,7 @@ def resolve_host(url_path):
         
         # Make sure a 404 was not returned
         if '404' not in data and data != '':
+            print 'IP attempt successful.'
             return host
         else:
             print 'IP attempt unsuccessful. Data return was: %s' % data
@@ -48,6 +49,7 @@ def resolve_host(url_path):
         
         # Make sure a 404 was not returned
         if '404' not in data and data != '':
+            print 'DNS attempt successful.'
             return host
         else:
             print 'DNS attempt unsuccessful. Aborting.'
