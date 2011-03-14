@@ -19,7 +19,7 @@ def resolve_host(url_path):
     host = '140.221.76.10'
 
     try:
-        print 'IP attempt: %s' % host
+        print 'Attempting IP connection to: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
         conn.request(method = "POST", url = url_path, body = "", headers = headers)
@@ -27,9 +27,10 @@ def resolve_host(url_path):
         conn.close()
         
         # Make sure a 404 was not returned
-        if '404' not in data:
+        if '404' not in data and data != '':
             return host
         else:
+            print 'IP attempt unsuccessful. Data return was: %s' % data
             host = 'metagenomics.anl.gov'
 
     except Exception, e:
@@ -37,7 +38,7 @@ def resolve_host(url_path):
         host = 'metagenomics.anl.gov'
     
     try:
-        print 'DNS attempt: %s' % host
+        print 'Attempting DNS connection to: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
         conn.request(method = "POST", url = url_path, body = "", headers = headers)
@@ -46,8 +47,10 @@ def resolve_host(url_path):
         conn.close()
         
         # Make sure a 404 was not returned
-        if '404' not in data:
+        if '404' not in data and data != '':
             return host
+        else:
+            print 'DNS attempt unsuccessful. Aborting.'
     except Exception, e:
         print str(e)
         print 'Resolving host %s failed. Aborting...' % host
