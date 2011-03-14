@@ -16,10 +16,10 @@ from sample_export import export_fasta_from_sample
 
 def resolve_host(url_path):
     data = ''
-    host = '140.221.76.10'
+    host = 'metagenomics.anl.gov'
 
     try:
-        print 'Attempting IP connection to: %s' % host
+        print 'Attempting DNS connection to: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
         conn.request(method = "POST", url = url_path, body = "", headers = headers)
@@ -28,18 +28,18 @@ def resolve_host(url_path):
         
         # Make sure a 404 was not returned
         if '404' not in data and data != '':
-            print 'IP attempt successful.'
+            print 'DNS attempt successful.'
             return host
         else:
-            print 'IP attempt unsuccessful. Data return was: %s' % data
-            host = 'metagenomics.anl.gov'
+            print 'DNS attempt unsuccessful. Data return was: %s' % data
+            host = '140.221.76.10'
 
     except Exception, e:
         print str(e)
-        host = 'metagenomics.anl.gov'
+        host = '140.221.76.10'
     
     try:
-        print 'Attempting DNS connection to: %s' % host
+        print 'Attempting IP connection to: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
         conn.request(method = "POST", url = url_path, body = "", headers = headers)
@@ -49,10 +49,10 @@ def resolve_host(url_path):
         
         # Make sure a 404 was not returned
         if '404' not in data and data != '':
-            print 'DNS attempt successful.'
+            print 'IP attempt successful.'
             return host
         else:
-            print 'DNS attempt unsuccessful. Aborting.'
+            print 'IP attempt unsuccessful. Aborting.'
     except Exception, e:
         print str(e)
         print 'Resolving host %s failed. Aborting...' % host
