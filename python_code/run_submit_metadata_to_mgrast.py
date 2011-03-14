@@ -19,12 +19,11 @@ def resolve_host(url_path):
     host = '140.221.76.10'
 
     try:
-        host = '140.221.76.10'
+        print 'IP attempt: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
         conn.request(method = "POST", url = url_path, body = "", headers = headers)
         response = conn.getresponse()
-        data = response.read()
         conn.close()
         
         # Make sure a 404 was not returned
@@ -33,11 +32,12 @@ def resolve_host(url_path):
         else:
             host = 'metagenomics.anl.gov'
 
-    except:
-        print 'Resolving host %s failed. trying next option...' % host
+    except Exception, e:
+        print str(e)
         host = 'metagenomics.anl.gov'
     
     try:
+        print 'DNS attempt: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
         conn.request(method = "POST", url = url_path, body = "", headers = headers)
@@ -48,7 +48,8 @@ def resolve_host(url_path):
         # Make sure a 404 was not returned
         if '404' not in data:
             return host
-    except:
+    except Exception, e:
+        print str(e)
         print 'Resolving host %s failed. Aborting...' % host
         
     return None
@@ -115,11 +116,11 @@ def submit_metadata_for_study(key, study_id, debug = False):
     fasta_base_path = '/tmp/'
     
     # Attempt to reslve the MG-RAST host
-    host = '140.221.76.10'
-    #host = resolve_host(study_cgi_path)
-    #if host is None:
-    #    print 'Could not resolve host. Aborting.'
-    #    return
+    # host = '140.221.76.10'
+    host = resolve_host(study_cgi_path)
+    if host is None:
+        print 'Could not resolve host. Aborting.'
+        return
 
     ######################################################
     #### Study Submission
