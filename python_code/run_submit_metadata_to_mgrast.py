@@ -115,10 +115,11 @@ def submit_metadata_for_study(key, study_id, debug = False):
     fasta_base_path = '/tmp/'
     
     # Attempt to reslve the MG-RAST host
-    host = resolve_host(study_cgi_path)
-    if host is None:
-        print 'Could not resolve host. Aborting.'
-        return
+    host = '140.221.76.10'
+    #host = resolve_host(study_cgi_path)
+    #if host is None:
+    #    print 'Could not resolve host. Aborting.'
+    #    return
 
     ######################################################
     #### Study Submission
