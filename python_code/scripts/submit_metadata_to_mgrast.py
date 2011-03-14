@@ -22,7 +22,9 @@ script_info['script_description'] = "This script takes a study_id and an MG-RAST
 script_info['script_usage'] = [("Example","This is an example usage", "python submit_data_to_mgrast.py -s 12345")]
 script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
 script_info['required_options'] = [make_option('-s','--study_id', help='The study id to be exported')]
-script_info['optional_options'] = []
+script_info['optional_options'] = [\
+make_option('-d','--debug', action='store_true', help='Specifies that verbose debug output should be displayed.',default=False)
+]
 script_info['version'] = __version__
 
 def main():
@@ -30,10 +32,11 @@ def main():
 
     # define the variables
     study_id = opts.study_id
+    debug = opts.debug
     
     # call the main function
     key = 'y7x2G29QEbuEyTYbLr7pjavtA'
-    result = submit_metadata_for_study(key, study_id)
+    result = submit_metadata_for_study(key, study_id, debug)
     
         
 if __name__ == "__main__":

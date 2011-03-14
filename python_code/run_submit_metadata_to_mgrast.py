@@ -14,24 +14,84 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 from sample_export import export_fasta_from_sample
 
-def submit_metadata_for_study(key, study_id):
+def resolve_host(url_path):
+    host = '140.221.76.10'
+    conn = httplib.HTTPConnection(host)
+    headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
+    conn.request(method = "POST", url = url_path, body = "", headers = headers)
+    response = conn.getresponse()
+    data = response.read()
+    conn.close()
+    
+    # Make sure a 404 was not returned
+    if '404' not in data:
+        return host
+        
+    host = 'metagenomics.anl.gov'
+    conn = httplib.HTTPConnection(host)
+    headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
+    conn.request(method = "POST", url = url_path, body = "", headers = headers)
+    response = conn.getresponse()
+    data = response.read()
+    conn.close()
+    
+    # Make sure a 404 was not returned
+    if '404' not in data:
+        return host
+        
+    else:
+        return None
+
+def clean_value_for_mgrast(value):
+    value = str(value).replace('<', '__lessthan__')
+    value = str(value).replace('>', '__greaterthan__')
+    value = str(value).replace('$', '__dollarsign__')
+    return value
+
+def send_data_to_mgrast(url_path, file_contents, host, debug):
+    success = None
+    entity_id = None
+        
+    # Output the file contents if debug mode is set
+    if debug:
+        print file_contents
+        print 'Host: %s' % host
+        print 'Service URL: %s' % url_path
+    
+    # Submit file data
+    headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
+    conn = httplib.HTTPConnection(host)
+    conn.request(method = "POST", url = url_path, body = file_contents, headers = headers)
+    response = conn.getresponse()
+    data = response.read()
+    conn.close()
+    
+    # Output the status and response if debug mode is set
+    if debug:
+        print response.status, response.reason
+        print str(data)
+
+    # Check for success
+    if '<success>0</success>' in data:
+        success = False
+    elif '<success>1</success>' in data:
+        success = True
+    
+    # Look for a returned identifier in the data
+    if '<project_id>' in data:
+        entity_id = data[data.find('<project_id>')+len('<project_id>'):data.find('</project_id>')]
+    elif '<sample_id>' in data:
+        entity_id = data[data.find('<sample_id>')+len('<sample_id>'):data.find('</sample_id>')]
+
+    return success, entity_id
+
+def submit_metadata_for_study(key, study_id, debug = False):
     """This function takes the input options from the user and generates a url
     and request header for submitting to the MG-RAST cgi script"""
 
     # Get a copy of data access
     data_access = data_access_factory(DataAccessType.qiime_production)
 
-    # Some vars
-    # host = 'dunkirk.mcs.anl.gov'
-    #host = 'dev.metagenomics.anl.gov'
-    #host = 'metagenomics.anl.gov'
-    host = '140.221.76.10'
-    
-    #study_cgi_path = '/~wilke/service/%s/study' % key
-    #sample_cgi_path = '/~wilke/service/%s/sample' % key
-    #prep_cgi_path = '/~wilke/service/%s/preparation' % key
-    #sequence_cgi_path = '/~wilke/service/%s/reads' % key
-    
     study_cgi_path = '/service/%s/study' % key
     sample_cgi_path = '/service/%s/sample' % key
     prep_cgi_path = '/service/%s/preparation' % key
@@ -42,6 +102,12 @@ def submit_metadata_for_study(key, study_id):
     prep_file_path = '/tmp/mgrast_prep_metadata_%s.xml' % study_id
     sequence_file_path = '/tmp/mgrast_sequence_metadata_%s.xml' % study_id
     fasta_base_path = '/tmp/'
+    
+    # Attempt to reslve the MG-RAST host
+    host = resolve_host(study_cgi_path)
+    if host is None:
+        print 'Could not resolve host. Aborting.'
+        return
 
     ######################################################
     #### Study Submission
@@ -66,10 +132,7 @@ def submit_metadata_for_study(key, study_id):
     
     for item in study_info:
         value = study_info[item]
-        value = str(value).replace('<', '__lessthan__')
-        value = str(value).replace('>', '__greaterthan__')
-        value = str(value).replace('$', '__dollarsign__')
-        study_file.write('        <{0}>{1}</{0}>\n'.format(item, value))
+        study_file.write('        <{0}>{1}</{0}>\n'.format(item, clean_value_for_mgrast(value)))
     
     study_file.write('    </metadata>\n')
     study_file.write('</study>\n')
@@ -79,32 +142,12 @@ def submit_metadata_for_study(key, study_id):
     study_file = open(study_file_path, 'r')
     file_contents = study_file.read()
     study_file.close()
-
-    #print file_contents
-
-    # Submit the study file data
-    headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-    conn = httplib.HTTPConnection(host)
-    conn.request(method="POST", url=study_cgi_path, body=file_contents, headers=headers)
-    response = conn.getresponse()
-    data = response.read()
-    conn.close()
-
-    # Get the MG-RAST project_id
-    if '<success>0</success>' in data:
-        print 'Failed to add metadata to MG-RAST'
-        print response.status, response.reason
-        print str(data)
-        #return
-    
-    # Find the MG-RAST project id for this newly created study
-    if '<project_id>' in data:
-        project_id = data[data.find('<project_id>')+len('<project_id>'):data.find('</project_id>')]
-    else:
-        print 'Setting temporary project_id to 1'
-        project_id = 1
         
-    print 'MG-RAST project_id: %s' % project_id
+    # Send the data to MG-RAST via REST services
+    success, project_id = send_data_to_mgrast(study_cgi_path, file_contents, host, debug)
+    if not project_id:
+        print 'Failed to add study metadata to MG-RAST. Aborting...'
+        return
 
     ######################################################
     #### Sample Submission
@@ -146,11 +189,9 @@ def submit_metadata_for_study(key, study_id):
                 
             #print table_name, column_name, sample_id
             column_value = data_access.getSampleColumnValue(sample_id, table_name, column_name)
-            column_value = str(column_value).replace('<', '__lessthan__')
-            column_value = str(column_value).replace('>', '__greaterthan__')
-            column_value = str(column_value).replace('$', '__dollarsign__')
-            sample_file.write('            <{0}>{1}</{0}>\n'.format(column_name, column_value))
-            
+            sample_file.write('            <{0}>{1}</{0}>\n'.format(column_name, 
+                clean_value_for_mgrast(column_value)))
+                        
         sample_file.write('        </metadata>\n')
         sample_file.write('    </sample>\n')
         sample_file.write('</data_block>\n')
@@ -160,28 +201,13 @@ def submit_metadata_for_study(key, study_id):
         sample_file = open(sample_file_path, 'r')
         file_contents = sample_file.read()
         sample_file.close()
-        
-        #print file_contents
 
-        # Send the file to MG-RAST
-        headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-        conn = httplib.HTTPConnection(host)
-        conn.request(method="POST", url=sample_cgi_path, body=file_contents, headers=headers)
-        response = conn.getresponse()
-        print response.status, response.reason
-        data = response.read()
-        print str(data)
-        conn.close()
-        
-        # Find the MG-RAST project id for this newly created study
-        mgrast_sample_id = ''
-        if '<sample_id>' in data:
-            mgrast_sample_id = data[data.find('<sample_id>')+len('<sample_id>'):data.find('</sample_id>')]
-        else:
-            print 'No MG-RAST sample_id found'
-            project_id = 1
-    
-        print 'MG-RAST sample_id: %s' % mgrast_sample_id
+        # Send the data to MG-RAST via REST services
+        success, mgrast_sample_id = send_data_to_mgrast(sample_cgi_path, file_contents, host, debug)
+        if not success or not mgrast_sample_id:
+            print 'Failed to add sample metadata to MG-RAST for sample_id %s: %s. Skipping sample and its dependencies...'\
+                % (sample_id, sample_name)
+            continue
 
         ######################################################
         #### Sequence Prep Submission
@@ -212,10 +238,8 @@ def submit_metadata_for_study(key, study_id):
                     continue
                     
                 column_value = data_access.getPrepColumnValue(sample_id, row_number, table_name, column_name)
-                column_value = str(column_value).replace('<', '__lessthan__')
-                column_value = str(column_value).replace('>', '__greaterthan__')
-                column_value = str(column_value).replace('$', '__dollarsign__')
-                prep_file.write('            <{0}>{1}</{0}>\n'.format(column_name, column_value))
+                prep_file.write('            <{0}>{1}</{0}>\n'.format(column_name,
+                    clean_value_for_mgrast(column_value)))
             
             prep_file.write('        </metadata>\n')
             prep_file.write('    </sample_prep>\n')
@@ -227,17 +251,11 @@ def submit_metadata_for_study(key, study_id):
             file_contents = prep_file.read()
             prep_file.close()
         
-            #print file_contents
-
-            # Send the file to MG-RAST
-            headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-            conn = httplib.HTTPConnection(host)
-            conn.request(method="POST", url=prep_cgi_path, body=file_contents, headers=headers)
-            response = conn.getresponse()
-            print response.status, response.reason
-            data = response.read()
-            print str(data)
-            conn.close()
+            # Send the data to MG-RAST via REST services
+            success, entity_id = send_data_to_mgrast(prep_cgi_path, file_contents, host, debug)
+            if not success:
+                print 'Failed to add prep metadata to MG-RAST for sample_id %s. Skipping sample and its dependencies...' % sample_id
+                continue
 
             ######################################################
             #### Fasta Submission
@@ -270,15 +288,10 @@ def submit_metadata_for_study(key, study_id):
             file_contents = sequence_file.read()
             sequence_file.close()
         
-            #print file_contents
+            # Send the data to MG-RAST via REST services
+            success, entity_id = send_data_to_mgrast(prep_cgi_path, file_contents, host, debug)
+            if not success:
+                print 'Failed to add sequence data to MG-RAST for sample_id %s, row_number %s.'\
+                    % (sample_id, row_number)
 
-            # Send the file to MG-RAST
-            headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-            conn = httplib.HTTPConnection(host)
-            conn.request(method="POST", url=sequence_cgi_path, body=file_contents, headers=headers)
-            response = conn.getresponse()
-            print response.status, response.reason
-            data = response.read()
-            print str(data)
-            conn.close()
 
