@@ -22,8 +22,9 @@ def resolve_host(url_path):
         print 'Attempting DNS connection to: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-        conn.request(method = "POST", url = url_path, body = "", headers = headers)
+        conn.request(method = "POST", url = url_path, body = "connect test", headers = headers)
         response = conn.getresponse()
+        data = response.read()
         conn.close()
         
         # Make sure a 404 was not returned
@@ -42,7 +43,7 @@ def resolve_host(url_path):
         print 'Attempting IP connection to: %s' % host
         conn = httplib.HTTPConnection(host)
         headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-        conn.request(method = "POST", url = url_path, body = "", headers = headers)
+        conn.request(method = "POST", url = url_path, body = "connect test", headers = headers)
         response = conn.getresponse()
         data = response.read()
         conn.close()
