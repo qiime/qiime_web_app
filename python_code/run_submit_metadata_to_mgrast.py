@@ -15,32 +15,43 @@ from enums import DataAccessType
 from sample_export import export_fasta_from_sample
 
 def resolve_host(url_path):
+    data = ''
     host = '140.221.76.10'
-    conn = httplib.HTTPConnection(host)
-    headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-    conn.request(method = "POST", url = url_path, body = "", headers = headers)
-    response = conn.getresponse()
-    data = response.read()
-    conn.close()
-    
-    # Make sure a 404 was not returned
-    if '404' not in data:
-        return host
+
+    try:
+        host = '140.221.76.10'
+        conn = httplib.HTTPConnection(host)
+        headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
+        conn.request(method = "POST", url = url_path, body = "", headers = headers)
+        response = conn.getresponse()
+        data = response.read()
+        conn.close()
         
-    host = 'metagenomics.anl.gov'
-    conn = httplib.HTTPConnection(host)
-    headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-    conn.request(method = "POST", url = url_path, body = "", headers = headers)
-    response = conn.getresponse()
-    data = response.read()
-    conn.close()
+        # Make sure a 404 was not returned
+        if '404' not in data:
+            return host
+        else:
+            host = 'metagenomics.anl.gov'
+
+    except:
+        print 'Resolving host %s failed. trying next option...' % host
+        host = 'metagenomics.anl.gov'
     
-    # Make sure a 404 was not returned
-    if '404' not in data:
-        return host
+    try:
+        conn = httplib.HTTPConnection(host)
+        headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
+        conn.request(method = "POST", url = url_path, body = "", headers = headers)
+        response = conn.getresponse()
+        data = response.read()
+        conn.close()
         
-    else:
-        return None
+        # Make sure a 404 was not returned
+        if '404' not in data:
+            return host
+    except:
+        print 'Resolving host %s failed. Aborting...' % host
+        
+    return None
 
 def clean_value_for_mgrast(value):
     value = str(value).replace('<', '__lessthan__')
