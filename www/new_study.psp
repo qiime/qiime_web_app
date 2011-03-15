@@ -104,7 +104,7 @@ function check_study_name()
 list = qda.getListValues('Investigation Type')
 for item in sorted(list):
     item_text = item[1]
-    if item[1] == 'miens-survey':
+    if item[1] == 'mimarks-survey':
         # Our own annotation, done here so that we do not alter the MIENS fields in the database
         
         item_text += ' (e.g. 16S rRNA)'

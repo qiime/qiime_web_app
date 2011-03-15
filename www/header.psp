@@ -104,7 +104,7 @@ if sess.get('study_id'):
 
                 <ul class="subnav">
                     <li><a href="fusebox.psp?page=new_study.psp" target="<%=sess['frame_target']%>">Create New Study</a></li>
-                    <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIENS Tempaltes</a></li>
+                    <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIMARKS Tempaltes</a></li>
 
 <%
     if portal_type == 'qiime':

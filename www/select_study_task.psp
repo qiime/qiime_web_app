@@ -19,6 +19,10 @@ from enums import DataAccessType
 data_access = data_access_factory(DataAccessType.qiime_production)
 study_id = int(sess['study_id'])
 is_admin = int(sess['is_admin'])
+web_app_user_id = sess['web_app_user_id']
+portal_type = sess['portal_type']
+frame_target = sess['frame_target']
+study_name = sess['study_name']
 study_info = data_access.getStudyInfo(study_id)
 metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
@@ -26,7 +30,7 @@ mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
 %>
 
-    <h3>Selected Study: <%=sess['study_name']%></h3>
+    <h3>Selected Study: <%=study_name%></h3>
     <br/>
 
     <b>Study Options:</b>
@@ -43,9 +47,9 @@ can_delete = study_info['can_delete']
                 Select an Existing Study:<br/>
                 <select validate="required:true" name="study_names" id="study_names" onchange="document.forms['user_study'].submit();">
 <%
-study_names = data_access_factory(DataAccessType.qiime_production).getUserStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
+study_names = data_access_factory(DataAccessType.qiime_production).getUserStudyNames(web_app_user_id, is_admin, portal_type)
 for study_name in study_names:
-    if (sess['study_name'] == study_name[1]):
+    if (study_name == study_name[1]):
         req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '" selected>' + study_name[1] + '</option>\n')
     else:
         req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + study_name[1] + '</option>\n')
@@ -61,12 +65,12 @@ for study_name in study_names:
             <form id="create_new_template" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="load_template_fields.psp">
                 <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
-                Generate a MIENS-compliant metadata template</a>
+                Generate a MIMARKS-compliant metadata template</a>
             </form>
         </li>
         
 <%
-if sess['portal_type'] == 'qiime':
+if portal_type == 'qiime':
     # Indent
     
 %>
@@ -84,7 +88,7 @@ if sess['portal_type'] == 'qiime':
         req.write('<p/>')
         req.write('<ul>')
 
-        study_id = sess['study_id']
+        study_id = study_id
         sff_files = data_access.getSFFFiles(study_id)
         for sff_file in sff_files:
             file_base = os.path.basename(sff_file)
@@ -129,7 +133,7 @@ else:
         </li>
 
 <%
-if sess['portal_type'] == 'qiime':
+if portal_type == 'qiime':
     # Indent
     
 %>
@@ -148,8 +152,8 @@ if sess['portal_type'] == 'qiime':
                     Checking status...
                 </div>
                 <script type="text/javascript">
-                    checkQiimeJobStatus();
-                    var timer = setInterval( "checkQiimeJobStatus();", 4000 );
+                    //checkQiimeJobStatus();
+                    var timer = setInterval( "checkQiimeJobStatus()", 3000 );
                 </script>
             </ul>
             <br/>
@@ -202,8 +206,9 @@ if len(jobs) > 0 and is_admin == 1:
                     Checking status...
                 </div>
                 <script type="text/javascript">
-                    checkMGRASTJobStatus();
-                    var timer = setInterval( "checkMGRASTJobStatus();", 6000 );
+                    //checkMGRASTJobStatus();
+                    var timer = setInterval( "checkMGRASTJobStatus();", 4000 );
+
                 </script>
             </ul>
         </li>
@@ -245,11 +250,42 @@ if can_delete == 'y':
     <b>Tools:</b>
     <ul>
         <li>
-            <form id="open_ontolgoy_geo_tools" action="fusebox.psp" method="post" target="<%=sess['frame_target']%>">
-                <input type="hidden" name="page" id="page" value="tools_ontology_and_geo.psp">
-                <a href="" onclick="document.forms['open_ontolgoy_geo_tools'].submit(); return false;" target="<%=sess['frame_target']%>">
-                Ontology Lookup and Georeferencing Utility</a>
+            <form id="open_ontolgoy" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="tools_ontology.psp">
+                <a href="" onclick="document.forms['open_ontolgoy'].submit(); return false;" target="<%=frame_target%>">
+                Ontology Lookup</a>
+            </form>
+        </li>
+        <li>
+            <form id="open_geo" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="tools_geo.psp">
+                <a href="" onclick="document.forms['open_geo'].submit(); return false;" target="<%=frame_target%>">
+                Georeferencing Utility</a>
             </form>
         </li>
     </ul>
+
+<%
+if portal_type == 'emp' and is_admin == 1:
+    # indent
+    
+%>
+    
+    
+    <b>EMP Administrators:</b>
+    <ul>
+        <li>
+            <form id="view_emp_submissions" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="view_emp_submissions.psp">
+                <a href="" onclick="document.forms['view_emp_submissions'].submit(); return false;" target="<%=frame_target%>">
+                View EMP Submissions</a>
+            </form>
+        </li>
+    </ul>
+    
 </p>
+
+<%
+# End if
+
+%>

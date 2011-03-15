@@ -6,16 +6,16 @@ QIIME Web-Interface Overview Tutorial
 
 Introduction
 -------------
-This tutorial explains how to use the **QIIME** (Quantitative Insights Into Microbial Ecology) Web-Interface to process data from high-throughput 16S rRNA sequencing studies. The purpose of this tutorial is to provide a start-to-finish workflow, beginning with the creation of a study, uploading the corresponding SFF and MIENS-compliant metadata through generating a composite list of sequences, OTU table, and QIIME-formatted mapping file. With this information in hand, it is possible to determine biological and environmental factors that alter microbial community ecology in your experiment in comparison to other experiments.
+This tutorial explains how to use the **QIIME** (Quantitative Insights Into Microbial Ecology) Web-Interface to process data from high-throughput 16S rRNA sequencing studies. The purpose of this tutorial is to provide a start-to-finish workflow, beginning with the creation of a study, uploading the corresponding SFF and MIMARKS-compliant metadata through generating a composite list of sequences, OTU table, and QIIME-formatted mapping file. With this information in hand, it is possible to determine biological and environmental factors that alter microbial community ecology in your experiment in comparison to other experiments.
 
 As an example, we will not use data from a study of the response of mouse gut microbial communities to fasting (Crawford et al., 2009). At the end of our tutorial, we will be able to compare the community structure of control vs. fasted animals. In particular, we will be able to compare taxonomic profiles for each sample type, differences in diversity metrics within the samples and between the groups, and perform comparative clustering analysis to look for overall differences in the samples.
 
 To load and process our data, we will perform the following steps:
 
 * Create a unique study for our dataset
-* Generate MIENS-compliant metadata templates
+* Generate MIMARKS-compliant metadata templates
 * Use the Ontology Lookup and GeoReferencing Tool for filling in Ontology specific metadata fields
-* Upload MIENS-compliant metadata and corresponding SFF files
+* Upload MIMARKS-compliant metadata and corresponding SFF files
 * Create a meta-analysis
 * Select and generate Sequences file, OTU table and QIIME-formatted metadata file.
 
@@ -24,7 +24,7 @@ To load and process our data, we will perform the following steps:
 Essential Files
 -----------------
 
-MIENS-Compliant Metadata Files (.xls or .txt)
+MIMARKS-Compliant Metadata Files (.xls or .txt)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 These are the tab-delimited templates generated using the QIIME Web-Interface, once you have created a unique study for your experiment and identified the type of study (i.e., host-associated, human-gut, human-oral, etc.).
 
@@ -34,7 +34,7 @@ This is the 454-machine generated file which stores the sequencing trace data. T
 
 Create a Study
 ---------------
-Once the user has logged in, we can create a study, by clicking on the link "Create a New Study".  For the QIIME Web-Interface, a study is classified as one or more sequencing runs that are part of the same study, which means there will be one set of MIENS-compliant templates for one or more Sequencing Runs (SFFs).
+Once the user has logged in, we can create a study, by clicking on the link "Create a New Study".  For the QIIME Web-Interface, a study is classified as one or more sequencing runs that are part of the same study, which means there will be one set of MIMARKS-compliant templates for one or more Sequencing Runs (SFFs).
 
 .. image:: ../images/QWA_New_Study_1.png
     :align: center
@@ -46,13 +46,13 @@ Once redirected to the new study page, the user must create a unique Study Name.
     :align: center
     :width: 600 px
     
-Once a Study Name has been defined, the user must select the Investigation Type for their study (i.e. MIENS-survey, metagenome, virus, etc.), however; most commonly users will be submitting a 16S rRNA MIENS-survey.
+Once a Study Name has been defined, the user must select the Investigation Type for their study (i.e. MIMARKS-survey, metagenome, virus, etc.), however; most commonly users will be submitting a 16S rRNA MIMARKS-survey.
 
 .. image:: ../images/QWA_New_Study_3.png
     :align: center
     :width: 600 px
 
-Along with the Investigation Type, the user must select one or multiple environmental packages that their study comprises. These fields determine which MIENS fields are required for submission of the study.
+Along with the Investigation Type, the user must select one or multiple environmental packages that their study comprises. These fields determine which MIMARKS fields are required for submission of the study.
 
 .. image:: ../images/QWA_New_Study_4.png
     :align: center
@@ -70,42 +70,42 @@ Once all the fields have been filled out, the user must click the "Next" button.
     :align: center
     :width: 600 px
 
-Generate MIENS-Compliant Templates
+Generate MIMARKS-Compliant Templates
 ----------------------------------
-To create the MIENS-compliant templates the user should select the link "Generate a MIENS-compliant metadata template".
+To create the MIMARKS-compliant templates the user should select the link "Generate a MIMARKS-compliant metadata template".
 
-.. image:: ../images/QWA_Generate_MIENs_1.png
+.. image:: ../images/QWA_Generate_MIMARKS_1.png
     :align: center
     :width: 600 px
 
-On the next page, the user will be presented with a large HTML table, which lists all the appropriate MIENS-compliant fields.  Rows with the Pink background denote fields that are required (either by MIENS or depending on the package(s) corresponding to this study).  If the user has other information pertaining to their study and the field is not required, the user can select specific columns, to add to their templates, by clicking on the checkbox next to the left of each field.  We recommend that you select all fields that apply, since the more information you put into these templates, the more useful the data becomes, when inserted into the database.
+On the next page, the user will be presented with a large HTML table, which lists all the appropriate MIMARKS-compliant fields.  Rows with the Pink background denote fields that are required (either by MIMARKS or depending on the package(s) corresponding to this study).  If the user has other information pertaining to their study and the field is not required, the user can select specific columns, to add to their templates, by clicking on the checkbox next to the left of each field.  We recommend that you select all fields that apply, since the more information you put into these templates, the more useful the data becomes, when inserted into the database.
 
-.. image:: ../images/QWA_Generate_MIENs_2.png
+.. image:: ../images/QWA_Generate_MIMARKS_2.png
     :align: center
     :width: 700 px
 
 If there is a field that the user thinks may be in the database, but they do not see it in the table, they can start typing the word(s) in the input box at the bottom of the page.  This will search the database and show other fields that are present, using auto-complete functionality.  If you cannot find a field, then we recommend you add the column to your sample template and it will be parsed and added to the database.
 
-.. image:: ../images/QWA_Generate_MIENs_3.png
+.. image:: ../images/QWA_Generate_MIMARKS_3.png
     :align: center
     :width: 700 px
 
 Once you have checked all the fields that apply, you can click the "Generate Templates" button.
 
-.. image:: ../images/QWA_Generate_MIENs_4.png
+.. image:: ../images/QWA_Generate_MIMARKS_4.png
     :align: center
     :width: 700 px
 
 Once you have clicked "Generate Templates", you will be redirected to another page, where you can download the templates by clicking "Download zip archives of all files".
 
-.. image:: ../images/QWA_Generate_MIENs_5.png
+.. image:: ../images/QWA_Generate_MIMARKS_5.png
     :align: center
     :width: 600 px
     
 Ontology Lookup and Georeferencing Tool
 ---------------------------------------
 
-When filling out the MIENS-compliant metadata templates, some fields require ontological terminology.  To learn about which fields require ontological terminology, the user should refer to the field_reference template file. To aid in filling out these columns, we have developed an Ontology Lookup and GeoReferencing Tool. Initially, the user should fill in these fields with the terms they would associate to this field. To access this tool, the user should click on the Ontology Lookup and Georeferencing Utility link. 
+When filling out the MIMARKS-compliant metadata templates, some fields require ontological terminology.  To learn about which fields require ontological terminology, the user should refer to the field_reference template file. To aid in filling out these columns, we have developed an Ontology Lookup and GeoReferencing Tool. Initially, the user should fill in these fields with the terms they would associate to this field. To access this tool, the user should click on the Ontology Lookup and Georeferencing Utility link. 
 
 .. image:: ../images/QWA_Ontology_Geo_1.png
     :align: center
@@ -219,16 +219,16 @@ Then, the user can paste the list into their template (" |apple| +V" key on Mac 
     :width: 600 px
     
     
-Upload MIENS-Compliant Templates 
+Upload MIMARKS-Compliant Templates 
 -----------------------------------------
 
-To upload your MIENS-compliant metadata files, you must first zip the templates into a single archive. Then you must select the link Upload metadata to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
+To upload your MIMARKS-compliant metadata files, you must first zip the templates into a single archive. Then you must select the link Upload metadata to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
 
 .. image:: ../images/QWA_Upload_Meta_1.png
     :align: center
     :width: 600 px
 
-Once redirected, you may see an applet permission pop-up, where the user should click on the "Allow" button.  The reason for this message is that the browser is trying to verify the use of the java applet.  Once the applet has loaded, the user can drag-n-drop their MIENS-compliant template archive onto the applet, or click on the "Add..." button.
+Once redirected, you may see an applet permission pop-up, where the user should click on the "Allow" button.  The reason for this message is that the browser is trying to verify the use of the java applet.  Once the applet has loaded, the user can drag-n-drop their MIMARKS-compliant template archive onto the applet, or click on the "Add..." button.
 
 .. image:: ../images/QWA_Upload_Meta_2.png
     :align: center
@@ -297,7 +297,7 @@ This will redirect the user to another page, where they can observe the loading 
 Upload SFFs
 ------------
 
-To upload your SFF files, you must first zip one or more SFFs into a single archive, depending on the SFFs listed in the RUN_PREFIX of your MIENS-compliant metadata templates.  First you must select the link Upload SFF files to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
+To upload your SFF files, you must first zip one or more SFFs into a single archive, depending on the SFFs listed in the RUN_PREFIX of your MIMARKS-compliant metadata templates.  First you must select the link Upload SFF files to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
 
 .. image:: ../images/QWA_Upload_SFF_1.png
     :align: center

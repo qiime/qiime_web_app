@@ -9,6 +9,8 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Production"
 
 portal_type = sess['portal_type']
+is_admin = int(sess['is_admin'])
+frame_target = sess['frame_target']
 %>
 
 <br>
@@ -92,4 +94,35 @@ if sess['portal_type'] == 'qiime':
             </form>
             </li>
     </ul>
+    
+    
+    
+    
+<%
+if portal_type == 'emp' and is_admin == 1:
+    # indent
+    
+%>
+    
+    
+    <b>EMP Administrators:</b>
+    <ul>
+        <li>
+            <form id="view_emp_submissions" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="view_emp_submissions.psp">
+                <a href="" onclick="document.forms['view_emp_submissions'].submit(); return false;" target="<%=frame_target%>">
+                View EMP Submissions</a>
+            </form>
+        </li>
+    </ul>
+    
+</p>
+
+<%
+# End if
+
+%>    
+    
+    
+    
 </p>
