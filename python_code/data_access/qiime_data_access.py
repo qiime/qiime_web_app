@@ -1383,7 +1383,7 @@ class QiimeDataAccess(object):
                 mapping_file_header += column[0] + '\t'
             
             for row in results:
-                run_prefix = row[4]
+                run_prefix = row[3]
                 
                 # If this is the first time we've seen this run_prefix, create a new list 
                 # to hold the rows
