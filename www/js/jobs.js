@@ -35,7 +35,7 @@ function GetXmlHttpObject()
     return null;
 }
 
-function checkSplitLibrariesJobStatus()
+function checkQiimeJobStatus()
 {
     // check if browser can perform xmlhttp
     xmlhttp = GetXmlHttpObject()
@@ -45,8 +45,8 @@ function checkSplitLibrariesJobStatus()
         return;
     }
     
-    div_name ="job_status_div";
-    var url = "check_job_status.psp?job_type_id="+job_type_id;
+    div_name ="qiime_status_div";
+    var url = "check_job_status.psp?job_type_id=3";
 
     xmlhttp.onreadystatechange=function()
     {
@@ -72,7 +72,7 @@ function checkMGRASTJobStatus()
     }
     
     div_name = "mg_rast_statis_div";
-    var url = "check_job_status.psp?job_type_id="+job_type_id;
+    var url = "check_job_status.psp?job_type_id=6";
 
     xmlhttp.onreadystatechange=function()
     {

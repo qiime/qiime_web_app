@@ -26,6 +26,7 @@ def resolve_host(url_path):
         response = conn.getresponse()
         data = response.read()
         conn.close()
+        print 'data is: %s ' % data
         
         # Make sure a 404 was not returned
         if '404' not in data and data != '':
@@ -47,7 +48,8 @@ def resolve_host(url_path):
         response = conn.getresponse()
         data = response.read()
         conn.close()
-        
+        print 'data is: %s ' % data
+
         # Make sure a 404 was not returned
         if '404' not in data and data != '':
             print 'IP attempt successful.'

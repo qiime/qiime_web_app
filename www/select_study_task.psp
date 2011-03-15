@@ -141,16 +141,15 @@ if sess['portal_type'] == 'qiime':
         # indent
 %>
 
-            Submitted Jobs:
+            Submitted Qiime Jobs:
             <br/>
             <ul>
-                <div name="job_status_div" id="job_status_div">
-                    <!-- Contents will be replaced by javascript dynamically -->
+                <div id="qiime_status_div">
                     Checking status...
                 </div>
                 <script type="text/javascript">
-                    checkSplitLibrariesJobStatus();
-                    var timer = setInterval( "checkSplitLibrariesJobStatus();", 5000 );
+                    checkQiimeJobStatus();
+                    var timer = setInterval( "checkQiimeJobStatus();", 4000 );
                 </script>
             </ul>
             <br/>
@@ -199,13 +198,12 @@ if len(jobs) > 0 and is_admin == 1:
             Exporting to MG-RAST...
             <br/>
             <ul>
-                <div name="mg_rast_statis_div" id="mg_rast_statis_div">
-                    <!-- Contents will be replaced by javascript dynamically -->
+                <div id="mg_rast_statis_div">
                     Checking status...
                 </div>
                 <script type="text/javascript">
                     checkMGRASTJobStatus();
-                    var timer = setInterval( "checkMGRASTJobStatus();", 5000 );
+                    var timer = setInterval( "checkMGRASTJobStatus();", 6000 );
                 </script>
             </ul>
         </li>

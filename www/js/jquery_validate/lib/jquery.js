@@ -3033,7 +3033,7 @@ jQuery( window ).bind( 'unload', function(){
 		
 		// Verify style float existence
 		// (IE uses styleFloat instead of cssFloat)
-		cssFloat: !!a.style/qiime.cssFloat,
+		// cssFloat: !!a.style/qiime.cssFloat,
 
 		// Will be defined later
 		scriptEval: false,
