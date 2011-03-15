@@ -35,7 +35,7 @@ function GetXmlHttpObject()
     return null;
 }
 
-function checkJobStatus(job_type_id)
+function checkSplitLibrariesJobStatus()
 {
     // check if browser can perform xmlhttp
     xmlhttp = GetXmlHttpObject()
@@ -45,19 +45,7 @@ function checkJobStatus(job_type_id)
         return;
     }
     
-    div_name = ''
-    switch(job_type_id)
-    {
-        case 3:
-            div_name = "job_status_div";
-            break;
-        case 6:
-            div_name = "mg_rast_statis_div";
-            break;
-        default:
-            break;
-    }
-    
+    div_name ="job_status_div";
     var url = "check_job_status.psp?job_type_id="+job_type_id;
 
     xmlhttp.onreadystatechange=function()
@@ -73,6 +61,31 @@ function checkJobStatus(job_type_id)
     xmlhttp.send(null);
 }
 
+function checkMGRASTJobStatus()
+{
+    // check if browser can perform xmlhttp
+    xmlhttp = GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+    
+    div_name = "mg_rast_statis_div";
+    var url = "check_job_status.psp?job_type_id="+job_type_id;
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+        }
+    }
+    
+    // perform a GET 
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send(null);
+}
 
 // This function is for showing the mapping and OTU tables when using meta-analysis
 function checkMetaAnalysisStatus()

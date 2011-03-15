@@ -150,7 +150,7 @@ if sess['portal_type'] == 'qiime':
                 </div>
                 <script type="text/javascript">
                     checkJobStatus(3);
-                    var timer = setInterval( "checkJobStatus(3);", 5000 );
+                    var timer = setInterval( "checkSplitLibrariesJobStatus();", 5000 );
                 </script>
             </ul>
             <br/>
@@ -205,7 +205,7 @@ if len(jobs) > 0 and is_admin == 1:
                 </div>
                 <script type="text/javascript">
                     checkJobStatus(6);
-                    var timer = setInterval( "checkJobStatus(6);", 5000 );
+                    var timer = setInterval( "checkMGRASTJobStatus();", 5000 );
                 </script>
             </ul>
         </li>
