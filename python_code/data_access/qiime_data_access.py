@@ -649,6 +649,21 @@ class QiimeDataAccess(object):
     # Metadata
     #####################################
     
+    def getEMPStudyList(self):
+        """ Returns a list of emp studies
+        """
+        try:
+            studies = []
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_emp_study_list', [results])
+            for row in results:
+                # study_id, project_name, study_title, email, sample_count, metadata_complete
+                studies.append((row[0], row[1], row[2], row[3], row[4], row[5]))
+            return studies
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+    
     def getListFieldValue(vocab_value_id):
         """ Returns a list env_package types associated to this study
         """
