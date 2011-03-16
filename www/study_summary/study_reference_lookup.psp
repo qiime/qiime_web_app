@@ -33,7 +33,8 @@ if not (sess.has_key('username')):
 #Get the values from the form fields
 study_id=str(form["study_id"]);
 study_name=str(form["study_name"]);
-
+sess['study_id']=study_id
+sess.save()
 #Try to get the summary info from the DB and write to the page.
 try:
     #Get summary info from DB
@@ -41,14 +42,13 @@ try:
     results=data_access.getQiimeSffDbSummary(study_id)
     for row in results:
         analysis_data.append(row)
-        
-    #Write the output to the screen
-    req.write(print_study_info_and_values_table(analysis_data))
 
 except:
     #if all the data is not present, the report that data is not available
     req.write('<h3>'+str(study_name) + \
             ':</h3><em style="color:red;"> No data currently available!</em>')
 
+#Write the output to the screen
+req.write(print_study_info_and_values_table(analysis_data))
 #
 %>
