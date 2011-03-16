@@ -1,0 +1,76 @@
+<html>
+<head><title>Metadata Download</title></head>
+<body>
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+import os
+from write_mapping_file import write_mapping_file
+from os import system
+script_description="""This script exports a full mapping file for the user to 
+download."""
+
+
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+if not (sess.has_key('username')):
+	sess.invalidate()
+	psp.redirect('../index.psp')
+
+
+#Get the values from the session fields
+study_id=sess.get('study_id');
+metadata_dir='study_'+study_id+'_metadata'
+data_output_dir=os.path.join(sess.get('user_dir'),'study_%s' % (study_id));
+link_output_dir=os.path.join(sess.get('db_root'),'study_%s' % (study_id));
+output_dir=os.path.join(data_output_dir,metadata_dir);
+db_dir=os.path.join(link_output_dir,metadata_dir);
+
+#create dir, if one does not exist
+if os.path.exists(output_dir):
+    dir_path=output_dir
+else:
+    try:
+        os.makedirs(output_dir)
+    except OSError:
+        pass
+
+#get all the metadata, along with the run_prefixes used for filenames
+run_prefixes=write_mapping_file(study_id,True,output_dir,False)
+
+req.write('<p>The following metadata files are broken down by '+\
+          'sequencing run (or lane), since barcodes must be unique for each '+\
+          'sequencing run, otherwise demultiplexing will not work properly.'+\
+          '<p><p><u><b>Files:</b></u><br>')
+#create file links for each mapping file
+for i in run_prefixes:
+    fname='study_'+study_id+'_run_'+i+'_mapping.txt'
+    fpath=os.path.join('../'+db_dir,fname)
+    req.write('<a href="'+fpath+'" target="_blank">'+fname+'</a><br>')
+    
+req.write('</p>')
+  
+#zip up the mapping files, so user can download all.  
+zip_loc=output_dir + '.zip '
+zip_fname='study_'+study_id+'_metadata.zip'
+zip_fpath=os.path.join('../'+link_output_dir,zip_fname)
+cmd='zip -rJjX %s %s' % (zip_loc,output_dir)
+os.system(cmd)
+req.write('<p><u><b>All Files (zipped)</b></u><br>')
+req.write('<a href="'+zip_fpath+'" target="_blank">'+zip_fname+'</a><br>')
+req.write('</p>')
+%>
+</body>
+</html>
