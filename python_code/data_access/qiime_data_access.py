@@ -549,6 +549,11 @@ class QiimeDataAccess(object):
                 study_info['mapping_file_complete'] = row[15]
                 study_info['miens_compliant'] = row[16]
                 study_info['can_delete'] = row[17]
+                study_info['emp_score'] = row[18]
+                study_info['number_samples_promised'] = row[19]
+                study_info['number_samples_collected'] = row[20]
+                study_info['principal_investigator'] = row[21]
+                study_info['sample_count'] = row[22]
             return study_info
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -658,9 +663,45 @@ class QiimeDataAccess(object):
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_emp_study_list', [results])
             for row in results:
-                # study_id, project_name, study_title, email, sample_count, metadata_complete
-                studies.append((row[0], row[1], row[2], row[3], row[4], row[5]))
+                # study_id, sample_id, sample_name, project_name, study_title, email, sample_count, metadata_complete,
+                # study_score, sample_score, s.number_samples_promised, s.number_samples_in_freezer, 
+                # s.principal_investigator
+                studies.append((row[0], row[1], row[2], row[3], row[4], row[5],
+                    row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
             return studies
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            
+    def getEMPSampleList(self, study_id):
+        """ Returns a list of emp studies
+        """
+        try:
+            samples = []
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_emp_sample_list', [study_id, results])
+            for row in results:
+                # sample_id, emp_score, sample_name
+                samples.append((row[0], row[1], row[2]))
+            return samples
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            
+    def updateEMPSampleData(self, sample_id, sample_score):
+        """ Updates the sample emp database fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.update_emp_sample_data', [sample_id, sample_score])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            
+    def updateEMPStudyData(self, study_id, study_score):
+        """ Updates the emp database fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.update_emp_study_data', [study_id, study_score])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
     

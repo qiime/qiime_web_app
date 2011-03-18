@@ -1,0 +1,7 @@
+<column width="150" type="combo" xmlcontent="1" …>TEXT
+	<option value="1">1 star (worst)</option>
+    <option value="2">2 star</option>
+    <option value="3">3 star</option>
+	<option value="4">4 star</option>
+	<option value="5">5 star (best)</option>
+  </column>

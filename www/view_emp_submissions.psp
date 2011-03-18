@@ -1,0 +1,186 @@
+<%
+__author__ = 'Doug Wendel'
+__copyright__ = 'Copyright 2009-2010, Qiime Web Analysis'
+__credits__ = ['Doug Wendel']
+__license__ = 'GPL'
+__version__ = '1.0.0.dev'
+__maintainer__ = ['Doug Wendel']
+__email__ = 'wendel@colorado.edu'
+__status__ = 'Development'
+%>
+
+<link rel="STYLESHEET" type="text/css" href="dhtmlxGrid/codebase/dhtmlxgrid.css">
+<script src="dhtmlxGrid/codebase/dhtmlxcommon.js"></script>
+<script src="dhtmlxGrid/codebase/dhtmlxgrid.js"></script>
+<script src="dhtmlxGrid/codebase/dhtmlxgridcell.js"></script>
+<script>
+    var studyGrid;
+    var sampleGrid;
+    
+    function doInitGrid()
+    {
+        ////////////////////////////////////
+        // Study Grid
+        ////////////////////////////////////
+        studyGrid = new dhtmlXGridObject('study_grid_container');
+        studyGrid.enableMultiselect(true);
+        studyGrid.setImagePath("dhtmlxGrid/codebase/imgs/");
+        studyGrid.setHeader("Study ID,Study Score,Project Name,Study Title,# of Samples,Metadata Complete,# Samples Promised,# Samples Collected,PI");
+        // Hide the Study ID
+        //studyGrid.setInitWidths("0");
+        studyGrid.setSkin("light");
+                
+        // Sorting types
+        studyGrid.setColSorting("int,int,str,str,int,str,int,int,str");
+        
+        // Seting editing types
+        studyGrid.setColTypes("ro,co,ro,ro,ro,ro,ro,ro,ro");
+
+        // Event handling
+        studyGrid.attachEvent("onRowSelect", doOnStudyRowSelected);
+        studyGrid.attachEvent("onEditCell", doOnStudyEditCell);
+        
+        // Init the grid
+        studyGrid.init();
+        
+        combo = studyGrid.getCombo(1);
+        combo.put("1", "1");
+        combo.put("2", "2");
+        combo.put("3", "3");
+        combo.put("4", "4");
+        combo.put("5", "5");
+        
+        // Data load
+        studyGrid.load("load_emp_studies.psp", "jsarray");
+        
+        ////////////////////////////////////
+        // Sample Grid
+        ////////////////////////////////////
+        sampleGrid = new dhtmlXGridObject('sample_grid_container');
+        sampleGrid.setImagePath("dhtmlxGrid/codebase/imgs/");
+        sampleGrid.setHeader("Sample ID,Sample Score,Sample Name");
+        // Hide the study and sample IDs
+        sampleGrid.setInitWidths("0");
+        sampleGrid.setSkin("light");
+                
+        // Sorting types
+        sampleGrid.setColSorting("int,int,str");
+        
+        // Seting editing types
+        sampleGrid.setColTypes("ro,co,ro");
+        
+        // Event handling
+        sampleGrid.attachEvent("onRowSelect", doOnSampleRowSelected);
+        sampleGrid.attachEvent("onEditCell", doOnSampleEditCell);
+        
+        // Init the grid
+        sampleGrid.init();
+        
+        combo = sampleGrid.getCombo(1);
+        combo.put("1", "1");
+        combo.put("2", "2");
+        combo.put("3", "3");
+        combo.put("4", "4");
+        combo.put("5", "5");
+    }
+        
+    function doOnSampleRowSelected(rowID, celInd)
+    {
+        document.getElementById("sample_status_div").innerHTML = "Selected row ID is " + 
+            rowID + "\n<br/>User clicked cell with index "+ celInd
+    }
+    
+    function doOnSampleEditCell(stage, rId, cInd, nValue, oValue)
+    {
+        // Skip if the edit wasn't completed
+        if (stage != 2)
+            return;
+        
+        // Find the study_id for this row:
+        var sample_id = sampleGrid.cells(rId, 0).getValue();
+        var sample_score = sampleGrid.cells(rId, 1).getValue();
+
+        // Update data on the server
+        updateEMPSampleData(sample_id, sample_score);
+
+        document.getElementById("sample_status_div").innerHTML = "Sample score set to '" + sample_score + "'"
+        
+        return true;
+    }
+    
+    function doOnStudyRowSelected(rowID, celInd)
+    {
+        var selId = studyGrid.getSelectedId();
+        var study_id = studyGrid.cells(selId, 0).getValue();
+        var project_name = studyGrid.cells(selId, 2).getValue();
+        document.getElementById("study_status_div").innerHTML = "Selected Study: '" + project_name + "'";
+        sampleGrid.clearAll();
+        sampleGrid.load("load_emp_samples.psp?study_id=" + study_id, "jsarray");
+    }
+        
+    function doOnStudyEditCell(stage, rId, cInd, nValue, oValue)
+    {
+        // Skip if the edit wasn't completed
+        if (stage != 2)
+            return;
+        
+        // Find the study_id for this row:
+        var study_id = studyGrid.cells(rId, 0).getValue();
+        var study_score = studyGrid.cells(rId, 1).getValue();
+        var sample_id = 0; // Not needed for this call
+
+        // Update data on the server
+        updateEMPStudyData(study_id, study_score);
+        
+        document.getElementById("study_status_div").innerHTML = "Study score set to '" + study_score + "'"        
+        
+        return true;
+    }
+    
+    function GetXmlHttpObject()
+    {
+        if (window.XMLHttpRequest)
+        {
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            return new XMLHttpRequest();
+        }
+
+        if (window.ActiveXObject)
+        {
+            // code for IE6, IE5
+            return new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        return null;
+    }
+    
+    function updateEMPSampleData(sample_id, sample_score)
+    {
+        xmlhttp = GetXmlHttpObject()
+        var url = "update_emp_sample_data.psp?sample_id=" + sample_id + "&sample_score=" + sample_score;
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send(null);
+    }
+    
+    function updateEMPStudyData(study_id, study_score)
+    {
+        xmlhttp = GetXmlHttpObject()
+        var url = "update_emp_study_data.psp?study_id=" + study_id + "&study_score=" + study_score;
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send(null);
+    }
+    
+</script>
+
+<h3>EMP Studies</h3>
+<div id="study_grid_container" style="width:100%;height:200px;"></div>
+<br/>
+<div id="study_status_div" style="width:90%;"></div>
+
+<h3>Samples For Selected Studies</h3>
+<div id="sample_grid_container" style="width:100%;height:200px;"></div>
+<br/>
+<div id="sample_status_div" style="width:90%;"></div>
+
+<%
+req.write('<script>doInitGrid();</script>')
+%>
