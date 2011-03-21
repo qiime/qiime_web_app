@@ -66,6 +66,9 @@ script_info['optional_options'] = [\
     make_option('-c','--write_to_all_fasta',action='store_true',\
            dest='write_to_all_fasta',default=False,\
            help='Copy the split_library seqs to folder for concatenation [default: %default]'),\
+    make_option('-d','--submit_to_test_db',help='Choose to submit data to Test DB [default: %default]',default='False'),\
+    make_option('-q','--sequencing_platform',help='This is the sequencing technology used.',default='FLX'),\
+    make_option('-r','--process_only',help='This is whether to only process the data without loading [default: %default]',default='False'),\
 ]
 script_info['version'] = __version__
 
@@ -84,7 +87,16 @@ def main():
     print_only = opts.print_only
     write_to_all_fasta=opts.write_to_all_fasta
     convert_to_flx=opts.convert_to_flx
-
+    submit_to_test_db=opts.submit_to_test_db
+    sequencing_platform=opts.sequencing_platform
+    process_only=opts.process_only
+    
+    if sequencing_platform=='TITANIUM':
+        convert_to_flx=True
+    else:
+        convert_to_flx=False
+        
+        
     try:
         parameter_f = open(opts.parameter_fp)
     except IOError:
@@ -135,15 +147,20 @@ def main():
                         status_update_callback=status_update_callback)
     print 'Completed run_chain_pick_otus.'
 
-    # Load the data into the database
-    data_access = data_access_factory(DataAccessType.qiime_production)
-
-    # Get all of the fasta files
-    print 'Submitting SFF data to database...'
-    analysis_id = submit_sff_and_split_lib(data_access, ','.join(fasta_file_paths), study_id)
-    print 'Submitting OTU data to database...'
-    load_otu_mapping(data_access, output_dir, analysis_id)
-    print 'Completed database loading.'
+    if submit_to_test_db == 'False':
+        # Load the data into the database
+        data_access = data_access_factory(DataAccessType.qiime_production)
+    else:
+        # Load the data into the database 
+        data_access = data_access_factory(DataAccessType.qiime_test)
+        
+    if process_only == 'False':
+        # Get all of the fasta files
+        print 'Submitting SFF data to database...'
+        analysis_id = submit_sff_and_split_lib(data_access, ','.join(fasta_file_paths), study_id)
+        print 'Submitting OTU data to database...'
+        load_otu_mapping(data_access, output_dir, analysis_id)
+        print 'Completed database loading.'
 
 if __name__ == "__main__":
     main()

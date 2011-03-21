@@ -16,18 +16,20 @@ from data_access_connections import data_access_factory
 from enums import DataAccessType
 import os
 
-def submitJob(study_id, user_id, param_file, mapping_file, sff_files, data_access):
+def submitJob(study_id, user_id, param_file, mapping_file, sequencing_platform, sff_files, process_only,submit_to_test_db,data_access):
     # Set up the parameters
     params = []
     params.append('Mapping=%s' % mapping_file)
     params.append('ParamFile=%s' % param_file)
     params.append('SFF=%s' % ','.join(sff_files))
     params.append('StudyID=%s' % str(study_id))
+    params.append('SeqPlatform=%s' % str(sequencing_platform).upper())
+    params.append('ProcessOnly=%s' % str(process_only))
+    params.append('SubmitToTestDB=%s' % str(submit_to_test_db))
     job_input = '!!'.join(params)
 
     # Submit the job
     job_id = data_access.createTorqueJob('ProcessSFFHandler', job_input, user_id, study_id)
-    
     # Make sure a legit job_id was created. If not, inform the user there was a problem
     if job_id < 0:
         raise Exception('There was an error creating the job. Please contact the system administrator.')
@@ -88,12 +90,15 @@ def writeMappingFiles(study_id, data_access, mapping_file_dir):
     mapping_files = data_access.getMappingFiles(study_id)
     return mapping_files
 
-def submitJobsToQiime(study_id, user_id, mapping_file_dir):
+def submitJobsToQiime(study_id, user_id, mapping_file_dir,process_only,submit_to_test_db):
     # Instantiate one copy of data access for this process
     data_access = data_access_factory(DataAccessType.qiime_production)
     
     # Get the SFF files associated to this study
     sff_files = data_access.getSFFFiles(study_id)
+    
+    # Get the SFF files associated to this study
+    sequencing_platform = data_access.getStudyPlatform(study_id)
     
     # Generate the mapping files
     mapping_files = writeMappingFiles(study_id, data_access, mapping_file_dir)
@@ -135,4 +140,4 @@ def submitJobsToQiime(study_id, user_id, mapping_file_dir):
     
     # Submit jobs to the queue
     for mapping_file in file_map:
-        submitJob(study_id, user_id, param_file, mapping_file, file_map[mapping_file], data_access)
+        submitJob(study_id, user_id, param_file, mapping_file, sequencing_platform, file_map[mapping_file],process_only,submit_to_test_db, data_access)

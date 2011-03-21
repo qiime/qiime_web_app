@@ -35,7 +35,7 @@ class QiimeDataAccess(object):
             raise ValueError('connections is None. Cannot instantiate QiimeDataAccess')
             
         self.getMetadataDatabaseConnection = connections.getMetadataDatabaseConnection
-        self.getOntologyDatabaseConnection = connections.fOntologyDatabaseConnection
+        self.getOntologyDatabaseConnection = connections.getOntologyDatabaseConnection
         self.getSFFDatabaseConnection = connections.getSFFDatabaseConnection
         
     #####################################
