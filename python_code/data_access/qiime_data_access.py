@@ -35,7 +35,7 @@ class QiimeDataAccess(object):
             raise ValueError('connections is None. Cannot instantiate QiimeDataAccess')
             
         self.getMetadataDatabaseConnection = connections.getMetadataDatabaseConnection
-        self.getOntologyDatabaseConnection = connections.getOntologyDatabaseConnection
+        self.getOntologyDatabaseConnection = connections.fOntologyDatabaseConnection
         self.getSFFDatabaseConnection = connections.getSFFDatabaseConnection
         
     #####################################
@@ -426,7 +426,28 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+    #
+    def getStudyPlatform(self,study_id):
+        """ Returns a Run Prefix for Sample
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            db_output=[]
+            con.cursor().callproc('qiime_assets.get_study_platform',\
+                                                    [study_id,results])
+                                                                
+            run_prefix = ''
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    study_platform=row[0]
+            return study_platform
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
     def getStudiesByMetaAnalysis(self,meta_analysis_id):
         """ Returns a list of study ids by meta_analysis id
         """
