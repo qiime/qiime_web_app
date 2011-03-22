@@ -178,6 +178,15 @@ __status__ = 'Development'
     
 </script>
 
+<h2>Manage EMP Studies</h2>
+<h4>
+<ul>
+<li>Sort by any column</li>
+<li>Double-click the score field to assign a score</li>
+<li>Select a study to display its samples</li>
+</ul>
+</h4>
+<br/>
 <h3>EMP Studies</h3>
 <div id="study_grid_container" style="width:100%;height:200px;"></div>
 <br/>
