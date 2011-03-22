@@ -58,17 +58,24 @@ __status__ = 'Development'
         ////////////////////////////////////
         sampleGrid = new dhtmlXGridObject('sample_grid_container');
         sampleGrid.setImagePath("dhtmlxGrid/codebase/imgs/");
-        sampleGrid.setHeader("Sample ID,Sample Score,Sample Name");
+        
+        
+        
+
+        
+        sampleGrid.setHeader("Sample ID,Sample Score,Sample Name,description,altitude,samp_size,temp,samp_store_temp,country,depth,elevation,env_biome,env_feature,env_matter,ph,latitude,longitude,chem_administration,samp_store_loc");
+        //  description, altitude, samp_size,
+        //  temp, samp_store_temp, country, depth, elevation, env_biome, 
+        //  env_feature, env_matter, ph, latitude, longitude, chem_administration, 
+        //  samp_store_loc
+        
+        sampleGrid.setColSorting("int,int,str,str,int,str,int,int,str,int,int,str,str,str,int,int,int,str,str");
+        sampleGrid.setColTypes("ro,co,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
+        
         // Hide the study and sample IDs
-        sampleGrid.setInitWidths("0");
+        //sampleGrid.setInitWidths("0");
         sampleGrid.setSkin("light");
-                
-        // Sorting types
-        sampleGrid.setColSorting("int,int,str");
-        
-        // Seting editing types
-        sampleGrid.setColTypes("ro,co,ro");
-        
+
         // Event handling
         sampleGrid.attachEvent("onRowSelect", doOnSampleRowSelected);
         sampleGrid.attachEvent("onEditCell", doOnSampleEditCell);
@@ -177,7 +184,7 @@ __status__ = 'Development'
 <div id="study_status_div" style="width:90%;"></div>
 
 <h3>Samples For Selected Studies</h3>
-<div id="sample_grid_container" style="width:100%;height:200px;"></div>
+<div id="sample_grid_container" style="width:100%;height:400px;"></div>
 <br/>
 <div id="sample_status_div" style="width:90%;"></div>
 

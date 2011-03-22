@@ -702,8 +702,14 @@ class QiimeDataAccess(object):
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_emp_sample_list', [study_id, results])
             for row in results:
-                # sample_id, emp_score, sample_name
-                samples.append((row[0], row[1], row[2]))
+                # sample_id, emp_score, sample_name, description, altitude, samp_size,
+                # temp, samp_store_temp, country, depth, elevation, env_biome, env_feature, 
+                # env_matter, ph, latitude, longitude, chem_administration, samp_store_loc
+                samples.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 
+                row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], 
+                row[15], row[16], row[17], row[18]))
+                
+                
             return samples
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
