@@ -86,8 +86,9 @@ if templates != None:
         req.write('<script type="text/javascript">document.forms["metadata_form"].submit();</script>')
     elif draw_submit and not forward:
         req.write('<p/>')
-        req.write('<input type="submit" id="metadata_submit" value="Submit Validated Metadata">&nbsp;&nbsp;or&nbsp;&nbsp;') 
-        req.write('<input type="button" value="Submit With Validation Errors" onClick="submitInvalidMetadata();"><br/>')
+        req.write('<input type="submit" id="metadata_submit" value="Submit Validated Metadata">') 
+        if portal_type == 'emp':
+            req.write('&nbsp;&nbsp;or&nbsp;&nbsp;<input type="button" value="Submit With Validation Errors" onClick="submitInvalidMetadata();"><br/>')
         req.write('<p/>')
         
     # End if
