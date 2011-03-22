@@ -671,6 +671,28 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def addTemplateFile(self, study_id, template_file_path):
+        """ adds a new mapping file to the study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.add_template_file', [study_id, template_file_path])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def clearStudyTemplates(self, study_id):
+        """ adds a new mapping file to the study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.clear_study_templates', [study_id])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
     #####################################
     # Metadata
     #####################################
@@ -1426,6 +1448,21 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+        
+    def getStudyTemplates(self, study_id):
+        """ Gets a list of template files for this study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            items = []
+            con.cursor().callproc('qiime_assets.get_study_templates', [study_id, results])
+            for row in results:
+                items.append(row[0])
+            return items
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False        
         
     def getJobInfo(self, study_id,job_type):
         """ Returns submits a job to the queue and returns the job_id

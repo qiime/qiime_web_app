@@ -120,9 +120,38 @@ __status__ = 'Development'
         var selId = studyGrid.getSelectedId();
         var study_id = studyGrid.cells(selId, 0).getValue();
         var project_name = studyGrid.cells(selId, 2).getValue();
-        document.getElementById("study_status_div").innerHTML = "Selected Study: '" + project_name + "'";
+        var sample_count = studyGrid.cells(selId, 4).getValue();
+        var metadata_complete = studyGrid.cells(selId, 5).getValue();
         sampleGrid.clearAll();
-        sampleGrid.load("load_emp_samples.psp?study_id=" + study_id, "jsarray");
+        
+        if (sample_count > 0)
+        {
+            document.getElementById("study_status_div").innerHTML = "";
+            sampleGrid.load("load_emp_samples.psp?study_id=" + study_id, "jsarray");
+        }
+        else if (metadata_complete == "i")
+        {
+            xmlhttp = GetXmlHttpObject()
+            div_name ="study_status_div";
+            var url = "load_metadata_templates.psp?study_id=" + study_id;
+
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4)
+                {
+                    document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+                }
+            }
+    
+            // perform a GET 
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send(null);
+        }
+        else
+        {
+            document.getElementById("study_status_div").innerHTML = "Selected Study '" + project_name + "'" +
+                " has no uploaded samples.";
+        }
     }
         
     function doOnStudyEditCell(stage, rId, cInd, nValue, oValue)

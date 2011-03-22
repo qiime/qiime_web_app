@@ -76,6 +76,11 @@ if len(files) != 3:
     for item in files:
         req.write(item + '<br/>')
 
+# Clear and re-insert our study tempaltes
+data_access.clearStudyTemplates(study_id)
+for filename in files:
+    data_access.addTemplateFile(study_id, filename)
+
 # Read in the files and put into da bucket of values
 validated_values = {}
 for name in files:

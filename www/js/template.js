@@ -20,6 +20,15 @@ function testMe()
     alert("I work, there for I am.");
 }
 
+function submitInvalidMetadata()
+{
+    ans = confirm('Are you sure you wish to submit your non-validated metadata? Your submission may receive less attention that fully-validated metadata sets if you proceed.');
+    if (ans)
+    {
+        document.forms['invalid_metadata_form'].submit();
+    }
+}
+
 function validateCorrectedMetadata()
 {
     // Look for all fields that are editable. Check if the color is set to valid or

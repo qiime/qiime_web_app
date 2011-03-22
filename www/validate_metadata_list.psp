@@ -7,6 +7,9 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
+
+from hashlib import md5
+from metadata_table import *
 %>
 
 <%@ include file="header.psp" %>
@@ -15,14 +18,20 @@ __status__ = "Development"
 
 <h2>Metadata Validation</h2>
 
+<form target="_top" id="invalid_metadata_form" method="post" action="submit_invalid_metadata.psp">
+<%
+templates = sess["templates"]
+for template in templates:
+    req.write('<input type="hidden" id="{0}" name="{0}" value="{0}">\n'.format(template))
+
+# End indent
+%>
+</form>
+
 <form target="_top" name="metadata_form" id="metadata_form" method="post" action="fusebox.psp" onsubmit="return validateCorrectedMetadata();">
 <input type="hidden" id="page" name="page" value="submit_corrected_metadata.psp"/>
 
 <%
-from hashlib import md5
-from metadata_table import *
-
-templates = sess["templates"]
 forward = True
 
 if templates != None:
@@ -77,7 +86,8 @@ if templates != None:
         req.write('<script type="text/javascript">document.forms["metadata_form"].submit();</script>')
     elif draw_submit and not forward:
         req.write('<p/>')
-        req.write('<input type="submit" id="metadata_submit" value="Submit Metadata"><br/>')
+        req.write('<input type="submit" id="metadata_submit" value="Submit Validated Metadata">&nbsp;&nbsp;or&nbsp;&nbsp;') 
+        req.write('<input type="button" value="Submit With Validation Errors" onClick="submitInvalidMetadata();"><br/>')
         req.write('<p/>')
         
     # End if
