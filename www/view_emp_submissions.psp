@@ -126,10 +126,15 @@ __status__ = 'Development'
         
         if (sample_count > 0)
         {
-            document.getElementById("study_status_div").innerHTML = "";
             sampleGrid.load("load_emp_samples.psp?study_id=" + study_id, "jsarray");
         }
-        else if (metadata_complete == "i")
+        else if (metadata_complete != "i")
+        {
+            document.getElementById("study_status_div").innerHTML = "Selected Study '" + project_name + "'" +
+                " has no uploaded samples.";
+        }
+        
+        if (metadata_complete == "i")
         {
             xmlhttp = GetXmlHttpObject()
             div_name ="study_status_div";
@@ -146,11 +151,6 @@ __status__ = 'Development'
             // perform a GET 
             xmlhttp.open("GET", url, true);
             xmlhttp.send(null);
-        }
-        else
-        {
-            document.getElementById("study_status_div").innerHTML = "Selected Study '" + project_name + "'" +
-                " has no uploaded samples.";
         }
     }
         

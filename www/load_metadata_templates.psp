@@ -11,7 +11,7 @@ __status__ = "Production"
 from os.path import basename
 %>
 
-<h4>This study does not have any validated samples. Click the links below to view the submitted templates.</h4>
+<h4>Click the links below to view the submitted templates.</h4>
 <ul>
 
 <%
