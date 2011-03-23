@@ -61,6 +61,32 @@ function checkQiimeJobStatus()
     xmlhttp.send(null);
 }
 
+function checkQiimeMetaAnalysisStatus()
+{
+    // check if browser can perform xmlhttp
+    xmlhttp = GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+    
+    div_name ="qiime_status_div";
+    var url = "check_job_status.psp?job_type_id=5";
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+        }
+    }
+    
+    // perform a GET 
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send(null);
+}
+
 function checkMGRASTJobStatus()
 {
     // check if browser can perform xmlhttp

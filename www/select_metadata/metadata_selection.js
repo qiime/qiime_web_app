@@ -57,15 +57,17 @@ function showResult(input_textbox,column_id,column_value)
         if (xmlhttp.readyState==4){
 
             //write the list of similar terms from the database  
- document.getElementById('field_ref_table').innerHTML=xmlhttp.responseText;
+            document.getElementById('field_ref_table').innerHTML=xmlhttp.responseText;
             document.getElementById('field_ref_table').style.border="1px solid #A5ACB2";
-
      
             if (array_key in savedValues){
                 var value_select_box = document.getElementById(array_key)
+                var list_of_saved_values=savedValues[array_key].split(',')
                 for (var i=0;i<value_select_box.length;i++){
-                    if ('\''+value_select_box.options[i].value+'\''== savedValues[array_key]){
-                            value_select_box.options[i].selected=true;
+                    for (var j=0;j<list_of_saved_values.length;j++){                    
+                        if (("'"+value_select_box.options[i].value+"'")==list_of_saved_values[j]){
+                                value_select_box.options[i].selected=true;
+                        }
                     }
                 }
                 //alert(savedValues[array_key]);
@@ -188,14 +190,14 @@ function select_group(identifier,selObject1,selObject2){
             if (field in box2values){
                 //do nothing
             }else{
-                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+box1original[i][2]+'</option>';
+                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'>'+box1original[i][2]+'</option>';
                 iter=iter+1;
             }
         }else if (identifier==group){
             if (field in box2values){
                 //do nothing
             }else{
-                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+box1original[i][2]+'</option>';
+                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'>'+box1original[i][2]+'</option>';
                 iter=iter+1;
             }
         }

@@ -58,24 +58,22 @@ sess.save()
 <%
 jobs = data_access.getJobInfo(meta_analysis_id,job_type_id)
 if len(jobs) > 0:
+    #Indent
+%>
 
-    req.write('''
-    <table>
-    <tr bgcolor="#CCCCCC"><td style="font-size: 12px;text-align:center;"><b>Jobs</b></td></tr>
-    <tr bgcolor="#CCCCCC"><td>
-        <div name="job_status_div" id="job_status_div">\
-            <!-- Contents will be replaced by javascript dynamically -->\
-            Checking status...\
-        </div>\
-        <script type="text/javascript">\
-            checkJobStatus(%s);\
-            var timer = setInterval( "checkJobStatus(%s);", 5000 );\
-        </script>\
-    </td>
-    </tr>
-    </table>\
-    ''' % (job_type_id,job_type_id))
-
+Submitted Meta-Analyses:
+<br/>
+<ul>
+    <div id="qiime_status_div">
+        Checking status...
+    </div>
+    <script type="text/javascript">
+        //checkQiimeJobStatus();
+        var timer = setInterval( "checkQiimeMetaAnalysisStatus()", 3000 );
+    </script>
+</ul>
+<br/>
+<%
 # print a llst of the mapping and otu files already generated for this 
 # meta_analysis
 
