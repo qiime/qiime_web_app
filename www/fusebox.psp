@@ -29,6 +29,8 @@ def loadPage(page):
 
 if form.has_key('page'):
     # We have the page form variable so let's load it up    
+    sess['form']=form
+    sess.save()
     page = form["page"]
     loadPage(page)
 

@@ -43,6 +43,11 @@ $(document).ready(function(){
         var form_object=document.getElementById("metadata_submission") 
 
         var listbox_values=document.getElementById('box2View');
+
+        if (listbox_values.options.length==0){
+            alert('You have not selected any metadata!');
+            return false;
+        }
         for (i=0;i<listbox_values.options.length;i++){
             if (listbox_values.options[i].value in savedValues){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="'+savedValues[listbox_values.options[i].value]+'">';
@@ -50,16 +55,7 @@ $(document).ready(function(){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="####ALL####">';
             }
         }
-        var fname_prefix=document.getElementById("fname_prefix").value;
-        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="fname_prefix" value="'+fname_prefix+'">'
-        /*
-        var taxonomy_class=document.getElementById("taxonomy").value;
-        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="taxonomy" value="'+taxonomy_class+'">'
-        */
-        var beta_metric=document.getElementById("beta_metric").value;
-        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="beta_metric" value="'+beta_metric+'">'
-        var rarefied_at=document.getElementById("rarefied_at").value;
-        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="rarefied_at" value="'+rarefied_at+'">'
+        return true;
     }
     
 </script>
@@ -219,7 +215,8 @@ req.write(unique_cols_to_select_box_str(public_columns))
 -->
 <table id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
 </table>
-<form id="metadata_submission" onsubmit="post_Array()" method="post" action="select_metadata/submit_pcoa_mapping_job.psp">
+<form id="metadata_submission" onsubmit="return post_Array()" method="post" action="fusebox.psp">
+<input type="hidden" name="page" id="page" value="select_metadata/select_meta_analysis_parameters.psp">
     <!--
     <input type="checkbox" name="mapping_file" id="mapping_file" checked="true">I want a mapping file</input><br/>
     <input type="checkbox" name="otu_table" id="otu_table" checked="true">I want the OTU table</input><br/>
@@ -227,5 +224,5 @@ req.write(unique_cols_to_select_box_str(public_columns))
     <input type="checkbox" name="pcoa_plot" id="pcoa_plot" checked="true">I want the beta diversity table</input><br/>
     <input type="checkbox" name="pcoa_plot" id="pcoa_plot" checked="true">I want the PCoA plot</input><br/>
     -->
-    <br/><input type="submit">
+    <br/><input type="submit" value="Continue">
 </form>
