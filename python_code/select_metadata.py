@@ -79,19 +79,19 @@ def unique_cols_to_select_box_str(public_columns):
             
             '''
             if col_name in sra_submission_field_list:
-                select_box.append('<option id="'+'SRASuFL#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                select_box.append('<option id="'+'SRASuFL#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'"</option>\n")
             '''
             if table_name.startswith('EXTRA_'):
-                select_box.append('<option id="'+'CUSTOM#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                select_box.append('<option id="'+'CUSTOM#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
             else:
                 if col_name in study_lists:
-                    select_box.append('<option id="'+'STUDY#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                    select_box.append('<option id="'+'STUDY#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
                 elif col_name in sample_lists:
-                    select_box.append('<option id="'+'SAMPLE#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                    select_box.append('<option id="'+'SAMPLE#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
                 elif col_name in prep_lists:
-                    select_box.append('<option id="'+'PREP#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                    select_box.append('<option id="'+'PREP#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
                 else:
-                    select_box.append('<option id="'+'ADD#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'" onclick="showResult(\'metadata_left_col\',this.id,this.value)">'+str(col_name)+"</option>\n")
+                    select_box.append('<option id="'+'ADD#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
     return '\n'.join(select_box)
 
 def print_metadata_info_and_values_table(query_results,show_values,table,col,
