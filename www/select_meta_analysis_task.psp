@@ -35,8 +35,8 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 <%
 # get the meta_analysis ID from the session
 meta_analysis_id=sess['meta_analysis_id']
-sess['job_type_id']=5
-job_type_id=5
+sess['job_type_id']=7
+job_type_id=7
 sess.save()
 %>
 

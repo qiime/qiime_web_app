@@ -39,10 +39,12 @@ script_info['required_options'] = [\
     make_option('-f','--fs_fp',help='this is the location of the actual files on the linux box'),\
     make_option('-w','--web_fp',help='this is the location that the webserver can find the files'),\
     make_option('-q','--query',help='this is the path to the users query'),\
-    make_option('-t','--tax_class',help='this is the taxonomy assignment to use.'),\
     make_option('-p','--fname_prefix',help='this is the prefix to append to the users files'),\
     make_option('-u','--user_id',help='this is the user id'),\
     make_option('-m','--meta_id',help='this is the meta analysis id'),\
+    make_option('-b','--params_path',help='this is the parameters file used'),\
+    make_option('-r','--bdiv_rarefied_at',help='this is the rarefaction number'),\
+    make_option('-s','--jobs_to_start',help='these are the jobs that should be started'),\
 ]
 script_info['optional_options'] = [\
 ]
@@ -61,16 +63,21 @@ def main():
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
         
-    table_col_value=eval(open(opts.query).read())
+    query_dict=eval(open(opts.query).read())
+    table_col_value={}
+    for i in query_dict:
+        if i not in ['otu_table','mapping_file','pcoa_plot']:
+            table_col_value[i]=query_dict[i]
+            
     fs_fp=opts.fs_fp
     web_fp=opts.web_fp
-    tax_class=opts.tax_class
     file_name_prefix=opts.fname_prefix
     user_id=int(opts.user_id)
     meta_id=int(opts.meta_id)
-    
-    
-    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, tax_class, file_name_prefix,user_id,meta_id)
+    params_path=opts.params_path
+    bdiv_rarefied_at=int(opts.bdiv_rarefied_at)
+    jobs_to_start=opts.jobs_to_start
+    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,bdiv_rarefied_at,jobs_to_start)
 
 if __name__ == "__main__":
     main()

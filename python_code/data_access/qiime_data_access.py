@@ -2241,7 +2241,26 @@ class QiimeDataAccess(object):
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+
     #
+    def getOTUTable(self,start_job,sample_name,otu_method,otu_threshold,\
+                  source_name,ref_threshold):
+        """ Gets a list otus for a samples
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            user_data = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_otu_table', [sample_name,\
+                                                  otu_method,otu_threshold,\
+                                                  source_name,ref_threshold,\
+                                                  user_data])
+                return user_data
+            else:
+                return False
+        except Exception, e:
+            return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
     #
     def getOTUMap2(self,sample_names_and_seq_runs):
         """ Gets a list otus for a samples

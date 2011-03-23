@@ -222,7 +222,8 @@ def get_table_col_values_from_form(form):
     table_col_value={}
     unique_cols=[]
     for form_key in form:
-        if form_key<>'fname_prefix' and form_key<>'taxonomy' and form_key<>'beta_metric' and form_key<>'rarefied_at':
+        split_form_key=form_key.split('####STUDIES####')
+        if len(split_form_key)>1:
             if type(form[form_key])==type([]):
                 for vals in form[form_key]:
                     if table_col_value.has_key(form_key):

@@ -45,7 +45,8 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'LoadSFFAndMetadataHandler':LoadSFFAndMetadataHandler,
                    'makeMappingAndOTUFiles':makeMappingAndOTUFiles,
                    'makeMappingFileandPCoAPlots':makeMappingFileandPCoAPlots,
-                   'ExportToMGRASTHandler':ExportToMGRASTHandler}
+                   'ExportToMGRASTHandler':ExportToMGRASTHandler,
+                   'generateMapOTUTableSubmitJobs':generateMapOTUTableSubmitJobs}
 
 class FileDoesNotExistError(IOError):
     pass

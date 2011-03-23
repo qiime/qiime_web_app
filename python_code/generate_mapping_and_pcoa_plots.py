@@ -14,14 +14,15 @@ from cogent.app.util import get_tmp_filename
 from os import system,path,makedirs
 import os
 from random import choice
-
+from numpy import zeros
 from time import strftime,clock,time
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_table
 from qiime.parse import parse_mapping_file,parse_qiime_parameters
+
 from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
-from qiime.format import format_matrix
+from qiime.format import format_matrix,format_otu_table
 from run_process_sff_through_split_lib import web_app_call_commands_serially
 from qiime.workflow import print_commands,\
                            print_to_stdout, no_status_updates,generate_log_fp,\
@@ -33,7 +34,6 @@ from cogent.util.misc import get_random_directory_name
 qiime_config = load_qiime_config()
             
 def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,beta_metric,rarefied_at):
-    
     total1 = time()
     unique_cols=[]
     # Create the mapping file based on sample and field selections
@@ -337,6 +337,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
     
     t1 = time()
     
+    
     query=[]
     for i,sample_name1 in enumerate(samples_list):
         for j,sample_name2 in enumerate(samples_list[:i+1]):
@@ -348,11 +349,12 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
 
     iterator=0
     listofall={}
-    
+    print query
     data_rows_lookup={}
     for i in samples_list:
         data_rows_lookup[i]={}
     for res in input_set_generator(query, cur, types,10000):
+        
         print 'running %i' % (iterator)
         iterator=iterator+1
         valid = data_access.getBetaDivDistancesArray(True, res)
@@ -448,6 +450,7 @@ def write_mapping_and_pcoa_plots(data_access, table_col_value, fs_fp, web_fp, fi
                                             zip_fpath_db)
     total2 = time()
     print 'total time: %s' % (total2-total1)
+    
     
 def run_principal_coords_through_3d_plots(dist_fpath,mapping_fp,output_dir,beta_diversity_metric,pcoa_file_dir_db):  
     """ Run the data preparation steps of Qiime 

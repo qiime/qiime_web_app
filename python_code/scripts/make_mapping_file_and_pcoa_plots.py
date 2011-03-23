@@ -42,7 +42,7 @@ script_info['required_options'] = [\
     make_option('-p','--fname_prefix',help='this is the prefix to append to the users files'),\
     make_option('-u','--user_id',help='this is the user id'),\
     make_option('-m','--meta_id',help='this is the meta analysis id'),\
-    make_option('-b','--beta_metric',help='this is the beta_metric used'),\
+    make_option('-b','--beta_metric',help='this is the parameters file used'),\
     make_option('-r','--rarefied_at',help='this is the rarefaction number'),\
 ]
 script_info['optional_options'] = [\
