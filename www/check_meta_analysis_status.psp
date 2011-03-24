@@ -12,6 +12,8 @@ __status__ = "Production"
 <%
 from data_access_connections import data_access_factory
 from enums import DataAccessType
+from datetime import datetime
+from time import strftime
 '''
 # This is for OTU Table and Mapping File
 # Grab some required values for this page
@@ -37,40 +39,41 @@ if mapping_otu_files:
 sess = Session.Session(req)
 data_access = data_access_factory(DataAccessType.qiime_production)
 meta_analysis_id = int(sess['meta_analysis_id'])
-filepaths = data_access.getMetaAnalPCoAFilepaths(meta_analysis_id)
+filepaths = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
 if filepaths:
-    
-    
     req.write('<br><br><table>')
     req.write('<tr><td style="font-size: 12px;text-align:left;" colspan="2"><b>Generated Files</b></td></tr>')
     
+    filepath_dict={}
+    for i in filepaths:
+        process_date=str(i[1].strftime("%m/%d/%Y @ %H:%M:%S"))
 
-    for file_set in filepaths:
-        mapping_file = (file_set[1], os.path.basename(file_set[1]))
-        distance_matrix_file = (file_set[2], os.path.basename(file_set[2]))
-        prefs_file = (file_set[3], os.path.basename(file_set[3]))
-        principal_coords_file = (file_set[4], os.path.basename(file_set[4]))
-        continuous_3d_plot_file = (file_set[6], os.path.basename(file_set[6]))
-        zipped_file =  (file_set[7], os.path.basename(file_set[7]))
-        meta_analysis_name = file_set[8]
-        
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Mapping Files</b></td>')
-        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (mapping_file[0], mapping_file[1]))
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Distance Matrices</b></td>')
-        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (distance_matrix_file[0], distance_matrix_file[1]))
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Prefs Files</b></td>')
-        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (prefs_file[0], prefs_file[1]))
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Principal Coords</b></td>')
-        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (principal_coords_file[0], principal_coords_file[1]))
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Continuous 3D Plots</b></td>')
-        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (continuous_3d_plot_file[0], continuous_3d_plot_file[1]))
-        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Zipped Files</b></td>')
-        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (zipped_file[0], zipped_file[1]))
-        req.write('<tr bgcolor="#D0F5A9"><td bgcolor="#FAAFBE" style="font-size: 11px;"><b>Remove Files</b></td>')
-        req.write('<td bgcolor="#FAAFBE" style="font-size: 10px;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?map_fname=%s&dist_fname=%s&zip_fname=%s\')">(clear files)</a></td></tr>' % (mapping_file[0], distance_matrix_file[0], zipped_file[0]))
-        req.write('<tr><td colspan="2">&nbsp;</td></tr>')
-
+        if filepath_dict.has_key(process_date):
+            filepath_dict[process_date].append((i[0],i[3]))
+        else:
+            filepath_dict[process_date]=[]
+            filepath_dict[process_date].append((i[0],i[3]))
+            
+    keys=filepath_dict.keys()
+    keys.sort()
+    for key in keys:
+        req.write('<tr><td style="font-size: 10px;"><b>Job: %s</b></td></tr>' % (key))
+        for fpath in filepath_dict[key]:
+            if fpath[1]=='MAPPING':
+                filetype='QIIME Mapping File:'
+            elif fpath[1]=='OTU_TABLE':
+                filetype='OTU Table:'
+            elif fpath[1]=='ZIP':
+                filetype='Zip Archive:'
+                
+            file_path = (fpath[0], os.path.basename(fpath[0]))
+            req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;"><b>%s</b></td><td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (filetype,file_path[0], file_path[1]))
+        #req.write('<tr bgcolor="#D0F5A9"><td bgcolor="#FAAFBE" style="font-size: 11px;"><b>Remove Files</b></td>')
+        req.write('<tr><td colspan="2" bgcolor="#FAAFBE" style="font-size: 10px;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?fpath=%s&meta_id=%s\')">(clear files)</a></td></tr>' % (','.join([x for (x,y) in filepath_dict[key]]),meta_analysis_id))
+        #req.write('<tr><td colspan="2">&nbsp;</td></tr>')
+    
 
     req.write('</table>')
+
 #
 %>

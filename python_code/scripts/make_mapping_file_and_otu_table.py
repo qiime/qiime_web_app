@@ -79,7 +79,7 @@ def main():
     bdiv_rarefied_at=int(opts.bdiv_rarefied_at)
     jobs_to_start=opts.jobs_to_start
     taxonomy=opts.taxonomy
-    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,bdiv_rarefied_at,jobs_to_start)
+    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,bdiv_rarefied_at,jobs_to_start,taxonomy)
 
 if __name__ == "__main__":
     main()

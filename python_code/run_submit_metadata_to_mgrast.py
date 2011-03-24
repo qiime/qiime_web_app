@@ -16,7 +16,8 @@ from sample_export import export_fasta_from_sample
 
 def resolve_host(url_path):
     data = ''
-    host = 'metagenomics.anl.gov'
+    #host = 'metagenomics.anl.gov'
+    host = dunkirk.mcs.anl.gov/~wilke
 
     try:
         print 'Attempting DNS connection to: %s' % host
@@ -112,10 +113,10 @@ def submit_metadata_for_study(key, study_id, debug = False):
     # Get a copy of data access
     data_access = data_access_factory(DataAccessType.qiime_production)
 
-    study_cgi_path = '/service/%s/study' % key
-    sample_cgi_path = '/service/%s/sample' % key
-    prep_cgi_path = '/service/%s/preparation' % key
-    sequence_cgi_path = '/service/%s/reads' % key
+    study_cgi_path = '/~wilke/service/%s/study' % key
+    sample_cgi_path = '/~wilke/service/%s/sample' % key
+    prep_cgi_path = '/~wilke/service/%s/preparation' % key
+    sequence_cgi_path = '/~wilke/service/%s/reads' % key
     
     study_file_path = '/tmp/mgrast_study_metadata_%s.xml' % study_id
     sample_file_path = '/tmp/mgrast_sample_metadata_%s.xml' % study_id
@@ -125,7 +126,8 @@ def submit_metadata_for_study(key, study_id, debug = False):
     
     # Attempt to reslve the MG-RAST host
     # host = '140.221.76.10'
-    host = resolve_host(study_cgi_path)
+    #host = resolve_host(study_cgi_path)
+    host = 'dunkirk.mcs.anl.gov'
     if host is None:
         print 'Could not resolve host. Aborting.'
         return

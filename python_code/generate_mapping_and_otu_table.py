@@ -19,7 +19,8 @@ from time import strftime,clock,time
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_table
 from qiime.parse import parse_mapping_file,parse_qiime_parameters
-
+from datetime import datetime
+from time import strftime
 from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
 from qiime.format import format_matrix,format_otu_table
@@ -33,8 +34,9 @@ from cogent.util.misc import get_random_directory_name
 
 qiime_config = load_qiime_config()
             
-def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,rarefied_at,jobs_to_start):
-    beta_metric='weighted_unifrac'
+def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,rarefied_at,jobs_to_start,tax_name):
+    tmp_prefix=get_tmp_filename('',suffix='').strip()
+
     total1 = time()
     unique_cols=[]
     # Create the mapping file based on sample and field selections
@@ -42,7 +44,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
     otu_table_file_dir=path.join(fs_fp,'otu_table_files')
     mapping_file_dir=path.join(fs_fp,'mapping_files')
     zip_file_dir=path.join(fs_fp,'zip_files')
-    pcoa_file_dir_loc=path.join(fs_fp,'pcoa_files')
+    #pcoa_file_dir_loc=path.join(fs_fp,'pcoa_files')
 
     otu_table_file_dir_db=path.join(web_fp,'otu_table_files')
     mapping_file_dir_db=path.join(web_fp,'mapping_files')
@@ -54,12 +56,10 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
     alphabet += "01234567890"
     random_dir_name=''.join([choice(alphabet) for i in range(10)])
     unique_name=strftime("%Y_%m_%d_%H_%M_%S")+random_dir_name
-    plot_unique_name=beta_metric+'_plots_'+unique_name
-    pcoa_file_dir=os.path.join(pcoa_file_dir_loc,plot_unique_name)
-    pcoa_file_dir_db=os.path.join(pcoa_file_dir_loc_db,plot_unique_name)
-    
-    create_dir(pcoa_file_dir)
-    
+    #plot_unique_name=beta_metric+'_plots_'+unique_name
+    #pcoa_file_dir=os.path.join(pcoa_file_dir_loc,plot_unique_name)
+    #pcoa_file_dir_db=os.path.join(pcoa_file_dir_loc_db,plot_unique_name)
+    #create_dir(pcoa_file_dir)
     map_files=[]
     
     t1 = time()
@@ -214,8 +214,8 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
 
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
     tmp_mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map_tmp.txt'), 'w')
-    map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_map.txt')
-    map_filepath_db=os.path.join(mapping_file_dir_db, file_name_prefix+'_map.txt')
+    map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_'+tmp_prefix+'_map.txt')
+    map_filepath_db=os.path.join(mapping_file_dir_db, file_name_prefix+'_'+tmp_prefix+'_map.txt')
 
     # All mapping files start with an opening hash
     tmp_mapping_file.write('#')
@@ -297,9 +297,8 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
         tmp_mapping_file.write(to_write[0:len(to_write)-1] + '\n')
 
     tmp_mapping_file.close()
-
     open_tmp_mapping_file=open(os.path.join(mapping_file_dir, file_name_prefix+'_map_tmp.txt')).readlines()
-    mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map.txt'), 'w')
+    mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_'+tmp_prefix+'_map.txt'), 'w')
     mapping_lines = []
     all_headers = {}
     result = []
@@ -363,17 +362,16 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
                     otu_table[j][i]=sample_counts[sample][otu]
              
 
-    
     taxonomy=[]
     for i in otus:
-        tax_str=data_access.getGGTaxonomy(True,i,'PHPR_tax_string')
+        tax_str=data_access.getGGTaxonomy(True,i,tax_name+'_tax_string')
         
         if not tax_str:
             taxonomy.append('')
         else:
             taxonomy.append(tax_str)
 
-    otu_table_fname = get_tmp_filename('', suffix="otu_table.txt").strip()
+    otu_table_fname = file_name_prefix+'_'+tmp_prefix+'_otu_table.txt'
     otu_table_filepath=os.path.join(otu_table_file_dir, otu_table_fname)
     otu_table_filepath_db=os.path.join(otu_table_file_dir_db, otu_table_fname)
     
@@ -381,228 +379,31 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
     otu_table_write.write(format_otu_table(samples_list,otus,otu_table,taxonomy=taxonomy))
     otu_table_write.close()
 
-    #sample_labels.append(sample_name1)
-    #distances.append(data_row)
-    """ This is the old functionality
-    
-    
-    query=[]
-    for i,sample_name1 in enumerate(samples_list):
-        for j,sample_name2 in enumerate(samples_list[:i+1]):
-            query.append('\t'.join([sample_name1,sample_name2,'999999999999',beta_metric,str(rarefied_at)]))
-    
-    con = data_access.getSFFDatabaseConnection()
-    cur = con.cursor()
-    types = ['s','s', 'bf', 's', 'i']
 
-    iterator=0
-    listofall={}
-    print query
-    data_rows_lookup={}
-    for i in samples_list:
-        data_rows_lookup[i]={}
-    for res in input_set_generator(query, cur, types,10000):
-        
-        print 'running %i' % (iterator)
-        iterator=iterator+1
-        valid = data_access.getBetaDivDistancesArray(True, res)
-        if valid != []:
-            for i,samp1 in enumerate(valid[0]):
-                data_rows_lookup[samp1][valid[1][i]]=valid[2][i]
-        
-
-    '''
-    data_rows_lookup={}
-    for i in samples_list:
-        data_rows_lookup[i]={}
-    
-    for i,sample_name1 in enumerate(samples_list):
-        for j,sample_name2 in enumerate(samples_list[:i+1]):
-            data_found=data_access.getBetaDivDistances(True,sample_name1,sample_name2,
-                                                     beta_metric,rarefied_at)
-            data_rows_lookup[sample_name1][sample_name2]=data_found
-            
-    '''
-    distances=[]
-    sample_labels=[]
-    for i in samples_list:
-        row_data=[]
-        for j in samples_list:
-            if (data_rows_lookup[i].has_key(j) and data_rows_lookup[i][j]!=None):
-                row_data.append(data_rows_lookup[i][j])
-                if i not in sample_labels:
-                    sample_labels.append(i)
-            elif (data_rows_lookup[j].has_key(i) and data_rows_lookup[j][i]!=None):
-                row_data.append(data_rows_lookup[j][i])
-                if i not in sample_labels:
-                    sample_labels.append(i)
-                    
-
-        if row_data !=[]:
-            distances.append(row_data)     
-
-    #sample_labels.append(sample_name1)
-    #distances.append(data_row)
-    
-    distance_matrix=format_matrix(distances,sample_labels,sample_labels)
-    #print distance_matrix
-    dist_fpath=os.path.join(pcoa_file_dir, file_name_prefix+'_%s.txt' % beta_metric)
-    dist_fpath_db=os.path.join(pcoa_file_dir_db, file_name_prefix+'_%s.txt' % beta_metric)
-    distance_mat_file = file(dist_fpath, 'w')
-    distance_mat_file.write(distance_matrix)
-    distance_mat_file.close()
-    
-    t2 = time()
-    print 'Making distance mtx file: %s' % (t2 - t1)
-    t1=time()
-    prefs_fp_db,pc_fp_db,discrete_3d_dir_db,continuous_3d_dir_db,\
-           prefs_fp,pc_fp,discrete_3d_dir,continuous_3d_dir=\
-        run_principal_coords_through_3d_plots(dist_fpath,map_filepath,\
-                        pcoa_file_dir,beta_metric,pcoa_file_dir_db)
-    
-    t2 = time()
-    print 'pcoa plotting: %s' % (t2-t1)
-    
-    pc_filename=pc_fp_db.split('/')[-1]
-    discrete_3d_fpath_db=os.path.join(discrete_3d_dir_db,pc_filename+'_3D.html')
-    continuous_3d_fpath_db=os.path.join(continuous_3d_dir_db,pc_filename+'_3D.html')
-
-    t1 = time()
     # zip up the OTU table and Mapping file for easy download
-    zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '_' + unique_name + '.zip')
-    zip_fpath_db=os.path.join(zip_file_dir_db, file_name_prefix + '_' + unique_name+ '.zip')
+    zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '_' + tmp_prefix + '_map_and_otu_table.zip')
+    zip_fpath_db=os.path.join(zip_file_dir_db, file_name_prefix + '_' + tmp_prefix+ '_map_and_otu_table.zip')
     
     cmd_call='cd %s; zip %s %s' % (mapping_file_dir,zip_fpath,map_filepath.split('/')[-1])
     system(cmd_call)
-    #cmd_call='zip -Xj  %s %s' % (zip_fpath,dist_fpath)
-    #system(cmd_call)
-    #cmd_call='zip -Xj  %s %s' % (zip_fpath,prefs_fp)
-    #ystem(cmd_call)
-    #cmd_call='zip -Xj  %s %s' % (zip_fpath,pc_fp)
-    #system(cmd_call)
-    #cmd_call='zip -r %s %s' % (zip_fpath,discrete_3d_dir)
-    #system(cmd_call)
-    cmd_call='cd %s; zip -r %s %s' % (pcoa_file_dir_loc,zip_fpath,pcoa_file_dir.split('/')[-1])
+    cmd_call='cd %s; zip %s %s' % (otu_table_file_dir,zip_fpath,otu_table_filepath.split('/')[-1])
     system(cmd_call)
     
-    t2 = time()
-    print 'Zipping files: %s' % (t2 - t1)
+    #get the date to put in the db
+    run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
     
-    #add filepaths to DB, so we know where to find the generated files
-    valid=data_access.addMappingPCoAFiles(True, meta_id, \
-                                            map_filepath_db,dist_fpath_db,
-                                            prefs_fp_db,
-                                            pc_fp_db,
-                                            discrete_3d_fpath_db,
-                                            continuous_3d_fpath_db,
-                                            zip_fpath_db)
-    total2 = time()
-    print 'total time: %s' % (total2-total1)
-    """
     
-def run_principal_coords_through_3d_plots(dist_fpath,mapping_fp,output_dir,beta_diversity_metric,pcoa_file_dir_db):  
-    """ Run the data preparation steps of Qiime 
+    valid=data_access.addMetaAnalysisFiles(True,int(meta_id),map_filepath_db,'OTUTABLE',run_date,'MAPPING')
     
-        The steps performed by this function are:
-         2) Peform a principal coordinates analysis on the result of
-          Step 1;
-         3) Generate a 3D prefs file for optimized coloring of continuous
-          variables;
-         4) Generate a 3D plot for all mapping fields with colors
-          optimized for continuous data;
-         5) Generate a 3D plot for all mapping fields with colors
-          optimized for discrete data.
+    if not valid:
+        raise ValueError, 'There was an issue uploading the filepaths to the DB!'
     
-    """  
-    # Prepare some variables for the later steps
-
-    commands = []
-    python_exe_fp = qiime_config['python_exe_fp']
-    script_dir = get_qiime_scripts_dir()
-    params=parse_qiime_parameters(open('/home/wwwuser/user_data/custom_parameters_uclust_ref_gg97.txt'))
-    logger = WorkflowLogger(generate_log_fp(output_dir),
-                            params=params,
-                            qiime_config=qiime_config)
+    valid=data_access.addMetaAnalysisFiles(True,int(meta_id),otu_table_filepath_db,'OTUTABLE',run_date,'OTU_TABLE')
     
-    mapping_file_header = parse_mapping_file(open(mapping_fp,'U'))[1]
-    mapping_fields = ','.join(mapping_file_header)
+    if not valid:
+        raise ValueError, 'There was an issue uploading the filepaths to the DB!'
     
-    # Build the 3d prefs file generator command
-    prefs_fp = get_tmp_filename(output_dir, suffix=".pref").strip()
-    prefs_fp_db=os.path.join(pcoa_file_dir_db,os.path.split(prefs_fp)[-1])
-    prefs_cmd = \
-     '%s %s/make_prefs_file.py -m %s -o %s' %\
-     (python_exe_fp, script_dir, mapping_fp, prefs_fp)
-    commands.append([('Build prefs file', prefs_cmd)])
-       
-    # Prep the principal coordinates command
+    valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
     
-    pc_fp = '%s_pc.txt' % (os.path.splitext(dist_fpath)[0])
-    pc_fp_db=os.path.join(pcoa_file_dir_db,os.path.split(pc_fp)[-1])
-    
-    try:
-        params_str = get_params_str(params['principal_coordinates'])
-    except KeyError:
-        params_str = ''
-    # Build the principal coordinates command
-    pc_cmd = '%s %s/principal_coordinates.py -i %s -o %s' %\
-     (python_exe_fp, script_dir, dist_fpath, pc_fp)
-    commands.append(\
-     [('Principal coordinates (%s)' % beta_diversity_metric, pc_cmd)])
-
-    # Prep the continuous-coloring 3d plots command
-    continuous_3d_dir = '%s/%s_3d_continuous/' %\
-     (output_dir, beta_diversity_metric)
-    continuous_3d_dir_db = '%s/%s_3d_continuous/' %\
-     (pcoa_file_dir_db, beta_diversity_metric)
-    try:
-        makedirs(continuous_3d_dir)
-    except OSError:
-        pass
-    try:
-        params_str = get_params_str(params['make_3d_plots'])
-    except KeyError:
-        params_str = ''
-    # Build the continuous-coloring 3d plots command
-    continuous_3d_command = \
-     '%s %s/make_3d_plots.py -p %s -i %s -o %s -m %s' %\
-      (python_exe_fp, script_dir, prefs_fp, pc_fp, continuous_3d_dir,\
-       mapping_fp)
-
-    # Prep the discrete-coloring 3d plots command
-    discrete_3d_dir = '%s/%s_3d_discrete/' %\
-     (output_dir, beta_diversity_metric)
-    discrete_3d_dir_db = '%s/%s_3d_discrete/' %\
-     (pcoa_file_dir_db, beta_diversity_metric)
-    '''
-    try:
-        makedirs(discrete_3d_dir)
-    except OSError:
-        pass
-    try:
-        params_str = get_params_str(params['make_3d_plots'])
-    except KeyError:
-        params_str = ''
-    # Build the discrete-coloring 3d plots command
-    discrete_3d_command = \
-     '%s %s/make_3d_plots.py -b "%s" -i %s -o %s -m %s' %\
-      (python_exe_fp, script_dir, mapping_fields, pc_fp, discrete_3d_dir,\
-       mapping_fp)
-
-    commands.append([\
-      ('Make 3D plots (continuous coloring, %s)' %\
-        beta_diversity_metric,continuous_3d_command),\
-      ('Make 3D plots (discrete coloring, %s)' %\
-        beta_diversity_metric,discrete_3d_command,)])
-    '''
-    commands.append([\
-      ('Make 3D plots (continuous coloring, %s)' %\
-        beta_diversity_metric,continuous_3d_command)])
-
-    # Call the command handler on the list of commands
-    web_app_call_commands_serially(commands, print_to_stdout, logger)
-
-    return prefs_fp_db,pc_fp_db,discrete_3d_dir_db,continuous_3d_dir_db,\
-           prefs_fp,pc_fp,discrete_3d_dir,continuous_3d_dir 
-
-    
+    if not valid:
+        raise ValueError, 'There was an issue uploading the filepaths to the DB!'

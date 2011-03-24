@@ -27,8 +27,8 @@ __status__ = "Pre-release"
 POLL_INTERVAL = 5
 STATUS_INTERVAL = 12
 QSTAT_NORMAL = "/usr/bin/qstat | grep %s"
-SUBMIT_QUEUE = 'amdq'
-QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s -l pvmem=16gb -q ' + SUBMIT_QUEUE
+SUBMIT_QUEUE = 'friendlyq'
+QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s -l pvmem=8gb -q ' + SUBMIT_QUEUE
 
 TORQUE_STATE_LOOKUP = {'R':'RUNNING',
                        'C':'COMPLETING',

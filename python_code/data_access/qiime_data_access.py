@@ -316,15 +316,15 @@ class QiimeDataAccess(object):
             return False
     
 
-    def addMetaAnalysisMapOTUFiles(self, start_job, meta_analysis_id, \
-                                    mapping_fpath, otu_fpath,zip_fpath):
+    def addMetaAnalysisFiles(self, start_job, meta_analysis_id, \
+                                    fpath, meta_type,run_date,ftype):
         try:
             con = self.getMetadataDatabaseConnection()
             if start_job:
-                con.cursor().callproc('add_map_and_otu_file_paths', 
+                con.cursor().callproc('add_meta_analysis_files', 
                                                     [meta_analysis_id,\
-                                                    mapping_fpath,otu_fpath,
-                                                    zip_fpath])  
+                                                    fpath,meta_type,
+                                                    run_date,ftype])  
             return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -371,11 +371,11 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def getMetaAnalPCoAFilepaths(self, meta_analysis_id):
+    def getMetaAnalysisFilepaths(self, meta_analysis_id):
         try:
             con = self.getMetadataDatabaseConnection()
             results=con.cursor()
-            con.cursor().callproc('get_meta_anal_pcoa_filepaths', 
+            con.cursor().callproc('get_meta_analysis_filepaths', 
                                                     [meta_analysis_id,\
                                                     results])
             fpaths=[]
@@ -1575,13 +1575,13 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
 
-    def clearMetaFiles(self, map_fname,otu_fname,zip_fname):
+    def clearMetaFiles(self, meta_id,fpath):
         """ Removes a job from the torque_jobs table
         """
 
         try:
             con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('clear_meta_analysis_files', [map_fname,otu_fname,zip_fname])
+            con.cursor().callproc('clear_meta_analysis_files', [meta_id,fpath])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
