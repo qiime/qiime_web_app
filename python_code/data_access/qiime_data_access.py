@@ -2585,3 +2585,19 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+    #
+    def getGGTaxonomy(self, start_job, prokmsa,tax_name):
+        """ starts process of importing failed otus
+        """
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor()
+            if start_job:
+                con.cursor().callproc('get_gg_taxonomy',
+                                        [str(prokmsa),str(tax_name),results])
+                for row in results:
+                    return row[0]
+                    
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return False

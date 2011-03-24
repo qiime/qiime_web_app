@@ -362,12 +362,24 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
                 if sample_counts[sample].has_key(otu):
                     otu_table[j][i]=sample_counts[sample][otu]
              
-           
-    print format_otu_table(samples_list,otus,otu_table)
-            
-    
 
     
+    taxonomy=[]
+    for i in otus:
+        tax_str=data_access.getGGTaxonomy(True,i,'PHPR_tax_string')
+        
+        if not tax_str:
+            taxonomy.append('')
+        else:
+            taxonomy.append(tax_str)
+
+    otu_table_fname = get_tmp_filename('', suffix="otu_table.txt").strip()
+    otu_table_filepath=os.path.join(otu_table_file_dir, otu_table_fname)
+    otu_table_filepath_db=os.path.join(otu_table_file_dir_db, otu_table_fname)
+    
+    otu_table_write=open(otu_table_filepath,'w')
+    otu_table_write.write(format_otu_table(samples_list,otus,otu_table,taxonomy=taxonomy))
+    otu_table_write.close()
 
     #sample_labels.append(sample_name1)
     #distances.append(data_row)

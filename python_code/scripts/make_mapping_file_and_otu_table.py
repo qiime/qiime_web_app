@@ -45,6 +45,7 @@ script_info['required_options'] = [\
     make_option('-b','--params_path',help='this is the parameters file used'),\
     make_option('-r','--bdiv_rarefied_at',help='this is the rarefaction number'),\
     make_option('-s','--jobs_to_start',help='these are the jobs that should be started'),\
+    make_option('-t','--taxonomy',help='this is the taxonomy to use'),\
 ]
 script_info['optional_options'] = [\
 ]
@@ -77,6 +78,7 @@ def main():
     params_path=opts.params_path
     bdiv_rarefied_at=int(opts.bdiv_rarefied_at)
     jobs_to_start=opts.jobs_to_start
+    taxonomy=opts.taxonomy
     write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,bdiv_rarefied_at,jobs_to_start)
 
 if __name__ == "__main__":

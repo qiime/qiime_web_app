@@ -321,8 +321,8 @@ class makeMappingFileandPCoAPlots(JobHandler):
 
 class generateMapOTUTableSubmitJobs(JobHandler):
     """Handler for bdiv_through_3d_plots.py"""
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s" ])
-    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'jobs_to_start':None}
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s --taxonomy %(taxonomy)s" ])
+    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'jobs_to_start':None,'taxonomy':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""
