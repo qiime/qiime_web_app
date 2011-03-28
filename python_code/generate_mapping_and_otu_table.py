@@ -30,11 +30,11 @@ from qiime.workflow import print_commands,\
                            get_params_str, WorkflowError,WorkflowLogger
 from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
 from cogent.util.misc import get_random_directory_name
-
+from submit_job_to_qiime import submitQiimeJob
 
 qiime_config = load_qiime_config()
             
-def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,rarefied_at,jobs_to_start,tax_name):
+def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,rarefied_at,jobs_to_start,tax_name,tree_fp):
     tmp_prefix=get_tmp_filename('',suffix='').strip()
 
     total1 = time()
@@ -407,3 +407,27 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
     
     if not valid:
         raise ValueError, 'There was an issue uploading the filepaths to the DB!'
+        
+        
+    #
+    params=[]
+    params.append('fs_fp=%s' % fs_fp)
+    params.append('web_fp=%s' % web_fp)
+    params.append('otu_table_fp=%s' % otu_table_filepath)
+    params.append('fname_prefix=%s' % file_name_prefix)
+    params.append('user_id=%s' % user_id)
+    params.append('meta_id=%s' % meta_id)
+    params.append('params_path=%s' % params_path)
+    params.append('bdiv_rarefied_at=%s' % rarefied_at)
+    params.append('jobs_to_start=%s' % jobs_to_start)
+    params.append('tree_fp=%s' % tree_fp)
+    job_input='!!'.join(params)
+    job_type='betaDiversityThrough3DPlots'
+
+    # Submit the Beta Diversity jobs
+    try:
+        # Attempt the submission
+        submitQiimeJob(meta_id, user_id, job_type, job_input, data_access)
+        
+    except Exception, e:
+        raise ValueError,e

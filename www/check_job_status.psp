@@ -35,22 +35,24 @@ elif meta_analysis_id:
 else:
     raise('Could not determine job identifier. study_id and meta_analysis_id are both empty.')
 
-job_type_id = int(form['job_type_id'])
-jobs = data_access.getJobInfo(job_locator_id, job_type_id)
+job_type_ids = form['job_type_id'].split(',')
 
-for job in jobs:
-    completed_status = 'COMPLETED_OKAY'
-    display_text = 'not set'
+for jobid in job_type_ids:
+    jobs = data_access.getJobInfo(job_locator_id, jobid)
+
+    for job in jobs:
+        completed_status = 'COMPLETED_OKAY'
+        display_text = 'not set'
     
-    if job['job_state_name'] != completed_status:
-        display_text = 'Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(clear job)</a><br>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id'])
-    elif job['job_state_name'] == completed_status and int(sess['is_admin']) == 1:
-        display_text = 'Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(admin option: clear job)</a><br>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id'])
-    else:
-        display_text = 'Job %s: %s <br>' % (job['job_id'], job['job_state_name'])
+        if job['job_state_name'] != completed_status:
+            display_text = 'Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(clear job)</a><br>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id'])
+        elif job['job_state_name'] == completed_status and int(sess['is_admin']) == 1:
+            display_text = 'Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(admin option: clear job)</a><br>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id'])
+        else:
+            display_text = 'Job %s: %s <br>' % (job['job_id'], job['job_state_name'])
         
-    req.write(display_text)
-    if job['job_notes'] != None:
-        req.write('<br/>Output: ' + job['job_notes'])
+        req.write(display_text)
+        if job['job_notes'] != None:
+            req.write('<br/>Output: ' + job['job_notes'])
 
 %>

@@ -16,7 +16,7 @@ from optparse import make_option
 from os import makedirs
 from qiime.util import load_qiime_config
 from generate_mapping_and_otu_table import write_mapping_and_otu_table
-
+from submit_job_to_qiime import submitQiimeJob
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -46,6 +46,7 @@ script_info['required_options'] = [\
     make_option('-r','--bdiv_rarefied_at',help='this is the rarefaction number'),\
     make_option('-s','--jobs_to_start',help='these are the jobs that should be started'),\
     make_option('-t','--taxonomy',help='this is the taxonomy to use'),\
+    make_option('-g','--tree_fp',help='this is the gg tree to use'),\
 ]
 script_info['optional_options'] = [\
 ]
@@ -79,7 +80,8 @@ def main():
     bdiv_rarefied_at=int(opts.bdiv_rarefied_at)
     jobs_to_start=opts.jobs_to_start
     taxonomy=opts.taxonomy
-    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,bdiv_rarefied_at,jobs_to_start,taxonomy)
+    tree_fp=opts.tree_fp
+    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,bdiv_rarefied_at,jobs_to_start,taxonomy,tree_fp)
 
 if __name__ == "__main__":
     main()

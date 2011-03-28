@@ -46,7 +46,8 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'makeMappingAndOTUFiles':makeMappingAndOTUFiles,
                    'makeMappingFileandPCoAPlots':makeMappingFileandPCoAPlots,
                    'ExportToMGRASTHandler':ExportToMGRASTHandler,
-                   'generateMapOTUTableSubmitJobs':generateMapOTUTableSubmitJobs}
+                   'generateMapOTUTableSubmitJobs':generateMapOTUTableSubmitJobs,
+                   'betaDiversityThrough3DPlots':betaDiversityThrough3DPlots}
 
 class FileDoesNotExistError(IOError):
     pass
