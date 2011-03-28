@@ -543,55 +543,83 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def getStudyInfo(self, study_id):
+    def getStudyInfo(self, study_id, web_app_user_id):
         """ Returns a list of metadata values based on a study type and list
         """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_study_info', [study_id, results])
-            study_info = {}
-            for row in results:
-                study_info['submit_to_insdc'] = row[0]
-                study_info['investigation_type'] = row[1]
-                study_info['project_name'] = row[2]
-                study_info['experimental_factor'] = row[3]
-                study_info['study_alias'] = row[4]
-                study_info['study_title'] = row[5]
-                study_info['study_type'] = row[6]
-                study_info['study_abstract'] = row[7]
-                study_info['study_description'] = row[8]
-                study_info['center_name'] = row[9]
-                study_info['center_project_name'] = row[10]
-                study_info['project_id'] = row[11]
-                study_info['pmid'] = row[12]
-                study_info['metadata_complete'] = row[13]
-                study_info['sff_complete'] = row[14]
-                study_info['mapping_file_complete'] = row[15]
-                study_info['miens_compliant'] = row[16]
-                study_info['can_delete'] = row[17]
-                study_info['emp_score'] = row[18]
-                study_info['number_samples_promised'] = row[19]
-                study_info['number_samples_collected'] = row[20]
-                study_info['principal_investigator'] = row[21]
-                study_info['sample_count'] = row[22]
-            return study_info
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('qiime_assets.get_study_info', [study_id, web_app_user_id, results])
+        study_info = {}
+        for row in results:
+            study_info['submit_to_insdc'] = row[0]
+            study_info['investigation_type'] = row[1]
+            study_info['project_name'] = row[2]
+            study_info['experimental_factor'] = row[3]
+            study_info['study_alias'] = row[4]
+            study_info['study_title'] = row[5]
+            study_info['study_type'] = row[6]
+            study_info['study_abstract'] = row[7]
+            study_info['study_description'] = row[8]
+            study_info['center_name'] = row[9]
+            study_info['center_project_name'] = row[10]
+            study_info['project_id'] = row[11]
+            study_info['pmid'] = row[12]
+            study_info['metadata_complete'] = row[13]
+            study_info['sff_complete'] = row[14]
+            study_info['mapping_file_complete'] = row[15]
+            study_info['miens_compliant'] = row[16]
+            study_info['can_delete'] = row[17]
+            study_info['avg_emp_score'] = row[18]
+            study_info['user_emp_score'] = row[19]
+            study_info['number_samples_promised'] = row[20]
+            study_info['number_samples_collected'] = row[21]
+            study_info['principal_investigator'] = row[22]
+            study_info['sample_count'] = row[23]               
+            study_info['lab_person'] = row[24] 
+            study_info['lab_person_contact'] = row[25]
+            study_info['emp_person'] = row[26]
+            study_info['first_contact'] = row[27]
+            study_info['most_recent_contact'] = row[28]
+            study_info['sample_type'] = row[29]
+            study_info['has_physical_specimen'] = row[30]
+            study_info['has_extracted_data'] = row[31]
+            study_info['timeseries'] = row[32]
+            study_info['spatial_series'] = row[33]
+            study_info['principal_investigator'] = row[34]
+            study_info['principal_investigator_contact'] = row[35]
+        return study_info
     
     def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type):
-        """ Returns a list of metadata values based on a study type and list
+        """ Creates a study
         """
         try:
             con = self.getMetadataDatabaseConnection()
             study_id = 0
-            study_id = con.cursor().callproc('qiime_assets.study_insert', [user_id, study_name, \
-                investigation_type, miens_compliant, submit_to_insdc, portal_type, study_id])
-            return study_id[6]
+            results = con.cursor().callproc('qiime_assets.study_insert', 
+                [study_id, user_id, study_name,
+                investigation_type, miens_compliant, submit_to_insdc, portal_type])
+            return results[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+
+    def createEMPStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type,
+        number_samples_collected, number_samples_promised , lab_person,
+        lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+        has_physical_specimen, has_extracted_data, timeseries, spatial_series,
+        principal_investigator, principal_investigator_contact):
+        """ Creates an EMP study
+        """
+        con = self.getMetadataDatabaseConnection()
+        study_id = 0
+        results = con.cursor().callproc('qiime_assets.emp_study_insert', 
+            [study_id, user_id, study_name,
+            investigation_type, miens_compliant, submit_to_insdc, portal_type, 
+            number_samples_collected, number_samples_promised , lab_person,
+            lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+            has_physical_specimen, has_extracted_data, timeseries, spatial_series,
+            principal_investigator, principal_investigator_contact])
+        return results[0]
 
     def createStudyPackage(self, study_id, env_package):
         """ 
@@ -715,44 +743,35 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             
-    def getEMPSampleList(self, study_id):
+    def getEMPSampleList(self, study_id, web_app_user_id):
         """ Returns a list of emp studies
         """
-        try:
-            samples = []
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_emp_sample_list', [study_id, results])
-            for row in results:
-                # sample_id, emp_score, sample_name, description, altitude, samp_size,
-                # temp, samp_store_temp, country, depth, elevation, env_biome, env_feature, 
-                # env_matter, ph, latitude, longitude, chem_administration, samp_store_loc
-                samples.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 
-                row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], 
-                row[15], row[16], row[17], row[18]))
-                
-                
-            return samples
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+        samples = []
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('qiime_assets.get_emp_sample_list', [study_id, web_app_user_id, results])
+        for row in results:
+            # sample_id, avg_emp_score, user_emp_score, sample_name, description, altitude, samp_size,
+            # temp, samp_store_temp, country, depth, elevation, env_biome, env_feature, 
+            # env_matter, ph, latitude, longitude, chem_administration, samp_store_loc
+            samples.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 
+            row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], 
+            row[15], row[16], row[17], row[18], row[19]))
             
-    def updateEMPSampleData(self, sample_id, sample_score):
+            
+        return samples
+            
+    def updateEMPSampleData(self, sample_id, sample_score, web_app_user_id):
         """ Updates the sample emp database fields
         """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.update_emp_sample_data', [sample_id, sample_score])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('qiime_assets.update_emp_sample_data', [sample_id, sample_score, web_app_user_id])
             
-    def updateEMPStudyData(self, study_id, study_score):
+    def updateEMPStudyData(self, study_id, study_score, web_app_user_id):
         """ Updates the emp database fields
         """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.update_emp_study_data', [study_id, study_score])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('qiime_assets.update_emp_study_data', [study_id, study_score, web_app_user_id])
     
     def getListFieldValue(vocab_value_id):
         """ Returns a list env_package types associated to this study

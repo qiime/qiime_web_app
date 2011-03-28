@@ -106,7 +106,7 @@ def send_data_to_mgrast(url_path, file_contents, host, debug):
 
     return success, entity_id
 
-def submit_metadata_for_study(key, study_id, debug = False):
+def submit_metadata_for_study(key, study_id, 0, debug = False):
     """This function takes the input options from the user and generates a url
     and request header for submitting to the MG-RAST cgi script"""
 
@@ -140,7 +140,7 @@ def submit_metadata_for_study(key, study_id, debug = False):
 
     # Get the study info and put it into xml format for MG-RAST
     study_file = open(study_file_path, 'w')
-    study_info = data_access.getStudyInfo(study_id)
+    study_info = data_access.getStudyInfo(study_id, web_app_user_id)
     
     study_file.write('<study>\n')
     study_file.write("    <study_id namespace='qiime'>%s</study_id>\n" % study_id)

@@ -26,8 +26,17 @@ study_name = sess['study_name']
 portal_type = sess['portal_type']
 
 # Add the new study to the database
-study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'], \
-    form['miens_compliant'], form['submit_to_insdc'], portal_type)
+if portal_type == 'emp':
+    study_id = data_access.createEMPStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type,    
+        form['number_samples_collected'], form['number_samples_promised'] , form['lab_person'],
+        form['lab_person_contact'], form['emp_person'], form['first_contact'],
+        form['most_recent_contact'], form['sample_type'], form['has_physical_specimen'],
+        form['has_extracted_data'], form['timeseries'], form['spatial_series'],
+        form['principal_investigator'], form['principal_investigator_contact'])
+else:
+    study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type)
 
 # Add the default study_actual column entries
 data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')

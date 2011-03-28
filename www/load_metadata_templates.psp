@@ -11,22 +11,25 @@ __status__ = "Production"
 from os.path import basename
 %>
 
-<h4>Click the links below to view the submitted templates.</h4>
-<ul>
-
 <%
 from data_access_connections import data_access_factory
 from enums import DataAccessType
 data_access = data_access_factory(DataAccessType.qiime_production)
 study_id = form['study_id']
 
-for template in data_access.getStudyTemplates(study_id):
-    base = basename(template)
-    path = '/qiime/studies/study_%s/%s' % (study_id, base)
-    req.write('<li><a href="{0}">{1}</a></li>'.format(path, base))
+templates = data_access.getStudyTemplates(study_id)
+if len(templates) > 0:
+    req.write('<h4>Click the links below to view the submitted templates.</h4>')
+    req.write('<ul>')
+
+    for template in data_access.getStudyTemplates(study_id):
+        base = basename(template)
+        path = '/qiime/studies/study_%s/%s' % (study_id, base)
+        req.write('<li><a href="{0}">{1}</a></li>'.format(path, base))
+        
+    req.write('</ul>')
+    req.write('<br/>')
 
 # End indent
 %>
 
-</ul>
-<br/>

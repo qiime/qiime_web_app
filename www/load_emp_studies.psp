@@ -24,16 +24,37 @@ if len(studies) == 0:
     study_array_string += ']'
 else:
     for study_id, project_name in studies:
-        study_info = data_access.getStudyInfo(study_id)
+        study_info = data_access.getStudyInfo(study_id, web_app_user_id)
     
         # of Samples, Complete, # Samples Promised, # Samples Collected, PI
-        study_array_string += '["%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"],' % \
-            (study_id, study_info['emp_score'], project_name, study_info['study_title'], 
-            study_info['sample_count'], study_info['metadata_complete'], 
-            study_info['number_samples_promised'], study_info['number_samples_collected'], 
-            study_info['principal_investigator'])
+        study_array_string += '["%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"],' % \
+            (study_id, 
+            study_info['avg_emp_score'], 
+            study_info['user_emp_score'], 
+            project_name, 
+            study_info['study_title'], 
+            study_info['sample_count'], 
+            study_info['metadata_complete'], 
+            study_info['number_samples_promised'], 
+            study_info['number_samples_collected'], 
+            study_info['principal_investigator'], 
+            study_info['principal_investigator_contact'], 
+            study_info['lab_person'],
+            study_info['lab_person_contact'],
+            study_info['emp_person'],
+            study_info['first_contact'],
+            study_info['most_recent_contact'],
+            study_info['sample_type'],
+            study_info['has_physical_specimen'],
+            study_info['has_extracted_data'],
+            study_info['timeseries'],
+            study_info['spatial_series'])
     
     study_array_string = study_array_string[:-1]
     study_array_string += ']'
 req.write(study_array_string)
+
+#f = open('/tmp/study_data.txt', 'w')
+#f.write(study_array_string)
+#f.close()
 %>

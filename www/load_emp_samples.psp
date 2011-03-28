@@ -13,26 +13,23 @@ __status__ = "Production"
 try:
     from data_access_connections import data_access_factory
     from enums import DataAccessType
+    sess = Session.Session(req)
     data_access = data_access_factory(DataAccessType.qiime_production)
     study_id = form['study_id']
     
     sample_array_string = '['
-    samples = data_access.getEMPSampleList(study_id)
-    
-    
-    
-    f = open('/tmp/jsarray.txt', 'w')
-    f.write(str(samples))
-    f.write('\n\n')
-    f.close()
-    
-    
+    samples = data_access.getEMPSampleList(study_id, sess['web_app_user_id'])
+        
+    #f = open('/tmp/jsarray.txt', 'w')
+    #f.write(str(samples))
+    #f.write('\n\n')
+    #f.close()
     
     if len(samples) == 0:
         sample_array_string += ']'
     else:
         for sample_info in samples:
-            sample_array_string += '["%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"],' % sample_info
+            sample_array_string += '["%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"],' % sample_info
         sample_array_string = sample_array_string[:-1]
         sample_array_string += ']'
     req.write(sample_array_string)    

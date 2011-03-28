@@ -172,9 +172,116 @@ for item in sorted(list):
             </td>
         </tr>
         --->
+<%
+if sess['portal_type'] == 'emp':
+    # Indent
+    
+%>        
+        <tr>
+            <td>Principal Investigator
+            </td>
+            <td>
+                <input type="text" name="principal_investigator" id="principal_investigator" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Principal Investigator Contact
+            </td>
+            <td>
+                <input type="text" name="principal_investigator_contact" id="principal_investigator_contact" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Lab Person
+            </td>
+            <td>
+                <input type="text" name="lab_person" id="lab_person" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Lab Person Contact
+            </td>
+            <td>
+                <input type="text" name="lab_person_contact" id="lab_person_contact" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>EMP Person
+            </td>
+            <td>
+                <input type="text" name="emp_person" id="emp_person" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>First Contact
+            </td>
+            <td>
+                <input type="text" name="first_contact" id="first_contact" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Most Recent Contact
+            </td>
+            <td>
+                <input type="text" name="most_recent_contact" id="most_recent_contact" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Sample Type
+            </td>
+            <td>
+                <input type="text" name="sample_type" id="sample_type" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td># of Samples Promised Promised
+            </td>
+            <td>
+                <input class="numeric" type="text" name="number_samples_promised" id="number_samples_promised" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td># of Samples Promised Collected
+            </td>
+            <td>
+                <input type="text" name="number_samples_collected" id="number_samples_collected" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Has Physical Specimen?
+            </td>
+            <td>
+                <input type="text" name="has_physical_specimen" id="has_physical_specimen" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Has Extracted Data?
+            </td>
+            <td>
+                <input type="text" name="has_extracted_data" id="has_extracted_data" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Timeseries?
+            </td>
+            <td>
+                <input type="text" name="timeseries" id="timeseries" value="" size="40">
+            </td>
+        </tr>
+        <tr>
+            <td>Spatial Series?
+            </td>
+            <td>
+                <input type="text" name="spatial_series" id="spatial_series" value="" size="40">
+            </td>
+        </tr>
+<%
+# End indent
+
+%>
         <tr>
             <td>
-                <input type="submit" value="Next"/>
+                <input type="submit" value="Create"/>
             </td>
         </tr>
     </table>

@@ -131,8 +131,8 @@ if form.has_key('username'):
             sys.exit()
         
         sess['document_root'] = req.document_root() + '/qiime/'
-        # Set the timeout in seconds (6 hours)
-        sess.set_timeout(21600)
+        # Set the timeout in seconds (1 week)
+        sess.set_timeout(604800)
         sess.save()
         req.write('<script language=\"javascript\">document.login_form.submit();</script>')
     else:

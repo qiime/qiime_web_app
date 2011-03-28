@@ -18,5 +18,5 @@ sess = Session.Session(req)
 data_access = data_access_factory(DataAccessType.qiime_production)
 study_id = form['study_id']
 study_score = form['study_score']
-data_access.updateEMPStudyData(study_id, study_score)
+data_access.updateEMPStudyData(study_id, study_score, sess['web_app_user_id'])
 %>
