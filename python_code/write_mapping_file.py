@@ -100,7 +100,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                     
         statement += '\n\
         where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
-        
+        #print statement
         #print statement
         con = data_access.getMetadataDatabaseConnection()
         cur = con.cursor()
@@ -117,33 +117,36 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
         mapping_fp.write('#')
 
         # Write the header row
-        to_write = ''
+        headers=[]
         for column in cur.description:
             if column[0]=='SAMPLEID':
-                to_write+='SampleID\t'
+                headers.append('SampleID')
             elif column[0]=='BARCODE':
-                to_write+='BarcodeSequence\t'
+                headers.append('BarcodeSequence')
             elif column[0]=='DESCRIPTION':
-                to_write+='Description_duplicate\t'
+                headers.append('Description_duplicate')
             elif column[0]=='DESCRIPTION_NEW':
-                to_write+='Description\t'
+                headers.append('Description')
             elif column[0]=='LINKERPRIMERSEQUENCE':
-                to_write+='LinkerPrimerSequence\t'
+                headers.append('LinkerPrimerSequence')
             else:
-                to_write += column[0] + '\t'
-
+                headers.append(column[0])
+        to_write='\t'.join(headers)
         mapping_fp.write(to_write[0:len(to_write)-1] + '\n')
-    
+        #elif data_access.checkIfColumnControlledVocab(str(column[0])):
+        #print to_write
         sample_to_run_prefix=[]
 
         samples_list=[]
         map_file_write=[]
         samples_list=[]
-
-        for row in results:
+        
+        data_map_table=[]
+        for i,row in enumerate(results):
+            data_map_table.append(list(row))
             # Can't use something like '\t'.join(row) because not all items in list
             # are string values, hence the explicit loop structure here.
-            to_write = ''
+            #to_write = ''
             sample_to_run_prefix.append(list((str(row[0]),str(row[4]),str(row[3]))))
 
             if str(row[0]) in samples_list:
@@ -154,7 +157,8 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                 row=tuple(row)
             else:    
                 samples_list.append(str(row[0]))
-
+            
+            '''
             for i,column in enumerate(row):            
                 val = str(column)
                 if val == 'None':
@@ -162,5 +166,29 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                 to_write += val + '\t'
             # Write the row minus the last tab
             mapping_fp.write(to_write[0:len(to_write)-1] + '\n')
-
+            '''
+        #print data_map_table
+        
+        for num,col in enumerate(headers):
+            #print col
+            if data_access.checkIfColumnControlledVocab(str(col)):
+                cont_vocab=data_access.getValidControlledVocabTerms(col)
+                col_values={}
+                for i in cont_vocab:
+                    if i[0] <> None:
+                        col_values[int(i[0])]=str(i[1])
+                
+                for i,val in enumerate(data_map_table):
+                    val[num]=col_values[int(val[num])]
+        
+        new_data_table=[]
+        for num,row in enumerate(data_map_table):
+           
+            row_str=['%s' % x for x in row]
+            new_data_table.append('\t'.join(row_str))
+        
+        #mapping_fp.write('\t'.join(headers)+'\n')
+        mapping_fp.write('\n'.join(new_data_table))
+        mapping_fp.close()                
+    
     return run_prefix_list
