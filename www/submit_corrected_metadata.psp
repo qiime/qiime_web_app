@@ -78,7 +78,7 @@ if len(files) != 3:
 
 # Clear and re-insert our study tempaltes
 data_access.clearStudyTemplates(study_id)
-for filename in files:
+for filename in sess['templates']:
     data_access.addTemplateFile(study_id, filename)
 
 # Read in the files and put into da bucket of values
