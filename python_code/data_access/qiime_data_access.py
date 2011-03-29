@@ -588,6 +588,65 @@ class QiimeDataAccess(object):
             study_info['principal_investigator'] = row[34]
             study_info['principal_investigator_contact'] = row[35]
         return study_info
+        
+    def getAllSampleFields(self, sample_id, study_id):
+        """ Finds all filled in sample fields for a given sample_id
+        """
+        sample_tables = []
+        sample_tables.append('sample')
+        sample_tables.append('common_fields')
+        sample_tables.append('extra_sample_')
+        sample_tables.append('air')
+        sample_tables.append('other_environment')
+        sample_tables.append('sediment')
+        sample_tables.append('soil')
+        sample_tables.append('wastewater_sludge')
+        sample_tables.append('water')
+        sample_tables.append('host_assoc_vertibrate')
+        sample_tables.append('host_associated_plant')
+        sample_tables.append('human_associated')
+        sample_tables.append('host_sample')
+        sample_tables.append('host')
+      
+        filled_fields = {}
+        
+        con = self.getMetadataDatabaseConnection()
+        cursor = con.cursor()
+        
+        for table in sample_tables:        
+            if 'extra_sample_' in table:
+                statement = 'select * from %s%s where sample_id = %s' % (table, study_id, sample_id)
+            elif table == 'host':
+                statement = 'select * from host h inner join host_sample hs on h.host_id = hs.host_id where sample_id = %s' % sample_id
+            else:
+                statement = 'select * from %s where sample_id = %s' % (table, sample_id)
+            
+            try:
+                cursor.execute(statement)
+            except Exception, e:
+                print str(e)
+                print 'Error running query:\n'
+                print statement
+                print 'Running next query...\n'
+                
+                continue
+                
+            data = cursor.fetchall()
+
+            # Get the column names
+            col_names = []
+            for i in range(0, len(cursor.description)):
+                col_names.append(cursor.description[i][0])
+        
+            # Find the rows with data
+            for row in data:
+                i = 0
+                for field in row:
+                    if field != None and field != '':
+                        filled_fields[col_names[i]] = field
+                    i += 1
+        
+        return filled_fields
     
     def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type):
         """ Creates a study

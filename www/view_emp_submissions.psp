@@ -89,12 +89,6 @@ __status__ = 'Development'
         combo.put("5", "5");
     }
         
-    function doOnSampleRowSelected(rowID, celInd)
-    {
-        document.getElementById("sample_status_div").innerHTML = "Selected row ID is " + 
-            rowID + "\n<br/>User clicked cell with index "+ celInd
-    }
-    
     function doOnSampleEditCell(stage, rId, cInd, nValue, oValue)
     {
         // Skip if the edit wasn't completed
@@ -111,6 +105,27 @@ __status__ = 'Development'
         document.getElementById("sample_status_div").innerHTML = "Sample score set to '" + sample_score + "'"
         
         return true;
+    }
+    
+    function doOnSampleRowSelected(rowID, celInd)
+    {
+        var selId = sampleGrid.getSelectedId();
+        var sample_id = sampleGrid.cells(selId, 0).getValue();
+        var study_id = studyGrid.cells(selId, 0).getValue();
+        xmlhttp = GetXmlHttpObject()
+        div_name ="sample_status_div";
+        var url = "load_all_sample_data.psp?study_id=" + study_id + '&sample_id=' + sample_id;
+        xmlhttp.onreadystatechange=function()
+        {
+            if (xmlhttp.readyState==4)
+            {
+                document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            }
+        }
+
+        // perform a GET 
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send(null);        
     }
     
     function doOnStudyRowSelected(rowID, celInd)
@@ -209,12 +224,12 @@ __status__ = 'Development'
 </h4>
 <br/>
 <h3>EMP Studies</h3>
-<div id="study_grid_container" style="width:100%;height:300px;"></div>
+<div id="study_grid_container" style="width:100%;height:200px;"></div>
 <br/>
 <div id="study_status_div" style="width:90%;"></div>
 
 <h3>Samples For Selected Studies</h3>
-<div id="sample_grid_container" style="width:100%;height:600px;"></div>
+<div id="sample_grid_container" style="width:100%;height:400px;"></div>
 <br/>
 <div id="sample_status_div" style="width:90%;"></div>
 

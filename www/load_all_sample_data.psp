@@ -1,0 +1,30 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+
+
+<%
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+data_access = data_access_factory(DataAccessType.qiime_production)
+
+study_id = form['study_id']
+sample_id = form['sample_id']
+
+found_fields = data_access.getAllSampleFields(sample_id, study_id)
+req.write('<h3>All fields for this sample</h3>')
+req.write('<ul>')
+for field in found_fields:
+    req.write('<li>%s: %s</li>\n' % (field, found_fields[field]))
+    
+req.write('</ul>')
+%>
