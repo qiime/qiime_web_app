@@ -16,6 +16,7 @@ __status__ = 'Development'
 <script>
     var studyGrid;
     var sampleGrid;
+    var study_id = 0;
     
     function doInitGrid()
     {
@@ -111,7 +112,7 @@ __status__ = 'Development'
     {
         var selId = sampleGrid.getSelectedId();
         var sample_id = sampleGrid.cells(selId, 0).getValue();
-        var study_id = studyGrid.cells(selId, 0).getValue();
+        
         xmlhttp = GetXmlHttpObject()
         div_name ="sample_status_div";
         var url = "load_all_sample_data.psp?study_id=" + study_id + '&sample_id=' + sample_id;
@@ -125,13 +126,13 @@ __status__ = 'Development'
 
         // perform a GET 
         xmlhttp.open("GET", url, true);
-        xmlhttp.send(null);        
+        xmlhttp.send(null);
     }
     
     function doOnStudyRowSelected(rowID, celInd)
     {
         var selId = studyGrid.getSelectedId();
-        var study_id = studyGrid.cells(selId, 0).getValue();
+        study_id = studyGrid.cells(selId, 0).getValue();
         var project_name = studyGrid.cells(selId, 3).getValue();
         var sample_count = studyGrid.cells(selId, 5).getValue();
         var metadata_complete = studyGrid.cells(selId, 6).getValue();

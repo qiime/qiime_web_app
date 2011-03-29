@@ -15,16 +15,18 @@ __status__ = "Production"
 
 from data_access_connections import data_access_factory
 from enums import DataAccessType
+import operator
 data_access = data_access_factory(DataAccessType.qiime_production)
 
 study_id = form['study_id']
 sample_id = form['sample_id']
 
 found_fields = data_access.getAllSampleFields(sample_id, study_id)
+sorted_fields = sorted(found_fields.iteritems(), key=operator.itemgetter(0))
 req.write('<h3>All fields for this sample</h3>')
 req.write('<ul>')
-for field in found_fields:
-    req.write('<li>%s: %s</li>\n' % (field, found_fields[field]))
+for field in sorted_fields:
+    req.write('<li>%s: %s</li>\n' % (field[0], field[1]))
     
 req.write('</ul>')
 %>
