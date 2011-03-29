@@ -42,6 +42,7 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 # Grab a couple of session variables
 study_name = sess['study_name']
 study_id = sess['study_id']
+portal_type = sess['portal_type']
 
 # Remove any existing metadata before upload. 0 = delete all but study specific data
 data_access.deleteStudy(study_id, 0)
@@ -71,7 +72,9 @@ for item in form:
         files.append(form[item])
 
 # Make sure we have 3 files. If not we're screeeeewd.
-if len(files) != 3:
+if portal_type == 'emp':
+    pass
+elif len(files) != 3:
     req.write('Missing files! I could only find these:<br/>')
     for item in files:
         req.write(item + '<br/>')
@@ -165,6 +168,10 @@ for item in validated_values:
     <br/><br/>
 </div>
 
+<%
+if portal_type != 'emp':
+    # Indent
+%>
 
 <!-- Divs for prep -->
 <div name="prep_container" id="prep_container" style="visibility:hidden;">
@@ -178,6 +185,7 @@ for item in validated_values:
 </div>
 
 <%
+
 if len(host_fields) > 0:
     # Indent
 %>

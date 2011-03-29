@@ -150,7 +150,7 @@ def logErrors(master_list, new_list):
 ################################
 # The main attraction 
 ################################
-def validateFileContents(study_id, sess, form, req):
+def validateFileContents(study_id, portal_type, sess, form, req):
     """
     Process the uploaded archive. If valid, write files out to the filesystem
     and validate the contents of each.
@@ -245,10 +245,13 @@ def validateFileContents(study_id, sess, form, req):
                 logErrors(errors, validatePrepFile(mdtable))
 
         # Perform multi-file validations
-        logErrors(errors, multiFileValidation(study_mdtable, sample_mdtable, prep_mdtable))
+        if portal_type != 'emp':
+            logErrors(errors, multiFileValidation(study_mdtable, sample_mdtable, prep_mdtable))
 
         # If the zip does not have exactly three templates, raise an error
-        if len(templates) != 3:
+        if portal_type == 'emp':
+            pass
+        elif len(templates) != 3:
             errors.append('A valid study, sample, and prep template must be in the archive.')
             
         # Make sure we have one of each template type
@@ -256,7 +259,9 @@ def validateFileContents(study_id, sess, form, req):
             errors.append('Study tempalte was not found.')
         if not sample_template_found:
             errors.append('Sample template was not found.')
-        if not prep_template_found:
+        if portal_type =='emp':
+            pass
+        elif not prep_template_found:
             errors.append('Prep template was not found.')
 
         # If there were errors, report them and stop processing. Note that writing to the req 

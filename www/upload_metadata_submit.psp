@@ -31,10 +31,11 @@ if form.has_key('file') and form['file'].filename:
 # A couple of items we will need below
 sess = Session.Session(req)
 study_id = sess['study_id']
+portal_type = sess['portal_type']
 
 # Validate zip file contents. If valid, get list of template files back and
 # validate their contents
-templates = validateFileContents(study_id, sess, form, req)
+templates = validateFileContents(study_id, portal_type, sess, form, req)
 
 if templates != None:    
     # Set the template names into our session variable
