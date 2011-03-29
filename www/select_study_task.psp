@@ -255,7 +255,7 @@ else:
 <%
 # End if
 
-if can_delete == 'y':
+if can_delete == 'y' or is_admin:
     # indent
     
 %>
