@@ -26,8 +26,8 @@ from submit_job_to_qiime import submitQiimeJob
 # Create the mapping file based on sample and field selections
 
 table_col_value=get_table_col_values_from_form(form)
-
-tree_fp='%s/software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre' % os.environ['HOME']
+environment_vars=req.get_options()
+tree_fp='%s/software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre' % environment_vars['HOME']
 
 #raise ValueError
 # get the directory location for the files to write

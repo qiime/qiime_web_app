@@ -11,7 +11,7 @@ __status__ = "Production"
 '''This script is the EMP user login page'''
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import DataAccessType,ServerConfig
 %>
 
 

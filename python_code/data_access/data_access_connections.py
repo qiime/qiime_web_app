@@ -23,9 +23,9 @@ def data_access_factory(data_access_type):
 
     connections = None
     
-    if ServerConfig.data_access_type == DataAccessType.qiime_production:
+    if data_access_type == DataAccessType.qiime_production:
         connections = QiimeDataAccessConnections() 
-    elif ServerConfig.data_access_type == DataAccessType.qiime_test:
+    elif data_access_type == DataAccessType.qiime_test:
         connections = TestDataAccessConnections()
     
     # Throw an exception if the type could not be determined

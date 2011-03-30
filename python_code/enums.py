@@ -7,6 +7,7 @@ Created by Doug Wendel on 2010-09-24.
 An "enum" for listing out the various field groupings rathern than referring
 to them by an index.
 """
+import os
 
 class FieldGrouping:
     sra_submission_level = -8
@@ -22,7 +23,9 @@ class DataAccessType:
     qiime_test = 2
     
 class ServerConfig:
-    config_fp='/etc/qiime_web.conf'
+    
+    config_fp='/home/wwwuser/qiime_web.conf'
+        
     filefp=open(config_fp).read().split('\n')
     config_options={}
     for line in filefp:
