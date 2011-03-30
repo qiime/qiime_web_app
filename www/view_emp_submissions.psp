@@ -176,7 +176,7 @@ __status__ = 'Development'
         // Update data on the server
         updateEMPStudyData(study_id, study_score);
         
-        document.getElementById("study_status_div").innerHTML = "Study score set to '" + study_score + "'"        
+        document.getElementById("study_status_div").innerHTML = "Study score set to '" + study_score + "'"
         
         return true;
     }
