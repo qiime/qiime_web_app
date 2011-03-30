@@ -66,7 +66,7 @@ if form.has_key('username'):
 </form>
 <table>
     <!--<tr><td>I just want data. <a href="./download_data.psp">Download sequence data</a></td></tr>-->
-    <tr><td>Don't have an account? Head here then return to this URL when you've set one up. <br/><a href="http://localhost/qiime/register_user.psp">Create Account</a></td></tr>
+    <tr><td>Don't have an account? Head here then return to this URL when you've set one up. <br/><a href="http://<%=req.hostname%>/qiime/register_user.psp">Create Account</a></td></tr>
     <!--<tr><td>Forgot your password? <a href="./forgot_password.psp">Reset Password</a></td></tr>-->
     <!--<tr><td>Would you like to change your password? <a href="./change_password.psp">Change Password</a></td></tr>-->
 </table>
