@@ -20,3 +20,15 @@ class FieldGrouping:
 class DataAccessType:
     qiime_production = 1
     qiime_test = 2
+    
+class ServerConfig:
+    config_fp='/etc/qiime_web.conf'
+    filefp=open(config_fp).readlines()
+    config_options={}
+    for line in filefp:
+        if line != None:
+            key,val=line.strip().split('=')
+            config_options[key]=val
+        
+    data_access_type = config_options['data_access_type']
+
