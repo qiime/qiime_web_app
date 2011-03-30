@@ -1,0 +1,109 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh","Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+import os
+from os import system
+from cogent.app.util import get_tmp_filename
+from os.path import split,join
+from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
+from qiime.make_otu_table import make_otu_table
+from load_tab_file import input_set_generator
+from select_metadata import get_table_col_values_from_form
+sess = Session.Session(req)
+data_access = data_access_factory(DataAccessType.qiime_production)
+
+from submit_job_to_qiime import submitQiimeJob
+
+# Create the mapping file based on sample and field selections
+
+table_col_value=get_table_col_values_from_form(form)
+
+tree_fp='/home/wwwuser/software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre'
+
+#raise ValueError
+# get the directory location for the files to write
+pcoa_file_dir=sess['pcoa_file_dir'].strip()
+pcoa_file_dir_db=sess['pcoa_file_dir_db'].strip()
+
+filesystem_path='/'.join(pcoa_file_dir.split('/')[:-2])
+web_server_path='/'.join(pcoa_file_dir_db.split('/')[:-2])
+
+query_folder=join(filesystem_path,'queries')
+if not os.path.exists(query_folder):
+    os.mkdir(query_folder)
+
+study_id=sess['meta_analysis_id']
+user_id=int(sess['web_app_user_id'])
+file_name_prefix=form['fname_prefix']
+jobs_to_start=form['jobs_to_start']
+
+if jobs_to_start=='':
+    jobs_to_start=None
+taxonomy=form['taxonomy']
+otutable_rarefied_at=form['otutable_rarefied_at']
+
+if form.has_key('bdiv_rarefied_at'):
+    bdiv_rarefied_at=form['bdiv_rarefied_at']
+else:
+    bdiv_rarefied_at=0
+    
+
+if file_name_prefix=='':
+    file_name_prefix='default'
+    
+tmp_filename = get_tmp_filename(tmp_dir=query_folder, prefix="qiime_otu_mapping_", suffix=".txt")
+
+fout=open(tmp_filename,'w')
+fout.write(str(table_col_value))
+fout.close()
+
+tmp_filename_params = get_tmp_filename(tmp_dir=query_folder, prefix="qiime_custom_parameters_", suffix=".txt")
+fout=open(tmp_filename_params,'w')
+fout.write('####QIIME WEB PARAMS FILE####\n\n')
+for key in form:
+    split_key=key.split('####STUDIES####');
+    if len(split_key)==1:
+        if key not in ['fname_prefix','bdiv_rarefied_at','taxonomy',\
+                       'jobs_to_start','otutable_rarefied_at']:
+            fout.write('%s\t%s\n' %(key,form[key]))
+        
+fout.close()
+
+params=[]
+params.append('fs_fp=%s' % filesystem_path)
+params.append('web_fp=%s' % web_server_path)
+params.append('query=%s' % tmp_filename.strip())
+params.append('fname_prefix=%s' % file_name_prefix)
+params.append('user_id=%s' % user_id)
+params.append('meta_id=%s' % study_id)
+params.append('params_path=%s' % tmp_filename_params.strip())
+params.append('bdiv_rarefied_at=%s' % bdiv_rarefied_at)
+params.append('otutable_rarefied_at=%s' % otutable_rarefied_at)
+params.append('jobs_to_start=%s' % jobs_to_start)
+params.append('taxonomy=%s' % taxonomy)
+params.append('tree_fp=%s' % tree_fp)
+job_input='!!'.join(params)
+job_type='generateMapOTUTableSubmitJobs'
+
+# Submit the jobs
+
+try:
+    # Attempt the submission
+    submitQiimeJob(study_id, user_id, job_type, job_input, data_access)
+    # Redirect to the home page for this study
+    psp.redirect('../fusebox.psp?page=select_meta_analysis_task.psp')
+except Exception, e:
+    req.write(str(e))
+
+
+%>
+

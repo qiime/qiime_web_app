@@ -1,0 +1,442 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType
+import os
+data_access = data_access_factory(DataAccessType.qiime_production)
+from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str
+from enums import FieldGrouping
+
+# get a list of public columns
+public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
+# get submission fields
+#sra_submission_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_submission_level))[0]))
+#req.write(str(sra_submission_field_list))
+
+
+form_data=sess['form']
+%>
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="./style/qiime.css" type="text/css">
+<script src="js/overlib.js" type="text/javascript" ></script>
+<script src="select_metadata/jquery-1.3.2.js" type="text/javascript"></script> 
+<script src="select_metadata/jQuery.dualListBox-1.2.js" type="text/javascript"></script> 
+<script src="select_metadata/metadata_selection.js" type="text/javascript" ></script>
+<script language="javascript" type="text/javascript"> 
+$(document).ready(function(){
+});
+    window.onload=$(function() {$.configureBoxes();});
+    
+    var savedValues=new Array();
+    
+    function post_Array() {
+        var form_object=document.getElementById("metadata_submission") 
+        var jobs_to_start=new Array();
+        var fname_prefix=document.getElementById("fname_prefix").value;
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="fname_prefix" value="'+fname_prefix+'">'
+
+        var taxonomy_class=document.getElementById("taxonomy").value;
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="taxonomy" value="'+taxonomy_class+'">'
+
+        //set the rarefaction threshold
+        var otutable_rarefied_at=parseInt(document.getElementById("otutable_rarefied_at").value);
+        if (isNaN(otutable_rarefied_at)){
+            otutable_rarefied_at=0;
+        }else if(otutable_rarefied_at<0 || otutable_rarefied_at>100000000){
+            alert('The rarefaction threshold must be an integer between 0 and 100000000!');
+            return false;
+        }
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="otutable_rarefied_at" value="'+otutable_rarefied_at+'">'
+
+        //set beta-diversity parameters
+        if (document.getElementById('check_bdiv').checked){
+            jobs_to_start.push('bdiv')
+            //set the metric to use
+            var bdiv_metric=document.getElementById("bdiv_metric").options;
+            var metrics_to_use=new Array();
+            var metric_iterator=0;
+            for (var i=0,il=bdiv_metric.length;i<il;i++){
+                if (bdiv_metric[i].selected){
+                    metrics_to_use[metric_iterator]=bdiv_metric[i].value;
+                    metric_iterator++;
+                }
+            }
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="beta_diversity:metrics" value="'+metrics_to_use.join()+'">'
+
+            //set the rarefaction threshold
+            var bdiv_rarefied_at=parseInt(document.getElementById("bdiv_rarefied_at").value);
+            if (isNaN(bdiv_rarefied_at)){
+                bdiv_rarefied_at=0;
+            }else if(bdiv_rarefied_at<0 || bdiv_rarefied_at>100000000){
+                alert('The rarefaction threshold must be an integer between 0 and 100000000!');
+                return false;
+            }
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="bdiv_rarefied_at" value="'+bdiv_rarefied_at+'">'
+            
+            if (document.getElementById('check_3d_plots').checked){
+                jobs_to_start.push('3d_bdiv_plots')
+                //set the 3D background color
+                var threed_bgcolor=document.getElementById("3dbdiv_bgcolor");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_3d_plots:background_color" value="'+threed_bgcolor[threed_bgcolor.selectedIndex].value+'">'
+            
+                //get the 3d colorby options
+                var threed_colorby=document.getElementById("3dbdiv_colorby").options;
+                var colorby_to_use=new Array();
+                var colorby_iterator=0;
+                for (var i=0,il=threed_colorby.length;i<il;i++){
+                    if (threed_colorby[i].selected){
+                        colorby_to_use[colorby_iterator]=threed_colorby[i].value;
+                        colorby_iterator++;
+                    }
+                }
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_3d_plots:colorby" value="'+colorby_to_use.join()+'">'
+
+                //set the custom axis to use
+                var threed_axes=document.getElementById("3dbdiv_axes");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_3d_plots:custom_axes" value="'+threed_axes[threed_axes.selectedIndex].value+'">'
+                //alert(form_object.innerHTML)
+            }
+            
+            if (document.getElementById('check_2d_plots').checked){
+                jobs_to_start.push('2d_bdiv_plots')
+                //set the 2D background color
+                var twod_bgcolor=document.getElementById("2dbdiv_bgcolor");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_2d_plots:background_color" value="'+twod_bgcolor[twod_bgcolor.selectedIndex].value+'">'
+            
+                //get the 2d colorby options
+                var twod_colorby=document.getElementById("2dbdiv_colorby").options;
+                var colorby_to_use=new Array();
+                var colorby_iterator=0;
+                for (var i=0,il=twod_colorby.length;i<il;i++){
+                    if (twod_colorby[i].selected){
+                        colorby_to_use[colorby_iterator]=twod_colorby[i].value;
+                        colorby_iterator++;
+                    }
+                }
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_2d_plots:colorby" value="'+colorby_to_use.join()+'">'
+            }
+            
+            if (document.getElementById('check_dist_hist').checked){
+                jobs_to_start.push('disthist_bdiv_plots')
+                //set the distance hist background color
+                var disthist_bgcolor=document.getElementById("disthist_bgcolor");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:background_color" value="'+disthist_bgcolor[disthist_bgcolor.selectedIndex].value+'">'
+            
+                //get the distance histogram options
+                var disthist_fields=document.getElementById("disthist_fields").options;
+                var fields_to_use=new Array();
+                var fields_iterator=0;
+                for (var i=0,il=disthist_fields.length;i<il;i++){
+                    if (disthist_fields[i].selected){
+                        fields_to_use[fields_iterator]=disthist_fields[i].value;
+                        fields_iterator++;
+                    }
+                }
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:fields" value="'+fields_to_use.join()+'">'
+
+                //set whether to use monte-carlo
+                var disthist_monte_carlo=document.getElementById("disthist_montecarlo");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:monte_carlo" value="'+disthist_monte_carlo[disthist_monte_carlo.selectedIndex].value+'">'
+                
+                if (disthist_monte_carlo[disthist_monte_carlo.selectedIndex].value=='True'){
+                    //set the monte-carlo iteration
+                    var monte_carlo_iter=parseInt(document.getElementById("disthist_monteiter").value);
+                    if (isNaN(monte_carlo_iter)){
+                        bdiv_rarefied_at=0;
+                    }else if(monte_carlo_iter<1 || monte_carlo_iter>100000000){
+                        alert('The monte-carlo iterations must be an integer between 1 and 100000000!');
+                        return false;
+                    }
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:monte_carlo_iters" value="'+monte_carlo_iter+'">'
+                }
+            }
+            
+        }
+        //set beta-diversity parameters
+        if (document.getElementById('check_heatmap').checked){
+            jobs_to_start.push('heatmap')
+            
+            //set the num otus
+            var heatmap_otu_hits=parseInt(document.getElementById("heatmap_otu_hits").value);
+            if (isNaN(heatmap_otu_hits)){
+                heatmap_otu_hits=5;
+            }else if(heatmap_otu_hits<0 || heatmap_otu_hits>100000000){
+                alert('The rarefaction threshold must be an float between 0 and 100000000!');
+                return false;
+            }
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_otu_heatmap_html:num_otu_hits" value="'+heatmap_otu_hits+'">'
+            
+            //set whether to use log-transform
+            var heatmap_log_transform=document.getElementById("heatmap_log_transform");
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_otu_heatmap_html:log_transform" value="'+heatmap_log_transform[heatmap_log_transform.selectedIndex].value+'">'
+            
+            if (heatmap_log_transform[heatmap_log_transform.selectedIndex].value=='True'){
+                //set the log transform replace zero number
+                var log_transform_replace=parseFloat(document.getElementById("log_transform_replace").value);
+                if (isNaN(log_transform_replace)){
+                    log_transform_replace=0.5;
+                }else if(log_transform_replace<0 || log_transform_replace>100000000){
+                    alert('The rarefaction threshold must be an float between 0 and 100000000!');
+                    return false;
+                }
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_otu_heatmap_html:log_eps" value="'+log_transform_replace+'">'
+            }
+            
+        }
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="jobs_to_start" value="'+jobs_to_start.join()+'">'
+        
+        
+        return true;
+    }
+    function show_hide_div(check_id,div_id){
+        checkbox_to_show_hide=document.getElementById(check_id)
+        div_to_show_hide=document.getElementById(div_id)
+        if (checkbox_to_show_hide.checked){
+            div_to_show_hide.style.display='';
+        }else{
+            div_to_show_hide.style.display='none';
+        }
+    }
+    
+</script>
+<style type="text/css">
+    td{
+        text-align:left;
+    }
+    table.column_values td{
+        text-align:left;
+        width:300px;
+        border: thin solid white;
+    }
+    
+    th{
+        text-align:center;
+    }
+    .countLabel 
+    {
+        color:Gray;
+        font-style:italic;
+    }
+</style>
+
+
+<!-- 
+This form contains the input box for the list of terms, along with
+the list of ontologies and function buttons.
+
+Onsubmit returns false, since the form is not formally submitted and
+it will remove the return key functionality.
+-->
+
+<form onsubmit="return false;">
+
+<h3>Meta-Analyses to Perform</h3>
+<div id='fname_prefix'>
+    <b>Filename Prefix: </b>
+    <input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" />
+</div>
+<br>
+<p><b>OTU Table</b></p>
+<div id='tax_assignment'>
+    <table>
+    <tr><td><b>Select Taxonomy: </b></td>
+    <td>
+        <select id="taxonomy" name="taxonomy">
+            <option>G2_chip
+            <option>Hugenholtz
+            <option>Ludwig
+            <option>NCBI
+            <option>Pace
+            <option selected>PHPR
+            <option>RDP
+        </select>
+    </td></tr>
+    <tr><td><b>Rarefied at: </b></td>
+    <td><input type='text' id="otutable_rarefied_at" name="otutable_rarefied_at" /></td>
+    </tr>
+    </table>
+    
+</div>
+<br>
+<b><input type='checkbox' id='check_heatmap' onclick='show_hide_div(this.id,"heatmap_div")'>&nbsp;Heatmap</input></b>
+<br>
+<div id='heatmap_div' style='display:none;valign:top'>
+    <table><tr>
+    <td><b>Min # of OTU Hits: </b></td>
+    <td><input type='text' id="heatmap_otu_hits" name="heatmap_otu_hits" /></td>
+    </tr>
+    <tr>
+    <td><b>Log Transform: </b></td>
+    <td>
+        <select id="heatmap_log_transform" name="heatmap_log_transform">
+            <option>False
+            <option>True
+        </select>
+    </td>
+    </tr>
+    <tr>
+    <td><b>Replace Zeros with: </b></td>
+    <td><input type='text' id="log_transform_replace" name="log_transform_replace" /><em style="color:gray">(this only applies if log-transform is true)</em></td>
+    </tr>
+    </table>
+</div>
+<br>   
+<b><input type='checkbox' id='check_bdiv' onclick='show_hide_div(this.id,"beta_div")'>&nbsp;Beta-Diversity</input></b>
+<br><br>
+<div id='beta_div' style='display:none;valign:top'>
+    <table><tr>
+        <td><b>Metrics: </b></td>
+        <td>
+            <select id="bdiv_metric" name="bdiv_metric" multiple>
+                <option>weighted_unifrac
+                <option>unweighted_unifrac
+            </select>
+        </td>
+        </tr><tr>
+        <td><b>Rarefied at: </b></td>
+        <td>
+            <input type='text' id="bdiv_rarefied_at" name="bdiv_rarefied_at" /><em style="color:gray">(default: use OTU table parameters)</em>
+        </td>
+        </tr>
+        <tr><td><b>Visualizations:</b></td><td><b><input type='checkbox' id='check_3d_plots' onclick='show_hide_div(this.id,"3d_plots")'>&nbsp;3D PCoA Plots</input></b></td></tr>
+        <tr><td></td><td>
+        <div id='3d_plots' style='display:none;valign:top'>
+            <table><tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<b>Background Color: </b></td>
+            <td>
+                <select id="3dbdiv_bgcolor" name="3dbdiv_bgcolor">
+                    <option>black
+                    <option>white
+                </select>
+            </td>
+            <td>&nbsp;&nbsp;<b>Colorby: </b></td>
+            <td>
+                <select id="3dbdiv_colorby" name="3dbdiv_colorby" multiple>
+                    <option>SampleID
+                    <option>LinkerPrimerSequence
+<%
+for i in form_data:
+    if i != 'page':
+        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+#
+%>
+                    <option>Description
+                </select>
+            </td>
+            <td>&nbsp;&nbsp;<b>Custom Axis: </b></td>
+            <td>
+                <select id="3dbdiv_axes" name="3dbdiv_axes">
+                    <option>
+                    <option>SampleID
+                    <option>LinkerPrimerSequence
+<%
+for i in form_data:
+    if i != 'page':
+        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+#
+%>
+                    <option>Description
+                </select>
+            </td>
+            </tr>
+            </table></div>
+        <td></tr>    
+        <tr><td></td><td><b><input type='checkbox' id='check_2d_plots' onclick='show_hide_div(this.id,"2d_plots")'>&nbsp;2D PCoA Plots</input></b></td></tr>
+        <tr><td></td><td>
+        <div id='2d_plots' style='display:none;valign:top'>
+            <table><tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<b>Background Color: </b></td>
+            <td>
+                <select id="2dbdiv_bgcolor" name="2dbdiv_bgcolor">
+                    <option>black
+                    <option>white
+                </select>
+            </td>
+            <td>&nbsp;&nbsp;<b>Colorby: </b></td>
+            <td>
+                <select id="2dbdiv_colorby" name="2dbdiv_colorby" multiple>
+                    <option>SampleID
+                    <option>LinkerPrimerSequence
+<%
+for i in form_data:
+    if i != 'page':
+        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+#
+%>
+                    <option>Description
+                </select>
+            </td>
+            </tr>
+            </table></div>
+        <td></tr>
+        <tr><td></td><td><b><input type='checkbox' id='check_dist_hist' onclick='show_hide_div(this.id,"dist_hist")'>&nbsp;Distance Histograms</input></b></td></tr>
+        <tr><td></td><td>
+        <div id='dist_hist' style='display:none;valign:top'>
+            <table><tr>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<b>Background Color: </b></td>
+            <td>
+                <select id="disthist_bgcolor" name="disthist_bgcolor">
+                    <option>black
+                    <option>white
+                </select>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<b>Perform Monte-Carlo: </b></td>
+            <td>
+                <select id="disthist_montecarlo" name="disthist_montecarlo">
+                    <option>False
+                    <option>True
+                </select>
+            </td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;<b>Monte-Carlo Iterations: </b></td>
+            <td>
+                <input type='text' id="disthist_monteiter" name="disthist_monteiter" /><em style="color:gray">(default: 100)</em>
+            </td>
+            <td>&nbsp;&nbsp;<b>Fields to Compare: </b></td>
+            <td>
+                <select id="disthist_fields" name="disthist_fields" multiple>
+                    <option>SampleID
+                    <option>LinkerPrimerSequence
+<%
+for i in form_data:
+    if i != 'page':
+        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+#
+%>
+                    <option>Description
+                </select>
+            </td>
+            </tr>
+            </table></div>
+        <td></tr>
+    </table>
+</div>
+<br>
+
+<br>
+<!-- 
+    The following table is where we will be dynamically writing
+    the results.
+-->
+<table id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
+</table>
+</form>
+<form id="metadata_submission" onsubmit="return post_Array()" method="post" action="select_metadata/submit_meta_analyses.psp">
+<%
+for i in form_data:
+    if i != 'page':
+        req.write('<input type="hidden" name="%s" value="%s" />' % (i,form_data[i]));
+#
+%>
+    <br/>
+    <input type="submit" />
+</form>
