@@ -13,7 +13,7 @@ __status__ = "Development"
  
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
-from os import makedirs
+from os import makedirs,environ
 from os.path import exists,splitext,split,join
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
@@ -79,7 +79,7 @@ def main():
     study_id = opts.study_id
     run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[0]
     print run_prefix
-    output_dir = '/home/wwwuser/user_data/studies/study_%s/processed_data_%s/' % (study_id, run_prefix)
+    output_dir = '%s/user_data/studies/study_%s/processed_data_%s/' % (environ['HOME'],study_id, run_prefix)
     
     sff_fname=opts.sff_fname
     map_fname = opts.map_fname

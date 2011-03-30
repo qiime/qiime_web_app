@@ -17,7 +17,7 @@ from qiime.parse import parse_mapping_file
 from qiime.format import format_map_file
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
-from os import system,popen
+from os import system,popen,environ
 from glob import glob
 import re
 from random import choice
@@ -69,7 +69,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     
     """
     if write_to_all_fasta:
-        split_lib_fastas='/home/wwwuser/user_data/studies/all_split_lib_fastas'
+        split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' % environ['HOME']
         create_dir(split_lib_fastas)
     # Prepare some variables for the later steps
     sff_filenames=sff_input_fp.split(',')

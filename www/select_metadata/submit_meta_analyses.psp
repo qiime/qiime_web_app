@@ -27,7 +27,7 @@ from submit_job_to_qiime import submitQiimeJob
 
 table_col_value=get_table_col_values_from_form(form)
 
-tree_fp='/home/wwwuser/software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre'
+tree_fp='%s/software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre' % os.environ['HOME']
 
 #raise ValueError
 # get the directory location for the files to write
