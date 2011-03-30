@@ -25,7 +25,7 @@ from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
 from qiime.format import format_matrix,format_otu_table
 from run_process_sff_through_split_lib import web_app_call_commands_serially
-from qiime.workflow import print_commands,\
+from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates,generate_log_fp,\
                            get_params_str, WorkflowError,WorkflowLogger
 from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
@@ -33,8 +33,13 @@ from cogent.util.misc import get_random_directory_name
 from submit_job_to_qiime import submitQiimeJob
 
 qiime_config = load_qiime_config()
-            
-def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,rarefied_at,jobs_to_start,tax_name,tree_fp):
+script_dir = get_qiime_scripts_dir()
+
+def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, 
+                                file_name_prefix,user_id,meta_id,params_path,
+                                rarefied_at,otutable_rarefied_at,
+                                jobs_to_start,tax_name,tree_fp):
+                                
     tmp_prefix=get_tmp_filename('',suffix='').strip()
 
     total1 = time()
@@ -353,7 +358,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
                 raise ValueError, 'Duplicate prokmsa ids!' 
             sample_counts[sample_name1][str(row[0])]=row[1]
         
-    otu_table=zeros((len(otus),len(samples_list)))
+    otu_table=zeros((len(otus),len(samples_list)),dtype=int)
     
     for i,sample in enumerate(samples_list):
         for j, otu in enumerate(otus):
@@ -389,24 +394,54 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
     cmd_call='cd %s; zip %s %s' % (otu_table_file_dir,zip_fpath,otu_table_filepath.split('/')[-1])
     system(cmd_call)
     
+    
     #get the date to put in the db
     run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
     
-    
     valid=data_access.addMetaAnalysisFiles(True,int(meta_id),map_filepath_db,'OTUTABLE',run_date,'MAPPING')
-    
     if not valid:
         raise ValueError, 'There was an issue uploading the filepaths to the DB!'
     
     valid=data_access.addMetaAnalysisFiles(True,int(meta_id),otu_table_filepath_db,'OTUTABLE',run_date,'OTU_TABLE')
-    
     if not valid:
         raise ValueError, 'There was an issue uploading the filepaths to the DB!'
     
-    valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
+    otu_table_basename, otu_table_ext = os.path.splitext(otu_table_fname)
+    if otutable_rarefied_at:
+        python_exe_fp = qiime_config['python_exe_fp']
+        commands=[]
+        command_handler=call_commands_serially
+        status_update_callback=no_status_updates
+        logger = WorkflowLogger(generate_log_fp('/tmp/'),
+                                params=dict(''),
+                                qiime_config=qiime_config)
+                                
+        # Sample the OTU table at even depth
+        new_fname='%s_even%d%s' % (otu_table_basename, otutable_rarefied_at, otu_table_ext)
+        even_sampled_otu_table_fp = os.path.join(otu_table_file_dir,new_fname)
+        single_rarefaction_cmd = \
+         '%s %s/single_rarefaction.py -i %s -o %s -d %d' %\
+         (python_exe_fp, script_dir, otu_table_filepath,
+          even_sampled_otu_table_fp, otutable_rarefied_at)
+        commands.append([
+         ('Sample OTU table at %d seqs/sample' % otutable_rarefied_at,
+          single_rarefaction_cmd)])
+        otu_table_filepath=even_sampled_otu_table_fp
+        otu_table_filepath_db=os.path.join(otu_table_file_dir_db, new_fname)
+        
+        # Call the command handler on the list of commands
+        command_handler(commands, status_update_callback, logger)
+        
+        valid=data_access.addMetaAnalysisFiles(True,int(meta_id),otu_table_filepath_db,'OTUTABLE',run_date,'OTU_TABLE')
+        if not valid:
+            raise ValueError, 'There was an issue uploading the filepaths to the DB!'
+        
+        cmd_call='cd %s; zip %s %s' % (otu_table_file_dir,zip_fpath,otu_table_filepath.split('/')[-1])
+        system(cmd_call)
+    #valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
     
-    if not valid:
-        raise ValueError, 'There was an issue uploading the filepaths to the DB!'
+    #if not valid:
+    #    raise ValueError, 'There was an issue uploading the filepaths to the DB!'
         
         
     #
@@ -414,6 +449,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
     params.append('fs_fp=%s' % fs_fp)
     params.append('web_fp=%s' % web_fp)
     params.append('otu_table_fp=%s' % otu_table_filepath)
+    params.append('mapping_file_fp=%s' % map_filepath)
     params.append('fname_prefix=%s' % file_name_prefix)
     params.append('user_id=%s' % user_id)
     params.append('meta_id=%s' % meta_id)
@@ -421,13 +457,34 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, fil
     params.append('bdiv_rarefied_at=%s' % rarefied_at)
     params.append('jobs_to_start=%s' % jobs_to_start)
     params.append('tree_fp=%s' % tree_fp)
+    params.append('run_date=%s' % run_date)
+    params.append('zip_fpath=%s' % zip_fpath)
+    params.append('zip_fpath_db=%s' % zip_fpath_db)
     job_input='!!'.join(params)
-    job_type='betaDiversityThrough3DPlots'
+    
+    analyses_to_start=jobs_to_start.split(',')
+    if 'bdiv' in analyses_to_start:
+        job_type='betaDiversityThrough3DPlots'
 
-    # Submit the Beta Diversity jobs
-    try:
-        # Attempt the submission
-        submitQiimeJob(meta_id, user_id, job_type, job_input, data_access)
+        # Submit the Beta Diversity jobs
+        try:
+            # Attempt the submission
+            submitQiimeJob(meta_id, user_id, job_type, job_input, data_access)
         
-    except Exception, e:
-        raise ValueError,e
+        except Exception, e:
+            raise ValueError,e
+    elif 'heatmap' in analyses_to_start:
+        job_type='makeOTUHeatmap'
+        
+        # Submit the Beta Diversity jobs
+        try:
+            # Attempt the submission
+            submitQiimeJob(meta_id, user_id, job_type, job_input, data_access)
+        
+        except Exception, e:
+            raise ValueError,e
+        
+    #add the zip file to the DB
+    valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
+    if not valid:
+        raise ValueError, 'There was an issue uploading the filepaths to the DB!'

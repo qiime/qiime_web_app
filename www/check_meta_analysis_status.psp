@@ -65,12 +65,37 @@ if filepaths:
                 filetype='OTU Table:'
             elif fpath[1]=='ZIP':
                 filetype='Zip Archive:'
+            elif fpath[1]=='WEIGHTED_UNIFRAC':
+                filetype='Weighted Unifrac Distance Matrix:'
+            elif fpath[1]=='UNWEIGHTED_UNIFRAC':
+                filetype='Unweighted Unifrac Distance Matrix:'
+            elif fpath[1]=='WEIGHTED_UNIFRAC_PC':
+                filetype='Weighted Unifrac Principal Coords File:'
+            elif fpath[1]=='UNWEIGHTED_UNIFRAC_PC':
+                filetype='Unweighted Unifrac Principal Coords File:'
+            elif fpath[1]=='CONTINUOUS_UNWEIGHTED_UNIFRAC_PC':
+                filetype='Unweighted Unifrac 3D Plots (continuous colors):'
+            elif fpath[1]=='DISCRETE_UNWEIGHTED_UNIFRAC_PC':
+                filetype='Unweighted Unifrac 3D Plots (discrete colors):'
+            elif fpath[1]=='CONTINUOUS_WEIGHTED_UNIFRAC_PC':
+                filetype='Weighted Unifrac 3D Plots (continuous colors):'
+            elif fpath[1]=='DISCRETE_WEIGHTED_UNIFRAC_PC':
+                filetype='Weighted Unifrac 3D Plots (discrete colors):'
+            elif fpath[1]=='WEIGHTED_UNIFRAC_DIST_HIST':
+                filetype='Weighted Unifrac Distance Histograms:'
+            elif fpath[1]=='UNWEIGHTED_UNIFRAC_DIST_HIST':
+                filetype='Unweighted Unifrac Distance Histograms:'
+            elif fpath[1]=='HEATMAP':
+                filetype='OTU Heatmap:'
+            else:
+                filetype='Other:'
                 
             file_path = (fpath[0], os.path.basename(fpath[0]))
             req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;"><b>%s</b></td><td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (filetype,file_path[0], file_path[1]))
         #req.write('<tr bgcolor="#D0F5A9"><td bgcolor="#FAAFBE" style="font-size: 11px;"><b>Remove Files</b></td>')
         req.write('<tr><td colspan="2" bgcolor="#FAAFBE" style="font-size: 10px;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?fpath=%s&meta_id=%s\')">(clear files)</a></td></tr>' % (','.join([x for (x,y) in filepath_dict[key]]),meta_analysis_id))
         #req.write('<tr><td colspan="2">&nbsp;</td></tr>')
+    
     
 
     req.write('</table>')

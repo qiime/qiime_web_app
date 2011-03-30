@@ -44,6 +44,7 @@ script_info['required_options'] = [\
     make_option('-m','--meta_id',help='this is the meta analysis id'),\
     make_option('-b','--params_path',help='this is the parameters file used'),\
     make_option('-r','--bdiv_rarefied_at',help='this is the rarefaction number'),\
+    make_option('-j','--otutable_rarefied_at',help='this is the rarefaction number for the OTU table'),\
     make_option('-s','--jobs_to_start',help='these are the jobs that should be started'),\
     make_option('-t','--taxonomy',help='this is the taxonomy to use'),\
     make_option('-g','--tree_fp',help='this is the gg tree to use'),\
@@ -78,10 +79,14 @@ def main():
     meta_id=int(opts.meta_id)
     params_path=opts.params_path
     bdiv_rarefied_at=int(opts.bdiv_rarefied_at)
+    otutable_rarefied_at=int(opts.otutable_rarefied_at)
     jobs_to_start=opts.jobs_to_start
     taxonomy=opts.taxonomy
     tree_fp=opts.tree_fp
-    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, file_name_prefix,user_id,meta_id,params_path,bdiv_rarefied_at,jobs_to_start,taxonomy,tree_fp)
+    write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, 
+                                file_name_prefix,user_id,meta_id,params_path,
+                                bdiv_rarefied_at,otutable_rarefied_at,
+                                jobs_to_start,taxonomy,tree_fp)
 
 if __name__ == "__main__":
     main()

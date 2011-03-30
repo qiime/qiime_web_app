@@ -24,7 +24,7 @@ QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_t
 QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
 QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 QIIME_BDIV_THROUGH_3D_PLOTS= QIIME_WEBAPP_BASE + "/bdiv_through_3d_plots.py"
-
+QIIME_MAKE_OTU_HEATMAP= QIIME_WEBAPP_BASE + "/make_otu_heatmap.py"
 
 class HandlerException(Exception):
     pass
@@ -323,8 +323,8 @@ class makeMappingFileandPCoAPlots(JobHandler):
 
 class generateMapOTUTableSubmitJobs(JobHandler):
     """Handler for bdiv_through_3d_plots.py"""
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s --taxonomy %(taxonomy)s --tree_fp %(tree_fp)s" ])
-    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'jobs_to_start':None,'taxonomy':None,'tree_fp':None}
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --otutable_rarefied_at %(otutable_rarefied_at)s --jobs_to_start %(jobs_to_start)s --taxonomy %(taxonomy)s --tree_fp %(tree_fp)s" ])
+    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'otutable_rarefied_at':None,'jobs_to_start':None,'taxonomy':None,'tree_fp':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""
@@ -342,8 +342,22 @@ def load_sff_and_metadata(input, output):
 class betaDiversityThrough3DPlots(JobHandler):
     """Handler for bdiv_through_3d_plots.py"""
 
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_BDIV_THROUGH_3D_PLOTS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --otu_table_fp %(otu_table_fp)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s --tree_fp %(tree_fp)s" ])
-    _base_args = {'fs_fp':None, 'web_fp':None,'otu_table_fp':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'jobs_to_start':None,'tree_fp':None}
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_BDIV_THROUGH_3D_PLOTS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --otu_table_fp %(otu_table_fp)s --mapping_file_fp %(mapping_file_fp)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s --tree_fp %(tree_fp)s --run_date %(run_date)s --zip_fpath %(zip_fpath)s --zip_fpath_db %(zip_fpath_db)s" ])
+    _base_args = {'fs_fp':None, 'web_fp':None,'otu_table_fp':None,'mapping_file_fp':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'jobs_to_start':None,'tree_fp':None,'run_date':None,'zip_fpath':None,'zip_fpath_db':None}
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+#
+class makeOTUHeatmap(JobHandler):
+    """Handler for make_otu_heatmap.py"""
+
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_OTU_HEATMAP, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --otu_table_fp %(otu_table_fp)s --mapping_file_fp %(mapping_file_fp)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s --tree_fp %(tree_fp)s --run_date %(run_date)s --zip_fpath %(zip_fpath)s --zip_fpath_db %(zip_fpath_db)s" ])
+    _base_args = {'fs_fp':None, 'web_fp':None,'otu_table_fp':None,'mapping_file_fp':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'jobs_to_start':None,'tree_fp':None,'run_date':None,'zip_fpath':None,'zip_fpath_db':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""
