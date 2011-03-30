@@ -74,7 +74,8 @@ def setPortalType():
         req.write('Authenciation failed.')
         return
     
-    output_dir='/home/wwwuser/user_data'
+    environment_vars=req.get_options()
+    output_dir='%s/user_data' % environment_vars['HOME']
     sess['study_name'] = ''
     sess['document_root'] = req.document_root() + '/qiime/'
     sess['user_dir'] = os.path.join(output_dir, 'studies')

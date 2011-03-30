@@ -103,7 +103,8 @@ $(document).ready(function(){
 
 <%
 # This is the location where the user directories are written
-output_dir='/home/wwwuser/user_data'
+environment_vars=req.get_options()
+output_dir='%s/user_data' % environment_vars['HOME']
 # link_path_dir='/tmp_qiime'
 link_path_dir = 'studies'
 if form.has_key('username'):
