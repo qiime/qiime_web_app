@@ -23,12 +23,12 @@ class DataAccessType:
     
 class ServerConfig:
     config_fp='/etc/qiime_web.conf'
-    filefp=open(config_fp).readlines()
+    filefp=open(config_fp).read().split('\n')
     config_options={}
     for line in filefp:
-        if line != None:
+        if line != '':
             key,val=line.strip().split('=')
             config_options[key]=val
         
-    data_access_type = config_options['data_access_type']
+    data_access_type = eval(config_options['data_access_type'])
 
