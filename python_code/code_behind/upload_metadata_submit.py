@@ -17,8 +17,8 @@ import zipfile
 from subprocess import PIPE,Popen
 from metadata_table import MetadataTable
 from data_access_connections import data_access_factory
-from enums import DataAccessType
-data_access = data_access_factory(DataAccessType.qiime_production)
+from enums import ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
 
 ################################
 # Helper functions

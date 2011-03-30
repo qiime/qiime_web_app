@@ -14,7 +14,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from column_factory import *
 import csv
 import re
@@ -34,7 +34,7 @@ class MetadataTable(object):
         self._columns = []
         self._log = []
         self._metadataFile = metadataFile
-        self._data_access = data_access_factory(DataAccessType.qiime_production)
+        self._data_access = data_access_factory(ServerConfig.data_access_type)
         self._study_id = study_id
 
     #############################################

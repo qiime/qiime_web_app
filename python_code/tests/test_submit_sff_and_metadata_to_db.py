@@ -29,7 +29,7 @@ from qiime.workflow import (call_commands_serially,
 no_status_updates,WorkflowError,print_commands)
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 data_access = data_access_factory(DataAccessType.qiime_test)
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:

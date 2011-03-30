@@ -11,7 +11,7 @@ __status__ = 'Development'
 %>
 
 <%
-qda = data_access_factory(DataAccessType.qiime_production)
+qda = data_access_factory(ServerConfig.data_access_type)
 %>
 
 <script type='text/javascript' src='js/template.js'></script>
@@ -26,7 +26,7 @@ Fields in red are required. Select any other fields to include them in your temp
 <%
 from mod_python import *
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from enums import FieldGrouping
 
 def outputFields(field_list, prefix, header_text):

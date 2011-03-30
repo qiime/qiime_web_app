@@ -24,7 +24,7 @@ from handler_workflows import run_make_otu_heatmap_html
 from cogent.app.util import get_tmp_filename
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from submit_job_to_qiime import submitQiimeJob
 from datetime import datetime
 from time import strftime
@@ -90,9 +90,9 @@ def main():
     
     try:
         from data_access_connections import data_access_factory
-        from enums import DataAccessType
+        from enums import ServerConfig
         import cx_Oracle
-        data_access = data_access_factory(DataAccessType.qiime_production)
+        data_access = data_access_factory(ServerConfig.data_access_type)
     except ImportError:
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass

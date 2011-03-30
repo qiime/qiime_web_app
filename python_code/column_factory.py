@@ -14,7 +14,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 import re
 
 class ColumnFactory(object):
@@ -27,7 +27,7 @@ class ColumnFactory(object):
 
     def _columnExists(self, column_name):
         found = False
-        column_detail_list = data_access_factory(DataAccessType.qiime_production).getColumnDictionary()
+        column_detail_list = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
         for row in column_detail_list:
             if row[0].upper() == column_name:
                 found = True

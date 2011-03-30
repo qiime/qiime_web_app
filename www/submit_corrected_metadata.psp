@@ -29,7 +29,7 @@ function updateStatus(currentItem, totalFieldCount, divPrefix)
 <%
 # The obligatory data access import
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from metadata_worker import *
 import threading
 import thread
@@ -37,7 +37,7 @@ import copy
 from time import sleep
 
 # Get our data_access instance
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 
 # Grab a couple of session variables
 study_name = sess['study_name']

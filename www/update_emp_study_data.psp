@@ -11,11 +11,11 @@ __status__ = "Production"
 
 <%
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 # Grab some required values for this page
 sess = Session.Session(req)
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 study_id = form['study_id']
 study_score = form['study_score']
 data_access.updateEMPStudyData(study_id, study_score, sess['web_app_user_id'])

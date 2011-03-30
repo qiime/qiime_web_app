@@ -13,7 +13,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 import os
 
 def submitJob(study_id, user_id, param_file, mapping_file, sequencing_platform, sff_files, process_only,submit_to_test_db,data_access):
@@ -92,7 +92,7 @@ def writeMappingFiles(study_id, data_access, mapping_file_dir):
 
 def submitJobsToQiime(study_id, user_id, mapping_file_dir,process_only,submit_to_test_db):
     # Instantiate one copy of data access for this process
-    data_access = data_access_factory(DataAccessType.qiime_production)
+    data_access = data_access_factory(ServerConfig.data_access_type)
     
     # Get the SFF files associated to this study
     sff_files = data_access.getSFFFiles(study_id)

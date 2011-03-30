@@ -12,7 +12,7 @@ __status__ = "Production"
 
 from mod_python import Session
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 import os
 
 # Get the session
@@ -108,7 +108,7 @@ output_dir='/home/wwwuser/user_data'
 link_path_dir = 'studies'
 if form.has_key('username'):
     # begin
-    qiimeDataAccess = data_access_factory(DataAccessType.qiime_production)
+    qiimeDataAccess = data_access_factory(ServerConfig.data_access_type)
     user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
     if ( user_data and user_data['verified']=='y'):
         sess['username'] = form["username"]

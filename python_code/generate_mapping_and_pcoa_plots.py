@@ -9,7 +9,7 @@ __status__ = "Production"
 
 from subprocess import Popen, PIPE, STDOUT
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from cogent.app.util import get_tmp_filename
 from os import system,path,makedirs
 import os

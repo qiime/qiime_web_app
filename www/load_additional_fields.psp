@@ -17,12 +17,12 @@ template fields for the user to add to their project.
 <%
 from mod_python import *
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 def writeTerms(search_term, sess):
     search_term = search_term.lower()
     
-    column_dictionary = data_access_factory(DataAccessType.qiime_production).getColumnDictionary()
+    column_dictionary = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
     for column in column_dictionary:
         if column[0] == None or column[2] == None or column[6] == 0:
             continue

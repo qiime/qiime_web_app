@@ -45,8 +45,8 @@ var studynames=new Array();
 
 <%
 from data_access_connections import data_access_factory
-from enums import DataAccessType
-qda = data_access_factory(DataAccessType.qiime_production)
+from enums import ServerConfig
+qda = data_access_factory(ServerConfig.data_access_type)
 
 # get a list of studies from the database
 study_names = qda.getStudyNames()

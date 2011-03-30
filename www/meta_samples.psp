@@ -47,7 +47,7 @@ sess['study_names'] = studies_to_get
 sess.save()
 
 # Instantiate a new instance of QiimeDataAccess
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 
 if isinstance(metadata_type,list):
     combined_metadata=[]

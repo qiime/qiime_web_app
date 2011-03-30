@@ -9,14 +9,14 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from os import system
 from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 from qiime.make_otu_table import make_otu_table
 from load_tab_file import input_set_generator
 from select_metadata import get_table_col_values_from_form
 sess = Session.Session(req)
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 
 
 unique_cols=[]

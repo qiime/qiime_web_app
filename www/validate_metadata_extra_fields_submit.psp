@@ -11,9 +11,9 @@ __status__ = "Development"
 
 <%
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 sess = Session.Session(req)
 study_id = sess['study_id']
 

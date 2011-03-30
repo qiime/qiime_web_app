@@ -16,7 +16,7 @@ if not (sess.has_key('username')):
 
 # Imports
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 # Set the image link based on whether or not a study has been selected:
 '''

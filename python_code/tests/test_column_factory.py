@@ -18,14 +18,14 @@ __status__ = "Production"
 import unittest
 from metadata_table import *
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 # Callback for invalid rows
 def is_invalid(column_name, row_index):
     return column_name, row_index
 
 # Global data access
-qda = data_access_factory(DataAccessType.qiime_production)
+qda = data_access_factory(ServerConfig.data_access_type)
 
 class MetadtaTableTests(unittest.TestCase):
     """ Unit tests for the MetadataTable and related classes

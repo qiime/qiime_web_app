@@ -19,8 +19,8 @@ column_name = form["column_name"]
 <th class="meta_th">Details</th>
 <%
 from data_access_connections import data_access_factory
-from enums import DataAccessType
-field_details = data_access_factory(DataAccessType.qiime_production).getFieldDetails(column_name)
+from enums import ServerConfig
+field_details = data_access_factory(ServerConfig.data_access_type).getFieldDetails(column_name)
 req.write('<tr>\n')
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[0])
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[1])

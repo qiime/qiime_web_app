@@ -26,7 +26,7 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from run_chain_pick_otus import run_chain_pick_otus
 from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, load_otu_mapping
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -149,7 +149,7 @@ def main():
 
     if submit_to_test_db == 'False':
         # Load the data into the database
-        data_access = data_access_factory(DataAccessType.qiime_production)
+        data_access = data_access_factory(ServerConfig.data_access_type)
     else:
         # Load the data into the database 
         data_access = data_access_factory(DataAccessType.qiime_test)

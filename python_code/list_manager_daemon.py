@@ -24,7 +24,7 @@ import xmlrpclib
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from daemon import Daemon
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 class ListManagerDaemon(Daemon):
     _lists = []
@@ -33,7 +33,7 @@ class ListManagerDaemon(Daemon):
     def checkListValue(self, list_name, value):
         # Make sure list has been loaded
         if list_name not in self._lists:
-            self._lists[list_name] = data_access_factory(DataAccessType.qiime_production).getListValues(list_name)
+            self._lists[list_name] = data_access_factory(ServerConfig.data_access_type).getListValues(list_name)
 
         # Check if values is in list
         if value in self._lists[list_name]:
@@ -44,7 +44,7 @@ class ListManagerDaemon(Daemon):
     def checkOntologyValue(self, ontology_name, term):
         # Make sure ontology has been loaded
         if ontology_name not in self._ontologies:
-            self._ontologies[ontology_name] = data_access_factory(DataAccessType.qiime_production).getOntologyValues(ontology_name)
+            self._ontologies[ontology_name] = data_access_factory(ServerConfig.data_access_type).getOntologyValues(ontology_name)
 
         # Check if term is in ontology
         if term in self._ontologies[ontology_name]:

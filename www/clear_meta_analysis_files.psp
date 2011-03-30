@@ -13,12 +13,12 @@ This script is the upload handler for uploading metadata files using JumpLoader'
 """
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from os import system
 
 def clearMetaFiles(meta_anal_id,fpaths):
     # Get a copy of data_acess
-    data_access = data_access_factory(DataAccessType.qiime_production)
+    data_access = data_access_factory(ServerConfig.data_access_type)
 
     for i in fpaths:
         # Clear the job

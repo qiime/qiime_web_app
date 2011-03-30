@@ -13,7 +13,7 @@ a username and password.'''
 
 from mod_python import Session
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from random import choice
 from time import strftime
 from send_mail_from_server import process_and_send_email
@@ -135,7 +135,7 @@ def validate_password(passwd):
 # them an email
 if form.has_key('username'):
      # validate that the username provided is available
-    qiimeDataAccess= data_access_factory(DataAccessType.qiime_production)
+    qiimeDataAccess= data_access_factory(ServerConfig.data_access_type)
     available = qiimeDataAccess.checkWebAppUserAvailability(form["username"])
     good_password=validate_password(form["password"])
     

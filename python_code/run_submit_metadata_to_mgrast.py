@@ -11,7 +11,7 @@ __status__ = "Development"
 
 import httplib, urllib
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from sample_export import export_fasta_from_sample
 
 def resolve_host(url_path):
@@ -111,7 +111,7 @@ def submit_metadata_for_study(key, study_id, 0, debug = False):
     and request header for submitting to the MG-RAST cgi script"""
 
     # Get a copy of data access
-    data_access = data_access_factory(DataAccessType.qiime_production)
+    data_access = data_access_factory(ServerConfig.data_access_type)
 
     study_cgi_path = '/~wilke/service/%s/study' % key
     sample_cgi_path = '/~wilke/service/%s/sample' % key

@@ -13,7 +13,7 @@ activates their account.'''
 
 from mod_python import Session
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 %>
 <!-- this is header information for the page -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -36,7 +36,7 @@ from enums import DataAccessType
 #This loop verifies the username and activation code in the url.
 if form.has_key('username') and form.has_key('activation_code'):
     #if username and activation code are valid, make the account valid
-    qiimeDataAccess= data_access_factory(DataAccessType.qiime_production)
+    qiimeDataAccess= data_access_factory(ServerConfig.data_access_type)
     
     #verify activation
     verify_activation = qiimeDataAccess.activateWebAppUser(form['username'], \

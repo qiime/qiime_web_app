@@ -15,7 +15,7 @@ want to proceed.
 
 import os
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 db_location='/tmp_qiime/'
 
@@ -25,7 +25,7 @@ sess['meta_analysis_name'] = form['meta_analysis_name']
 meta_analysis_name = sess['meta_analysis_name']
 
 # Add the new Investigation to the database
-meta_analysis_id = data_access_factory(DataAccessType.qiime_production).createMetaAnalysis(\
+meta_analysis_id = data_access_factory(ServerConfig.data_access_type).createMetaAnalysis(\
                             sess['web_app_user_id'],sess['meta_analysis_name'])
 
 

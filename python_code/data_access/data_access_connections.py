@@ -14,7 +14,7 @@ __status__ = "Development"
 
 import cx_Oracle
 from qiime_data_access import QiimeDataAccess
-from enums import DataAccessType
+from enums import ServerConfig
 
 def data_access_factory(data_access_type):
     """

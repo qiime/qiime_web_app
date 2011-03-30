@@ -40,7 +40,7 @@ for form_id in form:
 sess.save()
 
 '''OTU Picking Parameters'''
-data_access = data_access_factory(DataAccessType.qiime_production);
+data_access = data_access_factory(ServerConfig.data_access_type);
 
 #OTU Picking Method
 db_values = data_access.getParameterByScript('\'otu_picking_method\'','\'pick_otus\'')

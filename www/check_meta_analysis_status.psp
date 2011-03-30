@@ -11,14 +11,14 @@ __status__ = "Production"
 
 <%
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from datetime import datetime
 from time import strftime
 '''
 # This is for OTU Table and Mapping File
 # Grab some required values for this page
 sess = Session.Session(req)
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 meta_analysis_id = int(sess['meta_analysis_id'])
 mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
 if mapping_otu_files:
@@ -37,7 +37,7 @@ if mapping_otu_files:
 '''
 # Grab some required values for this page
 sess = Session.Session(req)
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 meta_analysis_id = int(sess['meta_analysis_id'])
 filepaths = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
 if filepaths:

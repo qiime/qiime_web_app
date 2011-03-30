@@ -9,7 +9,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "dev"
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 # Grab the sesison object if the header was not included
 if 'sess' not in locals():

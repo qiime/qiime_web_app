@@ -9,7 +9,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "dev"
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 
 # Grab the sesison object if the header was not included
 if 'sess' not in locals():
@@ -61,7 +61,7 @@ if web_app_user_id == 0:
             <select validate="required:true" name="study_names" id="study_names">
             <option value=""></option>
 <%
-data_access = data_access_factory(DataAccessType.qiime_production)
+data_access = data_access_factory(ServerConfig.data_access_type)
 req.write(str(data_access))
 study_names = data_access.getUserStudyNames(web_app_user_id, is_admin)
 req.write(str(study_names))

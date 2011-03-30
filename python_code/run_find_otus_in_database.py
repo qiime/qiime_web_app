@@ -9,7 +9,7 @@ __status__ = "Development"
 
 from cogent.parse.fasta import *
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from hashlib import md5
 from os.path import join
 
@@ -71,7 +71,7 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
     items_to_submit_to_db = 100
     i = 0
 
-    data_access = data_access_factory(DataAccessType.qiime_production)
+    data_access = data_access_factory(ServerConfig.data_access_type)
     parser = FastaParser(input_fasta_file)
 
     for rec in parser:

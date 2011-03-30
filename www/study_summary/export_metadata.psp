@@ -15,7 +15,7 @@ __status__ = "Production"
 
 
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 import os
 from write_mapping_file import write_mapping_file
 from os import system

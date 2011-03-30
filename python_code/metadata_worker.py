@@ -16,7 +16,7 @@ __status__ = "Development"
 import threading
 import mod_python
 from data_access_connections import data_access_factory
-from enums import DataAccessType
+from enums import ServerConfig
 from metadata_table import *
 from threading import Lock
 
@@ -48,7 +48,7 @@ class MetadataWorkerThread(threading.Thread):
     
     def run(self):
         
-        da = data_access_factory(DataAccessType.qiime_production)
+        da = data_access_factory(ServerConfig.data_access_type)
         item_count = len(self.item_list)
         
         for item in self.item_list:
