@@ -24,9 +24,9 @@ sample_id = form['sample_id']
 found_fields = data_access.getAllSampleFields(sample_id, study_id)
 sorted_fields = sorted(found_fields.iteritems(), key=operator.itemgetter(0))
 req.write('<h3>All fields for this sample</h3>')
-req.write('<ul>')
+req.write('<table>')
 for field in sorted_fields:
-    req.write('<li>%s: %s</li>\n' % (field[0], field[1]))
+    req.write('<tr><td>%s:</td><td><b>%s</b></td></tr>\n' % (field[0], field[1]))
     
-req.write('</ul>')
+req.write('</table>')
 %>
