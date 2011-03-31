@@ -473,7 +473,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         
         except Exception, e:
             raise ValueError,e
-    elif 'heatmap' in analyses_to_start:
+    if 'heatmap' in analyses_to_start:
         job_type='makeOTUHeatmap'
         
         # Submit the Beta Diversity jobs
