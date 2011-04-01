@@ -14,6 +14,8 @@ import os
 from time import sleep
 import cx_Oracle
 from handler import *
+from enums import ServerConfig,DataAccessType
+from data_access_connections import data_access_factory
 
 __author__ = "Daniel McDonald"
 __copyright__ = "Copyright 2010, The QIIME project"
@@ -67,8 +69,8 @@ class Poller(Daemon):
 
         Third, update job status
         """
-        self.con = cx_Oracle.connect(user='SFF',password='SFF454SFF',\
-                                     dsn='quarterbarrel:1521/qiimedb')
+        data_access=data_access_factory(ServerConfig.data_access_type)
+        self.con = data_access.getSFFDatabaseConnection()
         self.username = os.environ['USER']
         self.home = os.environ['HOME']
         self.Jobs = {} # pbs job id -> job object

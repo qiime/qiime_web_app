@@ -24,8 +24,8 @@ class DataAccessType:
     
 class ServerConfig:
     
-    config_fp='/home/wwwuser/qiime_web.conf'
-        
+    config_fp='/home/wwwdevuser/qiime_web.conf'
+    
     filefp=open(config_fp).read().split('\n')
     config_options={}
     for line in filefp:
@@ -34,4 +34,5 @@ class ServerConfig:
             config_options[key]=val
         
     data_access_type = eval(config_options['data_access_type'])
+    home = config_options['home']
 

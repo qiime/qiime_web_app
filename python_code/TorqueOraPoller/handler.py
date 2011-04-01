@@ -13,8 +13,11 @@ __maintainer__ = "Daniel McDonald"
 __email__ = "mcdonadt@@colorado.edu"
 __status__ = "Pre-release"
 
+import os
+from enums import ServerConfig
+
 PYTHON_BIN="/usr/bin/python2.6"
-QIIME_WEBAPP_BASE = "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/scripts"
+QIIME_WEBAPP_BASE = "%s/projects/Qiime/qiime_web_app/python_code/scripts" % ServerConfig.home
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_through_split_lib.py"
 QIIME_EXPORT_MGRAST = QIIME_WEBAPP_BASE + "/submit_metadata_to_mgrast.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
