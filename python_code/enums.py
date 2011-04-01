@@ -8,7 +8,7 @@ An "enum" for listing out the various field groupings rathern than referring
 to them by an index.
 """
 import os
-
+import getpass
 class FieldGrouping:
     sra_submission_level = -8
     sra_study_level = -7
@@ -24,7 +24,7 @@ class DataAccessType:
     
 class ServerConfig:
     
-    config_fp='/home/wwwdevuser/qiime_web.conf'
+    config_fp='/home/%s/qiime_web.conf' % getpass.getuser()
     
     filefp=open(config_fp).read().split('\n')
     config_options={}
