@@ -31,7 +31,7 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
 from cogent.util.misc import get_random_directory_name
 from submit_job_to_qiime import submitQiimeJob
-
+from qiime.filter_otu_table import _filter_table_samples
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
 
@@ -380,8 +380,9 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     otu_table_filepath=os.path.join(otu_table_file_dir, otu_table_fname)
     otu_table_filepath_db=os.path.join(otu_table_file_dir_db, otu_table_fname)
     
+    otu_lines=format_otu_table(samples_list,otus,otu_table,taxonomy=taxonomy)
     otu_table_write=open(otu_table_filepath,'w')
-    otu_table_write.write(format_otu_table(samples_list,otus,otu_table,taxonomy=taxonomy))
+    otu_table_write.write(_filter_table_samples(otu_lines.split('\n'),1))
     otu_table_write.close()
 
 
@@ -483,7 +484,32 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         
         except Exception, e:
             raise ValueError,e
+    
+    #
+    if 'arare' in analyses_to_start:
+        job_type='alphaRarefaction'
         
+        # Submit the Alpha Diversity jobs
+        try:
+            # Attempt the submission
+            submitQiimeJob(meta_id, user_id, job_type, job_input, data_access)
+        
+        except Exception, e:
+            raise ValueError,e
+        
+        
+    #
+    if 'sumtaxa' in analyses_to_start:
+        job_type='summarizeTaxa'
+        
+        # Submit the Summarized Taxa jobs
+        try:
+            # Attempt the submission
+            submitQiimeJob(meta_id, user_id, job_type, job_input, data_access)
+        
+        except Exception, e:
+            raise ValueError,e
+            
     #add the zip file to the DB
     valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
     if not valid:

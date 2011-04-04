@@ -50,7 +50,10 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'ExportToMGRASTHandler':ExportToMGRASTHandler,
                    'generateMapOTUTableSubmitJobs':generateMapOTUTableSubmitJobs,
                    'betaDiversityThrough3DPlots':betaDiversityThrough3DPlots,
-                   'makeOTUHeatmap':makeOTUHeatmap}
+                   'makeOTUHeatmap':makeOTUHeatmap,
+                   'alphaRarefaction':alphaRarefaction,
+                   'summarizeTaxa':summarizeTaxa}
+                   
 
 class FileDoesNotExistError(IOError):
     pass

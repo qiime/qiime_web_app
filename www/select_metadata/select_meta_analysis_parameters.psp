@@ -162,7 +162,7 @@ $(document).ready(function(){
             }
             
         }
-        //set beta-diversity parameters
+        //set heatmap parameters
         if (document.getElementById('check_heatmap').checked){
             jobs_to_start.push('heatmap')
             
@@ -193,6 +193,239 @@ $(document).ready(function(){
             }
             
         }
+         //set taxa-summary parameters
+            if (document.getElementById('check_sumtaxa').checked){
+                jobs_to_start.push('sumtaxa')
+                if (document.getElementById('check_sumcat').checked){
+                    jobs_to_start.push('sumcat')
+                    
+                    //get the category to summarize by option
+                    var sumcat_cat=document.getElementById("sumcat_cat").options;
+                    var cat_to_use=new Array();
+                    var cat_iterator=0;
+                    for (var i=0,il=sumcat_cat.length;i<il;i++){
+                        if (sumcat_cat[i].selected){
+                            cat_to_use[cat_iterator]=sumcat_cat[i].value;
+                            cat_iterator++;
+                        }
+                    }
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_otu_by_cat:meta_category" value="'+cat_to_use.join()+'">'
+                    
+                    //set the normalization
+                    var sumcat_norm=document.getElementById("sumcat_norm");
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_otu_by_cat:normalize_flag" value="'+sumcat_norm[sumcat_norm.selectedIndex].value+'">'
+                    
+                }
+                //set the absolute values
+                var sumtaxa_abs=document.getElementById("sumtaxa_abs");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_taxa:absolute_abundance" value="'+sumtaxa_abs[sumtaxa_abs.selectedIndex].value+'">'
+                
+                //get the summary levels
+                var sumtaxa_level=document.getElementById("sumtaxa_level").options;
+                var level_to_use=new Array();
+                var level_iterator=0;
+                for (var i=0,il=sumtaxa_level.length;i<il;i++){
+                    if (sumtaxa_level[i].selected){
+                        level_to_use[level_iterator]=sumtaxa_level[i].value;
+                        level_iterator++;
+                    }
+                }
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_taxa:level" value="'+level_to_use.join()+'">'
+                
+                //set the number of categories to use
+                var sumtaxa_numcat=parseInt(document.getElementById("sumtaxa_numcat").value);
+                if (isNaN(sumtaxa_numcat)){
+                    // do nothing
+                }else if(sumtaxa_numcat<0 || sumtaxa_numcat>100000000){
+                    alert('The number of categories to keep must be an int between 0 and 100000000!');
+                    return false;
+                }else{
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:num" value="'+sumtaxa_numcat+'">'
+                }
+                
+                //set the background color
+                var sumtaxa_bgcolor=document.getElementById("sumtaxa_bgcolor");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:background_color" value="'+sumtaxa_bgcolor[sumtaxa_bgcolor.selectedIndex].value+'">'
+                
+                //set the resolution to use
+                var sumtaxa_res=parseInt(document.getElementById("sumtaxa_res").value);
+                if (isNaN(sumtaxa_res)){
+                    // do nothing
+                }else if(sumtaxa_res<0 || sumtaxa_res>100000000){
+                    alert('The resolution (dpi) must be an int between 0 and 100000000!');
+                    return false;
+                }else{
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:dpi" value="'+sumtaxa_res+'">'
+                }
+                
+                //set the x-axis width to use
+                var sumtaxa_x=parseFloat(document.getElementById("sumtaxa_x").value);
+                if (isNaN(sumtaxa_x)){
+                    // do nothing
+                }else if(sumtaxa_x<0 || sumtaxa_x>100000000){
+                    alert('The x-axis must be a float between 0 and 100000000!');
+                    return false;
+                }else{
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:x_width" value="'+sumtaxa_x+'">'
+                }
+                
+                //set the y-axis height to use
+                var sumtaxa_y=parseFloat(document.getElementById("sumtaxa_y").value);
+                if (isNaN(sumtaxa_y)){
+                    // do nothing
+                }else if(sumtaxa_y<0 || sumtaxa_y>100000000){
+                    alert('The y-axis must be a float between 0 and 100000000!');
+                    return false;
+                }else{
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:y_height" value="'+sumtaxa_y+'">'
+                }
+                
+                //set the y-axis height to use
+                var sumtaxa_barw=parseFloat(document.getElementById("sumtaxa_barw").value);
+                if (isNaN(sumtaxa_barw)){
+                    // do nothing
+                }else if(sumtaxa_barw<0 || sumtaxa_barw>1){
+                    alert('The y-axis must be a float between 0 and 1!');
+                    return false;
+                }else{
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:bar_width" value="'+sumtaxa_barw+'">'
+                }
+                
+                //set the img type
+                var sumtaxa_imgtype=document.getElementById("sumtaxa_imgtype");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:type_of_file" value="'+sumtaxa_imgtype[sumtaxa_imgtype.selectedIndex].value+'">'
+                
+                //get the chart types
+                var sumtaxa_charttype=document.getElementById("sumtaxa_charttype").options;
+                var chart_to_use=new Array();
+                var chart_iterator=0;
+                for (var i=0,il=sumtaxa_charttype.length;i<il;i++){
+                    if (sumtaxa_charttype[i].selected){
+                        chart_to_use[chart_iterator]=sumtaxa_charttype[i].value;
+                        chart_iterator++;
+                    }
+                }
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:chart_type" value="'+chart_to_use.join()+'">'
+
+                //set the nth label to use
+                var sumtaxa_nth=parseFloat(document.getElementById("sumtaxa_nth").value);
+                if (isNaN(sumtaxa_nth)){
+                    // do nothing
+                }else if(sumtaxa_nth<0 || sumtaxa_nth>100000000){
+                    alert('The nth label must be a float between 0 and 100000000!');
+                    return false;
+                }else{
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:resize_nth_label" value="'+sumtaxa_nth+'">'
+                }
+                
+                //suppress html legend
+                var sumtaxa_supleg=document.getElementById("sumtaxa_supleg");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:suppress_html_legend" value="'+sumtaxa_supleg[sumtaxa_supleg.selectedIndex].value+'">'
+                
+                //suppress html legend
+                var sumtaxa_supcts=document.getElementById("sumtaxa_supcts");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:suppress_html_counts" value="'+sumtaxa_supcts[sumtaxa_supcts.selectedIndex].value+'">'
+                
+                //suppress html legend
+                var sumtaxa_lbltype=document.getElementById("sumtaxa_lbltype");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:a_label_type" value="'+sumtaxa_lbltype[sumtaxa_lbltype.selectedIndex].value+'">'
+                
+                
+            }
+        
+        //set alpha-diversity parameters
+        if (document.getElementById('check_arare').checked){
+            jobs_to_start.push('arare')
+            
+            //set the min
+            var arare_min=parseInt(document.getElementById("arare_min").value);
+            if (isNaN(arare_min)){
+                // do nothing
+            }else if(arare_min<0 || arare_min>100000000){
+                alert('The min must be an int between 0 and 100000000!');
+                return false;
+            }else{
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:min" value="'+arare_min+'">'
+            }
+            
+            //set the max
+            var arare_max=parseInt(document.getElementById("arare_max").value);
+            if (isNaN(arare_max)){
+                // do nothing
+            }else if((arare_max<0 || arare_max>100000000) && arare_min<arare_max){
+                alert('The max must be an int between 0 and 100000000 and must be greater than the min!');
+                return false;
+            }else{
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:max" value="'+arare_max+'">'
+            }
+            
+            //set the steps
+            var arare_steps=parseInt(document.getElementById("arare_steps").value);
+            if (isNaN(arare_steps)){
+                // do nothing
+            }else if(arare_steps<0 || arare_steps>100000000){
+                alert('The steps must be an int between 0 and 100000000!');
+                return false;
+            }else{
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:step" value="'+arare_steps+'">'
+            }
+            
+            //set the background color
+            var arare_bgcolor=document.getElementById("arare_bgcolor");
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:background_color" value="'+arare_bgcolor[arare_bgcolor.selectedIndex].value+'">'
+
+            //set the img-type
+            var arare_imgtype=document.getElementById("arare_imgtype");
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:imagetype" value="'+arare_imgtype[arare_imgtype.selectedIndex].value+'">'
+
+            //set the ymax
+            var arare_ymax=parseInt(document.getElementById("arare_ymax").value);
+            if (isNaN(arare_ymax)){
+                // do nothing
+            }else if(arare_ymax<0 || arare_ymax>100000000){
+                alert('The steps must be an int between 0 and 100000000!');
+                return false;
+            }else{
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:ymax" value="'+arare_ymax+'">'
+            }
+            
+            //set the resolution
+            var arare_res=parseInt(document.getElementById("arare_res").value);
+            if (isNaN(arare_res)){
+                // do nothing
+            }else if(arare_res<0 || arare_res>100000000){
+                alert('The steps must be an int between 0 and 100000000!');
+                return false;
+            }else{
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:resolution" value="'+arare_res+'">'
+            }
+            
+            //get the arare colorby options
+            var arare_colorby=document.getElementById("arare_colorby").options;
+            var colorby_to_use=new Array();
+            var colorby_iterator=0;
+            for (var i=0,il=arare_colorby.length;i<il;i++){
+                if (arare_colorby[i].selected){
+                    colorby_to_use[colorby_iterator]=arare_colorby[i].value;
+                    colorby_iterator++;
+                }
+            }
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:colorby" value="'+colorby_to_use.join()+'">'
+            
+            //get the arare metric options
+            var arare_metrics=document.getElementById("arare_metrics").options;
+            var metrics_to_use=new Array();
+            var metrics_iterator=0;
+            for (var i=0,il=arare_metrics.length;i<il;i++){
+                if (arare_metrics[i].selected){
+                    metrics_to_use[metrics_iterator]=arare_metrics[i].value;
+                    metrics_iterator++;
+                }
+            }
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="alpha_diversity:metrics" value="'+metrics_to_use.join()+'">'
+            
+        }
+        
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="jobs_to_start" value="'+jobs_to_start.join()+'">'
         
         
@@ -290,7 +523,236 @@ it will remove the return key functionality.
     </tr>
     </table>
 </div>
-<br>   
+<br>
+<!-- define Taxa Summary-->
+<b><input type='checkbox' id='check_sumtaxa' onclick='show_hide_div(this.id,"sumtaxa_div")'>&nbsp;Taxonomy Summary</input></b>
+<br>
+<div id='sumtaxa_div' style='display:none;valign:top'>
+    <b>&nbsp;&nbsp;<input type='checkbox' id='check_sumcat' onclick='show_hide_div(this.id,"sumcat_div")'>&nbsp;Summarize OTU by Category</input></b>
+    <br>
+    <div id='sumcat_div' style='display:none;valign:top'>
+    <table>
+        <td><b>Category: </b></td>
+        <td>
+            <select id="sumcat_cat" name="sumcat_cat">
+                <option>SampleID
+                <option>LinkerPrimerSequence
+<%
+for i in form_data:
+    if i != 'page':
+        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+#
+%>
+                <option>Description
+            </select>
+        </td>
+    </tr>
+    <tr>
+    <td><b>Normalize:</b></td>
+    <td>
+        <select id="sumcat_norm" name="sumcat_norm">
+            <option>True
+            <option selected>False
+        </select>
+    </td>
+    </tr>
+    </table></div>
+    <table>
+    <tr>
+    <td><b>Absolute Abundance:</b></td>
+    <td>
+        <select id="sumtaxa_abs" name="sumtaxa_abs">
+            <option>True
+            <option selected>False
+        </select>
+    </td>
+    </tr>
+    <tr>
+    <td><b>Level(s):</b></td>
+    <td>
+        <select id="sumtaxa_level" name="sumtaxa_level" multiple>
+            <option value=1>Domain
+            <option value=2>Phylum
+            <option value=3>Class
+            <option value=4>Order
+            <option value=5>Family
+            <option value=6>Genus
+            <option value=7>Species
+        </select>
+    </td>
+    </tr>
+    <tr>
+    
+        <td><b>Background Color:</b></td>
+        <td>
+            <select id="sumtaxa_bgcolor" name="sumtaxa_bgcolor">
+                <option>black
+                <option>white
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Image Type:</b></td>
+        <td>
+            <select id="sumtaxa_imgtype" name="sumtaxa_imgtype">
+                <option>pdf
+                <option selected>png
+                <option>svg
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Chart Type:</b></td>
+        <td>
+            <select id="sumtaxa_charttype" name="sumtaxa_charttype" multiple>
+                <option selected>area
+                <option selected>bar
+                <option>pie
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td><b>X-axis Width: </b></td><td><input type='text' id="sumtaxa_x" name="sumtaxa_x" /></td>
+    </tr>
+    <tr>
+        <td><b>Y-axis Height: </b></td><td><input type='text' id="sumtaxa_y" name="sumtaxa_y" /></td>
+    </tr>
+    <tr>
+        <td><b>Bar Width: </b></td><td><input type='text' id="sumtaxa_barw" name="sumtaxa_barw" /></td>
+    </tr>
+    <tr>
+        <td><b>Resolution: </b></td><td><input type='text' id="sumtaxa_res" name="sumtaxa_res" /></td>
+    </tr>
+    <tr>
+        <td><b>Number of Categories to keep: </b></td><td><input type='text' id="sumtaxa_numcat" name="sumtaxa_numcat" /></td>
+    </tr>
+    <tr>
+        <td><b>Resize every nth label: </b></td><td><input type='text' id="sumtaxa_nth" name="sumtaxa_nth" /></td>
+    </tr>
+    <tr>
+    <td><b>Suppress HTML-Legend:</b></td>
+    <td>
+        <select id="sumtaxa_supleg" name="sumtaxa_supleg">
+            <option>True
+            <option selected>False
+        </select>
+    </td>
+    </tr>
+    <tr>
+    <td><b>Suppress HTML-Counts:</b></td>
+    <td>
+        <select id="sumtaxa_supcts" name="sumtaxa_supcts">
+            <option>True
+            <option selected>False
+        </select>
+    </td>
+    </tr>
+    <tr>
+    <td><b>Label Type:</b></td>
+    <td>
+        <select id="sumtaxa_lbltype" name="sumtaxa_lbltype">
+            <option>float
+            <option>int
+            <option selected>str
+        </select>
+    </td>
+    </tr>
+    </table>
+</div>
+<br>
+<!-- define Alpha-Diversity and Rarefaction plots-->
+<b><input type='checkbox' id='check_arare' onclick='show_hide_div(this.id,"arare_div")'>&nbsp;Alpha-Diversity</input></b>
+<br>
+<div id='arare_div' style='display:none;valign:top'>
+    <table>
+    <tr>
+    <td><b>Min # of Seqs/Sample: </b></td>
+    <td><input type='text' id="arare_min" name="arare_min" /></td>
+    </tr>
+    <tr>
+    <td><b>Max # of Seqs/Sample: </b></td>
+    <td><input type='text' id="arare_max" name="arare_max" /></td>
+    </tr>
+    <tr>
+    <td><b># of Steps: </b></td>
+    <td><input type='text' id="arare_steps" name="arare_steps" /></td>
+    </tr>
+    <tr>
+        <td><b>Metrics: </b></td>
+        <td>
+            <select id="arare_metrics" name="arare_metrics" multiple>
+                <option>berger_parker_d
+                <option>brillouin_d
+                <option>chao1
+                <option>chao1_confidence
+                <option>dominance
+                <option>doubles
+                <option>equitability
+                <option>fisher_alpha
+                <option>heip_e
+                <option>kemption_taylor_q
+                <option>margalef
+                <option>mcintosh_d
+                <option>mcintosh_e
+                <option>menhinick
+                <option>michaelis_menten_fit
+                <option selected>observed_species
+                <option>osd
+                <option selected>PD_whole_tree
+                <option>reciprocal_simpson
+                <option>robbins
+                <option>shannon
+                <option>simpson
+                <option>simpson_e
+                <option>singles
+                <option>strong
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Colorby: </b></td>
+        <td>
+            <select id="arare_colorby" name="arare_colorby" multiple>
+                <option>SampleID
+                <option>LinkerPrimerSequence
+<%
+for i in form_data:
+    if i != 'page':
+        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+#
+%>
+                <option>Description
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Background Color:</b></td>
+        <td>
+            <select id="arare_bgcolor" name="arare_bgcolor">
+                <option>black
+                <option>white
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Image Type:</b></td>
+        <td>
+            <select id="arare_imgtype" name="arare_imgtype">
+                <option>pdf
+                <option selected>png
+                <option>svg
+            </select>
+        </td>
+    </tr>
+    <tr>
+        <td><b>Resolution: </b></td><td><input type='text' id="arare_res" name="arare_res" /></td>
+    </tr>
+    <tr>
+        <td><b>Y-axis maximum: </b></td><td><input type='text' id="arare_ymax" name="arare_ymax" /></td>
+    </tr>
+    </table>
+</div>
+<br>
 <b><input type='checkbox' id='check_bdiv' onclick='show_hide_div(this.id,"beta_div")'>&nbsp;Beta-Diversity</input></b>
 <br><br>
 <div id='beta_div' style='display:none;valign:top'>

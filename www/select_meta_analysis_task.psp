@@ -36,7 +36,7 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 # get the meta_analysis ID from the session
 meta_analysis_id=sess['meta_analysis_id']
 sess['job_type_id']=7
-job_type_id=7
+job_type_id=[7,8,9,10,11]
 sess.save()
 %>
 
@@ -56,9 +56,10 @@ sess.save()
 </p>
 <br>
 <%
-jobs = data_access.getJobInfo(meta_analysis_id,job_type_id)
-if len(jobs) > 0:
-    #Indent
+for i in job_type_id:
+    jobs = data_access.getJobInfo(meta_analysis_id,i)
+    if len(jobs) > 0:
+        #Indent
 %>
 
 Submitted Meta-Analyses:
@@ -74,6 +75,8 @@ Submitted Meta-Analyses:
 </ul>
 <br/>
 <%
+        break
+    #
 # print a llst of the mapping and otu files already generated for this 
 # meta_analysis
 

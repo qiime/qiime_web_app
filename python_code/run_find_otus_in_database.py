@@ -83,7 +83,7 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
         # First value is the arbitrary otu_id assigned by exact match filter
         #seq_id = rec[0].split()[0]
         seq_id = str(rec[0])
-        print str(seq_id)
+        #print str(seq_id)
         sequence = str(rec[1])
         m = md5(sequence).hexdigest()
         md5_list.append(m)

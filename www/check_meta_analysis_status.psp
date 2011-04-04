@@ -87,6 +87,8 @@ if filepaths:
                 filetype='Unweighted Unifrac Distance Histograms:'
             elif fpath[1]=='HEATMAP':
                 filetype='OTU Heatmap:'
+            elif fpath[1]=='ARARE':
+                filetype='Alpha Rarefaction Plots:'
             else:
                 filetype='Other:'
                 
