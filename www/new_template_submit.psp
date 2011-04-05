@@ -11,6 +11,7 @@ sess = Session.Session(req)
 if sess == None:
     psp.redirect('index.psp')
 
+portal_type = sess['portal_type']
 post_fix = str(datetime.now())
 study_file_name = 'tmp/study_template_' + post_fix + '.xls'
 sample_file_name = 'tmp/sample_template_' + post_fix + '.xls'
@@ -33,7 +34,7 @@ for field in form:
         study_fields.append(items[1])
     elif items[0] == 'sample':
         sample_fields.append(items[1])
-    elif items[0] == 'prep':
+    elif items[0] == 'prep' and portal_type != 'emp':
         prep_fields.append(items[1])
     #elif items[0] == 'submission':
     #    submission_fields.append(items[1])
@@ -89,9 +90,10 @@ try:
         f.write('\t'.join(sample_fields))
     req.write('<li><a href=\'%s\'>%s</a>' % (sample_file_name, 'Sample Template</li>'))
     
-    with open(sess['document_root'] + prep_file_name, 'w') as f:
-        f.write('\t'.join(prep_fields))
-    req.write('<li><a href=\'%s\'>%s</a>' % (prep_file_name, 'Library/Prep/Sequencing Template</li>'))
+    if portal_type != 'emp':
+        with open(sess['document_root'] + prep_file_name, 'w') as f:
+            f.write('\t'.join(prep_fields))
+        req.write('<li><a href=\'%s\'>%s</a>' % (prep_file_name, 'Library/Prep/Sequencing Template</li>'))
 
     #with open(sess['document_root'] + submission_file_name, 'w') as f:
     #    f.write('\t'.join(submission_fields))
@@ -108,8 +110,8 @@ try:
     zip = ZipFile(sess['document_root'] + zip_file_name, 'w')
     zip.write(sess['document_root'] + study_file_name, os.path.basename(study_file_name))
     zip.write(sess['document_root'] + sample_file_name, os.path.basename(sample_file_name))
-    zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))
-    #zip.write(sess['document_root'] + submission_file_name, os.path.basename(submission_file_name))
+    if portal_type != 'emp':
+        zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))
     zip.write(sess['document_root'] + doc_file_name, os.path.basename(doc_file_name))
     zip.close()
     req.write('<li><a href=\'%s\'>%s</a>' % (zip_file_name, 'Download zip archive of all files</li>'))
