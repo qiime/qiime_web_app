@@ -16,7 +16,7 @@ if not (sess.has_key('username')):
 
 # Imports
 from data_access_connections import data_access_factory
-from enums import ServerConfig
+from enums import ServerConfig,DataAccessType
 
 # Set the image link based on whether or not a study has been selected:
 '''
@@ -72,10 +72,16 @@ $(document).ready(function(){
 </head>
 
 <body>
+
 <div class="container">
 
 <% 
 req.write('<div id="header">')
+
+# puts in development text
+if str(ServerConfig.config_options['data_access_type'])=='DataAccessType.qiime_test':
+    req.write('<div class="development"><h1>Development</h1></div>')
+
 if sess['is_admin'] == 1:
     study_id = ''
     if sess.has_key('study_id'):
