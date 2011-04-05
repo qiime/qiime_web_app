@@ -662,6 +662,19 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def updateStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
+        """ Updates a study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.study_update', 
+                [study_id, investigation_type, miens_compliant, submit_to_insdc, 
+                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
 
     def createEMPStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
@@ -682,6 +695,23 @@ class QiimeDataAccess(object):
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,
             principal_investigator, principal_investigator_contact])
         return results[0]
+        
+    def updateEMPStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description,
+        number_samples_collected, number_samples_promised , lab_person,
+        lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+        has_physical_specimen, has_extracted_data, timeseries, spatial_series,
+        principal_investigator, principal_investigator_contact):
+        """ Creates an EMP study
+        """
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor().callproc('qiime_assets.emp_study_update', 
+            [study_id, investigation_type, miens_compliant, submit_to_insdc, portal_type, 
+            study_title, study_alias, pmid, study_abstract, study_description,
+            number_samples_collected, number_samples_promised , lab_person,
+            lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+            has_physical_specimen, has_extracted_data, timeseries, spatial_series,
+            principal_investigator, principal_investigator_contact])
 
     def createStudyPackage(self, study_id, env_package):
         """ 
@@ -689,6 +719,16 @@ class QiimeDataAccess(object):
         try:
             con = self.getMetadataDatabaseConnection()
             con.cursor().callproc('qiime_assets.study_packages_insert', [study_id, env_package])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+    def clearStudyPackages(self, study_id):
+        """ 
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.study_packages_delete', [study_id])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

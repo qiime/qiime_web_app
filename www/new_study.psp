@@ -20,16 +20,22 @@ upload a new SFF file and its associated data.
 This function performs validation on the form fields and then submits the
 form if the fields are valid.
 */
-$.validator.setDefaults({
-    submitHandler:function(){
-        //check the the user-defined study is not present in the database
-        valid=check_study_name()
-        if (valid=='True'){
-            study=document.getElementById('new_study');
-            study.submit();
-        }
-    }
-});
+
+<%
+
+if form['mode'] == 'new':
+    req.write('$.validator.setDefaults({ ')
+    req.write('submitHandler:function(){ ')
+    req.write('//check the the user-defined study is not present in the database ')
+    req.write('valid=check_study_name() ')
+    req.write('if (valid=="True"){ ')
+    req.write('study=document.getElementById("new_study"); ')
+    req.write('study.submit(); ')
+    req.write('} ')
+    req.write('} ')
+    req.write('}); ')
+
+%>
 
 //Create the validation attribute
 $.metadata.setType("attr","validate");
@@ -37,7 +43,7 @@ $.metadata.setType("attr","validate");
 //Set the validation for each form field
 $(document).ready(function(){
     $("#new_study").validate();
- 
+
 });
 
 //Create an array of study names retrieved from the database
@@ -80,38 +86,98 @@ function check_study_name()
 
 </script>
 
+<%
+
+# Find out if it's new or an edit
+page_mode = form['mode']
+portal_type = sess['portal_type']
+
+if page_mode == 'edit':
+    study_info = qda.getStudyInfo(sess['study_id'], sess['web_app_user_id'])
+    project_name = study_info['project_name']
+    study_title = study_info['study_title']
+    study_alias = study_info['study_alias']
+    pmid = study_info['pmid']
+    investigation_type = study_info['investigation_type']
+    study_abstract = study_info['study_abstract']
+    study_description = study_info['study_description']
+    environmental_packages = study_packages = qda.getStudyPackages(sess['study_id'])
+    button_text = 'Update'
+    if portal_type == 'emp':
+        principal_investigator = study_info['principal_investigator']
+        principal_investigator_contact = study_info['principal_investigator_contact']
+        lab_person = study_info['lab_person']
+        lab_person_contact = study_info['lab_person_contact']
+        emp_person = study_info['emp_person']
+        first_contact = study_info['first_contact']
+        most_recent_contact = study_info['most_recent_contact']
+        sample_type = study_info['sample_type']
+        if study_info['number_samples_promised'] == None:
+            number_samples_promised = ''
+        else:
+            number_samples_promised = study_info['number_samples_promised']
+        if study_info['number_samples_collected'] == None:
+            number_samples_collected = ''
+        else:
+            number_samples_collected = study_info['number_samples_collected']
+        has_physical_specimen = study_info['has_physical_specimen']
+        has_extracted_data = study_info['has_extracted_data']
+        timeseries = study_info['timeseries']
+        spatial_series = study_info['spatial_series']
+else:
+    study_info = None
+    project_name = ''
+    study_title = ''
+    study_alias = ''
+    pmid = ''
+    investigation_type = ''
+    study_abstract = ''
+    study_description = ''
+    environmental_packages = []
+    button_text = 'Create'
+
+%>
+
 <!-- Define the form-->
 <br>
 <form id="new_study" action="new_study_submit.psp" method="post">
     <!-- put the form fields in a table to add structure to the layout-->
+    <input type="hidden" id="page_mode" name="page_mode" value="<%=page_mode%>">
     <table>
         <tr>
             <td>
-                Study Name:
+                Study Name: 
             </td>
             <td>
-                <input class="safename" type="text" name="study_name" id="study_name" />
+<%
+if page_mode == 'edit':
+    req.write(project_name)
+else:
+    req.write('<input class="safename" type="text" name="study_name" id="study_name" value="%s" />' % project_name)
+
+%>
+                
             </td>
         </tr>
         <tr>
             <td>Study Title
             </td>
             <td>
-                <input type="text" class="input required" name="study_title" id="study_title" value="" size="40">
+                <input type="text" class="input required" name="study_title" id="study_title" value="<%=study_title%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Study Alias
             </td>
             <td>
-                <input type="text" class="input required" name="study_alias" id="study_alias" value="" size="40">
+                <input type="text" class="input required" name="study_alias" id="study_alias" value="<%=study_alias%>" size="40">
             </td>
         </tr>
         <tr>
             <td>PubMed ID
             </td>
             <td>
-                <input type="text" class="input required" name="pmid" id="pmid" value="" size="40">
+                <input type="text" class="input required" name="pmid" id="pmid" value="<%=pmid%>" size="40">
             </td>
         </tr>
         <tr>
@@ -125,16 +191,22 @@ function check_study_name()
 list = qda.getListValues('Investigation Type')
 for item in sorted(list):
     item_text = item[1]
+    
     if item[1] == 'mimarks-survey':
-        # Our own annotation, done here so that we do not alter the MIENS fields in the database
-        
+        # Our own annotation, done here so that we do not alter the MIENS fields in the database        
         item_text += ' (e.g. 16S rRNA)'
-        req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
     else:
         # Our own annotation, done here so that we do not alter the MIENS fields in the database
         if item[1] in ['bacteria_archaea', 'plasmid', 'virus', 'organelle']:
             item_text += ' (complete genome)'
+    
+    if investigation_type == '' and item[1] == 'mimarks-survey':
+        req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
+    elif investigation_type == item[1]:
+        req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
+    else:
         req.write('<option value=\"%s\">%s</option>\n' % (item[0], item_text))
+    
 #
 %>
                 </select>
@@ -158,47 +230,21 @@ for item in sorted(list):
 list = qda.getListValues('Package Type')
 for item in sorted(list):
     if item[0] > 0:
-        req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
+        if item[0] in study_packages:
+            req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item[1]))
+        else:
+            req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))
 #
 %>
                 </select>
             </td>
         </tr>
-        <input type="hidden" name="miens_compliant" id="miens_compliant" value="y">
-        <!--
-        <tr>
-            <td>
-                MIENS Compliant?
-            </td>
-            
-            <td>
-                <select class="input required" name="miens_compliant" id="miens_compliant">
-                    <option value=""></option>
-                    <option value="y">Yes</option>
-                    <option value="n">No</option>
-                </select>
-            </td>
-        </tr>
-        -->
-        <!---
-        <tr>
-            <td>Submit to INSDC?
-            </td>
-            <td>
-                <select class="input required" name="submit_to_insdc" id="submit_to_insdc">
-                    <option value=""></option>
-                    <option value="y">Yes</option>
-                    <option value="n">No</option>
-                </select>
-            </td>
-        </tr>
-        --->
-        
+        <input type="hidden" name="miens_compliant" id="miens_compliant" value="y">        
         <tr>
             <td>Study Abstract
             </td>
             <td>
-                <input type="text" class="input required" name="study_abstract" id="study_abstract" value="" size="40">
+                <input type="text" class="input required" name="study_abstract" id="study_abstract" value="<%=study_abstract%>" size="40">
             </td>
         </tr>
         
@@ -206,7 +252,7 @@ for item in sorted(list):
             <td>Study Description
             </td>
             <td>
-                <input type="text" class="input required" name="study_description" id="study_description" value="" size="40">
+                <input type="text" class="input required" name="study_description" id="study_description" value="<%=study_description%>" size="40">
             </td>
         </tr>
         
@@ -219,98 +265,98 @@ if sess['portal_type'] == 'emp':
             <td>Principal Investigator
             </td>
             <td>
-                <input type="text" name="principal_investigator" id="principal_investigator" value="" size="40">
+                <input type="text" name="principal_investigator" id="principal_investigator" value="<%=principal_investigator%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Principal Investigator Contact
             </td>
             <td>
-                <input type="text" name="principal_investigator_contact" id="principal_investigator_contact" value="" size="40">
+                <input type="text" name="principal_investigator_contact" id="principal_investigator_contact" value="<%=principal_investigator_contact%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Lab Person
             </td>
             <td>
-                <input type="text" name="lab_person" id="lab_person" value="" size="40">
+                <input type="text" name="lab_person" id="lab_person" value="<%=lab_person%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Lab Person Contact
             </td>
             <td>
-                <input type="text" name="lab_person_contact" id="lab_person_contact" value="" size="40">
+                <input type="text" name="lab_person_contact" id="lab_person_contact" value="<%=lab_person_contact%>" size="40">
             </td>
         </tr>
         <tr>
             <td>EMP Person
             </td>
             <td>
-                <input type="text" name="emp_person" id="emp_person" value="" size="40">
+                <input type="text" name="emp_person" id="emp_person" value="<%=emp_person%>" size="40">
             </td>
         </tr>
         <tr>
             <td>First Contact
             </td>
             <td>
-                <input type="text" name="first_contact" id="first_contact" value="" size="40">
+                <input type="text" name="first_contact" id="first_contact" value="<%=first_contact%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Most Recent Contact
             </td>
             <td>
-                <input type="text" name="most_recent_contact" id="most_recent_contact" value="" size="40">
+                <input type="text" name="most_recent_contact" id="most_recent_contact" value="<%=most_recent_contact%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Sample Type
             </td>
             <td>
-                <input type="text" name="sample_type" id="sample_type" value="" size="40">
+                <input type="text" name="sample_type" id="sample_type" value="<%=sample_type%>" size="40">
             </td>
         </tr>
         <tr>
             <td># of Samples Promised Promised
             </td>
             <td>
-                <input class="numeric" type="text" name="number_samples_promised" id="number_samples_promised" value="" size="40">
+                <input class="numeric" type="text" name="number_samples_promised" id="number_samples_promised" value="<%=number_samples_promised%>" size="40">
             </td>
         </tr>
         <tr>
-            <td># of Samples Promised Collected
+            <td># of Samples Collected
             </td>
             <td>
-                <input type="text" name="number_samples_collected" id="number_samples_collected" value="" size="40">
+                <input type="text" name="number_samples_collected" id="number_samples_collected" value="<%=number_samples_collected%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Has Physical Specimen?
             </td>
             <td>
-                <input type="text" name="has_physical_specimen" id="has_physical_specimen" value="" size="40">
+                <input type="text" name="has_physical_specimen" id="has_physical_specimen" value="<%=has_physical_specimen%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Has Extracted Data?
             </td>
             <td>
-                <input type="text" name="has_extracted_data" id="has_extracted_data" value="" size="40">
+                <input type="text" name="has_extracted_data" id="has_extracted_data" value="<%=has_extracted_data%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Timeseries?
             </td>
             <td>
-                <input type="text" name="timeseries" id="timeseries" value="" size="40">
+                <input type="text" name="timeseries" id="timeseries" value="<%=timeseries%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Spatial Series?
             </td>
             <td>
-                <input type="text" name="spatial_series" id="spatial_series" value="" size="40">
+                <input type="text" name="spatial_series" id="spatial_series" value="<%=spatial_series%>" size="40">
             </td>
         </tr>
 <%
@@ -319,7 +365,7 @@ if sess['portal_type'] == 'emp':
 %>
         <tr>
             <td>
-                <input type="submit" value="Create"/>
+                <input type="submit" value="<%=button_text%>"/>
             </td>
         </tr>
     </table>

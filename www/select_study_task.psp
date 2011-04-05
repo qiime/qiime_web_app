@@ -36,8 +36,17 @@ can_delete = study_info['can_delete']
     <b>Study Options:</b>
     <ul>
         <li>
+            <form id="edit_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="new_study.psp">
+                <input type="hidden" name="mode" id="mode" value="edit">
+                <a href="" onclick="document.forms['edit_study'].submit(); return false;">
+                Edit study information</a>
+            </form>
+        </li>
+        <li>
             <form id="create_new_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="new_study.psp">
+                <input type="hidden" name="mode" id="mode" value="new">
                 <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
                 Create a new study</a>
             </form>

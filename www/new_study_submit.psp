@@ -21,12 +21,17 @@ from enums import ServerConfig
 
 data_access = data_access_factory(ServerConfig.data_access_type)
 sess = Session.Session(req)
-sess['study_name'] = form['study_name']
-study_name = sess['study_name']
+
 portal_type = sess['portal_type']
+page_mode = form['page_mode']
+if page_mode == 'edit':
+    study_id = sess['study_id']
+else:
+    study_name = sess['study_name']
+    sess['study_name'] = form['study_name']
 
 # Add the new study to the database
-if portal_type == 'emp':
+if portal_type == 'emp' and page_mode == 'new':
     study_id = data_access.createEMPStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
         form['pmid'], form['study_abstract'], form['study_description'],
@@ -35,6 +40,19 @@ if portal_type == 'emp':
         form['most_recent_contact'], form['sample_type'], form['has_physical_specimen'],
         form['has_extracted_data'], form['timeseries'], form['spatial_series'],
         form['principal_investigator'], form['principal_investigator_contact'])
+elif portal_type == 'emp' and page_mode == 'edit':
+    data_access.updateEMPStudy(study_id, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
+        form['pmid'], form['study_abstract'], form['study_description'],
+        form['number_samples_collected'], form['number_samples_promised'] , form['lab_person'],
+        form['lab_person_contact'], form['emp_person'], form['first_contact'],
+        form['most_recent_contact'], form['sample_type'], form['has_physical_specimen'],
+        form['has_extracted_data'], form['timeseries'], form['spatial_series'],
+        form['principal_investigator'], form['principal_investigator_contact'])
+elif page_mode == 'edit':
+    data_access.updateStudy(study_id, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
+        form['pmid'], form['study_abstract'], form['study_description'])
 else:
     study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
@@ -44,8 +62,8 @@ else:
 data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')
 
 # Associate the chosen environmental packages to the study
+data_access.clearStudyPackages(study_id)
 for env_package in form['environmental_package']:
-    #req.write('study_id: ' + str(study_id) + ', env_package: ' + env_package + '<p>')
     data_access.createStudyPackage(study_id, env_package)
 
 # Add the study id to the session.
