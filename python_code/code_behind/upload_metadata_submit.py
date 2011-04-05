@@ -21,28 +21,8 @@ from enums import ServerConfig
 data_access = data_access_factory(ServerConfig.data_access_type)
 
 ################################
-# Helper functions
-################################
-
-################################
 # Checker functions
 ################################
-def validateStudyFile(filename):
-    errors = []
-    i = 0
-    
-    # Can only one row in study template (2 rows total with header)
-    f = open(filename, 'U')
-    for line in f:
-        if len(str(line).strip()):
-            i += 1
-    f.close()
-    
-    if i > 2:
-        errors.append('Study file can only contain one row of data.')
-
-    return errors
-    
 def validateSampleFile(mdtable, study_id):
     errors = []
 
@@ -63,20 +43,6 @@ def validateSampleFile(mdtable, study_id):
     for name in dupes:
         errors.append('Sample names must be unique in the sample file: "%s"' % name)
         
-    # Verify that all project name values are the same and match the study's 
-    # name in the database
-    #bad_project_names = []
-    #project_name = data_access.getStudyInfo(study_id)['project_name']
-    #project_name_values = mdtable.getColumn('project_name').values
-    #
-    #for i, v in enumerate(project_name_values):
-    #    if v[0] != project_name:
-    #        if v[0] not in bad_project_names:
-    #            bad_project_names.append(v[0])
-    #            
-    #for bad_project_name in bad_project_names:
-    #    errors.append('Project name value "%s" in sample template is incorrect. Should be "%s"' % (bad_project_name, project_name))
-
     return errors
 
 def validatePrepFile(mdtable):
@@ -108,7 +74,7 @@ def validatePrepFile(mdtable):
                 
     return errors
     
-def multiFileValidation(study_mdtable, sample_mdtable, prep_mdtable):
+def multiFileValidation(sample_mdtable, prep_mdtable):
     errors = []
     orphans = []
     samples_with_no_prep = []
@@ -177,11 +143,9 @@ def validateFileContents(study_id, portal_type, sess, form, req):
         errors = []
         templates = []
         
-        study_template_found = False
         sample_template_found = False
         prep_template_found = False
         
-        study_mdtable = None
         sample_mdtable = None
         prep_mdtable = None
         
@@ -202,10 +166,8 @@ def validateFileContents(study_id, portal_type, sess, form, req):
             else:
                 continue
 
-            # Validate that it's one of the three expected templates
-            if 'study_template' in filename:
-                study_template_found = True
-            elif 'sample_template' in filename:
+            # Validate that it's one of the two expected templates
+            if 'sample_template' in filename:
                 sample_template_found = True
             elif 'prep_template' in filename:
                 prep_template_found = True
@@ -234,29 +196,24 @@ def validateFileContents(study_id, portal_type, sess, form, req):
                     errors.append(e)
                     
             # Perform specific validations
-            if 'study_template' in outfile_filename:
-                study_mdtable = mdtable
-                logErrors(errors, validateStudyFile(outfile_filename))
-            elif 'sample_template' in outfile_filename:
+            if 'sample_template' in outfile_filename:
                 sample_mdtable = mdtable
                 logErrors(errors, validateSampleFile(mdtable, study_id))
             elif 'prep_template' in outfile_filename:
                 prep_mdtable = mdtable
                 logErrors(errors, validatePrepFile(mdtable))
-
+                
         # Perform multi-file validations
         if portal_type != 'emp':
-            logErrors(errors, multiFileValidation(study_mdtable, sample_mdtable, prep_mdtable))
+            logErrors(errors, multiFileValidation(sample_mdtable, prep_mdtable))
 
-        # If the zip does not have exactly three templates, raise an error
+        # If the zip does not have exactly two templates, raise an error
         if portal_type == 'emp':
             pass
-        elif len(templates) != 3:
-            errors.append('A valid study, sample, and prep template must be in the archive.')
+        elif len(templates) != 2:
+            errors.append('A valid sample and prep template must be in the archive.')
             
         # Make sure we have one of each template type
-        if not study_template_found:
-            errors.append('Study tempalte was not found.')
         if not sample_template_found:
             errors.append('Sample template was not found.')
         if portal_type =='emp':
