@@ -13,31 +13,23 @@ if sess == None:
 
 portal_type = sess['portal_type']
 post_fix = str(datetime.now())
-study_file_name = 'tmp/study_template_' + post_fix + '.xls'
 sample_file_name = 'tmp/sample_template_' + post_fix + '.xls'
 prep_file_name = 'tmp/prep_template_' + post_fix + '.xls'
-#submission_file_name = 'tmp/submission_template_' + post_fix + '.xls'
 doc_file_name = 'tmp/field_reference_' + post_fix + '.xls'
 zip_file_name = 'tmp/zip_archive_' + post_fix + '.zip'
 
-study_fields = []
 sample_fields = []
 prep_fields = []
-#submission_fields = []
 documentation_fields = []
 
 # Put the fields into the right buckets so we can write them to the
 # proper template files below
 for field in form:
     items = field.split(':')
-    if items[0] == 'study':
-        study_fields.append(items[1])
-    elif items[0] == 'sample':
+    if items[0] == 'sample':
         sample_fields.append(items[1])
     elif items[0] == 'prep' and portal_type != 'emp':
         prep_fields.append(items[1])
-    #elif items[0] == 'submission':
-    #    submission_fields.append(items[1])
     else:
         # Other form fields will simply be ignored.
         pass
@@ -45,18 +37,13 @@ for field in form:
 # Get the documentation for the list of fields
 column_dictionary = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
 for entry in column_dictionary:
-    if entry[0] in study_fields or entry[0] in sample_fields or entry[0] in prep_fields:
+    if entry[0] in sample_fields or entry[0] in prep_fields:
         documentation_fields.append(entry)
 
 req.write('<h3>Please download your templates and documentation:</h3>')
-#req.write('<p>NOTE: Upper-case fields are required for SRA submission.</p>')
 req.write('<ul>')
 
 # Sort the fields
-study_fields = sorted(study_fields)
-if 'project_name' in study_fields:
-    study_fields.remove('project_name')
-    study_fields.insert(0, 'project_name')
 sample_fields = sorted(sample_fields)
 if 'sample_name' in sample_fields:
     sample_fields.remove('sample_name')
@@ -76,16 +63,7 @@ try:
     template_path = os.path.join(sess['document_root'], 'tmp/')
     if not os.path.exists(template_path):
         os.makedirs(template_path)
-        
-    # Write out the individual template files
-    with open(sess['document_root'] + study_file_name, 'w') as f:
-        f.write('\t'.join(study_fields))
-        # Grab the known study fields and add to the file
-        #study_info = data_access_factory(ServerConfig.data_access_type).getStudyInfo(sess['study_id'])
-        #f.write('\n')
-        # Hmm, tricky. How to tell where to write values? 
-    req.write('<li><a href=\'%s\'>%s</a>' % (study_file_name, 'Study Template</li>'))
-    
+            
     with open(sess['document_root'] + sample_file_name, 'w') as f:
         f.write('\t'.join(sample_fields))
     req.write('<li><a href=\'%s\'>%s</a>' % (sample_file_name, 'Sample Template</li>'))
@@ -94,10 +72,6 @@ try:
         with open(sess['document_root'] + prep_file_name, 'w') as f:
             f.write('\t'.join(prep_fields))
         req.write('<li><a href=\'%s\'>%s</a>' % (prep_file_name, 'Library/Prep/Sequencing Template</li>'))
-
-    #with open(sess['document_root'] + submission_file_name, 'w') as f:
-    #    f.write('\t'.join(submission_fields))
-    #req.write('<li><a href=\'%s\'>%s</a>' % (submission_file_name, 'SRA Submission Template</li>'))
 
     # Write out documentation for the selected fields
     with open(sess['document_root'] + doc_file_name, 'w') as f:
@@ -108,7 +82,6 @@ try:
     
     # Create a zip archive
     zip = ZipFile(sess['document_root'] + zip_file_name, 'w')
-    zip.write(sess['document_root'] + study_file_name, os.path.basename(study_file_name))
     zip.write(sess['document_root'] + sample_file_name, os.path.basename(sample_file_name))
     if portal_type != 'emp':
         zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))

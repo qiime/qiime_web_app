@@ -648,21 +648,23 @@ class QiimeDataAccess(object):
         
         return filled_fields
     
-    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type):
+    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
         """ Creates a study
         """
         try:
             con = self.getMetadataDatabaseConnection()
             study_id = 0
             results = con.cursor().callproc('qiime_assets.study_insert', 
-                [study_id, user_id, study_name,
-                investigation_type, miens_compliant, submit_to_insdc, portal_type])
+                [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
             return results[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def createEMPStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type,
+    def createEMPStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         number_samples_collected, number_samples_promised , lab_person,
         lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
         has_physical_specimen, has_extracted_data, timeseries, spatial_series,
@@ -674,6 +676,7 @@ class QiimeDataAccess(object):
         results = con.cursor().callproc('qiime_assets.emp_study_insert', 
             [study_id, user_id, study_name,
             investigation_type, miens_compliant, submit_to_insdc, portal_type, 
+            study_title, study_alias, pmid, study_abstract, study_description,
             number_samples_collected, number_samples_promised , lab_person,
             lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,

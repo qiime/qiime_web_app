@@ -92,15 +92,11 @@ def outputFields(field_list, prefix, header_text):
 sess["field_list"] = []
 sess.save()
 
-# Write out the submission fields
-#field_list = qda.getPackageColumns(FieldGrouping.sra_submission_level)
-#outputFields(field_list, 'submission', 'SRA Submission Fields')
-
 # Write out the study fields
-field_list = qda.getPackageColumns(FieldGrouping.study_level)
-field_list.extend(qda.getPackageColumns(FieldGrouping.sra_study_level))
-field_list.sort()
-outputFields(field_list, 'study', 'Study Fields')
+#field_list = qda.getPackageColumns(FieldGrouping.study_level)
+#field_list.extend(qda.getPackageColumns(FieldGrouping.sra_study_level))
+#field_list.sort()
+#outputFields(field_list, 'study', 'Study Fields')
 
 # Write out the required sample fields along with the package-specific fields
 field_list = qda.getPackageColumns(FieldGrouping.sample_level)
