@@ -42,7 +42,6 @@ portal_type = sess['portal_type']
 <script type="text/javascript" src="./js/qiime.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
-<!--<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>-->
 <script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
 <script type="text/javascript"> 
 $(document).ready(function(){

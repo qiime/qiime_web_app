@@ -26,8 +26,17 @@ form if the fields are valid.
 if form['mode'] == 'new':
     req.write('$.validator.setDefaults({ ')
     req.write('submitHandler:function(){ ')
-    req.write('//check the the user-defined study is not present in the database ')
-    req.write('valid=check_study_name() ')
+    req.write('valid=check_study_name(); ')
+    req.write('if (valid=="True"){ ')
+    req.write('study=document.getElementById("new_study"); ')
+    req.write('study.submit(); ')
+    req.write('} ')
+    req.write('} ')
+    req.write('}); ')
+elif form['mode'] == 'edit':
+    req.write('$.validator.setDefaults({ ')
+    req.write('submitHandler:function(){ ')
+    req.write('valid=check_study_name(); ')
     req.write('if (valid=="True"){ ')
     req.write('study=document.getElementById("new_study"); ')
     req.write('study.submit(); ')
@@ -87,12 +96,12 @@ function check_study_name()
 </script>
 
 <%
-
 # Find out if it's new or an edit
 page_mode = form['mode']
 portal_type = sess['portal_type']
 
 if page_mode == 'edit':
+    environmental_packages = qda.getStudyPackages(sess['study_id'])
     study_info = qda.getStudyInfo(sess['study_id'], sess['web_app_user_id'])
     project_name = study_info['project_name']
     study_title = study_info['study_title']
@@ -101,7 +110,6 @@ if page_mode == 'edit':
     investigation_type = study_info['investigation_type']
     study_abstract = study_info['study_abstract']
     study_description = study_info['study_description']
-    environmental_packages = study_packages = qda.getStudyPackages(sess['study_id'])
     button_text = 'Update'
     if portal_type == 'emp':
         principal_investigator = study_info['principal_investigator']
@@ -125,6 +133,7 @@ if page_mode == 'edit':
         timeseries = study_info['timeseries']
         spatial_series = study_info['spatial_series']
 else:
+    environmental_packages = []
     study_info = None
     project_name = ''
     study_title = ''
@@ -133,8 +142,22 @@ else:
     investigation_type = ''
     study_abstract = ''
     study_description = ''
-    environmental_packages = []
     button_text = 'Create'
+    if portal_type == 'emp':
+        principal_investigator = ''
+        principal_investigator_contact = ''
+        lab_person = ''
+        lab_person_contact = ''
+        emp_person = ''
+        first_contact = ''
+        most_recent_contact = ''
+        sample_type = ''
+        number_samples_promised = ''
+        number_samples_collected = ''
+        has_physical_specimen = ''
+        has_extracted_data = ''
+        timeseries = ''
+        spatial_series = ''
 
 %>
 
@@ -230,7 +253,7 @@ for item in sorted(list):
 list = qda.getListValues('Package Type')
 for item in sorted(list):
     if item[0] > 0:
-        if item[0] in study_packages:
+        if item[0] in environmental_packages:
             req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item[1]))
         else:
             req.write('<option value=\"%s\">%s</option>\n' % (item[0], item[1]))

@@ -27,8 +27,8 @@ page_mode = form['page_mode']
 if page_mode == 'edit':
     study_id = sess['study_id']
 else:
-    study_name = sess['study_name']
-    sess['study_name'] = form['study_name']
+    study_name = form['study_name']
+    sess['study_name'] = study_name
 
 # Add the new study to the database
 if portal_type == 'emp' and page_mode == 'new':
