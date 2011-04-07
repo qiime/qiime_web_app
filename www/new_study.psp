@@ -200,7 +200,7 @@ else:
             <td>PubMed ID
             </td>
             <td>
-                <input type="text" class="input required" name="pmid" id="pmid" value="<%=pmid%>" size="40">
+                <input type="text" name="pmid" id="pmid" value="<%=pmid%>" size="40">
             </td>
         </tr>
         <tr>
@@ -341,7 +341,7 @@ if sess['portal_type'] == 'emp':
             </td>
         </tr>
         <tr>
-            <td># of Samples Promised Promised
+            <td># of Samples Promised
             </td>
             <td>
                 <input class="numeric" type="text" name="number_samples_promised" id="number_samples_promised" value="<%=number_samples_promised%>" size="40">
