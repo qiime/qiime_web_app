@@ -13,6 +13,8 @@ import httplib, urllib
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 from sample_export import export_fasta_from_sample
+import os
+import stat
 
 def resolve_host(url_path):
     data = ''
@@ -285,6 +287,14 @@ def submit_metadata_for_study(key, study_id, 0, debug = False):
             ######################################################
 
             print 'FASTA'
+            
+            output_fasta_path = fasta_base_path + 'sequences_%s_%s.fasta' % (sample_id, row_number)
+            export_fasta_from_sample(study_id, sample_id, output_fasta_path)
+            file_size = os.stat(output_fasta_path)[stat.ST_SIZE]
+            
+            # If there are no sequences then skip
+            if file_size > 0:
+                continue
 
             # Open the prep file for writing
             sequence_file = open(sequence_file_path, 'w')
@@ -298,9 +308,9 @@ def submit_metadata_for_study(key, study_id, 0, debug = False):
             sequence_file.write("     <sequences type='16s'>\n")
 
             # For each column for this sample, write the value to the sample file
-            output_fasta_path = fasta_base_path + 'sequences_%s_%s.fasta' % (sample_id, row_number)
-            export_fasta_from_sample(study_id, sample_id, output_fasta_path)
-            sequence_file.write(open(output_fasta_path, 'r').read())
+            f = open(output_fasta_path, 'r')
+            sequence_file.write(f.read())
+            f.close()
             
             sequence_file.write('     </sequences>\n')
             sequence_file.write('</data_file>\n')
@@ -310,7 +320,7 @@ def submit_metadata_for_study(key, study_id, 0, debug = False):
             sequence_file = open(sequence_file_path, 'r')
             file_contents = sequence_file.read()
             sequence_file.close()
-        
+            
             # Send the data to MG-RAST via REST services
             success, entity_id = send_data_to_mgrast(prep_cgi_path, file_contents, host, debug)
             if not success:
