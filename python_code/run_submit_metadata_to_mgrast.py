@@ -108,7 +108,7 @@ def send_data_to_mgrast(url_path, file_contents, host, debug):
 
     return success, entity_id
 
-def submit_metadata_for_study(key, study_id, debug = False):
+def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     """This function takes the input options from the user and generates a url
     and request header for submitting to the MG-RAST cgi script"""
 
