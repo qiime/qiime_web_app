@@ -13,9 +13,9 @@ if sess == None:
 
 portal_type = sess['portal_type']
 post_fix = str(datetime.now())
-sample_file_name = 'tmp/sample_template_' + post_fix + '.xls'
-prep_file_name = 'tmp/prep_template_' + post_fix + '.xls'
-doc_file_name = 'tmp/field_reference_' + post_fix + '.xls'
+sample_file_name = 'tmp/sample_template_' + post_fix + '.txt'
+prep_file_name = 'tmp/prep_template_' + post_fix + '.txt'
+doc_file_name = 'tmp/field_reference_' + post_fix + '.txt'
 zip_file_name = 'tmp/zip_archive_' + post_fix + '.zip'
 
 sample_fields = []

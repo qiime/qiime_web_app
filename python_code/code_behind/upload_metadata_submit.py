@@ -21,8 +21,33 @@ from enums import ServerConfig
 data_access = data_access_factory(ServerConfig.data_access_type)
 
 ################################
+# Helper Functions
+################################
+
+def is_binary(filename):
+    """
+    Determinees if a file is binary or text
+    
+    Adapted from: http://www.velocityreviews.com/forums/t320964-determine-file-type-binary-or-text.html
+    """
+    fin = open(filename, 'rb')
+    try:
+        CHUNKSIZE = 1024
+        while 1:
+            chunk = fin.read(CHUNKSIZE)
+            if '\0' in chunk: # found null byte
+                return True
+            if len(chunk) < CHUNKSIZE:
+                break # done
+    finally:
+        fin.close()
+
+    return False
+
+################################
 # Checker functions
 ################################
+
 def validateSampleFile(mdtable, study_id):
     errors = []
 
@@ -187,7 +212,12 @@ def validateFileContents(study_id, portal_type, sess, form, req):
             except IOError as e:
                 errors.append("""Could not open file "%s". The error was: %s""" % (filename, e))
                 continue
-
+                
+            # Check to see if it's a binary file
+            if is_binary(outfile_filename):
+                errors.append('The file "%s" is not a tab-delimited text file. Please resave this file in this format and try again.' % filename)
+                continue
+                
             # Check to see if columns are valid in this file
             mdtable = MetadataTable(outfile_filename, study_id)
             table_errors, bad_columns = mdtable.validateColumnNames()
@@ -202,9 +232,18 @@ def validateFileContents(study_id, portal_type, sess, form, req):
             elif 'prep_template' in outfile_filename:
                 prep_mdtable = mdtable
                 logErrors(errors, validatePrepFile(mdtable))
+
+        # Make sure we have one of each template type
+        if not sample_template_found:
+            errors.append('Sample template was not found.')
+            
+        if portal_type =='emp':
+            pass
+        elif not prep_template_found:
+            errors.append('Prep template was not found.')
                 
         # Perform multi-file validations
-        if portal_type != 'emp':
+        if portal_type != 'emp' and sample_mdtable and prep_mdtable:
             logErrors(errors, multiFileValidation(sample_mdtable, prep_mdtable))
 
         # If the zip does not have exactly two templates, raise an error
@@ -213,14 +252,6 @@ def validateFileContents(study_id, portal_type, sess, form, req):
         elif len(templates) != 2:
             errors.append('A valid sample and prep template must be in the archive.')
             
-        # Make sure we have one of each template type
-        if not sample_template_found:
-            errors.append('Sample template was not found.')
-        if portal_type =='emp':
-            pass
-        elif not prep_template_found:
-            errors.append('Prep template was not found.')
-
         # If there were errors, report them and stop processing. Note that writing to the req 
         # object is the signal for the JumpLoader to flag and error
         if errors:

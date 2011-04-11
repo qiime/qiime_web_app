@@ -171,7 +171,7 @@ else:
             <td>
                 Study Name: 
             </td>
-            <td>
+            <td>* 
 <%
 if page_mode == 'edit':
     req.write(project_name)
@@ -185,14 +185,14 @@ else:
         <tr>
             <td>Study Title
             </td>
-            <td>
+            <td>* 
                 <input type="text" class="input required" name="study_title" id="study_title" value="<%=study_title%>" size="40">
             </td>
         </tr>
         <tr>
             <td>Study Alias
             </td>
-            <td>
+            <td>* 
                 <input type="text" class="input required" name="study_alias" id="study_alias" value="<%=study_alias%>" size="40">
             </td>
         </tr>
@@ -207,7 +207,7 @@ else:
             <td>
                 Investigation Type
             </td>
-            <td>
+            <td>* 
                 <select class="input required" name="investigation_type" name="investigation_type">
                     <option value=""></option>
 <%
@@ -247,7 +247,7 @@ for item in sorted(list):
                 wish to select.
                 </div>
             </td>
-            <td>
+            <td>* 
                 <select class="input required" name="environmental_package" name="environmental_package" multiple>
 <%
 list = qda.getListValues('Package Type')
@@ -266,7 +266,7 @@ for item in sorted(list):
         <tr>
             <td>Study Abstract
             </td>
-            <td>
+            <td>* 
                 <input type="text" class="input required" name="study_abstract" id="study_abstract" value="<%=study_abstract%>" size="40">
             </td>
         </tr>
@@ -274,7 +274,7 @@ for item in sorted(list):
         <tr>
             <td>Study Description
             </td>
-            <td>
+            <td>* 
                 <input type="text" class="input required" name="study_description" id="study_description" value="<%=study_description%>" size="40">
             </td>
         </tr>
@@ -388,10 +388,12 @@ if sess['portal_type'] == 'emp':
 %>
         <tr>
             <td>
+                * indicates a required field.<br/><br/>
                 <input type="submit" value="<%=button_text%>"/>
             </td>
         </tr>
     </table>
+    
     <input type="hidden"  name="submit_to_insdc" id="submit_to_insdc" value = "n">
 </form>
 
