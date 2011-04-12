@@ -146,7 +146,7 @@ if portal_type == 'qiime':
             </li>
 
             <li><a href="docs/index.html" target="_blank">Help</a></li>
-            <li><a href="index.psp" target="<%=sess['frame_target']%>">Log Out</a></li>
+            <li><a href="http://microbio.me/<%=portal_type%>" target="<%=sess['frame_target']%>">Log Out</a></li>
         </ul>
         </td></tr></table>
     </div>
