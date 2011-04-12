@@ -61,10 +61,17 @@ else:
 # Add the default study_actual column entries
 data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')
 
-# Associate the chosen environmental packages to the study
+# Clear the existing package mappings
 data_access.clearStudyPackages(study_id)
-for env_package in form['environmental_package']:
-    data_access.createStudyPackage(study_id, env_package)
+
+# Associate the chosen environmental packages to the study. If only one is selected,
+# mod_python returns a string. If more than one, a list of fields. Thus the logic below...
+packages = form['environmental_package']
+if ',' in str(packages):
+    for env_package in packages:
+        data_access.createStudyPackage(study_id, env_package)
+else:
+    data_access.createStudyPackage(study_id, packages)
 
 # Add the study id to the session.
 sess['study_id'] = study_id

@@ -144,17 +144,9 @@ if portal_type == 'qiime':
                     <li><a href="fusebox.psp?page=tools_geo.psp" target="<%=sess['frame_target']%>">Georeference Utility</a></li>
                 </ul>
             </li>
-<%
-if portal_type == 'qiime':
-    # Indent
-    
-%>
+
             <li><a href="docs/index.html" target="_blank">Help</a></li>
             <li><a href="index.psp" target="<%=sess['frame_target']%>">Log Out</a></li>
-<%
-# End indent
-
-%>
         </ul>
         </td></tr></table>
     </div>
