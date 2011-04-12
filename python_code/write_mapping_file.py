@@ -35,7 +35,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
     for i in column_table:
         col_name=i[1]+'.'+i[0]
         if col_name not in ['"SEQUENCE_PREP".RUN_PREFIX',\
-                            '"SEQUENCE_PREP".BARCODE','"SEQUENCE_PREP".LINKER', \
+                            '"SEQUENCE_PREP".BARCODE','"SEQUENCE_PREP".LINKER',\
                             '"SEQUENCE_PREP".PRIMER','"SAMPLE".STUDY_ID',\
                             '"SEQUENCE_PREP".RUN_PREFIX',\
                             '"SEQUENCE_PREP".EXPERIMENT_TITLE',
@@ -63,7 +63,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
             for col_tab in new_cat_column_table:
                 statement += '%s, \n' % (col_tab)
         
-        statement += '"SEQUENCE_PREP".EXPERIMENT_TITLE as Description_new \n'
+        statement += '"SEQUENCE_PREP".EXPERIMENT_TITLE as Description_ANEW \n'
     
         statement = '\n\
         select distinct \n' + statement + ' \n\
@@ -80,7 +80,8 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                 inner join "COMMON_FIELDS" \n\
                 on "SAMPLE".sample_id = "COMMON_FIELDS".sample_id \n'
 
-            # Deal with the rest of the tables. They should all be assocaiated by sample id.
+            # Deal with the rest of the tables. They should all be assocaiated
+            # by sample id.
             for table in new_tables:
                 if table=='"HOST"':
                     try:
@@ -125,14 +126,14 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                 headers.append('BarcodeSequence')
             elif column[0]=='DESCRIPTION':
                 headers.append('Description_duplicate')
-            elif column[0]=='DESCRIPTION_NEW':
+            elif column[0]=='DESCRIPTION_ANEW':
                 headers.append('Description')
             elif column[0]=='LINKERPRIMERSEQUENCE':
                 headers.append('LinkerPrimerSequence')
             else:
                 headers.append(column[0])
         to_write='\t'.join(headers)
-        mapping_fp.write(to_write[0:len(to_write)-1] + '\n')
+        mapping_fp.write(to_write[0:len(to_write)] + '\n')
         #elif data_access.checkIfColumnControlledVocab(str(column[0])):
         #print to_write
         sample_to_run_prefix=[]
