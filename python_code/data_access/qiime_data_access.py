@@ -1068,7 +1068,7 @@ class QiimeDataAccess(object):
                     continue
 
                 # Some variables to allow for re-assignment should any of them be None
-                column_name = row[0]
+                column_name = row[0].lower()
                 expected_values = row[1]
                 description = row[2]
                 data_type = row[3]

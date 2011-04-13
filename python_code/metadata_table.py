@@ -133,6 +133,7 @@ class MetadataTable(object):
         
         self._log.append('Column headers: %s<br/>' % str(headers))
         for column in headers:
+            column = column.lower()
             
             # Skip known bad columns
             if column in bad_columns:
@@ -144,7 +145,9 @@ class MetadataTable(object):
                 # a valid column object
                 if column in column_details:
                     self._log.append('Column exists in dictionary.')
+                    self._log.append('Creating column with details: %s...' % str(column_details[column]))
                     result = column_factory.createColumn(column, column_details[column][0], column_details[column][1], column_details[column][2], True)
+                    self._log.append('Existing column successfully created.')
                     if result:
                         self._addColumn(result)
                     else:
