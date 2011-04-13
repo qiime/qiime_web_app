@@ -65,30 +65,26 @@ if filepaths:
                 filetype='OTU Table:'
             elif fpath[1]=='ZIP':
                 filetype='Zip Archive:'
-            elif fpath[1]=='WEIGHTED_UNIFRAC':
-                filetype='Weighted Unifrac Distance Matrix:'
-            elif fpath[1]=='UNWEIGHTED_UNIFRAC':
-                filetype='Unweighted Unifrac Distance Matrix:'
-            elif fpath[1]=='WEIGHTED_UNIFRAC_PC':
-                filetype='Weighted Unifrac Principal Coords File:'
-            elif fpath[1]=='UNWEIGHTED_UNIFRAC_PC':
-                filetype='Unweighted Unifrac Principal Coords File:'
-            elif fpath[1]=='CONTINUOUS_UNWEIGHTED_UNIFRAC_PC':
-                filetype='Unweighted Unifrac 3D Plots (continuous colors):'
-            elif fpath[1]=='DISCRETE_UNWEIGHTED_UNIFRAC_PC':
-                filetype='Unweighted Unifrac 3D Plots (discrete colors):'
-            elif fpath[1]=='CONTINUOUS_WEIGHTED_UNIFRAC_PC':
-                filetype='Weighted Unifrac 3D Plots (continuous colors):'
-            elif fpath[1]=='DISCRETE_WEIGHTED_UNIFRAC_PC':
-                filetype='Weighted Unifrac 3D Plots (discrete colors):'
-            elif fpath[1]=='WEIGHTED_UNIFRAC_DIST_HIST':
-                filetype='Weighted Unifrac Distance Histograms:'
-            elif fpath[1]=='UNWEIGHTED_UNIFRAC_DIST_HIST':
-                filetype='Unweighted Unifrac Distance Histograms:'
+            elif fpath[1].endswith('DISTANCE_MATRIX'):
+                filetype='Distance Matrix:'
+            elif fpath[1].startswith('3D_CONTINUOUS'):
+                filetype='3D Plots (continuous colors) %s:' % ' '.join(fpath[1].split('_')[2:-3]).lower()
+            elif fpath[1].startswith('3D_DISCRETE') :
+                filetype='3D Plots (discrete colors) %s:' % ' '.join(fpath[1].split('_')[2:-3]).lower()
+            elif fpath[1].startswith('2D_CONTINUOUS'):
+                filetype='2D Plots (continuous colors) %s:' % ' '.join(fpath[1].split('_')[2:-3]).lower()
+            elif fpath[1].startswith('2D_DISCRETE') :
+                filetype='2D Plots (discrete colors) %s:' % ' '.join(fpath[1].split('_')[2:-3]).lower()
+            elif fpath[1].endswith('PC'):
+                filetype='Principal Coordinates File:'
+            elif fpath[1].endswith('DIST_HIST'):
+                filetype='Distance Histograms:'
             elif fpath[1]=='HEATMAP':
                 filetype='OTU Heatmap:'
             elif fpath[1]=='ARARE':
                 filetype='Alpha Rarefaction Plots:'
+            elif fpath[1]=='SUMTAXA':
+                filetype='Summarized Taxonomy Plots:'
             else:
                 filetype='Other:'
                 

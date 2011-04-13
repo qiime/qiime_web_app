@@ -17,29 +17,110 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str
 from enums import FieldGrouping
 
+from qiime.alpha_diversity import list_known_metrics
+alpha_metrics=list_known_metrics();
+
+from qiime.beta_diversity import list_known_metrics
+beta_metrics=list_known_metrics();
+
 # get a list of public columns
 public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
-# get submission fields
-#sra_submission_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_submission_level))[0]))
-#req.write(str(sra_submission_field_list))
-
-
 form_data=sess['form']
+
+# get column headers
+column_headers=[]
+for i in form_data:
+    if i != 'page':
+        column_headers.append(i.split('####STUDIES####')[0].split('####SEP####')[1])
+
+# sort column headers
+column_headers.sort()
 %>
-<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" href="./style/qiime.css" type="text/css">
+
 <script src="js/overlib.js" type="text/javascript" ></script>
 <script src="select_metadata/jquery-1.3.2.js" type="text/javascript"></script> 
 <script src="select_metadata/jQuery.dualListBox-1.2.js" type="text/javascript"></script> 
 <script src="select_metadata/metadata_selection.js" type="text/javascript" ></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
 <script language="javascript" type="text/javascript"> 
-$(document).ready(function(){
-});
+    /*
+    $.metadata.setType("attr","validate");
+    $(document).ready(function(){
+        $("#meta_analysis_params").validate({
+        rules: {
+            fname_prefix: {
+                required: true,
+            },
+         },
+        });
+    });
+    */
     window.onload=$(function() {$.configureBoxes();});
     
     var savedValues=new Array();
     
+    function check_int_range_0_100000000(input_id){
+        //this function takes an input box id and identifies if the number
+        //is between a certain threshold. when null returns the value 0
+        var val=parseInt(document.getElementById(input_id).value);
+        if (isNaN(val) || val==''){
+            val=0;
+        }else if(val<0 || val>100000000){
+            alert('The ' + input_id + 
+                  ' threshold must be an integer between 0 and 100000000!');
+            return 'false';
+        }
+        return val;
+    }
+    
+    function check_float_range_0_100000000(input_id){
+        //this function takes an input box id and identifies if the number
+        //is between a certain threshold. when null returns the value 0
+        var val=parseFloat(document.getElementById(input_id).value);
+        if (isNaN(val) || val==''){
+            val=0;
+        }else if(val<0 || val>100000000){
+            alert('The ' + input_id + 
+                  ' threshold must be an integer between 0 and 100000000!');
+            return 'false';
+        }
+        return val;
+    }
+    
+    function check_float_range_0_1(input_id){
+        //this function takes an input box id and identifies if the number
+        //is between a certain threshold. when null returns the value 0
+        var val=parseFloat(document.getElementById(input_id).value);
+        if (isNaN(val) || val==''){
+            val=0;
+        }else if(val<0 || val>100000000){
+            alert('The ' + input_id + 
+                  ' threshold must be an integer between 0 and 100000000!');
+            return 'false';
+        }
+        return val;
+    }
+
+    function get_select_box_values(input_id){
+        //this function takes a select-box id and returns a list of selected 
+        //values
+        var vals=document.getElementById(input_id).options;
+        var vals_to_use=new Array();
+        var iterator=0;
+        for (var i=0,il=vals.length;i<il;i++){
+            if (vals[i].selected){
+                vals_to_use[iterator]=vals[i].value;
+                iterator++;
+            }
+        }
+        return vals_to_use;
+    }
+    
     function post_Array() {
+        //this function pulls all the values from the form and writes them
+        //as hidden form values to be submitted to the processing script
+        
         var form_object=document.getElementById("metadata_submission") 
         var jobs_to_start=new Array();
         var fname_prefix=document.getElementById("fname_prefix").value;
@@ -49,39 +130,28 @@ $(document).ready(function(){
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="taxonomy" value="'+taxonomy_class+'">'
 
         //set the rarefaction threshold
-        var otutable_rarefied_at=parseInt(document.getElementById("otutable_rarefied_at").value);
-        if (isNaN(otutable_rarefied_at)){
-            otutable_rarefied_at=0;
-        }else if(otutable_rarefied_at<0 || otutable_rarefied_at>100000000){
-            alert('The rarefaction threshold must be an integer between 0 and 100000000!');
+        var otutable_rarefied_at=check_int_range_0_100000000('otutable_rarefied_at');
+        if (otutable_rarefied_at != 'false'){
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="otutable_rarefied_at" value="'+otutable_rarefied_at+'">'
+        }else if (otutable_rarefied_at == 'false'){
             return false;
         }
-        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="otutable_rarefied_at" value="'+otutable_rarefied_at+'">'
-
+            
         //set beta-diversity parameters
         if (document.getElementById('check_bdiv').checked){
             jobs_to_start.push('bdiv')
+
             //set the metric to use
-            var bdiv_metric=document.getElementById("bdiv_metric").options;
-            var metrics_to_use=new Array();
-            var metric_iterator=0;
-            for (var i=0,il=bdiv_metric.length;i<il;i++){
-                if (bdiv_metric[i].selected){
-                    metrics_to_use[metric_iterator]=bdiv_metric[i].value;
-                    metric_iterator++;
-                }
-            }
-            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="beta_diversity:metrics" value="'+metrics_to_use.join()+'">'
+            var bdiv_metric=get_select_box_values("bdiv_metric");
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="beta_diversity:metrics" value="'+bdiv_metric.join()+'">'
 
             //set the rarefaction threshold
-            var bdiv_rarefied_at=parseInt(document.getElementById("bdiv_rarefied_at").value);
-            if (isNaN(bdiv_rarefied_at)){
-                bdiv_rarefied_at=0;
-            }else if(bdiv_rarefied_at<0 || bdiv_rarefied_at>100000000){
-                alert('The rarefaction threshold must be an integer between 0 and 100000000!');
+            var bdiv_rarefied_at=check_int_range_0_100000000('bdiv_rarefied_at');
+            if (bdiv_rarefied_at != 'false'){
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="bdiv_rarefied_at" value="'+bdiv_rarefied_at+'">'
+            }else if (bdiv_rarefied_at == 'false'){
                 return false;
             }
-            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="bdiv_rarefied_at" value="'+bdiv_rarefied_at+'">'
             
             if (document.getElementById('check_3d_plots').checked){
                 jobs_to_start.push('3d_bdiv_plots')
@@ -90,16 +160,8 @@ $(document).ready(function(){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_3d_plots:background_color" value="'+threed_bgcolor[threed_bgcolor.selectedIndex].value+'">'
             
                 //get the 3d colorby options
-                var threed_colorby=document.getElementById("3dbdiv_colorby").options;
-                var colorby_to_use=new Array();
-                var colorby_iterator=0;
-                for (var i=0,il=threed_colorby.length;i<il;i++){
-                    if (threed_colorby[i].selected){
-                        colorby_to_use[colorby_iterator]=threed_colorby[i].value;
-                        colorby_iterator++;
-                    }
-                }
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_3d_plots:colorby" value="'+colorby_to_use.join()+'">'
+                var threed_colorby=get_select_box_values("3dbdiv_colorby");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_3d_plots:colorby" value="'+threed_colorby.join()+'">'
 
                 //set the custom axis to use
                 var threed_axes=document.getElementById("3dbdiv_axes");
@@ -114,16 +176,8 @@ $(document).ready(function(){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_2d_plots:background_color" value="'+twod_bgcolor[twod_bgcolor.selectedIndex].value+'">'
             
                 //get the 2d colorby options
-                var twod_colorby=document.getElementById("2dbdiv_colorby").options;
-                var colorby_to_use=new Array();
-                var colorby_iterator=0;
-                for (var i=0,il=twod_colorby.length;i<il;i++){
-                    if (twod_colorby[i].selected){
-                        colorby_to_use[colorby_iterator]=twod_colorby[i].value;
-                        colorby_iterator++;
-                    }
-                }
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_2d_plots:colorby" value="'+colorby_to_use.join()+'">'
+                var twod_colorby=get_select_box_values("2dbdiv_colorby");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_2d_plots:colorby" value="'+twod_colorby.join()+'">'
             }
             
             if (document.getElementById('check_dist_hist').checked){
@@ -133,16 +187,8 @@ $(document).ready(function(){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:background_color" value="'+disthist_bgcolor[disthist_bgcolor.selectedIndex].value+'">'
             
                 //get the distance histogram options
-                var disthist_fields=document.getElementById("disthist_fields").options;
-                var fields_to_use=new Array();
-                var fields_iterator=0;
-                for (var i=0,il=disthist_fields.length;i<il;i++){
-                    if (disthist_fields[i].selected){
-                        fields_to_use[fields_iterator]=disthist_fields[i].value;
-                        fields_iterator++;
-                    }
-                }
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:fields" value="'+fields_to_use.join()+'">'
+                var disthist_fields=get_select_box_values("disthist_fields");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:fields" value="'+disthist_fields.join()+'">'
 
                 //set whether to use monte-carlo
                 var disthist_monte_carlo=document.getElementById("disthist_montecarlo");
@@ -150,14 +196,12 @@ $(document).ready(function(){
                 
                 if (disthist_monte_carlo[disthist_monte_carlo.selectedIndex].value=='True'){
                     //set the monte-carlo iteration
-                    var monte_carlo_iter=parseInt(document.getElementById("disthist_monteiter").value);
-                    if (isNaN(monte_carlo_iter)){
-                        bdiv_rarefied_at=0;
-                    }else if(monte_carlo_iter<1 || monte_carlo_iter>100000000){
-                        alert('The monte-carlo iterations must be an integer between 1 and 100000000!');
+                    var monte_carlo_iter=check_int_range_0_100000000('disthist_monteiter');
+                    if (monte_carlo_iter != 'false' && monte_carlo_iter!=0){
+                        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:monte_carlo_iters" value="'+monte_carlo_iter+'">'
+                    }else if (monte_carlo_iter == 'false'){
                         return false;
                     }
-                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_distance_histograms:monte_carlo_iters" value="'+monte_carlo_iter+'">'
                 }
             }
             
@@ -167,14 +211,12 @@ $(document).ready(function(){
             jobs_to_start.push('heatmap')
             
             //set the num otus
-            var heatmap_otu_hits=parseInt(document.getElementById("heatmap_otu_hits").value);
-            if (isNaN(heatmap_otu_hits)){
-                heatmap_otu_hits=5;
-            }else if(heatmap_otu_hits<0 || heatmap_otu_hits>100000000){
-                alert('The rarefaction threshold must be an float between 0 and 100000000!');
+            var heatmap_otu_hits=check_int_range_0_100000000('heatmap_otu_hits');
+            if (heatmap_otu_hits != 'false'){
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_otu_heatmap_html:num_otu_hits" value="'+heatmap_otu_hits+'">'
+            }else if (heatmap_otu_hits == 'false'){
                 return false;
             }
-            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_otu_heatmap_html:num_otu_hits" value="'+heatmap_otu_hits+'">'
             
             //set whether to use log-transform
             var heatmap_log_transform=document.getElementById("heatmap_log_transform");
@@ -182,14 +224,12 @@ $(document).ready(function(){
             
             if (heatmap_log_transform[heatmap_log_transform.selectedIndex].value=='True'){
                 //set the log transform replace zero number
-                var log_transform_replace=parseFloat(document.getElementById("log_transform_replace").value);
-                if (isNaN(log_transform_replace)){
-                    log_transform_replace=0.5;
-                }else if(log_transform_replace<0 || log_transform_replace>100000000){
-                    alert('The rarefaction threshold must be an float between 0 and 100000000!');
+                var log_transform_replace=check_int_range_0_100000000('log_transform_replace');
+                if (log_transform_replace != 'false'){
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_otu_heatmap_html:log_eps" value="'+log_transform_replace+'">'
+                }else if (log_transform_replace == 'false'){
                     return false;
                 }
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_otu_heatmap_html:log_eps" value="'+log_transform_replace+'">'
             }
             
         }
@@ -200,16 +240,8 @@ $(document).ready(function(){
                     jobs_to_start.push('sumcat')
                     
                     //get the category to summarize by option
-                    var sumcat_cat=document.getElementById("sumcat_cat").options;
-                    var cat_to_use=new Array();
-                    var cat_iterator=0;
-                    for (var i=0,il=sumcat_cat.length;i<il;i++){
-                        if (sumcat_cat[i].selected){
-                            cat_to_use[cat_iterator]=sumcat_cat[i].value;
-                            cat_iterator++;
-                        }
-                    }
-                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_otu_by_cat:meta_category" value="'+cat_to_use.join()+'">'
+                    var sumcat_cat=get_select_box_values("sumcat_cat");
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_otu_by_cat:meta_category" value="'+sumcat_cat.join()+'">'
                     
                     //set the normalization
                     var sumcat_norm=document.getElementById("sumcat_norm");
@@ -221,26 +253,15 @@ $(document).ready(function(){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_taxa:absolute_abundance" value="'+sumtaxa_abs[sumtaxa_abs.selectedIndex].value+'">'
                 
                 //get the summary levels
-                var sumtaxa_level=document.getElementById("sumtaxa_level").options;
-                var level_to_use=new Array();
-                var level_iterator=0;
-                for (var i=0,il=sumtaxa_level.length;i<il;i++){
-                    if (sumtaxa_level[i].selected){
-                        level_to_use[level_iterator]=sumtaxa_level[i].value;
-                        level_iterator++;
-                    }
-                }
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_taxa:level" value="'+level_to_use.join()+'">'
+                var sumtaxa_level=get_select_box_values("sumtaxa_level");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_taxa:level" value="'+sumtaxa_level.join()+'">'
                 
                 //set the number of categories to use
-                var sumtaxa_numcat=parseInt(document.getElementById("sumtaxa_numcat").value);
-                if (isNaN(sumtaxa_numcat)){
-                    // do nothing
-                }else if(sumtaxa_numcat<0 || sumtaxa_numcat>100000000){
-                    alert('The number of categories to keep must be an int between 0 and 100000000!');
-                    return false;
-                }else{
+                var sumtaxa_numcat=check_int_range_0_100000000('sumtaxa_numcat');
+                if (sumtaxa_numcat != 'false' && sumtaxa_numcat!=0){
                     form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:num" value="'+sumtaxa_numcat+'">'
+                }else if (sumtaxa_numcat == 'false'){
+                    return false;
                 }
                 
                 //set the background color
@@ -248,47 +269,34 @@ $(document).ready(function(){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:background_color" value="'+sumtaxa_bgcolor[sumtaxa_bgcolor.selectedIndex].value+'">'
                 
                 //set the resolution to use
-                var sumtaxa_res=parseInt(document.getElementById("sumtaxa_res").value);
-                if (isNaN(sumtaxa_res)){
-                    // do nothing
-                }else if(sumtaxa_res<0 || sumtaxa_res>100000000){
-                    alert('The resolution (dpi) must be an int between 0 and 100000000!');
-                    return false;
-                }else{
+                var sumtaxa_res=check_int_range_0_100000000('sumtaxa_res');
+                if (sumtaxa_res != 'false' && sumtaxa_res!=0){
                     form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:dpi" value="'+sumtaxa_res+'">'
+                }else if (sumtaxa_res == 'false'){
+                    return false;
                 }
                 
                 //set the x-axis width to use
-                var sumtaxa_x=parseFloat(document.getElementById("sumtaxa_x").value);
-                if (isNaN(sumtaxa_x)){
-                    // do nothing
-                }else if(sumtaxa_x<0 || sumtaxa_x>100000000){
-                    alert('The x-axis must be a float between 0 and 100000000!');
-                    return false;
-                }else{
+                var sumtaxa_x=check_int_range_0_100000000('sumtaxa_x');
+                if (sumtaxa_x != 'false' && sumtaxa_x!=0){
                     form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:x_width" value="'+sumtaxa_x+'">'
+                }else if (sumtaxa_x == 'false'){
+                    return false;
                 }
                 
                 //set the y-axis height to use
-                var sumtaxa_y=parseFloat(document.getElementById("sumtaxa_y").value);
-                if (isNaN(sumtaxa_y)){
-                    // do nothing
-                }else if(sumtaxa_y<0 || sumtaxa_y>100000000){
-                    alert('The y-axis must be a float between 0 and 100000000!');
-                    return false;
-                }else{
+                var sumtaxa_y=check_int_range_0_100000000('sumtaxa_y');
+                if (sumtaxa_y != 'false' && sumtaxa_y!=0){
                     form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:y_height" value="'+sumtaxa_y+'">'
+                }else if (sumtaxa_y == 'false'){
+                    return false;
                 }
                 
-                //set the y-axis height to use
-                var sumtaxa_barw=parseFloat(document.getElementById("sumtaxa_barw").value);
-                if (isNaN(sumtaxa_barw)){
-                    // do nothing
-                }else if(sumtaxa_barw<0 || sumtaxa_barw>1){
-                    alert('The y-axis must be a float between 0 and 1!');
-                    return false;
-                }else{
+                //set the bar width
+                if (sumtaxa_barw != 'false' && sumtaxa_barw != 0){
                     form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:bar_width" value="'+sumtaxa_barw+'">'
+                }else if (sumtaxa_barw == 'false'){
+                    return false;
                 }
                 
                 //set the img type
@@ -296,37 +304,26 @@ $(document).ready(function(){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:type_of_file" value="'+sumtaxa_imgtype[sumtaxa_imgtype.selectedIndex].value+'">'
                 
                 //get the chart types
-                var sumtaxa_charttype=document.getElementById("sumtaxa_charttype").options;
-                var chart_to_use=new Array();
-                var chart_iterator=0;
-                for (var i=0,il=sumtaxa_charttype.length;i<il;i++){
-                    if (sumtaxa_charttype[i].selected){
-                        chart_to_use[chart_iterator]=sumtaxa_charttype[i].value;
-                        chart_iterator++;
-                    }
-                }
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:chart_type" value="'+chart_to_use.join()+'">'
-
+                var sumtaxa_charttype=get_select_box_values("sumtaxa_charttype");
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:chart_type" value="'+sumtaxa_charttype.join()+'">'
+                
                 //set the nth label to use
-                var sumtaxa_nth=parseFloat(document.getElementById("sumtaxa_nth").value);
-                if (isNaN(sumtaxa_nth)){
-                    // do nothing
-                }else if(sumtaxa_nth<0 || sumtaxa_nth>100000000){
-                    alert('The nth label must be a float between 0 and 100000000!');
-                    return false;
-                }else{
+                var sumtaxa_nth=check_float_range_0_100000000('sumtaxa_nth');
+                if (sumtaxa_nth != 'false' && sumtaxa_nth!=0){
                     form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:resize_nth_label" value="'+sumtaxa_nth+'">'
+                }else if (sumtaxa_nth == 'false'){
+                    return false;
                 }
                 
                 //suppress html legend
                 var sumtaxa_supleg=document.getElementById("sumtaxa_supleg");
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:suppress_html_legend" value="'+sumtaxa_supleg[sumtaxa_supleg.selectedIndex].value+'">'
                 
-                //suppress html legend
+                //suppress html counts
                 var sumtaxa_supcts=document.getElementById("sumtaxa_supcts");
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:suppress_html_counts" value="'+sumtaxa_supcts[sumtaxa_supcts.selectedIndex].value+'">'
                 
-                //suppress html legend
+                //data type for x-axis values
                 var sumtaxa_lbltype=document.getElementById("sumtaxa_lbltype");
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:a_label_type" value="'+sumtaxa_lbltype[sumtaxa_lbltype.selectedIndex].value+'">'
                 
@@ -337,37 +334,28 @@ $(document).ready(function(){
         if (document.getElementById('check_arare').checked){
             jobs_to_start.push('arare')
             
-            //set the min
-            var arare_min=parseInt(document.getElementById("arare_min").value);
-            if (isNaN(arare_min)){
-                // do nothing
-            }else if(arare_min<0 || arare_min>100000000){
-                alert('The min must be an int between 0 and 100000000!');
+            //set the max
+            var arare_max=check_int_range_0_100000000('arare_max');
+            if (arare_max != 'false' && arare_max!=0){
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:max" value="'+arare_max+'">'
+            }else if (arare_max == 'false'){
                 return false;
-            }else{
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:min" value="'+arare_min+'">'
             }
             
-            //set the max
-            var arare_max=parseInt(document.getElementById("arare_max").value);
-            if (isNaN(arare_max)){
-                // do nothing
-            }else if((arare_max<0 || arare_max>100000000) && arare_min<arare_max){
-                alert('The max must be an int between 0 and 100000000 and must be greater than the min!');
+            //set the min
+            var arare_min=check_int_range_0_100000000('arare_min');
+            if (arare_min != 'false' && arare_max!=0 && arare_min!=0){
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:min" value="'+arare_min+'">'
+            }else if (arare_min == 'false'){
                 return false;
-            }else{
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:max" value="'+arare_max+'">'
             }
             
             //set the steps
-            var arare_steps=parseInt(document.getElementById("arare_steps").value);
-            if (isNaN(arare_steps)){
-                // do nothing
-            }else if(arare_steps<0 || arare_steps>100000000){
-                alert('The steps must be an int between 0 and 100000000!');
-                return false;
-            }else{
+            var arare_steps=check_int_range_0_100000000('arare_steps');
+            if (arare_steps != 'false' && arare_steps!=0){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="multiple_rarefactions:step" value="'+arare_steps+'">'
+            }else if (arare_steps == 'false'){
+                return false;
             }
             
             //set the background color
@@ -379,51 +367,29 @@ $(document).ready(function(){
             form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:imagetype" value="'+arare_imgtype[arare_imgtype.selectedIndex].value+'">'
 
             //set the ymax
-            var arare_ymax=parseInt(document.getElementById("arare_ymax").value);
-            if (isNaN(arare_ymax)){
-                // do nothing
-            }else if(arare_ymax<0 || arare_ymax>100000000){
-                alert('The steps must be an int between 0 and 100000000!');
-                return false;
-            }else{
+            var arare_ymax=check_int_range_0_100000000('arare_ymax');
+            if (arare_ymax != 'false' && arare_ymax!=0){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:ymax" value="'+arare_ymax+'">'
+            }else if (arare_ymax == 'false'){
+                return false;
             }
             
             //set the resolution
-            var arare_res=parseInt(document.getElementById("arare_res").value);
-            if (isNaN(arare_res)){
-                // do nothing
-            }else if(arare_res<0 || arare_res>100000000){
-                alert('The steps must be an int between 0 and 100000000!');
-                return false;
-            }else{
+            var arare_res=check_int_range_0_100000000('arare_res');
+            if (arare_res != 'false' && arare_res!=0){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:resolution" value="'+arare_res+'">'
+            }else if (arare_res == 'false'){
+                return false;
             }
             
             //get the arare colorby options
-            var arare_colorby=document.getElementById("arare_colorby").options;
-            var colorby_to_use=new Array();
-            var colorby_iterator=0;
-            for (var i=0,il=arare_colorby.length;i<il;i++){
-                if (arare_colorby[i].selected){
-                    colorby_to_use[colorby_iterator]=arare_colorby[i].value;
-                    colorby_iterator++;
-                }
-            }
-            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:colorby" value="'+colorby_to_use.join()+'">'
+            var arare_colorby=get_select_box_values("arare_colorby");
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="make_rarefaction_plots:colorby" value="'+arare_colorby.join()+'">'
             
             //get the arare metric options
-            var arare_metrics=document.getElementById("arare_metrics").options;
-            var metrics_to_use=new Array();
-            var metrics_iterator=0;
-            for (var i=0,il=arare_metrics.length;i<il;i++){
-                if (arare_metrics[i].selected){
-                    metrics_to_use[metrics_iterator]=arare_metrics[i].value;
-                    metrics_iterator++;
-                }
-            }
-            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="alpha_diversity:metrics" value="'+metrics_to_use.join()+'">'
-            
+            var arare_metrics=get_select_box_values("arare_metrics");
+            form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="alpha_diversity:metrics" value="'+arare_metrics.join()+'">'
+
         }
         
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="jobs_to_start" value="'+jobs_to_start.join()+'">'
@@ -471,12 +437,12 @@ Onsubmit returns false, since the form is not formally submitted and
 it will remove the return key functionality.
 -->
 
-<form onsubmit="return false;">
+<form id="meta_analysis_params" name="meta_analysis_params" onsubmit="return false;">
 
 <h3>Meta-Analyses to Perform</h3>
-<div id='fname_prefix'>
+<div id='filename_prefix'>
     <b>Filename Prefix: </b>
-    <input validate="required:true" type="text" id="fname_prefix" name="fname_prefix" />
+    <input type="text" id="fname_prefix" name="fname_prefix" />
 </div>
 <br>
 <p><b>OTU Table</b></p>
@@ -538,9 +504,8 @@ it will remove the return key functionality.
                 <option>SampleID
                 <option>LinkerPrimerSequence
 <%
-for i in form_data:
-    if i != 'page':
-        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+for i in column_headers:
+    req.write('<option>'+i);
 #
 %>
                 <option>Description
@@ -572,7 +537,7 @@ for i in form_data:
     <td>
         <select id="sumtaxa_level" name="sumtaxa_level" multiple>
             <option value=1>Domain
-            <option value=2>Phylum
+            <option value=2 selected>Phylum
             <option value=3>Class
             <option value=4>Order
             <option value=5>Family
@@ -681,31 +646,15 @@ for i in form_data:
         <td><b>Metrics: </b></td>
         <td>
             <select id="arare_metrics" name="arare_metrics" multiple>
-                <option>berger_parker_d
-                <option>brillouin_d
-                <option>chao1
-                <option>chao1_confidence
-                <option>dominance
-                <option>doubles
-                <option>equitability
-                <option>fisher_alpha
-                <option>heip_e
-                <option>kemption_taylor_q
-                <option>margalef
-                <option>mcintosh_d
-                <option>mcintosh_e
-                <option>menhinick
-                <option>michaelis_menten_fit
-                <option selected>observed_species
-                <option>osd
-                <option selected>PD_whole_tree
-                <option>reciprocal_simpson
-                <option>robbins
-                <option>shannon
-                <option>simpson
-                <option>simpson_e
-                <option>singles
-                <option>strong
+<%
+
+for i in alpha_metrics:
+    if i in ['PD_whole_tree','observed_species']:
+        req.write('<option selected>'+i)
+    else:
+        req.write('<option>'+i)
+#
+%>
             </select>
         </td>
     </tr>
@@ -716,9 +665,8 @@ for i in form_data:
                 <option>SampleID
                 <option>LinkerPrimerSequence
 <%
-for i in form_data:
-    if i != 'page':
-        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+for i in column_headers:
+    req.write('<option>'+i);
 #
 %>
                 <option>Description
@@ -760,8 +708,14 @@ for i in form_data:
         <td><b>Metrics: </b></td>
         <td>
             <select id="bdiv_metric" name="bdiv_metric" multiple>
-                <option>weighted_unifrac
-                <option>unweighted_unifrac
+<%
+for i in beta_metrics:
+    if i in ['weighted_unifrac','unweighted_unifrac']:
+        req.write('<option selected>'+i)
+    else:
+        req.write('<option>'+i)
+#
+%>
             </select>
         </td>
         </tr><tr>
@@ -787,9 +741,8 @@ for i in form_data:
                     <option>SampleID
                     <option>LinkerPrimerSequence
 <%
-for i in form_data:
-    if i != 'page':
-        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+for i in column_headers:
+    req.write('<option>'+i);
 #
 %>
                     <option>Description
@@ -802,9 +755,8 @@ for i in form_data:
                     <option>SampleID
                     <option>LinkerPrimerSequence
 <%
-for i in form_data:
-    if i != 'page':
-        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+for i in column_headers:
+    req.write('<option>'+i);
 #
 %>
                     <option>Description
@@ -830,9 +782,8 @@ for i in form_data:
                     <option>SampleID
                     <option>LinkerPrimerSequence
 <%
-for i in form_data:
-    if i != 'page':
-        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+for i in column_headers:
+    req.write('<option>'+i);
 #
 %>
                     <option>Description
@@ -869,9 +820,8 @@ for i in form_data:
                     <option>SampleID
                     <option>LinkerPrimerSequence
 <%
-for i in form_data:
-    if i != 'page':
-        req.write('<option>'+i.split('####STUDIES####')[0].split('####SEP####')[1]);
+for i in column_headers:
+    req.write('<option>'+i);
 #
 %>
                     <option>Description

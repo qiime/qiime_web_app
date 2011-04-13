@@ -92,7 +92,13 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
         # directory up from the other files
         rev = dirname(fasta_fname)[::-1]
         
-        sff_file_dir = split(input_dir)[0]
+        sffs_in_processed_folder = glob(join(input_dir, '*_FLX.sff'))
+
+        if len(sffs_in_processed_folder) == 0:
+            sff_file_dir = split(input_dir)[0]
+        else:
+            sff_file_dir=input_dir
+            
         sff_file = join(sff_file_dir, input_fname + '.sff')
         #sff_file = input_basename+'.sff'
         

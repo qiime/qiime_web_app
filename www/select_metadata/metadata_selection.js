@@ -190,14 +190,14 @@ function select_group(identifier,selObject1,selObject2){
             if (field in box2values){
                 //do nothing
             }else{
-                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'>'+box1original[i][2]+'</option>';
+                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'">'+box1original[i][2]+'</option>';
                 iter=iter+1;
             }
         }else if (identifier==group){
             if (field in box2values){
                 //do nothing
             }else{
-                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'>'+box1original[i][2]+'</option>';
+                option_str[iter]='<option id="'+box1original[i][0]+'" value="'+box1original[i][1]+'">'+box1original[i][2]+'</option>';
                 iter=iter+1;
             }
         }

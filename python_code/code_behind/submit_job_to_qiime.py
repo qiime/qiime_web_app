@@ -26,6 +26,7 @@ def submitJob(study_id, user_id, param_file, mapping_file, sequencing_platform, 
     params.append('SeqPlatform=%s' % str(sequencing_platform).upper())
     params.append('ProcessOnly=%s' % str(process_only))
     params.append('SubmitToTestDB=%s' % str(submit_to_test_db))
+    params.append('UserId=%s' % str(user_id))
     job_input = '!!'.join(params)
 
     # Submit the job
@@ -35,10 +36,9 @@ def submitJob(study_id, user_id, param_file, mapping_file, sequencing_platform, 
         raise Exception('There was an error creating the job. Please contact the system administrator.')
 
 #
-def submitQiimeJob(study_id, user_id, job_type, job_input, data_access):
+def submitQiimeJob(study_id, user_id, job_type, job_input, data_access,job_state=-1):
     # Submit the job
-    job_id = data_access.createTorqueJob(job_type, job_input, user_id, study_id)
-    
+    job_id = data_access.createTorqueJob(job_type, job_input, user_id, study_id,job_state_id=job_state)
     # Make sure a legit job_id was created. If not, inform the user there was a problem
     if job_id < 0:
         raise Exception('There was an error creating the job. Please contact the system administrator.')

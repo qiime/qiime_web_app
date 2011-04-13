@@ -117,7 +117,7 @@ def run_beta_diversity(otu_table_fp, mapping_fp,
         
         beta_div_fp = '%s/%s_%s' % \
          (output_dir, beta_diversity_metric, otu_table_filename)
-        dm_fps.append((beta_diversity_metric, beta_div_fp))
+        dm_fps.append((beta_diversity_metric+'_distance_matrix', beta_div_fp))
         
         
     
@@ -190,7 +190,7 @@ def run_3d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
         continuous_3d_dir = '%s/%s_3d_continuous/' %\
          (output_dir, beta_diversity_metric)
          
-        bdiv_3d_plots.append(('continuous_'+beta_diversity_metric,continuous_3d_dir,
+        bdiv_3d_plots.append(('3d_continuous_'+beta_diversity_metric,continuous_3d_dir,
                                '%s_3d_continuous/%s' % (beta_diversity_metric,
                                pc_fp.split('/')[-1]+'_3D.html')))
          
@@ -213,7 +213,7 @@ def run_3d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
         discrete_3d_dir = '%s/%s_3d_discrete/' %\
          (output_dir, beta_diversity_metric)
          
-        bdiv_3d_plots.append(('discrete_'+beta_diversity_metric,discrete_3d_dir,
+        bdiv_3d_plots.append(('3d_discrete_'+beta_diversity_metric,discrete_3d_dir,
                             '%s_3d_discrete/%s' % (beta_diversity_metric,
                             pc_fp.split('/')[-1]+'_3D.html')))
         try:
@@ -274,7 +274,7 @@ def run_2d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
         continuous_2d_dir = '%s/%s_2d_continuous/' %\
          (output_dir, beta_diversity_metric)
          
-        bdiv_2d_plots.append(('continuous_'+beta_diversity_metric,continuous_2d_dir,
+        bdiv_2d_plots.append(('2d_continuous_'+beta_diversity_metric,continuous_2d_dir,
                                '%s_2d_continuous/%s' % (beta_diversity_metric,
                                '2d_pcoa_plots.html')))
          
@@ -297,7 +297,7 @@ def run_2d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
         discrete_2d_dir = '%s/%s_2d_discrete/' %\
          (output_dir, beta_diversity_metric)
          
-        bdiv_2d_plots.append(('discrete_'+beta_diversity_metric,discrete_2d_dir,
+        bdiv_2d_plots.append(('2d_discrete_'+beta_diversity_metric,discrete_2d_dir,
                             '%s_2d_discrete/%s' % (beta_diversity_metric,
                             '2d_pcoa_plots.html')))
         try:

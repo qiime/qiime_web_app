@@ -44,15 +44,12 @@ sess.save()
 </div>
 <p>
 <h3>Selected Meta-Analysis: <%=sess['meta_analysis_name']%></h3>
-<h4>Tasks:</h4>
-        <ul><li>
-            <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="select_metadata/index.psp">
-                <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
-                Generate metadata mapping and PCoA Plots</a>
-            </form>
-        </li>
-    </ul>
+
+    <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
+        <input type="hidden" name="page" id="page" value="select_metadata/index.psp">
+        <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
+        Perform Meta-Analysis</a>
+    </form>
 </p>
 <br>
 <%

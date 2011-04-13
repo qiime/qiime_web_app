@@ -1528,18 +1528,18 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-    def createTorqueJob(self, job_type, job_input, user_id, study_id):
+    #
+    def createTorqueJob(self, job_type, job_input, user_id, study_id, job_state_id=-1):
         """ Returns submits a job to the queue and returns the job_id
         """
         try:
             con = self.getSFFDatabaseConnection()
             job_id = 0
-            job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, study_id, job_id])
-            return job_id[4]
+            job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, study_id, job_state_id,job_id])
+            return job_id[5]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-        
+                
     def getSFFFiles(self, study_id):
         """ Gets a list of SFF files for this study
         """

@@ -147,13 +147,11 @@ if portal_type == 'qiime':
     
 %>
         <li>
-
 <%
     jobs = data_access.getJobInfo(study_id, 3)
     if len(jobs) > 0:
         # indent
 %>
-
             Submitted Qiime Jobs:
             <br/>
             <ul>
@@ -162,11 +160,10 @@ if portal_type == 'qiime':
                 </div>
                 <script type="text/javascript">
                     //checkQiimeJobStatus();
-                    var timer = setInterval( "checkQiimeJobStatus()", 3000 );
+                    var timer = setInterval( "checkQiimeJobStatus()", 2000 );
                 </script>
             </ul>
             <br/>
-
 <%
     elif metadata_complete == 'y' and sff_complete == 'y':
         # Indent
@@ -210,9 +207,25 @@ if portal_type == 'qiime':
             Submit Job to Qiime (complete SFF and metadata upload first)
             <br/><br/>
 <%
+    if is_admin == 1:
+        jobs2 = data_access.getJobInfo(study_id, 12)
+        # indent
+%>
+            <li>
+            Queued Data to Load:
+            <br/>
+            <ul>
+                <div id="qiime_load_status_div">
+                    Checking status...
+                </div>
+                <script type="text/javascript">
+                    //checkQiimeJobStatus();
+                    var timer = setInterval( "checkQiimeJobLoadStatus()", 3000 );
+                </script>
+            </ul>
+            <br/>
+<%
     # End if
-    
-
 %>
         </li>
         
