@@ -19,6 +19,7 @@ from enums import ServerConfig
 PYTHON_BIN="/usr/bin/python2.6"
 QIIME_WEBAPP_BASE = "%s/projects/Qiime/qiime_web_app/python_code/scripts" % ServerConfig.home
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_through_split_lib.py"
+QIIME_LOAD_SFF = QIIME_WEBAPP_BASE + "/submit_sff_through_split_lib_to_db.py"
 QIIME_EXPORT_MGRAST = QIIME_WEBAPP_BASE + "/submit_metadata_to_mgrast.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_through_metadata_to_db.py"
@@ -196,8 +197,8 @@ class PollerTestHandlerErr(JobHandler):
 # LoadSffAndMetadataHandler (Job Type of ??)
 class ProcessSFFHandler(JobHandler):
     """Handler for process_sff_through_split_lib.py"""
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s -d %(SubmitToTestDB)s -q %(SeqPlatform)s -r %(ProcessOnly)s -fc"])
-    _base_args = {'SFF':None, 'Mapping':None, 'ParamFile':None, 'StudyID':None,'SubmitToTestDB':None,'SeqPlatform':None,'ProcessOnly':None}
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_PROCESS_SFF, "-i %(SFF)s -m %(Mapping)s -p %(ParamFile)s -s %(StudyID)s -d %(SubmitToTestDB)s -q %(SeqPlatform)s -r %(ProcessOnly)s -u %(UserId)s -fc"])
+    _base_args = {'SFF':None, 'Mapping':None, 'ParamFile':None, 'StudyID':None,'SubmitToTestDB':None,'SeqPlatform':None,'ProcessOnly':None,'UserId':None}
     _next_job_handler = ''
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
@@ -207,7 +208,22 @@ class ProcessSFFHandler(JobHandler):
             return True
         else:
             return False
+#
+#
+class LoadSFFHandler(JobHandler):
+    """Handler for submit_sff_through_split_lib_to_db.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_LOAD_SFF, \
+            "-i %(ProcessedFastaFilepath)s -s %(StudyId)s -u %(UserId)s -o %(OutputDir)s -t %(TestDB)s"])
+    _base_args = {'ProcessedFastaFilepath':None, 'StudyId':None,'UserId':None,'OutputDir':None,'TestDB':None}
 
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+            
 # Command for picking OTUs
 class ProcessPickOTUHandler(JobHandler):
     """Handler for pick_otus.py"""
@@ -297,7 +313,8 @@ class makeMappingAndOTUFiles(JobHandler):
             return True
         else:
             return False
-            
+
+                        
 class LoadSFFAndMetadataHandler(JobHandler):
     """Handler for submit_sff_and_metadata_to_db.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_SFF_METADATA_TO_DB, \

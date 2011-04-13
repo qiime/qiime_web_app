@@ -52,7 +52,8 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'betaDiversityThrough3DPlots':betaDiversityThrough3DPlots,
                    'makeOTUHeatmap':makeOTUHeatmap,
                    'alphaRarefaction':alphaRarefaction,
-                   'summarizeTaxa':summarizeTaxa}
+                   'summarizeTaxa':summarizeTaxa,
+                   'LoadSFFHandler':LoadSFFHandler}
                    
 
 class FileDoesNotExistError(IOError):
