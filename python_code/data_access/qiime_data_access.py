@@ -1021,6 +1021,19 @@ class QiimeDataAccess(object):
         except Exception, e:            
             raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
             
+    def findExtraColumnMatch(self, column_name):
+        """ Searches for a match in 'extra' tables
+        """
+        con = self.getMetadataDatabaseConnection()
+        matches = []
+        results = con.cursor()
+        con.cursor().callproc('qiime_assets.find_extra_column_match', [column_name, results])
+        #for row in results:
+        for table_name in results:
+            matches.append(table_name)
+        
+        return matches
+            
     def addExtraColumnMetadata(self, study_id, table_level, column_name, description, data_type):
         """ inserts metadata for an "extra" column
         """

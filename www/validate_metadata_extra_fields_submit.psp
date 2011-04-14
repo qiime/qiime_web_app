@@ -44,29 +44,7 @@ for item in form:
         
         # Add value to the dict
         columns[original_column_name]['new_column_name'] = value
-        
-        # Figure ouf if name was changed. If so, update file
-        """
-        if original_column_name != value:
-            
-            # Get the full filename
-            for t in sess['templates']:
-                if os.path.basename(t) == template_name:
-                    full_filename = t
                     
-            # Write the new column names over the old
-            if full_filename == '':
-                raise ValueError('Template filename was not found')
-                
-            f = open(full_filename, 'r')
-            contents = f.read().replace(original_column_name, value)
-            #req.write('<pre>' + contents + '</pre>')
-            f.close()
-            f = open(full_filename, 'w')
-            f.write(contents)
-            f.close()
-        """
-            
     elif field_type == 'column_description':
         columns[original_column_name]['description'] = value
     elif field_type == 'data_type':
@@ -81,15 +59,27 @@ for column in columns:
     details = columns[column]
     if 'prep' in details['template_name']:
         table_level = 'sequence_prep'
+        extra_table = 'common_extra_prep'
     elif 'sample' in details['template_name']:
         table_level = 'sample'
-    elif 'study' in details['template_name']:
-        table_level = 'study'
+        extra_table = 'common_extra_sample'
         
     data_access.addExtraColumnMetadata(study_id, table_level, \
         details['new_column_name'], details['description'], details['data_type'])
+        
+    # Perform column refactoring if necessary
+    extra_tables = data_access.findExtraColumnMatch(column)
+    for extra_table in extra_tables:
+        # Add this to the appropriate shared extra table
+        data_access.add
+        
+        # Copy the data found in the found extra_table
+        
+        # Remove the column from the found extra table. 
+        # If no additional columns exist in the extra table, delete it.
+        
     
 # Redirect to the data validation page
-psp.redirect('validate_metadata.psp')
+#psp.redirect('validate_metadata.psp')
 
 %>
