@@ -224,7 +224,16 @@ def validateFileContents(study_id, portal_type, sess, form, req):
             if len(table_errors) > 0:
                 for e in table_errors:
                     errors.append(e)
-                    
+            
+            # Make sure there's at least one row of data in the file
+            i = 0
+            with open(outfile_filename, 'rU') as f:
+                for line in f:
+                    i += 1
+            if i < 2:
+                errors.append('The file "%s" contains no data.' % filename)
+                continue
+
             # Perform specific validations
             if 'sample_template' in outfile_filename:
                 sample_mdtable = mdtable
