@@ -171,7 +171,7 @@ def main():
         submitQiimeJob(study_id, user_id, job_type, job_input, data_access)
     else:
         submitQiimeJob(study_id, user_id, job_type, job_input, data_access,\
-                       job_state=2)
+                       job_state=-2)
             
 
 if __name__ == "__main__":

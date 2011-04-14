@@ -43,11 +43,14 @@ for jobid in job_type_ids:
     for job in jobs:
         completed_status = 'COMPLETED_OKAY'
         display_text = 'not set'
-    
-        if job['job_state_name'] != completed_status:
+        QIIME_HOLD = 'QIIME_HOLD'
+        
+        if job['job_state_name'] != completed_status and job['job_state_name'] != QIIME_HOLD:
             display_text = 'Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(clear job)</a><br>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id'])
         elif job['job_state_name'] == completed_status and int(sess['is_admin']) == 1:
             display_text = 'Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(admin option: clear job)</a><br>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id'])
+        elif job['job_state_name'] == QIIME_HOLD:
+            display_text = 'Job %s: %s <a href="clear_job.psp?job_id=%s&job_type_id=%s">(admin option: clear job)</a>&nbsp;&nbsp;<a href="update_job_status.psp?job_id=%s&job_type_id=%s">(admin option: submit job)</a><br>' % (job['job_id'], job['job_state_name'], job['job_id'],job['job_type_id'],job['job_id'],job['job_type_id'])
         else:
             display_text = 'Job %s: %s <br>' % (job['job_id'], job['job_state_name'])
         
