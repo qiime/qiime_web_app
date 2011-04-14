@@ -93,7 +93,7 @@ column_headers.sort()
         //is between a certain threshold. when null returns the value 0
         var val=parseFloat(document.getElementById(input_id).value);
         if (isNaN(val) || val==''){
-            val=0;
+            val=0.75;
         }else if(val<0 || val>100000000){
             alert('The ' + input_id + 
                   ' threshold must be an integer between 0 and 100000000!');
@@ -293,6 +293,7 @@ column_headers.sort()
                 }
                 
                 //set the bar width
+                var sumtaxa_barw=check_float_range_0_1('sumtaxa_barw');
                 if (sumtaxa_barw != 'false' && sumtaxa_barw != 0){
                     form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:bar_width" value="'+sumtaxa_barw+'">'
                 }else if (sumtaxa_barw == 'false'){
