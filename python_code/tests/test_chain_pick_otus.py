@@ -27,10 +27,12 @@ from qiime.parse import parse_qiime_parameters
 from run_chain_pick_otus import run_chain_pick_otus,web_app_call_commands_serially
 from qiime.workflow import (call_commands_serially,
 no_status_updates,WorkflowError,print_commands,print_to_stdout)
+
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:
 ##  http://code.activestate.com/recipes/534115-function-timeout/
 ##  http://stackoverflow.com/questions/492519/timeout-on-a-python-function-call
+
 class TimeExceededError(Exception):
     pass
 
@@ -44,7 +46,7 @@ def timeout(signum, frame):
 class WorkflowTests(TestCase):
     
     def setUp(self):
-        """ """
+        """setup the test values"""
         
         self.qiime_config = load_qiime_config()
         self.dirs_to_remove = []
@@ -52,7 +54,7 @@ class WorkflowTests(TestCase):
         
         # Cannot use get_qiime_project_dir() due to test errors in virtual box
         test_dir = os.path.join(get_qiime_project_dir(),'tests')
-        self.fna_original_fp = '/home/wwwdevuser/qiime_test_dataset/split_libraries/0_FLX_seqs.fna'
+        self.fna_original_fp = '~/qiime_test_dataset/split_libraries/test.fna'
 
         tmp_dir = self.qiime_config['temp_dir'] or '/tmp/'
         if not exists(tmp_dir):
@@ -80,7 +82,7 @@ class WorkflowTests(TestCase):
         
     
     def tearDown(self):
-        """ """
+        """remove all the files after completing tests """
         # turn off the alarm
         signal.alarm(0)
         
@@ -92,179 +94,174 @@ class WorkflowTests(TestCase):
                 rmtree(d)
     
     def test_run_chain_pick_otus(self):
-        """run_chain_pick_otus runs without error"""
-        run_chain_pick_otus(self.fna_original_fp, self.wf_out, web_app_call_commands_serially, \
+        """run_chain_pick_otus runs serially without error"""
+        run_chain_pick_otus(self.fna_original_fp, self.wf_out,\
+                    call_commands_serially, \
                     self.params, self.qiime_config, False,\
                     no_status_updates)
         
-        #load the split lib fasta file and check if it is valid
-        cat_split_lib_fp=join(self.wf_out,'all_split_lib_seqs.fna')
-        cat_split_lib=open(cat_split_lib_fp).read()
-        original_fasta=open(self.fna_original_fp).read()
-        
-        self.assertEqual(cat_split_lib,original_fasta)
-        
-        #load the study_run_prefix dictionary and make sure it is valid
-        study_run_prefix_dict=eval(open(join(self.wf_out,'studies_run_prefix_dict.txt')).read())
-        exp_study_run_prefix={'0': ['FLX']}
-        
-        self.assertEqual(study_run_prefix_dict,exp_study_run_prefix)
-        
         #load the exact match OTUs and check if they are valid
-        exact_otus_fp=join(self.wf_out,'pick_otus_exact','all_split_lib_seqs_otus.txt')
+        exact_otus_fp=join(self.wf_out,'pick_otus_exact',\
+                           'test_otus.txt')
         obs_exact_otus=open(exact_otus_fp).read()
         
         self.assertEqual(obs_exact_otus,exp_exact_otus)
         
-        #load the trie filtered OTUs and check if they are valid
-        trie_otus_fp=join(self.wf_out,'pick_otus_trie','all_split_lib_seqs_exact_rep_otus.txt')
-        obs_trie_otus=open(trie_otus_fp).read()
-        
-        self.assertEqual(obs_trie_otus,exp_trie_otus)
-        
         #load the uclust_ref picked OTUs and check if they are valid
         uclust_ref_otus_fp=join(self.wf_out,'picked_otus_UCLUST_REF_97',
-                            'all_split_lib_seqs_exact_rep_trie_rep_otus.txt')
+                            'leftover_otus.txt')
         obs_uclust_ref_otus=open(uclust_ref_otus_fp).read()
         
         self.assertEqual(obs_uclust_ref_otus,exp_uclust_ref_otus)
         
         #load the merged OTUs and check if they are valid
         all_otus_fp=uclust_ref_otus_fp=join(self.wf_out,
-                                            'exact_trie_uclust_ref_otus.txt')
+                                            'exact_uclust_ref_otus.txt')
         obs_all_otus=open(all_otus_fp).read()
         
         self.assertEqual(obs_all_otus,exp_all_otus)
         
+        #load the sample failures and check if they are valid
+        otus_failures_fp=join(self.wf_out, 'all_failures.txt')
+        obs_otu_failures=open(otus_failures_fp).read()
+        
+        self.assertEqual(obs_otu_failures,exp_otu_failures)
+        
+        #load the otu table and check if they are valid
+        otus_table_fp=join(self.wf_out, 'exact_uclust_ref_otu_table.txt')
+        obs_otu_table=open(otus_table_fp).read()
+        
+        self.assertEqual(obs_otu_table,exp_otu_table)
+        
         # Check that the log file is created and has size > 0
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)
-        
-
+    
+    '''
+    # CURRENTLY: we do not allow for parallel otu-picking
     def test_run_chain_pick_otus_parallel(self):
-        """run_chain_pick_otus parallel runs without error"""
-        run_chain_pick_otus(self.fna_original_fp, self.wf_out, web_app_call_commands_serially, \
+        """run_chain_pick_otus runs without error"""
+        run_chain_pick_otus(self.fna_original_fp, self.wf_out,\
+                    call_commands_serially, \
                     self.params, self.qiime_config, True,\
                     no_status_updates)
         
-        #load the split lib fasta file and check if it is valid
-        cat_split_lib_fp=join(self.wf_out,'all_split_lib_seqs.fna')
-        cat_split_lib=open(cat_split_lib_fp).read()
-        original_fasta=open(self.fna_original_fp).read()
-
-        self.assertEqual(cat_split_lib,original_fasta)
-
-        #load the study_run_prefix dictionary and make sure it is valid
-        study_run_prefix_dict=eval(open(join(self.wf_out,'studies_run_prefix_dict.txt')).read())
-        exp_study_run_prefix={'0': ['FLX']}
-
-        self.assertEqual(study_run_prefix_dict,exp_study_run_prefix)
-
         #load the exact match OTUs and check if they are valid
-        exact_otus_fp=join(self.wf_out,'pick_otus_exact','all_split_lib_seqs_otus.txt')
+        exact_otus_fp=join(self.wf_out,'pick_otus_exact',\
+                           'test_otus.txt')
         obs_exact_otus=open(exact_otus_fp).read()
-
+        
         self.assertEqual(obs_exact_otus,exp_exact_otus)
-
-        #load the trie filtered OTUs and check if they are valid
-        trie_otus_fp=join(self.wf_out,'pick_otus_trie','all_split_lib_seqs_exact_rep_otus.txt')
-        obs_trie_otus=open(trie_otus_fp).read()
-
-        self.assertEqual(obs_trie_otus,exp_trie_otus)   
         
         #load the uclust_ref picked OTUs and check if they are valid
         uclust_ref_otus_fp=join(self.wf_out,'picked_otus_UCLUST_REF_97',
-                            'all_split_lib_seqs_exact_rep_trie_rep_otus.txt')
+                            'leftover_otus.txt')
         obs_uclust_ref_otus=open(uclust_ref_otus_fp).read()
         
-        self.assertEqual(obs_uclust_ref_otus,exp_uclust_ref_otus_parallel)
+        self.assertEqual(obs_uclust_ref_otus,exp_uclust_ref_otus)
         
         #load the merged OTUs and check if they are valid
         all_otus_fp=uclust_ref_otus_fp=join(self.wf_out,
-                                            'exact_trie_uclust_ref_otus.txt')
+                                            'exact_uclust_ref_otus.txt')
         obs_all_otus=open(all_otus_fp).read()
         
-        self.assertEqual(obs_all_otus,exp_all_otus_parallel)
+        self.assertEqual(obs_all_otus,exp_all_otus)
+        
+        #load the sample failures and check if they are valid
+        otus_failures_fp=join(self.wf_out, 'all_failures.txt')
+        obs_otu_failures=open(otus_failures_fp).read()
+        
+        self.assertEqual(obs_otu_failures,exp_otu_failures)
+        
+        #load the otu table and check if they are valid
+        otus_table_fp=join(self.wf_out, 'exact_uclust_ref_otu_table.txt')
+        obs_otu_table=open(otus_table_fp).read()
+        
+        self.assertEqual(obs_otu_table,exp_otu_table)
         
         # Check that the log file is created and has size > 0
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)
         
+    '''
         
-        
+   
+exp_otu_failures='''\
+test.PCx634.281501_20
+test.PCx635.281504_16
+test.PCx634.281501_14
+test.PCx634.281501_19'''
+
+exp_otu_table='''\
+# QIIME v1.2.1-dev OTU table
+#OTU ID	test.PCx354.281499	test.PCx355.281497	test.PCx356.281498	test.PCx481.281500	test.PCx593.281502	test.PCx634.281501	test.PCx635.281504	test.PCx636.281503
+204144	0	0	0	0	1	0	0	0
+230364	0	0	0	0	0	1	0	0
+264035	0	0	0	0	0	0	0	1
+266771	1	1	0	0	0	0	0	0
+268947	0	0	0	1	0	0	0	0
+299668	0	0	0	0	0	1	0	0
+331820	0	0	0	0	0	2	0	0
+332311	0	0	0	0	0	1	0	0
+343906	0	0	0	0	0	1	0	0
+355771	0	0	1	0	0	0	0	0
+362383	0	0	0	0	0	1	0	0
+469832	0	0	0	0	0	2	0	0
+568692	0	0	0	0	0	0	1	0'''
+
 exp_exact_otus='''\
-0	test_PCx634_17
-1	test_PCx354_3
-2	test_PCx634_8
-3	test_PCx636_6
-4	test_PCx355_13
-5	test_PCx634_1
-6	test_PCx635_15
-7	test_PCx634_2
-8	test_PCx634_10
-9	test_PCx634_9
-10	test_PCx481_4
-11	test_PCx634_18
-12	test_PCx634_14
-13	test_PCx593_19
-14	test_PCx634_11
-15	test_PCx634_7
-16	test_PCx356_16
-17	test_PCx634_5
-18	test_PCx593_12
+0	test.PCx635.281504_16
+1	test.PCx634.281501_19
+2	test.PCx354.281499_3
+3	test.PCx634.281501_8
+4	test.PCx636.281503_6
+5	test.PCx634.281501_18
+6	test.PCx355.281497_13
+7	test.PCx634.281501_1
+8	test.PCx635.281504_15
+9	test.PCx634.281501_2
+10	test.PCx634.281501_10
+11	test.PCx634.281501_9
+12	test.PCx481.281500_4
+13	test.PCx634.281501_20
+14	test.PCx634.281501_14
+15	test.PCx634.281501_11
+16	test.PCx634.281501_7
+17	test.PCx356.281498_17
+18	test.PCx634.281501_5
+19	test.PCx593.281502_12
 '''
 
-exp_trie_otus='''\
-0	11
-1	10
-2	13
-3	12
-4	15
-5	14
-6	17
-7	16
-8	18
-9	1
-10	0
-11	3
-12	2
-13	5
-14	4
-15	7
-16	6
-17	9
-18	8
-'''
 exp_uclust_ref_otus='''\
-231318	6
-259499	1
-342038	9	14
-271150	11
-230364	12
-204144	8
-135567	2
-469842	15	5
-169379	0
-249724	7
-568692	16
-328623	4
-577170	17	18
+362383	7
+268947	12
+230364	3
+355771	17
+469832	9	15
+332311	16
+343906	18
+299668	5
+331820	11	10
+264035	4
+568692	8
+266771	2	6
+204144	19
 '''
 
 exp_all_otus='''\
-135567	test_PCx593_19
-169379	test_PCx634_18
-204144	test_PCx593_12
-230364	test_PCx634_8
-231318	test_PCx634_5
-249724	test_PCx356_16
-259499	test_PCx481_4
-271150	test_PCx636_6
-328623	test_PCx634_7
-342038	test_PCx354_3	test_PCx355_13
-469842	test_PCx634_2	test_PCx634_11
-568692	test_PCx635_15
-577170	test_PCx634_9	test_PCx634_10
+362383	test.PCx634.281501_1
+268947	test.PCx481.281500_4
+230364	test.PCx634.281501_8
+355771	test.PCx356.281498_17
+469832	test.PCx634.281501_2	test.PCx634.281501_11
+332311	test.PCx634.281501_7
+343906	test.PCx634.281501_5
+299668	test.PCx634.281501_18
+331820	test.PCx634.281501_9	test.PCx634.281501_10
+264035	test.PCx636.281503_6
+568692	test.PCx635.281504_15
+266771	test.PCx354.281499_3	test.PCx355.281497_13
+204144	test.PCx593.281502_12
 '''
 
 exp_uclust_ref_otus_parallel='''\
@@ -323,7 +320,7 @@ split_libraries:reverse_primers	disable
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:max_cdhit_memory	400
-pick_otus:refseqs_fp    /home/wwwdevuser/software/gg_otus_6oct2010/rep_set/gg_97_otus_6oct2010.fasta
+pick_otus:refseqs_fp    /home/wwwdevuser/software/gg_otus_4feb2011/rep_set/gg_97_otus_4feb2011.fasta
 pick_otus:blast_db
 pick_otus:similarity	0.97
 pick_otus:max_e_value	1e-10

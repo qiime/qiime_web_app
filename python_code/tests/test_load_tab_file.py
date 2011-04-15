@@ -82,14 +82,14 @@ class ParseAndLoadDBTests(TestCase):
 
     def test_fasta_to_tab_delim(self):
         """make sure we can go from fasta to tab delim"""
-        input = """>a length=10 b c
+        input = """>a RUN1 orig_bc=AAAA new_bc=AAAA bc_diffs=0
 123123123
->d e f
+>d RUN1 orig_bc=AAAA new_bc=AAAA bc_diffs=0
 atcasdad
->h i j
+>h RUN1 orig_bc=AAAA new_bc=AAAA bc_diffs=0
 10 11 12"""
-        exp = ['a\t10\t123123123','d\tN/A\tatcasdad','h\tN/A\t10 11 12']
-        obs = list(fasta_to_tab_delim(input.splitlines()))
+        exp = ['1\t1\ta\ta\tRUN1\tAAAA\tAAAA\t0\t9\tf5bb0c8de146c67b44babbf4e6584cc0\t123123123', '1\t1\td\td\tRUN1\tAAAA\tAAAA\t0\t8\t1fae8caaf715bdc710b99e8c3e843092\tatcasdad', '1\t1\th\th\tRUN1\tAAAA\tAAAA\t0\t8\tb4c2a347f5d0453c4fdae6d5c7b5bc78\t10 11 12']
+        obs = list(fasta_to_tab_delim(input.splitlines(),1,1))
         self.assertEqual(obs, exp)
 
     def test_unzip_flow(self):

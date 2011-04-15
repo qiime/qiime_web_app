@@ -115,17 +115,21 @@ def run_chain_pick_otus(fasta_file, output_dir, command_handler, params, qiime_c
     leftover_fasta = join(output_dir, 'leftover.fasta')
     db_otu_map = join(output_dir, 'otu_map.txt')
     web_app_scripts_dir = join(split(realpath(__file__))[0], 'scripts')
-    find_db_otus_command = '%s %s/find_otus_in_database.py -i %s -f %s -m %s ' %\
-        (python_exe_fp, web_app_scripts_dir, exact_match_fna, leftover_fasta, db_otu_map)
+    find_db_otus_command = '%s %s/find_otus_in_database.py -i %s -f %s -m %s' %\
+        (python_exe_fp, web_app_scripts_dir, exact_match_fna, leftover_fasta,\
+         db_otu_map)
         
     commands.append([('Find Database OTU Hits', find_db_otus_command)])
     
     # Prep the UCLUST_REF OTU picking command
     otu_picking_method = params['pick_otus']['otu_picking_method'].upper()
     otu_picking_similarity = int(float(params['pick_otus']['similarity'])*100)
-    pick_otu_dir = '%s/picked_otus_%s_%s' % (output_dir,otu_picking_method, otu_picking_similarity)                       
-    uclust_otu_fp = join(pick_otu_dir,splitext(split(leftover_fasta)[-1])[0]+'_otus.txt')
-    uclust_failure_fp = join(pick_otu_dir,splitext(split(leftover_fasta)[-1])[0]+'_failures.txt')
+    pick_otu_dir = '%s/picked_otus_%s_%s' % (output_dir,otu_picking_method,\
+                                             otu_picking_similarity)
+    uclust_otu_fp = join(pick_otu_dir,\
+                         splitext(split(leftover_fasta)[-1])[0]+'_otus.txt')
+    uclust_failure_fp = join(pick_otu_dir,\
+                        splitext(split(leftover_fasta)[-1])[0]+'_failures.txt')
 
     params_list=[]
     params_list.append('-s '+params['pick_otus']['similarity'])

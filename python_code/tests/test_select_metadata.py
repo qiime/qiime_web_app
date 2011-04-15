@@ -67,7 +67,7 @@ class StringField(str):
     # cannot subclass str with a constructor that takes >1 argument)
     def __init__(self,value):
         '''Create StringField instance. You'll have to set name yourself.'''
-        str.__init__(self,value)
+        str.__init__(self)
         self.value = value
 
    
@@ -125,18 +125,7 @@ class SelectMetadataTests(TestCase):
          '''
         obs=public_cols_to_dict(self.public_columns)
         
-        exp={'SEQUENCE_PREP####SEP####EXPERIMENT_TITLE': [77],
-             'SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG': [77],
-             'SEQUENCE_PREP####SEP####POOL_MEMBER_NAME': [77], 
-             'SAMPLE####SEP####ELEVATION': [77], 
-             'SEQUENCE_PREP####SEP####RUN_DATE': [77], 
-             'SEQUENCE_PREP####SEP####KEY_SEQ': [77], 
-             'HOST_ASSOC_VERTIBRATE####SEP####DIET': [77], 
-             'HOST####SEP####HOST_TAXID': [89],  
-             'STUDY####SEP####STUDY_ALIAS': [89, 77], 
-             'EXTRA_SAMPLE_89####SEP####HOST': [89], 
-             'SEQUENCE_PREP####SEP####RUN_CENTER': [89], 
-             'EXTRA_SAMPLE_89####SEP####DONOR': [89]}
+        exp={'HOST####SEP####HOST_TAXID': [89], 'SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG': [77], 'SEQUENCE_PREP####SEP####POOL_MEMBER_NAME': [77], 'SEQUENCE_PREP####SEP####RUN_DATE': [77], 'SAMPLE####SEP####ELEVATION': [77], 'STUDY####SEP####STUDY_ALIAS': [89, 77], 'SEQUENCE_PREP####SEP####KEY_SEQ': [77], 'HOST_ASSOC_VERTIBRATE####SEP####DIET': [77], 'SEQUENCE_PREP####SEP####RUN_CENTER': [89], 'SEQUENCE_PREP####SEP####EXPERIMENT_TITLE': [77]}
              
         self.assertEqual(obs,exp)
 
@@ -191,7 +180,7 @@ class SelectMetadataTests(TestCase):
         table_name='HOST_ASSOC_VERTIBRATE' # this table is mispelled in the DB
         exp_values=['female', 'hermaphrodite', 'male', 'neuter', \
                     'not determined']
-        obs=get_selected_column_values(controlled_vocab,col_name,table_name)
+        obs=get_selected_column_values(controlled_vocab,col_name,table_name,1)
 
         self.assertEqual(obs,exp_values)
         
@@ -224,18 +213,7 @@ class SelectMetadataTests(TestCase):
         
         
 exp_select_box_str='''\
-<option id="HOST####SEP####HOST_TAXID" value="HOST####SEP####HOST_TAXID####STUDIES####89" onclick="showResult(\'metadata_left_col\',this.id,this.value)">HOST_TAXID</option>\n\n\
-<option id="SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG" value="SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG####STUDIES####77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">PRIMER_READ_GROUP_TAG</option>\n\n\
-<option id="SEQUENCE_PREP####SEP####POOL_MEMBER_NAME" value="SEQUENCE_PREP####SEP####POOL_MEMBER_NAME####STUDIES####77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">POOL_MEMBER_NAME</option>\n\n\
-<option id="EXTRA_SAMPLE_89####SEP####HOST" value="EXTRA_SAMPLE_89####SEP####HOST####STUDIES####89" onclick="showResult(\'metadata_left_col\',this.id,this.value)">HOST</option>\n\n\
-<option id="SEQUENCE_PREP####SEP####RUN_DATE" value="SEQUENCE_PREP####SEP####RUN_DATE####STUDIES####77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">RUN_DATE</option>\n\n\
-<option id="EXTRA_SAMPLE_89####SEP####DONOR" value="EXTRA_SAMPLE_89####SEP####DONOR####STUDIES####89" onclick="showResult(\'metadata_left_col\',this.id,this.value)">DONOR</option>\n\n\
-<option id="SAMPLE####SEP####ELEVATION" value="SAMPLE####SEP####ELEVATION####STUDIES####77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">ELEVATION</option>\n\n\
-<option id="STUDY####SEP####STUDY_ALIAS" value="STUDY####SEP####STUDY_ALIAS####STUDIES####89S77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">STUDY_ALIAS</option>\n\n\
-<option id="SEQUENCE_PREP####SEP####KEY_SEQ" value="SEQUENCE_PREP####SEP####KEY_SEQ####STUDIES####77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">KEY_SEQ</option>\n\n\
-<option id="HOST_ASSOC_VERTIBRATE####SEP####DIET" value="HOST_ASSOC_VERTIBRATE####SEP####DIET####STUDIES####77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">DIET</option>\n\n\
-<option id="SEQUENCE_PREP####SEP####RUN_CENTER" value="SEQUENCE_PREP####SEP####RUN_CENTER####STUDIES####89" onclick="showResult(\'metadata_left_col\',this.id,this.value)">RUN_CENTER</option>\n\n\
-<option id="SEQUENCE_PREP####SEP####EXPERIMENT_TITLE" value="SEQUENCE_PREP####SEP####EXPERIMENT_TITLE####STUDIES####77" onclick="showResult(\'metadata_left_col\',this.id,this.value)">EXPERIMENT_TITLE</option>\n\
+<option id="ADD#ENDGRP#HOST####SEP####HOST_TAXID" value="HOST####SEP####HOST_TAXID####STUDIES####89">HOST_TAXID</option>\n\n<option id="ADD#ENDGRP#SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG" value="SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG####STUDIES####77">PRIMER_READ_GROUP_TAG</option>\n\n<option id="ADD#ENDGRP#SEQUENCE_PREP####SEP####POOL_MEMBER_NAME" value="SEQUENCE_PREP####SEP####POOL_MEMBER_NAME####STUDIES####77">POOL_MEMBER_NAME</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_DATE" value="SEQUENCE_PREP####SEP####RUN_DATE####STUDIES####77">RUN_DATE</option>\n\n<option id="SAMPLE#ENDGRP#SAMPLE####SEP####ELEVATION" value="SAMPLE####SEP####ELEVATION####STUDIES####77">ELEVATION</option>\n\n<option id="STUDY#ENDGRP#STUDY####SEP####STUDY_ALIAS" value="STUDY####SEP####STUDY_ALIAS####STUDIES####89S77">STUDY_ALIAS</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####KEY_SEQ" value="SEQUENCE_PREP####SEP####KEY_SEQ####STUDIES####77">KEY_SEQ</option>\n\n<option id="ADD#ENDGRP#HOST_ASSOC_VERTIBRATE####SEP####DIET" value="HOST_ASSOC_VERTIBRATE####SEP####DIET####STUDIES####77">DIET</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_CENTER" value="SEQUENCE_PREP####SEP####RUN_CENTER####STUDIES####89">RUN_CENTER</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####EXPERIMENT_TITLE" value="SEQUENCE_PREP####SEP####EXPERIMENT_TITLE####STUDIES####77">EXPERIMENT_TITLE</option>\n\
 '''
 
 exp_info_table1='''\
@@ -275,36 +253,7 @@ exp_info_table2='''\
 </tr>\
 '''
 
-exp_info_table3='''\
-<tr>\
-<td><em>Column Name:</em></td>\
-<td style="color:black;text-decoration:none">TEST_COL</td>\
-<td rowspan=5><b>Select Values</b><br>\
-<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">\
-<option value="javascript:"><option value="javascript:select_all_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">All\
-<option value="javascript:select_none_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">None\
-<option value="Javascript:select_invert_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">Invert\
-</select>\
-<select id="TEST####SEP####TEST_COL####STUDIES####100" multiple style="width:300px;" onchange="saveSelection(this.id)">\
-<option id="y" value="y">y</option>\
-<option id="n" value="n">n</option>\
-</select>\
-</tr>\
-<tr>\
-<td><em>Table Name:</em></td>\
-<td style="color:black;text-decoration:none">TEST</td>\
-</tr>\
-<tr><td><em>Data Type:</em></td>\
-<td style="color:black;text-decoration:none">TEST</td>\
-</tr>\
-<tr>\
-<td><em>Description or Value:</em></td>\
-<td style="color:black;text-decoration:none">TEST_COL</td>\
-</tr>\
-<tr>\
-<td><em>Definition:</em></td>\
-<td style="color:black;text-decoration:none">This is a test</td>\
-</tr>\
+exp_info_table3='''<tr><td><em>Column Name:</em></td><td style="color:black;text-decoration:none">TEST_COL</td><td rowspan=5><b>Select Values</b><br><select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);"><option value="javascript:"><option value="javascript:select_all_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">All<option value="javascript:select_none_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">None<option value="Javascript:select_invert_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">Invert</select><select style="width:300px;" id="TEST####SEP####TEST_COL####STUDIES####100" multiple onchange="saveSelection(this.id)"><option id="y" value="y" onmouseover="return overlib(\'y\',WIDTH, 300);" onmouseout="return nd();">y</option><option id="n" value="n" onmouseover="return overlib(\'n\',WIDTH, 300);" onmouseout="return nd();">n</option></select></tr><tr><td><em>Table Name:</em></td><td style="color:black;text-decoration:none">TEST</td></tr><tr><td><em>Data Type:</em></td><td style="color:black;text-decoration:none">TEST</td></tr><tr><td><em>Description or Value:</em></td><td style="color:black;text-decoration:none">TEST_COL</td></tr><tr><td><em>Definition:</em></td><td style="color:black;text-decoration:none">This is a test</td></tr>\
 '''
 
 if __name__ == "__main__":
