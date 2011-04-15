@@ -122,7 +122,8 @@ class WorkflowTests(TestCase):
         
     def test_run_process_sff_through_split_lib(self):
         """run_process_sff_through_pick_otus runs without error"""
-        run_process_sff_through_split_lib(0,'Fasting_subset',sff_input_fp=self.sff_fp,\
+        run_process_sff_through_split_lib(0,'Fasting_subset',\
+         sff_input_fp=self.sff_fp,\
          mapping_fp=self.fasting_mapping_fp,\
          output_dir=self.wf_out, \
          command_handler=call_commands_serially,\
@@ -158,7 +159,8 @@ class WorkflowTests(TestCase):
 
     def test_run_process_sff_through_split_lib_FLX(self):
         """run_process_sff_through_pick_otus runs without error: Convert to FLX"""
-        run_process_sff_through_split_lib(0,'Fasting_subset',sff_input_fp=self.sff_fp,\
+        run_process_sff_through_split_lib(0,'Fasting_subset',\
+         sff_input_fp=self.sff_fp,\
          mapping_fp=self.fasting_mapping_fp,\
          output_dir=self.wf_out, \
          command_handler=call_commands_serially,\

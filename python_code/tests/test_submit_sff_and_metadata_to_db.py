@@ -24,17 +24,20 @@ from cogent.util.misc import remove_files
 from cogent.app.util import get_tmp_filename, ApplicationNotFoundError
 from qiime.util import load_qiime_config,get_qiime_project_dir
 from qiime.parse import parse_qiime_parameters
-from process_sff_and_metadata_workflow import (run_process_sff_through_pick_otus,submit_processed_data_to_db)
+from load_sff_through_split_lib_to_db import (submit_sff_and_split_lib,load_otu_mapping)
 from qiime.workflow import (call_commands_serially,
 no_status_updates,WorkflowError,print_commands)
-
+from run_process_sff_through_split_lib import run_process_sff_through_split_lib
 from data_access_connections import data_access_factory
-from enums import ServerConfig
+from enums import ServerConfig,DataAccessType
+from run_chain_pick_otus import run_chain_pick_otus
 data_access = data_access_factory(DataAccessType.qiime_test)
+
 ## The test case timing code included in this file is adapted from
 ## recipes provided at:
 ##  http://code.activestate.com/recipes/534115-function-timeout/
 ##  http://stackoverflow.com/questions/492519/timeout-on-a-python-function-call
+
 class TimeExceededError(Exception):
     pass
 
@@ -58,32 +61,32 @@ class WorkflowTests(TestCase):
         test_dir = os.path.join(get_qiime_project_dir(),'tests')
         sff_original_fp = os.path.join(test_dir, 'support_files', \
                                         'Fasting_subset.sff')
-
-        # copy sff file to working directory
-        self.sff_dir = tempfile.mkdtemp()
-        #self.dirs_to_remove.append(self.sff_dir)
         
-        self.sff_fp = os.path.join(self.sff_dir, 'Fasting_subset.sff')
+        self.sff_fp = os.path.join('/tmp/', 'Fasting_subset.sff')
+        self.files_to_remove.append(self.sff_fp)
         copy(sff_original_fp, self.sff_fp)
         #self.files_to_remove.append(self.sff_fp)
         
-        tmp_dir = "/home/wwwuser/qiime_test_dataset/"#self.qiime_config['temp_dir'] or '/tmp/'
+        tmp_dir = "/tmp/test_wf"
+        self.dirs_to_remove.append(tmp_dir)
+        
+        #self.qiime_config['temp_dir'] or '/tmp/'
         if not exists(tmp_dir):
             makedirs(tmp_dir)
             # if test creates the temp dir, also remove it
             #self.dirs_to_remove.append(tmp_dir)
-        self.wf_out="/home/wwwuser/qiime_test_dataset/"
-        '''
-        self.wf_out = get_tmp_filename(tmp_dir=tmp_dir,
-         prefix='qiime_wf_out',suffix='',result_constructor=str)
+        self.wf_out="/tmp/test_processed_data"
         self.dirs_to_remove.append(self.wf_out)
-        '''
+        self.gg_out=os.path.join(self.wf_out,'gg_97_otus')
+        if not exists(self.gg_out):
+            makedirs(self.gg_out)
+        
         self.fasting_mapping_fp = get_tmp_filename(tmp_dir=tmp_dir,
          prefix='qiime_wf_mapping',suffix='.txt')
         fasting_mapping_f = open(self.fasting_mapping_fp,'w')
         fasting_mapping_f.write(fasting_map)
         fasting_mapping_f.close()
-        #self.files_to_remove.append(self.fasting_mapping_fp)
+        self.files_to_remove.append(self.fasting_mapping_fp)
         
         working_dir = self.qiime_config['working_dir'] or './'
         jobs_dir = join(working_dir,'jobs')
@@ -113,27 +116,38 @@ class WorkflowTests(TestCase):
         
     def test_submit_processed_data_to_db(self):
         """run_process_sff_through_pick_otus runs without error"""
-        '''
-        run_process_sff_through_pick_otus(
+        
+        run_process_sff_through_split_lib(0,'Fasting_subset',
           sff_input_fp=self.sff_fp, 
           mapping_fp=self.fasting_mapping_fp,
-          output_dir=self.wf_out, 
-          denoise=False,
+          output_dir=self.wf_out,
           command_handler=call_commands_serially,
           params=self.params,
-          qiime_config=self.qiime_config, 
-          parallel=False,
+          qiime_config=self.qiime_config,convert_to_flx=False,
+          write_to_all_fasta=False,
           status_update_callback=no_status_updates)
-        '''
+        
+        
+        
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
         otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
         split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
                                  'seqs.fna')
                                  
+        run_chain_pick_otus(split_lib_seqs_fp,
+                            output_dir=self.gg_out,
+                            command_handler=call_commands_serially,
+                            params=self.params,
+                            qiime_config=self.qiime_config,parallel=False,
+                            status_update_callback=no_status_updates)
+                                 
         input_fname = splitext(split(self.sff_fp)[-1])[0]
         db_input_fp = join(self.wf_out,input_fname)
 
-        analysis_id=submit_processed_data_to_db(data_access,db_input_fp+'.fna',0)
+        analysis_id=submit_sff_and_split_lib(data_access,\
+                                                db_input_fp+'.fna',0)
+        load_otu_mapping(data_access,self.wf_out,analysis_id)
+                                                
         print 'Analysis ID is: %s' % str(analysis_id)
         print 'Testing the FLOW_DATA loading!'
         exp_sff_md5='314f4000857668d45a413d2e94a755fc'
@@ -146,7 +160,7 @@ class WorkflowTests(TestCase):
         obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
         obs_instrument_code,obs_read_id,obs_read_seq,obs_flow_string,\
         obs_qual_string = data_access.getTestFlowData(True,analysis_id,
-                                                            'test_PCx634_1')
+                                                            'test.PCx634_1')
 
         #print 'After getTestFlowData...'
                                                             
@@ -162,44 +176,40 @@ class WorkflowTests(TestCase):
         print 'Done testing Flow_Data!'
         
         print 'Testing Split-Library Data'
-        exp_split_lib_cmd='python /home/wwwuser/software/Qiime/scripts/split_libraries.py -f /home/wwwuser/qiime_test_dataset/Fasting_subset.fna -q /home/wwwuser/qiime_test_dataset/Fasting_subset.qual -m "/home/wwwuser/qiime_test_dataset/qiime_wf_mappingfgHtBGBCGsqINRl64WxD.txt" -o /home/wwwuser/qiime_test_dataset/split_libraries --reverse_primers disable --max-seq-length 1000 --max-ambig 0 --start-numbering 1 --max-primer 0 --min-qual-score 25 --max-homopolymer 6 --barcode-type 12 --max-barcode-errors 1.5 --remove_unassigned --min-seq-length 0 --qual_score_window 50\n'
         exp_split_lib_md5='Fasting_subset.fna:fd90ec77f6e426e7eebd5a1c11f3f8ab,Fasting_subset.qual:c992bb0e6dd74b39ec448d87f92a0fb9'
         exp_split_lib_seq='CTGGGCCGTGTCTCAGTCCCAATGTGGCCGTTTACCCTCTCAGGCCGGCTACGCATCATCGCCTTGGTGGGCCGTTACCTCACCAACTAGCTAATGCGCCGCAGGTCCATCCATGTTCACGCCTTGATGGGCGCTTTAATATACTGAGCATGCGCTCTGTATACCTATCCGGTTTTAGCTACCGTTTCCAGCAGTTATCCCGGACACATGGGCTAGG'
-        exp_split_lib_md5='4a369b42e8fc542a4896ef1d1106162b'
+        exp_split_lib_md5='2c67e0acf745bef73e26c36f0b3bd00a'
         exp_split_lib_seq_md5='008918f7469f8e33d5dd6e01075d5194'
 
         
         obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
         obs_split_lib_seq,obs_split_lib_seq_md5 = \
                     data_access.getTestSplitLibData(True,analysis_id,
-                                                            'test_PCx634_1')
+                                                            'test.PCx634_1')
                                                             
-        self.assertEqual(obs_split_lib_cmd,exp_split_lib_cmd)
         self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
         self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
         self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
         
         print 'Testing OTU Data!'
         
-        exp_prokmsa=55576
-        exp_otu_md5='a990fad228b5eaad9bce75b41ba40564'
+        exp_prokmsa=101126
+        exp_otu_md5='0b8edcf8a4275730001877496b41cf55'
         exp_threshold=97
-        exp_pick_otu_cmd='python /home/wwwuser/software/Qiime/scripts/pick_otus.py -i /home/wwwuser/qiime_test_dataset/split_libraries/seqs.fna -o /home/wwwuser/qiime_test_dataset//picked_otus --otu_picking_method uclust_ref --similarity 0.97 --uclust_otu_id_prefix otu_ --max_cdhit_memory 400 --suppress_new_clusters --refseqs_fp /home/wwwuser/software/greengenes_core_sets/gg_otus_may2010/inflated_sub_gg/uclust_otus_97/rep_set/gg_97_otus_may2010.fasta --clustering_algorithm furthest --max_e_value 1e-10\n'
         
         obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
         obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
         obs_otu_md5,obs_threshold = \
                     data_access.getTestOTUData(True,analysis_id,
-                                                            'test_PCx634_2')
+                                                            'test.PCx634_2')
         
         self.assertEqual(obs_prokmsa,exp_prokmsa)
-        self.assertEqual(obs_pick_otu_cmd,exp_pick_otu_cmd)
         self.assertEqual(obs_otu_md5,exp_otu_md5)
         self.assertEqual(obs_threshold,exp_threshold)
         
         obs_seq_run_id,obs_ssu_id = \
                     data_access.getTestOTUFailureData(True,analysis_id,
-                                                            'test_PCx634_1')
+                                                            'test.PCx634_14')
         
         self.failIfEqual(obs_seq_run_id,0)
         self.failIfEqual(obs_ssu_id,0)
@@ -238,7 +248,7 @@ split_libraries:reverse_primers	disable
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:max_cdhit_memory	400
-pick_otus:refseqs_fp	/home/wwwuser/gg_otus/uclust_otus_97_sel4cni_unmasked/rep_set/gg_97_otus_6oct2010.fasta
+pick_otus:refseqs_fp	/home/wwwdevuser/software/gg_otus_4feb2011/rep_set/gg_97_otus_4feb2011.fasta
 pick_otus:blast_db
 pick_otus:similarity	0.97
 pick_otus:max_e_value	1e-10
@@ -253,10 +263,6 @@ pick_otus:suppress_presort_by_abundance_uclust
 pick_otus:suppress_new_clusters	True
 pick_otus:uclust_otu_id_prefix  otu_
 
-# Parallel options
-parallel:jobs_to_start	2
-parallel:retain_temp_files	False
-parallel:seconds_to_sleep	1
 
 """.split('\n')
 
