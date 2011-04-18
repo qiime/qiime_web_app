@@ -301,7 +301,7 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-
+    '''DEPRECATED
     def appendMetaAnalysisStudy(self,inv_id,study_id):
         """ Returns a list of study names
         """
@@ -314,7 +314,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+    '''
 
     def addMetaAnalysisFiles(self, start_job, meta_analysis_id, \
                                     fpath, meta_type,run_date,ftype):
@@ -329,7 +329,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+    '''DEPRECATED
     def addMappingPCoAFiles(self, start_job, meta_id, \
                                             map_filepath_db,dist_fpath_db,\
                                             prefs_fp_db,\
@@ -352,7 +352,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+    '''
+    '''DEPRECATED
     def getMetaAnalysisFilepaths(self, meta_analysis_id):
         try:
             con = self.getMetadataDatabaseConnection()
@@ -370,7 +371,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+    '''
+    
     def getMetaAnalysisFilepaths(self, meta_analysis_id):
         try:
             con = self.getMetadataDatabaseConnection()
@@ -388,6 +390,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
     def createMetaAnalysis(self,web_app_user_id,inv_name):
         """ Returns a list of study names
         """
@@ -404,7 +407,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+    '''DEPRECATED
     def getRunPrefixForSample(self,sample_name,study_id):
         """ Returns a Run Prefix for Sample
         """
@@ -426,7 +429,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    #
+    '''
+    
     def getStudyPlatform(self,study_id):
         """ Returns a Run Prefix for Sample
         """
@@ -447,7 +451,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+    
+    '''DEPRECATED
     def getStudiesByMetaAnalysis(self,meta_analysis_id):
         """ Returns a list of study ids by meta_analysis id
         """
@@ -466,7 +471,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    #
+    '''
+    
     def getMetaAnalysisNames(self,web_app_user_id):
         """ Returns a list of study names
         """
@@ -512,7 +518,8 @@ class QiimeDataAccess(object):
                 all_studies.append(item)
                 
         return sorted(all_studies, key=lambda item: str(item[1]).lower())
-        
+    
+    '''DEPRECATED
     def getStudyByName(self, study_name):
         """ Returns a list of metadata values based on a study type and list
         """
@@ -527,7 +534,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+    '''
+    '''DEPRECATED
     def getStudyById(self, study_id):
         """ Returns a study name using the study_id
         """
@@ -542,7 +550,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+    '''
+    
     def getStudyInfo(self, study_id, web_app_user_id):
         """ Returns a list of metadata values based on a study type and list
         """
@@ -1515,7 +1524,7 @@ class QiimeDataAccess(object):
     #####################################
     # Jobs
     #####################################
-    
+    '''DEPRECATED
     def checkForNewJobs(self):
         """ Returns a list of jobs that are ready to start
         """
@@ -1530,7 +1539,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
+    '''
+    '''DEPRECATED
     def updateJobStatus(self, job_id, status):
         """ Updates the status message for a job
         """
@@ -1541,7 +1551,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    #
+    '''
+    
     def createTorqueJob(self, job_type, job_input, user_id, study_id, job_state_id=-1):
         """ Returns submits a job to the queue and returns the job_id
         """
@@ -1553,8 +1564,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
     
-    #
-    #
+
     def updateTorqueJob(self, job_id, new_state,job_notes):
         """ Returns submits a job to the queue and returns the job_id
         """
@@ -1961,7 +1971,7 @@ class QiimeDataAccess(object):
     #####################################
     # Loading
     #####################################
-    
+    '''DEPRECATED
     def loadSplitLibFasta(self,start_job,run_id,fname):
         """ starts process of importing processed split-library data into the DB
         """
@@ -1984,7 +1994,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-
+    '''
+    
     def loadSplitLibInfo(self, start_job, analysis_id, run_date, cmd, svn_version,
                             log_str, hist_str, md5_input_file):
         """ uploads the information related to the split_libraries run to the DB
@@ -2007,7 +2018,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False,0
-        
+    
+    '''DEPRECATED
     def loadOTUInfo(self, start_job, otu_run_set_id, analysis_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
                     otus_log_str,split_lib_seqs_md5,ref_set_name,
@@ -2036,7 +2048,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-
+    '''
+    
+    '''DEPRECATED
     # Write OTU failures to a new fasta file for otu selection
     def writeOTUFailures(self, output_fasta_file):
         """ Gets and writes any failed OTUs to a new fasta file
@@ -2059,7 +2073,8 @@ class QiimeDataAccess(object):
         finally:
             if output_file:
                 output_file.close()
-
+    '''
+    
     #The following is the OTU Info tool used
     def loadAllOTUInfo(self, start_job, otu_run_set_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
@@ -2089,7 +2104,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-
+    
+    '''DEPRECATED
     def getTestData(self, start_job,analysis_id, sample_id):
         """ Returns the data from the TEST data from DB
         """
@@ -2109,7 +2125,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+    '''
     def getTestFlowData(self, start_job,analysis_id, sample_id):
         """ Returns the FLOW TEST Data from DB
         """
@@ -2205,7 +2221,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+    '''DEPRECATED
     def loadOTUFailures(self, start_job, input_set):
         """ starts process of importing failed otus
         """
@@ -2219,7 +2235,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+    '''
+    
     def loadOTUFailuresAll(self, start_job, input_set):
         """ starts process of importing failed otus
         """
@@ -2329,7 +2346,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-            
+    
+    '''DEPRECATED
     def loadOTUMap(self, start_job, input_set):
         """ starts process of importing otus
         """
@@ -2342,7 +2360,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+    '''
+    
     def loadOTUMapAll(self, start_job, input_set):
         """ starts process of importing otus
         """
@@ -2369,7 +2388,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-
+    
+    '''DEPRECATED - Maybe keep
     def getOTUMap(self,sample_name,study_id,otu_threshold,otu_method,\
                   source_name,ref_threshold):
         """ Gets a list otus for a samples
@@ -2386,8 +2406,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-
+    '''
     #
     def getOTUTable(self,start_job,sample_name,otu_method,otu_threshold,\
                   source_name,ref_threshold):
@@ -2407,7 +2426,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    #
+    '''DEPRECATED
     def getOTUMap2(self,sample_names_and_seq_runs):
         """ Gets a list otus for a samples
         """
@@ -2421,8 +2440,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-
+    '''
+    
     def checkIfStudyIdExists(self, study_id):
         """ starts process of importing otus
         """
@@ -2438,7 +2457,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+    '''DEPRECATED
     def getSampleRunPrefixList(self, study_id):
         """ Returns a list of metadata fields
         """
@@ -2453,7 +2472,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    #
+    '''
+    '''DEPRECATED
     def getSeqRunIdFromRunPrefix(self, run_prefix,study_id):
         """ Returns a list of metadata fields
         """
@@ -2470,7 +2490,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    #
+    '''
+    '''DEPRECATED
     def getRunPrefixFromSeqRunId(self,study_id):
         """ Returns a list of metadata fields
         """
@@ -2486,7 +2507,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+    '''
+    
+    '''DEPRECATED
     def getOTUGG97Taxonomy(self,otu_id,taxonomy_name):
         """ Returns a list of metadata fields
         """
@@ -2502,7 +2525,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    #
+    '''
+    
     def checkIfColumnControlledVocab(self, column_name):
         """ starts process of importing otus
         """
@@ -2570,7 +2594,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+    
+    '''DEPRECATED
     def loadOTUsFromFasta(self, start_job, input_set):
         """ starts process of importing otus
         """
@@ -2583,7 +2608,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-
+    '''
+    '''DEPRECATED
     def updateAnalysisWithOTURun(self, start_job, otu_pick_run_id,\
                                  otu_run_set_id,study_id,run_prefix):
         """ starts process of importing otus
@@ -2598,7 +2624,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+    '''
     #
     def loadBetaDivDistances(self, start_job, input_set):
         """ starts process of importing failed otus
