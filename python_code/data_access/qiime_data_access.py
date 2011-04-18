@@ -43,6 +43,7 @@ class QiimeDataAccess(object):
     #####################################
     
     def testDatabase(self):
+        """This function just tests a database connection"""
         con = self.getMetadataDatabaseConnection()
         sleep(.1)
         sleep(.1)
@@ -71,6 +72,21 @@ class QiimeDataAccess(object):
     # Users
     #####################################
 
+    def deactivateWebAppUser( self, username, activation_code ):
+        """ Attempts to deactivate user's account
+
+        Attempt to deactivate the user account. If successful, returns True. 
+        If not, the function returns False. Note: in the tests, this is part
+        of the tearDown procedure.
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('deactivate_user_account', [username,activation_code])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
     def authenticateWebAppUser( self, username, password ):
         """ Attempts to validate authenticate the supplied username/password
         
@@ -95,11 +111,7 @@ class QiimeDataAccess(object):
             return False
             
     def getUserDetails(self, user_id):
-        """ Attempts to validate authenticate the supplied username/password
-
-        Attempt to authenticate the user against the list of users in
-        web_app_user table. If successful, a dict with user innformation is
-        returned. If not, the function returns False.
+        """ Gets the user data from the web_app_user table
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -116,10 +128,7 @@ class QiimeDataAccess(object):
             return False
 
     def verifyActivationCode( self, username, activation_code ):
-        """ Attempts to activate user's account
-
-        Attempt to activate the user account. If successful, returns True. 
-        If not, the function returns False.
+        """ Verify the user's activation code is correct.
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -155,26 +164,8 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
             
-    def deactivateWebAppUser( self, username, activation_code ):
-        """ Attempts to activate user's account
-
-        Attempt to activate the user account. If successful, returns True. 
-        If not, the function returns False.
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('deactivate_user_account', [username,activation_code])
-            return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-            
     def checkWebAppUserAvailability(self, username):
-        """ Attempts to validate authenticate the supplied username/password
-
-        Attempt to authenticate the user against the list of users in
-        web_app_user table. If successful, a dict with user innformation is
-        returned. If not, the function returns False.
+        """ Checks the availability of the supplied username
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -206,11 +197,7 @@ class QiimeDataAccess(object):
             return False
             
     def updateWebAppUserPwd( self, username, password ):
-        """ Attempts to validate authenticate the supplied username/password
-
-        Attempt to authenticate the user against the list of users in
-        web_app_user table. If successful, a dict with user innformation is
-        returned. If not, the function returns False.
+        """ Attempts to update the users password.
         """
         try:
             crypt_pass = crypt(password, username)
@@ -240,34 +227,36 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     
-    def getSequencesFullDatabase(self):
-        """ Returns a list of metadata fields
+    #
+    
+    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
+        """ Creates a study.
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_sequences_for_fasta_fulldb', [results])
-            for row in results:
-                # sequence_name, sequence_string, md5_checksum
-                yield [row[0], row[1], row[2]]
+            study_id = 0
+            results = con.cursor().callproc('qiime_assets.study_insert', 
+                [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
+            return results[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
             
-    def getSequencesFromSample(self, study_id, sample_id):
-        """ Returns a list of metadata fields
+    def updateStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
+        """ Updates a study
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_sequences_for_fasta', [study_id, sample_id, results])
-            seqs = {}
-            for row in results:
-                seqs[row[0]] = row[1]
-            return seqs            
+            con.cursor().callproc('qiime_assets.study_update', 
+                [study_id, investigation_type, miens_compliant, submit_to_insdc, 
+                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False    
-
+            return False
+    
     def deleteStudy(self, study_id, full_delete):
         """ Removes a study from the database
         
@@ -301,204 +290,14 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    '''DEPRECATED
-    def appendMetaAnalysisStudy(self,inv_id,study_id):
-        """ Returns a list of study names
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('append_meta_analysis_to_study', [inv_id, \
-                                                                    study_id])
-            return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-
-    def addMetaAnalysisFiles(self, start_job, meta_analysis_id, \
-                                    fpath, meta_type,run_date,ftype):
-        try:
-            con = self.getMetadataDatabaseConnection()
-            if start_job:
-                con.cursor().callproc('add_meta_analysis_files', 
-                                                    [meta_analysis_id,\
-                                                    fpath,meta_type,
-                                                    run_date,ftype])  
-            return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''DEPRECATED
-    def addMappingPCoAFiles(self, start_job, meta_id, \
-                                            map_filepath_db,dist_fpath_db,\
-                                            prefs_fp_db,\
-                                            pc_fp_db,\
-                                            discrete_3d_fpath_db,\
-                                            continuous_3d_fpath_db,\
-                                            zip_fpath_db):
-        try:
-            con = self.getMetadataDatabaseConnection()
-            if start_job:
-                con.cursor().callproc('add_map_and_pcoa_file_paths', 
-                                                   [meta_id, \
-                                                    map_filepath_db,dist_fpath_db,\
-                                                    prefs_fp_db,\
-                                                    pc_fp_db,\
-                                                    discrete_3d_fpath_db,\
-                                                    continuous_3d_fpath_db,\
-                                                    zip_fpath_db])  
-            return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    '''DEPRECATED
-    def getMetaAnalysisFilepaths(self, meta_analysis_id):
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results=con.cursor()
-            con.cursor().callproc('get_meta_anal_pcoa_filepaths', 
-                                                    [meta_analysis_id,\
-                                                    results])
-            fpaths=[]
-            for row in results:
-                if row[0] is None:
-                    continue
-                else:
-                    fpaths.append(row)
-            return fpaths
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    
-    def getMetaAnalysisFilepaths(self, meta_analysis_id):
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results=con.cursor()
-            con.cursor().callproc('get_meta_analysis_filepaths', 
-                                                    [meta_analysis_id,\
-                                                    results])
-            fpaths=[]
-            for row in results:
-                if row[0] is None:
-                    continue
-                else:
-                    fpaths.append(row)
-            return fpaths
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-            
-    def createMetaAnalysis(self,web_app_user_id,inv_name):
-        """ Returns a list of study names
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            db_output=[]
-            inv_id=0
-            db_output=con.cursor().callproc('create_meta_analysis', 
-                                                    [web_app_user_id, \
-                                                     inv_name,inv_id])
-                                                                
-            return db_output[2]
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''DEPRECATED
-    def getRunPrefixForSample(self,sample_name,study_id):
-        """ Returns a Run Prefix for Sample
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            db_output=[]
-            con.cursor().callproc('get_run_prefix_for_sample', 
-                                                    [sample_name,study_id,\
-                                                     results])
-                                                                
-            run_prefix = ''
-            for row in results:
-                if row[0] is None:
-                    continue
-                else:
-                    run_prefix=row[0]
-            return run_prefix
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    
-    def getStudyPlatform(self,study_id):
-        """ Returns a Run Prefix for Sample
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            db_output=[]
-            con.cursor().callproc('qiime_assets.get_study_platform',\
-                                                    [study_id,results])
-                                                                
-            run_prefix = ''
-            for row in results:
-                if row[0] is None:
-                    continue
-                else:
-                    study_platform=row[0]
-            return study_platform
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    
-    '''DEPRECATED
-    def getStudiesByMetaAnalysis(self,meta_analysis_id):
-        """ Returns a list of study ids by meta_analysis id
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_studies_by_meta_analysis', [meta_analysis_id,\
-                                                                results])
-            meta_analysis_name_list = []
-            for row in results:
-                if row[0] is None:
-                    continue
-                else:
-                    meta_analysis_name_list.append(row)
-            return meta_analysis_name_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    
-    def getMetaAnalysisNames(self,web_app_user_id):
-        """ Returns a list of study names
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_meta_analysis_names', [web_app_user_id,\
-                                                                results])
-            meta_analysis_name_list = []
-            for row in results:
-                if row[0] is None:
-                    continue
-                else:
-                    meta_analysis_name_list.append(row)
-            return meta_analysis_name_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-
     def getUserStudyNames(self, user_id, is_admin, portal_type):
-        """ Returns a list of study names
+        """ Returns a list of User's study names
         """
         try:
             con = self.getMetadataDatabaseConnection()
             study_names = con.cursor()
-            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id, is_admin, portal_type, study_names])
+            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id,
+                                            is_admin, portal_type, study_names])
             study_name_list = []
             for row in study_names:
                 if row[0] is None:
@@ -511,6 +310,9 @@ class QiimeDataAccess(object):
             return False
             
     def getUserAndPublicStudyNames(self, user_id, is_admin, portal_type):
+        """ Returns a list of user's private studies along with all public 
+            studies
+        """
         public_studies = self.getUserStudyNames(0, is_admin, portal_type)
         all_studies = self.getUserStudyNames(user_id, is_admin, portal_type)
         for item in public_studies:
@@ -518,39 +320,6 @@ class QiimeDataAccess(object):
                 all_studies.append(item)
                 
         return sorted(all_studies, key=lambda item: str(item[1]).lower())
-    
-    '''DEPRECATED
-    def getStudyByName(self, study_name):
-        """ Returns a list of metadata values based on a study type and list
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            values = con.cursor()
-            con.cursor().callproc('get_study_by_name', [study_name, study_id])
-            value_list = []
-            for row in study_id:
-                value_list.append(row[0])
-            return value_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    '''DEPRECATED
-    def getStudyById(self, study_id):
-        """ Returns a study name using the study_id
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            values = con.cursor()
-            con.cursor().callproc('get_study_by_id', [study_id, values])
-            value_list = []
-            for row in values:
-                value_list.append(row[0])
-            return value_list[0]
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
     
     def getStudyInfo(self, study_id, web_app_user_id):
         """ Returns a list of metadata values based on a study type and list
@@ -597,94 +366,32 @@ class QiimeDataAccess(object):
             study_info['principal_investigator'] = row[34]
             study_info['principal_investigator_contact'] = row[35]
         return study_info
-        
-    def getAllSampleFields(self, sample_id, study_id):
-        """ Finds all filled in sample fields for a given sample_id
-        """
-        sample_tables = []
-        sample_tables.append('sample')
-        sample_tables.append('common_fields')
-        sample_tables.append('extra_sample_')
-        sample_tables.append('air')
-        sample_tables.append('other_environment')
-        sample_tables.append('sediment')
-        sample_tables.append('soil')
-        sample_tables.append('wastewater_sludge')
-        sample_tables.append('water')
-        sample_tables.append('host_assoc_vertibrate')
-        sample_tables.append('host_associated_plant')
-        sample_tables.append('human_associated')
-        sample_tables.append('host_sample')
-        sample_tables.append('host')
-      
-        filled_fields = {}
-        
-        con = self.getMetadataDatabaseConnection()
-        cursor = con.cursor()
-        
-        for table in sample_tables:        
-            if 'extra_sample_' in table:
-                statement = 'select * from %s%s where sample_id = %s' % (table, study_id, sample_id)
-            elif table == 'host':
-                statement = 'select * from host h inner join host_sample hs on h.host_id = hs.host_id where sample_id = %s' % sample_id
-            else:
-                statement = 'select * from %s where sample_id = %s' % (table, sample_id)
-            
-            try:
-                cursor.execute(statement)
-            except Exception, e:
-                print str(e)
-                print 'Error running query:\n'
-                print statement
-                print 'Running next query...\n'
-                
-                continue
-                
-            data = cursor.fetchall()
 
-            # Get the column names
-            col_names = []
-            for i in range(0, len(cursor.description)):
-                col_names.append(cursor.description[i][0])
-        
-            # Find the rows with data
-            for row in data:
-                i = 0
-                for field in row:
-                    if field != None and field != '':
-                        filled_fields[col_names[i]] = field
-                    i += 1
-        
-        return filled_fields
-    
-    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
-        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
-        """ Creates a study
+    def getStudyPlatform(self,study_id):
+        """ Returns a Run Prefix for Sample
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            study_id = 0
-            results = con.cursor().callproc('qiime_assets.study_insert', 
-                [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
-                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
-            return results[0]
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-            
-    def updateStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
-        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
-        """ Updates a study
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.study_update', 
-                [study_id, investigation_type, miens_compliant, submit_to_insdc, 
-                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
+            results = con.cursor()
+            db_output=[]
+            con.cursor().callproc('qiime_assets.get_study_platform',\
+                                                    [study_id,results])
+                                                                
+            run_prefix = ''
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    study_platform=row[0]
+            return study_platform
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+
+    #####################################
+    # Metadata and EMP Stuff
+    #####################################
     def createEMPStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         number_samples_collected, number_samples_promised , lab_person,
@@ -831,10 +538,6 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-    #####################################
-    # Metadata
-    #####################################
     
     def getEMPStudyList(self):
         """ Returns a list of emp studies
@@ -1119,7 +822,7 @@ class QiimeDataAccess(object):
             return False
         
     def getPackageColumns(self, package_type_id):
-        """ Returns the full column dictionary
+        """ Returns the full package column dictionary
         """
         try:
             package_columns = []
@@ -1524,37 +1227,8 @@ class QiimeDataAccess(object):
     #####################################
     # Jobs
     #####################################
-    '''DEPRECATED
-    def checkForNewJobs(self):
-        """ Returns a list of jobs that are ready to start
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_new_queue_jobs', [results])
-            jobs = []
-            for row in results:
-                jobs.append((row[0], row[1], row[2]))
-            return jobs
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    '''DEPRECATED
-    def updateJobStatus(self, job_id, status):
-        """ Updates the status message for a job
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.update_job_status', [job_id, status])
-            return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    
     def createTorqueJob(self, job_type, job_input, user_id, study_id, job_state_id=-1):
-        """ Returns submits a job to the queue and returns the job_id
+        """ submits a job to the queue and returns the job_id
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1566,7 +1240,7 @@ class QiimeDataAccess(object):
     
 
     def updateTorqueJob(self, job_id, new_state,job_notes):
-        """ Returns submits a job to the queue and returns the job_id
+        """ updates a torque job and returns the job_id
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1575,53 +1249,20 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             
-    def getSFFFiles(self, study_id):
-        """ Gets a list of SFF files for this study
+    
+    def clearTorqueJob(self, job_id):
+        """ Removes a job from the torque_jobs table
         """
+        
         try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            items = []
-            con.cursor().callproc('qiime_assets.get_sff_files', [study_id, results])
-            for row in results:
-                items.append(row[0])
-            return items
+            con = self.getSFFDatabaseConnection()
+            con.cursor().callproc('clear_torque_job', [job_id])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-        
-    def getMappingFiles(self, study_id):
-        """ Gets a list of mapping files for this study
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            items = []
-            con.cursor().callproc('qiime_assets.get_mapping_files', [study_id, results])
-            for row in results:
-                items.append(row[0])
-            return items
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-        
-    def getStudyTemplates(self, study_id):
-        """ Gets a list of template files for this study
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            items = []
-            con.cursor().callproc('qiime_assets.get_study_templates', [study_id, results])
-            for row in results:
-                items.append(row[0])
-            return items
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False        
-        
+            raise Exception(str(e))
+    #
     def getJobInfo(self, study_id,job_type):
-        """ Returns submits a job to the queue and returns the job_id
+        """ returns job information
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1635,125 +1276,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
-    def getSplitLibrariesMappingFileData(self, study_id):
-        """ Returns a collection of data sets, one for each run_prefix in the study
-        
-        This funciton generates a collection of result sets for producing the minimal
-        mapping file required by split_libraries.py. There will be one result set for
-        each run_prefix found in the study. Each result set consists of only the few 
-        required fields for split_libraries.py to run.
-        """
-        
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            result_sets = {}
-            con.cursor().callproc('qiime_assets.get_split_libarary_data', [study_id, results])
 
-            mapping_file_header = ''
-            for column in results.description:
-                # Skip run_prefix for mapping file
-                if column[0].upper() == 'RUN_PREFIX':
-                    continue
-                mapping_file_header += column[0] + '\t'
-            
-            for row in results:
-                run_prefix = row[3]
-                
-                # If this is the first time we've seen this run_prefix, create a new list 
-                # to hold the rows
-                if run_prefix not in result_sets:
-                    result_sets[run_prefix] = []
-                
-                # Add the row to the right run_prefix heading
-                result_sets[run_prefix].append(row)
-                
-            #raise Exception(str(result_sets))
-                                    
-            return mapping_file_header, result_sets
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            raise Exception(str(e))
-
-    def clearSplitLibrariesMappingFiles(self, study_id):
-        """ Clears split lib mapping files by study id
-        """
-
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.clear_split_lib_map_files', [study_id])
-            return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            raise Exception(str(e))
-
-            
-    def checkRunPrefixBarcodeLengths(self, study_id, run_prefix):
-        """ Checks to make sure all barcode lengths are the same for a given run_prefix
-        """
-
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_run_prefix_bc_lengths', [study_id, run_prefix, results])
-            barcode_length = 0
-
-            # Make sure we get only one result back. If more than one length is returned, we must
-            # raise an error:
-            rows = results.fetchall()
-            if len(rows) == 0:
-                raise ValueError('No barcodes were found for the given run prefix: %s' % run_prefix)
-            if len(rows) > 1:
-                raise ValueError('All barcodes must be of the same length for a given run_prefix. Multiple barcode lengths found for run prefix: %s' % run_prefix)
-            
-            # Figure out if the length is one of the expected barcde lengths:
-            barcode_length = rows[0][0]
-            acceptable_barcode_lengths = ['8', '10', '12']
-            if str(barcode_length) not in acceptable_barcode_lengths:
-                raise ValueError('Barcode lengths must be one of the following: ' + ', '.join(acceptable_barcode_lengths))
-
-            # Looks like we're good! Return the length
-            return barcode_length
-            
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            raise Exception(str(e))
-
-    def clearTorqueJob(self, job_id):
-        """ Removes a job from the torque_jobs table
-        """
-        
-        try:
-            con = self.getSFFDatabaseConnection()
-            con.cursor().callproc('clear_torque_job', [job_id])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            raise Exception(str(e))
-
-    def clearMetaFiles(self, meta_id,fpath):
-        """ Removes a job from the torque_jobs table
-        """
-
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('clear_meta_analysis_files', [meta_id,fpath])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            raise Exception(str(e))
-
-    def clearSFFFile(self, study_id, sff_file):
-        """ Removes an sff file from the database
-        """
-        
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.clear_sff_file', [study_id, sff_file])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            raise Exception(str(e))
-
-                    
     #####################################
     # Ontologies and Lists
     #####################################
@@ -1995,6 +1518,163 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
     '''
+    
+    def getSFFFiles(self, study_id):
+        """ Gets a list of SFF files for this study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            items = []
+            con.cursor().callproc('qiime_assets.get_sff_files', [study_id, results])
+            for row in results:
+                items.append(row[0])
+            return items
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def getMappingFiles(self, study_id):
+        """ Gets a list of mapping files for this study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            items = []
+            con.cursor().callproc('qiime_assets.get_mapping_files', [study_id, results])
+            for row in results:
+                items.append(row[0])
+            return items
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def getStudyTemplates(self, study_id):
+        """ Gets a list of template files for this study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            items = []
+            con.cursor().callproc('qiime_assets.get_study_templates', [study_id, results])
+            for row in results:
+                items.append(row[0])
+            return items
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False        
+
+
+
+    def getSplitLibrariesMappingFileData(self, study_id):
+        """ Returns a collection of data sets, one for each run_prefix in the study
+
+        This funciton generates a collection of result sets for producing the minimal
+        mapping file required by split_libraries.py. There will be one result set for
+        each run_prefix found in the study. Each result set consists of only the few 
+        required fields for split_libraries.py to run.
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            result_sets = {}
+            con.cursor().callproc('qiime_assets.get_split_libarary_data', [study_id, results])
+
+            mapping_file_header = ''
+            for column in results.description:
+                # Skip run_prefix for mapping file
+                if column[0].upper() == 'RUN_PREFIX':
+                    continue
+                mapping_file_header += column[0] + '\t'
+
+            for row in results:
+                run_prefix = row[3]
+
+                # If this is the first time we've seen this run_prefix, create a new list 
+                # to hold the rows
+                if run_prefix not in result_sets:
+                    result_sets[run_prefix] = []
+
+                # Add the row to the right run_prefix heading
+                result_sets[run_prefix].append(row)
+
+            #raise Exception(str(result_sets))
+
+            return mapping_file_header, result_sets
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
+    def clearSplitLibrariesMappingFiles(self, study_id):
+        """ Clears split lib mapping files by study id
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.clear_split_lib_map_files', [study_id])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
+
+    def checkRunPrefixBarcodeLengths(self, study_id, run_prefix):
+        """ Checks to make sure all barcode lengths are the same for a given run_prefix
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_run_prefix_bc_lengths', [study_id, run_prefix, results])
+            barcode_length = 0
+
+            # Make sure we get only one result back. If more than one length is returned, we must
+            # raise an error:
+            rows = results.fetchall()
+            if len(rows) == 0:
+                raise ValueError('No barcodes were found for the given run prefix: %s' % run_prefix)
+            if len(rows) > 1:
+                raise ValueError('All barcodes must be of the same length for a given run_prefix. Multiple barcode lengths found for run prefix: %s' % run_prefix)
+
+            # Figure out if the length is one of the expected barcde lengths:
+            barcode_length = rows[0][0]
+            acceptable_barcode_lengths = ['8', '10', '12']
+            if str(barcode_length) not in acceptable_barcode_lengths:
+                raise ValueError('Barcode lengths must be one of the following: ' + ', '.join(acceptable_barcode_lengths))
+
+            # Looks like we're good! Return the length
+            return barcode_length
+
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
+
+
+    def clearMetaFiles(self, meta_id,fpath):
+        """ Removes a job from the torque_jobs table
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('clear_meta_analysis_files', [meta_id,fpath])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
+    def clearSFFFile(self, study_id, sff_file):
+        """ Removes an sff file from the database
+        """
+
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.clear_sff_file', [study_id, sff_file])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            raise Exception(str(e))
+
+
     
     def loadSplitLibInfo(self, start_job, analysis_id, run_date, cmd, svn_version,
                             log_str, hist_str, md5_input_file):
@@ -2773,3 +2453,167 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
+    
+    #META-ANALYSIS
+    
+    def addMetaAnalysisFiles(self, start_job, meta_analysis_id, \
+                                    fpath, meta_type,run_date,ftype):
+        try:
+            con = self.getMetadataDatabaseConnection()
+            if start_job:
+                con.cursor().callproc('add_meta_analysis_files', 
+                                                    [meta_analysis_id,\
+                                                    fpath,meta_type,
+                                                    run_date,ftype])  
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    
+    def getMetaAnalysisFilepaths(self, meta_analysis_id):
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results=con.cursor()
+            con.cursor().callproc('get_meta_analysis_filepaths', 
+                                                    [meta_analysis_id,\
+                                                    results])
+            fpaths=[]
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    fpaths.append(row)
+            return fpaths
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+    def createMetaAnalysis(self,web_app_user_id,inv_name):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            db_output=[]
+            inv_id=0
+            db_output=con.cursor().callproc('create_meta_analysis', 
+                                                    [web_app_user_id, \
+                                                     inv_name,inv_id])
+                                                                
+            return db_output[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    
+    def getMetaAnalysisNames(self,web_app_user_id):
+        """ Returns a list of study names
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('get_meta_analysis_names', [web_app_user_id,\
+                                                                results])
+            meta_analysis_name_list = []
+            for row in results:
+                if row[0] is None:
+                    continue
+                else:
+                    meta_analysis_name_list.append(row)
+            return meta_analysis_name_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    #
+    
+    def getSequencesFullDatabase(self):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_sequences_for_fasta_fulldb', [results])
+            for row in results:
+                # sequence_name, sequence_string, md5_checksum
+                yield [row[0], row[1], row[2]]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            
+    def getSequencesFromSample(self, study_id, sample_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_sequences_for_fasta', [study_id, sample_id, results])
+            seqs = {}
+            for row in results:
+                seqs[row[0]] = row[1]
+            return seqs            
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False    
+    
+    
+    def getAllSampleFields(self, sample_id, study_id):
+        """ Finds all filled in sample fields for a given sample_id
+        """
+        sample_tables = []
+        sample_tables.append('sample')
+        sample_tables.append('common_fields')
+        sample_tables.append('extra_sample_')
+        sample_tables.append('air')
+        sample_tables.append('other_environment')
+        sample_tables.append('sediment')
+        sample_tables.append('soil')
+        sample_tables.append('wastewater_sludge')
+        sample_tables.append('water')
+        sample_tables.append('host_assoc_vertibrate')
+        sample_tables.append('host_associated_plant')
+        sample_tables.append('human_associated')
+        sample_tables.append('host_sample')
+        sample_tables.append('host')
+      
+        filled_fields = {}
+        
+        con = self.getMetadataDatabaseConnection()
+        cursor = con.cursor()
+        
+        for table in sample_tables:        
+            if 'extra_sample_' in table:
+                statement = 'select * from %s%s where sample_id = %s' % (table, study_id, sample_id)
+            elif table == 'host':
+                statement = 'select * from host h inner join host_sample hs on h.host_id = hs.host_id where sample_id = %s' % sample_id
+            else:
+                statement = 'select * from %s where sample_id = %s' % (table, sample_id)
+            
+            try:
+                cursor.execute(statement)
+            except Exception, e:
+                print str(e)
+                print 'Error running query:\n'
+                print statement
+                print 'Running next query...\n'
+                
+                continue
+                
+            data = cursor.fetchall()
+
+            # Get the column names
+            col_names = []
+            for i in range(0, len(cursor.description)):
+                col_names.append(cursor.description[i][0])
+        
+            # Find the rows with data
+            for row in data:
+                i = 0
+                for field in row:
+                    if field != None and field != '':
+                        filled_fields[col_names[i]] = field
+                    i += 1
+        
+        return filled_fields
+    
+    
+    
