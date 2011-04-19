@@ -1282,7 +1282,7 @@ class QiimeDataAccess(object):
     #####################################
 
     def getControlledVocabs(self, column_name):
-        """ Returns the full column dictionary
+        """ Returns the controlled vocabularies
         """
         controlled_vocabs = []
         
@@ -1299,7 +1299,7 @@ class QiimeDataAccess(object):
             return False
         
     def getControlledVocabValueList(self, controlled_vocab_id):
-        """ Returns the full column dictionary
+        """ Returns the controlled vocabulary values
         """
         vocab_items = {}
 
@@ -1316,7 +1316,7 @@ class QiimeDataAccess(object):
             return False
 
     def getOntologies(self, column_name):
-        """ Returns the full column dictionary
+        """ Returns a list of Ontologies
         """
         ontologies = []
         
@@ -1333,7 +1333,7 @@ class QiimeDataAccess(object):
             return False
 
     def getListValues(self, list_name):
-        """ Returns the full column dictionary
+        """ Returns list values
         """
         try:
             list_values = []
@@ -1351,7 +1351,7 @@ class QiimeDataAccess(object):
             return False
                 
     def validateListValue(self, list_name, list_value):
-        """ Returns the full column dictionary
+        """ validates a list value
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -1363,7 +1363,7 @@ class QiimeDataAccess(object):
             return False
                 
     def getOntologyValues(self, ontology_name):
-        """ Returns the full column dictionary
+        """ Returns ontology values
         """
         try:
             ontology_values = []
@@ -1381,7 +1381,7 @@ class QiimeDataAccess(object):
             return False
 
     def validateOntologyValue(self, ontology_name, identifier_value):
-        """ Returns the full column dictionary
+        """ validates an ontology value
         """
         try:
             con = self.getOntologyDatabaseConnection()
@@ -1393,7 +1393,7 @@ class QiimeDataAccess(object):
             return False
                 
     def getTermMatches(self, column_name, term_value):
-        """ Finds close term matches for columns of type onotlogy or list
+        """ Finds close term matches for columns of type ontology or list
         """
         try:
             # Handle the ontology prefix:
@@ -1494,30 +1494,6 @@ class QiimeDataAccess(object):
     #####################################
     # Loading
     #####################################
-    '''DEPRECATED
-    def loadSplitLibFasta(self,start_job,run_id,fname):
-        """ starts process of importing processed split-library data into the DB
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            error_flag=1
-            warning_flag=1
-            if start_job:
-                db_output=con.cursor().callproc('load_fna_file',[fname,run_id,\
-                                                    error_flag,warning_flag])
-                if db_output[3]==-1:
-                    print "Warning: some of the samples are already in the DB!"
-                
-                if db_output[2]==0:
-                    return True
-                else:
-                    return False
-            else:
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-    '''
     
     def getSFFFiles(self, study_id):
         """ Gets a list of SFF files for this study
@@ -1673,8 +1649,6 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
-
-
     
     def loadSplitLibInfo(self, start_job, analysis_id, run_date, cmd, svn_version,
                             log_str, hist_str, md5_input_file):
@@ -1699,69 +1673,12 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False,0
     
-    '''DEPRECATED
-    def loadOTUInfo(self, start_job, otu_run_set_id, analysis_id, run_date,
-                    pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
-                    otus_log_str,split_lib_seqs_md5,ref_set_name,
-                    ref_set_threshold):
-        """ loads the information pertaining to an OTU picking runls
-        
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            error_flag=1
-            otu_picking_run_id=0
-            if start_job:
-                db_output=con.cursor().callproc(\
-                        'register_otu_picking_run',[otu_run_set_id, \
-                                analysis_id, run_date, pOTUs_method, \
-                                pOTUs_threshold, svn_version, pick_otus_cmd, \
-                                otus_log_str,split_lib_seqs_md5,ref_set_name, \
-                                ref_set_threshold, error_flag, \
-                                otu_picking_run_id])
-                if db_output[11]==0:
-                    return True,db_output[0],db_output[12]
-                else:
-                    return False,db_output[0],db_output[12]
-            else:
-                return True,0
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-    '''
-    
-    '''DEPRECATED
-    # Write OTU failures to a new fasta file for otu selection
-    def writeOTUFailures(self, output_fasta_file):
-        """ Gets and writes any failed OTUs to a new fasta file
 
-        """
-        output_file = None
-        
-        try:
-            output_file = open(output_fasta_file, 'w')
-            con = self.getSFFDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_otu_failures', [results])
-            for item in results:
-                output_file.write(item[0] + '\n') # Sequence identifier
-                output_file.write(item[1] + '\n') # Sequence string
-            
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-        finally:
-            if output_file:
-                output_file.close()
-    '''
-    
-    #The following is the OTU Info tool used
     def loadAllOTUInfo(self, start_job, otu_run_set_id, run_date,
                     pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
                     otus_log_str,split_lib_seqs_md5,ref_set_name,
                     ref_set_threshold, analysis_id):
-        """ loads the information pertaining to an OTU picking runls
-
+        """ loads the information pertaining to an OTU picking runs
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -1785,27 +1702,7 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
     
-    '''DEPRECATED
-    def getTestData(self, start_job,analysis_id, sample_id):
-        """ Returns the data from the TEST data from DB
-        """
-        analysis_data = []
-    
-        try:
-            con = self.getSFFDatabaseConnection()
-            results = con.cursor()
-            if start_job:
-                con.cursor().callproc('get_test_analysis_data', 
-                                        [analysis_id, sample_id,results])
-                for row in results:
-                    analysis_data.append(row)
-                return analysis_data[0]
-            else:
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
+
     def getTestFlowData(self, start_job,analysis_id, sample_id):
         """ Returns the FLOW TEST Data from DB
         """
@@ -1901,22 +1798,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    '''DEPRECATED
-    def loadOTUFailures(self, start_job, input_set):
-        """ starts process of importing failed otus
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            error_flag=1
-            if start_job:
-                db_output=con.cursor().callproc('load_otu_failures_package.array_insert',
-                                                input_set)
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-    '''
-    
+
     def loadOTUFailuresAll(self, start_job, input_set):
         """ starts process of importing failed otus
         """
@@ -2027,21 +1909,6 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
     
-    '''DEPRECATED
-    def loadOTUMap(self, start_job, input_set):
-        """ starts process of importing otus
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            if start_job:
-                db_output=con.cursor().callproc('load_otu_map_package.array_insert',
-                                                input_set)
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-    '''
-    
     def loadOTUMapAll(self, start_job, input_set):
         """ starts process of importing otus
         """
@@ -2057,7 +1924,7 @@ class QiimeDataAccess(object):
             return False  
                   
     def loadSeqToSourceMap(self, start_job, input_set):
-        """ starts process of importing otus
+        """ loads the sequence to source map...for greengenes seqs
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2087,7 +1954,7 @@ class QiimeDataAccess(object):
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     '''
-    #
+    
     def getOTUTable(self,start_job,sample_name,otu_method,otu_threshold,\
                   source_name,ref_threshold):
         """ Gets a list otus for a samples
@@ -2106,24 +1973,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    '''DEPRECATED
-    def getOTUMap2(self,sample_names_and_seq_runs):
-        """ Gets a list otus for a samples
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            user_data = con.cursor()
-            sample_ids=[]
-            con.cursor().callproc('get_otu_table_package.array_return',\
-                                            (sample_names_and_seq_runs,user_data))
-            return user_data
-        except Exception, e:
-            return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
     
     def checkIfStudyIdExists(self, study_id):
-        """ starts process of importing otus
+        """ Check if the study id already exists
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2137,78 +1989,10 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    '''DEPRECATED
-    def getSampleRunPrefixList(self, study_id):
-        """ Returns a list of metadata fields
-        """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_sample_run_prefix_list', [study_id, results])
-            sample_list = []
-            for row in results:
-                sample_list.append(row)
-            return sample_list
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    '''DEPRECATED
-    def getSeqRunIdFromRunPrefix(self, run_prefix,study_id):
-        """ Returns a list of metadata fields
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_seq_run_id_from_run_prefix', [run_prefix,\
-                                                                     study_id,\
-                                                                     results])
-            seq_run_id=0
-            for row in results:
-                seq_run_id=row[0]
-            return seq_run_id
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    '''DEPRECATED
-    def getRunPrefixFromSeqRunId(self,study_id):
-        """ Returns a list of metadata fields
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('get_sff_basename_from_run_id', [study_id,\
-                                                                     results])
-            run_prefix = []
-            for row in results:
-                run_prefix.append(row[0])
-            return run_prefix
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    
-    '''DEPRECATED
-    def getOTUGG97Taxonomy(self,otu_id,taxonomy_name):
-        """ Returns a list of metadata fields
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            column_values=con.cursor()
-            taxonomy_str=con.cursor().callproc('get_otu_id_to_gg_97_taxonomy', 
-                                    [str(otu_id), taxonomy_name,column_values])
-            query_results=[]
-            for row in column_values:
-                return row[0]
-        
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
-    '''
-    
+            
+
     def checkIfColumnControlledVocab(self, column_name):
-        """ starts process of importing otus
+        """ checks if column is a controlled column
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -2226,7 +2010,7 @@ class QiimeDataAccess(object):
     #
     #
     def getValidControlledVocabTerms(self,column_name):
-        """ Returns a list of metadata fields
+        """ get controlled vocab values
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -2242,7 +2026,7 @@ class QiimeDataAccess(object):
             return False
 
     def getPublicColumns(self, user_id):
-        """ Returns a list of metadata fields
+        """ get public columns for specified user
         """
         try:
             user_details = self.getUserDetails(user_id)
@@ -2275,39 +2059,8 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     
-    '''DEPRECATED
-    def loadOTUsFromFasta(self, start_job, input_set):
-        """ starts process of importing otus
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            if start_job:
-                db_output=con.cursor().callproc('load_otus_from_fasta.array_insert',
-                                                input_set)
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-    '''
-    '''DEPRECATED
-    def updateAnalysisWithOTURun(self, start_job, otu_pick_run_id,\
-                                 otu_run_set_id,study_id,run_prefix):
-        """ starts process of importing otus
-        """
-        try:
-            con = self.getSFFDatabaseConnection()
-            if start_job:
-                con.cursor().callproc('update_analysis_with_otu_run', \
-                                         [otu_pick_run_id,otu_run_set_id,\
-                                          study_id,run_prefix])
-                return True
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False
-    '''
-    #
     def loadBetaDivDistances(self, start_job, input_set):
-        """ starts process of importing failed otus
+        """ loads beta-diversity distances
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2321,7 +2074,7 @@ class QiimeDataAccess(object):
             return False
     #
     def loadOTUTable(self, start_job, input_set):
-        """ starts process of importing failed otus
+        """ loads the OTU table
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2333,10 +2086,10 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+    
     def getBetaDivDistances(self, start_job, sample_name1,sample_name2,metric,\
                              rarefied):
-        """ starts process of importing failed otus
+        """ gets the beta-div distance for 2 samples
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2387,7 +2140,7 @@ class QiimeDataAccess(object):
             return False
     
     def getQiimeSffSamples(self, study_id,seq_run_id):
-        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """ Gets a list of SFF samples
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2400,7 +2153,7 @@ class QiimeDataAccess(object):
             return False
 
     def getQiimeSffReadCounts(self,seq_run_id):
-        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """ Gets the read counts for a sequencing run
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2413,7 +2166,7 @@ class QiimeDataAccess(object):
             return False
 
     def getQiimeSffSamplesCount(self,sample):
-        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """ Gets the sample count
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2424,9 +2177,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+    
     def getQiimeSffDbSummary(self,study_id):
-        """ Gets a list of found OTU ids based on a list of input sequence MD5s
+        """ Gets the summary info for an SFF
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2437,9 +2190,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    #
+    
     def getGGTaxonomy(self, start_job, prokmsa,tax_name):
-        """ starts process of importing failed otus
+        """ gets the gg taxonomy for a prokmsa
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2454,10 +2207,14 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
     
-    #META-ANALYSIS
+    #####################################
+    # Meta-Analysis
+    #####################################
     
     def addMetaAnalysisFiles(self, start_job, meta_analysis_id, \
                                     fpath, meta_type,run_date,ftype):
+        """  add meta-analysis files
+        """
         try:
             con = self.getMetadataDatabaseConnection()
             if start_job:
@@ -2471,6 +2228,8 @@ class QiimeDataAccess(object):
             return False
     
     def getMetaAnalysisFilepaths(self, meta_analysis_id):
+        """ gets meta-analysis files
+        """
         try:
             con = self.getMetadataDatabaseConnection()
             results=con.cursor()
@@ -2489,7 +2248,7 @@ class QiimeDataAccess(object):
             return False
             
     def createMetaAnalysis(self,web_app_user_id,inv_name):
-        """ Returns a list of study names
+        """ creates a meta-analysis
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -2505,9 +2264,8 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    
     def getMetaAnalysisNames(self,web_app_user_id):
-        """ Returns a list of study names
+        """ Returns a list of meta-analysis names
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -2524,11 +2282,13 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-    #
+    
+    #####################################
+    # MG-RAST Stuff
+    #####################################
     
     def getSequencesFullDatabase(self):
-        """ Returns a list of metadata fields
+        """ Returns a list of all sequences in DB
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -2541,7 +2301,7 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             
     def getSequencesFromSample(self, study_id, sample_id):
-        """ Returns a list of metadata fields
+        """ Returns a list of seqs for a given sample
         """
         try:
             con = self.getMetadataDatabaseConnection()
