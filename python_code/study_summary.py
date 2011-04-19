@@ -143,7 +143,7 @@ def print_study_info_and_values_table(query_results):
             info_table.append('</table>')
             info_table.append('<div id="div_'+str(i)+ \
                     '" style="display:none;"><table border="1px" style="font-size:smaller;">')
-            info_table.append('<tr"><th>SampleID</th><th>Sequences/Sample</th></tr>')
+            info_table.append('<tr><th>SampleID</th><th>Sequences/Sample</th></tr>')
             sff_sample_count[sff].sort(key=lambda x:x[1],reverse=True)
             for j in sff_sample_count[sff]:
                 info_table.append('<tr><td>'+str(j[0])+'</td><td>'+str(j[1])+'</td></tr>')

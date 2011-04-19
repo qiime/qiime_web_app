@@ -119,8 +119,7 @@ class SelectMetadataTests(TestCase):
         self.col_values=['y','n']
         
     def test_public_cols_to_dict(self):
-        '''
-            test_public_cols_to_dict: convert array of oracle public columns 
+        ''' test_public_cols_to_dict: convert array of oracle public columns 
             into a dictionary for use in web page
          '''
         obs=public_cols_to_dict(self.public_columns)
@@ -130,8 +129,7 @@ class SelectMetadataTests(TestCase):
         self.assertEqual(obs,exp)
 
     def test_unique_cols_to_select_box_str(self):
-        '''
-            test_unique_cols_to_select_box_str: convert the oracle public 
+        ''' test_unique_cols_to_select_box_str: convert the oracle public 
             dictionary columns into the option string for the select box in the 
             web-interface
         '''
@@ -141,8 +139,7 @@ class SelectMetadataTests(TestCase):
         
         
     def test_print_metadata_info_and_values_table(self):
-        '''
-            test_print_metadata_info_and_values_table: this function writes out
+        ''' test_print_metadata_info_and_values_table: this function writes out
             the information table below the select metadata boxes
         '''
         query_results1=[['TEST','TEST_COL','This is a test']]
@@ -171,8 +168,7 @@ class SelectMetadataTests(TestCase):
         self.assertEqual(obs3,exp_info_table3)
     
     def test_get_selected_column_values(self):
-        '''
-            test_get_selected_column_values: get a list of column values for a
+        ''' test_get_selected_column_values: get a list of column values for a
             given table and column name
         '''
         controlled_vocab=True
@@ -185,8 +181,7 @@ class SelectMetadataTests(TestCase):
         self.assertEqual(obs,exp_values)
         
     def test_get_table_col_values_from_form(self):
-        '''
-            test_get_selected_column_values: get a list of column values for a
+        ''' test_get_selected_column_values: get a list of column values for a
             given table and column name
         '''
         form1={'fname_prefix': [StringField('fname_prefix:')]}

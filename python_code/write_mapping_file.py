@@ -14,10 +14,11 @@ __status__ = "Development"
 from os import path
 
 def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
+    '''This function writes a QIIME-formatted mapping file'''
     
     try:
         from data_access_connections import data_access_factory
-        from enums import ServerConfig
+        from enums import ServerConfig,DataAccessType
         import cx_Oracle
         if get_from_test_db:
             data_access = data_access_factory(DataAccessType.qiime_test)

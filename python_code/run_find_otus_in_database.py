@@ -13,10 +13,13 @@ from enums import ServerConfig
 from hashlib import md5
 from os.path import join
 
-def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file):
+def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, 
+                 data_access, leftovers_fasta_file):
+    """ This fxn processes the md5's and checks against the DB
+    """
     # Get our list of found items
     results = data_access.getFoundOTUArray(md5_list)
-    
+
     if results == None:
         return
     
@@ -45,7 +48,6 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_acce
         # next and write these entries to a new FASTA file
         del md5_sequence_map[md5]
         
-
     # Write the leftovers to a new FASTA file
     for md5 in md5_sequence_map:
         seq_id = md5_seq_id_map[md5]
@@ -57,7 +59,8 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
     input_fasta_file = open(input_fasta, 'r')
     leftovers_fasta_file = open(leftover_fasta, 'w')
     otu_map_file = open(otu_map, 'w')
-
+    """This fxn checks for otu assignment of a set of sequences"""
+    
     # OTU map will be a dict of lists: otu_id, [list of sequence names]
     otu_map = {}
 

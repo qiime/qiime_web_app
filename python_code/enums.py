@@ -1,5 +1,15 @@
 #!/usr/bin/env python
-# encoding: utf-8
+# File created on 19 Apr 2011
+from __future__ import division
+
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2011, The QIIME-webdev project"
+__credits__ = [" Doug Wendel","Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.2.1-dev"
+__maintainer__ = "Jesse Stombaugh"
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Development"
 """
 FieldGrouping.py
 
@@ -11,6 +21,9 @@ import os
 import getpass
 
 class FieldGrouping:
+    """ this is the metadata field groupings
+    """
+
     sra_submission_level = -8
     sra_study_level = -7
     sra_experiment_level = -5
@@ -20,10 +33,16 @@ class FieldGrouping:
     prep_level = -1
 
 class DataAccessType:
+    """ this is the two types of data access connections
+    """
+    
     qiime_production = 1
     qiime_test = 2
     
 class ServerConfig:
+    """ this is the cluster's server configuration to determine if it is a 
+        production or development server
+    """
     
     config_fp='/home/%s/qiime_web.conf' % getpass.getuser()
     
