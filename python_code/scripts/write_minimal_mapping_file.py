@@ -16,7 +16,6 @@ from optparse import make_option
 from os import makedirs,path
 import os
 from qiime.util import load_qiime_config
-from process_sff_and_metadata_workflow import submit_processed_data_to_db
 from write_mapping_file import write_mapping_file
 
 qiime_config = load_qiime_config()

@@ -36,7 +36,7 @@ no_status_updates,WorkflowError,print_commands,print_to_stdout)
 class TimeExceededError(Exception):
     pass
 
-allowed_seconds_per_test = 240
+allowed_seconds_per_test = 400
 
 def timeout(signum, frame):
     raise TimeExceededError,\
@@ -232,37 +232,24 @@ exp_exact_otus='''\
 19	test.PCx593.281502_12
 '''
 
-exp_uclust_ref_otus='''\
-362383	7
-268947	12
-230364	3
-355771	17
-469832	9	15
-332311	16
-343906	18
-299668	5
-331820	11	10
-264035	4
-568692	8
-266771	2	6
-204144	19
-'''
+exp_uclust_ref_otus=''''''
 
 exp_all_otus='''\
+355771	test.PCx356.281498_17
 362383	test.PCx634.281501_1
 268947	test.PCx481.281500_4
+204144	test.PCx593.281502_12
 230364	test.PCx634.281501_8
-355771	test.PCx356.281498_17
-469832	test.PCx634.281501_2	test.PCx634.281501_11
+469832	test.PCx634.281501_11	test.PCx634.281501_2
 332311	test.PCx634.281501_7
 343906	test.PCx634.281501_5
 299668	test.PCx634.281501_18
-331820	test.PCx634.281501_9	test.PCx634.281501_10
+331820	test.PCx634.281501_10	test.PCx634.281501_9
 264035	test.PCx636.281503_6
 568692	test.PCx635.281504_15
 266771	test.PCx354.281499_3	test.PCx355.281497_13
-204144	test.PCx593.281502_12
 '''
+
 
 exp_uclust_ref_otus_parallel='''\
 259499	1

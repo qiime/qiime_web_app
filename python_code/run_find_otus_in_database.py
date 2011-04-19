@@ -19,7 +19,7 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map,
     """
     # Get our list of found items
     results = data_access.getFoundOTUArray(md5_list)
-
+    
     if results == None:
         return
     
@@ -84,8 +84,9 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
         # Collect the values we'll be needing
         
         # First value is the arbitrary otu_id assigned by exact match filter
-        #seq_id = rec[0].split()[0]
-        seq_id = str(rec[0])
+        seq_id = str(rec[0].split()[0])
+        
+        #seq_id = str(rec[0])
         #print str(seq_id)
         sequence = str(rec[1])
         m = md5(sequence).hexdigest()
