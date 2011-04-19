@@ -27,6 +27,6 @@ req.write('<tr>\n')
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[0])
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[1])
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[2])
-req.write('<td style="vertical-align:top;">%s</td>' % link_urls(field_details[3])
+req.write('<td style="vertical-align:top;">%s</td>' % link_urls(field_details[3]))
 req.write('</tr>\n')
 %>
