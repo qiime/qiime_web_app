@@ -20,11 +20,13 @@ column_name = form["column_name"]
 <%
 from data_access_connections import data_access_factory
 from enums import ServerConfig
+from linkamafy import link_urls
+
 field_details = data_access_factory(ServerConfig.data_access_type).getFieldDetails(column_name)
 req.write('<tr>\n')
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[0])
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[1])
 req.write('<td style="vertical-align:top;">%s</td>' % field_details[2])
-req.write('<td style="vertical-align:top;">%s</td>' % field_details[3])
+req.write('<td style="vertical-align:top;">%s</td>' % link_urls(field_details[3])
 req.write('</tr>\n')
 %>

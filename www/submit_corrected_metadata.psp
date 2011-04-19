@@ -79,7 +79,7 @@ elif len(files) != 2:
     for item in files:
         req.write(item + '<br/>')
 
-# Clear and re-insert our study tempaltes
+# Clear and re-insert our study templates
 data_access.clearStudyTemplates(study_id)
 for filename in sess['templates']:
     data_access.addTemplateFile(study_id, filename)

@@ -9,6 +9,7 @@ to them by an index.
 """
 import os
 import getpass
+
 class FieldGrouping:
     sra_submission_level = -8
     sra_study_level = -7

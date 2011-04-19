@@ -19,7 +19,9 @@ from mod_python import *
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 
+
 def writeTerms(search_term, sess):
+    from linkamafy import link_urls
     search_term = search_term.lower()
     
     column_dictionary = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
@@ -47,7 +49,7 @@ def writeTerms(search_term, sess):
         req.write('</td>')
         
         req.write('<td>')
-        req.write('%s' % (column[2]))
+        req.write(link_urls(column[2]))
         req.write('</td>')
         
         req.write('</tr>')

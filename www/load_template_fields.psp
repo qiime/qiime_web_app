@@ -25,14 +25,10 @@ Fields in red are required. Select any other fields to include them in your temp
 <table id='package_fields'>
 
 <%
-from mod_python import *
-from data_access_connections import data_access_factory
-from enums import ServerConfig
-from enums import FieldGrouping
 
 def outputFields(field_list, prefix, header_text):
+    from linkamafy import link_urls
     count = 0
-
 
     # Sort the fields
     field_list = sorted(field_list)
@@ -57,8 +53,8 @@ def outputFields(field_list, prefix, header_text):
         column_name = field[0]
         required = field[1]
         data_type = field[2]
-        desc_or_value = field[3]
-        definition = field[4]
+        desc_or_value = field[3]        
+        definition = link_urls(field[4])
         
         # For alternate coloring of rows
         if required == 'M':

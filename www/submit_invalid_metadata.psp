@@ -33,7 +33,7 @@ for item in form:
     elif 'prep_template' in item:
         files.append(form[item])
 
-# Clear and re-insert our study tempaltes
+# Clear and re-insert our study templates
 data_access.clearStudyTemplates(study_id)
 for filename in files:
     data_access.addTemplateFile(study_id, filename)
