@@ -41,7 +41,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                             '"SEQUENCE_PREP".RUN_PREFIX',\
                             '"SEQUENCE_PREP".EXPERIMENT_TITLE',
                             '"SAMPLE".PUBLIC']:
-            new_cat_column_table.append(i[1]+'.'+i[0])
+            new_cat_column_table.append(i[1]+'."'+i[0]+'"')
         if i[1] not in ['"STUDY"', '"USER_STUDY"','"SAMPLE"','"SEQUENCE_PREP"']\
             and i[1] not in new_tables:
             new_tables.append(i[1])
@@ -95,7 +95,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                     statement += '\
                     inner join ' + table + '\n\
                     on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
-                else:
+                elif table!='"HOST_SAMPLE"':
                     statement += '\
                     inner join ' + table + '\n\
                     on "SAMPLE".sample_id = ' + table + '.sample_id\n '
