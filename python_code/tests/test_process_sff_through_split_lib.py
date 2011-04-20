@@ -17,12 +17,12 @@ import tempfile
 import shutil
 from shutil import rmtree,copy
 from glob import glob
-from os.path import join, exists, getsize, split, splitext
+from os.path import join, exists, getsize, split, splitext,abspath, dirname
 from os import makedirs
 from cogent.util.unit_test import TestCase, main
 from cogent.util.misc import remove_files
 from cogent.app.util import get_tmp_filename, ApplicationNotFoundError
-from qiime.util import load_qiime_config,get_qiime_project_dir
+from qiime.util import load_qiime_config
 from qiime.parse import parse_qiime_parameters
 from run_process_sff_through_split_lib import (run_process_sff_through_split_lib)
 from qiime.workflow import (call_commands_serially,
@@ -50,8 +50,8 @@ class WorkflowTests(TestCase):
         self.dirs_to_remove = []
         self.files_to_remove = []
         
-        # Cannot use get_qiime_project_dir() due to test errors in virtual box
-        test_dir = os.path.join(get_qiime_project_dir(),'tests')
+        #this is specific to the web-apps only
+        test_dir = abspath(dirname(__file__))
         sff_original_fp = os.path.join(test_dir, 'support_files', \
                                         'Fasting_subset.sff')
 

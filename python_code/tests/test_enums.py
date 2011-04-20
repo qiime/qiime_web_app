@@ -14,7 +14,7 @@ __status__ = "Development"
 
 from cogent.util.unit_test import TestCase, main
 from enums import FieldGrouping,DataAccessType,ServerConfig
-import getpass
+from os import environ
 
 class Tests(TestCase):
     
@@ -38,7 +38,7 @@ class Tests(TestCase):
         """ test_ServerConfig: this is the field groupings
         """
         
-        self.assertEqual(ServerConfig.home,'/home/%s/' % getpass.getuser())
+        self.assertEqual(ServerConfig.home,environ['HOME']+'/')
 
 
 if __name__ == "__main__":
