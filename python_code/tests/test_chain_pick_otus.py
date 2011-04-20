@@ -77,7 +77,7 @@ class WorkflowTests(TestCase):
         if not exists(jobs_dir):
             # only clean up the jobs dir if it doesn't already exist
             self.dirs_to_remove.append(jobs_dir)
-        self.params = parse_qiime_parameters(qiime_parameters_f)
+        self.params = parse_qiime_parameters(qiime_parameters_f.split('\n'))
 
         signal.signal(signal.SIGALRM, timeout)
         # set the 'alarm' to go off in allowed_seconds seconds
@@ -188,7 +188,7 @@ class WorkflowTests(TestCase):
         
     '''
         
-   
+  
 exp_otu_failures='''\
 test.PCx634.281501_20
 test.PCx635.281504_16
@@ -286,6 +286,7 @@ exp_all_otus_parallel='''\
 577170	test_PCx634_9	test_PCx634_10
 '''
 
+test_dir = abspath(dirname(__file__))
 qiime_parameters_f = """# qiime_parameters.txt
 # WARNING: DO NOT EDIT OR DELETE Qiime/qiime_parameters.txt. Users should copy this file and edit copies of it.
 
@@ -310,7 +311,7 @@ split_libraries:reverse_primers	disable
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:max_cdhit_memory	400
-pick_otus:refseqs_fp    /home/wwwdevuser/software/gg_otus_4feb2011/rep_set/gg_97_otus_4feb2011.fasta
+pick_otus:refseqs_fp    %s/gg_97_otus_4feb2011.fasta
 pick_otus:blast_db
 pick_otus:similarity	0.97
 pick_otus:max_e_value	1e-10
@@ -331,7 +332,7 @@ parallel:jobs_to_start	2
 parallel:retain_temp_files	False
 parallel:seconds_to_sleep	1
 
-""".split('\n')
+""" % os.path.join(test_dir, 'support_files')
 
 fasting_map = """#SampleID	BarcodeSequence	LinkerPrimerSequence	Treatment	DOB	Description
 #Example mapping file for the QIIME analysis package.  These 9 samples are from a study of the effects of exercise and diet on mouse cardiac physiology (Crawford, et al, PNAS, 2009).
