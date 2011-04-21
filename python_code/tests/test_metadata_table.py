@@ -47,11 +47,6 @@ class MetadtaTableTests(unittest.TestCase):
         self.assertTrue(base_column.column_name)
         self.assertTrue(base_column.is_invalid, True)
 
-    def test_AddBaseColumnValue(self):
-        base_column = BaseColumn('depth', is_invalid, True)
-        base_column._addValue(10, qda)
-        self.assertTrue(len(base_column.values) == 1)
-
     ######################################################    
     # Tests for RegEx column class
     ######################################################
@@ -64,7 +59,7 @@ class MetadtaTableTests(unittest.TestCase):
     def test_AddRegExColumnCreate(self):
         regex = '^y$|^Y$|^n$|^N$'
         reg_ex_column = RegExColumn('test_name', is_invalid, True, regex)
-        reg_ex_column._addValue('y', qda)
+        reg_ex_column._addValue('y', qda, True)
         self.assertTrue(len(reg_ex_column.values) == 1)
         
     ######################################################    
@@ -72,27 +67,19 @@ class MetadtaTableTests(unittest.TestCase):
     ######################################################
 
     def test_ColumnFactoryCreate(self):
-        factory = ColumnFactory(is_invalid)
+        factory = ColumnFactory(is_invalid, qda)
         self.assertTrue(factory)
 
     def test_ColumnFactoryCreateNumeric(self):
-        factory = ColumnFactory(is_invalid)
-        column = factory.createColumn('depth', 'numeric', True, 0)
+        factory = ColumnFactory(is_invalid, qda)
+        column = factory.createColumn('depth', 'numeric', 4000, 0, True)
         self.assertTrue(column)
         
     def test_ColumnFactoryCreateNotInDictionary(self):
-        factory = ColumnFactory(is_invalid)
-        column = factory.createColumn('xyz', 'text', False, 4000)
+        factory = ColumnFactory(is_invalid, qda)
+        column = factory.createColumn('xyz', 'text', 4000, 0, False)
         self.assertTrue(column)
 
-    ######################################################    
-    # Tests for MetaddataTable class
-    ######################################################
-
-    #def test_MetadataTableCreate(self):
-    #    table = MetadataTable('tests/test_data.xls')
-    #    self.assertTrue(table)
-        
 if __name__ == '__main__':
     unittest.main()
 
