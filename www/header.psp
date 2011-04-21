@@ -18,7 +18,8 @@ if not (sess.has_key('username')):
 from data_access_connections import data_access_factory
 from enums import *
 from mod_python import *
-
+from run_process_sff_through_split_lib import get_qiime_svn_version
+from qiime.util import __version__ as qiime_version
 # Set the image link based on whether or not a study has been selected:
 '''
 if sess['study_name']:
@@ -81,6 +82,7 @@ req.write('<div id="header">')
 # puts in development text
 if str(ServerConfig.config_options['data_access_type'])=='DataAccessType.qiime_test':
     req.write('<div class="development"><h1>Development</h1></div>')
+    req.write('<div class="qiime_version">QIIME %s: Revision:%s</div>' % (qiime_version,str(get_qiime_svn_version())))
 
 if sess['is_admin'] == 1:
     study_id = ''
