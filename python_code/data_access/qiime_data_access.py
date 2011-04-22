@@ -587,7 +587,7 @@ class QiimeDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('qiime_assets.update_emp_study_data', [study_id, study_score, web_app_user_id])
     
-    def getListFieldValue(vocab_value_id):
+    def getListFieldValue(self, vocab_value_id):
         """ Returns a list env_package types associated to this study
         """
         try:
