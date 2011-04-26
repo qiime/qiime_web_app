@@ -52,11 +52,15 @@ elif portal_type == 'emp' and page_mode == 'edit':
 elif page_mode == 'edit':
     data_access.updateStudy(study_id, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
-        form['pmid'], form['study_abstract'], form['study_description'])
+        form['pmid'], form['study_abstract'], form['study_description'],
+        form['principal_investigator'], form['principal_investigator_contact'],
+        form['lab_person'], form['lab_person_contact'])
 else:
     study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
-        form['pmid'], form['study_abstract'], form['study_description'])
+        form['pmid'], form['study_abstract'], form['study_description'],
+        form['principal_investigator'], form['principal_investigator_contact'],
+        form['lab_person'], form['lab_person_contact'])
 
 # Add the default study_actual column entries
 data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')

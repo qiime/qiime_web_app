@@ -111,11 +111,11 @@ if page_mode == 'edit':
     study_abstract = study_info['study_abstract']
     study_description = study_info['study_description']
     button_text = 'Update'
+    principal_investigator = study_info['principal_investigator']
+    principal_investigator_contact = study_info['principal_investigator_contact']
+    lab_person = study_info['lab_person']
+    lab_person_contact = study_info['lab_person_contact']
     if portal_type == 'emp':
-        principal_investigator = study_info['principal_investigator']
-        principal_investigator_contact = study_info['principal_investigator_contact']
-        lab_person = study_info['lab_person']
-        lab_person_contact = study_info['lab_person_contact']
         emp_person = study_info['emp_person']
         first_contact = study_info['first_contact']
         most_recent_contact = study_info['most_recent_contact']
@@ -143,11 +143,11 @@ else:
     study_abstract = ''
     study_description = ''
     button_text = 'Create'
+    principal_investigator = ''
+    principal_investigator_contact = ''
+    lab_person = ''
+    lab_person_contact = ''
     if portal_type == 'emp':
-        principal_investigator = ''
-        principal_investigator_contact = ''
-        lab_person = ''
-        lab_person_contact = ''
         emp_person = ''
         first_contact = ''
         most_recent_contact = ''
@@ -277,13 +277,7 @@ for item in sorted(list):
             <td>* 
                 <input type="text" class="input required" name="study_description" id="study_description" value="<%=study_description%>" size="40">
             </td>
-        </tr>
-        
-<%
-if sess['portal_type'] == 'emp':
-    # Indent
-    
-%>        
+        </tr>        
         <tr>
             <td>Principal Investigator
             </td>
@@ -312,6 +306,14 @@ if sess['portal_type'] == 'emp':
                 <input type="text" name="lab_person_contact" id="lab_person_contact" value="<%=lab_person_contact%>" size="40">
             </td>
         </tr>
+        
+<%
+if sess['portal_type'] == 'emp':
+    # Indent
+    
+%>        
+        
+        
         <tr>
             <td>EMP Person
             </td>
