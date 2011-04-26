@@ -230,7 +230,8 @@ class QiimeDataAccess(object):
     #
     
     def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
-        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description,
+        principal_investigator, principal_investigator_contact, lab_person, lab_person_contact):
         """ Creates a study.
         """
         try:
@@ -238,21 +239,24 @@ class QiimeDataAccess(object):
             study_id = 0
             results = con.cursor().callproc('qiime_assets.study_insert', 
                 [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
-                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
+                portal_type, study_title, study_alias, pmid, study_abstract, study_description,
+                principal_investigator, principal_investigator_contact, lab_person, lab_person_contact])
             return results[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
             
     def updateStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
-        portal_type, study_title, study_alias, pmid, study_abstract, study_description):
+        portal_type, study_title, study_alias, pmid, study_abstract, study_description,
+        principal_investigator, principal_investigator_contact, lab_person, lab_person_contact):
         """ Updates a study
         """
         try:
             con = self.getMetadataDatabaseConnection()
             con.cursor().callproc('qiime_assets.study_update', 
                 [study_id, investigation_type, miens_compliant, submit_to_insdc, 
-                portal_type, study_title, study_alias, pmid, study_abstract, study_description])
+                portal_type, study_title, study_alias, pmid, study_abstract, study_description,
+                principal_investigator, principal_investigator_contact, lab_person, lab_person_contact])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -820,6 +824,52 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+        
+    def getCustomColumnDetails(self, column_name):
+        """ Returns details about a user-defined column
+        """
+        column_info = {}
+        con = self.getMetadataDatabaseConnection()
+        found = False
+        column_name = column_name.upper()
+        
+        # Figure out if exists in "Extra" table
+        statement = """select table_name from all_tab_columns where column_name = '%s' and table_name like 'EXTRA_%%'"""\
+            % column_name
+        try:
+            results = con.cursor().execute(statement).fetchone()
+            extra_table_name = results[0]
+            found = True
+        except:
+            extra_table_name = None
+            
+        # Figure out if exists in a factored table
+        statement = """select table_name from all_tab_columns where column_name = '%s' and table_name like 'COMMON_EXTRA_%%'"""\
+            % column_name
+        try:
+            results = con.cursor().execute(statement).fetchone()
+            common_table_name = results[0]
+            found = True
+        except:
+            common_table_name = None
+        
+        if found:
+            try:
+                statement = """select data_type, description from extra_column_metadata where upper(column_name) = '%s'""" % column_name
+                results = con.cursor().execute(statement).fetchone()
+                data_type = results[0]
+                description = results[1]
+            except:
+                data_type = None
+                description = None
+        else:
+            data_type = None
+        
+        column_info['description'] = description
+        column_info['extra_table_name'] = extra_table_name
+        column_info['common_table_name'] = common_table_name
+        column_info['data_type'] = data_type
+        return column_info
         
     def getPackageColumns(self, package_type_id):
         """ Returns the full package column dictionary
