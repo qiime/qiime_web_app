@@ -69,6 +69,7 @@ def clean_value_for_mgrast(value):
     value = str(value).replace('<', '__lessthan__')
     value = str(value).replace('>', '__greaterthan__')
     value = str(value).replace('$', '__dollarsign__')
+    value = str(value).replace('&', '__ampersand__')
     return value
 
 def send_data_to_mgrast(url_path, file_contents, host, debug):
