@@ -610,20 +610,20 @@ class QiimeDataAccess(object):
         """
         try:
             table_name = table_name.upper()
-            column_name = column_name.upper()
+            column_name_upper = column_name.upper()
                 
             value = None
             statement = ''
             
             if table_name == 'HOST':
                 statement = 'select %s from host h inner join host_sample hs on h.host_id = hs.host_id inner join sample s on hs.sample_id = s.sample_id where s.sample_id = %s' %\
-                    (column_name, sample_id)
+                    (column_name_upper, sample_id)
             elif table_name == 'HOST_SAMPLE':
                 statement = 'select %s from host_sample hs inner join sample s on hs.sample_id = s.sample_id where s.sample_id = %s' %\
-                    (column_name, sample_id)
+                    (column_name_upper, sample_id)
             else:
                 statement = 'select "%s" from "%s" where sample_id = %s' % \
-                    (column_name, table_name, sample_id)
+                    (column_name_upper, table_name, sample_id)
 
             con = self.getMetadataDatabaseConnection()
             results = con.cursor().execute(statement).fetchone()
