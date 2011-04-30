@@ -638,6 +638,7 @@ class QiimeDataAccess(object):
             return value
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            print 'table_name: %s, column_name: %s, sample_id: %s' % (table_name, column_name, sample_id)
             return False
             
     def getPrepColumnValue(self, sample_id, row_number, table_name, column_name):
@@ -906,13 +907,14 @@ class QiimeDataAccess(object):
                 con.cursor().callproc('qiime_assets.find_metadata_table', [results])
                 for tab_name, col_name in results:
                     if col_name not in self.fields:
-                        self.fields[col_name] = []                        
+                        self.fields[col_name] = []
                     self.fields[col_name].append(tab_name)
-
-            # If there's only one hit we can assign it
+                    
+            # Return None if table could not be found for this field
             if column_name not in self.fields:
                 return None
             
+            # If there's only one hit we can assign it
             if len(self.fields[column_name]) == 1:
                 table = self.fields[column_name][0]
             # More than one table was found with this column name. Find the correct one
@@ -921,6 +923,10 @@ class QiimeDataAccess(object):
                 for table_name in self.fields[column_name]:
                     if str(study_id) in table_name:
                         table = table_name
+                
+                if table == '':
+                    if 'SAMPLE' in self.fields[column_name]:
+                        table = 'SAMPLE'
                 
             return table
         except Exception, e:
