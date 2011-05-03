@@ -83,27 +83,36 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
 
             # Deal with the rest of the tables. They should all be assocaiated
             # by sample id.
+            #Eraise ValueError, new_tables
+            if '"HOST"' or '"HOST_SAMPLE"' in new_tables:
+                
+                try:
+                    new_tables.remove('"HOST"')
+                except:
+                    pass
+            
+                try: 
+                    new_tables.remove('"HOST_SAMPLE"')
+                except:
+                    pass
+                    
+                statement += '\
+                left join "HOST_SAMPLE" \n\
+                on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
+                statement += '\
+                left join "HOST"\n\
+                on "HOST_SAMPLE".host_id = "HOST".host_id\n'
+                
+
             for table in new_tables:
-                if table=='"HOST"':
-                    try:
-                        new_tables.remove('"HOST_SAMPLE"')
-                    except:
-                        pass
-                    statement += '\
-                    inner join "HOST_SAMPLE" \n\
-                    on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
-                    statement += '\
-                    inner join ' + table + '\n\
-                    on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
-                elif table!='"HOST_SAMPLE"':
-                    statement += '\
-                    inner join ' + table + '\n\
-                    on "SAMPLE".sample_id = ' + table + '.sample_id\n '
+                statement += '\
+                inner join ' + table + '\n\
+                on "SAMPLE".sample_id = ' + table + '.sample_id\n'
                     
         statement += '\n\
         where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
         #print statement
-        #print statement
+        #raise ValueError, statement
         con = data_access.getMetadataDatabaseConnection()
         cur = con.cursor()
         #req.write(str(statement)+'<br><br>')

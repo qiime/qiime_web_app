@@ -241,7 +241,7 @@ column_headers.sort()
                     
                     //get the category to summarize by option
                     var sumcat_cat=get_select_box_values("sumcat_cat");
-                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_otu_by_cat:meta_category" value="'+sumcat_cat.join()+'">'
+                    form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="summarize_otu_by_cat:mapping_category" value="'+sumcat_cat.join()+'">'
                     
                     //set the normalization
                     var sumcat_norm=document.getElementById("sumcat_norm");
@@ -318,15 +318,15 @@ column_headers.sort()
                 
                 //suppress html legend
                 var sumtaxa_supleg=document.getElementById("sumtaxa_supleg");
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:suppress_html_legend" value="'+sumtaxa_supleg[sumtaxa_supleg.selectedIndex].value+'">'
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:include_html_legend" value="'+sumtaxa_supleg[sumtaxa_supleg.selectedIndex].value+'">'
                 
                 //suppress html counts
                 var sumtaxa_supcts=document.getElementById("sumtaxa_supcts");
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:suppress_html_counts" value="'+sumtaxa_supcts[sumtaxa_supcts.selectedIndex].value+'">'
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:include_html_counts" value="'+sumtaxa_supcts[sumtaxa_supcts.selectedIndex].value+'">'
                 
                 //data type for x-axis values
                 var sumtaxa_lbltype=document.getElementById("sumtaxa_lbltype");
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:a_label_type" value="'+sumtaxa_lbltype[sumtaxa_lbltype.selectedIndex].value+'">'
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="plot_taxa_summary:label_type" value="'+sumtaxa_lbltype[sumtaxa_lbltype.selectedIndex].value+'">'
                 
                 
             }
@@ -596,7 +596,7 @@ for i in column_headers:
         <td><b>Resize every nth label: </b></td><td><input type='text' id="sumtaxa_nth" name="sumtaxa_nth" /></td>
     </tr>
     <tr>
-    <td><b>Suppress HTML-Legend:</b></td>
+    <td><b>Include HTML-Legend:</b></td>
     <td>
         <select id="sumtaxa_supleg" name="sumtaxa_supleg">
             <option>True
@@ -605,7 +605,7 @@ for i in column_headers:
     </td>
     </tr>
     <tr>
-    <td><b>Suppress HTML-Counts:</b></td>
+    <td><b>Include HTML-Counts:</b></td>
     <td>
         <select id="sumtaxa_supcts" name="sumtaxa_supcts">
             <option>True
@@ -617,9 +617,8 @@ for i in column_headers:
     <td><b>Label Type:</b></td>
     <td>
         <select id="sumtaxa_lbltype" name="sumtaxa_lbltype">
-            <option>float
-            <option>int
-            <option selected>str
+            <option selected>categorical
+            <option>numeric
         </select>
     </td>
     </tr>

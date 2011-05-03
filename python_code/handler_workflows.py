@@ -192,7 +192,7 @@ def run_3d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
          
         bdiv_3d_plots.append(('3d_continuous_'+beta_diversity_metric,continuous_3d_dir,
                                '%s_3d_continuous/%s' % (beta_diversity_metric,
-                               pc_fp.split('/')[-1]+'_3D.html')))
+                               '_'.join(beta_diversity_metric.split('_')[:-1])+'_3D_PCoA_plots.html')))
          
         try:
             makedirs(continuous_3d_dir)
@@ -215,7 +215,7 @@ def run_3d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
          
         bdiv_3d_plots.append(('3d_discrete_'+beta_diversity_metric,discrete_3d_dir,
                             '%s_3d_discrete/%s' % (beta_diversity_metric,
-                            pc_fp.split('/')[-1]+'_3D.html')))
+                            '_'.join(beta_diversity_metric.split('_')[:-1])+'_3D_PCoA_plots.html')))
         try:
             makedirs(discrete_3d_dir)
         except OSError:
@@ -276,7 +276,7 @@ def run_2d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
          
         bdiv_2d_plots.append(('2d_continuous_'+beta_diversity_metric,continuous_2d_dir,
                                '%s_2d_continuous/%s' % (beta_diversity_metric,
-                               '2d_pcoa_plots.html')))
+                               '_'.join(beta_diversity_metric.split('_')[:-1])+'_2D_PCoA_plots.html')))
          
         try:
             makedirs(continuous_2d_dir)
@@ -299,7 +299,7 @@ def run_2d_plots(pc_files,mapping_fp,output_dir, params,qiime_config,
          
         bdiv_2d_plots.append(('2d_discrete_'+beta_diversity_metric,discrete_2d_dir,
                             '%s_2d_discrete/%s' % (beta_diversity_metric,
-                            '2d_pcoa_plots.html')))
+                            '_'.join(beta_diversity_metric.split('_')[:-1])+'_2D_PCoA_plots.html')))
         try:
             makedirs(discrete_2d_dir)
         except OSError:
@@ -492,8 +492,8 @@ def run_summarize_otu_by_cat(otu_table_fp, mapping_fp,
         params_str = ''
 
     # Build the make distance histograms command
-    sum_by_cat_cmd = '%s %s/summarize_otu_by_cat.py -c %s -i %s -o %s %s' %\
-     (python_exe_fp, script_dir, otu_table_fp, mapping_fp, output_dir, params_str)
+    sum_by_cat_cmd = '%s %s/summarize_otu_by_cat.py -c %s -i %s -o %s/%s_otu_table.txt %s' %\
+     (python_exe_fp, script_dir, otu_table_fp, mapping_fp, output_dir,params_str.split(' ')[-1], params_str)
     commands.append(\
      [('Sum OTU by Category',sum_by_cat_cmd)])
          
