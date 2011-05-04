@@ -179,7 +179,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
             mapping_fp.write(to_write[0:len(to_write)-1] + '\n')
             '''
         #print data_map_table
-        
+
         for num,col in enumerate(headers):
             #print col
             if data_access.checkIfColumnControlledVocab(str(col)):
@@ -190,7 +190,10 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                         col_values[int(i[0])]=str(i[1])
                 
                 for i,val in enumerate(data_map_table):
-                    val[num]=col_values[int(val[num])]
+                    try:
+                        val[num]=col_values[int(val[num])]
+                    except TypeError:
+                        val[num]='unknown'
         
         new_data_table=[]
         for num,row in enumerate(data_map_table):
