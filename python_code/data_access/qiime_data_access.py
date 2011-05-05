@@ -629,6 +629,8 @@ class QiimeDataAccess(object):
             results = con.cursor().execute(statement).fetchone()
             if not results:
                 return None
+            else:
+                value = results[0]
             
             # Figure out if this is a list column. If so, do a reverse-lookup to get the text value
             field_details = self.getFieldDetails(column_name)
