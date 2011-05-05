@@ -66,10 +66,10 @@ def resolve_host(url_path):
     return None
 
 def clean_value_for_mgrast(value):
-    value = str(value).replace('<', '__lessthan__')
-    value = str(value).replace('>', '__greaterthan__')
-    value = str(value).replace('$', '__dollarsign__')
-    value = str(value).replace('&', '__ampersand__')
+    value = str(value).replace('<', '&lt;')
+    value = str(value).replace('>', '&gt;')
+    #value = str(value).replace('$', '&ds;')
+    value = str(value).replace('&', '&amp;')
     return value
 
 def send_data_to_mgrast(url_path, file_contents, host, debug):
@@ -121,6 +121,11 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     prep_cgi_path = '/service/%s/preparation' % key
     sequence_cgi_path = '/service/%s/reads' % key
     
+    #study_cgi_path = '/~wilke/service/%s/study' % key
+    #sample_cgi_path = '/~wilke/service/%s/sample' % key
+    #prep_cgi_path = '/~wilke/service/%s/preparation' % key
+    #sequence_cgi_path = '/~wilke/service/%s/reads' % key
+
     study_file_path = '/tmp/mgrast_study_metadata_%s.xml' % study_id
     sample_file_path = '/tmp/mgrast_sample_metadata_%s.xml' % study_id
     prep_file_path = '/tmp/mgrast_prep_metadata_%s.xml' % study_id
@@ -130,7 +135,9 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     # Attempt to reslve the MG-RAST host
     # host = '140.221.76.10'
     #host = resolve_host(study_cgi_path)
-    host = 'metagenomics.anl.gov'
+    #host = 'test.metagenomics.anl.gov'
+    host = 'dev.metagenomics.anl.gov'
+    #host = 'metagenomics.anl.gov'
     if host is None:
         print 'Could not resolve host. Aborting.'
         return
@@ -171,6 +178,9 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     
     for item in study_info:
         value = study_info[item]
+        # Skip blank or null values
+        if value == 'None' or value == '' or value == None or value == ' ':
+            continue
         study_file.write('        <{0}>{1}</{0}>\n'.format(item, clean_value_for_mgrast(value)))
     
     study_file.write('    </metadata>\n')
@@ -228,6 +238,10 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
                 
             #print table_name, column_name, sample_id
             column_value = data_access.getSampleColumnValue(sample_id, table_name, column_name)
+            # Skip blank or null values
+            if column_value == 'None' or column_value == '' or column_value == None or column_value == ' ':
+                continue
+
             sample_file.write('            <{0}>{1}</{0}>\n'.format(column_name, 
                 clean_value_for_mgrast(column_value)))
                         
@@ -277,6 +291,10 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
                     continue
                     
                 column_value = data_access.getPrepColumnValue(sample_id, row_number, table_name, column_name)
+                # Skip blank or null values
+                if column_value == 'None' or column_value == '' or column_value == None or column_value == ' ':
+                    continue
+
                 prep_file.write('            <{0}>{1}</{0}>\n'.format(column_name,
                     clean_value_for_mgrast(column_value)))
             
@@ -307,7 +325,7 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
             file_size = os.stat(output_fasta_path)[stat.ST_SIZE]
             
             # If there are no sequences then skip
-            if file_size > 0:
+            if file_size == 0:
                 continue
 
             # Open the prep file for writing
