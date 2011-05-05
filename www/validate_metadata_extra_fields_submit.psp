@@ -10,10 +10,10 @@ __status__ = "Development"
 %>
 
 <%
-from data_access_connections import data_access_factory
 from enums import ServerConfig
-
+from data_access_connections import data_access_factory
 data_access = data_access_factory(ServerConfig.data_access_type)
+
 sess = Session.Session(req)
 study_id = sess['study_id']
 
@@ -67,18 +67,24 @@ for column in columns:
     data_access.addExtraColumnMetadata(study_id, table_level, \
         details['new_column_name'], details['description'], details['data_type'])
         
-"""        
+    #req.write(study_id + '<br/>')
+    #req.write(table_level + '<br/>')
+    #req.write(details['new_column_name'] + '<br/>')
+    #req.write(details['description'] + '<br/>')
+    #req.write(details['data_type'] + '<br/>')
+
+"""            
     # Perform column refactoring if necessary
-    extra_tables = data_access.findExtraColumnMatch(column)
-    for extra_table in extra_tables:
+    existing_extra_tables = data_access.findExtraColumnMatch(column)
+    for found_extra_table in extra_tables:
         # Add this to the appropriate shared extra table
-        data_access.addColu
+        data_access.addCommonExtraColumn(extra_table, column, found_extra_table)
         
         # Copy the data found in the found extra_table
         
         # Remove the column from the found extra table. 
         # If no additional columns exist in the extra table, delete it.
-"""        
+"""
     
 # Redirect to the data validation page
 psp.redirect('validate_metadata.psp')

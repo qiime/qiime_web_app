@@ -9,12 +9,12 @@ from qiime.util import get_qiime_scripts_dir
 import re
 
 __author__ = "Rob Knight"
-__copyright__ = "Copyright 2011, The QIIME Project" #consider project name
-__credits__ = ["Rob Knight","Greg Caporaso"] #remember to add yourself if you make changes
+__copyright__ = "Copyright 2010, The QIIME WebApp project"
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
 __license__ = "GPL"
-__version__ = "1.2.1-dev"
-__maintainer__ = "Greg Caporaso"
-__email__ = "gregcaporaso@gmail.com"
+__version__ = "dev"
+__maintainer__ = "Jesse Stombaugh"
+__email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
 
 from optparse import make_option
@@ -62,6 +62,8 @@ def main():
 
         for root, dirs, files in walk(test_dir):
             for name in files:
+                if 'deprecated' in root:
+                    continue
                 if name.startswith('test_') and name.endswith('.py'):
                     unittest_names.append(join(root,name))
 
@@ -101,6 +103,8 @@ def main():
             script_names.sort()
 
             for script_name in script_names:
+                if 'deprecated' in script_name:
+                    continue
                 script_good_pattern = re.compile('^Usage: %s' % split(script_name)[1])
                 print "Testing %s." % script_name
                 command = '%s %s -h' % (python_name, script_name)

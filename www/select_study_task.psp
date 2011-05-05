@@ -12,11 +12,8 @@ __status__ = "Production"
 <script type="text/javascript" src="js/jobs.js"></script>
 
 <%
-from data_access_connections import data_access_factory
-from enums import ServerConfig
 
 # Grab some required values for this page
-data_access = data_access_factory(ServerConfig.data_access_type)
 study_id = int(sess['study_id'])
 is_admin = int(sess['is_admin'])
 web_app_user_id = sess['web_app_user_id']
@@ -56,7 +53,7 @@ can_delete = study_info['can_delete']
                 Select an Existing Study:<br/>
                 <select validate="required:true" name="study_names" id="study_names" onchange="document.forms['user_study'].submit();">
 <%
-study_names = data_access_factory(ServerConfig.data_access_type).getUserStudyNames(web_app_user_id, is_admin, portal_type)
+study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, portal_type)
 for item in study_names:
     if (study_name == item[1]):
         req.write('<option value="' + str(item[0]) + ':' + item[1] + '" selected>' + item[1] + '</option>\n')
@@ -260,7 +257,7 @@ if len(jobs) > 0 and is_admin == 1:
         </li>
 
 <%
-else:
+elif is_admin == 1:
     # Indent
     
 %>

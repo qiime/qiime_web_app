@@ -627,7 +627,8 @@ class QiimeDataAccess(object):
 
             con = self.getMetadataDatabaseConnection()
             results = con.cursor().execute(statement).fetchone()
-            value = results[0]
+            if not results:
+                return None
             
             # Figure out if this is a list column. If so, do a reverse-lookup to get the text value
             field_details = self.getFieldDetails(column_name)

@@ -230,6 +230,8 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
         # For each column for this sample, write the value to the sample file
         for column_name in study_columns:
             table_name = data_access.findMetadataTable(column_name, study_id)
+            if not table_name:
+                continue
             table_category = data_access.getTableCategory(table_name)
             
             # Skip the prep and study columns

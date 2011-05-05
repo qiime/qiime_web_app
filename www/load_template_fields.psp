@@ -11,7 +11,6 @@ __status__ = 'Development'
 %>
 
 <%
-qda = data_access_factory(ServerConfig.data_access_type)
 portal_type = sess['portal_type']
 %>
 
@@ -89,14 +88,14 @@ sess["field_list"] = []
 sess.save()
 
 # Write out the study fields
-#field_list = qda.getPackageColumns(FieldGrouping.study_level)
-#field_list.extend(qda.getPackageColumns(FieldGrouping.sra_study_level))
+#field_list = data_access.getPackageColumns(FieldGrouping.study_level)
+#field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_study_level))
 #field_list.sort()
 #outputFields(field_list, 'study', 'Study Fields')
 
 # Write out the required sample fields along with the package-specific fields
-field_list = qda.getPackageColumns(FieldGrouping.sample_level)
-field_list.extend(qda.getPackageColumns(FieldGrouping.sra_sample_level))
+field_list = data_access.getPackageColumns(FieldGrouping.sample_level)
+field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_sample_level))
 # If EMP portal, add EMP fields
 if portal_type == 'emp':
     field_list.append(('extracted_dna_avail_now', 'M', 'yn', '[y/n]', 'Whether the extracted dna is available now for this sample'))
@@ -107,16 +106,16 @@ outputFields(field_list, 'sample', 'Sample Fields')
 
 # Write out the prep fields
 if sess['portal_type'] == 'qiime':
-    field_list = qda.getPackageColumns(FieldGrouping.prep_level)
-    field_list.extend(qda.getPackageColumns(FieldGrouping.sra_experiment_level))
+    field_list = data_access.getPackageColumns(FieldGrouping.prep_level)
+    field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_experiment_level))
     field_list.sort()
     outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
 
 # Write out the rest of the package fields
-packages = qda.getStudyPackages(sess['study_id'])
+packages = data_access.getStudyPackages(sess['study_id'])
 unique_package_fields = []
 for package in packages:
-    field_list = qda.getPackageColumns(package)
+    field_list = data_access.getPackageColumns(package)
     for field in field_list:
         if field not in unique_package_fields:
             unique_package_fields.append(field)
