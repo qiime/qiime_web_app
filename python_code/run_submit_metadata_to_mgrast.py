@@ -78,7 +78,8 @@ def send_data_to_mgrast(url_path, file_contents, host, debug):
         
     # Output the file contents if debug mode is set
     if debug:
-        print file_contents
+        if len(file_contents) < 10000:
+            print file_contents
         print 'Host: %s' % host
         print 'Service URL: %s' % url_path
     
@@ -231,17 +232,20 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
         for column_name in study_columns:
             table_name = data_access.findMetadataTable(column_name, study_id)
             if not table_name:
+                print 'No tablename for column: %s' % column_name
                 continue
             table_category = data_access.getTableCategory(table_name)
             
             # Skip the prep and study columns
             if table_category in ['prep', 'study']:
+                print 'Skipping non-sample column: %s' % column_name
                 continue
                 
             #print table_name, column_name, sample_id
             column_value = data_access.getSampleColumnValue(sample_id, table_name, column_name)
             # Skip blank or null values
             if column_value == 'None' or column_value == '' or column_value == None or column_value == ' ':
+                print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
                 continue
 
             sample_file.write('            <{0}>{1}</{0}>\n'.format(column_name, 
