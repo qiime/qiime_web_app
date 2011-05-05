@@ -232,13 +232,11 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
         for column_name in study_columns:
             table_name = data_access.findMetadataTable(column_name, study_id)
             if not table_name:
-                print 'No tablename for column: %s' % column_name
                 continue
             table_category = data_access.getTableCategory(table_name)
             
             # Skip the prep and study columns
             if table_category in ['prep', 'study']:
-                print 'Skipping non-sample column: %s' % column_name
                 continue
                 
             #print table_name, column_name, sample_id
