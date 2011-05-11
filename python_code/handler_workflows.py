@@ -414,8 +414,8 @@ def run_summarize_taxa(otu_table_fp, mapping_fp,
     sum_levels=[]
     for level in levels_to_summarize:
         # Prep the make distance histograms command
-        output_level_file = '%s/summarized_otu_table_L%s.txt' % (output_dir,\
-                                                        str(level))
+        basename,base_ext=splitext(split(otu_table_fp)[-1])
+        output_level_file = '%s/%s_L%s.txt' % (output_dir,basename,str(level))
         sum_taxa_files.append(output_level_file)
     
         if int(level)==1:
@@ -436,11 +436,11 @@ def run_summarize_taxa(otu_table_fp, mapping_fp,
         # Build the make distance histograms command
         if abs_abund:
             sum_taxa_cmd = '%s %s/summarize_taxa.py -i %s -o %s -L %s -a' %\
-             (python_exe_fp, script_dir, otu_table_fp, output_level_file, \
+             (python_exe_fp, script_dir, otu_table_fp, output_dir, \
               str(level))
         else:
             sum_taxa_cmd = '%s %s/summarize_taxa.py -i %s -o %s -L %s' %\
-                (python_exe_fp, script_dir, otu_table_fp, output_level_file, \
+                (python_exe_fp, script_dir, otu_table_fp, output_dir, \
                  str(level))
         commands.append(\
          [('Summarize Taxa (Level %s)' % str(level),sum_taxa_cmd)])

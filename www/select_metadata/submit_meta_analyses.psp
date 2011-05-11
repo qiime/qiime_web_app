@@ -77,7 +77,11 @@ for key in form:
             fout.write('%s\t%s\n' %(key,form[key]))
         
 fout.close()
-
+'''
+for i in open(tmp_filename_params).readlines():
+    req.write(i+'<br>')
+raise ValueError, 'Stop'
+'''
 params=[]
 params.append('fs_fp=%s' % filesystem_path)
 params.append('web_fp=%s' % web_server_path)
