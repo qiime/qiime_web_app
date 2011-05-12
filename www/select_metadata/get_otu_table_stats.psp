@@ -1,0 +1,64 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+import os
+data_access = data_access_factory(ServerConfig.data_access_type)
+from select_metadata import print_metadata_info_and_values_table,\
+                            get_selected_column_values,\
+                            get_otu_table,get_table_col_values_from_form
+from qiime.util import (compute_seqs_per_library_stats, 
+    parse_command_line_parameters, get_options_lookup, 
+    median_absolute_deviation, guess_even_sampling_depth)
+
+script_description="""This script gets an OTU table for a given set of metadata
+parameters, then calculates statistics, such as min/max seqs per sample"""
+
+
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+if not (sess.has_key('username')):
+    sess.invalidate()
+    psp.redirect('../index.psp')
+
+#get the form data and session info
+form_data=sess['form']
+user_id=int(sess['web_app_user_id'])
+meta_id=sess['meta_analysis_id']
+
+#convert form data into dict/lists
+table_col_value=get_table_col_values_from_form(form_data)
+
+#get the otu table
+otu_tab=get_otu_table(data_access, table_col_value,user_id,meta_id,'PHPR')
+
+#get statistics
+min_counts, max_counts, median_counts, mean_counts, counts_per_sample = \
+                        compute_seqs_per_library_stats(otu_tab.split('\n'))
+counts_per_sample_values = counts_per_sample.values()
+even_sampling_depth = guess_even_sampling_depth(counts_per_sample_values)
+
+#write the output table
+req.write('<tr><th><u>Seqs/sample summary:<u></th><td></td></tr>' )
+req.write('<tr><th>Number of samples:</th><td>%s</td></tr>' % \
+                                                    str(len(counts_per_sample)))
+req.write('<tr><th>Minimum:</th><td>%s</td></tr>' % str(min_counts))
+req.write('<tr><th>Maximum:</th><td>%s</td></tr>' % str(max_counts))
+req.write('<tr><th>Median:</th><td>%s</td></tr>' % str(int(median_counts)))
+req.write('<tr><th>Mean:</th><td>%s</td></tr>' % str(int(mean_counts)))
+req.write('<tr><th>Suggested even sampling depth:</th><td>%s</td></tr>' % \
+                                                    str(even_sampling_depth))
+
+#
+%>

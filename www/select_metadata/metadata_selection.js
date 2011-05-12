@@ -51,6 +51,21 @@ function showResult(input_textbox,column_id,column_value)
 
     //generate a url string where we pass our variables
     var url="select_metadata/metadata_reference_lookup.psp";
+
+    /*
+    var long_str=''
+    for (var i in savedValues){
+        split_sep=i.split('####SEP####');
+        saved_table=split_sep[0]
+        split_studies=split_sep[1].split('####STUDIES####');
+        saved_table=split_studies[0]
+        saved_studies=split_studies[1]
+        saved_values=savedValues[i].split(',').join('__vals__').replace(/['"]/g,'')
+        
+        long_str+=saved_values
+    }
+    alert(long_str)
+    */
     url=url + "?col_id=" + col_name + "&tab_name=" + table_name + "&show_values=" + show_values + "&studies=" + studies;
     xmlhttp.onreadystatechange=function()
     {
@@ -353,4 +368,35 @@ function select_invert_col_values(listbox_id){
     saveSelection(listbox_id);
 
     return
+}
+
+
+function getStats(form_object)
+{
+    xmlhttp=GetXmlHttpObject()
+    
+    //check if browser can perform xmlhttp
+    if (xmlhttp==null){
+        alert("Your browser does not support XML HTTP Request");
+        return;
+    }
+    
+    form_object=form_object['otu_table_info']
+    //generate a url string where we pass our variables
+    var url="select_metadata/get_otu_table_stats.psp";
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4){
+            //write the list of similar terms from the database  
+            document.getElementById('field_ref_table').innerHTML=xmlhttp.responseText;
+            document.getElementById('field_ref_table').style.border="1px solid #A5ACB2";
+        }
+    }
+
+    //perform a POST 
+    xmlhttp.open("POST",url,true);
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp.setRequestHeader("Content-length", form_object.length);
+    xmlhttp.send(form_object)
 }

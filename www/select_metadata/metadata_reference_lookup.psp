@@ -37,7 +37,7 @@ col=str(form["col_id"]).upper();
 table=str(form["tab_name"]).upper();
 studies=str(form['studies'])
 show_values=str(form["show_values"]);
-
+#req.write(str(form["saved"]))
 #check if col is a controlled column
 controlled_col=data_access.checkIfColumnControlledVocab(str(col))
 

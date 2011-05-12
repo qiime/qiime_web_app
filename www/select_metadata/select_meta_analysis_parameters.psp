@@ -14,8 +14,12 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig
 import os
 data_access = data_access_factory(ServerConfig.data_access_type)
-from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str
+from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str,\
+                            get_otu_table,get_table_col_values_from_form
 from enums import FieldGrouping
+from qiime.util import (compute_seqs_per_library_stats, 
+    parse_command_line_parameters, get_options_lookup, 
+    median_absolute_deviation, guess_even_sampling_depth)
 
 from qiime.alpha_diversity import list_known_metrics
 alpha_metrics=list_known_metrics();
@@ -24,6 +28,7 @@ from qiime.beta_diversity import list_known_metrics
 beta_metrics=list_known_metrics();
 
 
+# set the help image location
 help_img="./img/help_icon.png"
 
 # get a list of public columns
@@ -34,9 +39,18 @@ form_data=sess['form']
 column_headers=[]
 column_headers.append('SampleID')
 column_headers.append('LinkerPrimerSequence')
+#write the form data to be used for seq/sample summary
+req.write('<form onsubmit="return false;" id="otu_table_info">')
 for i in form_data:
     if i != 'page':
-        column_headers.append(i.split('####STUDIES####')[0].split('####SEP####')[1])
+        column_headers.append(\
+                        i.split('####STUDIES####')[0].split('####SEP####')[1])
+        req.write('<input type="hidden" id="%s" value="%s" \>' % \
+                                                            (i,form_data[i]))
+req.write('</form>')
+
+user_id=int(sess['web_app_user_id'])
+meta_id=sess['meta_analysis_id']
 
 # sort column headers
 column_headers.sort()
@@ -49,13 +63,12 @@ def create_options(script_name,column_headers,help_img):
         html_options_output+='<p><b>Required</b>&nbsp;(%s.py)</p><div id="%s_required" class="required"><table>%s</table></div>' % (script_name,script_name,required)
 
     if optional != "":
-        html_options_output+='<a href="javascript:show_hide_optional(\'%s\')">Optional Parameters </a>(%s.py)<br>'% (script_name,script_name)
+        html_options_output+='<a href="javascript:show_hide_optional(\'%s\')"><img src="./img/toggle-small-expand.png" id="%s_icon"\> Optional Parameters </a>(%s.py)<br>'% (script_name,script_name,script_name)
         html_options_output+='<div id="%s" class="optional" style="display:none;valign:top">' % (script_name)
         html_options_output+='<table>%s</table>' % (optional)
         html_options_output+='</div>'
     
     return html_options_output
-
 
 %>
 
@@ -77,9 +90,11 @@ def create_options(script_name,column_headers,help_img):
          },
         });
     });
-    */
-    window.onload=$(function() {$.configureBoxes();});
     
+    */
+    
+    window.onload=$(function() {$.configureBoxes();});
+
     var savedValues=new Array();
     
     function check_int_range_0_100000000(input_id){
@@ -138,7 +153,9 @@ def create_options(script_name,column_headers,help_img):
         }
         return vals_to_use;
     }
-    /* Taken from: http://rickyrosario.com/blog/javascript-startswith-and-endswith-implementation-for-strings/
+    /* 
+       Following function was adapted from: 
+       http://rickyrosario.com/blog/javascript-startswith-and-endswith-implementation-for-strings/
     */
     function strStartsWith(str, prefix) {
         return str.indexOf(prefix) === 0;
@@ -223,10 +240,13 @@ def create_options(script_name,column_headers,help_img):
     }
     function show_hide_optional(div_id){
         div_to_show_hide=document.getElementById(div_id)
+        icon_to_change=document.getElementById(div_id+'_icon')
         if (div_to_show_hide.style.display==''){
             div_to_show_hide.style.display='none';
+            icon_to_change.src='./img/toggle-small-expand.png';
         }else{
             div_to_show_hide.style.display='';
+            icon_to_change.src='./img/toggle-small.png';
         }
     }
     
@@ -241,34 +261,24 @@ the list of ontologies and function buttons.
 Onsubmit returns false, since the form is not formally submitted and
 it will remove the return key functionality.
 -->
+<script>
+    /* use AJAX to load the seq/sample stats */
+    getStats(document.forms);
+</script>
+
+<!-- this is the table displaying seq/sample stats -->
+<table class='stats' id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
+    <tr><th>Loading Stats...</th></th>
+</table>
 
 <form id="meta_analysis_params" name="meta_analysis_params" onsubmit="return false;">
 
 <h3>Meta-Analyses to Perform</h3>
-<div id='filename_prefix'>
-    <b>Filename Prefix: </b>
-    <input type="text" id="fname_prefix" name="fname_prefix" />
-</div>
-<br>
+<input type="hidden" id="fname_prefix" name="fname_prefix" value="meta_analysis"/>
 
 <input type="checkbox" checked disabled \><b>&nbsp;OTU Table</b><br>
-<a href="javascript:show_hide_optional('tax_assignment')">Optional Parameters </a>(taxonomy assignment and rarefaction)<br>
-<!--
-<ol class="tree">
-	<li>
-	<label for="folder1">Folder 1</label> <input type="checkbox" checked disabled id="folder1" /> 
-	<ol>
-		<li class="file"><a href="document.html.pdf">File 1</a></li>
-		<li>
-			<label for="subfolder1">Subfolder 1</label> <input type="checkbox" id="subfolder1" /> 
-			<ol>
-				<li class="file"><a href="">Filey 1</a></li>
-			</ol>
-		</li>
-	</ol>
-	</li>
-</ol>
--->
+<a href="javascript:show_hide_optional('tax_assignment')"><img src="./img/toggle-small-expand.png" id="tax_assignment_icon"\> Optional Parameters </a>(taxonomy assignment and rarefaction)<br>
+
 <div id='tax_assignment' class="optional" style="display:none;valign:top">
     <table>
     <tr><td><b>Select Taxonomy: </b></td>
@@ -343,8 +353,8 @@ req.write(create_options(script_name,column_headers,help_img))
 
 
 <%
-req.write('<a href="javascript:show_hide_optional(\'rarefaction\')">Optional Parameters </a>(rarefaction.py)<br>')
-req.write('<div id="rarefaction" class="optional" style="display:none;valign:top">')
+req.write('<a href="javascript:show_hide_optional(\'beta_rarefaction\')"><img src="./img/toggle-small-expand.png" id="beta_rarefaction_icon"\> Optional Parameters </a>(rarefaction.py)<br>')
+req.write('<div id="beta_rarefaction" class="optional" style="display:none;valign:top">')
 req.write('<table><tr><td><b>Rarefied at: </b></td><td><input type="text" id="bdiv_rarefied_at" name="bdiv_rarefied_at" /><em style="color:gray">(default: use OTU table parameters)</em></td></tr></table>')
 req.write('</div>')
 
@@ -384,8 +394,7 @@ req.write('</div><br>')
     The following table is where we will be dynamically writing
     the results.
 -->
-<table id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
-</table>
+
 </form>
 <form id="metadata_submission" onsubmit="return post_Array()" method="post" action="select_metadata/submit_meta_analyses.psp">
 <%

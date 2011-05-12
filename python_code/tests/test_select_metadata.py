@@ -15,12 +15,15 @@ __status__ = "Development"
 from cogent.util.unit_test import TestCase, main
 from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str,\
                             print_metadata_info_and_values_table,\
-                            get_selected_column_values,get_table_col_values_from_form
+                            get_selected_column_values,\
+                            get_table_col_values_from_form,get_otu_table
 
 from types import *
 from exceptions import *
 
-
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
 
 '''
 The following StringField class was pulled out of the util script in the mod_python 
@@ -205,6 +208,14 @@ class SelectMetadataTests(TestCase):
 
         obs3=get_table_col_values_from_form(form3)
         self.assertEqual(obs3,exp3)
+        
+    #
+    def test_get_otu_table(self):
+        ''' test_get_otu_table: get OTU table for given set of params
+        '''
+    
+        obs1=get_otu_table(data_access, {'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0:female')},'12171',0,'PHPR')
+        self.assertEqual(obs1,'# QIIME v1.2.1-dev OTU table\n#OTU ID')
         
         
 exp_select_box_str='''\

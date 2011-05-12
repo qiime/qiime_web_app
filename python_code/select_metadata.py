@@ -16,6 +16,8 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig
 data_access = data_access_factory(ServerConfig.data_access_type)
 from enums import FieldGrouping
+from numpy import zeros
+from qiime.format import format_matrix,format_otu_table
 
 def public_cols_to_dict(public_columns):
     # create a dictionary containing all public column fields
@@ -235,3 +237,200 @@ def get_table_col_values_from_form(form):
             else:
                 table_col_value[form_key]=str(form[form_key])
     return table_col_value
+    
+
+def get_otu_table(data_access, table_col_value,user_id,meta_id,tax_name):
+    ''' This function is similar to what is written in the 
+        generate_mapping_and_otu_table.py script, however; it does not need 
+        all the extra columns and does not need to write files
+    '''
+    
+    unique_cols=[]
+    database_map = {}
+    tables = []
+    
+    # Get the user details
+    user_details = data_access.getUserDetails(user_id)
+    if not user_details:
+        raise ValueError('No details found for this user')
+    is_admin = user_details['is_admin']
+
+    # Start building the statement for writing out the mapping file
+    # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
+    statement = '"SAMPLE".sample_name||\'.\'||"SEQUENCE_PREP".sequence_prep_id as SampleID, \n'
+    statement += '"SEQUENCE_PREP".barcode, \n'
+    statement += 'concat("SEQUENCE_PREP".linker, "SEQUENCE_PREP".primer) as LinkerPrimerSequence, \n'
+    statement += '"SAMPLE".study_id, \n'
+    statement += '"SEQUENCE_PREP".run_prefix as RUN_PREFIX, \n'
+
+    study_id_array=[]
+    # Break out the recorded fields and store as dict: field name and table name
+    # field[0] = field_name, field[1] = table_name
+
+    for i in table_col_value:
+        tab_col_studies=i.split('####SEP####')
+        tab=tab_col_studies[0]
+    
+        col_studies=tab_col_studies[1].split('####STUDIES####')
+    
+        column=col_studies[0]
+        studies=col_studies[1].split('S')
+        for study_id in studies:
+            study_id_array.append(study_id)
+    
+        # Required fields which much show up first. Skip as they are already
+        # in the statement
+        if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 
+                      'EXPERIMENT_TITLE','DESCRIPTION','RUN_PREFIX']:
+            continue
+
+        # Add the table to our list if not already there and not one of the
+        # required tables
+        if '"'+tab+'"' not in tables and '"'+tab+'"' not in ['"STUDY"',
+                                                '"SAMPLE"', '"SEQUENCE_PREP"']:
+            tables.append('"'+tab+'"')
+
+        # Finally, add to our column list
+        database_map[column] = '"'+tab+'"'
+
+        # End for
+
+    unique_study_ids=list(set(study_id_array))
+    
+    statement += '"SEQUENCE_PREP".experiment_title as Description \n'
+    
+    if is_admin:
+        statement = '\
+        select distinct \n' + statement + ' \n\
+        from "STUDY" '
+    else:
+        statement = '\
+        select distinct \n' + statement + ' \n\
+        from "STUDY" inner join user_study us on "STUDY".study_id=us.study_id'
+
+    statement += ' \n\
+    inner join "SAMPLE" \n\
+    on "STUDY".study_id = "SAMPLE".study_id \n '
+
+    statement += ' \
+    inner join "SEQUENCE_PREP" \n\
+    on "SAMPLE".sample_id = "SEQUENCE_PREP".sample_id \n '
+
+    # Handle Common fields table
+    if '"COMMON_FIELDS"' in tables:
+        tables.remove('"COMMON_FIELDS"')
+        statement += '\
+    left join "COMMON_FIELDS" \n\
+    on "SAMPLE".sample_id = "COMMON_FIELDS".sample_id \n'
+
+    # Handle host tables
+    if '"HOST_SAMPLE"' in tables:
+        tables.remove('"HOST_SAMPLE"')
+        statement += '\
+        left join "HOST_SAMPLE" \n\
+        on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
+
+    # Deal with the rest of the tables. They should all be assocaiated by
+    # sample id.
+    for table in tables:
+        if table=='"HOST"':
+            statement += '\
+            left join ' + table + '\n\
+            on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
+        else:
+            statement += '\
+            left join ' + table + '\n\
+            on "SAMPLE".sample_id = ' + table + '.sample_id\n '
+    
+    # add the study ids to the statement
+    study_statement=[]
+    for study_id in unique_study_ids:
+        study_statement.append('"STUDY".study_id = ' + study_id)
+    
+    if is_admin:
+        statement += ' where (%s)' % (' or '.join(study_statement))
+    else:
+        statement += ' where (%s) and ("SAMPLE"."PUBLIC"=\'y\' or us.web_app_user_id=%s)' % \
+                                        (' or '.join(study_statement),user_id)
+
+    # add where statements based on selected metadata
+    additional_where_statements=[]
+    for i in table_col_value:
+        tab_col_studies=i.split('####SEP####')
+        tab=tab_col_studies[0]
+        col_studies=tab_col_studies[1].split('####STUDIES####')
+        column=col_studies[0]
+    
+        selected_col_values=table_col_value[i].split('\',\'')
+        controlled_col=data_access.checkIfColumnControlledVocab(str(column))
+        
+        if controlled_col:
+            vocab_terms=data_access.getValidControlledVocabTerms(str(column))
+        same_col_addition_statements=[]
+
+        for col_value in selected_col_values:
+            col_value=col_value.strip('\'')
+
+            clipped_col_value=str(col_value.strip("'"))
+            if controlled_col:
+            
+                #put the column values into a dictionary so we can run natural
+                # sort on the list
+                for i in vocab_terms:
+                    if i[1]==str(clipped_col_value):
+                        clipped_col_value=str(i[0])
+                        break
+               
+            if clipped_col_value<>'####ALL####' and \
+                                            clipped_col_value.upper()<>'NONE':
+                same_col_addition_statements.append(\
+                            '"'+tab+'"."'+column+'"=\''+clipped_col_value+'\'')
+        if same_col_addition_statements<>[]:
+            additional_where_statements.append('(%s)' % \
+                                    (' or '.join(same_col_addition_statements)))
+    if additional_where_statements<>[]:
+        statement += ' and (%s) ' % (' and '.join(additional_where_statements)) 
+
+    # connect to metadata database
+    con = data_access.getMetadataDatabaseConnection()
+    cur = con.cursor()
+
+    # get results
+    results = cur.execute(statement)
+    
+    # get a list of sample_names for getting OTU table
+    samples_list=[]
+    for row in results:
+        if str(row[0]) not in samples_list: 
+            samples_list.append(str(row[0]))
+       
+    # iterate over samples and get otu counts
+    con = data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+    query=[]
+    sample_counts={}
+    otus=[]
+    for i,sample_name1 in enumerate(samples_list):
+        sample_counts[sample_name1]={}
+        user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97,
+                                          'GREENGENES_REFERENCE',97)
+        for row in user_data:
+            if row[0] not in otus:
+                otus.append(str(row[0]))
+            if sample_counts[sample_name1].has_key(str(row[0])):
+                raise ValueError, 'Duplicate prokmsa ids!' 
+            sample_counts[sample_name1][str(row[0])]=row[1]
+
+    otu_table=zeros((len(otus),len(samples_list)),dtype=int)
+    
+    # generate otu table
+    for i,sample in enumerate(samples_list):
+        for j, otu in enumerate(otus):
+            if sample_counts.has_key(sample):
+                if sample_counts[sample].has_key(otu):
+                    otu_table[j][i]=sample_counts[sample][otu]
+             
+    # format otu table and return
+    otu_lines=format_otu_table(samples_list,otus,otu_table)
+
+    return otu_lines
