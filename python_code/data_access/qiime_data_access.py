@@ -605,6 +605,27 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
 
+    def verifySampleNames(self, study_id, file_sample_name_list):
+        all_samples_present = True
+        
+        # Get the list of sample names for this study:
+        database_sample_name_list = self.getSampleList(study_id)
+        # Chop off the sample_id from the tuple - only want names for comparison
+        database_sample_name_list = zip(*database_sample_name_list.items())[1]
+
+        # If all samples in file are not present in list in database, need to reload
+        common_names = set(file_sample_name_list).intersection(set(database_sample_name_list))
+        
+        # If any samples that used to exist in the database are missing...
+        if len(common_names) < len(database_sample_name_list):
+            return False
+        
+        # If the entire list is not a subset of what's in the database
+        #if not set(file_sample_name_list).issubset(set(database_sample_name_list)):
+        #    all_samples_present = False
+
+        return all_samples_present
+
     def getSampleColumnValue(self, sample_id, table_name, column_name):
         """ Returns a field value
         """
@@ -837,6 +858,12 @@ class QiimeDataAccess(object):
         found = False
         column_name = column_name.upper()
         
+        # Init some variables
+        description = ''
+        extra_table_name = ''
+        common_table_name = ''
+        data_type = ''
+        
         # Figure out if exists in "Extra" table
         statement = """select table_name from all_tab_columns where column_name = '%s' and table_name like 'EXTRA_%%'"""\
             % column_name
@@ -873,6 +900,7 @@ class QiimeDataAccess(object):
         column_info['extra_table_name'] = extra_table_name
         column_info['common_table_name'] = common_table_name
         column_info['data_type'] = data_type
+        
         return column_info
         
     def getPackageColumns(self, package_type_id):
@@ -892,6 +920,17 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def getImmutableDatabaseFields(self, study_id):
+        """ Returns the immutable metadata fields for a study
+        """
+        fields = []
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('qiime_assets.get_immutable_database_fields', [study_id, results])
+        for row in results:
+            fields.append((row[0], row[1], row[2], row[3], row[4], row[5]))
+        return fields
     
     fields = {}
     def findMetadataTable(self, column_name, study_id):

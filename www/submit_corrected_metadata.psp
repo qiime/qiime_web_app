@@ -44,8 +44,18 @@ study_name = sess['study_name']
 study_id = sess['study_id']
 portal_type = sess['portal_type']
 
-# Remove any existing metadata before upload. 0 = delete all but study specific data
-data_access.deleteStudy(study_id, 0)
+if sess.has_key('load_type'):
+    load_type = sess['load_type']
+    del sess['load_type']
+    sess.save()
+else:
+    load_type = 'update'
+
+req.write('LOAD TYPE: %s' % load_type)
+
+# Remove any existing metadata if a reload is required
+if load_type == 'reload':
+    data_access.deleteStudy(study_id, 0)
 
 # Variables to collect our data
 sample_key_fields = {}

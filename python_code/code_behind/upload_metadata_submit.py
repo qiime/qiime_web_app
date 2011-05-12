@@ -23,7 +23,7 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 ################################
 # Helper Functions
 ################################
-
+        
 def is_binary(filename):
     """
     Determinees if a file is binary or text
@@ -48,12 +48,13 @@ def is_binary(filename):
 # Checker functions
 ################################
 
-def validateSampleFile(mdtable, study_id):
+def validateSampleFile(mdtable, study_id, web_app_user_id):
     errors = []
 
     # Check for duplicate sample names:    
     names = []
     dupes = []
+    samples_missing = False
     
     sample_values = mdtable.getColumn('sample_name').values
     for name_valid_pair in sample_values:
@@ -67,11 +68,21 @@ def validateSampleFile(mdtable, study_id):
             
     for name in dupes:
         errors.append('Sample names must be unique in the sample file: "%s"' % name)
-        
-    return errors
 
-def validatePrepFile(mdtable):
+    # If metadata was previously uploaded, make sure all samples in database
+    # are still represented in the sample file
+    study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+    if study_info['metadata_complete'] == 'y':
+        file_sample_names = zip(*sample_values)[0]
+        all_samples_present = data_access.verifySampleNames(study_id, file_sample_names)
+        if not all_samples_present:
+            samples_missing = True
+        
+    return errors, samples_missing
+
+def validatePrepFile(mdtable, req, study_id):
     errors = []
+    key_fields_changed = False
     
     # Combo of run_prefix and barcode must be unique
     run_prefixes = []
@@ -96,8 +107,33 @@ def validatePrepFile(mdtable):
         
     for dupe in dupes:
         errors.append('Pairs of BARCODE and RUN_PREFIX must be unique with the prep file: %s' % dupe)
-                
-    return errors
+    
+    # Verify that the key fields we require have not been modified:
+    # sample_name (already verified in validateSampleFile), linker, primer, barcode, run_prefix, platform
+    
+    # Extract fields from mdtable
+    file_sample_names = zip(*mdtable.getColumn('sample_name').values)[0]
+    file_linkers = zip(*mdtable.getColumn('linker').values)[0]
+    file_primers = zip(*mdtable.getColumn('primer').values)[0]
+    file_barcodes = zip(*mdtable.getColumn('barcode').values)[0]
+    file_run_prefixes = zip(*mdtable.getColumn('run_prefix').values)[0]
+    file_platforms = zip(*mdtable.getColumn('platform').values)[0]
+
+    # Get data from database:
+    # s.sample_name, sp.linker, sp.primer, sp.barcode, sp.run_prefix, sp.platform
+    # ordered by sample_name
+    database_fields = data_access.getImmutableDatabaseFields(study_id)
+    
+    # Compare. If they do not match, we must ask the user to reload all metadata or abort
+    i = 0
+    for file_sample_name in file_sample_names:
+        for sample_name, linker, primer, barcode, run_prefix, platform in database_fields:
+            if file_sample_name == sample_name:
+                if file_linkers[i] != linker or file_primers[i] != primer or file_barcodes[i] != barcode or file_run_prefixes[1] != run_prefix or file_platforms[i] != platform:
+                    key_fields_changed = True
+        i += 1
+    
+    return errors, key_fields_changed
     
 def multiFileValidation(sample_mdtable, prep_mdtable):
     errors = []
@@ -141,7 +177,7 @@ def logErrors(master_list, new_list):
 ################################
 # The main attraction 
 ################################
-def validateFileContents(study_id, portal_type, sess, form, req):
+def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id):
     """
     Process the uploaded archive. If valid, write files out to the filesystem
     and validate the contents of each.
@@ -149,6 +185,9 @@ def validateFileContents(study_id, portal_type, sess, form, req):
     
     # A nested FieldStorage instance holds the file
     fileitem = form['file']
+    
+    # Sample validation variables
+    samples_missing = False
     
     # Test if the file was uploaded
     if fileitem.filename:
@@ -237,10 +276,12 @@ def validateFileContents(study_id, portal_type, sess, form, req):
             # Perform specific validations
             if 'sample_template' in outfile_filename:
                 sample_mdtable = mdtable
-                logErrors(errors, validateSampleFile(mdtable, study_id))
+                sample_errors, samples_missing = validateSampleFile(mdtable, study_id, web_app_user_id)
+                logErrors(errors, sample_errors)
             elif 'prep_template' in outfile_filename:
                 prep_mdtable = mdtable
-                logErrors(errors, validatePrepFile(mdtable))
+                prep_errors, key_fields_changed = validatePrepFile(mdtable, req, study_id)
+                logErrors(errors, prep_errors)
 
         # Make sure we have one of each template type
         if not sample_template_found:
@@ -268,13 +309,25 @@ def validateFileContents(study_id, portal_type, sess, form, req):
             for e in errors:    
                 req.write('<li style="color:#FF0000">%s</li>\n' % e)
             req.write('</ul>')
-                            
+        
+        # Handle sample database validation issues
+        if samples_missing:
+            # Do not change this string. It's checked for on the respose page.
+            req.write('missing samples')
+            return None
+            
+        # Handle immutable field issues
+        if key_fields_changed:
+            # Do not change this string. It's checked for on the respose page.
+            req.write('immutable fields changed')
+            return None
+                                        
         # Delete the old files
         files = os.listdir(dir_path)
         for file_name in files:
             if file_name.endswith('.xls') or file_name.endswith('.zip'):
                 if os.path.basename(file_name) not in templates:
                     os.remove(os.path.join(dir_path, file_name))
-                    
+
         # Assuming all went well, return the list of templates
         return templates

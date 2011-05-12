@@ -113,29 +113,27 @@ if portal_type == 'qiime':
 %>
         
         <li>        
+            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
+                <input type="hidden" name="metadata_complete" id="metadata_complete" value="<%=metadata_complete%>">
+                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
+                
 <%
 if metadata_complete == 'n':
-    
+    # indent
 %>
-            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
-                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
                 Upload metadata to this study (not complete)</a>
-            <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+                <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
 else:
-    
+    # indent
 %>
-            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
-                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
-                <a href="" onclick="if (confirm('Warning, this will remove all existing metadata for this study. Do you want to continue?')) {document.forms['associate_metadata_to_study'].submit();} return false;">
-                Upload metadata to this study</a>
-            <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+                Upload metadata to this study (complete)</a>
+                <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
 <%
-
-# End if
+# End indent
 %>
-                </form>
+            </form>
         </li>
 
 <%

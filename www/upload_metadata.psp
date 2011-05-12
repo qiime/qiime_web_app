@@ -63,8 +63,47 @@ function uploaderFileStatusChanged(uploader, file)
     var index = file.getIndex()
     if (file.getResponseContent() != null && file.getResponseContent() != '')
     {
-        document.getElementById('complete').innerHTML = file.getResponseContent();
-        //alert(file.getResponseContent())
+        var response_text = file.getResponseContent();
+        var ask_user_to_reload = false;
+        var message = '';
+        
+        if (response_text == "missing samples")
+        {
+            message = "Samples currently in the database are not represented in the supplied files.";
+            ask_user_to_reload = true;
+        }
+        else if (response_text = "immutable fields changed")
+        {
+            message = "One or more key fields has been changed: sample_name, linker, primer, barcode, run_prefix, or platform).";
+            ask_user_to_reload = true;
+        }
+        
+        if (ask_user_to_reload)
+        {
+            var ans = confirm(message + " Do you wish to wish to replace the current metadata with the data from these files?");
+            if (ans)
+            {
+                var xmlhttp = new XMLHttpRequest();
+                var url = "set_metadata_load_type.psp";
+                
+                xmlhttp.onreadystatechange=function()
+                {
+                    if (xmlhttp.readyState==4)
+                    {
+                        setCompleteBox();
+                    }
+                }
+    
+                // perform a GET 
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send(null);
+            }
+            else
+            {
+                response_text = "Upload aborted - You have selected not to repace the current set of metadata.";
+            }
+        }
+        document.getElementById("complete").innerHTML = response_text;
     }
     else
     {
