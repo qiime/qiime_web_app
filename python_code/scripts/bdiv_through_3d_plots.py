@@ -136,13 +136,14 @@ def main():
         cmd_call='cd %s; zip %s %s' % (output_dir,zip_fpath,dist_file[1].split('/')[-1])
         system(cmd_call)
         
+        ''' These files are in zip, so don't need a link
         #convert link into web-link
         web_link=path.join(web_fp,dist_file[1].split('/')[-1])
         #add the distance matrices
         valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,dist_file[0].upper())
         if not valid:
             raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-
+        '''
 
     analyses_to_start=jobs_to_start.split(',')
     if '3d_bdiv_plots' in analyses_to_start or '2d_bdiv_plots' in analyses_to_start:
@@ -157,14 +158,15 @@ def main():
             #zip the distance matrices
             cmd_call='cd %s; zip %s %s' % (output_dir,zip_fpath,pc_file[1].split('/')[-1])
             system(cmd_call)
-        
+            
+            ''' These files are in zip, so don't need a link
             #convert link into web-link
             web_link=path.join(web_fp,pc_file[1].split('/')[-1])
             #add the distance matrices
             valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,pc_file[0].upper())
             if not valid:
                 raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-    
+            '''
 
    
 
