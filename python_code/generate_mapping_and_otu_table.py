@@ -299,7 +299,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
                     val = ''
                 to_write += val + '\t'
         # Write the row minus the last tab
-        tmp_mapping_file.write(to_write[0:len(to_write)-1] + '\n')
+        tmp_mapping_file.write(to_write[0:len(to_write)] + '\n')
 
     tmp_mapping_file.close()
     open_tmp_mapping_file=open(os.path.join(mapping_file_dir, file_name_prefix+'_map_tmp.txt')).readlines()
