@@ -1,0 +1,38 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Development"
+
+"""
+This script is for updating a job status for resubmission'
+"""
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+from commands import getoutput
+import re
+
+def updateJob(job_id,state='NEW',notes=''):
+    # Get a copy of data_acess
+    data_access = data_access_factory(ServerConfig.data_access_type)
+
+    # Clear the job from the database
+    data_access.updateTorqueJob(job_id,state,notes)
+    
+
+# Update the job
+job_id = int(form['job_id'])
+updateJob(job_id)
+job_type_id = str(form['job_type_id'])
+if int(job_type_id) in [5,7,8,9,10,11]:
+    psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
+else:
+    # Redirect to the home page for this study
+    psp.redirect('fusebox.psp?page=select_study_task.psp')
+#
+%>
