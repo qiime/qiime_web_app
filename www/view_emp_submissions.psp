@@ -26,17 +26,17 @@ __status__ = 'Development'
         studyGrid = new dhtmlXGridObject('study_grid_container');
         studyGrid.enableMultiselect(true);
         studyGrid.setImagePath("dhtmlxGrid/codebase/imgs/");
-        studyGrid.setHeader("ID,Avg Score,Your Score,Project Name,Study Title,# of Samples,Metadata Complete,# Samples Promised,# Samples Collected,PI,PI Contact,Lab Person,Lab Contact,First Contact,Most Recent Contact,Sample Type,Has Physical Specimen?,Has Extracted Data?,Timeseries?,Spatial Series?");
+        studyGrid.setHeader("ID,Avg Score,Your Score,Project Name,Study Title,# of Samples,Metadata Complete,# Samples Promised,# Samples Collected,PI,PI Contact,Lab Person,Lab Contact,EMP Contact,First Contact,Most Recent Contact,Sample Type,Has Physical Specimen?,Has Extracted Data?,Timeseries?,Spatial Series?");
         
         // Hide the Study ID
         //studyGrid.setInitWidths("0");
         studyGrid.setSkin("light");
                 
         // Sorting types
-        studyGrid.setColSorting("int,int,int,str,str,int,str,int,int,str,str,str,str,str,str,str,str,str,str,str");
+        studyGrid.setColSorting("int,int,int,str,str,int,str,int,int,str,str,str,str,str,str,str,str,str,str,str,str");
         
         // Seting editing types
-        studyGrid.setColTypes("ro,ro,co,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
+        studyGrid.setColTypes("ro,ro,co,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
 
         // Event handling
         studyGrid.attachEvent("onRowSelect", doOnStudyRowSelected);
