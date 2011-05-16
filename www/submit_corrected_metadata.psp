@@ -56,6 +56,8 @@ req.write('LOAD TYPE: %s' % load_type)
 # Remove any existing metadata if a reload is required
 if load_type == 'reload':
     data_access.deleteStudy(study_id, 0)
+else:
+    data_access.updateStudy(study_id)
 
 # Variables to collect our data
 sample_key_fields = {}
