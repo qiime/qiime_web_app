@@ -21,6 +21,7 @@ from metadata_table import *
 
 templates = sess["templates"]
 study_id = sess['study_id']
+has_existing_custom_columns = False
 
 # Preprocess the files to see if we have extras. Forward if not
 templates_with_extras = {}
@@ -54,18 +55,30 @@ else:
                 req.write('<tr>')
                 
                 # If the column was already factored, display a message only
-                if False:
-                #if custom_column_details['extra_table_name'] != None or custom_column_details['common_table_name'] != None:
+                #if False:
+                if custom_column_details['extra_table_name'] != None or custom_column_details['common_table_name'] != None:
+                    has_existing_custom_columns = True
+                    
+                    # Validate that the details are okay
+                    if custom_column_details == None:
+                        raise Exception('Custom column details could not be loaded.')
+                    elif custom_column_details['description'] == None:
+                        raise Exception('Custom column detail "description" could not be loaded.')
+                    elif custom_column_details['data_type'] == None:
+                        raise Exception('Custom column detail "description" could not be loaded.')                
+                    
                     req.write('<td width="250">\n')
                     req.write(column.column_name + ' (already in database)\n<input type="hidden" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
                     req.write('</td>\n')
                     
                     req.write('<td>\n')
                     req.write(custom_column_details['description'])
+                    req.write('<input type="hidden" name="column_description!!%s!!%s" id="column_description!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, custom_column_details['description']))
                     req.write('</td>\n')
                     
                     req.write('<td width="150">\n')
                     req.write(custom_column_details['data_type'])
+                    req.write('<input type="hidden" name="data_type!!%s!!%s" id="data_type!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, custom_column_details['data_type']))
                     req.write('</td>\n')
                 else:
                     req.write('<td>\n')
@@ -98,6 +111,8 @@ else:
 
     if templates_with_extras:
         req.write('<p/>')
+        if has_existing_custom_columns:
+            req.write('<h3>Important Notes:</h3><ul><li>Your template contains custom fields that have already been submitted to the database. If the details for these columns is correct you may continue.</li><li>If the fields do not agree with your study, rename the fields in your templates and re-upload these files.</li></ul>Click "Continue" if you are satisfied with the column details.<br/><br/>')
         req.write('<input type="submit" value="Continue"><br/>')
         req.write('<p/>')
     else:

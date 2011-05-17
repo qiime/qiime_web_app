@@ -311,6 +311,7 @@ def _errorCallback(e):
 
 # Go workers go!
 for item in all_other_fields:
+    #req.write(str(item) + '....' + validated_values[item] + '<br/>')
     item_list.append(item)
     if len(item_list) == bucket_size:
         t = MetadataWorkerThread(validated_values, copy.deepcopy(item_list), sample_key_fields, \

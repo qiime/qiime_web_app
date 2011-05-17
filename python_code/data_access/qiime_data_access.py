@@ -771,15 +771,132 @@ class QiimeDataAccess(object):
     def findExtraColumnMatch(self, column_name):
         """ Searches for a match in 'extra' tables
         """
+        column_name = column_name.upper()
         con = self.getMetadataDatabaseConnection()
         matches = []
         results = con.cursor()
         con.cursor().callproc('qiime_assets.find_extra_column_match', [column_name, results])
         #for row in results:
-        for table_name in results:
-            matches.append(table_name)
+        for row in results:
+            matches.append(row[0])
         
         return matches
+        
+    def addCommonExtraColumn(self, req, study_id, found_extra_table, column_name, data_type, description):
+        """ Factors an extra column into the common table
+        """
+        debug = False
+        # Set the proper target table name
+        common_extra_table_name = None
+        min_column_count = None
+        
+        if 'SAMPLE' in found_extra_table:
+            common_extra_table_name = 'COMMON_EXTRA_SAMPLE'
+            min_column_count = 2
+        elif 'PREP' in found_extra_table:
+            common_extra_table_name = 'COMMON_EXTRA_PREP'
+            min_column_count = 3
+            
+        if common_extra_table_name == None:
+            raise Exception('Error: Could not determine the common extra table name. The found extra table is: %s' % found_extra_table)
+            
+        # Set the database data type:
+        database_data_type = ''
+        if data_type == 'text' or database_data_type == 'range':
+            database_data_type = 'varchar2(4000)'
+        elif data_type == 'numeric':
+            database_data_type = 'int'
+        elif data_type == 'date':
+            database_data_type = 'date'
+            
+        if database_data_type == '':
+            raise Exception('Could not determine common extra column data type.')
+
+        # Create the column if it doesn't already exist
+        statement = """
+        select  count(*) 
+        from    all_tab_columns 
+        where   column_name = '{0}' 
+                and table_name = '{1}'
+        """.format(column_name.upper(), common_extra_table_name)
+        if debug:
+            req.write('<pre>' + statement + '</pre><br/>')
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor().execute(statement).fetchone()
+        if results[0] == 0:
+            statement = 'alter table %s add %s %s' % (common_extra_table_name, column_name, database_data_type)
+            if debug:
+                req.write('<pre>' + statement + '</pre><br/>')
+            con.cursor().execute(statement)
+        
+        # Copy the data found in the found extra_table
+        if common_extra_table_name == 'COMMON_EXTRA_SAMPLE':
+            statement = """
+            MERGE INTO common_extra_sample e
+            USING (
+                    SELECT  sample_id, {0}
+                    FROM    {1}
+                  ) x
+                  ON (e.sample_id = x.sample_id)
+            WHEN MATCHED THEN 
+              UPDATE SET e.{0} = x.{0}
+            WHEN NOT MATCHED THEN 
+              INSERT (e.sample_id, e.{0})
+              VALUES (x.sample_id, x.{0})
+            """.format(column_name, found_extra_table)
+        else:
+            statement = """
+            MERGE INTO common_extra_prep e
+            USING (
+                    SELECT  sample_id, row_number, {0}
+                    FROM    {1}
+                  ) x
+                  ON (e.sample_id = x.sample_id and e.row_number = x.row_number)
+            WHEN MATCHED THEN 
+              UPDATE SET e.{0} = x.{0}
+            WHEN NOT MATCHED THEN 
+              INSERT (e.sample_id, e.row_number, e.{0})
+              VALUES (x.sample_id, x.row_number, x.{0})
+            """.format(column_name, found_extra_table)
+        
+        if debug:
+            req.write('<pre>' + statement + '</pre><br/>')
+        con.cursor().execute(statement)
+        statement = 'commit'
+        if debug:
+            req.write('<pre>' + statement + '</pre><br/>')
+        con.cursor().execute(statement)
+        
+        # Remove the column from the found extra table. If it's the last custom column in the table, remove the table
+        statement = "select count(*) from all_tab_columns where table_name = '%s'" % (found_extra_table)
+        if debug:
+            req.write('<pre>' + statement + '</pre><br/>')
+        results = con.cursor().execute(statement).fetchone()
+        if results[0] <= min_column_count:
+            statement = 'drop table %s' % (found_extra_table)
+            if debug:
+                req.write('<pre>' + statement + '</pre><br/>')
+            con.cursor().execute(statement)
+        else:
+            statement = 'alter table %s drop column %s' % (found_extra_table, column_name)
+            if debug:
+                req.write('<pre>' + statement + '</pre><br/>')
+            con.cursor().execute(statement)
+        
+        # Clean up references in study_actual_columns
+        statement = """
+        update  study_actual_columns 
+        set     table_name = '"{0}"' 
+        where   study_id = {1} 
+                and table_name = '{2}'
+        """.format(common_extra_table_name, study_id, found_extra_table)
+        if debug:
+            req.write('<pre>' + statement + '</pre><br/>')
+        con.cursor().execute(statement)
+        statement = 'commit'
+        if debug:
+            req.write('<pre>' + statement + '</pre><br/>')
+        con.cursor().execute(statement)
             
     def addExtraColumnMetadata(self, study_id, table_level, column_name, description, data_type):
         """ inserts metadata for an "extra" column
@@ -1175,8 +1292,7 @@ class QiimeDataAccess(object):
                 table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
             
             # Double-quote for database safety.
-            table_name = '"' + table_name + '"'
-            
+            table_name = '"' + table_name + '"'            
             log.append('Table name found: %s' % (table_name))
             
             # Store the field name in the database. These are the field names which will
@@ -1244,7 +1360,8 @@ class QiimeDataAccess(object):
             
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
             '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"', \
-            '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HOST_SAMPLE"', '"HUMAN_ASSOCIATED"'] \
+            '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HOST_SAMPLE"', '"HUMAN_ASSOCIATED"',
+            '"COMMON_EXTRA_SAMPLE"', '"COMMON_EXTRA_PREP"'] \
             or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_field':key_field, 'study_id':study_id}
                 statement = 'select sample_id from "SAMPLE" where sample_name = :key_field and study_id = :study_id'
@@ -1275,7 +1392,7 @@ class QiimeDataAccess(object):
             log.append('Checking if row already exists...')
             
             # Must append row_num if sequence table
-            if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+            if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_column_value':key_column_value, 'row_number':row_num}
                 statement = 'select * from %s where %s = :key_column_value and row_number = :row_number'\
                     % (table_name, key_column)
@@ -1287,7 +1404,7 @@ class QiimeDataAccess(object):
                 
             if results == None:
                 log.append('No row found, inserting new row')
-                if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+                if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
                     log.append('Row number is %s' % (str(row_num)))
                     named_params = {'key_column_value':key_column_value, 'row_number':row_num}
                     statement = 'insert into %s (%s, row_number) values (:key_column_value, :row_number)'\
@@ -1302,7 +1419,7 @@ class QiimeDataAccess(object):
             log.append('Writing metadata value...')
             if database_data_type == 'date':
                 field_value = self.convertToOracleHappyName(field_value)
-            if table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
+            if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
                 statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s'\
                     % (table_name, field_name, field_value, key_column, key_column_value, row_num)
             else:  
