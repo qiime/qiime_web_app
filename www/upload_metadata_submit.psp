@@ -37,8 +37,7 @@ web_app_user_id = sess['web_app_user_id']
 # Validate zip file contents. If valid, get list of template files back and
 # validate their contents
 templates = validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id)
-
-if templates != None:    
+if templates != None:
     # Set the template names into our session variable
     fullnames = []
     for template in templates:

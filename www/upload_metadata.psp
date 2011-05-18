@@ -57,6 +57,7 @@ function uploaderFileStatusChanged(uploader, file)
     if (file.getStatus() == file.STATUS_FAILED)
     {
         alert('failed');
+        return;
     }
     
     var filecount = uploader.getFileCount()
@@ -72,7 +73,7 @@ function uploaderFileStatusChanged(uploader, file)
             message = "Samples currently in the database are not represented in the supplied files.";
             ask_user_to_reload = true;
         }
-        else if (response_text = "immutable fields changed")
+        else if (response_text == "immutable fields changed")
         {
             message = "One or more key fields has been changed: sample_name, linker, primer, barcode, run_prefix, or platform).";
             ask_user_to_reload = true;

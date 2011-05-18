@@ -56,7 +56,13 @@ def validateSampleFile(mdtable, study_id, web_app_user_id):
     dupes = []
     samples_missing = False
     
-    sample_values = mdtable.getColumn('sample_name').values
+    # If the sample_name is missing, exit immediately
+    try:
+        sample_values = mdtable.getColumn('sample_name').values
+    except Exception, e:
+        errors.append('Error: "sample_name" must exist in your sample template.')
+        return errors, samples_missing
+    
     for name_valid_pair in sample_values:
         # The values are actually a tuple of the value and whether or not it validated
         name = name_valid_pair[0]
@@ -83,6 +89,18 @@ def validateSampleFile(mdtable, study_id, web_app_user_id):
 def validatePrepFile(mdtable, req, study_id):
     errors = []
     key_fields_changed = False
+    
+    # If any key fields are missing, exit immediately
+    try:
+        mdtable.getColumn('linker')
+        mdtable.getColumn('primer')
+        mdtable.getColumn('barcode')
+        mdtable.getColumn('run_prefix')
+        mdtable.getColumn('platform')
+        mdtable.getColumn('sample_name')
+    except Exception, e:
+        errors.append('"linker", "primer", "barcode", "run_prefix", "platform", and "sample_name" must exist in your prep template.')
+        return errors, key_fields_changed
     
     # Combo of run_prefix and barcode must be unique
     run_prefixes = []
@@ -140,6 +158,14 @@ def multiFileValidation(sample_mdtable, prep_mdtable):
     orphans = []
     samples_with_no_prep = []
     bad_project_names = []
+    
+    # If any key fields are missing, exit immediately
+    try:
+        sample_mdtable.getColumn('sample_name')
+        prep_mdtable.getColumn('sample_name')
+    except Exception, e:
+        errors.append('Cross-file validation failed due to missing "sample_name" field.')
+        return errors
 
     # Make sure no sample_name entries exist in prep template that do not also exist in sample file
     sample_sample_values = sample_mdtable.getColumn('sample_name').values
@@ -309,25 +335,29 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             for e in errors:    
                 req.write('<li style="color:#FF0000">%s</li>\n' % e)
             req.write('</ul>')
-        
-        # Handle sample database validation issues
-        if samples_missing:
-            # Do not change this string. It's checked for on the respose page.
-            req.write('missing samples')
-            return None
             
-        # Handle immutable field issues
-        if key_fields_changed:
-            # Do not change this string. It's checked for on the respose page.
-            req.write('immutable fields changed')
             return None
+        else:
+            # Handle sample database validation issues
+            if samples_missing:
+                # Do not change this string. It's checked for on the respose page.
+                req.write('missing samples')
+                return None
+            
+            # Handle immutable field issues
+            if key_fields_changed:
+                # Do not change this string. It's checked for on the respose page.
+                req.write('immutable fields changed')
+                return None
                                         
-        # Delete the old files
-        files = os.listdir(dir_path)
-        for file_name in files:
-            if file_name.endswith('.xls') or file_name.endswith('.zip'):
-                if os.path.basename(file_name) not in templates:
-                    os.remove(os.path.join(dir_path, file_name))
+            # Delete the old files
+            files = os.listdir(dir_path)
+            for file_name in files:
+                if file_name.endswith('.xls') or file_name.endswith('.zip'):
+                    if os.path.basename(file_name) not in templates:
+                        os.remove(os.path.join(dir_path, file_name))
 
-        # Assuming all went well, return the list of templates
-        return templates
+            # Assuming all went well, return the list of templates
+            return templates
+            
+

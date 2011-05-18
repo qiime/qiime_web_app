@@ -19,7 +19,7 @@ __status__ = "Development"
 <%
 from metadata_table import *
 
-templates = sess["templates"]
+templates = sess['templates']
 study_id = sess['study_id']
 has_existing_custom_columns = False
 
@@ -51,21 +51,20 @@ else:
             for column in user_defined_columns:
                 # Figure out if this column has already been factored into a common table
                 custom_column_details = data_access.getCustomColumnDetails(column.column_name)
-
                 req.write('<tr>')
                 
                 # If the column was already factored, display a message only
-                #if False:
                 if custom_column_details['extra_table_name'] != None or custom_column_details['common_table_name'] != None:
+                    log.append(str(custom_column_details))
                     has_existing_custom_columns = True
                     
                     # Validate that the details are okay
                     if custom_column_details == None:
-                        raise Exception('Custom column details could not be loaded.')
+                        raise Exception('Custom column details could not be loaded for "%s".' % column.column_name)
                     elif custom_column_details['description'] == None:
-                        raise Exception('Custom column detail "description" could not be loaded.')
+                        raise Exception('Custom column detail "description" could not be loaded for "%s".' % column.column_name)
                     elif custom_column_details['data_type'] == None:
-                        raise Exception('Custom column detail "description" could not be loaded.')                
+                        raise Exception('Custom column detail "data_type" could not be loaded for "%s".' % column.column_name)
                     
                     req.write('<td width="250">\n')
                     req.write(column.column_name + ' (already in database)\n<input type="hidden" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
