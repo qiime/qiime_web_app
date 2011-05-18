@@ -336,19 +336,19 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
                 req.write('<li style="color:#FF0000">%s</li>\n' % e)
             req.write('</ul>')
             
-            return None
+            return None, errors
         else:
             # Handle sample database validation issues
             if samples_missing:
                 # Do not change this string. It's checked for on the respose page.
                 req.write('missing samples')
-                return None
+                return templates, errors
             
             # Handle immutable field issues
             if key_fields_changed:
                 # Do not change this string. It's checked for on the respose page.
                 req.write('immutable fields changed')
-                return None
+                return templates, errors
                                         
             # Delete the old files
             files = os.listdir(dir_path)
@@ -358,6 +358,6 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
                         os.remove(os.path.join(dir_path, file_name))
 
             # Assuming all went well, return the list of templates
-            return templates
+            return templates, errors
             
 
