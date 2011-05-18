@@ -85,7 +85,7 @@ else:
                     req.write('</td>\n')
             
                     req.write('<td>\n')
-                    req.write('<input type="text" class="required" style="width:400" name="column_description!!%s!!%s" id="column_description!!%s!!%s" value="">\n' % (template_filename, column.column_name, template_filename, column.column_name))
+                    req.write('<input type="text" class="required" style="width:400" name="column_description!!%s!!%s" id="column_description!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
                     req.write('</td>\n')
             
                     req.write('<td>\n')
