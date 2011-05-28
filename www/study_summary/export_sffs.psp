@@ -48,7 +48,7 @@ run_prefixes = cur.execute('select distinct sp.RUN_PREFIX \
                             % (str(study_id)))
 req.write('<p><b><u>SFF Files:</u></b><br>')
 for run_prefix in run_prefixes:
-    req.write('<a href=\'ftp://thebeast.colorado.edu/pub/QIIME_DB_Study_SFFs/study_%s_%s.sff\' target="_blank">study_%s_%s.sff.tgz</a></p>' % (str(study_id),run_prefix[0],str(study_id),run_prefix[0]))
+    req.write('<a href=\'ftp://thebeast.colorado.edu/pub/QIIME_DB_Study_SFFs/study_%s_%s.sff.tgz\' target="_blank">study_%s_%s.sff.tgz</a></p>' % (str(study_id),run_prefix[0],str(study_id),run_prefix[0]))
 
 %>
 </body>
