@@ -73,7 +73,13 @@ def print_study_info_and_values_table(query_results):
         info_table.append('<h3>'+str(i)+\
                           ' (<a href=\'./study_summary/export_metadata.psp\' '+\
                           ' target="_blank">'+\
-                          'download metadata</a>)</h3>')
+                          'download metadata</a>)&nbsp;')
+        #
+        if sffs[0]:
+            info_table.append('(<a href=\'./study_summary/export_sffs.psp\' '+\
+                              ' target="_blank">'+\
+                              'download sffs</a>)</h3>')
+    #
     
     #write out study information
     info_table.append('<table><tr><th><u>Study Information</u></th><td></tr>')

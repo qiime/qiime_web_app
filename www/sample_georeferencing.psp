@@ -59,6 +59,46 @@ for i,val in enumerate(results):
         result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'FF0000\']')
 
 
+results=[["Bonnie OA Samples",50.25,4.216667],
+["McMahon Bog Lakes",46.041014,-89.686411],
+["Cansu L4",50.25,4.216667],
+["Catlin DNA",78.7115,-104.8776666],
+["Russian Tundra",69.43513,-97.738728],
+["Russian Tundra 2", 74.462540,-97.738728],
+["Bergen Mesocosm",60.269444,5.222222],
+["Tatoosh Island",48.32,-124.74],
+["C-MORE HOT",22.75,-158],
+["McMurdo Dry Valley",-77.4348,162.1891],
+["Exotic vs. Native Grassland",31.1,-97.34],
+["Switchgrass Spatial Study",41.841521,-88.229872]]
+
+for i,val in enumerate(results):
+    if val[0] and val[1] and val[2]:
+        result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'FFFF00\']')
+
+
+'''
+results=[["Bonnie OA Samples",50.25,4.216667],
+["McMahon Bog Lakes",46.041014,-89.686411],
+["Cansu L4",50.25,4.216667],
+["Catlin DNA",78.7115,-104.8776666],
+["Russian Tundra",69.43513,-97.738728],
+["Russian Tundra 2", 74.462540,-97.738728],
+["Bergen Mesocosm",60.269444,5.222222],
+["Tatoosh Island",48.32,-124.74],
+["C-MORE HOT",22.75,-158],
+["McMurdo Dry Valley",-77.4348,162.1891],
+["Exotic vs. Native Grassland",31.1,-97.34],
+["Switchgrass Spatial Study",41.841521,-88.229872]]
+
+for i,val in enumerate(results):
+    if val[0] and val[1] and val[2]:
+        result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'FF69B4\']')
+
+'''
+
+
+
 req.write('%s];' % ','.join(result_list))
 req.write('window.onload=initialize;</script>')
 

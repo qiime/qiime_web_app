@@ -322,6 +322,12 @@ function setMarkers(map, locations) {
   for (var i = 0; i < locations.length; i++) {
     var loc = locations[i];
     var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
-	var styleMaker1 = new StyledMarker({size:(102,102),styleIcon:new StyledIcon(StyledIconTypes.MARKER,{size:(100,100),color:loc[4]}),position:myLatLng,map:map,title:loc[0]});
+    /*var styleMaker1 = new google.maps.Marker({  
+      position: myLatLng,  
+      map: map,  
+      icon: './img/emp.png',
+      size(5,5,widthUnit?:px, heightUnit?:px)
+    });*/
+	var styleMaker1 = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.MARKER,{size:(100,100),color:loc[4]}),position:myLatLng,map:map,title:loc[0]});
   }
 }
