@@ -260,17 +260,16 @@ the list of ontologies and function buttons.
 
 Onsubmit returns false, since the form is not formally submitted and
 it will remove the return key functionality.
--->
+
 <script>
     /* use AJAX to load the seq/sample stats */
     getStats(document.forms);
 </script>
 
-<!-- this is the table displaying seq/sample stats -->
 <table class='stats' id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
     <tr><th>Loading Stats...</th></th>
 </table>
-
+-->
 <form id="meta_analysis_params" name="meta_analysis_params" onsubmit="return false;">
 
 <h3>Meta-Analyses to Perform</h3>

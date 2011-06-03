@@ -22,6 +22,7 @@ from qiime.format import format_matrix,format_otu_table
 def public_cols_to_dict(public_columns):
     # create a dictionary containing all public column fields
     unique_public_columns={}
+    unique_studies=[]
     for i,j in enumerate(public_columns):
         if public_columns[i][1].strip('"').startswith('EXTRA_PREP') or public_columns[i][1].strip('"').startswith('EXTRA_SAMPLE'):
             continue
@@ -32,8 +33,11 @@ def public_cols_to_dict(public_columns):
             else:
                 unique_public_columns[col_key]=[]
                 unique_public_columns[col_key].append(public_columns[i][2])
+        
+        if public_columns[i][2] not in unique_studies:
+            unique_studies.append(str(public_columns[i][2]))
     
-    return unique_public_columns
+    return unique_public_columns,unique_studies
 
 def get_unique_package_column_values(package_cols):
     #This function filters out hidden fields from the returned package columns
@@ -45,7 +49,7 @@ def get_unique_package_column_values(package_cols):
     return columns
         
 def unique_cols_to_select_box_str(public_columns):
-    unique_public_columns=public_cols_to_dict(public_columns)
+    unique_public_columns,unique_studies=public_cols_to_dict(public_columns)
     
     # get submission fields
     #sra_submission_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_submission_level))[0]))
@@ -67,14 +71,13 @@ def unique_cols_to_select_box_str(public_columns):
     prep_lists=prep_field_list+sra_experiment_field_list
     
     select_box=[]
+    new_study_str='S'.join(unique_studies)
+    
     # write out the public column values as a select box
     for col in unique_public_columns:
         table_name,col_name=col.split('####SEP####')
         studies_to_use=str(unique_public_columns[col]).strip('[]').split(',')
         study_string=[]
-        for i in studies_to_use:
-            study_string.append(str(i.strip()))
-            new_study_str='S'.join(study_string)
         
         # remove the Public fields
         if str(col_name) not in ['PUBLIC']:

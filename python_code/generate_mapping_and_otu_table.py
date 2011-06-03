@@ -149,18 +149,24 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
 
     # Handle host tables
     if '"HOST_SAMPLE"' in tables:
-        tables.remove('"HOST_SAMPLE"')
         statement += '\
         left join "HOST_SAMPLE" \n\
         on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
 
     # Deal with the rest of the tables. They should all be assocaiated by sample id.
     for table in tables:
-        if table=='"HOST"':
+        if table=='"HOST"' in tables and '"HOST_SAMPLE"' not in tables:
+            statement += '\
+            left join "HOST_SAMPLE" \n\
+            on "SAMPLE".sample_id = "HOST_SAMPLE".sample_id\n'
             statement += '\
             left join ' + table + '\n\
             on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
-        else:
+        elif table=='"HOST"' and '"HOST_SAMPLE"' in tables:
+            statement += '\
+            left join ' + table + '\n\
+            on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
+        elif table!='"HOST_SAMPLE"':
             statement += '\
             left join ' + table + '\n\
             on "SAMPLE".sample_id = ' + table + '.sample_id\n '
@@ -207,12 +213,11 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     if additional_where_statements<>[]:
         statement += ' and (%s) ' % (' and '.join(additional_where_statements)) 
 
-    #req.write(statement)
     # Run the statement
 
     con = data_access.getMetadataDatabaseConnection()
     cur = con.cursor()
-    print statement
+
     #req.write(str(statement)+'<br><br>')
     results = cur.execute(statement)
 
