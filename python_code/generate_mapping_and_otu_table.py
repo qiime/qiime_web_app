@@ -444,13 +444,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         system(cmd_call)
         
         
-        
-    #valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
-    
-    #if not valid:
-    #    raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-        
-        
+
     #
     params=[]
     params.append('fs_fp=%s' % fs_fp)
@@ -471,7 +465,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     
     analyses_to_start=jobs_to_start.split(',')
     if 'bdiv' in analyses_to_start:
-        job_type='betaDiversityThrough3DPlots'
+        job_type='betaDiversityThroughPlots'
 
         # Submit the Beta Diversity jobs
         try:
@@ -480,6 +474,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         
         except Exception, e:
             raise ValueError,e
+            
     if 'heatmap' in analyses_to_start:
         job_type='makeOTUHeatmap'
         

@@ -20,9 +20,6 @@ from submit_job_to_qiime import submitQiimeJob
 from qiime.parse import parse_qiime_parameters
 from qiime.workflow import run_qiime_alpha_rarefaction, print_commands,\
     call_commands_serially, print_to_stdout, no_status_updates
-from handler_workflows import run_beta_diversity,run_principal_coordinates,\
-                              run_3d_plots,run_2d_plots,\
-                              run_make_distance_histograms
 from cogent.app.util import get_tmp_filename
 
 from data_access_connections import data_access_factory

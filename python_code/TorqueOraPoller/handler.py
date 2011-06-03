@@ -27,7 +27,7 @@ QIIME_SUBMIT_OTU_MAPPING_TO_DB = QIIME_WEBAPP_BASE  + "/submit_otu_mapping_to_db
 QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
 QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
-QIIME_BDIV_THROUGH_3D_PLOTS= QIIME_WEBAPP_BASE + "/bdiv_through_3d_plots.py"
+QIIME_BDIV_THROUGH_PLOTS= QIIME_WEBAPP_BASE + "/bdiv_through_plots.py"
 QIIME_MAKE_OTU_HEATMAP= QIIME_WEBAPP_BASE + "/make_otu_heatmap.py"
 QIIME_SUMMARIZE_TAXA= QIIME_WEBAPP_BASE + "/summarize_taxonomy.py"
 QIIME_ALPHA_RAREFACTION= QIIME_WEBAPP_BASE + "/alpha_rarefaction.py"
@@ -362,10 +362,10 @@ def load_sff_and_metadata(input, output):
     str_fmt = "%s %s/submit_sff_and_metadata_to_db.py -i %s -s 0"
     cmd_str = str_fmt % (PYTHON_BIN, QIIME_WEBAPP_BASE, input)
 
-class betaDiversityThrough3DPlots(JobHandler):
-    """Handler for bdiv_through_3d_plots.py"""
+class betaDiversityThroughPlots(JobHandler):
+    """Handler for bdiv_through_plots.py"""
 
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_BDIV_THROUGH_3D_PLOTS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --otu_table_fp %(otu_table_fp)s --mapping_file_fp %(mapping_file_fp)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s --tree_fp %(tree_fp)s --run_date %(run_date)s --zip_fpath %(zip_fpath)s --zip_fpath_db %(zip_fpath_db)s" ])
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_BDIV_THROUGH_PLOTS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --otu_table_fp %(otu_table_fp)s --mapping_file_fp %(mapping_file_fp)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --jobs_to_start %(jobs_to_start)s --tree_fp %(tree_fp)s --run_date %(run_date)s --zip_fpath %(zip_fpath)s --zip_fpath_db %(zip_fpath_db)s" ])
     _base_args = {'fs_fp':None, 'web_fp':None,'otu_table_fp':None,'mapping_file_fp':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'jobs_to_start':None,'tree_fp':None,'run_date':None,'zip_fpath':None,'zip_fpath_db':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):

@@ -79,7 +79,10 @@ for key in form:
     if len(split_key)==1:
         if key not in ['fname_prefix','bdiv_rarefied_at','taxonomy',\
                        'jobs_to_start','otutable_rarefied_at']:
-            fout.write('%s\t%s\n' %(key,form[key]))
+            if key=='summarize_taxa:delimiter':
+                fout.write('%s\t\'%s\'\n' %(key,form[key]))
+            else:
+                fout.write('%s\t%s\n' %(key,form[key]))
         
 fout.close()
 

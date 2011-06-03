@@ -128,7 +128,7 @@ def main():
     
     # add in optional parameters depending on whether they are supplied
     if bdiv_rarefied_at:
-        beta_div_cmd+=" -e %s" % (beta_rarefied_at)
+        beta_div_cmd+=" -e %s" % (str(bdiv_rarefied_at))
     
     html_fpaths=[]
     
@@ -181,7 +181,7 @@ def main():
         valid=data_access.addMetaAnalysisFiles(True,int(meta_id),i[0],
                                                'BDIV',run_date,i[1].upper())
         if not valid:
-            raise ValueError, 'There was an issue uploading the filepaths to the DB!'     
+            raise ValueError, 'There was an issue uploading the filepaths to the DB!'
 
     
 if __name__ == "__main__":

@@ -271,7 +271,7 @@ def get_html_for_options(script_name,script_info,option_type,column_headers,
         
             #check if the option is deprecated based on the start of the help
             #message containing the word DEPRECATED
-            if not option_help_msg.startswith('DEPRECATED'):
+            if not option_help_msg.upper().startswith('DEPRECATED'):
                 #if option is valid, then generate the tooltip mouseover for the 
                 #option
                 option_help='<a class="tooltip" href="#">'
