@@ -217,7 +217,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
 
     con = data_access.getMetadataDatabaseConnection()
     cur = con.cursor()
-
+    
     #req.write(str(statement)+'<br><br>')
     results = cur.execute(statement)
 
@@ -353,6 +353,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     query=[]
     sample_counts={}
     otus=[]
+    
     for i,sample_name1 in enumerate(samples_list):
         sample_counts[sample_name1]={}
         user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97,'GREENGENES_REFERENCE',97)
