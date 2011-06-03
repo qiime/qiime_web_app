@@ -394,6 +394,9 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     system(cmd_call)
     cmd_call='cd %s; zip %s %s' % (otu_table_file_dir,zip_fpath,otu_table_filepath.split('/')[-1])
     system(cmd_call)
+    params_fpath=params_path.split('/')
+    cmd_call='cd %s; zip %s %s' % ('/'.join(params_fpath[:-1]),zip_fpath,params_fpath[-1])
+    system(cmd_call)
     
     
     #get the date to put in the db
@@ -439,6 +442,9 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         
         cmd_call='cd %s; zip %s %s' % (otu_table_file_dir,zip_fpath,otu_table_filepath.split('/')[-1])
         system(cmd_call)
+        
+        
+        
     #valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
     
     #if not valid:

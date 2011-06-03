@@ -14,17 +14,14 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs,path,system
-from qiime.util import load_qiime_config
+from qiime.util import load_qiime_config,get_qiime_scripts_dir,create_dir
 from generate_mapping_and_otu_table import write_mapping_and_otu_table
 from submit_job_to_qiime import submitQiimeJob
 from qiime.parse import parse_qiime_parameters
-from qiime.workflow import print_to_stdout,\
-                           call_commands_serially,no_status_updates
-from handler_workflows import run_beta_diversity,run_principal_coordinates,\
-                              run_3d_plots,run_2d_plots,\
-                              run_make_distance_histograms
+from qiime.workflow import print_to_stdout,WorkflowLogger,generate_log_fp,\
+                           call_commands_serially,no_status_updates,\
+                           WorkflowError,get_params_str
 from cogent.app.util import get_tmp_filename
-
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 from submit_job_to_qiime import submitQiimeJob
@@ -82,9 +79,10 @@ def main():
     user_id=int(opts.user_id)
     meta_id=int(opts.meta_id)
     bdiv_rarefied_at=int(opts.bdiv_rarefied_at)
-    jobs_to_start=opts.jobs_to_start
+    jobs_to_start=opts.jobs_to_start.split(',')
     tree_fp=opts.tree_fp
     command_handler=call_commands_serially
+    status_update_callback=no_status_updates
     zip_fpath=opts.zip_fpath
     zip_fpath_db=opts.zip_fpath_db
     run_date=opts.run_date
@@ -108,134 +106,72 @@ def main():
     
     params=parse_qiime_parameters(parameter_f)
     
-    try:
-        makedirs(output_dir)
-    except OSError:
-        if force:
-            pass
-        else:
-            # Since the analysis can take quite a while, I put this check
-            # in to help users avoid overwriting previous output.
-            print "Output directory already exists. Please choose "+\
-             "a different directory, or force overwrite with -f."
-            exit(1)
-
-    # run beta-diversity calculations and return fpaths
-    bdiv_files=run_beta_diversity(otu_table_fp, mapping_file_fp,
-        output_dir, command_handler, params, qiime_config,
-        sampling_depth=bdiv_rarefied_at,
-        tree_fp=tree_fp, parallel=False, 
-        status_update_callback=no_status_updates)
-
-
+    create_dir(output_dir)
+    commands = []
+    python_exe_fp = qiime_config['python_exe_fp']
+    script_dir = get_qiime_scripts_dir()
+    logger = WorkflowLogger(generate_log_fp(output_dir),
+                            params=params,
+                            qiime_config=qiime_config)
     
-    #iterate over files generated and put the paths in the database for display
-    for dist_file in bdiv_files:
+    beta_diversity_metrics = params['beta_diversity']['metrics'].split(',')
+
+    beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -f' %\
+        (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
+         tree_fp,opts.params_path)
+    
+    if bdiv_rarefied_at:
+        beta_div_cmd+=" -e %s" % (beta_rarefied_at)
+    
+    html_fpaths=[]
+    
+    if '3d_bdiv_plots' not in jobs_to_start:  
+        beta_div_cmd+=" --suppress_3d_plots"
+    else:
+        for met in beta_diversity_metrics:
+            html_fpaths.append((path.join(web_fp,'%s_3d_discrete' % (met),
+                                '%s_3D_PCoA_plots.html' % (met)),
+                                '3D_DISCRETE_PLOT'))
+            html_fpaths.append((path.join(web_fp,'%s_3d_continuous' % (met),
+                                         '%s_3D_PCoA_plots.html' % (met)), 
+                                         '3D_CONTINUOUS_PLOT'))
+    
+    if '2d_bdiv_plots' not in jobs_to_start:
+        beta_div_cmd+=" --suppress_2d_plots"
+    else:
+        for met in beta_diversity_metrics:
+            html_fpaths.append((path.join(web_fp,'%s_2d_discrete' % (met),
+                                         '%s_2D_PCoA_plots.html' % (met)),
+                                         '2D_DISCRETE_PLOT'))
+            html_fpaths.append((path.join(web_fp,'%s_2d_continuous' % (met),
+                                         '%s_2D_PCoA_plots.html' % (met)),
+                                          '2D_CONTINUOUS_PLOT'))
         
-        #zip the distance matrices
-        cmd_call='cd %s; zip %s %s' % (output_dir,zip_fpath,dist_file[1].split('/')[-1])
-        system(cmd_call)
-        
-        ''' These files are in zip, so don't need a link
-        #convert link into web-link
-        web_link=path.join(web_fp,dist_file[1].split('/')[-1])
-        #add the distance matrices
-        valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,dist_file[0].upper())
+    if 'disthist_bdiv_plots' not in jobs_to_start:
+        beta_div_cmd+=" --suppress_distance_histograms"
+    else:
+        for met in beta_diversity_metrics:
+            html_fpaths.append((path.join(web_fp,'%s_histograms' % (met),
+                                         '%s_distance_histograms.html' % (met)),
+                                         'DISTANCE_HISTOGRAM'))
+    
+    commands.append([('Beta Diversity Through Plots',beta_div_cmd)])
+
+    # Call the command handler on the list of commands
+    command_handler(commands, status_update_callback, logger)
+    
+    #zip the distance matrices
+    cmd_call='cd %s; zip -r %s %s' % (output_dir,\
+                                      zip_fpath, './*')
+    
+    system(cmd_call)
+
+    #convert link into web-link
+    for i in html_fpaths:
+        valid=data_access.addMetaAnalysisFiles(True,int(meta_id),i[0],
+                                               'BDIV',run_date,i[1].upper())
         if not valid:
-            raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-        '''
-
-    analyses_to_start=jobs_to_start.split(',')
-    if '3d_bdiv_plots' in analyses_to_start or '2d_bdiv_plots' in analyses_to_start:
-        
-        pc_files=run_principal_coordinates(bdiv_files,output_dir, params,
-                                           qiime_config,command_handler,
-                                           status_update_callback=no_status_updates)
-    
-        #iterate over files generated and put the paths in the database for display    
-        for pc_file in pc_files:
-        
-            #zip the distance matrices
-            cmd_call='cd %s; zip %s %s' % (output_dir,zip_fpath,pc_file[1].split('/')[-1])
-            system(cmd_call)
-            
-            ''' These files are in zip, so don't need a link
-            #convert link into web-link
-            web_link=path.join(web_fp,pc_file[1].split('/')[-1])
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,pc_file[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-            '''
-
-   
-
-    if '3d_bdiv_plots' in analyses_to_start:
-        
-        bdiv_3d_fpaths=run_3d_plots(pc_files,mapping_file_fp,output_dir, params,
-                                    qiime_config,command_handler,
-                                    status_update_callback=no_status_updates)
-
-
-        #iterate over files generated and put the paths in the database for display
-        for bdiv_3d_plots in bdiv_3d_fpaths:
-
-            #zip the distance matrices
-            cmd_call='cd %s; zip -r %s %s' % (output_dir,zip_fpath,bdiv_3d_plots[2].split('/')[0])
-            system(cmd_call)
-
-            #convert link into web-link
-            web_link=path.join(web_fp,bdiv_3d_plots[2])
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,bdiv_3d_plots[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-                
-    #
-    if '2d_bdiv_plots' in analyses_to_start:
-        
-        bdiv_2d_fpaths=run_2d_plots(pc_files,mapping_file_fp,output_dir, params,
-                                    qiime_config,command_handler,
-                                    status_update_callback=no_status_updates)
-
-
-        #iterate over files generated and put the paths in the database for display
-        for bdiv_2d_plots in bdiv_2d_fpaths:
-
-            #zip the distance matrices
-            cmd_call='cd %s; zip -r %s %s' % (output_dir,zip_fpath,bdiv_2d_plots[2].split('/')[0])
-            system(cmd_call)
-
-            #convert link into web-link
-            web_link=path.join(web_fp,bdiv_2d_plots[2])
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,bdiv_2d_plots[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-
-    #
-    if 'disthist_bdiv_plots' in analyses_to_start:
-        
-        bdiv_disthist_fpaths=run_make_distance_histograms(bdiv_files,mapping_file_fp,
-                                    output_dir, params,
-                                    qiime_config,command_handler,
-                                    status_update_callback=no_status_updates)
-
-
-        #iterate over files generated and put the paths in the database for display
-        for bdiv_disthist_plots in bdiv_disthist_fpaths:
-
-            #zip the distance matrices
-            cmd_call='cd %s; zip -r %s %s' % (output_dir,zip_fpath,bdiv_disthist_plots[1].split('/')[-1])
-            system(cmd_call)
-
-            #convert link into web-link
-            web_link=path.join(web_fp,bdiv_disthist_plots[1].split('/')[-1],'QIIME_Distance_Histograms.html')
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,bdiv_disthist_plots[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-                
+            raise ValueError, 'There was an issue uploading the filepaths to the DB!'     
 
     
     
