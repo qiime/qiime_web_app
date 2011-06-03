@@ -32,30 +32,30 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Submit processed SFF and metadata through picking OTUs into the Oracle DB"
+script_info['brief_description'] = "This script call the beta_diversity_through_plots workflow script in QIIME"
 script_info['script_description'] = """\
-This script takes an processed sff fasta file and performs the \
-following steps:
-
-    1) 
-    2) 
-    3) 
-    4) 
+This script call the beta_diversity_through_plots workflow script in QIIME
 """
-script_info['script_usage'] = [("Example:","This is an example of a basic use case",
-"%prog -i 454_Reads.fna")]
-script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
+script_info['script_usage'] = [("","","")]
+script_info['output_description']= "Output beta diversity plots and puts links in the DB associated to the files generated"
 script_info['required_options'] = [\
-    make_option('-f','--fs_fp',help='this is the location of the actual files on the linux box'),\
-    make_option('-w','--web_fp',help='this is the location that the webserver can find the files'),\
-    make_option('-o','--otu_table_fp',help='this is the path to the otu table'),\
-    make_option('-q','--mapping_file_fp',help='this is the path to the qiime mapping file'),\
-    make_option('-p','--fname_prefix',help='this is the prefix to append to the users files'),\
+    make_option('-f','--fs_fp',
+        help='this is the location of the actual files on the linux box'),\
+    make_option('-w','--web_fp',
+        help='this is the location that the webserver can find the files'),\
+    make_option('-o','--otu_table_fp',
+        help='this is the path to the otu table'),\
+    make_option('-q','--mapping_file_fp',
+        help='this is the path to the qiime mapping file'),\
+    make_option('-p','--fname_prefix',
+        help='this is the prefix to append to the users files'),\
     make_option('-u','--user_id',help='this is the user id'),\
     make_option('-m','--meta_id',help='this is the meta analysis id'),\
     make_option('-b','--params_path',help='this is the parameters file used'),\
-    make_option('-r','--bdiv_rarefied_at',help='this is the rarefaction number'),\
-    make_option('-s','--jobs_to_start',help='these are the jobs that should be started'),\
+    make_option('-r','--bdiv_rarefied_at',
+        help='this is the rarefaction number'),\
+    make_option('-s','--jobs_to_start',
+        help='these are the jobs that should be started'),\
     make_option('-g','--tree_fp',help='this is the gg tree to use'),\
     make_option('-d','--run_date',help='this is the run date'),\
     make_option('-z','--zip_fpath',help='this is the zip fpath'),\
@@ -88,6 +88,7 @@ def main():
     run_date=opts.run_date
     force=True
     
+    # Connect to the database for adding fpaths
     try:
         from data_access_connections import data_access_factory
         from enums import ServerConfig
@@ -96,7 +97,8 @@ def main():
     except ImportError:
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
-        
+    
+    # open and get params
     try:
         parameter_f = open(opts.params_path)
     except IOError:
@@ -108,23 +110,29 @@ def main():
     
     create_dir(output_dir)
     commands = []
+    
     python_exe_fp = qiime_config['python_exe_fp']
     script_dir = get_qiime_scripts_dir()
     logger = WorkflowLogger(generate_log_fp(output_dir),
                             params=params,
                             qiime_config=qiime_config)
     
+    # get the beta_diversity metrics, so we can determine the filepaths based
+    # on these
     beta_diversity_metrics = params['beta_diversity']['metrics'].split(',')
 
+    #start preparing the script call
     beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -f' %\
         (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
          tree_fp,opts.params_path)
     
+    # add in optional parameters depending on whether they are supplied
     if bdiv_rarefied_at:
         beta_div_cmd+=" -e %s" % (beta_rarefied_at)
     
     html_fpaths=[]
     
+    # add 3d plots params
     if '3d_bdiv_plots' not in jobs_to_start:  
         beta_div_cmd+=" --suppress_3d_plots"
     else:
@@ -135,7 +143,8 @@ def main():
             html_fpaths.append((path.join(web_fp,'%s_3d_continuous' % (met),
                                          '%s_3D_PCoA_plots.html' % (met)), 
                                          '3D_CONTINUOUS_PLOT'))
-    
+                                         
+    # add 2d plots params
     if '2d_bdiv_plots' not in jobs_to_start:
         beta_div_cmd+=" --suppress_2d_plots"
     else:
@@ -146,7 +155,8 @@ def main():
             html_fpaths.append((path.join(web_fp,'%s_2d_continuous' % (met),
                                          '%s_2D_PCoA_plots.html' % (met)),
                                           '2D_CONTINUOUS_PLOT'))
-        
+    
+    # add distance histograms params
     if 'disthist_bdiv_plots' not in jobs_to_start:
         beta_div_cmd+=" --suppress_distance_histograms"
     else:
@@ -160,20 +170,19 @@ def main():
     # Call the command handler on the list of commands
     command_handler(commands, status_update_callback, logger)
     
-    #zip the distance matrices
+    
+    #zip the files produced
     cmd_call='cd %s; zip -r %s %s' % (output_dir,\
                                       zip_fpath, './*')
-    
     system(cmd_call)
 
-    #convert link into web-link
+    #add html links to DB for easy display
     for i in html_fpaths:
         valid=data_access.addMetaAnalysisFiles(True,int(meta_id),i[0],
                                                'BDIV',run_date,i[1].upper())
         if not valid:
             raise ValueError, 'There was an issue uploading the filepaths to the DB!'     
 
-    
     
 if __name__ == "__main__":
     main()
