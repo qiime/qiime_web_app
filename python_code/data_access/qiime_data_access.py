@@ -485,12 +485,12 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def addSFFFile(self, study_id, sff_file_path):
+    def addSeqFile(self, study_id, file_path, file_type):
         """ adds a new SFF file to the study
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.add_sff_file', [study_id, sff_file_path])
+            con.cursor().callproc('qiime_assets.add_seq_file', [study_id, file_path, file_type])
             return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
