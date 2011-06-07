@@ -288,11 +288,11 @@ class QiimeDataAccessTests(unittest.TestCase):
         # needs added
         pass
         
-    def test_addSFFFile(self):
-        """ test_addSFFFile: tries to add SFF, but will fail
+    def test_addSeqFile(self):
+        """ test_addSeqFile: tries to add SFF, but will fail
         """
         
-        result = self._qiime_data_access.addSFFFile(1, '/dev/null/my.sff')
+        result = self._qiime_data_access.addSeqFile(1, '/dev/null/my.sff','SFF')
         self.assertFalse(result)
     
     def test_addSFFFileInfo(self):
