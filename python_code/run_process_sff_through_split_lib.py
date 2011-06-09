@@ -15,6 +15,7 @@ import time
 from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file
 from cogent.parse.fastq import MinimalFastqParser
+from cogent.parse.fasta import MinimalFastaParser
 from qiime.format import format_map_file
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
@@ -180,8 +181,6 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
                             params=params,
                             qiime_config=qiime_config)
     
-
-    
     copied_mapping=split(mapping_fp)[-1]
     mapping_input_fp_copy=join(output_dir, copied_mapping)
     copy_mapping_cmd='cp %s %s' % (mapping_fp,mapping_input_fp_copy)
@@ -189,15 +188,6 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
 
     filenames.sort()
 
-    #fastq_dict={}
-    #mapping_file=open(mapping_fp,'U')
-    
-    # iterate over files and import them
-    # both seqs and barcode files are valid fastq files, so we need
-    # to look at the length of seq and/or barcode to determine the file types
-    #for file in filenames:
-    #    fastq_dict[file]=open(file,'U')
-    
     input_str=get_split_libraries_fastq_params_and_file_types(filenames,
                                                               mapping_fp)
     
@@ -230,7 +220,7 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     command_handler(commands,status_update_callback,logger=logger)
 
     # Return the fasta file paths
-    return ','.join(filenames)
+    return filenames
 
 def web_app_call_commands_serially(commands,
                            status_update_callback,

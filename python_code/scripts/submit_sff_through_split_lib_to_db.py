@@ -75,10 +75,10 @@ def main():
         analysis_id = submit_sff_and_split_lib(data_access, fasta_file_paths, study_id)
     elif platform=='ILLUMINA':
         print 'Submitting Illumina data to database...'
-        analysis_id = submit_illumina_and_split_lib(data_access, fasta_file_paths, study_id)
+        analysis_id = submit_illumina_and_split_lib(data_access, fasta_file_paths, study_id,output_dir)
     elif platform=='FASTA':
         print 'Submitting FASTA data to database...'
-        analysis_id = submit_fasta_and_split_lib(data_access, fasta_file_paths, study_id)
+        analysis_id = submit_fasta_and_split_lib(data_access, fasta_file_paths, study_id, output_dir)
         
     print 'Submitting OTU data to database...'
     load_otu_mapping(data_access, output_dir, analysis_id)

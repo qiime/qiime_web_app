@@ -16,6 +16,7 @@ from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file,parse_otu_table
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
+from cogent.parse.fastq import MinimalFastqParser
 from os import system,popen
 from glob import glob
 import re
@@ -28,8 +29,8 @@ from qiime.parse import fields_to_dict
 from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates,generate_log_fp,\
                            get_params_str, WorkflowError
-from qiime.util import (compute_seqs_per_library_stats, 
-                        get_qiime_scripts_dir,
+from qiime.util import (compute_seqs_per_library_stats, get_top_fastq_two_lines,
+                        get_qiime_scripts_dir,qiime_system_call,
                         create_dir)
 from wrap_files_for_md5 import MD5Wrap
 from load_tab_file import input_set_generator, flowfile_inputset_generator, \
@@ -267,12 +268,20 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     # For OTU Tables
     #read in the workflow log file and determine timestamp and svn version of
     #Qiime used for the analysis
-    pick_otus_cmd = ''
     pOTUs_threshold = '97'
     ref_set_threshold = '97'
     pOTUs_method='UCLUST_REF'
     reference_set_name='GREENGENES_REFERENCE'
     otus_log_str = open(join(input_dir, 'gg_97_otus', 'log.txt')).read()
+    log_str = open(join(input_dir, 'gg_97_otus', 'log.txt')).readlines()
+    
+    #from the workflow log file get the pick-otus cmd
+    for substr in log_str:
+        if 'parallel_pick_otus_uclust_ref.py' in substr:
+            pick_otus_cmd=substr
+        elif 'pick_otus.py' in substr:
+            pick_otus_cmd=substr
+    
     otu_run_set_id = 0
     svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
     qiime_revision=get_qiime_svn_version()
@@ -505,79 +514,32 @@ def submit_illumina_and_split_lib(data_access,fastq_files,metadata_study_id,
         
         if not fastq_exists:
             if seq_run_id==0:
-                seq_run_id=data_access.createSequencingRun(True,None,
+                seq_run_id=data_access.createSequencingRun(True,'ILLUMINA',
                                                            None,seq_run_id)
-                                                           
+            
+            count_seqs_cmd="grep ^@ %s | wc -l" % (fastq_fname)
+            o,e,r = qiime_system_call(count_seqs_cmd)
+            seq_counts = o.strip()
+            
+            fastq_fname_open=open(fastq_fname)
+            first_seq_fastq=get_top_fastq_two_lines(fastq_fname_open)
+            header_length=len(first_seq_fastq[1])
+            num_flows=len(first_seq_fastq[1])
+            
             valid=data_access.addSFFFileInfo(True,input_fname,
+                                          seq_counts,
+                                          header_length,
                                           None,
-                                          None,
-                                          None,
-                                          None,
+                                          num_flows,
                                           None,
                                           None,
                                           None,
                                           fastq_md5,seq_run_id)
         else:
             seq_run_id=data_access.getSeqRunIDUsingMD5(fastq_md5)
-        """
-        sff_exists=data_access.checkIfSFFExists(sff_md5)
-        print 'sff in database? %s' % str(sff_exists)
-
-        #if True:
-        if not sff_exists:
-         print 'flow_fname: %s' % flow_fname
-         sff_header=get_header_info(open(flow_fname))
-
-         if sff_header['# of Flows']=='400':
-             instrument_code='GS FLX'
-         elif sff_header['# of Flows']=='168':
-             instrument_code='GS2-'
-         elif sff_header['# of Flows']=='800':
-             instrument_code='Titanium'
-         else:
-             instrument_code='UNKNOWN'
-         print 'Instrument Code: %s' % instrument_code
-         if seq_run_id==0:
-             seq_run_id=data_access.createSequencingRun(True,instrument_code,
-                                         sff_header['Version'],seq_run_id)
-             valid=data_access.addSFFFileInfo(True,sff_basename,
-                                          sff_header['# of Reads'],
-                                          sff_header['Header Length'],
-                                          sff_header['Key Length'],
-                                          sff_header['# of Flows'],
-                                          sff_header['Flowgram Code'],
-                                          sff_header['Flow Chars'],
-                                          sff_header['Key Sequence'],
-                                          sff_md5,seq_run_id)
-         else:
-             valid=data_access.addSFFFileInfo(True,sff_basename,
-                                          sff_header['# of Reads'],
-                                          sff_header['Header Length'],
-                                          sff_header['Key Length'],
-                                          sff_header['# of Flows'],
-                                          sff_header['Flowgram Code'],
-                                          sff_header['Flow Chars'],
-                                          sff_header['Key Sequence'],
-                                          sff_md5,seq_run_id)
-
-         con=data_access.getSFFDatabaseConnection()
-         cur = con.cursor()
-         print 'Writing flow file data to database.'
-         flow_results = flowfile_inputset_generator(open(flow_fname,'U'),cur,seq_run_id,sff_md5,buffer_size=1000)
-         current_item = 0
-         for res in flow_results:
-             start = time.time()
-             valid=data_access.loadSFFData(True,res)
-             end = time.time()
-             print "(flow iteration: %s) Total processor time elapsed: %s" % (current_item, str(end - start))
-             current_item += 1
-         print time.time()
-        else:
-         seq_run_id=data_access.getSeqRunIDUsingMD5(sff_md5)
-        """
              
     print 'sequence_run_id is: %s' % str(seq_run_id)
-
+    
     #print fasta_qual_files
     split_lib_input_md5sum=safe_md5(MD5Wrap(fastq_filenames)).hexdigest()
     print split_lib_input_md5sum

@@ -20,7 +20,8 @@ from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable,\
                        create_dir
 from run_process_sff_through_split_lib import run_process_sff_through_split_lib,\
-                                           web_app_call_commands_serially
+                                          web_app_call_commands_serially,\
+                                          run_process_illumina_through_split_lib
 from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates
 from run_chain_pick_otus import run_chain_pick_otus
@@ -79,7 +80,7 @@ def main():
        parse_command_line_parameters(**script_info)
     
     study_id = opts.study_id
-    run_prefix=splitext(split(opts.map_fname)[-1])[0].split('_')[0]
+    run_prefix='_'.join(splitext(split(opts.map_fname)[-1])[0].split('_')[:-4])
     print run_prefix
     output_dir = '%s/user_data/studies/study_%s/processed_data_%s/' % (environ['HOME'],study_id, run_prefix)
     
@@ -177,9 +178,14 @@ def main():
     otu_output_dir=join(output_dir,'gg_97_otus')
     create_dir(otu_output_dir)
     print 'Running run_chain_pick_otus...'
-    run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
-                        params, qiime_config, parallel=False, \
-                        status_update_callback=status_update_callback)
+    if (sequencing_platform=='ILLUMINA'):
+        run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
+                            params, qiime_config, parallel=True, \
+                            status_update_callback=status_update_callback)
+    else:
+        run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
+                            params, qiime_config, parallel=False, \
+                            status_update_callback=status_update_callback)
     print 'Completed run_chain_pick_otus.'
 
     params=[]
