@@ -21,6 +21,7 @@ portal_type = sess['portal_type']
 frame_target = sess['frame_target']
 study_name = sess['study_name']
 study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+investigation_type = study_info['investigation_type']
 metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
 mapping_file_complete = study_info['mapping_file_complete']
@@ -71,7 +72,14 @@ for item in study_names:
             <form id="create_new_template" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="load_template_fields.psp">
                 <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
-                Generate a MIMARKS-compliant metadata template</a>
+<%
+if investigation_type == 'metagenome':
+    study_type_text = 'MIMS'
+else:
+    study_type_text = 'MIMARKS'
+# End indent
+%>
+                Generate <%=study_type_text%>-compliant metadata templates</a>
             </form>
         </li>
         

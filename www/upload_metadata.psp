@@ -195,19 +195,28 @@ function resizeApplet()
 
 function setCompleteBox()
 {
-    document.forms['upload_complete'].submit();
+<%
+if sess['study_id'] == 0:
+    req.write('document.forms["validate_only"].submit();')
+else:
+    req.write('document.forms["upload_complete"].submit();')
+# End indent
+%>
 }
 
 </script>
 
-<form name="upload_complete" id="upload_complete" method="post" action="fusebox.psp?page=validate_metadata_extra_fields.psp">
+<form name="validate_only" id="validate_only" method="post" action="validate.psp?page=validate_metadata_extra_fields.psp"> 
+</form>
+
+<form name="upload_complete" id="upload_complete" method="post" action="fusebox.psp?page=validate_metadata_extra_fields.psp"> 
 </form>
 
 <table>
 <tr><td>
 <div id='applet'>
 <!--this is the jumploader applet-->
-<p><b>Please zip your 3 metadata files into a single archive prior to uploading.</b><br/>
+<p><b>Please zip your metadata files into a single archive prior to uploading.</b><br/>
 The filename should not contain spaces or non-alphanumeric characters.</p>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 

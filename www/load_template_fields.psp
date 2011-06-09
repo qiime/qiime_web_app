@@ -12,6 +12,10 @@ __status__ = 'Development'
 
 <%
 portal_type = sess['portal_type']
+study_id = sess['study_id']
+web_app_user_id = sess['web_app_user_id']
+study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+investigation_type = study_info['investigation_type']
 %>
 
 <script type='text/javascript' src='js/template.js'></script>
@@ -87,12 +91,6 @@ def outputFields(field_list, prefix, header_text):
 sess["field_list"] = []
 sess.save()
 
-# Write out the study fields
-#field_list = data_access.getPackageColumns(FieldGrouping.study_level)
-#field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_study_level))
-#field_list.sort()
-#outputFields(field_list, 'study', 'Study Fields')
-
 # Write out the required sample fields along with the package-specific fields
 field_list = data_access.getPackageColumns(FieldGrouping.sample_level)
 field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_sample_level))
@@ -108,6 +106,10 @@ outputFields(field_list, 'sample', 'Sample Fields')
 if sess['portal_type'] == 'qiime':
     field_list = data_access.getPackageColumns(FieldGrouping.prep_level)
     field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_experiment_level))
+    if investigation_type == 'metagenome':
+        field_list.extend(data_access.getPackageColumns(FieldGrouping.mims_prep))
+    else:
+        field_list.extend(data_access.getPackageColumns(FieldGrouping.mimarks_prep))
     field_list.sort()
     outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
 

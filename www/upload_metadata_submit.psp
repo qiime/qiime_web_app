@@ -18,8 +18,6 @@ and validate the contents of each.
 ----------------------------------------------------------------------------"""
 
 from upload_metadata_submit import validateFileContents
-import sys
-import traceback
 
 # Some code for Windows systems
 if form.has_key('file') and form['file'].filename:
@@ -38,7 +36,17 @@ web_app_user_id = sess['web_app_user_id']
 
 # Validate zip file contents. If valid, get list of template files back and
 # validate their contents
-templates, errors = validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id)    
+try:
+    f = open('/debug_output/error.txt', 'w')
+    f.write('start log\n')
+    templates, errors = validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id)
+    f.write('got templates.\n')
+except Exception, e:
+    f.write('caught error:\n')
+    f.write(str(e))
+finally:
+    f.close()
+
 if templates != None:
     # Set the template names into our session variable
     fullnames = []
@@ -46,5 +54,4 @@ if templates != None:
         fullnames.append(os.path.join(form['output_dir'], template))
     sess['templates'] = fullnames
     sess.save()
-
 %>
