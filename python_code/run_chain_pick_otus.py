@@ -131,19 +131,20 @@ def run_chain_pick_otus(fasta_file, output_dir, command_handler, params, qiime_c
     uclust_failure_fp = join(pick_otu_dir,\
                         splitext(split(leftover_fasta)[-1])[0]+'_failures.txt')
 
-    params_list=[]
-    params_list.append('-s '+params['pick_otus']['similarity'])
-    params_list.append('-r '+params['pick_otus']['refseqs_fp'])
-    params_list.append('--uclust_stable_sort')
-    
+    # Grab the OTU picker parameters
+    try:
+        # Want to find a cleaner strategy for this: the parallel script
+        # is method-specific, so doesn't take a --otu_picking_method
+        # option. This works for now though.
+        d = params['pick_otus'].copy()
+        del d['otu_picking_method']
+        params_str = ' %s' % get_params_str(d)
+    except KeyError:
+        pass
+        
     if parallel:
         # Grab the parallel-specific parameters
-        try:
-            params_str = get_params_str(params['parallel'])
-        except KeyError:
-            params_str = ''
         
-        '''
         # Grab the OTU picker parameters
         try:
             # Want to find a cleaner strategy for this: the parallel script
@@ -151,29 +152,34 @@ def run_chain_pick_otus(fasta_file, output_dir, command_handler, params, qiime_c
             # option. This works for now though.
             d = params['pick_otus'].copy()
             del d['otu_picking_method']
-            params_str += ' %s' % get_params_str(d)
+            del d['clustering_algorithm']
+            del d['suppress_new_clusters']
+            params_str = ' %s' % get_params_str(d)
         except KeyError:
             pass
-        '''
         
-        params_list.append('-O '+params['parallel']['jobs_to_start'])
-        params_list.append('-Z '+params['parallel']['seconds_to_sleep'])
-
-        # Build the OTU picking command
-        pick_otus_cmd = '%s %s/parallel_pick_otus_uclust_ref.py -i %s -o %s -T %s' %\
-         (python_exe_fp, script_dir, leftover_fasta, pick_otu_dir, ' '.join(params_list))
-    else:
-        '''
         try:
-            params_str = get_params_str(params['pick_otus'])
+            params_str += ' %s' % get_params_str(params['parallel'])
         except KeyError:
-            params_str = ''
-        '''
-        params_list.append('--suppress_new_clusters')
-        params_list.append('-m '+params['pick_otus']['otu_picking_method'])
+            params_str += ''
+        
+        # Build the OTU picking command
+        pick_otus_cmd = '%s %s/parallel_pick_otus_uclust_ref.py -i %s -T -o %s %s' %\
+         (python_exe_fp, script_dir, leftover_fasta, pick_otu_dir, params_str)
+        
+    else:
+        try:
+            # Want to find a cleaner strategy for this: the parallel script
+            # is method-specific, so doesn't take a --otu_picking_method
+            # option. This works for now though.
+            d = params['pick_otus'].copy()
+            params_str = ' %s' % get_params_str(d)
+        except KeyError:
+            pass
+            
         # Build the OTU picking command
         pick_otus_cmd = '%s %s/pick_otus.py -i %s -o %s %s' %\
-         (python_exe_fp, script_dir, leftover_fasta, pick_otu_dir, ' '.join(params_list))
+         (python_exe_fp, script_dir, leftover_fasta, pick_otu_dir, params_str)
     
     commands.append([('Pick OTUs: uclust_ref', pick_otus_cmd)])
     

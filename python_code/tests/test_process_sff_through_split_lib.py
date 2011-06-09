@@ -24,7 +24,8 @@ from cogent.util.misc import remove_files
 from cogent.app.util import get_tmp_filename, ApplicationNotFoundError
 from qiime.util import load_qiime_config
 from qiime.parse import parse_qiime_parameters
-from run_process_sff_through_split_lib import (run_process_sff_through_split_lib)
+from run_process_sff_through_split_lib import (run_process_sff_through_split_lib,
+                                        run_process_illumina_through_split_lib)
 from qiime.workflow import (call_commands_serially,
 no_status_updates,WorkflowError,print_commands)
 ## The test case timing code included in this file is adapted from
@@ -54,7 +55,14 @@ class WorkflowTests(TestCase):
         test_dir = abspath(dirname(__file__))
         sff_original_fp = os.path.join(test_dir, 'support_files', \
                                         'Fasting_subset.sff')
-
+        
+        self.illumina_fps = [os.path.join(test_dir, 'support_files', \
+                                        's_8_1_sequence_100_records.txt'),
+                             os.path.join(test_dir, 'support_files', \
+                                        's_8_2_sequence_100_records.txt')]
+        self.illumina_map_fp = os.path.join(test_dir, 'support_files', \
+                                        's8_map_incomplete.txt')
+                                        
         # copy sff file to working directory
         self.sff_dir = tempfile.mkdtemp()
         self.dirs_to_remove.append(self.sff_dir)
@@ -81,21 +89,6 @@ class WorkflowTests(TestCase):
         fasting_mapping_f.close()
         self.files_to_remove.append(self.fasting_mapping_fp)
         
-        '''
-        self.fasting_seqs_fp = get_tmp_filename(tmp_dir=tmp_dir,
-            prefix='qiime_wf_seqs',suffix='.fasta')
-        fasting_seqs_f = open(self.fasting_seqs_fp,'w')
-        fasting_seqs_f.write(fasting_seqs_subset)
-        fasting_seqs_f.close()
-        self.files_to_remove.append(self.fasting_seqs_fp)
-        
-        self.fasting_seqs_denoiser_fp = get_tmp_filename(tmp_dir=tmp_dir,
-            prefix='qiime_wf_seqs',suffix='.fasta')
-        fasting_seqs_f = open(self.fasting_seqs_denoiser_fp,'w')
-        fasting_seqs_f.write('\n'.join(fasting_seqs_subset.split('\n')[:44]))
-        fasting_seqs_f.close()
-        self.files_to_remove.append(self.fasting_seqs_denoiser_fp)
-        '''
         working_dir = self.qiime_config['working_dir'] or './'
         jobs_dir = join(working_dir,'jobs')
         if not exists(jobs_dir):
@@ -189,6 +182,34 @@ class WorkflowTests(TestCase):
         #new_map_str=open(new_map_fp,'U').read()
         
         #self.assertTrue(new_map_str,exp_new_fasting_map)
+        # Check that the log file is created and has size > 0
+        log_fp = glob(join(self.wf_out,'log*.txt'))[0]
+        self.assertTrue(getsize(log_fp) > 0)
+
+    #
+    def test_run_process_illumina_through_split_lib(self):
+        """run_process_illumina_through_pick_otus runs without error"""
+        run_process_illumina_through_split_lib(0,'Fasting_subset',\
+         input_fp=','.join(self.illumina_fps),\
+         mapping_fp=self.illumina_map_fp,\
+         output_dir=self.wf_out, \
+         command_handler=call_commands_serially,\
+         params=self.params,\
+         qiime_config=self.qiime_config,\
+         write_to_all_fasta=False,\
+         status_update_callback=no_status_updates)
+        
+        input_file_basename = splitext(split(self.sff_fp)[1])[0]
+        
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
+                                    'seqs.fna')
+                                    
+        #sff_fp = join(self.wf_out,'Fasting_subset.sff')
+        new_map_fp = join(self.wf_out,'Fasting_subset_mapping.txt')
+        
+        # check that the two final output files have non-zero size
+        self.assertTrue(getsize(split_lib_seqs_fp) > 0)
+        
         # Check that the log file is created and has size > 0
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)

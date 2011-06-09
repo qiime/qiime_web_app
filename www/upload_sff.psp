@@ -15,7 +15,7 @@ from enums import ServerConfig
 data_access = data_access_factory(ServerConfig.data_access_type)
 %>
 
-<h3>SFF Upload</h3>
+<h3>Sequence File Upload</h3>
 
 <script type="text/javascript">
 
@@ -145,8 +145,13 @@ function setCompleteBox()
 <tr><td>
 <div id='applet'>
 <!--this is the jumploader applet-->
-<b>SFF Upload: Please upload only zipped files.</b><br/>
-The filename should not contain spaces or non-alphanumeric characters.<p/>
+<b>Sequence File Upload: Please upload only zipped files.</b><br/>
+The filename should not contain spaces or non-alphanumeric characters.
+<br/>
+<br/>
+You can either submit SFF files (.sff), FASTQ files (.fastq), and/or FASTA files (.fasta/.fna).
+
+<p/>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="250" width="600" mayscript>

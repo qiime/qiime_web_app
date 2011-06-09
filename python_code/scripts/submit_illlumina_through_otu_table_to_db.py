@@ -16,8 +16,7 @@ from optparse import make_option
 from os import makedirs
 from os.path import split, join
 from qiime.util import load_qiime_config
-from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, \
-                                             submit_illumina_and_split_lib,\
+from load_sff_through_split_lib_to_db import submit_illumina_and_split_lib, \
                                              load_otu_mapping
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
@@ -45,7 +44,6 @@ script_info['required_options'] = [\
     make_option('-s','--study_id',help='This is the study id assigned from loading the metadata'),\
     make_option('-u','--user_id',help='user id'),\
     make_option('-o','--output_dir',help='output directory'),\
-    make_option('-p','--platform',help='sequencing platform'),\
 ]
 script_info['optional_options'] = [\
 ]
@@ -60,7 +58,6 @@ def main():
     fasta_file_paths=opts.fasta_file_paths
     study_id=opts.study_id
     output_dir=opts.output_dir
-    platform=opts.platform
     
     if submit_to_test_db == 'False':
         # Load the data into the database
@@ -69,17 +66,10 @@ def main():
         # Load the data into the database 
         data_access = data_access_factory(DataAccessType.qiime_test)
 
+
     # Get all of the fasta files
-    if (platform=='FLX' or platform=='TITANIUM'):
-        print 'Submitting SFF data to database...'
-        analysis_id = submit_sff_and_split_lib(data_access, fasta_file_paths, study_id)
-    elif platform=='ILLUMINA':
-        print 'Submitting Illumina data to database...'
-        analysis_id = submit_illumina_and_split_lib(data_access, fasta_file_paths, study_id)
-    elif platform=='FASTA':
-        print 'Submitting FASTA data to database...'
-        analysis_id = submit_fasta_and_split_lib(data_access, fasta_file_paths, study_id)
-        
+    print 'Submitting SFF data to database...'
+    analysis_id = submit_sff_and_split_lib(data_access, fasta_file_paths, study_id)
     print 'Submitting OTU data to database...'
     load_otu_mapping(data_access, output_dir, analysis_id)
     print 'Completed database loading.'

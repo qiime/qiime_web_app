@@ -213,8 +213,8 @@ class ProcessSFFHandler(JobHandler):
 class LoadSFFHandler(JobHandler):
     """Handler for submit_sff_through_split_lib_to_db.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_LOAD_SFF, \
-            "-i %(ProcessedFastaFilepath)s -s %(StudyId)s -u %(UserId)s -o %(OutputDir)s -t %(TestDB)s"])
-    _base_args = {'ProcessedFastaFilepath':None, 'StudyId':None,'UserId':None,'OutputDir':None,'TestDB':None}
+            "-i %(ProcessedFastaFilepath)s -s %(StudyId)s -u %(UserId)s -o %(OutputDir)s -t %(TestDB)s -p %(Platform)s"])
+    _base_args = {'ProcessedFastaFilepath':None, 'StudyId':None,'UserId':None,'OutputDir':None,'TestDB':None,'Platform':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""

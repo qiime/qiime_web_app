@@ -127,17 +127,49 @@ def main():
     # Process the SFF file
     params=parse_qiime_parameters(parameter_f)
     print 'Running run_process_sff_through_split_lib...'
-    fasta_file_paths = run_process_sff_through_split_lib(study_id=study_id,\
-     run_prefix=run_prefix,\
-     sff_input_fp=sff_fname,\
-     mapping_fp=map_fname,\
-     output_dir=output_dir,\
-     command_handler=command_handler,\
-     params=params,\
-     qiime_config=qiime_config,\
-     convert_to_flx=convert_to_flx,\
-     write_to_all_fasta=write_to_all_fasta,\
-     status_update_callback=status_update_callback)
+    
+    if (sequencing_platform=='TITANIUM' or sequencing_platform=='FLX'):
+        fasta_file_paths = run_process_sff_through_split_lib(study_id=study_id,\
+         run_prefix=run_prefix,\
+         sff_input_fp=sff_fname,\
+         mapping_fp=map_fname,\
+         output_dir=output_dir,\
+         command_handler=command_handler,\
+         params=params,\
+         qiime_config=qiime_config,\
+         convert_to_flx=convert_to_flx,\
+         write_to_all_fasta=write_to_all_fasta,\
+         status_update_callback=status_update_callback)
+    elif (sequencing_platform=='ILLUMINA'):
+        fasta_file_paths = run_process_illumina_through_split_lib(\
+         study_id=study_id,\
+         run_prefix=run_prefix,\
+         input_fp=sff_fname,\
+         mapping_fp=map_fname,\
+         output_dir=output_dir,\
+         command_handler=command_handler,\
+         params=params,\
+         qiime_config=qiime_config,\
+         write_to_all_fasta=write_to_all_fasta,\
+         status_update_callback=status_update_callback)
+    elif (sequencing_platform=='FASTA'):
+        # this will most likely be a clean fasta step, since it should be
+        # demultiplexed
+        fasta_file_paths = run_process_fasta_through_split_lib(\
+         study_id=study_id,\
+         run_prefix=run_prefix,\
+         sff_input_fp=sff_fname,\
+         mapping_fp=map_fname,\
+         output_dir=output_dir,\
+         command_handler=command_handler,\
+         params=params,\
+         qiime_config=qiime_config,\
+         write_to_all_fasta=write_to_all_fasta,\
+         status_update_callback=status_update_callback)
+    else:
+        raise ValueError, 'Platform (%s) defined in metadata is not supported!'\
+            % (sequencing_platform)
+        
     print 'Completed run_process_sff_through_split_lib.'
    
     # Chain Pick OTUS
@@ -156,6 +188,7 @@ def main():
     params.append('StudyId=%s' % study_id)
     params.append('TestDB=%s' % submit_to_test_db)
     params.append('ProcessedFastaFilepath=%s' % ','.join(fasta_file_paths))
+    params.append('Platform=%s' % sequencing_platform)
     job_input='!!'.join(params)
     job_type='LoadSFFHandler'
     

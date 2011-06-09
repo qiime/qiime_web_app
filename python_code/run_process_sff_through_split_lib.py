@@ -14,6 +14,7 @@ __status__ = "Development"
 import time 
 from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file
+from cogent.parse.fastq import MinimalFastqParser
 from qiime.format import format_map_file
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
@@ -31,13 +32,11 @@ from qiime.workflow import print_commands,call_commands_serially,\
                            get_params_str, WorkflowError
 from qiime.util import (compute_seqs_per_library_stats, 
                         get_qiime_scripts_dir,
-                        create_dir)
+                        create_dir,
+                        get_split_libraries_fastq_params_and_file_types)
 from wrap_files_for_md5 import MD5Wrap
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
-
-
-
 from cogent.util.misc import safe_md5
 
 def generate_log_fp(output_dir,
@@ -65,8 +64,6 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
           3) Optionally denoise the sequences (set sff_input_fp=True);
           4) Pick OTUs;
           
-         
-    
     """
     if write_to_all_fasta:
         split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' % environ['HOME']
@@ -118,26 +115,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
             denoise_flow_input_files.append(join(output_dir,input_basename + '.txt'))
         commands.append([('ProcessSFFs', process_sff_cmd)])
         
-    '''
-    data, headers, run_description = parse_mapping_file(open(mapping_fp), \
-    suppress_stripping=False)
-    
-    id_map={}
-    description_map={}
-    for i in data:
-        suffix='.%s' % (str(run_prefix))
-        i[0]+=suffix
-        id_map[i[0]]={}
-        description_map[i[0]]=i[-1]
-        for num,head in enumerate(headers):
-            id_map[i[0]][head]=i[num]
-            
-    outfile_data=format_map_file(headers, id_map,"Description", "SampleID",description_map, run_description)
-    map_location=join(output_dir,input_basename + '_mapping.txt')
-    map_outf=open(map_location,'w')
-    map_outf.write(outfile_data)
-    map_outf.close()
-    '''
+
     split_lib_fasta_input=','.join(split_lib_fasta_input_files)
     split_lib_qual_input=','.join(split_lib_qual_input_files)
     denoise_flow_input=','.join(denoise_flow_input_files)
@@ -170,7 +148,90 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     # Return the fasta file paths
     return split_lib_fasta_input_files
     
+#
+## Begin task-specific workflow functions
+def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
+    mapping_fp, output_dir, 
+    command_handler, params, qiime_config,
+    write_to_all_fasta=False,
+    status_update_callback=print_to_stdout):
+    """ NOTE: Parts of this function are a directly copied from the
+        run_qiime_data_preparation function from the workflow.py library file 
+        in QIIME.
     
+        The steps performed by this function are:
+          1) De-multiplex sequences. (split_libraries.py)
+    
+    """
+    
+    #print input_fp
+    if write_to_all_fasta:
+        split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' \
+                            % environ['HOME']
+        create_dir(split_lib_fastas)
+        
+    # Prepare some variables for the later steps
+    filenames=input_fp.split(',')
+    commands = []
+    create_dir(output_dir)
+    python_exe_fp = qiime_config['python_exe_fp']
+    script_dir = get_qiime_scripts_dir()
+    logger = WorkflowLogger(generate_log_fp(output_dir),
+                            params=params,
+                            qiime_config=qiime_config)
+    
+
+    
+    copied_mapping=split(mapping_fp)[-1]
+    mapping_input_fp_copy=join(output_dir, copied_mapping)
+    copy_mapping_cmd='cp %s %s' % (mapping_fp,mapping_input_fp_copy)
+    commands.append([('CopyMapping', copy_mapping_cmd)])
+
+    filenames.sort()
+
+    #fastq_dict={}
+    #mapping_file=open(mapping_fp,'U')
+    
+    # iterate over files and import them
+    # both seqs and barcode files are valid fastq files, so we need
+    # to look at the length of seq and/or barcode to determine the file types
+    #for file in filenames:
+    #    fastq_dict[file]=open(file,'U')
+    
+    input_str=get_split_libraries_fastq_params_and_file_types(filenames,
+                                                              mapping_fp)
+    
+    split_library_output=join(output_dir,'split_libraries')
+    create_dir(split_library_output)
+
+    '''
+    try:
+        params_str = get_params_str(params['split_libraries'])
+    except KeyError:
+        params_str = ''
+    '''
+    
+    # Build the split libraries command
+    split_libraries_cmd = '%s %s/split_libraries_fastq.py -o %s -m %s %s' % \
+     (python_exe_fp, script_dir, split_library_output, mapping_input_fp_copy,
+      input_str)
+    commands.append([('SplitLibraries', split_libraries_cmd)])
+    
+    input_fp=join(split_library_output,'seqs.fna')
+    
+    
+    if write_to_all_fasta:
+        copy_split_lib_seqs_location='%s_%s_seqs.fna' % (study_id,run_prefix)
+        copy_to_split_lib_fastas_cmd=cp_files(input_fp,join(split_lib_fastas,
+                                        copy_split_lib_seqs_location))
+        commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
+    
+    # Call the command handler on the list of commands
+    command_handler(commands,status_update_callback,logger=logger)
+
+    # Return the fasta file paths
+    return ','.join(filenames)
+
 def web_app_call_commands_serially(commands,
                            status_update_callback,
                            logger):

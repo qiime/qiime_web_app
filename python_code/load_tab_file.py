@@ -100,10 +100,19 @@ def fasta_to_tab_delim(data, seq_run_id,split_library_run_id):
             items = line[1:].split(' ')
             sample_id = items[0]
             read_id = items[1]
-            orig_bc = items[2].split('=')[1]
-            new_bc = items[3].split('=')[1]
-            bc_diffs = items[4].split('=')[1]
-
+            orig_bc = ''
+            new_bc = ''
+            bc_diffs = '0'
+            
+            if len(items) > 2 and '=' in items[2]:
+                orig_bc = items[2].split('=')[1]
+                            
+            if len(items) > 3 and '=' in items[3]:
+                new_bc = items[3].split('=')[1]
+            
+            if len(items) > 4 and '=' in items[4]:
+                bc_diffs = items[4].split('=')[1]
+                
             to_yield.append(str(split_library_run_id))
             to_yield.append(str(seq_run_id))
             to_yield.append(sample_id)
