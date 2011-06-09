@@ -76,13 +76,14 @@ def validateSampleFile(mdtable, study_id, web_app_user_id):
         errors.append('Sample names must be unique in the sample file: "%s"' % name)
 
     # If metadata was previously uploaded, make sure all samples in database
-    # are still represented in the sample file
-    study_info = data_access.getStudyInfo(study_id, web_app_user_id)
-    if study_info['metadata_complete'] == 'y':
-        file_sample_names = zip(*sample_values)[0]
-        all_samples_present = data_access.verifySampleNames(study_id, file_sample_names)
-        if not all_samples_present:
-            samples_missing = True
+    # are still represented in the sample file. Skip if study_id = 0 (indepenent validation)
+    if study_id > 0:
+        study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+        if study_info['metadata_complete'] == 'y':
+            file_sample_names = zip(*sample_values)[0]
+            all_samples_present = data_access.verifySampleNames(study_id, file_sample_names)
+            if not all_samples_present:
+                samples_missing = True
         
     return errors, samples_missing
 
@@ -337,7 +338,9 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             req.write('</ul>')
             
             return None, errors
-        else:
+        # study_id > 0 ensures that this is not the anonymous case. If so, we skip the
+        # next two validations.
+        elif study_id > 0:
             # Handle sample database validation issues
             if samples_missing:
                 # Do not change this string. It's checked for on the respose page.
@@ -358,6 +361,8 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
                         os.remove(os.path.join(dir_path, file_name))
 
             # Assuming all went well, return the list of templates
+            return templates, errors
+        elif study_id == 0:
             return templates, errors
             
 

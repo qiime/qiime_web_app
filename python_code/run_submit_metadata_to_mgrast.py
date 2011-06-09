@@ -16,60 +16,11 @@ from sample_export import export_fasta_from_sample
 import os
 import stat
 
-def resolve_host(url_path):
-    data = ''
-    #host = 'metagenomics.anl.gov'
-    host = dunkirk.mcs.anl.gov/~wilke
-
-    try:
-        print 'Attempting DNS connection to: %s' % host
-        conn = httplib.HTTPConnection(host)
-        headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-        conn.request(method = "POST", url = url_path, body = "connect test", headers = headers)
-        response = conn.getresponse()
-        data = response.read()
-        conn.close()
-        print 'data is: %s ' % data
-        
-        # Make sure a 404 was not returned
-        if '404' not in data and data != '':
-            print 'DNS attempt successful.'
-            return host
-        else:
-            print 'DNS attempt unsuccessful. Data return was: %s' % data
-            host = '140.221.76.10'
-
-    except Exception, e:
-        print str(e)
-        host = '140.221.76.10'
-    
-    try:
-        print 'Attempting IP connection to: %s' % host
-        conn = httplib.HTTPConnection(host)
-        headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-        conn.request(method = "POST", url = url_path, body = "connect test", headers = headers)
-        response = conn.getresponse()
-        data = response.read()
-        conn.close()
-        print 'data is: %s ' % data
-
-        # Make sure a 404 was not returned
-        if '404' not in data and data != '':
-            print 'IP attempt successful.'
-            return host
-        else:
-            print 'IP attempt unsuccessful. Aborting.'
-    except Exception, e:
-        print str(e)
-        print 'Resolving host %s failed. Aborting...' % host
-        
-    return None
-
 def clean_value_for_mgrast(value):
-    value = str(value).replace('<', '&lt;')
-    value = str(value).replace('>', '&gt;')
-    #value = str(value).replace('$', '&ds;')
+    # Order matters! Leave & as the first replace
     value = str(value).replace('&', '&amp;')
+    value = value.replace('<', '&lt;')
+    value = value.replace('>', '&gt;')
     return value
 
 def send_data_to_mgrast(url_path, file_contents, host, debug):
@@ -114,6 +65,9 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     """This function takes the input options from the user and generates a url
     and request header for submitting to the MG-RAST cgi script"""
 
+    # Set up a list of invalid values
+    invalid_values = set(['', ' ', None, 'None'])
+
     # Get a copy of data access
     data_access = data_access_factory(ServerConfig.data_access_type)
 
@@ -135,13 +89,9 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     
     # Attempt to reslve the MG-RAST host
     # host = '140.221.76.10'
-    #host = resolve_host(study_cgi_path)
     #host = 'test.metagenomics.anl.gov'
     host = 'dev.metagenomics.anl.gov'
     #host = 'metagenomics.anl.gov'
-    if host is None:
-        print 'Could not resolve host. Aborting.'
-        return
 
     ######################################################
     #### Study Submission
@@ -160,6 +110,7 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     study_file.write('    <metadata>\n')
     
     # Don't want to write these to MG-RAST
+    # create a dict, iterate over and remove
     del study_info['mapping_file_complete']
     del study_info['can_delete']
     del study_info['project_id']
@@ -180,7 +131,7 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
     for item in study_info:
         value = study_info[item]
         # Skip blank or null values
-        if value == 'None' or value == '' or value == None or value == ' ':
+        if value in invalid_values:
             continue
         study_file.write('        <{0}>{1}</{0}>\n'.format(item, clean_value_for_mgrast(value)))
     
@@ -242,7 +193,7 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
             #print table_name, column_name, sample_id
             column_value = data_access.getSampleColumnValue(sample_id, table_name, column_name)
             # Skip blank or null values
-            if column_value == 'None' or column_value == '' or column_value == None or column_value == ' ':
+            if column_name in invalid_values:
                 print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
                 continue
 
@@ -296,7 +247,7 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
                     
                 column_value = data_access.getPrepColumnValue(sample_id, row_number, table_name, column_name)
                 # Skip blank or null values
-                if column_value == 'None' or column_value == '' or column_value == None or column_value == ' ':
+                if column_value in invalid_values:
                     continue
 
                 prep_file.write('            <{0}>{1}</{0}>\n'.format(column_name,
@@ -324,11 +275,10 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
 
             print 'FASTA'
             
+            # If there are no sequences then skip
             output_fasta_path = fasta_base_path + 'sequences_%s_%s.fasta' % (sample_id, row_number)
             export_fasta_from_sample(study_id, sample_id, output_fasta_path)
             file_size = os.stat(output_fasta_path)[stat.ST_SIZE]
-            
-            # If there are no sequences then skip
             if file_size == 0:
                 continue
 
