@@ -106,7 +106,8 @@ if portal_type == 'qiime':
         sff_files = data_access.getSFFFiles(study_id)
         for sff_file in sff_files:
             file_base = os.path.basename(sff_file)
-            req.write('<li>%s <a href="clear_sff_file.psp?filename=%s">(remove file)</a></li>' % (file_base, file_base))
+            req.write('<li>%s <a href="#" onClick="if(confirm(\'Are you sure you want to erase: %s?\')) location.href = \'clear_sff_file.psp?filename=%s\';">(remove file)</a></li>' % (file_base, file_base, file_base))
+            
 
         req.write('</ul>')
 
