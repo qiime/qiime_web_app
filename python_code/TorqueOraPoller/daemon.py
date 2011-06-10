@@ -17,6 +17,10 @@ This code is from \ http://www.jejik.com/articles/2007/02/a_simple_unix_linux_da
 
 import sys, os, time, atexit
 from signal import SIGTERM 
+from subprocess import Popen, PIPE
+
+# When stopping, try killing for 30 seconds
+KILL_TIMEOUT = 30
 
 class Daemon(object):
     """A generic daemon class.
@@ -80,22 +84,36 @@ class Daemon(object):
     def delpid(self):
         os.remove(self.pidfile)
 
+    def _get_pid_from_file(self):
+        """Get PID from file 
+        
+        return None if no pid file 
+        return -1 if unable to read pid file
+        """
+        # Check for a pidfile to see if the daemon already runs
+        pid = None
+        if os.path.isfile(self.pidfile):
+            pf = open(self.pidfile)
+            try:
+                pid = int(pf.read().strip())
+            except IOError:
+                pid = -1
+        return pid
+
     def start(self):
         """
         Start the daemon
         """
-        # Check for a pidfile to see if the daemon already runs
-        try:
-            pf = file(self.pidfile,'r')
-            pid = int(pf.read().strip())
-            pf.close()
-        except IOError:
-            pid = None
-    
-        if pid:
-            message = "pidfile %s already exist. Daemon already running?\n"
-            sys.stderr.write(message % self.pidfile)
-            sys.exit(1)
+        pid = self._get_pid_from_file()
+        if pid is not None:
+            if pid == -1:
+                message = "pidfile %s exists, unable to read PID.\n"
+                sys.stderr.write(message % self.pidfile)
+                sys.exit(1)
+            else:
+                message = "pidfile %s with PID %d already exists.\n"
+                sys.stderr.write(message % (self.pidfile, pid))
+                sys.exit(1)
         
         # Start the daemon
         self.daemonize()
@@ -106,31 +124,67 @@ class Daemon(object):
         Stop the daemon
         """
         # Get the pid from the pidfile
-        try:
-            pf = file(self.pidfile,'r')
-            pid = int(pf.read().strip())
-            pf.close()
-        except IOError:
-            pid = None
-    
-        if not pid:
+        pid = self._get_pid_from_file()
+        
+        if pid is None:
             message = "pidfile %s does not exist. Daemon not running?\n"
             sys.stderr.write(message % self.pidfile)
             return # not an error in a restart
+        elif pid == -1:
+            message = "pidfile %s exists but cannot read it.\t"
+            sys.stderr.write(message % self.pidfile)
+            return # error?? what would this mean?
 
-        # Try killing the daemon process    
-        try:
-            while True:
+        for i in range(KILL_TIMEOUT):
+            all_pids = self._get_process_list()
+            if pid not in all_pids:
+                break
+
+            # its possible the kill from the previous iteration was delayed
+            # and the processs terminated between the all_pids population and
+            # the try block. Any other OSError is considered bad
+            try:
                 os.kill(pid, SIGTERM)
-                time.sleep(0.1)
-        except OSError, err:
-            err = str(err)
-            if err.find("No such process") > 0:
-                if os.path.exists(self.pidfile):
-                    os.remove(self.pidfile)
-            else:
-                print str(err)
-                sys.exit(1)
+            except OSError, err:
+                if err.find("No such process") > 0:
+                    break
+                else:
+                    print str(err)
+                    sys.exit(1)
+
+            time.sleep(1)
+
+        all_pids = self._get_process_list()
+        if pid in all_pids:
+            raise OSError, "Time out reached! Cannot kill daemon pid %d" % pid
+        
+        try:
+            self.delpid()
+        except:
+            raise IOError, "Unable to remove pidfile %s!" % self.pidfile
+
+    def _get_process_list(self):
+        """returns a set of PIDs"""
+        if 'posix' != os.name:
+            raise OSError, "Windows sucks"
+        if os.path.exists('/proc'):
+            return self._get_process_list_linux()
+        else:
+            return self._get_process_list_osx()
+
+    def _get_process_list_linux(self):
+        """grab all PIDs from the /proc dir""" 
+        # taken from http://stackoverflow.com/questions/2703640/process-list-on-linux-via-python
+        return set([int(pid) for pid in listdir('/proc/') if pid.isdigit()])
+
+    def _get_process_list_osx(self):
+        """grab all PIDs from ps"""
+        procs = Popen(['ps','aux'], shell=False, stdout=PIPE)
+        o, e = procs.communicate()
+        o = o.splitlines()
+
+        # idx 1 is PID, skip the first line as it is header
+        return set([int(proc.split()[1]) for proc in o[1:]]) 
 
     def restart(self):
         """Restart the daemon"""

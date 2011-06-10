@@ -63,6 +63,14 @@ class CannotOpenFileError(IOError):
 
 class Poller(Daemon):
     """Polls TORQUE_JOBS for new jobs, submits, updates status"""
+    def __init__(self, *args, **kwargs):
+        self.data_access=data_access_factory(ServerConfig.data_access_type)
+        self.username = os.environ['USER']
+        self.home = os.environ['HOME']
+        self.Jobs = {} # pbs job id -> job object
+        self.interval = 0
+        super(Poller, self).__init__(*args, **kwargs)
+
     def run(self):
         """This method is called when the daemon is started
 
@@ -73,11 +81,7 @@ class Poller(Daemon):
 
         Third, update job status
         """
-        data_access=data_access_factory(ServerConfig.data_access_type)
-        self.con = data_access.getSFFDatabaseConnection()
-        self.username = os.environ['USER']
-        self.home = os.environ['HOME']
-        self.Jobs = {} # pbs job id -> job object
+        self.con = self.data_access.getSFFDatabaseConnection()
         iter_count = 0
 
         while True:
