@@ -138,10 +138,10 @@ def main():
     else:
         for met in beta_diversity_metrics:
             html_fpaths.append((path.join(web_fp,'%s_3d_discrete' % (met),
-                                '%s_3D_PCoA_plots.html' % (met)),
+                                '%s_pc_3D_PCoA_plots.html' % (met)),
                                 '3D_DISCRETE_PLOT'))
             html_fpaths.append((path.join(web_fp,'%s_3d_continuous' % (met),
-                                         '%s_3D_PCoA_plots.html' % (met)), 
+                                         '%s_pc_3D_PCoA_plots.html' % (met)), 
                                          '3D_CONTINUOUS_PLOT'))
                                          
     # add 2d plots params
@@ -150,10 +150,10 @@ def main():
     else:
         for met in beta_diversity_metrics:
             html_fpaths.append((path.join(web_fp,'%s_2d_discrete' % (met),
-                                         '%s_2D_PCoA_plots.html' % (met)),
+                                         '%s_pc_2D_PCoA_plots.html' % (met)),
                                          '2D_DISCRETE_PLOT'))
             html_fpaths.append((path.join(web_fp,'%s_2d_continuous' % (met),
-                                         '%s_2D_PCoA_plots.html' % (met)),
+                                         '%s_pc_2D_PCoA_plots.html' % (met)),
                                           '2D_CONTINUOUS_PLOT'))
     
     # add distance histograms params
@@ -162,7 +162,7 @@ def main():
     else:
         for met in beta_diversity_metrics:
             html_fpaths.append((path.join(web_fp,'%s_histograms' % (met),
-                                         '%s_distance_histograms.html' % (met)),
+                                    '%s_dm_distance_histograms.html' % (met)),
                                          'DISTANCE_HISTOGRAM'))
     
     commands.append([('Beta Diversity Through Plots',beta_div_cmd)])
