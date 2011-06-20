@@ -1260,7 +1260,7 @@ class QiimeDataAccess(object):
             raise Exception(str(e))
     
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, \
-        study_id, host_key_field, row_num):
+        study_id, host_key_field, row_num, lock):
         """ Writes a metadata value to the database
         """
         
@@ -1278,7 +1278,7 @@ class QiimeDataAccess(object):
             con.cursor().execute('alter session set ddl_lock_timeout=100')            
             
             # Lock the table search/create so that only one thread can check or create at a time.
-            #lock.acquire()
+            lock.acquire()
             log.append('Lock acquired')
             
             # Find the table name
@@ -1290,6 +1290,9 @@ class QiimeDataAccess(object):
             if table_name == '' or table_name == None:
                 # If the table was not found, this is a user-added column.
                 table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
+            
+            # Release the lock
+            lock.release()
             
             # Double-quote for database safety.
             table_name = '"' + table_name + '"'            
