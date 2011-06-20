@@ -33,7 +33,7 @@ class TestThread(threading.Thread):
 
 class MetadataWorkerThread(threading.Thread):
     def __init__(self, form, item_list, sample_key_fields, prep_key_fields, host_key_fields, \
-        study_name, study_id, data_access, updateCallback, errorCallback):
+        study_name, study_id, data_access, updateCallback, errorCallback, lock):
         threading.Thread.__init__(self)
         self.item_list = item_list
         self.sample_key_fields = sample_key_fields
@@ -45,6 +45,7 @@ class MetadataWorkerThread(threading.Thread):
         self.data_access = data_access
         self.updateCallback = updateCallback
         self.errorCallback = errorCallback
+        self.lock = lock
     
     def run(self):
         
@@ -88,10 +89,12 @@ class MetadataWorkerThread(threading.Thread):
             field_value = field_value.replace('\'', '\'\'')
 
             try:
+                self.lock.acquire()
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, \
                     self.study_id, host_key_field, row_num)
-                
                 # Notify parent that an item was inserted
                 self.updateCallback()
             except Exception, e:
                 self.errorCallback(e)
+            finally:
+                self.lock.release()
