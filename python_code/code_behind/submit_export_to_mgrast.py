@@ -13,15 +13,17 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
 from data_access_connections import data_access_factory
+from live_mgrast_rest_services import LiveMGRASTRestServices
 from enums import ServerConfig
 import os
 
 def exportStudyToMGRAST(study_id, user_id):
     # Instantiate one copy of data access for this process
     data_access = data_access_factory(ServerConfig.data_access_type)
-
+    live_rest_services = LiveMGRASTRestServices()
+    
     # Submit the job
-    job_id = data_access.createTorqueJob('ExportToMGRASTHandler', 'StudyID=%s' % study_id, user_id, study_id)
+    job_id = data_access.createTorqueJob('ExportToMGRASTHandler', 'StudyID=%s' % study_id)
     
     # Make sure a legit job_id was created. If not, inform the user there was a problem
     if job_id < 0:

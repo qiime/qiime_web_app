@@ -10,10 +10,11 @@ __version__ = "1.2.0-dev"
 __maintainer__ = "Jesse Stombaugh"
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
- 
+
 
 from optparse import make_option
 from qiime.util import parse_command_line_parameters
+from live_mgrast_web_services import LiveMGRASTRestServices
 from run_submit_metadata_to_mgrast import submit_metadata_for_study
 
 script_info = {}
@@ -36,8 +37,14 @@ def main():
     
     # call the main function
     key = 'y7x2G29QEbuEyTYbLr7pjavtA'
-    result = submit_metadata_for_study(key, study_id, debug)
     
+    # User_ID. Mine for now for access to all studies.
+    web_app_user_id = 12169
+    
+    # Get the live function reference
+    live_rest_services = LiveMGRASTRestServices()
+    
+    result = submit_metadata_for_study(key, study_id, web_app_user_id, LiveMGRASTRestServices.send_data_to_mgrast, debug)
         
 if __name__ == "__main__":
     main()

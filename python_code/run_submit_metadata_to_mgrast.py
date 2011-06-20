@@ -9,61 +9,28 @@ __maintainer__ = "Doug Wendel"
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
-import httplib, urllib
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 from sample_export import export_fasta_from_sample
 import os
 import stat
 
-def clean_value_for_mgrast(value):
+def clean_value_for_mgrast(self, value):
     # Order matters! Leave & as the first replace
     value = str(value).replace('&', '&amp;')
     value = value.replace('<', '&lt;')
     value = value.replace('>', '&gt;')
     return value
 
-def send_data_to_mgrast(url_path, file_contents, host, debug):
-    success = None
-    entity_id = None
-        
-    # Output the file contents if debug mode is set
-    if debug:
-        if len(file_contents) < 10000:
-            print file_contents
-        print 'Host: %s' % host
-        print 'Service URL: %s' % url_path
+def submit_metadata_for_study(key, study_id, web_app_user_id, send_data_to_mgrast, debug = False):
+    """
+    Submits data to MGRAST via REST services.
     
-    # Submit file data
-    headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
-    conn = httplib.HTTPConnection(host)
-    conn.request(method = "POST", url = url_path, body = file_contents, headers = headers)
-    response = conn.getresponse()
-    data = response.read()
-    conn.close()
-    
-    # Output the status and response if debug mode is set
-    if debug:
-        print response.status, response.reason
-        print str(data)
-
-    # Check for success
-    if '<success>0</success>' in data:
-        success = False
-    elif '<success>1</success>' in data:
-        success = True
-    
-    # Look for a returned identifier in the data
-    if '<project_id>' in data:
-        entity_id = data[data.find('<project_id>')+len('<project_id>'):data.find('</project_id>')]
-    elif '<sample_id>' in data:
-        entity_id = data[data.find('<sample_id>')+len('<sample_id>'):data.find('</sample_id>')]
-
-    return success, entity_id
-
-def submit_metadata_for_study(key, study_id, web_app_user_id, debug = False):
-    """This function takes the input options from the user and generates a url
-    and request header for submitting to the MG-RAST cgi script"""
+    This function takes the input options from the user and generates a url
+    and request header for submitting to the MG-RAST cgi script. Note that the 
+    function send_data_to_mgrast is passed in to enable proper testing of this
+    code. See base_mgrast_rest_services.py and mock_mgrast_rest_services.py for
+    the rest of the implementation."""
 
     # Set up a list of invalid values
     invalid_values = set(['', ' ', None, 'None'])
