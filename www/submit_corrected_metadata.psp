@@ -128,7 +128,7 @@ for item in validated_values:
     field_name = parts[3]
     field_value = validated_values[item]
     
-    # Skip the project name field here since we staticly don't want to
+    # Skip the project name field here since we don't want to
     # change the name the user typed when creating their study. This value
     # may show up in some legacy files or could be added by the user at a
     # later time. 
@@ -282,7 +282,7 @@ if len(host_fields) > 0:
 # To hold the current bucket of metadata values
 item_list = []
 threads = []
-thread_count = 1
+thread_count = 20
 
 # Sets the number of metadata fields to be processed by each thread
 item_count = len(all_other_fields)
@@ -309,6 +309,8 @@ def _errorCallback(e):
     with_errors = True
     req.write(str(e) + '<p/>')
 
+lock = Lock()
+
 # Go workers go!
 for item in all_other_fields:
     #req.write(str(item) + '....' + validated_values[item] + '<br/>')
@@ -316,7 +318,7 @@ for item in all_other_fields:
     if len(item_list) == bucket_size:
         t = MetadataWorkerThread(validated_values, copy.deepcopy(item_list), sample_key_fields, \
             prep_key_fields, host_key_fields, study_name, study_id, data_access, _updateCallback,\
-            _errorCallback)
+            _errorCallback, lock)
         threads.append(t)
         t.start()
         item_list = []
@@ -324,7 +326,7 @@ for item in all_other_fields:
 # If there are any items left, process those last
 if len(item_list) > 0:
     t = MetadataWorkerThread(validated_values, item_list, sample_key_fields, prep_key_fields, \
-        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback)
+        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback, lock)
     threads.append(t)
     t.start()
 
