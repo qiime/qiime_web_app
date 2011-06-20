@@ -89,12 +89,9 @@ class MetadataWorkerThread(threading.Thread):
             field_value = field_value.replace('\'', '\'\'')
 
             try:
-                self.lock.acquire()
                 result = da.writeMetadataValue(field_type, key_field, field_name, field_value, \
-                    self.study_id, host_key_field, row_num)
+                    self.study_id, host_key_field, row_num, self.lock)
                 # Notify parent that an item was inserted
                 self.updateCallback()
             except Exception, e:
                 self.errorCallback(e)
-            finally:
-                self.lock.release()
