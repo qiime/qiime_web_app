@@ -298,6 +298,9 @@ it will remove the return key functionality.
     </table>
 </div>
 <br>
+<b><input type='checkbox' id='check_showTE'>&nbsp;TopiaryExplorer Visualization</input></b>
+<br>
+<br>
 <b><input type='checkbox' id='check_heatmap' onclick='show_hide_div(this.id,"heatmap_div")'>&nbsp;Heatmap</input></b>
 <br>
 <div id='heatmap_div' style='display:none;valign:top'>

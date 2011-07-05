@@ -32,6 +32,7 @@ from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
 from cogent.util.misc import get_random_directory_name
 from submit_job_to_qiime import submitQiimeJob
 from qiime.filter_otu_table import _filter_table_samples
+import socket
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
 
@@ -449,7 +450,6 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         cmd_call='cd %s; zip %s %s' % (otu_table_file_dir,zip_fpath,otu_table_filepath.split('/')[-1])
         system(cmd_call)
         
-        
 
     #
     params=[]
@@ -470,6 +470,52 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     job_input='!!'.join(params)
     
     analyses_to_start=jobs_to_start.split(',')
+    if 'showTE' in analyses_to_start:
+        tree_fpath=path.abspath('software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre')
+        python_exe_fp = qiime_config['python_exe_fp']
+        commands=[]
+        command_handler=call_commands_serially
+        status_update_callback=no_status_updates
+        logger = WorkflowLogger(generate_log_fp('/tmp/'),
+                               params=dict(''),
+                               qiime_config=qiime_config)
+        
+        #define topiary explorer fpaths
+        jnlp_fname=path.splitext(path.split(otu_table_filepath)[-1])[0]+'.jnlp'
+        tep_fname=path.splitext(path.split(otu_table_filepath)[-1])[0]+'.tep'
+        jnlp_filepath_web=path.join(web_fp,'topiaryexplorer_files',jnlp_fname)
+        jnlp_filepath_web_tep=path.join(web_fp,'topiaryexplorer_files',tep_fname)
+        
+        if ServerConfig.home=='/home/wwwdevuser/':
+            host_name='http://webdev.microbio.me/qiime'
+        else:
+            host_name='http://www.microbio.me/qiime'
+        jnlp_filepath_web_tep_url=path.join(host_name,jnlp_filepath_web_tep)
+        output_dir=os.path.join(fs_fp,'topiaryexplorer_files')
+        
+        #build command
+        make_tep_cmd='%s %s/make_tep.py -i %s -m %s -t %s -o %s -u %s -w' %\
+        (python_exe_fp, script_dir, otu_table_filepath,map_filepath,tree_fpath,output_dir,jnlp_filepath_web_tep_url)
+        commands.append([
+        ('Make TopiaryExplorer jnlp',
+         make_tep_cmd)])
+
+        # Call the command handler on the list of commands
+        command_handler(commands, status_update_callback, logger)
+        
+        #zip Topiary Explorer jnlp file
+        cmd_call='cd %s; zip %s %s' % (output_dir,zip_fpath,jnlp_fname)
+        system(cmd_call)
+        
+        #zip Topiary Explorer project file
+        cmd_call='cd %s; zip %s %s' % (output_dir,zip_fpath,tep_fname)
+        system(cmd_call)
+        
+        valid=data_access.addMetaAnalysisFiles(True,int(meta_id),jnlp_filepath_web,'OTUTABLE',run_date,'TOPIARYEXPLORER')
+        if not valid:
+            raise ValueError, 'There was an issue uploading the filepaths to the DB!'
+            
+    
     if 'bdiv' in analyses_to_start:
         job_type='betaDiversityThroughPlots'
 
@@ -521,3 +567,4 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     valid=data_access.addMetaAnalysisFiles(True,int(meta_id),zip_fpath_db,'OTUTABLE',run_date,'ZIP')
     if not valid:
         raise ValueError, 'There was an issue uploading the filepaths to the DB!'
+        
