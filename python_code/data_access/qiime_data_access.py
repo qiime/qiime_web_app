@@ -313,7 +313,7 @@ class QiimeDataAccess(object):
                 if row[0] is None:
                     continue
                 else:
-                    study_name_list.append((row[0], row[1]))
+                    study_name_list.append((row[0], row[1],row[2],row[3]))
             return study_name_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -2503,6 +2503,21 @@ class QiimeDataAccess(object):
                 else:
                     meta_analysis_name_list.append(row)
             return meta_analysis_name_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+    #
+    def getSampleCount(self,study_id):
+        """ Returns a list of meta-analysis names
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            count=0
+            results=con.cursor().callproc('get_sample_count', [study_id,\
+                                                                count])
+            
+            return results[1]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
