@@ -20,10 +20,7 @@ from enums import FieldGrouping
 data_access = data_access_factory(ServerConfig.data_access_type)
 
 #Get list of public and user studies
-if sess["is_admin"] != 1:
-    public_studies=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
-else:
-    public_studies=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
+public_studies=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
 #
 %>
 
