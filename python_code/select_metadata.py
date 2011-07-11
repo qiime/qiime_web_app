@@ -33,7 +33,7 @@ def public_cols_to_dict(public_columns):
             else:
                 unique_public_columns[col_key]=[]
                 unique_public_columns[col_key].append(public_columns[i][2])
-        
+
         if public_columns[i][2] not in unique_studies:
             unique_studies.append(str(public_columns[i][2]))
     
@@ -115,7 +115,7 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
         if query_results==[]:
             info_table.append('<td rowspan=3>')
         else:
-            info_table.append('<td rowspan=5>')
+            info_table.append('<td rowspan=3>')
 
         # print the column values in a select box
         table_col_id=str(table) + '####SEP####' + col + '####STUDIES####' + studies
@@ -135,9 +135,9 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
     info_table.append('</tr>')
 
     # print the table name
-    info_table.append('<tr><td><em>Table Name:</em></td><td '+ \
-                    'style="color:black;text-decoration:none">' + \
-                    table+'</td></tr>')
+    #info_table.append('<tr><td><em>Table Name:</em></td><td '+ \
+    #                'style="color:black;text-decoration:none">' + \
+    #                table+'</td></tr>')
 
     # print the Data information
     if query_results==[]:
@@ -149,15 +149,89 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
         info_table.append('<tr><td><em>Data Type:</em></td><td '+ \
                         'style="color:black;text-decoration:none">' + \
                         str(query_results[0][0])+'</td></tr>')
-        info_table.append('<tr><td><em>Description or Value:</em></td><td ' + \
-                        'style="color:black;text-decoration:none">' + \
-                        str(query_results[0][1])+'</td></tr>')
+        #info_table.append('<tr><td><em>Description or Value:</em></td><td ' + \
+        #                'style="color:black;text-decoration:none">' + \
+        #                str(query_results[0][1])+'</td></tr>')
         info_table.append('<tr><td><em>Definition:</em></td><td ' + \
                         'style="color:black;text-decoration:none">' + \
                         str(query_results[0][2])+'</td></tr>')
     return ''.join(info_table)
     
-def get_selected_column_values(controlled_col,col,table,user_id):
+def get_selected_column_values(controlled_col,col,table,user_id,studies):
+    # if the column is not controlled, then we must look in the database
+    # for the public values provided in that column
+    studies_to_retrieve=studies.split('S')
+    
+    study_sql_array=[]
+    for i in studies_to_retrieve:
+        study_sql_array.append("st.study_id=%s" % (str(i)))
+    study_sql_cmd=' or '.join(study_sql_array)
+    
+    if not controlled_col:
+        
+        # Get the user details
+        user_details = data_access.getUserDetails(user_id)
+        if not user_details:
+            raise ValueError('No details found for this user')
+        is_admin = user_details['is_admin']
+
+        # Handle the different table names, since the inner joins depend on which
+        # table is being traversed
+        if is_admin:
+            if str(table)=='STUDY':
+                statement='select distinct st."%s" from "%s" st where (%s) and st.metadata_complete=\'y\'' % (col,table,study_sql_cmd)
+            elif str(table)=='SAMPLE':
+                statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id where (%s) and st.metadata_complete=\'y\'' % (col,table,study_sql_cmd)
+            elif str(table)=='SEQUENCE_PREP':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id where (%s) and st.metadata_complete=\'y\'' % (col,table,study_sql_cmd)
+            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST_SAMPLE' or table=='HUMAN_ASSOCIATED':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id where (%s) and st.metadata_complete=\'y\'' % (str(col),str(table),study_sql_cmd)
+            elif str(table)=='HOST':
+                statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id where (%s) and st.metadata_complete=\'y\'' % (str(col),str(table),study_sql_cmd)
+            else:
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id where (%s) and st.metadata_complete=\'y\'' % (col,table,study_sql_cmd)
+        else:
+            if str(table)=='STUDY':
+                statement='select distinct st."%s" from "%s" st inner join user_study us on st.study_id=us.study_id where (st."STUDY_PUBLIC" = \'y\' or us.web_app_user_id=%s) and (%s) and st.metadata_complete=\'y\'' % (col,table,user_id,study_sql_cmd)
+            elif str(table)=='SAMPLE':
+                statement='select distinct t."%s" from "%s" t inner join study st on t.study_id=st.study_id inner join user_study us on st.study_id=us.study_id where (t."PUBLIC" = \'y\' or us.web_app_user_id=%s) and (%s) and st.metadata_complete=\'y\'' % (col,table,user_id,study_sql_cmd)
+            elif str(table)=='SEQUENCE_PREP':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and (%s) and st.metadata_complete=\'y\'' % (col,table,user_id,study_sql_cmd)
+            elif str(table)=='HOST_ASSOC_VERTIBRATE' or table=='HOST_ASSOC_PLANT' or table=='HOST_SAMPLE' or table=='HUMAN_ASSOCIATED':
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and (%s) and st.metadata_complete=\'y\'' % (str(col),str(table),user_id,study_sql_cmd)
+            elif str(table)=='HOST':
+                statement='select distinct t."%s" from "%s" t inner join "HOST_SAMPLE" h on t.host_id=h.host_id inner join "SAMPLE" s on h.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and (%s) and st.metadata_complete=\'y\'' % (str(col),str(table),user_id,study_sql_cmd)
+            else:
+                statement='select distinct t."%s" from "%s" t inner join "SAMPLE" s on t.sample_id=s.sample_id inner join study st on s.study_id=st.study_id inner join user_study us on st.study_id=us.study_id where (s."PUBLIC" = \'y\' or us.web_app_user_id=%s) and (%s) and st.metadata_complete=\'y\'' % (col,table,user_id,study_sql_cmd)
+            
+        # Run the statement
+        con = data_access.getMetadataDatabaseConnection()
+        cur = con.cursor()
+        #req.write(str(statement)+'<br><br>')
+        results = cur.execute(statement)
+        #raise ValueError, statement
+        #put the column values into a dictionary so we can run natural sort on the list
+        col_values={}
+        for i in results:
+            if i[0] <> None:
+                col_values[str(i[0])]=str(i[0])
+
+    else:
+        # get the controlled terms
+        results=data_access.getValidControlledVocabTerms(col)
+        #put the column values into a dictionary so we can run natural sort on the list
+        col_values={}
+        for i in results:
+            if i[0] <> None:
+                col_values[str(i[1])]=str(i[1])
+
+    # sort the column values
+    col_values=natsort(col_values)
+    
+    return col_values
+    
+#
+def get_selected_column_values_old(controlled_col,col,table,user_id):
     # if the column is not controlled, then we must look in the database
     # for the public values provided in that column
     if not controlled_col:
@@ -222,8 +296,7 @@ def get_selected_column_values(controlled_col,col,table,user_id):
     col_values=natsort(col_values)
     
     return col_values
-    
-    
+
 def get_table_col_values_from_form(form):
     ''' get the form values from select_metadata/index.psp '''
     table_col_value={}

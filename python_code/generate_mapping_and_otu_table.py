@@ -36,49 +36,12 @@ import socket
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
 
-def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, 
-                                file_name_prefix,user_id,meta_id,params_path,
-                                rarefied_at,otutable_rarefied_at,
-                                jobs_to_start,tax_name,tree_fp):
-                                
-    tmp_prefix=get_tmp_filename('',suffix='').strip()
-
-    total1 = time()
-    unique_cols=[]
-    # Create the mapping file based on sample and field selections
-    # get the directory location for the files to write
-    otu_table_file_dir=path.join(fs_fp,'otu_table_files')
-    mapping_file_dir=path.join(fs_fp,'mapping_files')
-    zip_file_dir=path.join(fs_fp,'zip_files')
-    #pcoa_file_dir_loc=path.join(fs_fp,'pcoa_files')
-
-    otu_table_file_dir_db=path.join(web_fp,'otu_table_files')
-    mapping_file_dir_db=path.join(web_fp,'mapping_files')
-    zip_file_dir_db=path.join(web_fp,'zip_files')
-    pcoa_file_dir_loc_db=path.join(web_fp,'pcoa_files')    
-                
-    alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
-    alphabet += alphabet.lower()
-    alphabet += "01234567890"
-    random_dir_name=''.join([choice(alphabet) for i in range(10)])
-    unique_name=strftime("%Y_%m_%d_%H_%M_%S")+random_dir_name
-    #plot_unique_name=beta_metric+'_plots_'+unique_name
-    #pcoa_file_dir=os.path.join(pcoa_file_dir_loc,plot_unique_name)
-    #pcoa_file_dir_db=os.path.join(pcoa_file_dir_loc_db,plot_unique_name)
-    #create_dir(pcoa_file_dir)
-    map_files=[]
-    
-    t1 = time()
+def get_mapping_data(data_access,is_admin,table_col_value,get_count=False):
     
     #recorded_fields = data_access.getMetadataFields(study_id)
     database_map = {}
     tables = []
     
-    # Get the user details
-    user_details = data_access.getUserDetails(user_id)
-    if not user_details:
-        raise ValueError('No details found for this user')
-    is_admin = user_details['is_admin']
 
     # Start building the statement for writing out the mapping file
     # THIS ORDER MUST REMAIN THE SAME SINCE CHANGES WILL AFFECT LATER FUNCTION
@@ -88,29 +51,28 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     statement += '"SAMPLE".study_id, \n'
     statement += '"SEQUENCE_PREP".run_prefix as RUN_PREFIX, \n'
 
-
     study_id_array=[]
     # Break out the recorded fields and store as dict: field name and table name
     # field[0] = field_name, field[1] = table_name
 
     for i in table_col_value:
         tab_col_studies=i.split('####SEP####')
-        tab=tab_col_studies[0]
-    
+        tab=tab_col_studies[0].upper()
+
         col_studies=tab_col_studies[1].split('####STUDIES####')
-    
-        column=col_studies[0]
+
+        column=col_studies[0].upper()
         studies=col_studies[1].split('S')
         for study_id in studies:
             study_id_array.append(study_id)
-    
+
         # Required fields which much show up first. Skip as they are already in the statement
         if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE','DESCRIPTION','RUN_PREFIX']:
             continue
 
         # Add to select list
         statement += '"'+tab + '"."' + column + '", \n'
-   
+
         # Add the table to our list if not already there and not one of the required tables
         if '"'+tab+'"' not in tables and '"'+tab+'"' not in ['"STUDY"', '"SAMPLE"', '"SEQUENCE_PREP"']:
             tables.append('"'+tab+'"')
@@ -120,9 +82,12 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
 
         # End for
 
+    statement += '"SEQUENCE_PREP".experiment_title as Description \n'
     unique_study_ids=list(set(study_id_array))
     
-    statement += '"SEQUENCE_PREP".experiment_title as Description \n'
+    ###this is for the website sample count
+    if get_count:
+        statement = 'count(1) \n'
     
     if is_admin:
         statement = '\
@@ -215,12 +180,58 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         statement += ' and (%s) ' % (' and '.join(additional_where_statements)) 
 
     # Run the statement
-
     con = data_access.getMetadataDatabaseConnection()
     cur = con.cursor()
     
-    #req.write(str(statement)+'<br><br>')
+    #raise ValueError,statement
+    
+    print statement
     results = cur.execute(statement)
+    
+    return results,cur
+
+def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, 
+                                file_name_prefix,user_id,meta_id,params_path,
+                                rarefied_at,otutable_rarefied_at,
+                                jobs_to_start,tax_name,tree_fp):
+                                
+    tmp_prefix=get_tmp_filename('',suffix='').strip()
+
+    total1 = time()
+    unique_cols=[]
+    # Create the mapping file based on sample and field selections
+    # get the directory location for the files to write
+    otu_table_file_dir=path.join(fs_fp,'otu_table_files')
+    mapping_file_dir=path.join(fs_fp,'mapping_files')
+    zip_file_dir=path.join(fs_fp,'zip_files')
+    #pcoa_file_dir_loc=path.join(fs_fp,'pcoa_files')
+
+    otu_table_file_dir_db=path.join(web_fp,'otu_table_files')
+    mapping_file_dir_db=path.join(web_fp,'mapping_files')
+    zip_file_dir_db=path.join(web_fp,'zip_files')
+    pcoa_file_dir_loc_db=path.join(web_fp,'pcoa_files')    
+                
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
+    alphabet += alphabet.lower()
+    alphabet += "01234567890"
+    random_dir_name=''.join([choice(alphabet) for i in range(10)])
+    unique_name=strftime("%Y_%m_%d_%H_%M_%S")+random_dir_name
+    #plot_unique_name=beta_metric+'_plots_'+unique_name
+    #pcoa_file_dir=os.path.join(pcoa_file_dir_loc,plot_unique_name)
+    #pcoa_file_dir_db=os.path.join(pcoa_file_dir_loc_db,plot_unique_name)
+    #create_dir(pcoa_file_dir)
+    map_files=[]
+    
+    t1 = time()
+    
+    # Get the user details
+    user_details = data_access.getUserDetails(user_id)
+    if not user_details:
+        raise ValueError('No details found for this user')
+    is_admin = user_details['is_admin']
+
+    # get mapping results
+    results,cur=get_mapping_data(data_access,is_admin,table_col_value)
 
 
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
