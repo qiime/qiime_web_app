@@ -75,14 +75,17 @@ tmp_filename_params = get_tmp_filename(tmp_dir=query_folder,
 fout=open(tmp_filename_params,'w')
 fout.write('####QIIME WEB PARAMS FILE####\n\n')
 for key in form:
-    split_key=key.split('####STUDIES####');
-    if len(split_key)==1:
-        if key not in ['fname_prefix','bdiv_rarefied_at','taxonomy',\
-                       'jobs_to_start','otutable_rarefied_at']:
-            if key=='summarize_taxa:delimiter':
-                fout.write('%s\t\'%s\'\n' %(key,form[key]))
-            else:
-                fout.write('%s\t%s\n' %(key,form[key]))
+    if key=='contains_seqs':
+        contains_seqs=form[key]
+    else:
+        split_key=key.split('####STUDIES####');
+        if len(split_key)==1:
+            if key not in ['fname_prefix','bdiv_rarefied_at','taxonomy',\
+                           'jobs_to_start','otutable_rarefied_at']:
+                if key=='summarize_taxa:delimiter':
+                    fout.write('%s\t\'%s\'\n' %(key,form[key]))
+                else:
+                    fout.write('%s\t%s\n' %(key,form[key]))
         
 fout.close()
 
@@ -100,7 +103,12 @@ params.append('jobs_to_start=%s' % jobs_to_start)
 params.append('taxonomy=%s' % taxonomy)
 params.append('tree_fp=%s' % tree_fp)
 job_input='!!'.join(params)
-job_type='generateMapOTUTableSubmitJobs'
+
+if contains_seqs=='false':
+    job_type='generateMapSubmitJobs'
+else:
+    job_type='generateMapOTUTableSubmitJobs'
+
 
 # Submit the jobs
 try:
@@ -110,6 +118,7 @@ try:
     psp.redirect('../fusebox.psp?page=select_meta_analysis_task.psp')
 except Exception, e:
     req.write(str(e))
+    
 #
 %>
 

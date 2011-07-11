@@ -99,7 +99,7 @@ function checkQiimeMetaAnalysisStatus()
     }
     
     div_name ="qiime_status_div";
-    var url = "check_job_status.psp?job_type_id=7,8,9,10,11";
+    var url = "check_job_status.psp?job_type_id=7,8,9,10,11,13";
     
     xmlhttp.onreadystatechange=function()
     {

@@ -66,6 +66,7 @@ function showResult(input_textbox,column_id,column_value)
     }
     alert(long_str)
     */
+    
     url=url + "?col_id=" + col_name + "&tab_name=" + table_name + "&show_values=" + show_values + "&studies=" + studies;
     xmlhttp.onreadystatechange=function()
     {
@@ -110,18 +111,60 @@ function saveSelection(input_selectbox)
             break;
         }
     }
+    
     if (exist='False'){
         savedValues[select_box_id.id]=selected_values;
     }
     
-    /*
-    var select_value_array=new Array();
-    select_value_array=savedValues[select_box_id.id].split(',');
-    for (var i in select_value_array){
-        alert(select_value_array[i])
+    var key_values=document.forms['key_vals'];
+    key_values.innerHTML=''
+    
+    // check which columns have been selected
+    cols_in_select_box=new Array();
+    var box2=document.getElementById('box2View')
+
+    for (var i=0;i<box2.length;i++){
+        cols_in_select_box[box2[i].value.toUpperCase()]=''
     }
-    */
-    return
+    
+    for (var i in savedValues){
+        //verify saved cols are in the selected box
+        if (i in cols_in_select_box && savedValues[i]!=''){
+            key_values.innerHTML+='<input type="hidden" name="'+i+'" id="'+i+'" value="'+savedValues[i]+'" /><br>'
+        }
+    }
+
+    //if no values selected then return
+    if (key_values.innerHTML==''){
+        return;
+    }
+    
+    xmlhttp3=GetXmlHttpObject()
+    
+    //check if browser can perform xmlhttp
+    if (xmlhttp3==null){
+        alert("Your browser does not support XML HTTP Request");
+        return;
+    }
+
+    //generate a url string where we pass our variables
+    var url="select_metadata/get_sample_counts.psp";
+
+    xmlhttp3.onreadystatechange=function()
+    {
+        if (xmlhttp3.readyState==4){
+
+            //write the list of similar terms from the database  
+            document.getElementById('sample_count').innerHTML=xmlhttp3.responseText;
+            //document.getElementById('field_ref_table2').style.border="1px solid #A5ACB2";
+        }
+    }
+    var key_values2=document.forms['key_vals'];
+    //perform a POST 
+    xmlhttp3.open("POST",url,true);
+    xmlhttp3.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xmlhttp3.send($(key_values2).serialize())
+    
 }
 
 
@@ -399,4 +442,104 @@ function getStats(form_object)
     xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.setRequestHeader("Content-length", form_object.length);
     xmlhttp.send(form_object)
+}
+
+/* 
+    This is the AJAX function which produces the list of terms below each input
+    box. It takes as input:
+        1) the ontology select box id
+        2) the query string
+        3) the input box id
+        4) the txt box below input id
+*/
+function showColumns(input_textbox,column_id,column_value)
+{
+    
+    select_box_id=document.getElementById(column_id).parentNode.id
+    var listbox_values=document.getElementById(select_box_id);
+    selected_studies=new Array();
+    for (var i=0;i<listbox_values.options.length;i++){
+        if (listbox_values.options[i].selected==true){
+            selected_studies.push(listbox_values.options[i].id);
+        }
+    }
+    
+    xmlhttp=GetXmlHttpObject()
+    
+    //check if browser can perform xmlhttp
+    if (xmlhttp==null){
+        alert("Your browser does not support XML HTTP Request");
+        return;
+    }
+
+    //generate a url string where we pass our variables
+    var url="select_metadata/get_study_columns.psp";
+    
+    url=url + "?studies=" + selected_studies.join();
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4){
+
+            //write the list of similar terms from the database  
+            document.getElementById('box1View').innerHTML=xmlhttp.responseText;
+            $("#box1View").html($("#box1View option").sort(function (a, b) {
+                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
+            }));
+
+            /*
+            document.getElementById('field_ref_table').style.border="1px solid #A5ACB2";
+     
+            if (array_key in savedValues){
+                var value_select_box = document.getElementById(array_key)
+                var list_of_saved_values=savedValues[array_key].split(',')
+                for (var i=0;i<value_select_box.length;i++){
+                    for (var j=0;j<list_of_saved_values.length;j++){                    
+                        if (("'"+value_select_box.options[i].value+"'")==list_of_saved_values[j]){
+                                value_select_box.options[i].selected=true;
+                        }
+                    }
+                }
+                //alert(savedValues[array_key]);
+            }*/
+        }
+    }
+    //perform a GET 
+    xmlhttp.open("GET",url,true);
+    xmlhttp.send(null)
+   
+    xmlhttp2=GetXmlHttpObject()
+    
+    //check if browser can perform xmlhttp
+    if (xmlhttp2==null){
+        alert("Your browser does not support XML HTTP Request");
+        return;
+    }
+    savedValues=new Array();
+    //generate a url string where we pass our variables
+    var url="select_metadata/get_sample_info.psp";
+    
+    url=url + "?studies=" + selected_studies.join();
+    
+    contains_seqs=true
+    for (var i=0;i<selected_studies.length;i++){
+        if (study_types[selected_studies[i].toString()][1]=='false'){
+            contains_seqs=false;
+        }
+    }
+    
+    xmlhttp2.onreadystatechange=function()
+    {
+        if (xmlhttp2.readyState==4){
+            //write the list of similar terms from the database  
+            document.getElementById('sample_info').innerHTML=xmlhttp2.responseText;
+            document.getElementById('sample_info').innerHTML+="<p id='seqs_loaded'>Seqs loaded: "+contains_seqs+"</p>"
+            document.getElementById('box2View').innerHTML=''
+            document.getElementById('field_ref_table').innerHTML='';
+            document.getElementById('field_ref_table').style.border="";
+            
+        }
+    }
+    //perform a GET 
+    xmlhttp2.open("GET",url,true);
+    xmlhttp2.send(null)
 }

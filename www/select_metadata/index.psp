@@ -18,13 +18,49 @@ from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str
 from enums import FieldGrouping
 
 # get a list of public columns
-public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
-# get submission fields
-#sra_submission_field_list = map(lambda x:x.upper(),(zip(*data_access.getPackageColumns(FieldGrouping.sra_submission_level))[0]))
-#req.write(str(sra_submission_field_list))
+#public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
+#req.write(str(public_columns))
+qiime_projects=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"], 'qiime')
+emp_projects=data_access.getUserAndPublicStudyNames(sess['web_app_user_id'], sess["is_admin"], 'emp')
+web_app_user_id = sess['web_app_user_id']
 %>
+<script type="text/javascript">
+    var contains_seqs=true;
+    var study_types=new Array();
+<%
+qiime_emp_projects=[]
+for i in qiime_projects:
+    study_id_exists=data_access.checkIfStudyIdExists(str(i[0]))
+    study_info = data_access.getStudyInfo(str(i[0]), web_app_user_id)
+    if study_info['metadata_complete']=='y':
+        qiime_emp_projects.append(i)
+        req.write('study_types["'+str(i[0])+'"]=["qiime","'+str(study_id_exists).lower()+'"];\n')
 
-<h3>Meta-Analysis Value Selection</h3>
+for i in emp_projects:
+    study_id_exists=data_access.checkIfStudyIdExists(str(i[0]))
+    study_info = data_access.getStudyInfo(str(i[0]), web_app_user_id)
+    if study_info['metadata_complete']=='y':
+        qiime_emp_projects.append(i)
+        req.write('study_types["'+str(i[0])+'"]=new Array();\n')
+        req.write('study_types["'+str(i[0])+'"]=["emp","'+str(study_id_exists).lower()+'"];\n')
+#
+%>
+</script>
+<%  
+
+
+#req.write(str(qiime_projects))
+#req.write('<h3>Meta-Analysis Value Selection</h3>')
+req.write('<table><tr><th colspan=2>Select Studies (note: this will clear any previous value selections)</th></tr>')
+req.write('<tr><td>')
+req.write('<select id="qiime_emp_studies" style="height:150px;width:300px;" multiple onchange="javascript:showColumns(\'metadata_left_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">')
+qiime_emp_projects.sort(key=lambda x: x[1].lower())
+for i in qiime_emp_projects:
+    req.write('<option id="%s" onmouseover="return overlib(\'<b>Study Title:</b>%s<br><br><b>Abstract:</b>%s\',WIDTH, 500);" onmouseout="return nd();">%s' % (str(i[0]),str(i[2]),str(i[3]),str(i[1])))
+req.write('</select></td>')
+req.write('<td id="sample_info"></td></tr></table>')
+#
+%>
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="./style/qiime.css" type="text/css">
 <script src="js/overlib.js" type="text/javascript" ></script>
@@ -32,30 +68,29 @@ public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
 <script src="select_metadata/jQuery.dualListBox-1.2.js" type="text/javascript"></script> 
 <script src="select_metadata/metadata_selection.js" type="text/javascript" ></script>
 <script language="javascript" type="text/javascript"> 
-$(document).ready(function(){
-    
-});
+
     window.onload=$(function() {$.configureBoxes();});
     
     var savedValues=new Array();
     
     function post_Array() {
         var form_object=document.getElementById("metadata_submission") 
-
         var listbox_values=document.getElementById('box2View');
 
         if (listbox_values.options.length==0){
             alert('You have not selected any metadata!');
             return false;
         }
-        for (i=0;i<listbox_values.options.length;i++){
-            if (listbox_values.options[i].value in savedValues){
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="'+savedValues[listbox_values.options[i].value]+'">';
+        for (var i=0;i<listbox_values.options.length;i++){
+            var list_value=listbox_values.options[i].value.toUpperCase()
+            if (list_value in savedValues){
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+list_value+'" value="'+savedValues[list_value]+'">';
             }else{
-                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+listbox_values.options[i].value+'" value="####ALL####">';
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+list_value+'" value="####ALL####">';
             }
         }
-        return true;
+        
+        form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="contains_seqs" value="'+contains_seqs+'">';
     }
     
 </script>
@@ -171,12 +206,12 @@ it will remove the return key functionality.
     <tr>
         <!-- Define list input area and ontology select list -->
         <td>
-            <select id="box1View" multiple="multiple" style="height:200px;width:300px;" onchange="javascript:showResult(\'metadata_left_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">
+            <select id="box1View" multiple="multiple" style="height:150px;width:300px;" onchange="javascript:showResult(\'metadata_left_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">
                 <!-- Using psp, generate a list of ontologies -->
 <%
 #write out the list of public columns
 
-req.write(unique_cols_to_select_box_str(public_columns))
+#req.write(unique_cols_to_select_box_str(public_columns))
 %>
                 </select>
             </td> 
@@ -187,7 +222,7 @@ req.write(unique_cols_to_select_box_str(public_columns))
                 <button id="to1" type="button">&nbsp;<&nbsp;</button> 
             </td> 
             <td> 
-                <select id="box2View" multiple="multiple" style="height:200px;width:300px;" onchange="javascript:showResult(\'metadata_right_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);"> 
+                <select id="box2View" multiple="multiple" style="height:150px;width:300px;" onchange="javascript:showResult(\'metadata_right_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);"> 
                 </select>
             </td>
         </tr><tr>
@@ -215,6 +250,8 @@ req.write(unique_cols_to_select_box_str(public_columns))
 -->
 <table id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
 </table>
+<table id='field_ref_table2' class="column_values" bgcolor="#C0C0C0">
+</table>
 <form id="metadata_submission" onsubmit="return post_Array()" method="post" action="fusebox.psp">
 <input type="hidden" name="page" id="page" value="select_metadata/select_meta_analysis_parameters.psp">
     <!--
@@ -225,4 +262,7 @@ req.write(unique_cols_to_select_box_str(public_columns))
     <input type="checkbox" name="pcoa_plot" id="pcoa_plot" checked="true">I want the PCoA plot</input><br/>
     -->
     <br/><input type="submit" value="Continue">
+</form>
+
+<form id="key_vals" onsubmit="return false;">
 </form>

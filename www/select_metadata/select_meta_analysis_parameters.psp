@@ -42,7 +42,10 @@ column_headers.append('LinkerPrimerSequence')
 #write the form data to be used for seq/sample summary
 req.write('<form onsubmit="return false;" id="otu_table_info">')
 for i in form_data:
-    if i != 'page':
+    if i=='contains_seqs':
+        contains_seqs=form_data[i]
+        req.write("<script type='text/javascript'>var contains_seqs='%s'</script>" % (contains_seqs))
+    elif i != 'page':
         column_headers.append(\
                         i.split('####STUDIES####')[0].split('####SEP####')[1])
         req.write('<input type="hidden" id="%s" value="%s" \>' % \
@@ -249,10 +252,8 @@ def create_options(script_name,column_headers,help_img):
             icon_to_change.src='./img/toggle-small.png';
         }
     }
-    
 </script>
 <link rel="stylesheet" href="./style/select_metadata_styles.css" type="text/css">
-
 
 <!-- 
 This form contains the input box for the list of terms, along with
@@ -272,6 +273,14 @@ it will remove the return key functionality.
 -->
 <form id="meta_analysis_params" name="meta_analysis_params" onsubmit="return false;">
 
+<%
+if contains_seqs=='false':
+    req.write('<input type="hidden" id="otutable_rarefied_at" name="otutable_rarefied_at" />')
+    req.write('<input type="hidden" id="fname_prefix" name="fname_prefix" value="meta_analysis"/>')
+    req.write('<select id="taxonomy" name="taxonomy" style="display:none"><option selected>PHPR</select>')
+else:
+    #
+%>
 <h3>Meta-Analyses to Perform</h3>
 <input type="hidden" id="fname_prefix" name="fname_prefix" value="meta_analysis"/>
 
@@ -305,9 +314,8 @@ it will remove the return key functionality.
 <br>
 <div id='heatmap_div' style='display:none;valign:top'>
 <%
-script_name='make_otu_heatmap_html'
-req.write(create_options(script_name,column_headers,help_img))
-
+    script_name='make_otu_heatmap_html'
+    req.write(create_options(script_name,column_headers,help_img))
 %>
 </div>
 <br>
@@ -319,17 +327,16 @@ req.write(create_options(script_name,column_headers,help_img))
 <br>
 <div id='sumcat_div' style='display:none;valign:top'>
 <%
-script_name='summarize_otu_by_cat'
-req.write(create_options(script_name,column_headers,help_img))
+    script_name='summarize_otu_by_cat'
+    req.write(create_options(script_name,column_headers,help_img))
 
-req.write('</div><br>')
+    req.write('</div><br>')
 
-script_name='summarize_taxa'
-req.write(create_options(script_name,column_headers,help_img))
+    script_name='summarize_taxa'
+    req.write(create_options(script_name,column_headers,help_img))
 
-script_name='plot_taxa_summary'
-req.write(create_options(script_name,column_headers,help_img))
-
+    script_name='plot_taxa_summary'
+    req.write(create_options(script_name,column_headers,help_img))
 %>
 </div>
 <br>
@@ -338,14 +345,14 @@ req.write(create_options(script_name,column_headers,help_img))
 <br>
 <div id='arare_div' style='display:none;valign:top'>
 <%
-script_name='multiple_rarefactions'
-req.write(create_options(script_name,column_headers,help_img))
+    script_name='multiple_rarefactions'
+    req.write(create_options(script_name,column_headers,help_img))
 
-script_name='alpha_diversity'
-req.write(create_options(script_name,column_headers,help_img))
+    script_name='alpha_diversity'
+    req.write(create_options(script_name,column_headers,help_img))
 
-script_name='make_rarefaction_plots'
-req.write(create_options(script_name,column_headers,help_img))
+    script_name='make_rarefaction_plots'
+    req.write(create_options(script_name,column_headers,help_img))
 %>
 </div>
 <br>
@@ -355,37 +362,35 @@ req.write(create_options(script_name,column_headers,help_img))
 
 
 <%
-req.write('<a href="javascript:show_hide_optional(\'beta_rarefaction\')"><img src="./img/toggle-small-expand.png" id="beta_rarefaction_icon"\> Optional Parameters </a>(rarefaction.py)<br>')
-req.write('<div id="beta_rarefaction" class="optional" style="display:none;valign:top">')
-req.write('<table><tr><td><b>Rarefied at: </b></td><td><input type="text" id="bdiv_rarefied_at" name="bdiv_rarefied_at" /><em style="color:gray">(default: use OTU table parameters)</em></td></tr></table>')
-req.write('</div>')
+    req.write('<a href="javascript:show_hide_optional(\'beta_rarefaction\')"><img src="./img/toggle-small-expand.png" id="beta_rarefaction_icon"\> Optional Parameters </a>(rarefaction.py)<br>')
+    req.write('<div id="beta_rarefaction" class="optional" style="display:none;valign:top">')
+    req.write('<table><tr><td><b>Rarefied at: </b></td><td><input type="text" id="bdiv_rarefied_at" name="bdiv_rarefied_at" /><em style="color:gray">(default: use OTU table parameters)</em></td></tr></table>')
+    req.write('</div>')
 
-script_name='beta_diversity'
-req.write(create_options(script_name,column_headers,help_img))
-
+    script_name='beta_diversity'
+    req.write(create_options(script_name,column_headers,help_img))
 %>
 <br>
 <b>Visualizations:</b><br><b><input type='checkbox' id='check_2d_bdiv_plots' onclick='show_hide_div(this.id,"2d_plots")'>&nbsp;2D PCoA Plots</input></b>
 <div id='2d_plots' style='display:none;valign:top'>
 <%
-
-script_name='make_2d_plots'
-req.write(create_options(script_name,column_headers,help_img))
-req.write('</div><br>')
+    script_name='make_2d_plots'
+    req.write(create_options(script_name,column_headers,help_img))
+    req.write('</div><br>')
 %>
 <b><input type='checkbox' id='check_3d_bdiv_plots' onclick='show_hide_div(this.id,"3d_plots")'>&nbsp;3D PCoA Plots</input></b>
 <div id='3d_plots' style='display:none;valign:top'>
 <%
-script_name='make_3d_plots'
-req.write(create_options(script_name,column_headers,help_img))
-req.write('</div><br>')
+    script_name='make_3d_plots'
+    req.write(create_options(script_name,column_headers,help_img))
+    req.write('</div><br>')
 %>
 <b><input type='checkbox' id='check_disthist_bdiv_plots' onclick='show_hide_div(this.id,"dist_hist")'>&nbsp;Distance Histograms</input></b>
 <div id='dist_hist' style='display:none;valign:top'>
 <%
-script_name='make_distance_histograms'
-req.write(create_options(script_name,column_headers,help_img))
-req.write('</div><br>')
+    script_name='make_distance_histograms'
+    req.write(create_options(script_name,column_headers,help_img))
+    req.write('</div><br>')
 %>
 
 </div>
@@ -396,15 +401,27 @@ req.write('</div><br>')
     The following table is where we will be dynamically writing
     the results.
 -->
-
+<%
+#
+%>
 </form>
+
 <form id="metadata_submission" onsubmit="return post_Array()" method="post" action="select_metadata/submit_meta_analyses.psp">
 <%
 for i in form_data:
     if i != 'page':
         req.write('<input type="hidden" name="%s" value="%s" />' % (i,form_data[i]));
 #
+if contains_seqs=='true':
+    req.write('<input type="submit" />')
+#
 %>
-    <br/>
-    <input type="submit" />
+
 </form>
+<script type="text/javascript">
+    if (contains_seqs=='false'){
+        post_Array()
+        document.forms["metadata_submission"].submit();
+    }
+    
+</script>
