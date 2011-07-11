@@ -25,6 +25,7 @@ QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_through_metadata_to_db.py"
 QIIME_SUBMIT_OTU_MAPPING_TO_DB = QIIME_WEBAPP_BASE  + "/submit_otu_mapping_to_db.py"
 QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
+QIIME_MAKE_MAPPING_FILE = QIIME_WEBAPP_BASE + "/make_mapping_file.py"
 QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
 QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 QIIME_BDIV_THROUGH_PLOTS= QIIME_WEBAPP_BASE + "/bdiv_through_plots.py"
@@ -313,7 +314,19 @@ class makeMappingAndOTUFiles(JobHandler):
             return True
         else:
             return False
+#
+class generateMapSubmitJobs(JobHandler):
+    """Handler for bdiv_through_3d_plots.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAPPING_FILE, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --otutable_rarefied_at %(otutable_rarefied_at)s --jobs_to_start %(jobs_to_start)s --taxonomy %(taxonomy)s --tree_fp %(tree_fp)s" ])
+    _base_args = {'fs_fp':None, 'web_fp':None, 'query':None,'fname_prefix':None,'user_id':None,'meta_id':None,'params_path':None,'bdiv_rarefied_at':None,'otutable_rarefied_at':None,'jobs_to_start':None,'taxonomy':None,'tree_fp':None}
 
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
                         
 class LoadSFFAndMetadataHandler(JobHandler):
     """Handler for submit_sff_and_metadata_to_db.py"""

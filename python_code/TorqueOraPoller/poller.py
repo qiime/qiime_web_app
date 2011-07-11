@@ -53,7 +53,8 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'makeOTUHeatmap':makeOTUHeatmap,
                    'alphaRarefaction':alphaRarefaction,
                    'summarizeTaxa':summarizeTaxa,
-                   'LoadSFFHandler':LoadSFFHandler}
+                   'LoadSFFHandler':LoadSFFHandler,
+                   'generateMapSubmitJobs':generateMapSubmitJobs}
                    
 
 class FileDoesNotExistError(IOError):
