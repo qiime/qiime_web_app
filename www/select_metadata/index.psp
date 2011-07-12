@@ -27,6 +27,8 @@ web_app_user_id = sess['web_app_user_id']
 <script type="text/javascript">
     var contains_seqs=true;
     var study_types=new Array();
+    var available_studies=new Array();
+    var available_cols=new Array();
 <%
 qiime_emp_projects=[]
 for i in qiime_projects:
@@ -53,13 +55,20 @@ for i in emp_projects:
 #req.write('<h3>Meta-Analysis Value Selection</h3>')
 req.write('<table><tr><th colspan=2>Select Studies (note: this will clear any previous value selections)</th></tr>')
 req.write('<tr><td>')
+req.write('<b>Show Type:&nbsp;</b><select id="study_types" onchange="javascript:showStudies(\'qiime_emp_studies\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">')
+req.write('<option id="all">All</option><option id="emp">EMP</option><option id="qiime">QIIME</option><option id="contains_seqs">Contains seqs</option></select><br>')
 req.write('<select id="qiime_emp_studies" style="height:150px;width:300px;" multiple onchange="javascript:showColumns(\'metadata_left_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">')
 qiime_emp_projects.sort(key=lambda x: x[1].lower())
 for i in qiime_emp_projects:
     req.write('<option id="%s" onmouseover="return overlib(\'<b>Study Title:</b>%s<br><br><b>Abstract:</b>%s\',WIDTH, 500);" onmouseout="return nd();">%s' % (str(i[0]),str(i[2]),str(i[3]),str(i[1])))
 req.write('</select></td>')
 req.write('<td id="sample_info"></td></tr></table>')
-#
+
+req.write('<script type="text/javascript">\n')
+for i in qiime_emp_projects:
+    req.write('available_studies["'+str(i[0])+'"]=new Array();\n')
+    req.write('available_studies["'+str(i[0])+'"]=["%s","%s","%s"];\n' % (str(i[2]),str(i[3]),str(i[1])))
+req.write('</script>\n')
 %>
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="./style/qiime.css" type="text/css">
@@ -68,7 +77,6 @@ req.write('<td id="sample_info"></td></tr></table>')
 <script src="select_metadata/jQuery.dualListBox-1.2.js" type="text/javascript"></script> 
 <script src="select_metadata/metadata_selection.js" type="text/javascript" ></script>
 <script language="javascript" type="text/javascript"> 
-
     window.onload=$(function() {$.configureBoxes();});
     
     var savedValues=new Array();
@@ -169,9 +177,7 @@ it will remove the return key functionality.
             Filter: <input type="text" id="box2Filter" name="box2Filter" /><button type="button" id="box2Clear">X</button>
         </td>
     </tr>
-    -->
     <tr>
-        <!-- Define Two Column headers -->
         <td>Filter by Category:
             <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
                 <option value="javascript:">
@@ -182,6 +188,12 @@ it will remove the return key functionality.
                 <option value="javascript:select_group('ADD','box1View','box2View');">Package-Specific
                 <option value="javascript:select_group('CUSTOM','box1View','box2View');">Custom Fields
             </select>
+        </td>
+    </tr>
+    -->
+    <tr>
+        <td>Show Common Fields Only:
+            <input type="checkbox" id="common_fields" name="common_fields" onchange="javascript:show_hide_study_metadata_columns(\'box1View\',this.id)"/>
         </td>
     </tr>
     <tr>

@@ -479,28 +479,11 @@ function showColumns(input_textbox,column_id,column_value)
     xmlhttp.onreadystatechange=function()
     {
         if (xmlhttp.readyState==4){
-
             //write the list of similar terms from the database  
-            document.getElementById('box1View').innerHTML=xmlhttp.responseText;
-            $("#box1View").html($("#box1View option").sort(function (a, b) {
-                return a.text == b.text ? 0 : a.text < b.text ? -1 : 1;
-            }));
-
-            /*
-            document.getElementById('field_ref_table').style.border="1px solid #A5ACB2";
-     
-            if (array_key in savedValues){
-                var value_select_box = document.getElementById(array_key)
-                var list_of_saved_values=savedValues[array_key].split(',')
-                for (var i=0;i<value_select_box.length;i++){
-                    for (var j=0;j<list_of_saved_values.length;j++){                    
-                        if (("'"+value_select_box.options[i].value+"'")==list_of_saved_values[j]){
-                                value_select_box.options[i].selected=true;
-                        }
-                    }
-                }
-                //alert(savedValues[array_key]);
-            }*/
+            eval(xmlhttp.responseText);
+            document.getElementById('common_fields').checked=true;
+            show_hide_study_metadata_columns('box1View','common_fields')
+            
         }
     }
     //perform a GET 
@@ -542,4 +525,52 @@ function showColumns(input_textbox,column_id,column_value)
     //perform a GET 
     xmlhttp2.open("GET",url,true);
     xmlhttp2.send(null)
+}
+
+function showStudies(input_textbox,column_id,column_value){
+    /* This function will show emp and qiime or studies containing seq data. */
+    var listbox_values=document.getElementById(input_textbox);
+    listbox_values.innerHTML=''
+    for (var j in available_studies){
+        if (column_id=='all'){
+            listbox_values.innerHTML+='<option id="'+j+'" onmouseover="return overlib(\'<b>Study Title:</b>'+available_studies[j][0]+'<br><br><b>Abstract:</b>'+available_studies[j][1]+'\',WIDTH, 500);" onmouseout="return nd();">'+available_studies[j][2]
+        }else if (column_id=='qiime'){
+            if (study_types[j][0]=='qiime'){
+                listbox_values.innerHTML+='<option id="'+j+'" onmouseover="return overlib(\'<b>Study Title:</b>'+available_studies[j][0]+'<br><br><b>Abstract:</b>'+available_studies[j][1]+'\',WIDTH, 500);" onmouseout="return nd();">'+available_studies[j][2]
+            }
+        }else if (column_id=='emp'){
+            if (study_types[j][0]=='emp'){
+                listbox_values.innerHTML+='<option id="'+j+'" onmouseover="return overlib(\'<b>Study Title:</b>'+available_studies[j][0]+'<br><br><b>Abstract:</b>'+available_studies[j][1]+'\',WIDTH, 500);" onmouseout="return nd();">'+available_studies[j][2]
+            }
+        }else if (column_id=='contains_seqs'){
+            if (study_types[j][1]=='true'){
+                listbox_values.innerHTML+='<option id="'+j+'" onmouseover="return overlib(\'<b>Study Title:</b>'+available_studies[j][0]+'<br><br><b>Abstract:</b>'+available_studies[j][1]+'\',WIDTH, 500);" onmouseout="return nd();">'+available_studies[j][2]
+            }
+        }
+    }
+    $("#"+input_textbox).html($("#"+input_textbox+" option").sort(function (a, b) {
+            return a.text.toUpperCase() == b.text.toUpperCase() ? 0 : a.text.toUpperCase() < b.text.toUpperCase() ? -1 : 1;
+    }));
+}
+
+function show_hide_study_metadata_columns(input_textbox,input_check){
+    /* This function will show emp and qiime or studies containing seq data. */
+    var listbox_values=document.getElementById(input_textbox);
+    document.getElementById('box2View').innerHTML='';
+    if (document.getElementById(input_check).checked){
+        column_type='common_study'
+    }else{
+        column_type='unique_study'
+    }
+    listbox_values.innerHTML=''
+    for (var j in available_cols){
+        if (column_type==available_cols[j][0] || available_cols[j][0]=='common_study'){
+            listbox_values.innerHTML+='<option id="'+available_cols[j][1]+'" value="'+available_cols[j][2]+'">'+available_cols[j][3]+'</option>'
+        }
+    }
+    
+    $("#"+input_textbox).html($("#"+input_textbox+" option").sort(function (a, b) {
+            return a.innerHTML == b.innerHTML ? 0 : a.innerHTML < b.innerHTML ? -1 : 1;
+    }));
+    
 }

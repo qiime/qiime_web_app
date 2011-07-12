@@ -73,12 +73,12 @@ def unique_cols_to_select_box_str(public_columns):
     select_box=[]
     new_study_str='S'.join(unique_studies)
     
+    javascript_str='available_cols=new Array();\n'
     # write out the public column values as a select box
     for col in unique_public_columns:
         table_name,col_name=col.split('####SEP####')
         studies_to_use=str(unique_public_columns[col]).strip('[]').split(',')
         study_string=[]
-        
         # remove the Public fields
         if str(col_name) not in ['PUBLIC']:
             
@@ -86,18 +86,43 @@ def unique_cols_to_select_box_str(public_columns):
             if col_name in sra_submission_field_list:
                 select_box.append('<option id="'+'SRASuFL#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'"</option>\n")
             '''
-            if table_name.startswith('EXTRA_'):
-                select_box.append('<option id="'+'CUSTOM#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
-            else:
-                if col_name in study_lists:
-                    select_box.append('<option id="'+'STUDY#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
-                elif col_name in sample_lists:
-                    select_box.append('<option id="'+'SAMPLE#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
-                elif col_name in prep_lists:
-                    select_box.append('<option id="'+'PREP#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+            javascript_str+='available_cols["'+str(col)+'"]=new Array();\n'
+            if len(unique_public_columns[col])==len(unique_studies):
+                if table_name.startswith('EXTRA_'):
+                    javascript_str+='available_cols["'+str(col)+'"]=["common_study","CUSTOM#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                    #select_box.append('<option class="common_study" id="'+'CUSTOM#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
                 else:
-                    select_box.append('<option id="'+'ADD#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
-    return '\n'.join(select_box)
+                    if col_name in study_lists:
+                        javascript_str+='available_cols["'+str(col)+'"]=["common_study","STUDY#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="common_study" id="'+'STUDY#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+                    elif col_name in sample_lists:
+                        javascript_str+='available_cols["'+str(col)+'"]=["common_study","SAMPLE#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="common_study" id="'+'SAMPLE#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+                    elif col_name in prep_lists:
+                        javascript_str+='available_cols["'+str(col)+'"]=["common_study","PREP#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="common_study" id="'+'PREP#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+                    else:
+                        javascript_str+='available_cols["'+str(col)+'"]=["common_study","ADD#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="common_study" id="'+'ADD#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+            else:
+                if table_name.startswith('EXTRA_'):
+                    javascript_str+='available_cols["'+str(col)+'"]=["unique_study","CUSTOM#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                    #select_box.append('<option class="unique_study" id="'+'CUSTOM#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+                else:
+                    if col_name in study_lists:
+                        javascript_str+='available_cols["'+str(col)+'"]=["unique_study","STUDY#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="unique_study" id="'+'STUDY#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+                    elif col_name in sample_lists:
+                        javascript_str+='available_cols["'+str(col)+'"]=["unique_study","SAMPLE#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="unique_study" id="'+'SAMPLE#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+                    elif col_name in prep_lists:
+                        javascript_str+='available_cols["'+str(col)+'"]=["unique_study","PREP#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="unique_study" id="'+'PREP#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+                    else:
+                        javascript_str+='available_cols["'+str(col)+'"]=["unique_study","ADD#ENDGRP#'+str(col)+'","'+str(col)+'####STUDIES####'+new_study_str+'","'+str(col_name)+'"]\n'
+                        #select_box.append('<option class="unique_study" id="'+'ADD#ENDGRP#'+str(col)+'" value="'+str(col)+'####STUDIES####'+new_study_str+'">'+str(col_name)+"</option>\n")
+
+    return javascript_str #'\n'.join(select_box)
 
 def print_metadata_info_and_values_table(query_results,show_values,table,col,
                                          studies,col_values):
