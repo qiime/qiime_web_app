@@ -62,7 +62,7 @@ Once all the fields have been filled out, the user must click the "Create" butto
     :width: 400 px
 
 Generate MIMARKS-Compliant Templates
---------------------------------------
+----------------------------------------
 To create the MIMARKS-compliant templates the user should select the link "Generate MIMARKS-compliant metadata templates".
 
 .. image:: ../images/QWA_Generate_MIMARKS_1.png
@@ -94,7 +94,7 @@ Once you have clicked "Generate Templates", you will be redirected to another pa
     :width: 400 px
     
 Ontology Lookup and Georeferencing Tool
----------------------------------------
+------------------------------------------
 
 When filling out the MIMARKS-compliant metadata templates, some fields require ontological terminology.  To learn about which fields require ontological terminology, the user should refer to the field_reference template file. To aid in filling out these columns, we have developed an Ontology Lookup and GeoReferencing Tool. Initially, the user should fill in these fields with the terms they would associate to this field. To access this tool, the user should click on the "Ontology Lookup" link. 
 
