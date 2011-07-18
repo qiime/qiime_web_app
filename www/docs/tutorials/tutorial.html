@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Create Study and Generate MIMARKS-compliant Metadata &mdash; Homepage</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0-web_app',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="Homepage" href="../index.html" />     
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<!--
+Commented out for now
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAbW_pA971hrPgosv-Msv7hRRE2viNBUPuU405tK6p2cguOFmlFBQSwZMG6_q_v6Z42nkdo9ejT1aHmA"></script>--
+<script type="text/javascript" src="../_static/google_feed.js"></script>
+
+-->
+
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 0px">
+<a href="../index.html"><img src="../_static/wordpressheader.png" border="0" alt="sampledoc"/></a>
+</div>
+<!-- 
+Commented out for now
+<div class="news" style="background-color:#ccc;"><table style="font-size:12pt;padding: 5px;"><tr id="feed"><td><b>News and Announcements &raquo;</b></td>
+</tr></table></div>
+-->
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="create-study-and-generate-mimarks-compliant-metadata">
+<span id="tutorial"></span><h1>Create Study and Generate MIMARKS-compliant Metadata<a class="headerlink" href="#create-study-and-generate-mimarks-compliant-metadata" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This tutorial explains how to use the <strong>QIIME</strong> (Quantitative Insights Into Microbial Ecology) Web-Interface to generate MIMARKS-compliant metadata and submission to the QIIME Database. With this information in hand, it is possible to determine biological and environmental factors that alter microbial community ecology in your experiment in comparison to other experiments.</p>
+<p>As an example, we will use data from a study of the response of mouse gut microbial communities to fasting (Crawford et al., 2009), which can be downloaded <a class="reference external" href="../crawford_mice_qiime_web_tutorial.zip">here</a>. This folder contains the original paper and a QIIME-formatted mapping file containing the samples and some key information pertaining to those samples. At the end of our tutorial, we will be able to compare the community structure of control vs. fasted animals. In particular, we will be able to compare taxonomic profiles for each sample type, differences in diversity metrics within the samples and between the groups, and perform comparative clustering analysis to look for overall differences in the samples.</p>
+<p>To load and process our data, we will perform the following steps:</p>
+<ul class="simple">
+<li>Create a unique study for our dataset</li>
+<li>Generate MIMARKS-compliant metadata templates</li>
+<li>Use the Ontology Lookup and GeoReferencing Tool for filling in Ontology specific metadata fields</li>
+<li>Upload MIMARKS-compliant metadata and corresponding SFF files</li>
+</ul>
+</div>
+<div class="section" id="essential-files">
+<h2>Essential Files<a class="headerlink" href="#essential-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mimarks-compliant-metadata-files-xls-or-txt">
+<h3>MIMARKS-Compliant Metadata Files (.xls or .txt)<a class="headerlink" href="#mimarks-compliant-metadata-files-xls-or-txt" title="Permalink to this headline">¶</a></h3>
+<p>These are the tab-delimited templates generated using the QIIME Web-Interface, once you have created a unique study for your experiment and identified the type of study (i.e., host-associated, human-gut, human-oral, etc.).</p>
+</div>
+<div class="section" id="flowgram-file-sff">
+<h3>Flowgram File (.sff)<a class="headerlink" href="#flowgram-file-sff" title="Permalink to this headline">¶</a></h3>
+<p>This is the 454-machine generated file which stores the sequencing trace data. This is the largest file returned from a 454 run.</p>
+</div>
+</div>
+<div class="section" id="create-a-study">
+<h2>Create a Study<a class="headerlink" href="#create-a-study" title="Permalink to this headline">¶</a></h2>
+<p>Once the user has logged in, we can create a study, by clicking on the link &#8220;Create a New Study&#8221;.  For the QIIME Web-Interface, a study is classified as one or more sequencing runs which comprise an experimental hypothesis, which means there will be one set of MIMARKS-compliant templates for one or more sequencing runs to address the hypothesis.</p>
+<img alt="../_images/QWA_New_Study_1.png" class="align-center" src="../_images/QWA_New_Study_1.png" style="width: 600px;" />
+<p>Once redirected to the new study page, the user must create a unique Study Name.  The Study Name is unique to the database, not just to an individual&#8217;s account, which means that if you type &#8220;mice&#8221; it is most likely someone else has used that study name. Therefore you will want to create a unique study name, such as the combination of the first author&#8217;s last name and the type of study (e.g. Turnbaugh_Obese_and_Lean_Twins). Along with Study Name, the user should supply the Study Title, an Alias for easy lookup and a Pubmed ID (if applicable).</p>
+<img alt="../_images/QWA_New_Study_2.png" class="align-center" src="../_images/QWA_New_Study_2.png" style="width: 400px;" />
+<p>Once the Study information has been defined, the user must select the Investigation Type for their study (i.e. MIMARKS-survey, metagenome, virus, etc.), however; most commonly users will be submitting a 16S rRNA MIMARKS-survey.</p>
+<img alt="../_images/QWA_New_Study_3.png" class="align-center" src="../_images/QWA_New_Study_3.png" style="width: 400px;" />
+<p>Along with the Investigation Type, the user must select one or multiple environmental packages that their study comprises. These fields determine which MIMARKS fields are required for submission of the study.</p>
+<img alt="../_images/QWA_New_Study_4.png" class="align-center" src="../_images/QWA_New_Study_4.png" style="width: 400px;" />
+<p>Once all the fields have been filled out, the user must click the &#8220;Create&#8221; button.</p>
+<img alt="../_images/QWA_New_Study_5.png" class="align-center" src="../_images/QWA_New_Study_5.png" style="width: 400px;" />
+</div>
+<div class="section" id="generate-mimarks-compliant-templates">
+<h2>Generate MIMARKS-Compliant Templates<a class="headerlink" href="#generate-mimarks-compliant-templates" title="Permalink to this headline">¶</a></h2>
+<p>To create the MIMARKS-compliant templates the user should select the link &#8220;Generate MIMARKS-compliant metadata templates&#8221;.</p>
+<img alt="../_images/QWA_Generate_MIMARKS_1.png" class="align-center" src="../_images/QWA_Generate_MIMARKS_1.png" style="width: 600px;" />
+<p>On the next page, the user will be presented with a large HTML table, which lists all the appropriate MIMARKS-compliant fields.  Rows with the Pink background denote fields that are required (either by MIMARKS or depending on the package(s) corresponding to this study).  If the user has other information pertaining to their study and the field is not required, the user can select specific columns, to add to their templates, by clicking on the checkbox next to the left of each field.  We recommend that you select all fields that apply, since the more information you put into these templates, the more useful the data becomes, when inserted into the database.</p>
+<img alt="../_images/QWA_Generate_MIMARKS_2.png" class="align-center" src="../_images/QWA_Generate_MIMARKS_2.png" style="width: 700px;" />
+<p>If there is a field that the user thinks may be in the database, but they do not see it in the table, they can start typing the word(s) in the input box at the bottom of the page.  This will search the database and show other fields that are present, using auto-complete functionality.  If you cannot find a field, then we recommend you add the column to your sample template and it will be parsed and added to the database.</p>
+<img alt="../_images/QWA_Generate_MIMARKS_3.png" class="align-center" src="../_images/QWA_Generate_MIMARKS_3.png" style="width: 700px;" />
+<p>Once you have checked all the fields that apply, you can click the &#8220;Generate Templates&#8221; button.</p>
+<img alt="../_images/QWA_Generate_MIMARKS_4.png" class="align-center" src="../_images/QWA_Generate_MIMARKS_4.png" style="width: 700px;" />
+<p>Once you have clicked &#8220;Generate Templates&#8221;, you will be redirected to another page, where you can download the templates by clicking &#8220;Download zip archives of all files&#8221;.</p>
+<img alt="../_images/QWA_Generate_MIMARKS_5.png" class="align-center" src="../_images/QWA_Generate_MIMARKS_5.png" style="width: 400px;" />
+</div>
+<div class="section" id="ontology-lookup-and-georeferencing-tool">
+<h2>Ontology Lookup and Georeferencing Tool<a class="headerlink" href="#ontology-lookup-and-georeferencing-tool" title="Permalink to this headline">¶</a></h2>
+<p>When filling out the MIMARKS-compliant metadata templates, some fields require ontological terminology.  To learn about which fields require ontological terminology, the user should refer to the field_reference template file. To aid in filling out these columns, we have developed an Ontology Lookup and GeoReferencing Tool. Initially, the user should fill in these fields with the terms they would associate to this field. To access this tool, the user should click on the &#8220;Ontology Lookup&#8221; link.</p>
+<img alt="../_images/QWA_Ontology_Geo_1.png" class="align-center" src="../_images/QWA_Ontology_Geo_1.png" style="width: 600px;" />
+<p>The user will be redirected to the Ontology Lookup Tool.</p>
+<img alt="../_images/QWA_Ontology_Geo_2.png" class="align-center" src="../_images/QWA_Ontology_Geo_2.png" style="width: 600px;" />
+<p>The first step for using the Ontology Lookup Tool is to select and copy the column from there template (&#8220;⌘+C&#8221; key on Mac or &#8220;CTRL+C&#8221; on PC).</p>
+<img alt="../_images/QWA_Ontology_Geo_3.png" class="align-center" src="../_images/QWA_Ontology_Geo_3.png" style="width: 600px;" />
+<p>Then the user should click on the Input Data select-box and paste the column (&#8220;⌘+V&#8221; key on Mac or &#8220;CTRL+V&#8221; on PC).</p>
+<img alt="../_images/QWA_Ontology_Geo_4.png" class="align-center" src="../_images/QWA_Ontology_Geo_4.png" style="width: 600px;" />
+<p>Once the users column has been pasted, the user should select which Ontology they want to search for their terms (i.e. FMA, ENVO, GAZ, etc.).</p>
+<img alt="../_images/QWA_Ontology_Geo_5.png" class="align-center" src="../_images/QWA_Ontology_Geo_5.png" style="width: 600px;" />
+<p>Once the ontology(s) have been selected the user should click on the button &#8220;Input Data&#8221;.</p>
+<img alt="../_images/QWA_Ontology_Geo_6.png" class="align-center" src="../_images/QWA_Ontology_Geo_6.png" style="width: 600px;" />
+<p>The user should notice that there are a new input boxes created below, where their list of terms should have been dereplicated.</p>
+<img alt="../_images/QWA_Ontology_Geo_7.png" class="align-center" src="../_images/QWA_Ontology_Geo_7.png" style="width: 600px;" />
+<p>Now that the terms have been dereplicated, the user should click on each input box, which will produce a list (up to 20 terms) below the input box where the user must should select the term that best describes their initial term.  If you get no results, then you may want to try another term, by typing in the input box, until you find the term that best relates to your sample.  Note: some ontology terms can only be defined at the resolution allowed by the ontology (e.g. Rat feces can only be defined as feces).</p>
+<img alt="../_images/QWA_Ontology_Geo_8.png" class="align-center" src="../_images/QWA_Ontology_Geo_8.png" style="width: 600px;" />
+<p>Once all the terms have been updated, you should see checks next to each term, if so, then click &#8220;Output Data&#8221;, where a new a window will pop-up and the user can select/copy and paste that list back into their template.  If there are no checkmarks, then the user will need to modify the term in the input boxes, until they get checkmarks.</p>
+<img alt="../_images/QWA_Ontology_Geo_9.png" class="align-center" src="../_images/QWA_Ontology_Geo_9.png" style="width: 600px;" />
+<p>A new pop-up window will be produced where the use can select and copy the list (&#8220;⌘+C&#8221; key on Mac or &#8220;CTRL+C&#8221; on PC).</p>
+<img alt="../_images/QWA_Ontology_Geo_10.png" class="align-center" src="../_images/QWA_Ontology_Geo_10.png" style="width: 300px;" />
+<p>Once the list has been copied the user can paste it back into their template, using &#8220;⌘+V&#8221; key on Mac or &#8220;CTRL+V&#8221; on PC.</p>
+<img alt="../_images/QWA_Ontology_Geo_11.png" class="align-center" src="../_images/QWA_Ontology_Geo_11.png" style="width: 600px;" />
+<p>To use the Georeferencing tool, the user should select the &#8220;Georeferencing Utility&#8221; link from the Selected Study page.</p>
+<img alt="../_images/QWA_Ontology_Geo_12.png" class="align-center" src="../_images/QWA_Ontology_Geo_12.png" style="width: 600px;" />
+<p>In the Georeferencing tool, the user can create a list of Latitudes, Longitudes, and Elevations.  First the user should type in a location in the &#8220;Enter Location&#8221; box.</p>
+<img alt="../_images/QWA_Ontology_Geo_13.png" class="align-center" src="../_images/QWA_Ontology_Geo_13.png" style="width: 600px;" />
+<p>Next the user should click on the &#8220;Verify Location&#8221; button, which will create a tooltip on the map below of the location.  The user should verify that the location is correct, since locations like &#8220;Columbus&#8221; can mean &#8220;Columbus, OH&#8221; or &#8220;Columbus, GA&#8221;, for which you will need to be more specific.  Note: If you can only describe your samples at the location of a country, you can specify only a country.</p>
+<img alt="../_images/QWA_Ontology_Geo_14.png" class="align-center" src="../_images/QWA_Ontology_Geo_14.png" style="width: 600px;" />
+<p>Once you location is correct, the user needs input the the number of rows in their template.</p>
+<img alt="../_images/QWA_Ontology_Geo_15.png" class="align-center" src="../_images/QWA_Ontology_Geo_15.png" style="width: 600px;" />
+<p>Next the user should select which field they would like to output (Lat/Long/Elev).</p>
+<img alt="../_images/QWA_Ontology_Geo_16.png" class="align-center" src="../_images/QWA_Ontology_Geo_16.png" style="width: 600px;" />
+<p>To create the list of Lat/Long/Elev the user needs to click on the &#8220;Output Data&#8221; button&#8221;, which will produce a pop-up containing the appropriate data, which can be selected and copied (&#8220;⌘+C&#8221; key on Mac or &#8220;CTRL+C&#8221; on PC).</p>
+<img alt="../_images/QWA_Ontology_Geo_17.png" class="align-center" src="../_images/QWA_Ontology_Geo_17.png" style="width: 300px;" />
+<p>Then, the user can paste the list into their template (&#8220;⌘+V&#8221; key on Mac or &#8220;CTRL+V&#8221; on PC).</p>
+<img alt="../_images/QWA_Ontology_Geo_18.png" class="align-center" src="../_images/QWA_Ontology_Geo_18.png" style="width: 600px;" />
+</div>
+<div class="section" id="upload-mimarks-compliant-templates">
+<h2>Upload MIMARKS-Compliant Templates<a class="headerlink" href="#upload-mimarks-compliant-templates" title="Permalink to this headline">¶</a></h2>
+<p>To upload your MIMARKS-compliant metadata files, you must first zip the templates into a single archive. Then you must select the link Upload metadata to this study.  Note: once you successfully upload the SFF files, the &#8220;(not complete)&#8221; message and X will change to &#8220;(complete)&#8221; and a checkmark will appear next to this link.</p>
+<img alt="../_images/QWA_Upload_Meta_1.png" class="align-center" src="../_images/QWA_Upload_Meta_1.png" style="width: 600px;" />
+<p>Once redirected, you may see an applet permission pop-up, where the user should click on the &#8220;Allow&#8221; button.  The reason for this message is that the browser is trying to verify the use of the java applet.  Once the applet has loaded, the user can drag-n-drop their MIMARKS-compliant template archive onto the applet, or click on the &#8220;Add...&#8221; button.</p>
+<img alt="../_images/QWA_Upload_Meta_2.png" class="align-center" src="../_images/QWA_Upload_Meta_2.png" style="width: 600px;" />
+<p>If the user selects &#8220;Add...&#8221; a window should pop-up.  In this window the user should locate their zipped file and select it. Once the zipped file is selected the user should click &#8220;Open&#8221;.</p>
+<img alt="../_images/QWA_Upload_Meta_3.png" class="align-center" src="../_images/QWA_Upload_Meta_3.png" style="width: 400px;" />
+<p>Once the file shows up in the applet window, the user should click on &#8220;Start Upload&#8221; button on the bottom left corner of the applet.</p>
+<img alt="../_images/QWA_Upload_Meta_4.png" class="align-center" src="../_images/QWA_Upload_Meta_4.png" style="width: 600px;" />
+<p>If there are columns in the metadata templates that are user specific, then a page will ask the user to describe these new columns.</p>
+<img alt="../_images/QWA_Upload_Meta_6.png" class="align-center" src="../_images/QWA_Upload_Meta_6.png" style="width: 600px;" />
+<p>After describing the column, the user should select the type of data in that will be found in that column.</p>
+<img alt="../_images/QWA_Upload_Meta_7.png" class="align-center" src="../_images/QWA_Upload_Meta_7.png" style="width: 600px;" />
+<p>Once the user has filled in the description and selected the data-type for each user-specified column, you should click on the &#8220;Continue&#8221; button.</p>
+<img alt="../_images/QWA_Upload_Meta_8.png" class="align-center" src="../_images/QWA_Upload_Meta_8.png" style="width: 600px;" />
+<p>The user will now be redirected to another page where each template is loaded into an HTML table.  If there are errors, the user will observe an input box in the column denoting the user needs to update and correct the specified fields.  The user should click on the input box and update the field.</p>
+<img alt="../_images/QWA_Upload_Meta_9.png" class="align-center" src="../_images/QWA_Upload_Meta_9.png" style="width: 600px;" />
+<p>Once corrected, the user should not that the background of the input box will turn green.</p>
+<img alt="../_images/QWA_Upload_Meta_10.png" class="align-center" src="../_images/QWA_Upload_Meta_10.png" style="width: 600px;" />
+<p>After making all the corrections, the user should scroll to the bottom of the page and click on the &#8220;Submit Metadata&#8221; button.</p>
+<img alt="../_images/QWA_Upload_Meta_11.png" class="align-center" src="../_images/QWA_Upload_Meta_11.png" style="width: 600px;" />
+<p>This will redirect the user to another page, where they can observe the loading progress and if successful, they we see a fun fireworks animation.</p>
+<img alt="../_images/QWA_Upload_Meta_12.png" class="align-center" src="../_images/QWA_Upload_Meta_12.png" style="width: 600px;" />
+</div>
+<div class="section" id="upload-sffs">
+<h2>Upload SFFs<a class="headerlink" href="#upload-sffs" title="Permalink to this headline">¶</a></h2>
+<p>To upload your SFF files, you must first zip one or more SFFs into a single archive, depending on the SFFs listed in the RUN_PREFIX of your MIMARKS-compliant metadata templates.  First you must select the link Upload SFF files to this study.  Note: once you successfully upload the SFF files, the &#8220;(not complete)&#8221; message and X will change to &#8220;(complete)&#8221; and a checkmark will appear next to this link.</p>
+<img alt="../_images/QWA_Upload_SFF_1.png" class="align-center" src="../_images/QWA_Upload_SFF_1.png" style="width: 600px;" />
+<p>Once redirected, you may see an applet permission pop-up, where the user should click on the &#8220;Allow&#8221; button.  The reason for this message is that the browser is trying to verify the use of the java applet.  Once the applet has loaded, the user can drag-n-drop their SFF archive onto the applet, or click on the &#8220;Add...&#8221; button.</p>
+<img alt="../_images/QWA_Upload_SFF_2.png" class="align-center" src="../_images/QWA_Upload_SFF_2.png" style="width: 600px;" />
+<p>Once the file shows up in the applet window, the user should click on &#8220;Start Upload&#8221; button on the bottom left corner of the applet.</p>
+<img alt="../_images/QWA_Upload_SFF_3.png" class="align-center" src="../_images/QWA_Upload_SFF_3.png" style="width: 600px;" />
+<p>If there are no errors and the files upload correctly, the user will be redirected to the &#8220;Select Task&#8221; page.  If the job fails, there could be several reasons, such as the SFF files in the zip archive are corrupt or missing from the archive.</p>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Crawford, P. A., Crowley, J. R., Sambandam, N., Muegge, B. D., Costello, E. K., Hamady, M., et al. (2009). Regulation of myocardial ketone body metabolism by the gut microbiota during nutrient deprivation. Proc Natl Acad Sci U S A, 106(27), 11276-11281.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+
+    
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Create Study and Generate MIMARKS-compliant Metadata</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#essential-files">Essential Files</a><ul>
+<li><a class="reference internal" href="#mimarks-compliant-metadata-files-xls-or-txt">MIMARKS-Compliant Metadata Files (.xls or .txt)</a></li>
+<li><a class="reference internal" href="#flowgram-file-sff">Flowgram File (.sff)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#create-a-study">Create a Study</a></li>
+<li><a class="reference internal" href="#generate-mimarks-compliant-templates">Generate MIMARKS-Compliant Templates</a></li>
+<li><a class="reference internal" href="#ontology-lookup-and-georeferencing-tool">Ontology Lookup and Georeferencing Tool</a></li>
+<li><a class="reference internal" href="#upload-mimarks-compliant-templates">Upload MIMARKS-Compliant Templates</a></li>
+<li><a class="reference internal" href="#upload-sffs">Upload SFFs</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+
+	<!--<h3><a href="../index.html">Site index</a></h3>-->
+	<ul><li><ul>
+		
+	 <li><a href="../index.html">Home</a><br /></li>
+	 <!--<li><a href="../documentation/index.html">Documentation</a><br /></li>-->
+	 <li><a href="index.html">Tutorials</a><br /></li>
+	 <li><a href="http://qiime.wordpress.com">Blog</a><br /></li>
+	</ul></li></ul>
+
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+
+    <div class="footer">
+        &copy; Copyright 2010, QIIME Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+    </div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6636235-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+  </body>
+</html>
