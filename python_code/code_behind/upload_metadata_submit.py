@@ -216,6 +216,9 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
     # Sample validation variables
     samples_missing = False
     
+    # Set a default value for key_fields_changed
+    key_fields_changed = False
+    
     # Test if the file was uploaded
     if fileitem.filename:
         # strip leading path from file name to avoid directory traversal attacks
