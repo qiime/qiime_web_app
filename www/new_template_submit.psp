@@ -35,10 +35,20 @@ for field in form:
         pass
 
 # Get the documentation for the list of fields
+"""
+Code here works as follows:
+* Get a copy of the column dictionary and interate over the entire contents
+* For every entry that matches one found in the list of sample or prep fields for this study,
+  add it to the documentation_fields list
+* Before adding, make sure that the field has not already been added. If so, skip.
+"""
 column_dictionary = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
 for entry in column_dictionary:
     if entry[0] in sample_fields or entry[0] in prep_fields:
-        documentation_fields.append(entry)
+        # Extract a slice of data from the list of tuples which represents the column names
+        names = [x[0] for x in documentation_fields]
+        if entry[0] not in names:
+            documentation_fields.append(entry)
 
 req.write('<h3>Please download your templates and documentation:</h3>')
 req.write('<ul>')
