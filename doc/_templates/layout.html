@@ -1,0 +1,56 @@
+{% extends "!layout.html" %}
+
+{% block extrahead %}     
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<!--
+Commented out for now
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAbW_pA971hrPgosv-Msv7hRRE2viNBUPuU405tK6p2cguOFmlFBQSwZMG6_q_v6Z42nkdo9ejT1aHmA"></script>--
+<script type="text/javascript" src="{{ pathto("_static/google_feed.js",1)}}"></script>
+
+-->
+{% endblock %}
+
+{% block relbar1 %}
+
+<div style="background-color: white; text-align: left; padding: 0px">
+<a href="{{ pathto('index') }}"><img src="{{
+pathto("_static/wordpressheader.png", 1) }}" border="0" alt="sampledoc"/></a>
+</div>
+<!-- 
+Commented out for now
+<div class="news" style="background-color:#ccc;"><table style="font-size:12pt;padding: 5px;"><tr id="feed"><td><b>News and Announcements &raquo;</b></td>
+</tr></table></div>
+-->
+{{ super() }}
+{% endblock %}
+
+
+{% block sidebartoc %}
+
+    {{ super() }}
+
+	<!--<h3><a href="{{ pathto('index') }}">Site index</a></h3>-->
+	<ul><li><ul>
+		
+	 <li><a href="{{ pathto('index')}}">Home</a><br /></li>
+	 <!--<li><a href="{{ pathto('documentation/index')}}">Documentation</a><br /></li>-->
+	 <li><a href="{{ pathto('tutorials/index')}}">Tutorials</a><br /></li>
+	 <li><a href="http://qiime.wordpress.com">Blog</a><br /></li>
+	</ul></li></ul>
+
+{% endblock %}
+
+
+{# include the Google Analytics Tracker #}
+{% block footer %}
+{{ super() }}
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6636235-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+{% endblock %}
