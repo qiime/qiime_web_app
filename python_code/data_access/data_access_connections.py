@@ -139,6 +139,9 @@ class QiimeDataAccessConnections(AbstractDataAccessConnections):
         self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
         self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
         self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb'
+        #self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@thebeast.colorado.edu'
+        #self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@thebeast.colorado.edu'
+        #self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@thebeast.colorado.edu'
 
 class TestDataAccessConnections(AbstractDataAccessConnections):
     """

@@ -485,6 +485,17 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def calcAgeInYears(self, study_id):
+        """ Calculates a normalized age in years
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.calc_age_in_years', [study_id])
+            return True
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
     def addSeqFile(self, study_id, file_path, file_type):
         """ adds a new SFF file to the study
         """
@@ -1056,7 +1067,7 @@ class QiimeDataAccess(object):
         return fields
     
     fields = {}
-    def findMetadataTable(self, column_name, study_id):
+    def findMetadataTable(self, column_name, study_id, lock):
         """ Finds the target metadata table for the supplied column name
         """
         
@@ -1067,6 +1078,7 @@ class QiimeDataAccess(object):
 
             # Fill out the field list if it's the first call
             if len(self.fields) == 0:
+                lock.acquire()
                 con = self.getMetadataDatabaseConnection()
                 results = con.cursor()
                 con.cursor().callproc('qiime_assets.find_metadata_table', [results])
@@ -1074,25 +1086,47 @@ class QiimeDataAccess(object):
                     if col_name not in self.fields:
                         self.fields[col_name] = []
                     self.fields[col_name].append(tab_name)
-                    
-            # Return None if table could not be found for this field
-            if column_name not in self.fields:
-                return None
+                lock.release()
             
-            # If there's only one hit we can assign it
-            if len(self.fields[column_name]) == 1:
-                table = self.fields[column_name][0]
-            # More than one table was found with this column name. Find the correct one
-            # based on the study id
+            if column_name in self.fields:
+                # If there's only one hit we can assign it
+                if len(self.fields[column_name]) == 1:
+                    table = self.fields[column_name][0]
+                
+                # More than one table was found with this column name. Find the correct one
+                # based on the study id
+                else:
+                    for table_name in self.fields[column_name]:
+                        if str(study_id) in table_name:
+                            table = table_name
+                    if table == '':
+                        if 'SAMPLE' in self.fields[column_name]:
+                            table = 'SAMPLE'
+                            
+            # If table is not found, assume user-defined column
             else:
-                for table_name in self.fields[column_name]:
-                    if str(study_id) in table_name:
-                        table = table_name
+                """ Code may look bizarre... but here's why:
+                1. To streamline access and prevent locking, we first check to see if the field
+                does exist in the field list. If it does, we do not have to lock and can simply
+                look up the table name.
                 
-                if table == '':
-                    if 'SAMPLE' in self.fields[column_name]:
-                        table = 'SAMPLE'
-                
+                2. If field is not in list, it must be a new column. In this case we must lock the 
+                code that handles new column creation. The catch is that if two threads both hit the lock
+                with the same field name, one will get in and the other will block. Once the initial thread 
+                exists, it will have handled the new column, gotten the appropriate table name, and returned. 
+                The 2nd thread will now enter the critical section, however if we don't again check to see 
+                if the field is now in the field list, it will attempt to create the same column again and 
+                fail. Thus we check a 2nd time to see if the field exists and if so, simply read it from the 
+                field list.                
+                """
+                lock.acquire()                
+                if column_name in self.fields:
+                    table_name = self.fields[column_name][0]
+                else:
+                    table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
+                    self.fields[col_name].append(table_name)
+                lock.release()
+            
             return table
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -1271,28 +1305,18 @@ class QiimeDataAccess(object):
         pk_name = ''
         
         try:
+            #lock.acquire()
+            
             # Get our database connection
             con = self.getMetadataDatabaseConnection()
             
             # Set the timeout
-            con.cursor().execute('alter session set ddl_lock_timeout=100')            
-            
-            # Lock the table search/create so that only one thread can check or create at a time.
-            lock.acquire()
-            log.append('Lock acquired')
-            
+            #con.cursor().execute('alter session set ddl_lock_timeout=100')            
+                        
             # Find the table name
             log.append('Locating table name...')
             table_name = None
-            table_name = self.findMetadataTable(field_name, study_id)
-            
-            # If table is not found, assume user-defined column and store appropriately
-            if table_name == '' or table_name == None:
-                # If the table was not found, this is a user-added column.
-                table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
-            
-            # Release the lock
-            lock.release()
+            table_name = self.findMetadataTable(field_name, study_id, lock)
             
             # Double-quote for database safety.
             table_name = '"' + table_name + '"'            
@@ -1317,7 +1341,7 @@ class QiimeDataAccess(object):
                 database_data_type = field_details[1]
                 log.append('Read field database data type as "%s"' % database_data_type)
             
-            # If the filed value is 'unknown', switch to 'null' (empty string is the same as null)
+            # If the field value is 'unknown', switch to 'null' (empty string is the same as null)
             if str(field_value).upper() == 'UNKNOWN':
                 field_value = ''
             # Figure out if this needs to be an integer ID instead of a text value
@@ -1391,6 +1415,20 @@ class QiimeDataAccess(object):
                     % (field_name, field_value))
                 raise Exception
 
+
+
+
+
+
+
+
+
+
+
+            ####### to speed up access, create local storage for all items already seen
+
+
+
             # If it ain't there, create it
             log.append('Checking if row already exists...')
             
@@ -1417,6 +1455,12 @@ class QiimeDataAccess(object):
                     statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
                 log.append(statement)
                 con.cursor().execute(statement, named_params)
+
+
+
+
+
+
             
             # Attempt to write the metadata field
             log.append('Writing metadata value...')
@@ -1435,7 +1479,7 @@ class QiimeDataAccess(object):
             results = con.cursor().execute('commit')
             
         except Exception, e:
-            call_string = 'writeMetadataValue(\'%s\', \'%s\', \'%s\', \'%s\', \'%s\')'\
+            call_string = 'writeMetadataValue("%s", "%s", "%s", "%s", "%s")'\
                 % (field_type, key_field, field_name, field_value, study_id)
             log_string = '<br/>'.join(log)
             error_msg = 'Exception caught attempting to store field "%s" with value "%s" into \
