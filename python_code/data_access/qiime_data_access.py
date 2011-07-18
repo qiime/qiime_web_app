@@ -313,7 +313,7 @@ class QiimeDataAccess(object):
                 if row[0] is None:
                     continue
                 else:
-                    study_name_list.append((row[0], row[1]))
+                    study_name_list.append((row[0], row[1], row[2], row[3]))
             return study_name_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
