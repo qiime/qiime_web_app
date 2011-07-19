@@ -26,7 +26,7 @@ req.write('var latlongs_db = [')
 result_list=[]
 
 
-'''
+
 portal_type='qiime'
 public_studies=data_access.getUserAndPublicStudyNames(12171,1,portal_type)
 study_ids=list(zip(*public_studies)[0])
@@ -42,7 +42,7 @@ results = cur.execute(statement)
 
 for i,val in enumerate(results):
     if val[0] and val[1] and val[2]:
-        result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'ff69b4\']')
+        result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'00B2EE\']')
         
         
 portal_type='emp'
@@ -62,6 +62,7 @@ for i,val in enumerate(results):
     if val[0] and val[1] and val[2]:
         result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'ff69b4\']')
 
+'''
 
 results=[["Bonnie OA Samples",50.25,4.216667],
 ["McMahon Bog Lakes",46.041014,-89.686411],
@@ -94,7 +95,7 @@ results,header,run_description=parse_mapping_file(open(map_fp,'U'))
 for i,val in enumerate(results):
     if val[0] and val[1] and val[2]:
         result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'FF0000\']')
-'''
+
 
 map_fp='/home/wwwdevuser/maps/non_host_associated_lat_long.txt'
 results,header,run_description=parse_mapping_file(open(map_fp,'U'))
@@ -102,7 +103,7 @@ for i,val in enumerate(results):
     if val[0] and val[1] and val[2]:
         result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'0000FF\']')
 
-'''
+
 results=[["Bonnie OA Samples",50.25,4.216667],
 ["McMahon Bog Lakes",46.041014,-89.686411],
 ["Cansu L4",50.25,4.216667],
