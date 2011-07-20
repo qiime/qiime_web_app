@@ -1067,14 +1067,14 @@ class QiimeDataAccess(object):
         return fields
     
     fields = {}
-    def findMetadataTable(self, column_name, study_id, lock):
+    def findMetadataTable(self, field_name, field_type, log, study_id, lock):
         """ Finds the target metadata table for the supplied column name
         """
         
         try:
             table = ''
-            column_name = column_name.upper()
-            column_name.replace('"', '')
+            field_name = field_name.upper()
+            field_name.replace('"', '')
 
             # Fill out the field list if it's the first call
             if len(self.fields) == 0:
@@ -1088,19 +1088,19 @@ class QiimeDataAccess(object):
                     self.fields[col_name].append(tab_name)
                 lock.release()
             
-            if column_name in self.fields:
+            if field_name in self.fields:
                 # If there's only one hit we can assign it
-                if len(self.fields[column_name]) == 1:
-                    table = self.fields[column_name][0]
+                if len(self.fields[field_name]) == 1:
+                    table = self.fields[field_name][0]
                 
                 # More than one table was found with this column name. Find the correct one
                 # based on the study id
                 else:
-                    for table_name in self.fields[column_name]:
+                    for table_name in self.fields[field_name]:
                         if str(study_id) in table_name:
                             table = table_name
                     if table == '':
-                        if 'SAMPLE' in self.fields[column_name]:
+                        if 'SAMPLE' in self.fields[field_name]:
                             table = 'SAMPLE'
                             
             # If table is not found, assume user-defined column
@@ -1120,10 +1120,10 @@ class QiimeDataAccess(object):
                 field list.                
                 """
                 lock.acquire()                
-                if column_name in self.fields:
-                    table_name = self.fields[column_name][0]
+                if field_name in self.fields:
+                    table_name = self.fields[field_name][0]
                 else:
-                    table_name = self.handleExtraData(study_id, field_name, field_type, log, con)
+                    table_name = self.handleExtraData(study_id, field_name, field_type, log)
                     self.fields[col_name].append(table_name)
                 lock.release()
             
@@ -1204,7 +1204,10 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     
-    def handleExtraData(self, study_id, field_name, field_type, log, con):
+    def handleExtraData(self, study_id, field_name, field_type, log):
+        
+        # Get our database connection
+        con = self.getMetadataDatabaseConnection()
         
         # Define the names of the 'extra' tables
         extra_table = ''
@@ -1226,8 +1229,7 @@ class QiimeDataAccess(object):
             key_table = 'sample'
         else:
             # Error state
-            raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
-        
+            raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))        
         try:
             # Does table exist already?
             log.append('Checking if table %s exists...' % extra_table)
@@ -1316,7 +1318,7 @@ class QiimeDataAccess(object):
             # Find the table name
             log.append('Locating table name...')
             table_name = None
-            table_name = self.findMetadataTable(field_name, study_id, lock)
+            table_name = self.findMetadataTable(field_name, field_type, log, study_id, lock)
             
             # Double-quote for database safety.
             table_name = '"' + table_name + '"'            
