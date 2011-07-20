@@ -1092,16 +1092,19 @@ class QiimeDataAccess(object):
                 # If there's only one hit we can assign it
                 if len(self.fields[field_name]) == 1:
                     table = self.fields[field_name][0]
+                    log.append('Field only in one table: %s' % table)
                 
                 # More than one table was found with this column name. Find the correct one
                 # based on the study id
                 else:
+                    log.append('Field in multiple tables: %s' % str(self.fields[field_name]))
+                    log.append('Study is is: %s' % study_id)
                     for table_name in self.fields[field_name]:
                         if str(study_id) in table_name:
                             table = table_name
-                    if table == '':
-                        if 'SAMPLE' in self.fields[field_name]:
-                            table = 'SAMPLE'
+                    #if table == '':
+                    #    if 'SAMPLE' in self.fields[field_name]:
+                    #        table = 'SAMPLE'
                             
             # If table is not found, assume user-defined column
             else:
@@ -1121,14 +1124,24 @@ class QiimeDataAccess(object):
                 """
                 lock.acquire()                
                 if field_name in self.fields:
-                    table_name = self.fields[field_name][0]
+                    log.append('Field now exists. Pulling from local list.')
+                    table = self.fields[field_name][0]
+                    log.append('Table name exists. Using "%s".' % table)
                 else:
-                    table_name = self.handleExtraData(study_id, field_name, field_type, log)
-                    self.fields[col_name].append(table_name)
+                    log.append('Entities do not exist. Creating...')
+                    table = self.handleExtraData(study_id, field_name, field_type, log)
+                    log.append('Entities created. Table name is "%s"' % table)
+                    if field_name not in self.fields:
+                        self.fields[field_name] = table
+                    else:
+                        self.fields[field_name].append(table)
                 lock.release()
-            
+           
+            log.append('Returning from findMetadataTable with value: %s' % str(table))
             return table
+
         except Exception, e:
+            log.append('Exception caught: %s' % str(e))
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
@@ -1289,8 +1302,10 @@ class QiimeDataAccess(object):
                 statement = 'alter table %s add "%s" varchar2(4000) default \'\'' % (extra_table, field_name.upper())
                 log.append(statement)
                 results = con.cursor().execute(statement)
+                log.append('Column added. Results are: %s. Extra table is: %s' % (str(results), extra_table))
         
             # Return the proper table name
+            log.append('Returning extra table as %s' % extra_table)
             return extra_table
         except Exception, e:
             raise Exception(str(e))
@@ -1319,9 +1334,12 @@ class QiimeDataAccess(object):
             log.append('Locating table name...')
             table_name = None
             table_name = self.findMetadataTable(field_name, field_type, log, study_id, lock)
+            log.append('Successfully found table name. Table name is "%s"' % str(table_name))
             
-            # Double-quote for database safety.
-            table_name = '"' + table_name + '"'            
+            # Double-quote for database safety
+            log.append('Adding quotes to table name...')
+            table_name = '"' + table_name + '"' 
+            log.append('Quoted table name is %s' % table_name)
             log.append('Table name found: %s' % (table_name))
             
             # Store the field name in the database. These are the field names which will
