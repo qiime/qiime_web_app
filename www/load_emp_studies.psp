@@ -23,7 +23,7 @@ studies = data_access.getUserStudyNames(web_app_user_id, is_admin, 'emp')
 if len(studies) == 0:
     study_array_string += ']'
 else:
-    for study_id, project_name in studies:
+    for study_id, project_name, study_title, study_abstract in studies:
         study_info = data_access.getStudyInfo(study_id, web_app_user_id)
     
         # of Samples, Complete, # Samples Promised, # Samples Collected, PI
