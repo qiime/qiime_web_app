@@ -34,7 +34,7 @@ def public_cols_to_dict(public_columns):
                 unique_public_columns[col_key]=[]
                 unique_public_columns[col_key].append(public_columns[i][2])
 
-        if public_columns[i][2] not in unique_studies:
+        if str(public_columns[i][2]) not in unique_studies:
             unique_studies.append(str(public_columns[i][2]))
     
     return unique_public_columns,unique_studies

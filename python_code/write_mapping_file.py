@@ -15,7 +15,7 @@ from os import path
 
 def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
     '''This function writes a QIIME-formatted mapping file'''
-    
+
     try:
         from data_access_connections import data_access_factory
         from enums import ServerConfig,DataAccessType
@@ -28,9 +28,31 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
     
-    con = data_access.getMetadataDatabaseConnection()
-    cur = con.cursor()
-    column_table=data_access.getMetadataFields(study_id)
+    try:
+        con = data_access.getMetadataDatabaseConnection()
+        cur = con.cursor()
+        column_table=data_access.getMetadataFields(study_id)
+        results = cur.execute('select distinct sp.RUN_PREFIX from SEQUENCE_PREP sp \
+        inner join "SAMPLE" s on s.sample_id=sp.sample_id where s.study_id=%s' % (study_id))
+        run_prefixes=[]
+        for i in results:
+            run_prefixes.append(i)
+    except:
+        raise ValueError, study_id
+    finally:
+        con.close()
+
+    try:
+        from data_access_connections import data_access_factory
+        from enums import ServerConfig,DataAccessType
+        import cx_Oracle
+        if get_from_test_db:
+            data_access = data_access_factory(DataAccessType.qiime_test)
+        else:
+            data_access = data_access_factory(ServerConfig.data_access_type)
+    except ImportError:
+        print "NOT IMPORTING QIIMEDATAACCESS"
+        pass
     new_cat_column_table=[]
     new_tables=[]
     for i in column_table:
@@ -48,8 +70,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
     
     #req.write(str(statement)+'<br><br>')
     run_prefix_list=[]
-    run_prefixes = cur.execute('select distinct sp.RUN_PREFIX from SEQUENCE_PREP sp \
-    inner join "SAMPLE" s on s.sample_id=sp.sample_id where s.study_id=%s' % (study_id))
+    
     for run_prefix in run_prefixes:
         run_prefix_list.append(run_prefix[0])
         # Start building the statement for writing out the mapping file
@@ -117,12 +138,30 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
             cur = con.cursor()
             #req.write(str(statement)+'<br><br>')
             results = cur.execute(statement)
-            con.close()
+            cur_description=[]
+            for column in cur.description:
+                cur_description.append(column)
+
+            result_arr=[]
+            for i in results:
+                result_arr.append(i)
         except:
             raise ValueError, statement
         finally:
             con.close()
 
+        try:
+            from data_access_connections import data_access_factory
+            from enums import ServerConfig,DataAccessType
+            import cx_Oracle
+            if get_from_test_db:
+                data_access = data_access_factory(DataAccessType.qiime_test)
+            else:
+                data_access = data_access_factory(ServerConfig.data_access_type)
+        except ImportError:
+            print "NOT IMPORTING QIIMEDATAACCESS"
+            pass
+            
         mapping_fname='study_%s_run_%s_mapping.txt' % (study_id,run_prefix[0])
         
         # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
@@ -134,7 +173,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
 
         # Write the header row
         headers=[]
-        for column in cur.description:
+        for column in cur_description:
             if column[0]=='SAMPLEID':
                 headers.append('SampleID')
             elif column[0]=='BARCODE':
@@ -158,7 +197,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
         samples_list=[]
         
         data_map_table=[]
-        for i,row in enumerate(results):
+        for i,row in enumerate(result_arr):
             data_map_table.append(list(row))
             # Can't use something like '\t'.join(row) because not all items in list
             # are string values, hence the explicit loop structure here.
