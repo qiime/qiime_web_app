@@ -44,7 +44,11 @@ Code here works as follows:
 """
 column_dictionary = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
 for entry in column_dictionary:
-    if entry[0] in sample_fields or entry[0] in prep_fields:
+    lower_sample_fields = [x.lower() for x in sample_fields]
+    lower_prep_fields = [x.lower() for x in prep_fields]
+    lower_entry = entry[0].lower()
+
+    if lower_entry in lower_sample_fields or lower_entry in lower_prep_fields:
         # Extract a slice of data from the list of tuples which represents the column names
         names = [x[0] for x in documentation_fields]
         if entry[0] not in names:
