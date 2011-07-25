@@ -111,13 +111,18 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                     
         statement += '\n\
         where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
-        #print statement
-        #raise ValueError, statement
-        con = data_access.getMetadataDatabaseConnection()
-        cur = con.cursor()
-        #req.write(str(statement)+'<br><br>')
-        results = cur.execute(statement)
         
+        try:
+            con = data_access.getMetadataDatabaseConnection()
+            cur = con.cursor()
+            #req.write(str(statement)+'<br><br>')
+            results = cur.execute(statement)
+            con.close()
+        except:
+            raise ValueError, statement
+        finally:
+            con.close()
+
         mapping_fname='study_%s_run_%s_mapping.txt' % (study_id,run_prefix[0])
         
         # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....

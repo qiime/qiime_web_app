@@ -179,16 +179,27 @@ def get_mapping_data(data_access,is_admin,table_col_value,get_count=False):
     if additional_where_statements<>[]:
         statement += ' and (%s) ' % (' and '.join(additional_where_statements)) 
 
-    # Run the statement
-    con = data_access.getMetadataDatabaseConnection()
-    cur = con.cursor()
-    
-    #raise ValueError,statement
-    
-    print statement
-    results = cur.execute(statement)
-    
-    return results,cur
+    try:
+        # Run the statement
+        con = data_access.getMetadataDatabaseConnection()
+        cur = con.cursor()
+        print statement
+        results = cur.execute(statement)
+        
+        cur_description=[]
+        for column in cur.description:
+            cur_description.append(column)
+        
+        result_arr=[]
+        for i in results:
+            result_arr.append(i)
+            
+    except:
+        raise ValueError, statement
+    finally:
+        con.close()
+        
+    return result_arr,cur_description
 
 def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, 
                                 file_name_prefix,user_id,meta_id,params_path,
@@ -231,9 +242,18 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     is_admin = user_details['is_admin']
 
     # get mapping results
-    results,cur=get_mapping_data(data_access,is_admin,table_col_value)
+    results,cur_description=get_mapping_data(data_access,is_admin,table_col_value)
 
-
+    ### need to reconnect to data_access, since it gets closed up a con.close()
+    try:
+        from data_access_connections import data_access_factory
+        from enums import ServerConfig
+        import cx_Oracle
+        data_access = data_access_factory(ServerConfig.data_access_type)
+    except ImportError:
+        print "NOT IMPORTING QIIMEDATAACCESS"
+        pass
+        
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
     tmp_mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map_tmp.txt'), 'w')
     map_filepath=os.path.join(mapping_file_dir, file_name_prefix+'_'+tmp_prefix+'_map.txt')
@@ -244,7 +264,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
 
     # determine if a column is a controlled vaocabulary columnn
     controlled_vocab_columns={}
-    for i,column in enumerate(cur.description):
+    for i,column in enumerate(cur_description):
         if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', \
                       'EXPERIMENT_TITLE']:
             pass
@@ -260,9 +280,8 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         vocab_id_to_valid_term=data_access.getValidControlledVocabTerms(column)
         controlled_vocab_lookup[controlled_vocab_columns[column]]=dict(vocab_id_to_valid_term)
 
-
     to_write = ''
-    for column in cur.description:
+    for column in cur_description:
         if column[0]=='SAMPLEID':
             to_write+='SampleID\t'
         elif column[0]=='BARCODE':
@@ -360,15 +379,16 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     t1 = time()
     
     
-    con = data_access.getSFFDatabaseConnection()
-    cur = con.cursor()
+    #con = data_access.getSFFDatabaseConnection()
+    #cur = con.cursor()
     query=[]
     sample_counts={}
     otus=[]
     
     for i,sample_name1 in enumerate(samples_list):
         sample_counts[sample_name1]={}
-        user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97,'GREENGENES_REFERENCE',97)
+        user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97,
+                                          'GREENGENES_REFERENCE',97)
         for row in user_data:
             if row[0] not in otus:
                 otus.append(str(row[0]))
