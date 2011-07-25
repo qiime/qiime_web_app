@@ -78,8 +78,16 @@ def write_mapping(data_access, table_col_value, fs_fp, web_fp,
     is_admin = user_details['is_admin']
 
     # get mapping results
-    results,cur=get_mapping_data(data_access,is_admin,table_col_value)
-
+    results,cur_description=get_mapping_data(data_access,is_admin,table_col_value)
+   
+    try:
+        from data_access_connections import data_access_factory
+        from enums import ServerConfig
+        import cx_Oracle
+        data_access = data_access_factory(ServerConfig.data_access_type)
+    except ImportError:
+        print "NOT IMPORTING QIIMEDATAACCESS"
+        pass
 
     # Write out proper header row, #SampleID, BarcodeSequence, LinkerPrimerSequence, Description, all others....
     tmp_mapping_file = file(os.path.join(mapping_file_dir, file_name_prefix+'_map_tmp.txt'), 'w')
@@ -91,7 +99,7 @@ def write_mapping(data_access, table_col_value, fs_fp, web_fp,
 
     # determine if a column is a controlled vaocabulary columnn
     controlled_vocab_columns={}
-    for i,column in enumerate(cur.description):
+    for i,column in enumerate(cur_description):
         if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', \
                       'EXPERIMENT_TITLE']:
             pass
@@ -109,7 +117,7 @@ def write_mapping(data_access, table_col_value, fs_fp, web_fp,
 
 
     to_write = ''
-    for column in cur.description:
+    for column in cur_description:
         if column[0]=='SAMPLEID':
             to_write+='SampleID\t'
         elif column[0]=='BARCODE':
