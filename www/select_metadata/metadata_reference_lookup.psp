@@ -42,7 +42,7 @@ show_values=str(form["show_values"]);
 controlled_col=data_access.checkIfColumnControlledVocab(str(col))
 
 #get a list of column values
-col_values=get_selected_column_values(controlled_col,col,table,sess['web_app_user_id'],studies)
+col_values=get_selected_column_values(controlled_col,col,table,sess['web_app_user_id'],studies,data_access)
 
 # get the information regarding the column
 query_results = data_access.getFieldReferenceInfo(col)

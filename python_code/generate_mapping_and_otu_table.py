@@ -179,25 +179,21 @@ def get_mapping_data(data_access,is_admin,table_col_value,get_count=False):
     if additional_where_statements<>[]:
         statement += ' and (%s) ' % (' and '.join(additional_where_statements)) 
 
-    try:
-        # Run the statement
-        con = data_access.getMetadataDatabaseConnection()
-        cur = con.cursor()
-        print statement
-        results = cur.execute(statement)
-        
-        cur_description=[]
-        for column in cur.description:
-            cur_description.append(column)
-        
-        result_arr=[]
-        for i in results:
-            result_arr.append(i)
-            
-    except:
-        raise ValueError, statement
-    finally:
-        con.close()
+
+    # Run the statement
+    con = data_access.getMetadataDatabaseConnection()
+    cur = con.cursor()
+    print statement
+    results = cur.execute(statement)
+    
+    cur_description=[]
+    for column in cur.description:
+        cur_description.append(column)
+    
+    result_arr=[]
+    for i in results:
+        result_arr.append(i)
+
         
     return result_arr,cur_description
 

@@ -43,7 +43,7 @@ for i in studies:
     for j in study_cols:
         new_col_vals.append((j.lower(),study_cols[j].strip('\"').lower(),str(i)))
     
-req.write(unique_cols_to_select_box_str(new_col_vals))
+req.write(unique_cols_to_select_box_str(new_col_vals,data_access))
 
 
 #req.write(print_metadata_info_and_values_table(query_results,show_values,table,

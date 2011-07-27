@@ -184,6 +184,7 @@ function showResult(ont_id,str,inputbox_id,txt_id)
                 //write the list of similar terms from the database  
                 document.getElementById('input'+inputbox_id).innerHTML=xmlhttp.responseText;
                 document.getElementById('input'+inputbox_id).style.border="1px solid #A5ACB2";
+                xmlhttp.close();
             }
         }
         //perform a GET 

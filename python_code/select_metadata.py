@@ -12,9 +12,9 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
  
 from qiime.colors import natsort
-from data_access_connections import data_access_factory
+#from data_access_connections import data_access_factory
 from enums import ServerConfig
-data_access = data_access_factory(ServerConfig.data_access_type)
+#data_access = data_access_factory(ServerConfig.data_access_type)
 from enums import FieldGrouping
 from numpy import zeros
 from qiime.format import format_matrix,format_otu_table
@@ -48,7 +48,7 @@ def get_unique_package_column_values(package_cols):
     
     return columns
         
-def unique_cols_to_select_box_str(public_columns):
+def unique_cols_to_select_box_str(public_columns,data_access):
     unique_public_columns,unique_studies=public_cols_to_dict(public_columns)
     
     # get submission fields
@@ -182,7 +182,7 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
                         str(query_results[0][2])+'</td></tr>')
     return ''.join(info_table)
     
-def get_selected_column_values(controlled_col,col,table,user_id,studies):
+def get_selected_column_values(controlled_col,col,table,user_id,studies,data_access):
     # if the column is not controlled, then we must look in the database
     # for the public values provided in that column
     studies_to_retrieve=studies.split('S')

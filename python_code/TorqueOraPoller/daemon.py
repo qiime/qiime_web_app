@@ -175,7 +175,7 @@ class Daemon(object):
     def _get_process_list_linux(self):
         """grab all PIDs from the /proc dir""" 
         # taken from http://stackoverflow.com/questions/2703640/process-list-on-linux-via-python
-        return set([int(pid) for pid in listdir('/proc/') if pid.isdigit()])
+        return set([int(pid) for pid in os.listdir('/proc/') if pid.isdigit()])
 
     def _get_process_list_osx(self):
         """grab all PIDs from ps"""

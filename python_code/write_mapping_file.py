@@ -28,31 +28,17 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
     
-    try:
-        con = data_access.getMetadataDatabaseConnection()
-        cur = con.cursor()
-        column_table=data_access.getMetadataFields(study_id)
-        results = cur.execute('select distinct sp.RUN_PREFIX from SEQUENCE_PREP sp \
-        inner join "SAMPLE" s on s.sample_id=sp.sample_id where s.study_id=%s' % (study_id))
-        run_prefixes=[]
-        for i in results:
-            run_prefixes.append(i)
-    except:
-        raise ValueError, study_id
-    finally:
-        con.close()
 
-    try:
-        from data_access_connections import data_access_factory
-        from enums import ServerConfig,DataAccessType
-        import cx_Oracle
-        if get_from_test_db:
-            data_access = data_access_factory(DataAccessType.qiime_test)
-        else:
-            data_access = data_access_factory(ServerConfig.data_access_type)
-    except ImportError:
-        print "NOT IMPORTING QIIMEDATAACCESS"
-        pass
+    con = data_access.getMetadataDatabaseConnection()
+    cur = con.cursor()
+    column_table=data_access.getMetadataFields(study_id)
+    results = cur.execute('select distinct sp.RUN_PREFIX from SEQUENCE_PREP sp \
+    inner join "SAMPLE" s on s.sample_id=sp.sample_id where s.study_id=%s' % (study_id))
+    run_prefixes=[]
+    for i in results:
+        run_prefixes.append(i)
+
+
     new_cat_column_table=[]
     new_tables=[]
     for i in column_table:
@@ -133,34 +119,19 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
         statement += '\n\
         where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
         
-        try:
-            con = data_access.getMetadataDatabaseConnection()
-            cur = con.cursor()
-            #req.write(str(statement)+'<br><br>')
-            results = cur.execute(statement)
-            cur_description=[]
-            for column in cur.description:
-                cur_description.append(column)
+        
+        con = data_access.getMetadataDatabaseConnection()
+        cur = con.cursor()
+        #req.write(str(statement)+'<br><br>')
+        results = cur.execute(statement)
+        cur_description=[]
+        for column in cur.description:
+            cur_description.append(column)
 
-            result_arr=[]
-            for i in results:
-                result_arr.append(i)
-        except:
-            raise ValueError, statement
-        finally:
-            con.close()
-
-        try:
-            from data_access_connections import data_access_factory
-            from enums import ServerConfig,DataAccessType
-            import cx_Oracle
-            if get_from_test_db:
-                data_access = data_access_factory(DataAccessType.qiime_test)
-            else:
-                data_access = data_access_factory(ServerConfig.data_access_type)
-        except ImportError:
-            print "NOT IMPORTING QIIMEDATAACCESS"
-            pass
+        result_arr=[]
+        for i in results:
+            result_arr.append(i)
+    
             
         mapping_fname='study_%s_run_%s_mapping.txt' % (study_id,run_prefix[0])
         
