@@ -57,25 +57,6 @@ class AbstractDataAccessConnections(object):
         self._SFFDatabaseConnection = None
         self._SFFDatabaseConnectionString = ''
         
-    def __del__(self):
-        # Make sure we close out our connections when the object goes out of scope
-        try:
-            if self._metadataDatabaseConnection:
-                self._metadataDatabaseConnection.close()
-            
-            if self._ontologyDatabaseConnection:
-                self._ontologyDatabaseConnection.close()
-            
-            if self._SFFDatabaseConnection:
-                self._SFFDatabaseConnection.close()
- 
-        # It's possible that the calling code already closed the connection. Since
-        # cx_Oracle does not provide a means for explicity testing if a connection
-        # is open, this simply tosses the exception out since nothing actually needs
-        # to be done about it.
-        except:
-            pass
-    
     def getMetadataDatabaseConnection(self):
         """ Obtains a connection to the qiime_production schema
 
