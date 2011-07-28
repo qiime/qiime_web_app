@@ -33,7 +33,7 @@ link_page = 'select_study.psp'
 
 portal_type = sess['portal_type']
 
-data_access = data_access_factory(ServerConfig.data_access_type)
+#data_access = data_access_factory(ServerConfig.data_access_type)
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
