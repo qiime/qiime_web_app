@@ -103,7 +103,7 @@ def get_mapping_data(data_access,is_admin,table_col_value,get_count=False):
     on "STUDY".study_id = "SAMPLE".study_id \n '
 
     statement += ' \
-    inner join "SEQUENCE_PREP" \n\
+    left join "SEQUENCE_PREP" \n\
     on "SAMPLE".sample_id = "SEQUENCE_PREP".sample_id \n '
 
     # Handle Common fields table
@@ -184,6 +184,7 @@ def get_mapping_data(data_access,is_admin,table_col_value,get_count=False):
     con = data_access.getMetadataDatabaseConnection()
     cur = con.cursor()
     print statement
+    
     results = cur.execute(statement)
     
     cur_description=[]
