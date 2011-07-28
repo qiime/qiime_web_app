@@ -111,6 +111,7 @@ if form.has_key('username'):
     # begin
     qiimeDataAccess = data_access_factory(ServerConfig.data_access_type)
     user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
+    qiimeDataAccess = None
     if ( user_data and user_data['verified']=='y'):
         sess['username'] = form["username"]
         sess['is_admin'] = user_data['is_admin']
