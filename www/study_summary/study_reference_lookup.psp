@@ -49,6 +49,6 @@ except:
             ':</h3><em style="color:red;"> No data currently available!</em>')
 
 #Write the output to the screen
-req.write(print_study_info_and_values_table(analysis_data))
+req.write(print_study_info_and_values_table(analysis_data,data_access))
 #
 %>

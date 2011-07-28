@@ -12,13 +12,13 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
  
 from qiime.colors import natsort
-from data_access_connections import data_access_factory
-from enums import ServerConfig
-data_access = data_access_factory(ServerConfig.data_access_type)
+#from data_access_connections import data_access_factory
+#from enums import ServerConfig
+#data_access = data_access_factory(ServerConfig.data_access_type)
 from enums import FieldGrouping
         
 
-def print_study_info_and_values_table(query_results):
+def print_study_info_and_values_table(query_results,data_access):
     ''' This function write the Study summary information below the select-box'''
 
     info_table=[]
