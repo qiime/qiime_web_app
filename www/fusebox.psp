@@ -19,6 +19,9 @@ make sure that the user is logged in and then performs page redirects.
 
 <%
 import os
+import gc
+
+data_access = data_access_factory(ServerConfig.data_access_type)
 
 def loadPage(page):
     if ( os.path.isfile( sess['document_root'] + page ) ):
@@ -52,3 +55,8 @@ else:
 %>
 
 <%@ include file="footer.psp" %>
+
+<%
+data_access = None
+gc.collect()
+%>
