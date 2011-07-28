@@ -145,7 +145,7 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
         # print the column values in a select box
         table_col_id=str(table) + '####SEP####' + col + '####STUDIES####' + studies
         info_table.append('<b>Select Values</b><br>')
-        info_table.append('<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">')
+        info_table.append('<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);saveSelection(\'%s\')">' % (table_col_id))
         info_table.append('<option value="javascript:">')
         info_table.append('<option value="javascript:select_all_col_values(\'%s\');">All' % (table_col_id))
         info_table.append('<option value="javascript:select_none_col_values(\'%s\');">None' % (table_col_id))
