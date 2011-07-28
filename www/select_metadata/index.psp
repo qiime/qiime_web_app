@@ -91,8 +91,10 @@ req.write('</script>\n')
         }
         for (var i=0;i<listbox_values.options.length;i++){
             var list_value=listbox_values.options[i].value.toUpperCase()
-            if (list_value in savedValues){
+            if (list_value in savedValues && savedValues[list_value]!=''){
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+list_value+'" value="'+savedValues[list_value]+'">';
+            }else if (savedValues[list_value]==''){
+                form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+list_value+'" value="####ALL####">';
             }else{
                 form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="'+list_value+'" value="####ALL####">';
             }

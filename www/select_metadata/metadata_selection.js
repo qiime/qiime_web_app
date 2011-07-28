@@ -100,22 +100,11 @@ function showResult(input_textbox,column_id,column_value)
 function saveSelection(input_selectbox)
 {
     var select_box_id=document.getElementById(input_selectbox)
-    //var select_box_object=document.getElementById(select_box_id)
+
     var exists='False';
     var selected_values=get_selected(select_box_id)
     
-    for (var i in savedValues){
-        if (i==select_box_id.id){
-            savedValues[select_box_id.id]=selected_values;
-            exist='True';
-            break;
-        }
-    }
-    
-    if (exist='False'){
-        savedValues[select_box_id.id]=selected_values;
-    }
-    
+    savedValues[select_box_id.id]=selected_values;
     var key_values=document.forms['key_vals'];
     key_values.innerHTML=''
     
@@ -131,6 +120,8 @@ function saveSelection(input_selectbox)
         //verify saved cols are in the selected box
         if (i in cols_in_select_box && savedValues[i]!=''){
             key_values.innerHTML+='<input type="hidden" name="'+i+'" id="'+i+'" value="'+savedValues[i]+'" /><br>'
+        }else if (i in cols_in_select_box && savedValues[i]!=''){
+            key_values.innerHTML+='<input type="hidden" name="'+i+'" id="'+i+'" value="####ALL####" /><br>'
         }
     }
 
