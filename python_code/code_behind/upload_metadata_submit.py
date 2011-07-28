@@ -84,7 +84,19 @@ def validateSampleFile(mdtable, study_id, web_app_user_id):
             all_samples_present = data_access.verifySampleNames(study_id, file_sample_names)
             if not all_samples_present:
                 samples_missing = True
-        
+    
+    # If study type is of any host-associated type, make sure host_subject_id exists
+    # in sample file. Upload will fail if this is missing
+    host_packages = [2, 3, 4, 5, 6, 7, 8, 9 ,10, 13]
+    study_packages = data_access.getStudyPackages(study_id)
+    common_items = list(set(host_packages) & set(study_packages))
+    if common_items != []:
+        # Make sure host_subject_id exists
+        try:
+            col = mdtable.getColumn('host_subject_id')
+        except:
+            errors.append('Error: "host_subject_id" is not present in the sample template. This field must be present for all host associated study types.')
+            
     return errors, samples_missing
 
 def validatePrepFile(mdtable, req, study_id):
