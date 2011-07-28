@@ -16,6 +16,7 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig
 from random import choice
 from time import strftime
+import gc
 from send_mail_from_server import process_and_send_email
 %>
 <!-- header information -->
@@ -135,8 +136,8 @@ def validate_password(passwd):
 # them an email
 if form.has_key('username'):
      # validate that the username provided is available
-    qiimeDataAccess= data_access_factory(ServerConfig.data_access_type)
-    available = qiimeDataAccess.checkWebAppUserAvailability(form["username"])
+    data_access= data_access_factory(ServerConfig.data_access_type)
+    available = data_access.checkWebAppUserAvailability(form["username"])
     good_password=validate_password(form["password"])
     
     # if the password is a good one and the username is available create
@@ -147,7 +148,7 @@ if form.has_key('username'):
         alphabet += "01234567890"
 
         activation_code=''.join([choice(alphabet) for i in range(20)])
-        user_data=qiimeDataAccess.registerWebAppUser( form["username"], form["password"] ,activation_code)
+        user_data=data_access.registerWebAppUser( form["username"], form["password"] ,activation_code)
         
         # send an email with an activation link for the user
         process_and_send_email('qiime.web.app@colorado.edu',form["username"], \
@@ -208,6 +209,8 @@ else:
     </form>
 <%
 #
+data_access = None
+gc.collect()
 %>
 </body>
 </html>
