@@ -16,9 +16,6 @@ import os
 import zipfile
 from subprocess import PIPE,Popen
 from metadata_table import MetadataTable
-from data_access_connections import data_access_factory
-from enums import ServerConfig
-data_access = data_access_factory(ServerConfig.data_access_type)
 
 ################################
 # Helper Functions
@@ -48,7 +45,7 @@ def is_binary(filename):
 # Checker functions
 ################################
 
-def validateSampleFile(mdtable, study_id, web_app_user_id):
+def validateSampleFile(mdtable, study_id, web_app_user_id, data_access):
     errors = []
 
     # Check for duplicate sample names:    
@@ -99,7 +96,7 @@ def validateSampleFile(mdtable, study_id, web_app_user_id):
             
     return errors, samples_missing
 
-def validatePrepFile(mdtable, req, study_id):
+def validatePrepFile(mdtable, req, study_id, data_access):
     errors = []
     key_fields_changed = False
     
@@ -216,7 +213,7 @@ def logErrors(master_list, new_list):
 ################################
 # The main attraction 
 ################################
-def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id):
+def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id, data_access):
     """
     Process the uploaded archive. If valid, write files out to the filesystem
     and validate the contents of each.
@@ -318,11 +315,11 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             # Perform specific validations
             if 'sample_template' in outfile_filename:
                 sample_mdtable = mdtable
-                sample_errors, samples_missing = validateSampleFile(mdtable, study_id, web_app_user_id)
+                sample_errors, samples_missing = validateSampleFile(mdtable, study_id, web_app_user_id, data_access)
                 logErrors(errors, sample_errors)
             elif 'prep_template' in outfile_filename:
                 prep_mdtable = mdtable
-                prep_errors, key_fields_changed = validatePrepFile(mdtable, req, study_id)
+                prep_errors, key_fields_changed = validatePrepFile(mdtable, req, study_id, data_access)
                 logErrors(errors, prep_errors)
 
         # Make sure we have one of each template type
