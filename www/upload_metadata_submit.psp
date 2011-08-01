@@ -36,6 +36,10 @@ web_app_user_id = sess['web_app_user_id']
 
 # Validate zip file contents. If valid, get list of template files back and
 # validate their contents
+
+from data_access_connections import data_access_factory
+from enums import *
+data_access = data_access_factory(ServerConfig.data_access_type)
 templates, errors = validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id, data_access)
 
 if templates != None:
@@ -45,4 +49,6 @@ if templates != None:
         fullnames.append(os.path.join(form['output_dir'], template))
     sess['templates'] = fullnames
     sess.save()
+
+data_access = None
 %>
