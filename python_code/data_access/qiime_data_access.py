@@ -895,12 +895,14 @@ class QiimeDataAccess(object):
             con.cursor().execute(statement)
         
         # Clean up references in study_actual_columns
+        extra_table_study_id = found_extra_table.split('_')[2]
+
         statement = """
         update  study_actual_columns 
         set     table_name = '"{0}"' 
         where   study_id = {1} 
-                and table_name = '{2}'
-        """.format(common_extra_table_name, study_id, found_extra_table)
+                and table_name = '"{2}"'
+        """.format(common_extra_table_name, extra_table_study_id, found_extra_table)
         if debug:
             req.write('<pre>' + statement + '</pre><br/>')
         con.cursor().execute(statement)
