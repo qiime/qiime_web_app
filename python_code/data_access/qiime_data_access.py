@@ -1092,6 +1092,8 @@ class QiimeDataAccess(object):
             
             if field_name in self.fields:
                 # If there's only one hit we can assign it
+                tables = self.fields[field_name]
+                log.append('Type of variable is: %s' % str(tables))
                 if len(self.fields[field_name]) == 1:
                     table = self.fields[field_name][0]
                     log.append('Field only in one table: %s' % table)
@@ -1099,7 +1101,7 @@ class QiimeDataAccess(object):
                 # More than one table was found with this column name. Find the correct one
                 # based on the study id
                 else:
-                    log.append('Field in multiple tables: %s' % str(self.fields[field_name]))
+                    log.append('Field in multiple tables(%s): %s' % (len(self.fields[field_name]), str(self.fields[field_name])))
                     log.append('Study is is: %s' % study_id)
                     for table_name in self.fields[field_name]:
                         if str(study_id) in table_name:
@@ -1134,7 +1136,7 @@ class QiimeDataAccess(object):
                     table = self.handleExtraData(study_id, field_name, field_type, log)
                     log.append('Entities created. Table name is "%s"' % table)
                     if field_name not in self.fields:
-                        self.fields[field_name] = table
+                        self.fields[field_name] = [table]
                     else:
                         self.fields[field_name].append(table)
                 lock.release()
@@ -1254,6 +1256,7 @@ class QiimeDataAccess(object):
             log.append('schema_owner: %s' % schema_owner)
             log.append('extra_table: %s' % extra_table)
             results = con.cursor().execute(statement, named_params).fetchone()
+            log.append('Table search results: %s' % str(results))
         
             # Create if it doesn't exist already
             if not results:
@@ -1287,29 +1290,34 @@ class QiimeDataAccess(object):
                     log.append(statement)
                     results = con.cursor().execute(statement)
                     con.cursor().execute('commit')
+            else:
+                log.append('Extra table already exists.')
                             
             # Check if the column exists
             log.append('Checking if extra column exists: %s' % field_name)
-            named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table,\
-                'column_name':field_name.upper()}
+            named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name.upper()}
             statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
             log.append(statement)
             log.append('schema_owner: %s, extra_table_name: %s, column_name: %s' %
                 (schema_owner, extra_table, field_name))
             results = con.cursor().execute(statement, named_params).fetchone()
-        
+            log.append('Results are: %s' % (str(results)))
+
             # If column doesn't exist, add it:
             if not results:
-                log.append('Creating extra column: %s' % field_name)
+                log.append('Column does not exist. Creating extra column: %s' % field_name)
                 statement = 'alter table %s add "%s" varchar2(4000) default \'\'' % (extra_table, field_name.upper())
                 log.append(statement)
                 results = con.cursor().execute(statement)
                 log.append('Column added. Results are: %s. Extra table is: %s' % (str(results), extra_table))
-        
+            else:
+                log.append('Column already exists.')
+
             # Return the proper table name
             log.append('Returning extra table as %s' % extra_table)
             return extra_table
         except Exception, e:
+            log.append('Exception caught creating entities. Exception was: "%s"' % str(e))
             raise Exception(str(e))
     
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, \
@@ -1322,7 +1330,7 @@ class QiimeDataAccess(object):
         statement = ''
         log = []
         pk_name = ''
-        
+
         try:
             #lock.acquire()
             
@@ -1338,6 +1346,9 @@ class QiimeDataAccess(object):
             table_name = self.findMetadataTable(field_name, field_type, log, study_id, lock)
             log.append('Successfully found table name. Table name is "%s"' % str(table_name))
             
+            #if field_name == 'dw1':
+            #    raise Exception('asdf')
+
             # Double-quote for database safety
             log.append('Adding quotes to table name...')
             table_name = '"' + table_name + '"' 
@@ -1499,6 +1510,9 @@ class QiimeDataAccess(object):
             
             # Finally, commit the changes
             results = con.cursor().execute('commit')
+
+            #if field_name == '"DW1"':
+            #    raise Exception('Found DW1: Dumping log')
             
         except Exception, e:
             call_string = 'writeMetadataValue("%s", "%s", "%s", "%s", "%s")'\
