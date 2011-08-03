@@ -393,21 +393,21 @@ if sess['portal_type'] == 'emp':
             <td>Default EMP Status
             </td>
             <td>
-                <select class="input required" name="default_emp_status" name="default_emp_status">
+                * <select class="input required" name="default_emp_status" id="default_emp_status">
                     <option value=""></option>
 <%
-list = qda.getListValues('EMP Status')
-for item in sorted(list):
-    item_text = item[1]
+    list = qda.getListValues('EMP Status')
+    for item in sorted(list):
+        item_text = item[1]
     
-    if default_emp_status == '' and item[1] == 'EMP':
-        req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
-    elif default_emp_status == item[1]:
-        req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
-    else:
-        req.write('<option value=\"%s\">%s</option>\n' % (item[0], item_text))
+        if default_emp_status == '' and item[1] == 'EMP':
+            req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
+        elif default_emp_status == item[1]:
+            req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
+        else:
+            req.write('<option value=\"%s\">%s</option>\n' % (item[0], item_text))
     
-#
+    #
 %>
                 </select>
             </td>
