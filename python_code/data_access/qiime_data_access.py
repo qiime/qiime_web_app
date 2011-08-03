@@ -375,6 +375,8 @@ class QiimeDataAccess(object):
             study_info['spatial_series'] = row[33]
             study_info['principal_investigator'] = row[34]
             study_info['principal_investigator_contact'] = row[35]
+            study_info['default_emp_status'] = row[36]
+            study_info['funding'] = row[37]
         return study_info
 
     def getStudyPlatform(self,study_id):
@@ -407,7 +409,7 @@ class QiimeDataAccess(object):
         number_samples_collected, number_samples_promised , lab_person,
         lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
         has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-        principal_investigator, principal_investigator_contact):
+        principal_investigator, principal_investigator_contact, default_emp_status, funding):
         """ Creates an EMP study
         """
         con = self.getMetadataDatabaseConnection()
@@ -419,7 +421,7 @@ class QiimeDataAccess(object):
             number_samples_collected, number_samples_promised , lab_person,
             lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-            principal_investigator, principal_investigator_contact])
+            principal_investigator, principal_investigator_contact, default_emp_status, funding])
         return results[0]
         
     def updateEMPStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
@@ -427,7 +429,7 @@ class QiimeDataAccess(object):
         number_samples_collected, number_samples_promised , lab_person,
         lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
         has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-        principal_investigator, principal_investigator_contact):
+        principal_investigator, principal_investigator_contact, default_emp_status, funding):
         """ Creates an EMP study
         """
         con = self.getMetadataDatabaseConnection()
@@ -437,7 +439,7 @@ class QiimeDataAccess(object):
             number_samples_collected, number_samples_promised , lab_person,
             lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-            principal_investigator, principal_investigator_contact])
+            principal_investigator, principal_investigator_contact, default_emp_status, funding])
 
     def createStudyPackage(self, study_id, env_package):
         """ 
