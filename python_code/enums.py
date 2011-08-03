@@ -24,6 +24,7 @@ class FieldGrouping:
     """ this is the metadata field groupings
     """
 
+    emp_level = -11
     mims_prep = -10
     mimarks_prep = -9
     sra_submission_level = -8
