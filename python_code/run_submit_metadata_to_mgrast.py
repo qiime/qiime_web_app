@@ -14,6 +14,7 @@ from enums import ServerConfig
 from sample_export import export_fasta_from_sample
 import os
 import stat
+import threading
 
 def clean_value_for_mgrast(value):
     # Order matters! Leave & as the first replace
@@ -55,10 +56,10 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, send_data_to_mgras
     fasta_base_path = '/tmp/'
     
     # Attempt to reslve the MG-RAST host
-    # host = '140.221.76.10'
-    #host = 'test.metagenomics.anl.gov'
+    #host = '140.221.76.10'
+    host = 'test.metagenomics.anl.gov'
     #host = 'dev.metagenomics.anl.gov'
-    host = 'metagenomics.anl.gov'
+    #host = 'metagenomics.anl.gov'
 
     ######################################################
     #### Study Submission
@@ -146,9 +147,14 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, send_data_to_mgras
         sample_file.write('        <sample_name>%s</sample_name>\n' % sample_name)
         sample_file.write('        <metadata>\n')
 
+        # A few values necessary to run findMetadataTable
+        lock = threading.Lock()
+        log = []
+        field_type = 'text' 
+
         # For each column for this sample, write the value to the sample file
         for column_name in study_columns:
-            table_name = data_access.findMetadataTable(column_name, study_id)
+            table_name = data_access.findMetadataTable(column_name, field_type, log, study_id, lock)
             if not table_name:
                 continue
             table_category = data_access.getTableCategory(table_name)
@@ -203,9 +209,14 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, send_data_to_mgras
             prep_file.write('        <row_number>%s</row_number>\n' % row_number)
             prep_file.write('        <metadata>\n')
 
+            # A few values necessary to run findMetadataTable
+            lock = threading.Lock()
+            log = []
+            field_type = 'text'
+
             # For each column for this sample, write the value to the sample file
             for column_name in study_columns:
-                table_name = data_access.findMetadataTable(column_name, study_id)
+                table_name = data_access.findMetadataTable(column_name, field_type, log, study_id, lock)
                 table_category = data_access.getTableCategory(table_name)
             
                 # Skip the prep and study columns
