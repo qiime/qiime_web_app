@@ -57,9 +57,9 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, send_data_to_mgras
     
     # Attempt to reslve the MG-RAST host
     #host = '140.221.76.10'
-    host = 'test.metagenomics.anl.gov'
+    #host = 'test.metagenomics.anl.gov'
     #host = 'dev.metagenomics.anl.gov'
-    #host = 'metagenomics.anl.gov'
+    host = 'metagenomics.anl.gov'
 
     ######################################################
     #### Study Submission
