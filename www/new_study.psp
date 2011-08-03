@@ -132,6 +132,8 @@ if page_mode == 'edit':
         has_extracted_data = study_info['has_extracted_data']
         timeseries = study_info['timeseries']
         spatial_series = study_info['spatial_series']
+        default_emp_status = study_info['default_emp_status']
+        funding = study_info['funding']
 else:
     environmental_packages = []
     study_info = None
@@ -158,6 +160,8 @@ else:
         has_extracted_data = ''
         timeseries = ''
         spatial_series = ''
+        default_emp_status = ''
+        funding = ''
 
 %>
 
@@ -382,6 +386,37 @@ if sess['portal_type'] == 'emp':
             </td>
             <td>
                 <input type="text" name="spatial_series" id="spatial_series" value="<%=spatial_series%>" size="40">
+            </td>
+        </tr>
+        
+        <tr>
+            <td>Default EMP Status
+            </td>
+            <td>
+                <select class="input required" name="default_emp_status" name="default_emp_status">
+                    <option value=""></option>
+<%
+list = qda.getListValues('EMP Status')
+for item in sorted(list):
+    item_text = item[1]
+    
+    if default_emp_status == '' and item[1] == 'EMP':
+        req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
+    elif default_emp_status == item[1]:
+        req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item_text))
+    else:
+        req.write('<option value=\"%s\">%s</option>\n' % (item[0], item_text))
+    
+#
+%>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Funding
+            </td>
+            <td>
+                <input type="text" name="funding" id="funding" value="<%=funding%>" size="40">
             </td>
         </tr>
 <%
