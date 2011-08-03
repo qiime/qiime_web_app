@@ -257,7 +257,7 @@ if len(jobs) > 0 and is_admin == 1:
                 </div>
                 <script type="text/javascript">
                     //checkMGRASTJobStatus();
-                    var timer = setInterval( "checkMGRASTJobStatus();", 4000 );
+                    var timer = setInterval( "checkMGRASTJobStatus();", 5000 );
 
                 </script>
             </ul>
