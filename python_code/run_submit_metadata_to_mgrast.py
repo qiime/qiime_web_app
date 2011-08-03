@@ -15,7 +15,7 @@ from sample_export import export_fasta_from_sample
 import os
 import stat
 
-def clean_value_for_mgrast(self, value):
+def clean_value_for_mgrast(value):
     # Order matters! Leave & as the first replace
     value = str(value).replace('&', '&amp;')
     value = value.replace('<', '&lt;')
