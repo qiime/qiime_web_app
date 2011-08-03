@@ -44,7 +44,7 @@ def main():
     # Get the live function reference
     live_rest_services = LiveMGRASTRestServices()
     
-    result = submit_metadata_for_study(key, study_id, web_app_user_id, LiveMGRASTRestServices.send_data_to_mgrast, debug)
+    result = submit_metadata_for_study(key, study_id, web_app_user_id, live_rest_services.send_data_to_mgrast, debug)
         
 if __name__ == "__main__":
     main()
