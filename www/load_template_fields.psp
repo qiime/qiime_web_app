@@ -24,8 +24,8 @@ investigation_type = study_info['investigation_type']
 Fields in red are required. Select any other fields to include them in your templates.
 <br/><br/>
 
-<!--<form action='new_template_submit.psp' target='_blank'>-->
-<form method="post" action="fusebox.psp?page=template_prefill.psp">
+<form action='new_template_submit.psp' target='_blank'>
+<!--<form method="post" action="fusebox.psp?page=template_prefill.psp">-->
 <table id='package_fields'>
 
 <%
@@ -149,8 +149,8 @@ outputFields(unique_package_fields, 'sample', 'Package-Specific Sample Fields')
     <td colspan='5'>&nbsp</td>
 </tr>
 <tr>
-    <!--<td colspan='5'><input type='submit' value='Generate Templates' onclick='window.location="fusebox.psp?page=select_study_task.psp";'></td>-->
-    <td colspan='5'><input type='submit' value='Continue'></td>
+    <td colspan='5'><input type='submit' value='Generate Templates' onclick='window.location="fusebox.psp?page=select_study_task.psp";'></td>
+    <!--<td colspan='5'><input type='submit' value='Continue'></td>-->
 </tr>
 
 </table>
