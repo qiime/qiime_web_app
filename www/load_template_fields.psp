@@ -24,7 +24,8 @@ investigation_type = study_info['investigation_type']
 Fields in red are required. Select any other fields to include them in your templates.
 <br/><br/>
 
-<form action='new_template_submit.psp' target='_blank'>
+<!--<form action='new_template_submit.psp' target='_blank'>-->
+<form method="post" action="fusebox.psp?page=template_prefill.psp">
 <table id='package_fields'>
 
 <%
@@ -94,10 +95,14 @@ sess.save()
 # Write out the required sample fields along with the package-specific fields
 field_list = data_access.getPackageColumns(FieldGrouping.sample_level)
 field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_sample_level))
+
+
 # If EMP portal, add EMP fields
 if portal_type == 'emp':
-    field_list.append(('extracted_dna_avail_now', 'M', 'yn', '[y/n]', 'Whether the extracted dna is available now for this sample'))
-    field_list.append(('physical_samp_avail_now', 'M', 'yn', '[y/n]', 'Whether the physical sample is available now for this sample'))
+    field_list.extend(data_access.getPackageColumns(FieldGrouping.emp_level))
+    #field_list.append(('extracted_dna_avail_now', 'M', 'yn', '[y/n]', 'Whether the extracted dna is available now for this sample'))
+    #field_list.append(('physical_samp_avail_now', 'M', 'yn', '[y/n]', 'Whether the physical sample is available now for this sample'))
+    
 field_list.sort()
 outputFields(field_list, 'sample', 'Sample Fields')
 
@@ -144,7 +149,8 @@ outputFields(unique_package_fields, 'sample', 'Package-Specific Sample Fields')
     <td colspan='5'>&nbsp</td>
 </tr>
 <tr>
-    <td colspan='5'><input type='submit' value='Generate Templates' onclick='window.location="fusebox.psp?page=select_study_task.psp";'></td>
+    <!--<td colspan='5'><input type='submit' value='Generate Templates' onclick='window.location="fusebox.psp?page=select_study_task.psp";'></td>-->
+    <td colspan='5'><input type='submit' value='Continue'></td>
 </tr>
 
 </table>
