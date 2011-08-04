@@ -588,21 +588,22 @@ class QiimeDataAccess(object):
         results = con.cursor()
         con.cursor().callproc('qiime_assets.get_emp_sample_list', [study_id, web_app_user_id, results])
         for row in results:
-            # sample_id, avg_emp_score, user_emp_score, sample_name, description, altitude, samp_size,
+            # sample_id, avg_emp_score, user_emp_score, sample_name, emp_status, sample_location, 
+            # sample_progress, description, altitude, samp_size,
             # temp, samp_store_temp, country, depth, elevation, env_biome, env_feature, 
             # env_matter, ph, latitude, longitude, chem_administration, samp_store_loc
             samples.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 
             row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], 
-            row[15], row[16], row[17], row[18], row[19]))
+            row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22]))
             
             
         return samples
             
-    def updateEMPSampleData(self, sample_id, sample_score, web_app_user_id):
+    def updateEMPSampleData(self, sample_id, sample_score, emp_status, web_app_user_id):
         """ Updates the sample emp database fields
         """
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('qiime_assets.update_emp_sample_data', [sample_id, sample_score, web_app_user_id])
+        con.cursor().callproc('qiime_assets.update_emp_sample_data', [sample_id, sample_score, emp_status, web_app_user_id])
             
     def updateEMPStudyData(self, study_id, study_score, web_app_user_id):
         """ Updates the emp database fields
