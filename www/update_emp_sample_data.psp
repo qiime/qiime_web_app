@@ -18,5 +18,6 @@ sess = Session.Session(req)
 data_access = data_access_factory(ServerConfig.data_access_type)
 sample_id = form['sample_id']
 sample_score = form['sample_score']
-data_access.updateEMPSampleData(sample_id, sample_score, sess['web_app_user_id'])
+emp_status = form['emp_status']
+data_access.updateEMPSampleData(sample_id, sample_score, emp_status, sess['web_app_user_id'])
 %>
