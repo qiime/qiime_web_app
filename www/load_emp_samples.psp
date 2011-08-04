@@ -29,7 +29,7 @@ try:
         sample_array_string += ']'
     else:
         for sample_info in samples:
-            sample_array_string += '["%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"],' % sample_info
+            sample_array_string += '["%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"],' % sample_info
         sample_array_string = sample_array_string[:-1]
         sample_array_string += ']'
     req.write(sample_array_string)    
