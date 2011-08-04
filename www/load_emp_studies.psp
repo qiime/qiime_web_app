@@ -60,7 +60,7 @@ else:
     study_array_string += ']'
 req.write(study_array_string)
 
-f = open('/tmp/study_data.txt', 'w')
-f.write(study_array_string)
-f.close()
+#f = open('/tmp/study_data.txt', 'w')
+#f.write(study_array_string)
+#f.close()
 %>
