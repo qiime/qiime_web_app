@@ -26,17 +26,17 @@ __status__ = 'Development'
         studyGrid = new dhtmlXGridObject('study_grid_container');
         studyGrid.enableMultiselect(true);
         studyGrid.setImagePath("dhtmlxGrid/codebase/imgs/");
-        studyGrid.setHeader("ID,Avg Score,Your Score,Project Name,Study Title,# of Samples,Metadata Complete,# Samples Promised,# Samples Collected,PI,PI Contact,Lab Person,Lab Contact,EMP Contact,First Contact,Most Recent Contact,Sample Type,Has Physical Specimen?,Has Extracted Data?,Timeseries?,Spatial Series?");
+        studyGrid.setHeader("ID,Avg Score,Your Score,Project Name,Study Title,Default EMP Status,Funding,# of Samples,Metadata Complete,# Samples Promised,# Samples Collected,PI,PI Contact,Lab Person,Lab Contact,EMP Contact,First Contact,Most Recent Contact,Sample Type,Has Physical Specimen?,Has Extracted Data?,Timeseries?,Spatial Series?");
         
         // Hide the Study ID
         //studyGrid.setInitWidths("0");
         studyGrid.setSkin("light");
                 
         // Sorting types
-        studyGrid.setColSorting("int,int,int,str,str,int,str,int,int,str,str,str,str,str,str,str,str,str,str,str,str");
+        studyGrid.setColSorting("int,int,int,str,str,str,str,int,str,int,int,str,str,str,str,str,str,str,str,str,str,str,str");
         
         // Seting editing types
-        studyGrid.setColTypes("ro,ro,co,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
+        studyGrid.setColTypes("ro,ro,co,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
 
         // Event handling
         studyGrid.attachEvent("onRowSelect", doOnStudyRowSelected);
@@ -61,19 +61,19 @@ __status__ = 'Development'
         ////////////////////////////////////
         sampleGrid = new dhtmlXGridObject('sample_grid_container');
         sampleGrid.setImagePath("dhtmlxGrid/codebase/imgs/");        
-        sampleGrid.setHeader("ID,Avg Score,Your Score,Sample Name,description,altitude,samp_size,temp,samp_store_temp,country,depth,elevation,env_biome,env_feature,env_matter,ph,latitude,longitude,chem_administration,samp_store_loc");
+        sampleGrid.setHeader("ID,Avg Score,Your Score,Sample Name,EMP Status,Sample Location,Sample Progress,description,altitude,samp_size,temp,samp_store_temp,country,depth,elevation,env_biome,env_feature,env_matter,ph,latitude,longitude,chem_administration,samp_store_loc");
         //  description, altitude, samp_size,
         //  temp, samp_store_temp, country, depth, elevation, env_biome, 
         //  env_feature, env_matter, ph, latitude, longitude, chem_administration, 
         //  samp_store_loc
         
-        sampleGrid.setColSorting("int,int,int,str,str,int,str,int,int,str,int,int,str,str,str,int,int,int,str,str");
-        sampleGrid.setColTypes("ro,ro,co,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
+        sampleGrid.setColSorting("int,int,int,str,str,str,str,str,int,str,int,int,str,int,int,str,str,str,int,int,int,str,str");
+        sampleGrid.setColTypes("ro,ro,co,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro,ro");
         
         // Hide the study and sample IDs
-        //sampleGrid.setInitWidths("0");
+        // sampleGrid.setInitWidths("0");
         sampleGrid.setSkin("light");
-
+        
         // Event handling
         sampleGrid.attachEvent("onRowSelect", doOnSampleRowSelected);
         sampleGrid.attachEvent("onEditCell", doOnSampleEditCell);
@@ -88,6 +88,7 @@ __status__ = 'Development'
         combo.put("3", "3");
         combo.put("4", "4");
         combo.put("5", "5");
+        
     }
         
     function doOnSampleEditCell(stage, rId, cInd, nValue, oValue)
@@ -98,12 +99,17 @@ __status__ = 'Development'
         
         // Find the study_id for this row:
         var sample_id = sampleGrid.cells(rId, 0).getValue();
+        
+        // Get the user submitted sample score
         var sample_score = sampleGrid.cells(rId, 2).getValue();
-
+        
+        // Get the user selected EMP status
+        var emp_status = sampleGrid.cells(rId, 4).getValue();
+        
         // Update data on the server
-        updateEMPSampleData(sample_id, sample_score);
-
-        document.getElementById("sample_status_div").innerHTML = "Sample score set to '" + sample_score + "'"
+        updateEMPSampleData(sample_id, sample_score, emp_status);
+        
+        document.getElementById("sample_status_div").innerHTML = "Sample updated."
         
         return true;
     }
@@ -134,8 +140,8 @@ __status__ = 'Development'
         var selId = studyGrid.getSelectedId();
         study_id = studyGrid.cells(selId, 0).getValue();
         var project_name = studyGrid.cells(selId, 3).getValue();
-        var sample_count = studyGrid.cells(selId, 5).getValue();
-        var metadata_complete = studyGrid.cells(selId, 6).getValue();
+        var sample_count = studyGrid.cells(selId, 7).getValue();
+        var metadata_complete = studyGrid.cells(selId, 8).getValue();
         sampleGrid.clearAll();
         
         // Load the grid if we have samples
@@ -180,7 +186,7 @@ __status__ = 'Development'
         
         return true;
     }
-    
+
     function GetXmlHttpObject()
     {
         if (window.XMLHttpRequest)
@@ -200,7 +206,8 @@ __status__ = 'Development'
     function updateEMPSampleData(sample_id, sample_score)
     {
         xmlhttp = GetXmlHttpObject()
-        var url = "update_emp_sample_data.psp?sample_id=" + sample_id + "&sample_score=" + sample_score;
+        var url = "update_emp_sample_data.psp?sample_id=" + sample_id + 
+            "&sample_score=" + sample_score + "&emp_status=" + emp_status;
         xmlhttp.open("GET", url, true);
         xmlhttp.send(null);
     }
