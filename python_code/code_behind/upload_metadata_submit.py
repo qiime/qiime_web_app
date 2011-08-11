@@ -56,8 +56,11 @@ def validateSampleFile(mdtable, study_id, web_app_user_id, data_access):
     # If the sample_name is missing, exit immediately
     try:
         sample_values = mdtable.getColumn('sample_name').values
-    except Exception, e:
+    except ValueError:
         errors.append('Error: "sample_name" must exist in your sample template.')
+        return errors, samples_missing
+    except Exception, e:
+        errors.append('An error has occurred: %s' % str(e))
         return errors, samples_missing
     
     for name_valid_pair in sample_values:
