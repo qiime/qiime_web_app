@@ -1500,14 +1500,24 @@ class QiimeDataAccess(object):
             
             # Attempt to write the metadata field
             log.append('Writing metadata value...')
+            
+            # If it's a date, must not put quotes around the oracle to_date function.
             if database_data_type == 'date':
                 field_value = self.convertToOracleHappyName(field_value)
-            if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
-                statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s'\
-                    % (table_name, field_name, field_value, key_column, key_column_value, row_num)
-            else:  
-                statement = 'update %s set %s = \'%s\' where %s = %s'\
-                    % (table_name, field_name, field_value, key_column, key_column_value)
+                if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
+                    statement = 'update %s set %s = %s where %s = %s and row_number = %s'\
+                        % (table_name, field_name, field_value, key_column, key_column_value, row_num)
+                else:  
+                    statement = 'update %s set %s = %s where %s = %s'\
+                        % (table_name, field_name, field_value, key_column, key_column_value)            
+            else:            
+                if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
+                    statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s'\
+                        % (table_name, field_name, field_value, key_column, key_column_value, row_num)
+                else:  
+                    statement = 'update %s set %s = \'%s\' where %s = %s'\
+                        % (table_name, field_name, field_value, key_column, key_column_value)
+
             log.append(statement)
             results = con.cursor().execute(statement)
             
