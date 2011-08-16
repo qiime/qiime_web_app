@@ -83,7 +83,7 @@ for item in form:
     elif 'prep_template' in item:
         files.append(form[item])
 
-# Make sure we have 2 files. If not we're screeeeewd.
+# If not EMP, make sure we have 2 files. If not we're screeeeewd.
 if portal_type == 'emp':
     pass
 elif len(files) != 2:
@@ -269,6 +269,9 @@ if batch_size == 0:
     batch_size = 1
 current_item = 0
 if len(host_fields) > 0:
+    # Add host_subject_id to study_actual_columns
+    data_access.addStudyActualColumn(study_id, 'host_subject_id', '"HOST"');
+    
     for item in host_fields:
         current_item += 1
         parts = item.split(':')
@@ -347,6 +350,9 @@ else:
     req.write('<p/><h3>Upload Completed!</h3>')
     req.write('<p style="font-size:8px">yahoo!</p>')
     req.write('<img src="img/firework3.gif"/>')
+    
+    # One more calc to perform - figure out the age in years for host studies
+    data_access.calcAgeInYears(study_id)
     
     # Update the database flag for successful metadata upload
     data_access.updateMetadataFlag(study_id, 'y')
