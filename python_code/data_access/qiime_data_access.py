@@ -756,6 +756,15 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def removeStudyActualColumn(self, study_id, column_name):
+        """ inserts a selected metadata column name into the database
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            con.cursor().callproc('qiime_assets.remove_study_actual_column', [study_id, column_name])
+        except Exception, e:            
+            raise Exception('Exception caught in removeStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
+
     def addStudyActualColumn(self, study_id, column_name, table_name):
         """ inserts a selected metadata column name into the database
         """
