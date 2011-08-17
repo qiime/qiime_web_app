@@ -49,8 +49,9 @@ def export_db_to_fasta(output_fasta_name):
     data_access = data_access_factory(ServerConfig.data_access_type)
     
     # Get all studies from the database
-    results = data_access.getUserStudyNames(12161, 1)
-    for study_id, study_name in results:
+    results = data_access.getUserStudyNames(12161, 1,'qiime')
+    
+    for study_id, study_name,t,s in results:
         print '------------------------ Exporting data from study ID: %s' % study_id
         print study_name
         print '\n\n'

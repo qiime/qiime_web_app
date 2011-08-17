@@ -47,17 +47,17 @@ class sampleExport(TestCase):
         self.assertTrue(file_size > 0)
         
     def test_export_db_to_fasta(self):
-        export_db_to_fasta(self.output_fasta, 12161)
+        export_db_to_fasta(self.output_fasta)
         file_size = os.stat(self.output_fasta)[stat.ST_SIZE]
         self.assertTrue(file_size > 0)
 
     def test_export_fasta_from_study(self):
-        export_fasta_from_study(389, self.output_fasta)
+        export_fasta_from_study(609, self.output_fasta)
         file_size = os.stat(self.output_fasta)[stat.ST_SIZE]
         self.assertTrue(file_size > 0)
 
     def test_export_fasta_from_sample(self):
-        export_fasta_from_sample(389, 240083, self.output_fasta)
+        export_fasta_from_sample(609, 234891, self.output_fasta)
         file_size = os.stat(self.output_fasta)[stat.ST_SIZE]
         self.assertTrue(file_size > 0)
         
