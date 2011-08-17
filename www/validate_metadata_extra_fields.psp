@@ -62,7 +62,7 @@ else:
                     if custom_column_details == None:
                         raise Exception('Custom column details could not be loaded for "%s".' % column.column_name)
                     elif custom_column_details['description'] == None:
-                        raise Exception('Custom column detail "description" could not be loaded for "%s".' % column.column_name)
+                        raise Exception('Custom column detail "description" could not be loaded for "%s". Custom column details: %s' % (column.column_name, str(custom_column_details)))
                     elif custom_column_details['data_type'] == None:
                         raise Exception('Custom column detail "data_type" could not be loaded for "%s".' % column.column_name)
                     

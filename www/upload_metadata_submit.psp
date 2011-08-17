@@ -18,6 +18,7 @@ and validate the contents of each.
 ----------------------------------------------------------------------------"""
 
 from upload_metadata_submit import validateFileContents
+import gc
 
 # Some code for Windows systems
 if form.has_key('file') and form['file'].filename:
@@ -51,4 +52,5 @@ if templates != None:
     sess.save()
 
 data_access = None
+gc.collect()
 %>
