@@ -184,7 +184,8 @@ class QiimeDataAccessTests(unittest.TestCase):
 
         values = self._qiime_data_access.createStudy(1, 'test', 3, 'y', 'y',
                                                      'qiime','test','test','',
-                                                     'test','test')
+                                                     'test','test','test',
+                                                     'test','test','test')
         self.assertTrue(values)
         values = self._qiime_data_access.deleteStudy(values, 1)
 
@@ -195,11 +196,13 @@ class QiimeDataAccessTests(unittest.TestCase):
 
         values = self._qiime_data_access.createStudy(1, 'test', 3, 'y', 'y',
                                                      'qiime','test','test','',
-                                                     'test','test')
+                                                     'test','test','test',
+                                                      'test','test','test')
                                                      
         values2 = self._qiime_data_access.updateStudy(values, 3, 'y', 'y',
                                                      'qiime','test2','test2','',
-                                                     'test2','test2')
+                                                     'test2','test2','test2',
+                                                      'test2','test2','test2')
     
         values = self._qiime_data_access.deleteStudy(values, 1)
 
@@ -215,7 +218,8 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         
         study_names = self._qiime_data_access.getUserStudyNames(12171,0,'qiime')
-        if (609, 'jesse_test') in study_names:
+
+        if (609, 'jesse_test', 'Fasting subset mice for testing purposes', 'This is a test dataset using the Fasting subset of mice.') in study_names:
             value=True
         else:
             value=False
@@ -229,7 +233,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         
         study_names = self._qiime_data_access.getUserAndPublicStudyNames(12171,
                                                                     0,'qiime')
-        if (609, 'jesse_test') in study_names:
+        if (609, 'jesse_test', 'Fasting subset mice for testing purposes', 'This is a test dataset using the Fasting subset of mice.') in study_names:
             value=True
         else:
             value=False
@@ -816,7 +820,7 @@ class QiimeDataAccessTests(unittest.TestCase):
     def test_getPublicColumns(self):
         """ test_getPublicColumns: get public columns for specified user
         """
-        result=self._qiime_data_access.getPublicColumns('12423')
+        result=self._qiime_data_access.getPublicColumns('12171')
         self.assertTrue(result)
 
     def test_getFieldReferenceInfo(self):

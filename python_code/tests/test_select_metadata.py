@@ -127,7 +127,16 @@ class SelectMetadataTests(TestCase):
          '''
         obs=public_cols_to_dict(self.public_columns)
         
-        exp={'HOST####SEP####HOST_TAXID': [89], 'SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG': [77], 'SEQUENCE_PREP####SEP####POOL_MEMBER_NAME': [77], 'SEQUENCE_PREP####SEP####RUN_DATE': [77], 'SAMPLE####SEP####ELEVATION': [77], 'STUDY####SEP####STUDY_ALIAS': [89, 77], 'SEQUENCE_PREP####SEP####KEY_SEQ': [77], 'HOST_ASSOC_VERTIBRATE####SEP####DIET': [77], 'SEQUENCE_PREP####SEP####RUN_CENTER': [89], 'SEQUENCE_PREP####SEP####EXPERIMENT_TITLE': [77]}
+        exp=({'HOST####SEP####HOST_TAXID': [89], 
+             'SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG': [77], 
+             'SEQUENCE_PREP####SEP####POOL_MEMBER_NAME': [77], 
+             'SEQUENCE_PREP####SEP####RUN_DATE': [77], 
+             'SAMPLE####SEP####ELEVATION': [77], 
+             'STUDY####SEP####STUDY_ALIAS': [89, 77], 
+             'SEQUENCE_PREP####SEP####KEY_SEQ': [77], 
+             'HOST_ASSOC_VERTIBRATE####SEP####DIET': [77], 
+             'SEQUENCE_PREP####SEP####RUN_CENTER': [89], 
+             'SEQUENCE_PREP####SEP####EXPERIMENT_TITLE': [77]}, ['77', '89'])
              
         self.assertEqual(obs,exp)
 
@@ -137,7 +146,7 @@ class SelectMetadataTests(TestCase):
             web-interface
         '''
         
-        obs=unique_cols_to_select_box_str(self.public_columns)
+        obs=unique_cols_to_select_box_str(self.public_columns,data_access)
         self.assertEqual(obs,exp_select_box_str)
         
         
@@ -179,7 +188,7 @@ class SelectMetadataTests(TestCase):
         table_name='HOST_ASSOC_VERTIBRATE' # this table is mispelled in the DB
         exp_values=['female', 'hermaphrodite', 'male', 'neuter', \
                     'not determined']
-        obs=get_selected_column_values(controlled_vocab,col_name,table_name,1)
+        obs=get_selected_column_values(controlled_vocab,col_name,table_name,1,'609',data_access)
 
         self.assertEqual(obs,exp_values)
         
@@ -215,11 +224,31 @@ class SelectMetadataTests(TestCase):
         '''
     
         obs1=get_otu_table(data_access, {'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0:female')},'12171',0,'PHPR')
-        self.assertEqual(obs1,'# QIIME v1.2.1-dev OTU table\n#OTU ID')
+        self.assertEqual(obs1,'# QIIME v1.3.0-dev OTU table\n#OTU ID')
         
         
 exp_select_box_str='''\
-<option id="ADD#ENDGRP#HOST####SEP####HOST_TAXID" value="HOST####SEP####HOST_TAXID####STUDIES####89">HOST_TAXID</option>\n\n<option id="ADD#ENDGRP#SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG" value="SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG####STUDIES####77">PRIMER_READ_GROUP_TAG</option>\n\n<option id="ADD#ENDGRP#SEQUENCE_PREP####SEP####POOL_MEMBER_NAME" value="SEQUENCE_PREP####SEP####POOL_MEMBER_NAME####STUDIES####77">POOL_MEMBER_NAME</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_DATE" value="SEQUENCE_PREP####SEP####RUN_DATE####STUDIES####77">RUN_DATE</option>\n\n<option id="SAMPLE#ENDGRP#SAMPLE####SEP####ELEVATION" value="SAMPLE####SEP####ELEVATION####STUDIES####77">ELEVATION</option>\n\n<option id="STUDY#ENDGRP#STUDY####SEP####STUDY_ALIAS" value="STUDY####SEP####STUDY_ALIAS####STUDIES####89S77">STUDY_ALIAS</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####KEY_SEQ" value="SEQUENCE_PREP####SEP####KEY_SEQ####STUDIES####77">KEY_SEQ</option>\n\n<option id="ADD#ENDGRP#HOST_ASSOC_VERTIBRATE####SEP####DIET" value="HOST_ASSOC_VERTIBRATE####SEP####DIET####STUDIES####77">DIET</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_CENTER" value="SEQUENCE_PREP####SEP####RUN_CENTER####STUDIES####89">RUN_CENTER</option>\n\n<option id="PREP#ENDGRP#SEQUENCE_PREP####SEP####EXPERIMENT_TITLE" value="SEQUENCE_PREP####SEP####EXPERIMENT_TITLE####STUDIES####77">EXPERIMENT_TITLE</option>\n\
+available_cols=new Array();
+available_cols["HOST####SEP####HOST_TAXID"]=new Array();
+available_cols["HOST####SEP####HOST_TAXID"]=["unique_study","ADD#ENDGRP#HOST####SEP####HOST_TAXID","HOST####SEP####HOST_TAXID####STUDIES####77S89","HOST_TAXID"]
+available_cols["SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG"]=["unique_study","ADD#ENDGRP#SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG","SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG####STUDIES####77S89","PRIMER_READ_GROUP_TAG"]
+available_cols["SEQUENCE_PREP####SEP####POOL_MEMBER_NAME"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####POOL_MEMBER_NAME"]=["unique_study","ADD#ENDGRP#SEQUENCE_PREP####SEP####POOL_MEMBER_NAME","SEQUENCE_PREP####SEP####POOL_MEMBER_NAME####STUDIES####77S89","POOL_MEMBER_NAME"]
+available_cols["SEQUENCE_PREP####SEP####RUN_DATE"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####RUN_DATE"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_DATE","SEQUENCE_PREP####SEP####RUN_DATE####STUDIES####77S89","RUN_DATE"]
+available_cols["SAMPLE####SEP####ELEVATION"]=new Array();
+available_cols["SAMPLE####SEP####ELEVATION"]=["unique_study","SAMPLE#ENDGRP#SAMPLE####SEP####ELEVATION","SAMPLE####SEP####ELEVATION####STUDIES####77S89","ELEVATION"]
+available_cols["STUDY####SEP####STUDY_ALIAS"]=new Array();
+available_cols["STUDY####SEP####STUDY_ALIAS"]=["common_study","STUDY#ENDGRP#STUDY####SEP####STUDY_ALIAS","STUDY####SEP####STUDY_ALIAS####STUDIES####77S89","STUDY_ALIAS"]
+available_cols["SEQUENCE_PREP####SEP####KEY_SEQ"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####KEY_SEQ"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####KEY_SEQ","SEQUENCE_PREP####SEP####KEY_SEQ####STUDIES####77S89","KEY_SEQ"]
+available_cols["HOST_ASSOC_VERTIBRATE####SEP####DIET"]=new Array();
+available_cols["HOST_ASSOC_VERTIBRATE####SEP####DIET"]=["unique_study","ADD#ENDGRP#HOST_ASSOC_VERTIBRATE####SEP####DIET","HOST_ASSOC_VERTIBRATE####SEP####DIET####STUDIES####77S89","DIET"]
+available_cols["SEQUENCE_PREP####SEP####RUN_CENTER"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####RUN_CENTER"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_CENTER","SEQUENCE_PREP####SEP####RUN_CENTER####STUDIES####77S89","RUN_CENTER"]
+available_cols["SEQUENCE_PREP####SEP####EXPERIMENT_TITLE"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####EXPERIMENT_TITLE"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####EXPERIMENT_TITLE","SEQUENCE_PREP####SEP####EXPERIMENT_TITLE####STUDIES####77S89","EXPERIMENT_TITLE"]
 '''
 
 exp_info_table1='''\
@@ -228,16 +257,8 @@ exp_info_table1='''\
 <td style="color:black;text-decoration:none">TEST_COL</td>\
 </tr>\
 <tr>\
-<td><em>Table Name:</em></td>\
-<td style="color:black;text-decoration:none">TEST</td>\
-</tr>\
-<tr>\
 <td><em>Data Type:</em></td>\
 <td style="color:black;text-decoration:none">TEST</td>\
-</tr>\
-<tr>\
-<td><em>Description or Value:</em></td>\
-<td style="color:black;text-decoration:none">TEST_COL</td>\
 </tr>\
 <tr>\
 <td><em>Definition:</em></td>\
@@ -251,15 +272,24 @@ exp_info_table2='''\
 <td style="color:black;text-decoration:none">TEST_COL</td>\
 </tr>\
 <tr>\
-<td><em>Table Name:</em></td>\
-<td style="color:black;text-decoration:none">TEST</td>\
-</tr>\
-<tr>\
 <td colspan=2 style="color:black;text-decoration:none">This is a study-specific column defined by the user, field-specific information is not available.</td>\
 </tr>\
 '''
 
-exp_info_table3='''<tr><td><em>Column Name:</em></td><td style="color:black;text-decoration:none">TEST_COL</td><td rowspan=5><b>Select Values</b><br><select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);"><option value="javascript:"><option value="javascript:select_all_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">All<option value="javascript:select_none_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">None<option value="Javascript:select_invert_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">Invert</select><select style="width:300px;" id="TEST####SEP####TEST_COL####STUDIES####100" multiple onchange="saveSelection(this.id)"><option id="y" value="y" onmouseover="return overlib(\'y\',WIDTH, 300);" onmouseout="return nd();">y</option><option id="n" value="n" onmouseover="return overlib(\'n\',WIDTH, 300);" onmouseout="return nd();">n</option></select></tr><tr><td><em>Table Name:</em></td><td style="color:black;text-decoration:none">TEST</td></tr><tr><td><em>Data Type:</em></td><td style="color:black;text-decoration:none">TEST</td></tr><tr><td><em>Description or Value:</em></td><td style="color:black;text-decoration:none">TEST_COL</td></tr><tr><td><em>Definition:</em></td><td style="color:black;text-decoration:none">This is a test</td></tr>\
+exp_info_table3='''\
+<tr>\
+<td><em>Column Name:</em></td>\
+<td style="color:black;text-decoration:none">TEST_COL</td>\
+<td rowspan=3><b>Select Values</b><br><select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);saveSelection(\'TEST####SEP####TEST_COL####STUDIES####100\')"><option value="javascript:"><option value="javascript:select_all_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">All<option value="javascript:select_none_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">None<option value="Javascript:select_invert_col_values(\'TEST####SEP####TEST_COL####STUDIES####100\');">Invert</select><select style="width:300px;" id="TEST####SEP####TEST_COL####STUDIES####100" multiple onchange="saveSelection(this.id)"><option id="y" value="y" onmouseover="return overlib(\'y\',WIDTH, 300);" onmouseout="return nd();">y</option><option id="n" value="n" onmouseover="return overlib(\'n\',WIDTH, 300);" onmouseout="return nd();">n</option></select></td>\
+</tr>\
+<tr>\
+<td><em>Data Type:</em></td>\
+<td style="color:black;text-decoration:none">TEST</td>\
+</tr>\
+<tr>\
+<td><em>Definition:</em></td>\
+<td style="color:black;text-decoration:none">This is a test</td>\
+</tr>\
 '''
 
 if __name__ == "__main__":

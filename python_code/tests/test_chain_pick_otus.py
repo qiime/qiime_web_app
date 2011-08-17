@@ -71,7 +71,7 @@ class WorkflowTests(TestCase):
         if not exists(self.wf_out):
             makedirs(self.wf_out)         
             self.dirs_to_remove.append(self.wf_out)
-        
+        #print self.wf_out
         working_dir = self.qiime_config['working_dir'] or './'
         jobs_dir = join(working_dir,'jobs')
         if not exists(jobs_dir):
@@ -196,7 +196,7 @@ test.PCx634.281501_14
 test.PCx634.281501_19'''
 
 exp_otu_table='''\
-# QIIME v1.2.1-dev OTU table
+# QIIME v1.3.0-dev OTU table
 #OTU ID	test.PCx354.281499	test.PCx355.281497	test.PCx356.281498	test.PCx481.281500	test.PCx593.281502	test.PCx634.281501	test.PCx635.281504	test.PCx636.281503
 204144	0	0	0	0	1	0	0	0
 230364	0	0	0	0	0	1	0	0
@@ -235,22 +235,36 @@ exp_exact_otus='''\
 19	test.PCx593.281502_12
 '''
 
-exp_uclust_ref_otus=''''''
+exp_uclust_ref_otus='''\
+362383	7
+268947	12
+230364	3
+355771	17
+469832	9	15
+332311	16
+343906	18
+299668	5
+331820	11	10
+264035	4
+568692	8
+266771	2	6
+204144	19
+'''
 
 exp_all_otus='''\
-355771	test.PCx356.281498_17
 362383	test.PCx634.281501_1
 268947	test.PCx481.281500_4
-204144	test.PCx593.281502_12
 230364	test.PCx634.281501_8
-469832	test.PCx634.281501_11	test.PCx634.281501_2
+355771	test.PCx356.281498_17
+469832	test.PCx634.281501_2	test.PCx634.281501_11
 332311	test.PCx634.281501_7
 343906	test.PCx634.281501_5
 299668	test.PCx634.281501_18
-331820	test.PCx634.281501_10	test.PCx634.281501_9
+331820	test.PCx634.281501_9	test.PCx634.281501_10
 264035	test.PCx636.281503_6
 568692	test.PCx635.281504_15
 266771	test.PCx354.281499_3	test.PCx355.281497_13
+204144	test.PCx593.281502_12
 '''
 
 
@@ -310,22 +324,10 @@ split_libraries:reverse_primers	disable
 # OTU picker parameters
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
-pick_otus:max_cdhit_memory	400
 pick_otus:refseqs_fp    %s/gg_97_otus_4feb2011.fasta
-pick_otus:blast_db
 pick_otus:similarity	0.97
-pick_otus:max_e_value	1e-10
-pick_otus:prefix_prefilter_length
-pick_otus:trie_prefilter
-pick_otus:prefix_length
-pick_otus:suffix_length
-pick_otus:optimal_uclust
-pick_otus:exact_uclust
-pick_otus:user_sort
-pick_otus:suppress_presort_by_abundance_uclust
 pick_otus:suppress_new_clusters True
-pick_otus:uclust_otu_id_prefix  otu_
-pick_otus:uclust_stable_sort    True
+pick_otus:enable_rev_strand_match True
 
 # Parallel options
 parallel:jobs_to_start	2

@@ -23,8 +23,8 @@ pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:refseqs_fp	~/software/gg_otus_4feb2011/rep_set/gg_97_otus_4feb2011.fasta
 pick_otus:suppress_new_clusters	True
-pick_otus:uclust_stable_sort	True
 pick_otus:similarity	0.97
+pick_otus:enable_rev_strand_match True
 
 # Parallel options
 parallel:jobs_to_start	20

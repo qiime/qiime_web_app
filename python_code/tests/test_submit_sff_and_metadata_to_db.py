@@ -270,7 +270,7 @@ class WorkflowTests(TestCase):
               inner join sff_file f on f.sff_file_id=s.sff_file_id
               inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
               inner join sequencing_run h on h.seq_run_id=s.seq_run_id"""
-        seq_run_info+=" where j.analysis_id=%s and slrm.sample_name=\'NSBE19July07\'" % (str(analysis_id))
+        seq_run_info+=" where j.analysis_id=%s and slrm.sample_name=\'HKE08Aug07\'" % (str(analysis_id))
         results = cur.execute(seq_run_info)
         
         #print 'Calling getTestFlowData...'
@@ -279,19 +279,18 @@ class WorkflowTests(TestCase):
             obs_instrument_code = data
             
         print 'After getTestFlowData...'
-                                                            
-        self.assertEqual(obs_sff_filename,exp_sff_fname)    
-        self.assertEqual(obs_num_of_reads,exp_num_seqs)            
+        
+        self.assertEqual(obs_sff_filename,exp_sff_fname)
+        self.assertEqual(obs_num_of_reads,exp_num_seqs)
         self.assertEqual(obs_sff_md5,exp_sff_md5)
         self.assertEqual(obs_instrument_code,exp_instr_code)
         
         print 'Done testing Flow_Data!'
         
         print 'Testing Split-Library Data'
-        exp_split_lib_md5='Fasting_subset.fna:fd90ec77f6e426e7eebd5a1c11f3f8ab,Fasting_subset.qual:c992bb0e6dd74b39ec448d87f92a0fb9'
-        exp_split_lib_seq='TACAGAGGGTGCAAGCGTTAATCGGATTTACTGGGCGTAAAGCGCGCGCAGGCGGCTAATTACGTCAAATGTGAAATCCCCGAGCTTAACTTGGGAATTGCATTCGATACGGGTTAGCTAGAGTGTG'
+        exp_split_lib_seq='TACGAAGGGAGCTAGCGTTATTCGGAATGATTGGGTGTAAAGAGTTTGTAGATTGCAAAATTTTTGTTATTAGTAAAAAATTGAATTTATTATTTAAAGATGCTTTTAATACAATTTTGCTTGAGTATAGTAGAGGAAAAT'
         exp_split_lib_md5='1443e25614090e660b003c5774ed4cba'
-        exp_split_lib_seq_md5='4d14f321bfb97e5fd063d3cf143cd5e5'
+        exp_split_lib_seq_md5='7e8278ef1f5561d997cad48eabe40847'
 
         split_lib_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,l.command,l.md5_checksum,
               s.sequence_string,s.md5_checksum
@@ -299,7 +298,7 @@ class WorkflowTests(TestCase):
               inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
               inner join ssu_sequence s on slrm.ssu_sequence_id=s.ssu_sequence_id
               inner join split_library_run l on j.split_library_run_id=l.split_library_run_id"""
-        split_lib_info+=" where j.analysis_id=%s and slrm.sample_name=\'NSBE19July07\'" % (str(analysis_id))
+        split_lib_info+=" where j.analysis_id=%s and slrm.sample_name=\'HKE08Aug07\'" % (str(analysis_id))
     
         results = cur.execute(split_lib_info)
         
@@ -314,8 +313,8 @@ class WorkflowTests(TestCase):
         
         print 'Testing OTU Data!'
         
-        exp_prokmsa=97534
-        exp_otu_md5='7a8d405fd4e120c1829b21dea066092a'
+        exp_prokmsa=97550
+        exp_otu_md5='56222e11026575d9850009768c0b8885'
         exp_threshold=97
         
         otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,m.otu_id,o.ssu_sequence_id,
@@ -326,7 +325,7 @@ class WorkflowTests(TestCase):
             inner join otu_map m on j.otu_run_set_id=m.otu_run_set_id and slrm.ssu_sequence_id=m.ssu_sequence_id
             inner join otu o on m.otu_id=o.otu_id
             inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
-        otu_info+=" where j.analysis_id=%s and slrm.sample_name=\'NSBE19July07\'" % (str(analysis_id))
+        otu_info+=" where j.analysis_id=%s and slrm.sample_name=\'SSBH05July07\'" % (str(analysis_id))
     
         results = cur.execute(otu_info)
         
@@ -343,7 +342,7 @@ class WorkflowTests(TestCase):
               from analysis j
               inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
               inner join otu_picking_failures f on slrm.ssu_sequence_id=f.ssu_sequence_id"""
-        otu_fail_info+=" where j.analysis_id=%s and slrm.sample_name=\'NSBE27July09\'" % (str(analysis_id))
+        otu_fail_info+=" where j.analysis_id=%s and slrm.sample_name=\'HKE08Aug07\'" % (str(analysis_id))
     
         results = cur.execute(otu_fail_info)
         
@@ -389,10 +388,9 @@ split_libraries:reverse_primers	disable
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest
 pick_otus:refseqs_fp	~/software/gg_otus_4feb2011/rep_set/gg_97_otus_4feb2011.fasta
-pick_otus:suppress_new_clusters	True
-pick_otus:uclust_stable_sort	True
 pick_otus:similarity	0.97
-
+pick_otus:suppress_new_clusters True
+pick_otus:enable_rev_strand_match True
 
 # Parallel options
 parallel:jobs_to_start	20

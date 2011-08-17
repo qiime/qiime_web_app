@@ -147,7 +147,7 @@ def print_study_info_and_values_table(query_results,data_access):
             #write out Samples
             info_table.append('<tr><th><a id=\'sym_'+str(i) + \
                     '\' onclick=\"show_hide_samples(\'div_'+str(i) + \
-                    '\',this.id);\" style=\"color:blue;\">&#x25BA;</a>&nbsp;Samples</th><td><td></tr>')
+                    '\',this.id);\" style=\"color:blue;\">&#x25BA;</a>&nbsp;Samples</th><td></td></tr>')
             info_table.append('</table>')
             info_table.append('<div id="div_'+str(i)+ \
                     '" style="display:none;"><table border="1px" style="font-size:smaller;">')

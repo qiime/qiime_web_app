@@ -156,7 +156,7 @@ def print_metadata_info_and_values_table(query_results,show_values,table,col,
             info_table.append('<option id="%s" value="%s" onmouseover="return overlib(\'%s\',WIDTH, 300);" onmouseout="return nd();">%s</option>' % (row,row,row,row))
 
         # close the select box
-        info_table.append('</select>')
+        info_table.append('</select></td>')
     info_table.append('</tr>')
 
     # print the table name

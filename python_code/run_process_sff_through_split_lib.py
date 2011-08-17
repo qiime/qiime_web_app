@@ -205,6 +205,7 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     split_libraries_cmd = '%s %s/split_libraries_fastq.py -o %s -m %s %s' % \
      (python_exe_fp, script_dir, split_library_output, mapping_input_fp_copy,
       input_str)
+    
     commands.append([('SplitLibraries', split_libraries_cmd)])
     
     input_fp=join(split_library_output,'seqs.fna')
