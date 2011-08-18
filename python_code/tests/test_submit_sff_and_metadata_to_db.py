@@ -89,6 +89,7 @@ class WorkflowTests(TestCase):
             #self.dirs_to_remove.append(tmp_dir)
             
         self.wf_out="/%s/test_processed_data" % environ['HOME']
+        #print self.wf_out
         self.dirs_to_remove.append(self.wf_out)
         self.gg_out=os.path.join(self.wf_out,'gg_97_otus')
         if not exists(self.gg_out):
@@ -155,14 +156,38 @@ class WorkflowTests(TestCase):
         exp_instr_code='GS FLX'
         exp_sff_fname='Fasting_subset'
        
+       
+        con = data_access.getSFFDatabaseConnection()
+        cur = con.cursor()
+        seq_run_info="""select j.seq_run_id,f.sff_filename,f.number_of_reads,f.md5_checksum,
+              h.instrument_code
+              from analysis j
+              inner join seq_run_to_sff_file s on j.seq_run_id=s.seq_run_id
+              inner join sff_file f on f.sff_file_id=s.sff_file_id
+              inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
+              inner join sequencing_run h on h.seq_run_id=s.seq_run_id"""
+        seq_run_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_1\'" % (str(analysis_id))
+        results = cur.execute(seq_run_info)
+        
+        #print 'Calling getTestFlowData...'
+        for data in results:
+            obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
+            obs_instrument_code = data
+        
+        self.assertEqual(obs_sff_filename,exp_sff_fname)
+        self.assertEqual(obs_num_of_reads,exp_num_seqs)
+        self.assertEqual(obs_sff_md5,exp_sff_md5)
+        self.assertEqual(obs_instrument_code,exp_instr_code)
+        
+        '''
+        print 'After getTestFlowData...'
         #print 'Calling getTestFlowData...' 
         obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
         obs_instrument_code,obs_read_id,obs_read_seq,obs_flow_string,\
         obs_qual_string = data_access.getTestFlowData(True,analysis_id,
                                                             'test.PCx634_1')
 
-        #print 'After getTestFlowData...'
-                                                            
+        #print 'After getTestFlowData...'                                                   
         self.assertEqual(obs_sff_filename,exp_sff_fname)    
         self.assertEqual(obs_num_of_reads,exp_num_seqs)            
         self.assertEqual(obs_sff_md5,exp_sff_md5)
@@ -174,13 +199,34 @@ class WorkflowTests(TestCase):
         
         print 'Done testing Flow_Data!'
         
+        '''
+        
         print 'Testing Split-Library Data'
-        exp_split_lib_md5='Fasting_subset.fna:fd90ec77f6e426e7eebd5a1c11f3f8ab,Fasting_subset.qual:c992bb0e6dd74b39ec448d87f92a0fb9'
         exp_split_lib_seq='CTGGGCCGTGTCTCAGTCCCAATGTGGCCGTTTACCCTCTCAGGCCGGCTACGCATCATCGCCTTGGTGGGCCGTTACCTCACCAACTAGCTAATGCGCCGCAGGTCCATCCATGTTCACGCCTTGATGGGCGCTTTAATATACTGAGCATGCGCTCTGTATACCTATCCGGTTTTAGCTACCGTTTCCAGCAGTTATCCCGGACACATGGGCTAGG'
         exp_split_lib_md5='2c67e0acf745bef73e26c36f0b3bd00a'
         exp_split_lib_seq_md5='008918f7469f8e33d5dd6e01075d5194'
 
         
+        split_lib_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,l.command,l.md5_checksum,
+              s.sequence_string,s.md5_checksum
+              from analysis j
+              inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
+              inner join ssu_sequence s on slrm.ssu_sequence_id=s.ssu_sequence_id
+              inner join split_library_run l on j.split_library_run_id=l.split_library_run_id"""
+        split_lib_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_1\'" % (str(analysis_id))
+    
+        results = cur.execute(split_lib_info)
+        
+        #print 'Calling getTestFlowData...'
+        for data in results:
+            obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
+            obs_split_lib_seq,obs_split_lib_seq_md5 = data
+                                                            
+        self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
+        self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
+        self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
+        
+        '''
         obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
         obs_split_lib_seq,obs_split_lib_seq_md5 = \
                     data_access.getTestSplitLibData(True,analysis_id,
@@ -189,26 +235,57 @@ class WorkflowTests(TestCase):
         self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
         self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
         self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
-        
+        '''
         print 'Testing OTU Data!'
         
         exp_prokmsa=101126
         exp_otu_md5='0b8edcf8a4275730001877496b41cf55'
         exp_threshold=97
         
+        otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,m.otu_id,o.ssu_sequence_id,
+            o.otu_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
+            p.threshold
+            from analysis j
+            inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
+            inner join otu_map m on j.otu_run_set_id=m.otu_run_set_id and slrm.ssu_sequence_id=m.ssu_sequence_id
+            inner join otu o on m.otu_id=o.otu_id
+            inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
+        otu_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_2\'" % (str(analysis_id))
+    
+        results = cur.execute(otu_info)
+        
+        for data in results:
+            obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
+            obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
+            obs_otu_md5,obs_threshold = data
+        
+        '''
         obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
         obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
         obs_otu_md5,obs_threshold = \
                     data_access.getTestOTUData(True,analysis_id,
                                                             'test.PCx634_2')
-        
+        '''
         self.assertEqual(obs_prokmsa,exp_prokmsa)
         self.assertEqual(obs_otu_md5,exp_otu_md5)
         self.assertEqual(obs_threshold,exp_threshold)
         
+        otu_fail_info="""select distinct j.seq_run_id,f.ssu_sequence_id
+              from analysis j
+              inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
+              inner join otu_picking_failures f on slrm.ssu_sequence_id=f.ssu_sequence_id"""
+        otu_fail_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_14\'" % (str(analysis_id))
+    
+        results = cur.execute(otu_fail_info)
+        
+        for data in results:
+            obs_seq_run_id,obs_ssu_id= data
+        
+        '''
         obs_seq_run_id,obs_ssu_id = \
                     data_access.getTestOTUFailureData(True,analysis_id,
                                                             'test.PCx634_14')
+        '''
         
         self.failIfEqual(obs_seq_run_id,0)
         self.failIfEqual(obs_ssu_id,0)
@@ -216,6 +293,7 @@ class WorkflowTests(TestCase):
         valid=data_access.deleteTestAnalysis(True,analysis_id)
         if not valid:
             print "Error: Could not delete data from DB!"
+    
     
     def test_submit_processed_data_to_db_illumina(self):
         """run_process_illumina_through_pick_otus runs without error"""

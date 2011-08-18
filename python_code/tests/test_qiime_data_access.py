@@ -820,8 +820,8 @@ class QiimeDataAccessTests(unittest.TestCase):
     def test_getPublicColumns(self):
         """ test_getPublicColumns: get public columns for specified user
         """
-        result=self._qiime_data_access.getPublicColumns('12171')
-        self.assertTrue(result)
+        result=self._qiime_data_access.getPublicColumns('0')
+        self.assertFalse(result)
 
     def test_getFieldReferenceInfo(self):
         """ test_getFieldReferenceInfo: get public columns for specified user
