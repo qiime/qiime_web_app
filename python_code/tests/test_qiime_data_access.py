@@ -34,11 +34,11 @@ class QiimeDataAccessTests(unittest.TestCase):
         self._qiime_data_access = data_access_factory(
                                                 ServerConfig.data_access_type)
                                                 
-    '''
+    
     def tearDown(self):
-        result = self._qiime_data_access.deactivateWebAppUser('test_user1313',
-                                                              'calkd1579')
-    '''
+        self._qiime_data_access = None
+        
+        
     # The rest of the unit tests
     
     #####################################
@@ -65,7 +65,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ test_getMetadataDatabaseConnection: get a metadata database 
             connection.
         """
-
+        
         con = self._qiime_data_access.getMetadataDatabaseConnection()
         self.assertTrue(con)
     
