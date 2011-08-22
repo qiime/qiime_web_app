@@ -76,6 +76,8 @@ function codeAddress() {
     var infowindow = new google.maps.InfoWindow();
     var elevator = new google.maps.ElevationService();
     var address = document.getElementById("address").value;
+    address='loc:'+address.replace(/^loc:/i, '')
+    
     var latlong
     if (geocoder) {
         var lat2=geocoder.geocode( { 'address': address}, function(results, status) {
