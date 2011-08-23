@@ -12,16 +12,26 @@ sess = Session.Session(req)
 if sess == None:
     psp.redirect('index.psp')
 
+# Some useful items
+data_access = data_access_factory(ServerConfig.data_access_type)
+study_id = sess['study_id']
+web_app_user_id = sess['web_app_user_id']
 portal_type = sess['portal_type']
+study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+includes_timeseries = study_info['includes_timeseries']
 post_fix = str(datetime.now())
+
 sample_file_name = 'tmp/sample_template_' + post_fix + '.txt'
 prep_file_name = 'tmp/prep_template_' + post_fix + '.txt'
 doc_file_name = 'tmp/field_reference_' + post_fix + '.html'
 zip_file_name = 'tmp/zip_archive_' + post_fix + '.zip'
+if includes_timeseries == 1:
+    timeseries_file_name = 'tmp/timeseries_template_' + post_fix + '.txt'
 
 sample_fields = []
 prep_fields = []
 documentation_fields = []
+timeseries_fields = []
 
 # Put the fields into the right buckets so we can write them to the
 # proper template files below
@@ -43,7 +53,7 @@ Code here works as follows:
   add it to the documentation_fields list
 * Before adding, make sure that the field has not already been added. If so, skip.
 """
-column_dictionary = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
+column_dictionary = data_access.getColumnDictionary()
 for entry in column_dictionary:
     lower_sample_fields = [x.lower() for x in sample_fields]
     lower_prep_fields = [x.lower() for x in prep_fields]
@@ -103,12 +113,18 @@ try:
         f.write('</body></html>')
     req.write('<li><a href=\'%s\'>%s</a>' % (doc_file_name, 'Field Reference Documentation</li>'))
     
+    with open(sess['document_root'] + timeseries_file_name, 'w') as f:
+        #f.write('\t'.join(sample_fields))
+        f.write('a test')
+    req.write('<li><a href=\'%s\'>%s</a>' % (timeseries_file_name, 'Timeseries Template</li>'))
+    
     # Create a zip archive
     zip = ZipFile(sess['document_root'] + zip_file_name, 'w')
     zip.write(sess['document_root'] + sample_file_name, os.path.basename(sample_file_name))
     if portal_type != 'emp':
         zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))
     zip.write(sess['document_root'] + doc_file_name, os.path.basename(doc_file_name))
+    zip.write(sess['document_root'] + timeseries_file_name, os.path.basename(timeseries_file_name))
     zip.close()
     req.write('<li><a href=\'%s\'>%s</a>' % (zip_file_name, 'Download zip archive of all files</li>'))
     

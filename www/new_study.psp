@@ -136,7 +136,7 @@ if page_mode == 'edit':
         default_emp_status = study_info['default_emp_status']
         funding = study_info['funding']
 else:
-    includes_timeseries = 1
+    includes_timeseries = 0
     environmental_packages = []
     study_info = None
     project_name = ''
