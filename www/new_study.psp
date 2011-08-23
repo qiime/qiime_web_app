@@ -103,6 +103,7 @@ portal_type = sess['portal_type']
 if page_mode == 'edit':
     environmental_packages = qda.getStudyPackages(sess['study_id'])
     study_info = qda.getStudyInfo(sess['study_id'], sess['web_app_user_id'])
+    includes_timeseries = study_info['includes_timeseries']
     project_name = study_info['project_name']
     study_title = study_info['study_title']
     study_alias = study_info['study_alias']
@@ -135,6 +136,7 @@ if page_mode == 'edit':
         default_emp_status = study_info['default_emp_status']
         funding = study_info['funding']
 else:
+    includes_timeseries = 1
     environmental_packages = []
     study_info = None
     project_name = ''
@@ -267,6 +269,25 @@ for item in sorted(list):
             </td>
         </tr>
         <input type="hidden" name="miens_compliant" id="miens_compliant" value="y">        
+        <tr>
+            <td>Includes Timeseries Data?
+            </td>
+            <td>
+<%
+if includes_timeseries == 1:
+    # Indent
+%>
+                <input type="checkbox" checked name="includes_timeseries" id="includes_timeseries" value="1" size="40">
+<%
+else:
+    # Indent
+%>
+                <input type="checkbox" name="includes_timeseries" id="includes_timeseries" value="1" size="40">
+<%
+# End if
+%>
+            </td>
+        </tr>
         <tr>
             <td>Study Abstract
             </td>

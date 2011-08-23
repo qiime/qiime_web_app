@@ -30,6 +30,11 @@ else:
     study_name = form['study_name']
     sess['study_name'] = study_name
 
+# Check to see if the form contains 'includes_timeseries'. It's a checkbox and thus
+# does not get submitted if not checked. If absent, add it with value of '0'
+if not form.has_key('includes_timeseries'):
+    form['includes_timeseries'] = 0
+
 # Add the new study to the database
 if portal_type == 'emp' and page_mode == 'new':
     study_id = data_access.createEMPStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
@@ -40,7 +45,7 @@ if portal_type == 'emp' and page_mode == 'new':
         form['most_recent_contact'], form['sample_type'], form['has_physical_specimen'],
         form['has_extracted_data'], form['timeseries'], form['spatial_series'],
         form['principal_investigator'], form['principal_investigator_contact'],
-        form['default_emp_status'], form['funding'])
+        form['default_emp_status'], form['funding'], form['includes_timeseries'])
 elif portal_type == 'emp' and page_mode == 'edit':
     data_access.updateEMPStudy(study_id, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
@@ -50,22 +55,23 @@ elif portal_type == 'emp' and page_mode == 'edit':
         form['most_recent_contact'], form['sample_type'], form['has_physical_specimen'],
         form['has_extracted_data'], form['timeseries'], form['spatial_series'],
         form['principal_investigator'], form['principal_investigator_contact'],
-        form['default_emp_status'], form['funding'])
+        form['default_emp_status'], form['funding'], form['includes_timeseries'])
 elif page_mode == 'edit':
     data_access.updateStudy(study_id, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
         form['pmid'], form['study_abstract'], form['study_description'],
         form['principal_investigator'], form['principal_investigator_contact'],
-        form['lab_person'], form['lab_person_contact'])
+        form['lab_person'], form['lab_person_contact'], form['includes_timeseries'])
 else:
     study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
         form['pmid'], form['study_abstract'], form['study_description'],
         form['principal_investigator'], form['principal_investigator_contact'],
-        form['lab_person'], form['lab_person_contact'])
+        form['lab_person'], form['lab_person_contact'], form['includes_timeseries'])
 
 # Insert the fields into study_actual_columns
 study_fields = []
+study_fields.append('includes_timeseries')
 study_fields.append('investigation_type')
 study_fields.append('miens_compliant')
 study_fields.append('submit_to_insdc')

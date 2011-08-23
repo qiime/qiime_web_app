@@ -231,7 +231,8 @@ class QiimeDataAccess(object):
     
     def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
-        principal_investigator, principal_investigator_contact, lab_person, lab_person_contact):
+        principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
+        includes_timeseries):
         """ Creates a study.
         """
         try:
@@ -240,7 +241,8 @@ class QiimeDataAccess(object):
             results = con.cursor().callproc('qiime_assets.study_insert', 
                 [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
                 portal_type, study_title, study_alias, pmid, study_abstract, study_description,
-                principal_investigator, principal_investigator_contact, lab_person, lab_person_contact])
+                principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
+                includes_timeseries])
             return results[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -248,7 +250,8 @@ class QiimeDataAccess(object):
             
     def updateStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
-        principal_investigator, principal_investigator_contact, lab_person, lab_person_contact):
+        principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
+        includes_timeseries):
         """ Updates a study
         """
         try:
@@ -256,7 +259,8 @@ class QiimeDataAccess(object):
             con.cursor().callproc('qiime_assets.study_update', 
                 [study_id, investigation_type, miens_compliant, submit_to_insdc, 
                 portal_type, study_title, study_alias, pmid, study_abstract, study_description,
-                principal_investigator, principal_investigator_contact, lab_person, lab_person_contact])
+                principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
+                includes_timeseries])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -377,6 +381,7 @@ class QiimeDataAccess(object):
             study_info['principal_investigator_contact'] = row[35]
             study_info['default_emp_status'] = row[36]
             study_info['funding'] = row[37]
+            study_info['includes_timeseries'] = row[38]
         return study_info
 
     def getStudyPlatform(self,study_id):
@@ -409,7 +414,8 @@ class QiimeDataAccess(object):
         number_samples_collected, number_samples_promised , lab_person,
         lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
         has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-        principal_investigator, principal_investigator_contact, default_emp_status, funding):
+        principal_investigator, principal_investigator_contact, default_emp_status, funding,
+        includes_timeseries):
         """ Creates an EMP study
         """
         con = self.getMetadataDatabaseConnection()
@@ -421,7 +427,8 @@ class QiimeDataAccess(object):
             number_samples_collected, number_samples_promised , lab_person,
             lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-            principal_investigator, principal_investigator_contact, default_emp_status, funding])
+            principal_investigator, principal_investigator_contact, default_emp_status, funding,
+            includes_timeseries])
         return results[0]
         
     def updateEMPStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
@@ -429,7 +436,8 @@ class QiimeDataAccess(object):
         number_samples_collected, number_samples_promised , lab_person,
         lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
         has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-        principal_investigator, principal_investigator_contact, default_emp_status, funding):
+        principal_investigator, principal_investigator_contact, default_emp_status, funding,
+        includes_timeseries):
         """ Creates an EMP study
         """
         con = self.getMetadataDatabaseConnection()
@@ -439,7 +447,8 @@ class QiimeDataAccess(object):
             number_samples_collected, number_samples_promised , lab_person,
             lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,
-            principal_investigator, principal_investigator_contact, default_emp_status, funding])
+            principal_investigator, principal_investigator_contact, default_emp_status, funding,
+            includes_timeseries])
 
     def createStudyPackage(self, study_id, env_package):
         """ 

@@ -26,6 +26,8 @@ metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
 mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
+
+approved_qiime_submitters = [12428,12169,12171]
 %>
 
     <h3>Selected Study: <%=study_name%></h3>
@@ -147,15 +149,11 @@ else:
 
 <%
 if portal_type == 'qiime':
-    # Indent
-    
-%>
-        <li>
-<%
     jobs = data_access.getJobInfo(study_id, 3)
     if len(jobs) > 0:
         # indent
 %>
+            <li>
             Submitted Qiime Jobs:
             <br/>
             <ul>
@@ -167,11 +165,13 @@ if portal_type == 'qiime':
                     var timer = setInterval( "checkQiimeJobStatus()", 2000 );
                 </script>
             </ul>
+            </li>
             <br/>
 <%
-    elif metadata_complete == 'y' and sff_complete == 'y':
+    elif metadata_complete == 'y' and sff_complete == 'y' and web_app_user_id in approved_qiime_submitters:
         # Indent
 %>
+            <li>
             <form id="submit_job_to_qiime" action="submit_job_to_qiime.psp" method="post">
                 <input type="hidden" name="process_only" id="process_only" value="False">
                 <input type="hidden" name="submit_to_test_db" id="submit_to_test_db"  value="False">
@@ -204,7 +204,12 @@ if portal_type == 'qiime':
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
 <%
-    else:
+        # De-indent
+%>
+            </li>
+
+<%
+    elif web_app_user_id in approved_qiime_submitters:
         # Indent
         
 %>
