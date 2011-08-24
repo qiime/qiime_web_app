@@ -113,10 +113,11 @@ try:
         f.write('</body></html>')
     req.write('<li><a href=\'%s\'>%s</a>' % (doc_file_name, 'Field Reference Documentation</li>'))
     
-    with open(sess['document_root'] + timeseries_file_name, 'w') as f:
-        #f.write('\t'.join(sample_fields))
-        f.write('a test')
-    req.write('<li><a href=\'%s\'>%s</a>' % (timeseries_file_name, 'Timeseries Template</li>'))
+    if includes_timeseries == 1: 
+        with open(sess['document_root'] + timeseries_file_name, 'w') as f:
+            #f.write('\t'.join(sample_fields))
+            f.write('a test')
+        req.write('<li><a href=\'%s\'>%s</a>' % (timeseries_file_name, 'Timeseries Template</li>'))
     
     # Create a zip archive
     zip = ZipFile(sess['document_root'] + zip_file_name, 'w')
@@ -124,7 +125,7 @@ try:
     if portal_type != 'emp':
         zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))
     zip.write(sess['document_root'] + doc_file_name, os.path.basename(doc_file_name))
-    if include_timeseries == 1:
+    if includes_timeseries == 1:
         zip.write(sess['document_root'] + timeseries_file_name, os.path.basename(timeseries_file_name))
     zip.close()
     req.write('<li><a href=\'%s\'>%s</a>' % (zip_file_name, 'Download zip archive of all files</li>'))
