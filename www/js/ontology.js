@@ -17,9 +17,9 @@ var xmlhttp
 var geocoder;
 var map;
 var marker;
-var latitude;
-var longitude;
-var elevation;
+var latitude=new Array();
+var longitude=new Array();
+var elevation=new Array();
 var markersArray = [];
 var infoWindowArray = [];
 
@@ -49,89 +49,144 @@ function displayGeography(){
 /* Initializes the Google Map. */
 function initialize(){
     geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(40.01,-105.27);
+    var latlng = new google.maps.LatLng(0,0);
     var myOptions = {
-        zoom: 7,
+        zoom: 1,
         center: latlng,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     }
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 }
 
-
-/* Removes the overlays from the map, but keeps them in the array */
+/* Removes the overlays from the map, but keeps them in the array*
+//not used, since we are re-initializing the map
 function clearOverlays() {
     if (markersArray) {
         for (i in markersArray) {
-            markersArray[i].setMap(null);
-            infoWindowArray[i].close()
+            markersArray[i].setMap(null)
+            //infoWindowArray[i].close()
         }
         markersArray.length = 0;
-        infoWindowArray.length = 0; 
+        //infoWindowArray.length = 0; 
+        //markersArray=new Array();
+    }
+}
+*/
+
+var elevator = new google.maps.ElevationService();
+
+/* This function preps the addresses and calls the geocoder */
+function codeAddress() {
+    //we reinitialize each time this is called, so it recenters on the world
+    //I did this since it is difficult to zoom based on the lat/lngs
+    initialize();
+    
+    //get the locations from the input box
+    var address = document.getElementById("address").value;
+    
+    //convert the input box into an array
+    address_array=convert_terms_to_array(address)
+    
+    //iterate over the addresses and append the "loc:" tag to the beginning
+    //which overwrites google point of interest detector
+    saved_address_array=new Array();
+    for (var i=0; i<address_array.length-1; i++){
+        if (address_array[i] != ''){
+            address_array[i]='loc:'+address_array[i].replace(/^loc:/i, '')
+            saved_address_array[i]='loc:'+address_array[i].replace(/^loc:/i, '')
+        }else if (address_array[i] == '' && address_array[i-1]!=''){
+            address_array[i]=address_array[i-1]
+            saved_address_array[i]=address_array[i-1]
+        }else{
+            saved_address_array[i]=address_array[i]
+        }
+    }
+
+    //get a unique list of the address
+    unique_addresses=unique(address_array)
+    
+    //no longer needed since we are re-initializing
+    //clearOverlays();
+    
+    latitude=new Array();
+    longitude=new Array();
+    elevation=new Array();
+    var latlong
+    var iterator=0;
+    timer_ms=0;
+    if (geocoder) {
+        
+        //give status updates
+        document.getElementById("loading_status").innerHTML='Loading coordinates'
+        
+        //iterate over the addresses and append a timing event, since google
+        //has a query limit per second
+        for (var i=0; i<unique_addresses.length; i++){
+            if (unique_addresses[i]!=''){
+                var lat2=setTimeout('geocode_results('+i+')',timer_ms)
+                timer_ms+=700
+            }
+        }
+        //append to the status after all points should have loaded
+        setTimeout("document.getElementById('loading_status').innerHTML='Completed'",timer_ms) 
     }
 }
 
+
 /* This function gets the Lat/Long using Google Maps Geocoder API. */
-function codeAddress() {
-    var infowindow = new google.maps.InfoWindow();
-    var elevator = new google.maps.ElevationService();
-    var address = document.getElementById("address").value;
-    address='loc:'+address.replace(/^loc:/i, '')
+function geocode_results(i){
     
-    var latlong
-    if (geocoder) {
-        var lat2=geocoder.geocode( { 'address': address}, function(results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                clearOverlays();
-                map.setZoom(7);  
-                map.setCenter(results[0].geometry.location);
-                var marker = new google.maps.Marker({
-                    map: map, 
-                    position: results[0].geometry.location
-                });
-                markersArray.push(marker);
-                latitude=results[0].geometry.location.lat()
-                longitude=results[0].geometry.location.lng()
-                var formal_address=results[0].formatted_address
-                var latlong = new google.maps.LatLng(latitude,longitude); 
-                /* This function gets the Elevation using Google Maps Elevations API. */
-                elevator.getElevationForLocations({'locations':[latlong]}, function(results, status){
-                    if (status == google.maps.ElevationStatus.OK) {
-                        // Retrieve the first result
-                        if (results[0]) {
-                            elevation=results[0].elevation;
-                            infowindow.setContent('<table class="overlay"><tr><th colspan="2" style="font-weight:bold"><u>'+formal_address+'</u></th></tr><tr><td>Latitude:</td><td>'+latitude.toFixed(2)+'&deg;</td></tr><tr><td>Longitude:</td><td>'+longitude.toFixed(2)+'&deg;</td></tr><tr><td>Elevation:</td><td>'+elevation.toFixed(2)+'m</td></tr></table>');
-                            infowindow.open(map, marker);
-                            infoWindowArray.push(infowindow);
-                        } else {
-                            alert("No elevation results found!");
-                        }
+    //query google maps for lat/lngs
+    geocoder.geocode( { 'address': unique_addresses[i]}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            var latlong = new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()); 
+            
+            /* This function gets the Elevation using Google Maps Elevations API. */
+            elevator.getElevationForLocations({'locations':[latlong]}, function(results2, status2){
+                if (status == google.maps.ElevationStatus.OK) {
+                    // Retrieve the first result
+                    if (results2[0]) {
+                        //assign lat/lng/elev to arrays
+                        latitude[unique_addresses[i]]=results2[0].location.lat()
+                        longitude[unique_addresses[i]]=results2[0].location.lng()
+                        elevation[unique_addresses[i]]=results2[0].elevation;
+                        
+                        //put a pointer on the map
+                        markersArray[unique_addresses[i]] = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.MARKER,
+                                                                             {size:(100,100),color:'#FF0000'}),
+                                                                              position:latlong,map:map,
+                                                                              title:unique_addresses[i].replace(/^loc:/i, '')+'\nLatitude: '+latitude[unique_addresses[i]].toFixed(2)+'\nLongitude: '+longitude[unique_addresses[i]].toFixed(2)+'\nElevation: '+elevation[unique_addresses[i]].toFixed(2),
+                                                                              flat:true});
+                        
+                    } else {
+                        alert("No elevation results found!");
                     }
-                });
-            }else{
-                alert("Unable to find the Location you specified!");
-            }  
-        });
-    }
+                }
+            });
+        }else{
+            alert(status)
+            alert("Unable to find the Location you specified!");
+        }  
+    })
 }
 /* This function outputs the Lat/Long/Elev to the Console. */
 function output_latlong(){
-    num_rows=document.getElementById('numRows').value
+    //generate the output content
     type=document.getElementById('latlngType').value
-
     var content='';
-    for (var i=0; i<num_rows; i++) {
-        if (type=='Latitude'){
-            content=content+latitude+'<br>';
-        }else if (type=='Longitude'){
-            content=content+longitude+'<br>';
-        }else if (type=='Elevation'){
-            content=content+elevation+'<br>';
-        }
+    for (var i=0; i<saved_address_array.length; i++) {
+            if (type=='Latitude'){
+                content=content+latitude[saved_address_array[i]]+'<br>';
+            }else if (type=='Longitude'){
+                content=content+longitude[saved_address_array[i]]+'<br>';
+            }else if (type=='Elevation'){
+                content=content+elevation[saved_address_array[i]]+'<br>';
+            }
+        
     }
 
-top.consoleRef=window.open('','myconsole','width=350,height=400,menubar=0,toolbar=1,status=0,scrollbars=1,resizable=1')
     //write page
+    top.consoleRef=window.open('','myconsole','width=350,height=400,menubar=0,toolbar=1,status=0,scrollbars=1,resizable=1')
     top.consoleRef.document.writeln('<html><head><title>Console</title></head><body bgcolor=white onLoad="self.focus()">'+content+'</body></html>')
     top.consoleRef.document.close()
 }
