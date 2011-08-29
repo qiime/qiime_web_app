@@ -286,7 +286,7 @@ def submit_metadata_for_study(key, study_id, web_app_user_id, send_data_to_mgras
             sequence_file.close()
             
             # Send the data to MG-RAST via REST services
-            success, entity_id = send_data_to_mgrast(prep_cgi_path, file_contents, host, debug)
+            success, entity_id = send_data_to_mgrast(sequence_cgi_path, file_contents, host, debug)
             if not success:
                 print 'Failed to add sequence data to MG-RAST for sample_id %s, row_number %s.'\
                     % (sample_id, row_number)
