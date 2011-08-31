@@ -25,13 +25,21 @@ sample_file_name = 'tmp/sample_template_' + post_fix + '.txt'
 prep_file_name = 'tmp/prep_template_' + post_fix + '.txt'
 doc_file_name = 'tmp/field_reference_' + post_fix + '.html'
 zip_file_name = 'tmp/zip_archive_' + post_fix + '.zip'
-if includes_timeseries == 1:
-    timeseries_file_name = 'tmp/timeseries_template_' + post_fix + '.txt'
 
 sample_fields = []
 prep_fields = []
 documentation_fields = []
-timeseries_fields = []
+
+if includes_timeseries == 1:
+    # For the moment, fields will be listed here. 
+    timeseries_file_name = 'tmp/timeseries_template_' + post_fix + '.txt'
+    timeseries_fields = []
+    timeseries_fields.append('event_date_time')
+    timeseries_fields.append('event_description')
+    timeseries_fields.append('event_duration')
+    timeseries_fields.append('hours_since_experiment_start')
+    timeseries_fields.append('sample_names')
+    timeseries_fields.append('host_subject_ids')
 
 # Put the fields into the right buckets so we can write them to the
 # proper template files below
@@ -115,8 +123,7 @@ try:
     
     if includes_timeseries == 1: 
         with open(sess['document_root'] + timeseries_file_name, 'w') as f:
-            #f.write('\t'.join(sample_fields))
-            f.write('a test')
+            f.write('\t'.join(timeseries_fields))
         req.write('<li><a href=\'%s\'>%s</a>' % (timeseries_file_name, 'Timeseries Template</li>'))
     
     # Create a zip archive
