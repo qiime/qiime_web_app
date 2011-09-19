@@ -38,15 +38,15 @@ data_access = None
 </script>
 
 <script type="text/javascript">
-    function initialize() 
-    {
-        var center_point = new google.maps.LatLng(<%=lats[0]%>, <%=longs[0]%>);
-        var latlngbounds = new google.maps.LatLngBounds();
+function initialize() 
+{
+    var center_point = new google.maps.LatLng(<%=lats[0]%>, <%=longs[0]%>);
+    var latlngbounds = new google.maps.LatLngBounds();
 
-        map = new google.maps.Map(document.getElementById('map_canvas'), {
-            center: center_point,
-            zoom: 12,
-            mapTypeId: 'satellite'
+    map = new google.maps.Map(document.getElementById('map_canvas'), {
+        center: center_point,
+        zoom: 0,
+        mapTypeId: 'satellite'
     });
     
 <%
@@ -63,21 +63,26 @@ for position, lat in enumerate(lats):
     });
 
     marker_<%=position%>.setMap(map);
-    
+
     var infowindow_<%=position%> = new google.maps.InfoWindow({
-        content: '<div style="width: 200; height: 60px;"><b>Sample Name:</b> <%=sample_names[position]%><br/> \
+        content: '<div style="width: 250; height: 90px;"><b>Sample Name:</b> <%=sample_names[position]%><br/> \
         <b>Latitude:</b> <%=lats[position]%><br/>\
         <b>Longitude:</b> <%=longs[position]%></div>'
     });
-    
+
     google.maps.event.addListener(marker_<%=position%>, 'click', function() {
         infowindow_<%=position%>.open(map, marker_<%=position%>);
     });
 
 <%
 # End indent
+
 %>
     map.fitBounds( latlngbounds );
+    var listener = google.maps.event.addListener(map, "idle", function() { 
+        if (map.getZoom() > 18) map.setZoom(18); 
+        google.maps.event.removeListener(listener); 
+    });
 }
 </script>
 
