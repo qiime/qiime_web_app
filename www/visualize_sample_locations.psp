@@ -1,0 +1,86 @@
+<!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+-->
+
+<%
+data_access = data_access_factory(ServerConfig.data_access_type)
+con = data_access.getMetadataDatabaseConnection()
+
+# Get the current sample data
+results = con.cursor().execute("select sample_name, latitude, longitude from sample where study_id = %s" % (study_id))
+lats = []
+longs = []
+sample_names = []
+
+for row in results:
+    sample_names.append(row[0])
+    lats.append(row[1])
+    longs.append(row[2])
+data_access = None
+%>
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0; padding: 0 }
+  #map_canvas { height: 100% }
+</style>
+
+<script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?sensor=false">
+</script>
+
+<script type="text/javascript">
+    function initialize() 
+    {
+        var center_point = new google.maps.LatLng(<%=lats[0]%>, <%=longs[0]%>);
+        var latlngbounds = new google.maps.LatLngBounds();
+
+        map = new google.maps.Map(document.getElementById('map_canvas'), {
+            center: center_point,
+            zoom: 12,
+            mapTypeId: 'satellite'
+    });
+    
+<%
+for position, lat in enumerate(lats):
+    # Indent
+%>
+
+    var p = new google.maps.LatLng(<%=lats[position]%>, <%=longs[position]%>);
+    latlngbounds.extend(p);    
+    var marker_<%=position%> = new google.maps.Marker({
+    position: p,
+    animation: google.maps.Animation.DROP,
+        title:"Hello World!"
+    });
+
+    marker_<%=position%>.setMap(map);
+    
+    var infowindow_<%=position%> = new google.maps.InfoWindow({
+        content: '<div style="width: 200; height: 60px;"><b>Sample Name:</b> <%=sample_names[position]%><br/> \
+        <b>Latitude:</b> <%=lats[position]%><br/>\
+        <b>Longitude:</b> <%=longs[position]%></div>'
+    });
+    
+    google.maps.event.addListener(marker_<%=position%>, 'click', function() {
+        infowindow_<%=position%>.open(map, marker_<%=position%>);
+    });
+
+<%
+# End indent
+%>
+    map.fitBounds( latlngbounds );
+}
+</script>
+
+<script type="text/javascript">window.onload=initialize;</script>
+
+<div id="map_canvas" style="width:1100px; height:700px;border:3px solid black"></div>
