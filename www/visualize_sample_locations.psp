@@ -59,7 +59,7 @@ for position, lat in enumerate(lats):
     var marker_<%=position%> = new google.maps.Marker({
     position: p,
     animation: google.maps.Animation.DROP,
-        title:"Hello World!"
+        title:""
     });
 
     marker_<%=position%>.setMap(map);
