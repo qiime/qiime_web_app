@@ -68,7 +68,12 @@ study_names = qda.getStudyNames()
 
 # iterate through the studies and write them into a javascript array
 for i in range(len(study_names)):
-    req.write('studynames['+str(i)+']="'+study_names[i][0]+'"\n');
+    # If this is an existing study, allow the same name to be submitted again
+    if sess.has_key('study_name'):
+        if sess['study_name'] == study_names[i][0]:
+            continue
+            
+    req.write('studynames['+str(i)+']="' + study_names[i][0] + '"\n');
 #
 %>
 
@@ -178,14 +183,7 @@ else:
                 Study Name: 
             </td>
             <td>* 
-<%
-if page_mode == 'edit':
-    req.write(project_name)
-else:
-    req.write('<input class="safename" type="text" name="study_name" id="study_name" value="%s" />' % project_name)
-
-%>
-                
+                <input class="safename" type="text" name="study_name" id="study_name" value="<%=project_name%>" />
             </td>
         </tr>
         <tr>
