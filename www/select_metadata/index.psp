@@ -60,14 +60,14 @@ req.write('<option id="all">All</option><option id="emp">EMP</option><option id=
 req.write('<select id="qiime_emp_studies" style="height:150px;width:300px;" multiple onchange="javascript:showColumns(\'metadata_left_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">')
 qiime_emp_projects.sort(key=lambda x: x[1].lower())
 for i in qiime_emp_projects:
-    req.write('<option id="%s" onmouseover="return overlib(\'<b>Study Title:</b>%s<br><br><b>Abstract:</b>%s\',WIDTH, 500);" onmouseout="return nd();">%s' % (str(i[0]).replace('"',''),str(i[2]).replace('"',''),str(i[3]).replace('"',''),str(i[1]).replace('"','')))
+    req.write('<option id="%s" onmouseover="return overlib(\'<b>Study Title:</b>%s<br><br><b>Abstract:</b>%s\',WIDTH, 500);" onmouseout="return nd();">%s' % (str(i[0]).replace('"','').replace(":",'').replace("\r\n",' '),str(i[2]).replace('"','').replace(":",'').replace("\r\n",' '),str(i[3]).replace('"','').replace(":",'').replace("\r\n",' '),str(i[1]).replace('"','').replace(":",'').replace("\r\n",' ')))
 req.write('</select></td>')
 req.write('<td id="sample_info"></td></tr></table>')
 
 req.write('<script type="text/javascript">\n')
 for i in qiime_emp_projects:
-    req.write('available_studies["'+str(i[0]).replace('"','')+'"]=new Array();\n')
-    req.write('available_studies["'+str(i[0]).replace('"','')+'"]=["%s","%s","%s"];\n' % (str(i[2]).replace('"',''),str(i[3]).replace('"',''),str(i[1]).replace('"','')))
+    req.write('available_studies["'+str(i[0]).replace('"','').replace(":",'').replace("\r\n",' ')+'"]=new Array();\n')
+    req.write('available_studies["'+str(i[0]).replace('"','').replace(":",'').replace("\r\n",' ')+'"]=["%s","%s","%s"];\n' % (str(i[2]).replace('"','').replace(":",'').replace("\r\n",' '),str(i[3]).replace('"','').replace(":",'').replace("\r\n",' '),str(i[1]).replace('"','').replace(":",'').replace("\r\n",' ')))
 req.write('</script>\n')
 %>
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
