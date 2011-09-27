@@ -248,7 +248,7 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
             
-    def updateStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
+    def updateStudy(self, study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
         includes_timeseries):
@@ -257,7 +257,7 @@ class QiimeDataAccess(object):
         try:
             con = self.getMetadataDatabaseConnection()
             con.cursor().callproc('qiime_assets.study_update', 
-                [study_id, investigation_type, miens_compliant, submit_to_insdc, 
+                [study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
                 portal_type, study_title, study_alias, pmid, study_abstract, study_description,
                 principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
                 includes_timeseries])
@@ -384,6 +384,14 @@ class QiimeDataAccess(object):
             study_info['includes_timeseries'] = row[38]
         return study_info
 
+    def saveTimeseriesData(self, study_id, timeseries_file):
+        pass
+        # Delete a table if it exists already
+        
+        # Create the new table based on file headers
+        
+        # Load the data rows
+
     def getStudyPlatform(self,study_id):
         """ Returns a Run Prefix for Sample
         """
@@ -431,7 +439,7 @@ class QiimeDataAccess(object):
             includes_timeseries])
         return results[0]
         
-    def updateEMPStudy(self, study_id, investigation_type, miens_compliant, submit_to_insdc, 
+    def updateEMPStudy(self, study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         number_samples_collected, number_samples_promised , lab_person,
         lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
@@ -442,7 +450,7 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         results = con.cursor().callproc('qiime_assets.emp_study_update', 
-            [study_id, investigation_type, miens_compliant, submit_to_insdc, portal_type, 
+            [study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type, 
             study_title, study_alias, pmid, study_abstract, study_description,
             number_samples_collected, number_samples_promised , lab_person,
             lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
