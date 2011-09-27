@@ -26,9 +26,9 @@ portal_type = sess['portal_type']
 page_mode = form['page_mode']
 if page_mode == 'edit':
     study_id = sess['study_id']
-else:
-    study_name = form['study_name']
-    sess['study_name'] = study_name
+
+study_name = form['study_name']
+sess['study_name'] = study_name
 
 # Check to see if the form contains 'includes_timeseries'. It's a checkbox and thus
 # does not get submitted if not checked. If absent, add it with value of '0'
@@ -47,7 +47,7 @@ if portal_type == 'emp' and page_mode == 'new':
         form['principal_investigator'], form['principal_investigator_contact'],
         form['default_emp_status'], form['funding'], form['includes_timeseries'])
 elif portal_type == 'emp' and page_mode == 'edit':
-    data_access.updateEMPStudy(study_id, form['investigation_type'],
+    data_access.updateEMPStudy(study_id, study_name, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
         form['pmid'], form['study_abstract'], form['study_description'],
         form['number_samples_collected'], form['number_samples_promised'] , form['lab_person'],
@@ -57,7 +57,7 @@ elif portal_type == 'emp' and page_mode == 'edit':
         form['principal_investigator'], form['principal_investigator_contact'],
         form['default_emp_status'], form['funding'], form['includes_timeseries'])
 elif page_mode == 'edit':
-    data_access.updateStudy(study_id, form['investigation_type'],
+    data_access.updateStudy(study_id, study_name, form['investigation_type'],
         form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
         form['pmid'], form['study_abstract'], form['study_description'],
         form['principal_investigator'], form['principal_investigator_contact'],
