@@ -290,7 +290,7 @@ else:
             <td>Study Abstract
             </td>
             <td>* 
-                <textarea class="input required" name="study_abstract" id="study_abstract" style="width:450px;height:150px;">value="<%=study_abstract%>" </textarea>
+                <textarea class="input required" name="study_abstract" id="study_abstract" style="width:450px;height:150px;"><%=study_abstract%></textarea>
             </td>
         </tr>
         
