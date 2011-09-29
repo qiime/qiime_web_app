@@ -1623,9 +1623,26 @@ class QiimeDataAccess(object):
     #####################################
     # Ontologies and Lists
     #####################################
+    
+    def getAllControlledVocabs(self):
+        """ Returns all controlled vocabularies
+        """
+        controlled_vocabs = {}
+        
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_controlled_vocab_list_all', [results])
+            for row in results:
+                controlled_vocabs[row[0]] = row[1]
+            
+            return controlled_vocabs
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
 
     def getControlledVocabs(self, column_name):
-        """ Returns the controlled vocabularies
+        """ Returns controlled vocabularies associated to the supplied column name
         """
         controlled_vocabs = []
         
