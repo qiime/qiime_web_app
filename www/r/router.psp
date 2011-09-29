@@ -1,0 +1,65 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+import gc
+
+# Instantiate a copy of data access
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+# Grab a reference to the session
+sess = Session.Session(req)
+
+# Function for loading requested pages
+def loadPage(page):
+    req.content_type = 'text/xml'
+    doc_root = req.document_root() + '/r/'
+    if ( os.path.isfile( doc_root + page ) ):
+        req.write('<?xml version="1.0"?>')
+        code = parse( page, doc_root )
+        exec ( code )
+    else:
+        req.write('<h3>Page not found.</h3>')
+
+# Parse out the terms
+terms = form['query'][1].split("/")
+
+# The requested resource (noun) in REST-speak
+resource = terms[0]
+
+# The specific item requested
+if len(terms) > 1 and terms[1] != '':
+    identifier = terms[1]
+else:
+    identifier = None
+
+# Save the identifier in the session for use in the included page
+sess['identifier'] = identifier
+sess.save()
+
+
+# Switchboard
+request_method = req.method
+if request_method == 'GET':
+    page = '%s_get.psp' % (resource)
+    loadPage(page)
+elif request_method == 'PUT':
+    req.write('put not implemented')
+elif request_method == 'POST':
+    req.write('post not implemented')
+elif request_method == 'DELETE':
+    req.write('delete not implemented');
+else:
+    pass
+
+data_access = None
+gc.collect()
+%>
