@@ -44,12 +44,14 @@ def print_study_info_and_values_table(query_results,data_access):
     if sffs[0]:
         # iterate over the sffs in this study
         for i,sff in enumerate(sffs):
-        
+            
+            # deprecation due to no longer loading into reads table
+            '''
             #Get the number of reads in a given sff
             results=data_access.getQiimeSffReadCounts(seq_run_ids[i])
             for row in results:
                 read_counts.append(row[0])
-            
+            '''
             #Get a list of samples for a given sff
             results=data_access.getQiimeSffSamples(study_id,seq_run_ids[i])
             samples[seq_run_ids[i]]=[]
@@ -132,10 +134,12 @@ def print_study_info_and_values_table(query_results,data_access):
             info_table.append('<td></td></tr><tr><th>SFF Filename:</th><td>' + \
                     str(sff)+'</td></tr>')
         
+            # deprecating due to no longer loading into reads table
+            '''
             #write out number of reads
             info_table.append('<tr><th>Number of Reads:</th><td>' + \
                     str(read_counts[i])+'</td></tr>')
-        
+            '''
             #write out number of samples
             info_table.append('<tr><th>Number of Samples:</th><td>' + \
                     str(len(samples[seq_run_ids[i]]))+'</td></tr>')
@@ -157,10 +161,13 @@ def print_study_info_and_values_table(query_results,data_access):
                 info_table.append('<tr><td>'+str(j[0])+'</td><td>'+str(j[1])+'</td></tr>')
         
             info_table.append('</table></div><br>')
-
+            
+        # deprecating due to no longer loading into reads table
+        '''
         # write out total number of reads across all sffs
         info_table.append('<table><tr><th>Total Number of Reads:</th><td>' + \
                     str(sum(read_counts))+'</td></tr></table>')
+        '''
     else:
         info_table.append('<table><tr><th><u>SFF(s) Information</u></th></tr><tr><td style=\"color:red;\">The sequence data for this study has not been processed!</td></tr></table>')
                 

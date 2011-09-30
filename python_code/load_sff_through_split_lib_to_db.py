@@ -78,6 +78,13 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
             sff_basename=input_fname
         else:
             sff_basename=input_fname[:-2]
+
+        if re.search('0\d_FLX$', sff_basename)==None or re.search('0\d_FLX$', sff_basename).group()==None:
+            sff_basename=sff_basename
+        else:
+            sff_basename=sff_basename[:-6]
+
+            
         print 'sff_basename: %s' % sff_basename
 
         analysis_notes=split(input_basename)[0]
