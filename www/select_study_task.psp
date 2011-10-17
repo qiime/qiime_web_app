@@ -9,7 +9,25 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
 
+<script src="http://code.jquery.com/jquery-latest.js"></script>
 <script type="text/javascript" src="js/jobs.js"></script>
+
+<script type="text/javascript">
+
+function toggleSamples()
+{
+    sample_div = document.getElementById('sample_div');
+    if (sample_div.style.display == 'none')
+    {
+        $('#sample_div').fadeIn('fast')
+    }
+    else
+    {
+        $('#sample_div').fadeOut('fast')
+    }
+}
+
+</script>
 
 <%
 
@@ -21,6 +39,7 @@ portal_type = sess['portal_type']
 frame_target = sess['frame_target']
 study_name = sess['study_name']
 study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+sample_count = study_info['sample_count']
 investigation_type = study_info['investigation_type']
 metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
@@ -141,6 +160,20 @@ else:
 %>
                 Upload metadata to this study (complete)</a>
                 <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+                <br/>
+                <%=sample_count%> samples uploaded. (<a href="" onclick="toggleSamples(); return false;">show/hide samples</a>)
+                <div id="sample_div" name="sample_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:500px; padding:5px; background-color:#b0c4de;">
+<%
+    # List all samples names here
+    req.write('<table width="100%">')
+    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>')
+    for sample_name, sample_id, public, collection_date in data_access.getSampleDetailList(study_id):
+        req.write('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date))
+    req.write('</table>')
+    
+%>
+                </div>
+
 <%
 # End indent
 %>
@@ -213,8 +246,7 @@ if portal_type == 'qiime':
         # Indent
         
 %>
-            Submit Job to Qiime (complete SFF and metadata upload first)
-            <br/><br/>
+            <li>Submit Job to Qiime (complete SFF and metadata upload first)</li>
 <%
     if is_admin == 1:
         jobs2 = data_access.getJobInfo(study_id, 12)
