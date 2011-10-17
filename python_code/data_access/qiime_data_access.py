@@ -382,6 +382,7 @@ class QiimeDataAccess(object):
             study_info['default_emp_status'] = row[36]
             study_info['funding'] = row[37]
             study_info['includes_timeseries'] = row[38]
+            study_info['sample_count'] = row[39]
         return study_info
 
     def saveTimeseriesData(self, study_id, timeseries_file):
@@ -754,6 +755,21 @@ class QiimeDataAccess(object):
             for sample_name, sample_id in results:
                 sample_list[sample_id] = sample_name
             return sample_list
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+            
+    def getSampleDetailList(self, study_id):
+        """ Returns a list of metadata fields
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('qiime_assets.get_sample_detail_list', [study_id, results])
+            sample_details = []
+            for sample_name, sample_id, public, collection_date in results:
+                sample_details.append((sample_name, sample_id, public, collection_date))
+            return sample_details
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
