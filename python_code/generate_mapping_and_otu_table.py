@@ -36,7 +36,8 @@ import socket
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
 
-def get_mapping_data(data_access,is_admin,table_col_value,get_count=False):
+def get_mapping_data(data_access,is_admin,table_col_value,user_id,
+                     get_count=False):
     
     #recorded_fields = data_access.getMetadataFields(study_id)
     database_map = {}
@@ -239,7 +240,8 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     is_admin = user_details['is_admin']
 
     # get mapping results
-    results,cur_description=get_mapping_data(data_access,is_admin,table_col_value)
+    results,cur_description=get_mapping_data(data_access,is_admin,table_col_value,
+                                         user_id)
 
     ### need to reconnect to data_access, since it gets closed up a con.close()
     try:
