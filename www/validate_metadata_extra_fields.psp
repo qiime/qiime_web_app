@@ -26,6 +26,9 @@ has_existing_custom_columns = False
 # Preprocess the files to see if we have extras. Forward if not
 templates_with_extras = {}
 for template in templates:
+    # Skip the timeseries template - they're all treated as extras
+    if 'timeseries_template' in template:
+        continue
     table = MetadataTable(template, study_id)
     user_defined_columns = table.getUserDefinedColumns()
     if len(user_defined_columns):
