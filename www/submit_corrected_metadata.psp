@@ -73,6 +73,8 @@ prep_fields = []
 all_other_fields = []
 key_field_errors = []
 
+timeseries_template = None
+
 # Get references to our files
 files = []
 for item in form:
@@ -82,6 +84,8 @@ for item in form:
         files.append(form[item])
     elif 'prep_template' in item:
         files.append(form[item])
+    elif 'timeseries_template' in item:
+        timeseries_template = form[item]
 
 # If not EMP, make sure we have 2 files. If not we're screeeeewd.
 if portal_type == 'emp':
@@ -335,6 +339,10 @@ if len(item_list) > 0:
 
 for t in threads:
     t.join()
+    
+# Load the timeseries file into a new table
+if timeseries_template:
+    data_access.saveTimeseriesData(study_id, timeseries_template, req)
 
 if with_errors:
     req.write('<h3>Upload Completed With Errors</h3>')
