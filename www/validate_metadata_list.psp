@@ -38,6 +38,12 @@ if templates != None:
     draw_submit = True
     
     for template in templates:
+        # Skip the timeseries template. Because it consists mostly of custom columns
+        # It's minimally validated earlier. 
+        if 'timeseries' in template:
+            req.write('<input type="hidden" id="{0}" name="{0}" value="{0}">'.format(template))
+            continue
+            
         req.write('<h3>Results for file: ' + os.path.basename(template) + '</h3>')
         log = []
         try:
