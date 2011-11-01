@@ -386,15 +386,17 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     
     for i,sample_name1 in enumerate(samples_list):
         sample_counts[sample_name1]={}
-        user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97,
-                                          'GREENGENES_REFERENCE',97)
+        user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97, 'GREENGENES_REFERENCE',97)
         for row in user_data:
             if row[0] not in otus:
                 otus.append(str(row[0]))
             if sample_counts[sample_name1].has_key(str(row[0])):
-                raise ValueError, 'Duplicate prokmsa ids!' 
-            sample_counts[sample_name1][str(row[0])]=row[1]
-        
+                raise ValueError, 'Duplicate prokmsa ids!'
+            try:
+                sample_counts[sample_name1][str(row[0])]=row[1]
+            except:
+                continue
+
     otu_table=zeros((len(otus),len(samples_list)),dtype=int)
     
     for i,sample in enumerate(samples_list):

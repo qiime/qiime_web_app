@@ -9,6 +9,7 @@ __maintainer__ = "Doug Wendel"
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
+import sys
 import httplib, urllib
 from base_mgrast_rest_services import BaseMGRASTRestServices
 

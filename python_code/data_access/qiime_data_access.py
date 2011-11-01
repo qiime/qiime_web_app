@@ -329,6 +329,8 @@ class QiimeDataAccess(object):
         """
         public_studies = self.getUserStudyNames(0, is_admin, portal_type)
         all_studies = self.getUserStudyNames(user_id, is_admin, portal_type)
+        if not public_studies:
+            return
         for item in public_studies:
             if item not in all_studies:
                 all_studies.append(item)
