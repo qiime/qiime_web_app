@@ -16,6 +16,7 @@ import cx_Oracle
 from crypt import crypt
 from threading import Lock
 from time import sleep
+import csv
 
 class QiimeDataAccess(object):
     """
@@ -387,13 +388,56 @@ class QiimeDataAccess(object):
             study_info['sample_count'] = row[39]
         return study_info
 
-    def saveTimeseriesData(self, study_id, timeseries_file):
-        pass
+    def saveTimeseriesData(self, study_id, timeseries_file, req):
+        con = self.getMetadataDatabaseConnection()
+        
         # Delete a table if it exists already
+        try:
+            statement = 'drop table study_{0}_timeseries'.format(str(study_id))
+            con.cursor().execute(statement)
+        except:
+            # If the table doesn't exist, this may toss an exception. We don't care,
+            # just want to delete the table whether or not it exists
+            pass
+                
+        # Dict for assigning data types:
+        data_types = {}
+        data_types['event_date_time'] = 'varchar2(50)'
+        data_types['event_description'] = 'varchar2(2000)'
+        data_types['event_duration'] = 'varchar2(100)'
+        data_types['hours_since_experiment_start'] = 'integer'
+        data_types['sample_names'] = 'varchar2(4000)'
+        data_types['host_subject_ids'] = 'varchar2(4000)'
         
+        # Iterate over the remaining columns and create
+        columns = []
+        f = open(timeseries_file, 'rU')
+        reader = csv.reader(f, delimiter='\t')        
+        headers = reader.next()
+        for column in headers:
+            if column in data_types:
+                data_type = data_types[column]
+            else:
+                data_type = 'varchar2(1000)'
+            columns.append('{0} {1}'.format(column, data_type))
+
         # Create the new table based on file headers
-        
+        table_name = 'study_{0}_timeseries'.format(str(study_id))
+        statement = 'create table {0} ({1})'.format(table_name, ','.join(columns))
+        #req.write(statement)
+        con.cursor().execute(statement)
+            
         # Load the data rows
+        for row in reader:
+            values = ','.join(['\'' + item + '\'' for item in row])
+            statement = 'insert into {0} values ({1})'.format(table_name, values)
+            #req.write(statement)
+            con.cursor().execute(statement)
+            con.cursor().execute('commit')
+            
+        f.close()
+        
+        
 
     def getStudyPlatform(self,study_id):
         """ Returns a Run Prefix for Sample
