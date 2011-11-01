@@ -251,9 +251,14 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
         
         sample_template_found = False
         prep_template_found = False
+        timeseries_template_found = False
         
         sample_mdtable = None
         prep_mdtable = None
+        
+        # Figure out if this study has timeseries data
+        study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+        includes_timeseries = study_info['includes_timeseries']
         
         for fullname in t.namelist():
             # Ignore directories
@@ -272,11 +277,13 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             else:
                 continue
 
-            # Validate that it's one of the two expected templates
+            # Validate that it's one of the three expected templates
             if 'sample_template' in filename:
                 sample_template_found = True
             elif 'prep_template' in filename:
                 prep_template_found = True
+            elif 'timeseries_template' in filename:
+                timeseries_template_found = True
             else:
                 continue
 
@@ -324,6 +331,15 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
                 prep_mdtable = mdtable
                 prep_errors, key_fields_changed = validatePrepFile(mdtable, req, study_id, data_access)
                 logErrors(errors, prep_errors)
+            elif 'timeseries_template' in outfile_filename:
+                # Add specific checks
+                
+                # Make sure lists of sample names and host names are legit and match entries in
+                # the sample file
+                
+                # Make sure other values are okay if applicable? 
+                
+                pass
 
         # Make sure we have one of each template type
         if not sample_template_found:
@@ -333,17 +349,26 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             pass
         elif not prep_template_found:
             errors.append('Prep template was not found.')
+            
+        if includes_timeseries == 1 and not timeseries_template_found:
+            errors.append('This study includes timeseries data however the timeseries file is missing from this upload.')
                 
         # Perform multi-file validations
         if portal_type != 'emp' and sample_mdtable and prep_mdtable:
             logErrors(errors, multiFileValidation(sample_mdtable, prep_mdtable))
 
-        # If the zip does not have exactly two templates, raise an error
-        if portal_type == 'emp':
-            pass
-        elif len(templates) != 2:
-            errors.append('A valid sample and prep template must be in the archive.')
+        # Check that the archive contains the correct number of files:
+        required_file_count = 1
+        
+        if includes_timeseries == 1:
+            required_file_count += 1
             
+        if portal_type == 'qiime':
+            required_file_count += 1
+                    
+        if len(templates) != required_file_count:
+            errors.append('One more more required files were not included in this upload.')
+        
         # If there were errors, report them and stop processing. Note that writing to the req 
         # object is the signal for the JumpLoader to flag and error
         if errors:
@@ -367,7 +392,7 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
                 # Do not change this string. It's checked for on the respose page.
                 req.write('immutable fields changed')
                 return templates, errors
-                                        
+            
             # Delete the old files
             files = os.listdir(dir_path)
             for file_name in files:
