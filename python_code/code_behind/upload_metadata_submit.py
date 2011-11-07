@@ -165,6 +165,20 @@ def validatePrepFile(mdtable, req, study_id, data_access):
         i += 1
     
     return errors, key_fields_changed
+
+def validateTimeseriesFile(mdtable, req, study_id, data_access):
+    errors = []
+    required_columns = set(['event_date_time', 'event_description', 'event_duration', 'hours_since_experiment_start', 'sample_names', 'host_subject_ids'])
+
+    # Make sure the required columns exist
+    for column in required_columns:
+        try:
+            mdtable.getColumn(column)
+        except Exception, e:
+            errors.append("Error: '{0}' was not found in the timeseries file. Please make sure the following columns exist in your timeseries template: 'event_date_time', 'event_description', 'event_duration', 'hours_since_experiment_start', 'sample_names', 'host_subject_ids'".format(column))
+    
+    return errors
+
     
 def multiFileValidation(sample_mdtable, prep_mdtable):
     errors = []
@@ -332,14 +346,9 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
                 prep_errors, key_fields_changed = validatePrepFile(mdtable, req, study_id, data_access)
                 logErrors(errors, prep_errors)
             elif 'timeseries_template' in outfile_filename:
-                # Add specific checks
-                
-                # Make sure lists of sample names and host names are legit and match entries in
-                # the sample file
-                
-                # Make sure other values are okay if applicable? 
-                
-                pass
+                timeseries_mdtable = mdtable
+                prep_errors = validateTimeseriesFile(mdtable, req, study_id, data_access)
+                logErrors(errors, prep_errors)
 
         # Make sure we have one of each template type
         if not sample_template_found:
