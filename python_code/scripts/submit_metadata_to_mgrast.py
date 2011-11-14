@@ -36,7 +36,8 @@ def main():
     debug = opts.debug
     
     # call the main function
-    key = 'y7x2G29QEbuEyTYbLr7pjavtA'
+    #key = 'y7x2G29QEbuEyTYbLr7pjavtA'
+    key = 'VaLLv2abEpZvpbHHNUJhySydr'
     
     # User_ID. Mine for now for access to all studies.
     web_app_user_id = 12169
