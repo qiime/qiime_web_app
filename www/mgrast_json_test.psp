@@ -1,0 +1,21 @@
+<%
+import json
+import httplib
+
+req.write('<h3>MG-RAST MOBEDAC REST/JSON Test</h3>')
+
+con = httplib.HTTPConnection('mobedac.org')
+con.request('GET', '/api.cgi/project')
+response = con.getresponse()
+raw_data = response.read()
+if raw_data:
+    json_data = json.loads(raw_data)
+    for item in json_data:
+        req.write('<b>Request Item:</b> %s' % item)
+        req.write('<br/>')
+        req.write('<b>Data Type:</b> %s' % str(type(json_data[item])).replace('<', '').replace('>', ''))
+        req.write('<br/>')
+        req.write('<b>Contents:</b> %s' % str(json_data[item]))
+        req.write('<p/>')
+
+%>
