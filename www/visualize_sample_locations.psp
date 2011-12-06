@@ -89,3 +89,4 @@ for position, lat in enumerate(lats):
 <script type="text/javascript">window.onload=initialize;</script>
 
 <div id="map_canvas" style="width:1100px; height:700px;border:3px solid black"></div>
+

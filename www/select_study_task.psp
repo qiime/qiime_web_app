@@ -254,7 +254,6 @@ if portal_type == 'qiime':
 %>
             <li>
             Queued Data to Load:
-            <br/>
             <ul>
                 <div id="qiime_load_status_div">
                     Checking status...

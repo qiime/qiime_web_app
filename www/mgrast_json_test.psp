@@ -1,13 +1,26 @@
 <%
 import json
-import httplib
+import urllib2
 
 req.write('<h3>MG-RAST MOBEDAC REST/JSON Test</h3>')
 
-con = httplib.HTTPConnection('mobedac.org')
-con.request('GET', '/api.cgi/project')
-response = con.getresponse()
+
+##### NOTE: None of this works to actually authenticate at the moment. Nothing
+##### reads it on the other end. But it will still open the un-authenticated page
+##### and read the sampel JSON contained there.
+
+# Create an OpenerDirector with support for Basic HTTP Authentication...
+auth_handler = urllib2.HTTPBasicAuthHandler()
+auth_handler.add_password(realm='MOBEDAC',
+                          uri='http://mobedac.org/api.cgi/project',
+                          user='duggus',
+                          passwd='humongous')
+opener = urllib2.build_opener(auth_handler)
+# ...and install it globally so it can be used with urlopen.
+urllib2.install_opener(opener)
+response = urllib2.urlopen('http://mobedac.org/api.cgi/project')
 raw_data = response.read()
+
 if raw_data:
     json_data = json.loads(raw_data)
     for item in json_data:
@@ -19,3 +32,4 @@ if raw_data:
         req.write('<p/>')
 
 %>
+

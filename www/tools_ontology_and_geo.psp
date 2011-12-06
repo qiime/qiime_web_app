@@ -3,7 +3,7 @@
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2010, Qiime Web Analysis"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Jesse Stombaugh"]
@@ -20,5 +20,6 @@ ontology_list = data_access.get_list_of_ontologies()
 
 <ul>
     <li><a href="fusebox.psp?page=tools_ontology.psp">Ontology Lookup Service</a></li>
+    <li><a href="fusebox.psp?page=tools_controlled_vocab.psp">Controlled Vocabulary Lookup Service</a></li>
     <li><a href="fusebox.psp?page=tools_geo.psp">Georeference Utility</a></li>
 </ul>

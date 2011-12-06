@@ -232,12 +232,12 @@ __status__ = 'Development'
 </h4>
 <br/>
 <h3>EMP Studies</h3>
-<div id="study_grid_container" style="width:100%;height:200px;"></div>
+<div id="study_grid_container" style="width:90%;height:200px;"></div>
 <br/>
 <div id="study_status_div" style="width:90%;"></div>
 
 <h3>Samples For Selected Studies</h3>
-<div id="sample_grid_container" style="width:100%;height:400px;"></div>
+<div id="sample_grid_container" style="width:90%;height:400px;"></div>
 <br/>
 <div id="sample_status_div" style="width:90%;"></div>
 
