@@ -28,6 +28,14 @@ def loadPage(page):
         exec ( code )
     else:
         req.write('<h3>Page not found.</h3>')
+        
+def getPage(page):
+    doc_root = req.document_root() + '/r/'
+    if ( os.path.isfile( doc_root + page ) ):
+        code = parse( page, doc_root )
+        exec ( code )
+    else:
+        req.write('<h3>Page not found.</h3>')
 
 # Parse out the terms
 terms = form['query'][1].split("/")
@@ -45,18 +53,21 @@ else:
 sess['identifier'] = identifier
 sess.save()
 
-
 # Switchboard
 request_method = req.method
+req.write(request_method)
 if request_method == 'GET':
     page = '%s_get.psp' % (resource)
     loadPage(page)
 elif request_method == 'PUT':
-    req.write('put not implemented')
+    page = '%s_put.psp' % (resource)
+    getPage(page)
 elif request_method == 'POST':
-    req.write('post not implemented')
+    page = '%s_post.psp' % (resource)
+    getPage(page)
 elif request_method == 'DELETE':
-    req.write('delete not implemented');
+    page = '%s_delete.psp' % (resource)
+    getPage(page)
 else:
     pass
 
