@@ -55,7 +55,6 @@ sess.save()
 
 # Switchboard
 request_method = req.method
-req.write(request_method)
 if request_method == 'GET':
     page = '%s_get.psp' % (resource)
     loadPage(page)
