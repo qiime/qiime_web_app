@@ -44,14 +44,14 @@ class QiimeDataAccess(object):
     #####################################
     
     def testDatabase(self):
-        """This function just tests a database connection"""
+        """Attempt to connect to the database
+        
+        Attempt a database connection. Will throw an exception if it fails. Returns
+        "True" if successful.
+        """
         con = self.getMetadataDatabaseConnection()
-        sleep(.1)
-        sleep(.1)
-        sleep(.1)
-        sleep(.1)
-        sleep(.1)
-        return True
+        if con:
+            return True
     
     def convertToOracleHappyName(self, date_string):
         """ Oracle is picky about dates. This function takes a previously validated
@@ -1162,7 +1162,13 @@ class QiimeDataAccess(object):
     fields = {}
     def findMetadataTable(self, field_name, field_type, log, study_id, lock):
         """ Finds the target metadata table for the supplied column name
+        
+        Determines which table a column belongs to based on field_name and type.
         """
+        
+        # log passed in from writeMetadataValue() - it's a list. At end of function, 
+        # exception handler will output contents of log to web for viewing if error
+        # occurrs.
         
         try:
             table = ''
@@ -1197,14 +1203,11 @@ class QiimeDataAccess(object):
                     for table_name in self.fields[field_name]:
                         if str(study_id) in table_name:
                             table = table_name
-                    #if table == '':
-                    #    if 'SAMPLE' in self.fields[field_name]:
-                    #        table = 'SAMPLE'
                             
             # If table is not found, assume user-defined column
             else:
                 """ Code may look bizarre... but here's why:
-                1. To streamline access and prevent locking, we first check to see if the field
+                1. To streamline access and prevent blocking, we first check to see if the field
                 does exist in the field list. If it does, we do not have to lock and can simply
                 look up the table name.
                 
@@ -1987,7 +1990,24 @@ class QiimeDataAccess(object):
                 mapping_file_header += column[0] + '\t'
 
             for row in results:
-                run_prefix = row[3]
+                linker = row[2]
+                primers = row[3]
+                run_prefix = row[4]
+                linker_primer_list = ''
+                
+                # Create a comma-separated list of linker+primer sequences
+                if ',' in primers:
+                    primer_list = primers.split(',')
+                    for primer in primer_list:
+                        linker_primer_list += '{0}{1},'.format(linker, primer)
+                
+                    # Strip the trailing comma
+                    linker_primer_list = linker_primer_list[:-1]
+                else:
+                    linker_primer_list = linker + primers
+
+                # Adjust the row contents
+                newrow = (row[0], row[1], linker_primer_list, row[4], row[5])
 
                 # If this is the first time we've seen this run_prefix, create a new list 
                 # to hold the rows
@@ -1995,7 +2015,7 @@ class QiimeDataAccess(object):
                     result_sets[run_prefix] = []
 
                 # Add the row to the right run_prefix heading
-                result_sets[run_prefix].append(row)
+                result_sets[run_prefix].append(newrow)
 
             #raise Exception(str(result_sets))
 
