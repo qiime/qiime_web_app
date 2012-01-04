@@ -330,11 +330,12 @@ class QiimeDataAccess(object):
         """
         public_studies = self.getUserStudyNames(0, is_admin, portal_type)
         all_studies = self.getUserStudyNames(user_id, is_admin, portal_type)
-        if not public_studies:
+        if not public_studies and not all_studies:
             return
-        for item in public_studies:
-            if item not in all_studies:
-                all_studies.append(item)
+        elif public_studies:
+            for item in public_studies:
+                if item not in all_studies:
+                    all_studies.append(item)
                 
         return sorted(all_studies, key=lambda item: str(item[1]).lower())
     
