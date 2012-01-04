@@ -33,7 +33,7 @@ try:
     submitJobsToQiime(study_id, user_id, mapping_file_dir, process_only, submit_to_test_db)
 
     # Redirect to the home page for this study
-    #psp.redirect('fusebox.psp?page=select_study_task.psp')
+    psp.redirect('fusebox.psp?page=select_study_task.psp')
 except Exception, e:
     req.write(str(e))
 
