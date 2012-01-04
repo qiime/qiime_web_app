@@ -1982,12 +1982,9 @@ class QiimeDataAccess(object):
             result_sets = {}
             con.cursor().callproc('qiime_assets.get_split_libarary_data', [study_id, results])
 
-            mapping_file_header = ''
-            for column in results.description:
-                # Skip run_prefix for mapping file
-                if column[0].upper() == 'RUN_PREFIX':
-                    continue
-                mapping_file_header += column[0] + '\t'
+            mapping_file_header = '#SampleID\tBarcodeSequece\tLinkerPrimerSequence\tRunPrefix\tDescription'
+            #for column in results.description:
+            #    mapping_file_header += column[0] + '\t'
 
             for row in results:
                 linker = row[2]
