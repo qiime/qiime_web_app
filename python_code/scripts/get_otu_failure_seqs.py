@@ -75,7 +75,7 @@ def main():
        "inner join qiime_metadata.sample sa on an.study_id=sa.study_id " +\
        "inner join qiime_metadata.sequence_prep sp on sa.sample_id=sp.sample_id " +\
        "where (%s) and (%s)" % (' or '.join(primer_strings),' or '.join(seq_method_strings))
-    print statement 
+    #print statement 
     
     # Run the statement
     con = data_access.getSFFDatabaseConnection()
@@ -83,7 +83,7 @@ def main():
     
     # write resulting fasta file
     results = cur.execute(statement)
-    print results
+    #print results
     for i in results:
         output_fp.write('>%s\n%s\n' % (i[0],i[1]))
     
