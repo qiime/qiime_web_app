@@ -38,7 +38,7 @@ for i in form:
 
 #req.write(str(tab_col_vals))
 results,cur=get_mapping_data(data_access,sess['is_admin'],tab_col_vals,
-                         get_count=True)
+                             sess['web_app_user_id'],get_count=True)
 for i in results:
     req.write('# of Samples: %s<br>' % str(i[0]))
 #
