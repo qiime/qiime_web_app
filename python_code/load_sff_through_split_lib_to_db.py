@@ -328,7 +328,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     cur = con.cursor()
     set_count = 1
     start = time.time()
-    
+    """
     print 'Starting otu map loading...'
     for input_set in input_set_generator(otu_map, cur, types, buffer_size=1000):
         print "loading OTU mapping input set: %s" % set_count
@@ -342,7 +342,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     print 'Successfully loaded the OTU map into the database!'
     end = time.time()
     print "Total processor time elapsed: %s" % str(end - start)
-    
+    """
     pick_otus_failures = join(input_dir, 'gg_97_otus', 'all_failures.txt')
     
     lines = open(pick_otus_failures,'U')

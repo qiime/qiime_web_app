@@ -157,7 +157,20 @@ def generate_string_input(script_name,label_to_use,option_help,option,headers,
             else:
                 html_out+='<option>%s\n' % (i)
         html_out+='</select></td></tr>\n'
-    elif option_name in ['colorby','mapping_category','fields']:
+    elif script_name=='make_distance_histograms' and option_name=='fields':
+        #create a multi-select box specifically the fields in 
+        #make_distance_histograms
+        html_out+='<tr><th>%s&nbsp;%s</th><td><select id="%s" multiple>\n' % \
+                        (label_to_use,option_help,script_name+":"+option_name)
+        
+        for i in headers:
+            if i in ['SampleID']:
+                html_out+='<option selected>%s\n' % (i)
+            else:
+                html_out+='<option>%s\n' % (i)
+            
+        html_out+='</select></td></tr>\n'
+    elif option_name in ['colorby','mapping_category']:
         #create a multi-select box which uses the column headers passed in
         html_out='<tr><th>%s&nbsp;%s</th><td><select id="%s" multiple>\n' % \
                         (label_to_use,option_help,script_name+":"+option_name)
