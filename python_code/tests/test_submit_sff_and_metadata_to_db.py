@@ -242,13 +242,13 @@ class WorkflowTests(TestCase):
         exp_otu_md5='0b8edcf8a4275730001877496b41cf55'
         exp_threshold=97
         
-        otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,m.otu_id,o.ssu_sequence_id,
-            o.otu_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
+        otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,ot.reference_id,gr.ssu_sequence_id,
+            ot.reference_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
             p.threshold
             from analysis j
             inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
-            inner join otu_map m on j.otu_run_set_id=m.otu_run_set_id and slrm.ssu_sequence_id=m.ssu_sequence_id
-            inner join otu o on m.otu_id=o.otu_id
+            inner join otu_table ot on j.otu_run_set_id=ot.otu_run_set_id
+            inner join gg_plus_denovo_reference gr on ot.reference_id=gr.reference_id
             inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
         otu_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_2\'" % (str(analysis_id))
     
@@ -395,13 +395,13 @@ class WorkflowTests(TestCase):
         exp_otu_md5='56222e11026575d9850009768c0b8885'
         exp_threshold=97
         
-        otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,m.otu_id,o.ssu_sequence_id,
-            o.otu_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
+        otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,ot.reference_id,gr.ssu_sequence_id,
+            ot.reference_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
             p.threshold
             from analysis j
             inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
-            inner join otu_map m on j.otu_run_set_id=m.otu_run_set_id and slrm.ssu_sequence_id=m.ssu_sequence_id
-            inner join otu o on m.otu_id=o.otu_id
+            inner join otu_table ot on j.otu_run_set_id=ot.otu_run_set_id
+            inner join gg_plus_denovo_reference gr on ot.reference_id=gr.reference_id
             inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
         otu_info+=" where j.analysis_id=%s and slrm.sample_name=\'SSBH05July07\'" % (str(analysis_id))
     
@@ -478,15 +478,15 @@ parallel:seconds_to_sleep	60
 
 fasting_map = """#SampleID	BarcodeSequence	LinkerPrimerSequence	Treatment	DOB	Description
 #Example mapping file for the QIIME analysis package.  These 9 samples are from a study of the effects of exercise and diet on mouse cardiac physiology (Crawford, et al, PNAS, 2009).
-test_PCx354	AGCACGAGCCTA	CATGCTGCCTCCCGTAGGAGT	Control	20061218	Control_mouse__I.D._354
-test_PCx355	AACTCGTCGATG	CATGCTGCCTCCCGTAGGAGT	Control	20061218	Control_mouse__I.D._355
-test_PCx356	ACAGACCACTCA	CATGCTGCCTCCCGTAGGAGT	Control	20061126	Control_mouse__I.D._356
-test_PCx481	ACCAGCGACTAG	CATGCTGCCTCCCGTAGGAGT	Control	20070314	Control_mouse__I.D._481
-test_PCx593	AGCAGCACTTGT	CATGCTGCCTCCCGTAGGAGT	Control	20071210	Control_mouse__I.D._593
-test_PCx607	AACTGTGCGTAC	CATGCTGCCTCCCGTAGGAGT	Fast	20071112	Fasting_mouse__I.D._607
-test_PCx634	ACAGAGTCGGCT	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._634
-test_PCx635	ACCGCAGAGTCA	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._635
-test_PCx636	ACGGTGAGTGTC	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	Fasting_mouse__I.D._636
+test.PCx354	AGCACGAGCCTA	CATGCTGCCTCCCGTAGGAGT	Control	20061218	1
+test.PCx355	AACTCGTCGATG	CATGCTGCCTCCCGTAGGAGT	Control	20061218	2
+test.PCx356	ACAGACCACTCA	CATGCTGCCTCCCGTAGGAGT	Control	20061126	3
+test.PCx481	ACCAGCGACTAG	CATGCTGCCTCCCGTAGGAGT	Control	20070314	4
+test.PCx593	AGCAGCACTTGT	CATGCTGCCTCCCGTAGGAGT	Control	20071210	5
+test.PCx607	AACTGTGCGTAC	CATGCTGCCTCCCGTAGGAGT	Fast	20071112	6
+test.PCx634	ACAGAGTCGGCT	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	7
+test.PCx635	ACCGCAGAGTCA	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	8
+test.PCx636	ACGGTGAGTGTC	CATGCTGCCTCCCGTAGGAGT	Fast	20080116	9
 """
 
 
