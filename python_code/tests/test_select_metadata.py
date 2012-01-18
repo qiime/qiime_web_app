@@ -224,7 +224,7 @@ class SelectMetadataTests(TestCase):
         '''
     
         obs1=get_otu_table(data_access, {'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0:female')},'12171',0,'PHPR')
-        self.assertEqual(obs1,'# QIIME v1.3.0-dev OTU table\n#OTU ID')
+        self.assertEqual(obs1,'# QIIME v1.4.0-dev OTU table\n#OTU ID')
         
         
 exp_select_box_str='''\

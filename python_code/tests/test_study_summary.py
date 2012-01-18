@@ -37,7 +37,7 @@ class studySummary(TestCase):
         """
         data_access = data_access_factory(ServerConfig.data_access_type)
         analysis_data=[]
-        results=data_access.getQiimeSffDbSummary(367)
+        results=data_access.getQiimeSffDbSummary(609)
         
         for row in results:
             analysis_data.append(row)
@@ -45,14 +45,16 @@ class studySummary(TestCase):
         self.assertEqual(print_study_info_and_values_table(analysis_data,data_access),exp_output)
        
 exp_output="""\
-<h3>Jesse_test (<a href=\'./study_summary/export_metadata.psp\'  target="_blank">download metadata</a>)&nbsp;</h3>\
-<table><tr><th><u>Study Information</u></th><td></tr><tr>\
-<th>Study ID:</th><td style="color:black;text-decoration:none">367</td></tr>\
-<tr><th>Project Name:</th><td style="color:black;text-decoration:none">Jesse_test</td></tr>\
+<h3>jesse_test (<a href=\'./study_summary/export_metadata.psp\'  target="_blank">download metadata</a>)&nbsp;\
+</h3><table><tr><th><u>Study Information</u></th><td></tr>\
+<tr><th>Study ID:</th>\
+<td style="color:black;text-decoration:none">609</td></tr><tr>\
+<th>Project Name:</th><td style="color:black;text-decoration:none">jesse_test</td></tr>\
 <tr><th>Study Title:</th><td style="color:black;text-decoration:none">Fasting subset mice for testing purposes</td></tr>\
 <tr><th>Study Abstract:</th><td style="color:black;text-decoration:none">This is a test dataset using the Fasting subset of mice.</td></tr>\
-<tr><th>Pubmed ID (pmid):</th><td style="color:black;text-decoration:none"><a href=http://www.ncbi.nlm.nih.gov/pubmed?term=None[uid] target="_blank">None</a></td></tr></table><br><table><tr><th><u>SFF(s) Information</u></th></tr><tr><td style="color:red;">The sequence data for this study has not been processed!</td></tr>\
-</table>\
+<tr><th>Pubmed ID (pmid):</th><td style="color:black;text-decoration:none"><a href=http://www.ncbi.nlm.nih.gov/pubmed?term=None[uid] target="_blank">None</a></td></tr></table>\
+<br><table><tr><th><u>SFF(s) Information</u></th></tr>\
+<tr><td style="color:red;">The sequence data for this study has not been processed!</td></tr></table>\
 """
 
 if __name__ == "__main__":

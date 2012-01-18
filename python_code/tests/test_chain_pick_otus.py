@@ -62,12 +62,12 @@ class WorkflowTests(TestCase):
         tmp_dir = self.qiime_config['temp_dir'] or '/tmp/'
         if not exists(tmp_dir):
             makedirs(tmp_dir)
+            
             # if test creates the temp dir, also remove it
             self.dirs_to_remove.append(tmp_dir)
         
         self.wf_out = get_tmp_filename(tmp_dir=tmp_dir,
          prefix='qiime_wf_out',suffix='',result_constructor=str)
-        
         if not exists(self.wf_out):
             makedirs(self.wf_out)         
             self.dirs_to_remove.append(self.wf_out)
@@ -196,7 +196,7 @@ test.PCx634.281501_14
 test.PCx634.281501_19'''
 
 exp_otu_table='''\
-# QIIME v1.3.0-dev OTU table
+# QIIME v1.4.0-dev OTU table
 #OTU ID	test.PCx354.281499	test.PCx355.281497	test.PCx356.281498	test.PCx481.281500	test.PCx593.281502	test.PCx634.281501	test.PCx635.281504	test.PCx636.281503
 204144	0	0	0	0	1	0	0	0
 230364	0	0	0	0	0	1	0	0
@@ -234,24 +234,38 @@ exp_exact_otus='''\
 18	test.PCx634.281501_5
 19	test.PCx593.281502_12
 '''
-exp_uclust_ref_otus=''''''
+exp_uclust_ref_otus='''\
+362383	7
+268947	12
+230364	3
+355771	17
+469832	9	15
+332311	16
+343906	18
+299668	5
+331820	11	10
+264035	4
+568692	8
+266771	2	6
+204144	19
+'''
 
 
 
 exp_all_otus='''\
-355771	test.PCx356.281498_17
-362383	test.PCx634.281501_1
-268947	test.PCx481.281500_4
-204144	test.PCx593.281502_12
-230364	test.PCx634.281501_8
-469832	test.PCx634.281501_11	test.PCx634.281501_2
-332311	test.PCx634.281501_7
-343906	test.PCx634.281501_5
-299668	test.PCx634.281501_18
-331820	test.PCx634.281501_10	test.PCx634.281501_9
-264035	test.PCx636.281503_6
-568692	test.PCx635.281504_15
-266771	test.PCx354.281499_3	test.PCx355.281497_13
+362383\ttest.PCx634.281501_1
+268947\ttest.PCx481.281500_4
+230364\ttest.PCx634.281501_8
+355771\ttest.PCx356.281498_17
+469832\ttest.PCx634.281501_2\ttest.PCx634.281501_11
+332311\ttest.PCx634.281501_7
+343906\ttest.PCx634.281501_5
+299668\ttest.PCx634.281501_18
+331820\ttest.PCx634.281501_9\ttest.PCx634.281501_10
+264035\ttest.PCx636.281503_6
+568692\ttest.PCx635.281504_15
+266771\ttest.PCx354.281499_3\ttest.PCx355.281497_13
+204144\ttest.PCx593.281502_12
 '''
 
 
