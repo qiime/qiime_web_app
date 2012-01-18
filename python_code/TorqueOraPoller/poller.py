@@ -29,8 +29,7 @@ __status__ = "Pre-release"
 POLL_INTERVAL = 5
 STATUS_INTERVAL = 12
 QSTAT_NORMAL = "/usr/bin/qstat | grep %s"
-SUBMIT_QUEUE = 'no_bad_touching'
-QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s -l pvmem=16gb -q ' + SUBMIT_QUEUE
+QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s -l pvmem=16gb -q %s'
 
 TORQUE_STATE_LOOKUP = {'R':'RUNNING',
                        'C':'COMPLETING',
@@ -264,8 +263,14 @@ class Poller(Daemon):
             sys.stdout.write('Job command: %s' % cmd)
 
             #### decompose job submission
-            # submit job
-            res = getoutput(QSUB_CMD % (cmd, job_name))
+            # submit job - if loading into DB use singleq
+            if job_type=='LoadSFFHandler':
+                submit_queue = 'no_bad_touching'
+                res = getoutput(QSUB_CMD % (cmd, job_name,submit_queue))
+            else:
+                submit_queue = 'no_bad_touching'
+                res = getoutput(QSUB_CMD % (cmd, job_name,submit_queue))
+            
             res_lines = res.splitlines()
 
             if len(res_lines) == 0 or len(res_lines) > 1:
