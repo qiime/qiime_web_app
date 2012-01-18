@@ -120,11 +120,18 @@ def main():
     # get the beta_diversity metrics, so we can determine the filepaths based
     # on these
     beta_diversity_metrics = params['beta_diversity']['metrics'].split(',')
-
-    #start preparing the script call
-    beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -f' %\
-        (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
-         tree_fp,opts.params_path)
+    
+    if 'disthist_bdiv_plots' in jobs_to_start:
+        #start preparing the script call
+        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -c %s -f' %\
+            (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
+             output_dir,tree_fp,opts.params_path, \
+             params['make_distance_histograms']['fields'])
+    else:
+        #start preparing the script call
+        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -f' %\
+            (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
+             tree_fp,opts.params_path)
     
     # add in optional parameters depending on whether they are supplied
     if bdiv_rarefied_at:
@@ -158,7 +165,8 @@ def main():
     
     # add distance histograms params
     if 'disthist_bdiv_plots' not in jobs_to_start:
-        beta_div_cmd+=" --suppress_distance_histograms"
+        #beta_div_cmd+=" --suppress_distance_histograms"
+        pass
     else:
         for met in beta_diversity_metrics:
             html_fpaths.append((path.join(web_fp,'%s_histograms' % (met),
