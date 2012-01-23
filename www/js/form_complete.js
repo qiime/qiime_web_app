@@ -209,6 +209,10 @@ function bpFormSelect(li) {
     case "shortid_name":
       jQuery(input).val(li.extra[0] + ':' + li.extra[4])
       break;
+    case "ontprefix_name":
+      var ontology_prefix = li.extra[0].split(":")[0]
+      jQuery(input).val(ontology_prefix + ':' + li.extra[4])
+      break;
   }
 
   jQuery("#" + jQuery(input).attr('name') + "_bioportal_concept_id").val(li.extra[0]);
