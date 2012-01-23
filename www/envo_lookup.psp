@@ -11,16 +11,41 @@
 <form>
 
 ENVO Biome<br/>
-<input type="text" name="a" class="bp_form_complete-1069-name" data-bp_search_branch="ENVO:00000428" data-bp_include_definitions="true" size="100"/><br/>
+<input type="text" name="a" class="bp_form_complete-2092-ontprefix_name" data-bp_search_branch="ENVO:00000428" data-bp_include_definitions="true" size="100"/><br/>
 <br/>
 ENVO Feature<br/>
-<input type="text" name="a" class="bp_form_complete-1069-name" data-bp_search_branch="ENVO:00002297" data-bp_include_definitions="true" size="100"/><br/>
+<input type="text" name="a" class="bp_form_complete-2092-ontprefix_name" data-bp_search_branch="ENVO:00002297" data-bp_include_definitions="true" size="100"/><br/>
 <br/>
 ENVO Material<br/>
-<input type="text" name="a" class="bp_form_complete-1069-name" data-bp_search_branch="ENVO:00010483" data-bp_include_definitions="true" size="100"/><br/>
+<input type="text" name="a" class="bp_form_complete-2092-ontprefix_name" data-bp_search_branch="ENVO:00010483" data-bp_include_definitions="true" size="100"/><br/>
 <br/>
 
 </form>
+
+
+<!--
+<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+	id="OntologyTree" width="300" height="100%"
+	codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
+	<param name="movie" value="http://keg.cs.uvic.ca/ncbo/ontologytree/OntologyTree.swf" />
+	<param name="quality" value="high" />
+	<param name="bgcolor" value="#ffffff" />
+	<param name="allowScriptAccess" value="always" />
+	<param name="flashVars" value="ontology=1069&alerterrors=true&canchangeontology=false" />
+	<embed src="http://keg.cs.uvic.ca/ncbo/ontologytree/OntologyTree.swf" quality="high" bgcolor="#ffffff"
+		width="300" height="100%" name="OntologyTree" align="middle"
+		play="true"
+		loop="false"
+		allowScriptAccess="always"
+		type="application/x-shockwave-flash"
+		flashVars="ontology=1069&alerterrors=true&canchangeontology=false"
+		pluginspage="http://www.adobe.com/go/getflashplayer">
+	</embed>
+</object>
+-->
+
+
+
 
 </body>
 </html>
