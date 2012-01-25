@@ -35,6 +35,10 @@ script_info['required_options'] = [\
 script_info['optional_options'] = [\
  make_option('-t','--use_test_db',action="store_true",default='False',
              help='check against the test database [default: %default]'),\
+ make_option('-x','--min_samples',type="int",default=2,
+             help='minimum number of samples the sequence appears in [default: %default]'),\
+ make_option('-y','--min_seqs',type="int",default=20,
+             help='minimum number of times the sequence appears [default: %default]'),\
 ]
 script_info['version'] = __version__
 
@@ -80,13 +84,31 @@ def main():
     # Run the statement
     con = data_access.getSFFDatabaseConnection()
     cur = con.cursor()
-    
+    count=0
     # write resulting fasta file
     results = cur.execute(statement)
     #print results
     for i in results:
-        output_fp.write('>%s\n%s\n' % (i[0],i[1]))
-    
+        
+        # pull out the sample and sequence counts based on ssu_sequence_id
+        check_seq_count_statement="select count(slrm.ssu_sequence_id), " +\
+                                  "count(distinct slrm.sample_name) " +\
+                                  "from split_library_read_map slrm " +\
+                                  "where slrm.ssu_sequence_id=\'%s\'" % \
+                                  (i[0])
+                                  
+
+        # write resulting fasta file
+        cur2 = con.cursor()
+        results2 = cur2.execute(check_seq_count_statement) 
+        
+        for j in results2:
+            # check if sequence appears more than 20 times or in more than 
+            # 1 sample or in more than 1 study
+            if (j[0]>=int(opts.min_seqs)) or (j[1]>=int(opts.min_samples)):
+                output_fp.write('>%s\n%s\n' % (i[0],i[1]))
+                count=count+1
+                
     output_fp.close()
 
 if __name__ == "__main__":
