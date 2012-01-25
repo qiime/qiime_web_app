@@ -13,6 +13,9 @@ This page is used to create a new meta_analysis in the database (i.e. the user
 wants to select studies and its associated data.
 '''
 
+# Adding login info to bypass for now
+form['meta_login'] = 'I_want_in!'
+
 if 'meta_login' in form and form['meta_login'] == 'I_want_in!':
     # Indent
 %>
