@@ -1,0 +1,105 @@
+<!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+-->
+
+<%
+data_access = data_access_factory(ServerConfig.data_access_type)
+con = data_access.getMetadataDatabaseConnection()
+
+portal_type = sess['portal_type']
+
+# Get the current sample data
+results = con.cursor().execute("select sa.sample_name, sa.latitude, sa.longitude, st.project_name from sample sa inner join study st on sa.study_id = st.study_id where st.portal_type = '%s'" % portal_type)
+lats = []
+longs = []
+sample_names = []
+used_lat_longs = []
+total_count = 0
+
+for row in results:
+    total_count += 1
+    sample_names.append(row[0])
+    lats.append(row[1])
+    longs.append(row[2])
+data_access = None
+%>
+
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0; padding: 0 }
+  #map_canvas { height: 100% }
+</style>
+
+<script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?sensor=false">
+</script>
+
+<script type="text/javascript">
+function initialize() 
+{
+    var center_point = new google.maps.LatLng(<%=lats[0]%>, <%=longs[0]%>);
+    var latlngbounds = new google.maps.LatLngBounds();
+
+    map = new google.maps.Map(document.getElementById('map_canvas'), {
+        center: center_point,
+        zoom: 2,
+        // mapTypeId can be: roadmap, satellite, roadmap, or hybrid
+        mapTypeId: 'terrain'
+    });
+    
+<%
+for position, lat in enumerate(lats):
+    lat_long = str(lats[position]) + ',' + str(longs[position])
+    if lat_long in used_lat_longs:
+        continue
+        
+    used_lat_longs.append(lat_long)
+%>
+
+    var p = new google.maps.LatLng(<%=lats[position]%>, <%=longs[position]%>);
+    latlngbounds.extend(p);    
+    var marker_<%=position%> = new google.maps.Marker({
+    position: p,
+    animation: google.maps.Animation.DROP,
+        title:""
+    });
+
+    marker_<%=position%>.setMap(map);
+
+    var infowindow_<%=position%> = new google.maps.InfoWindow({
+        content: '<div style="width: 250; height: 90px;"><b>Sample Name:</b> <%=sample_names[position]%><br/> \
+        <b>Latitude:</b> <%=lats[position]%><br/>\
+        <b>Longitude:</b> <%=longs[position]%></div>'
+    });
+
+    google.maps.event.addListener(marker_<%=position%>, 'click', function() {
+        infowindow_<%=position%>.open(map, marker_<%=position%>);
+    });
+
+<%
+# End indent
+
+%>
+    /*
+    map.fitBounds( latlngbounds );
+    var listener = google.maps.event.addListener(map, "idle", function() { 
+        if (map.getZoom() > 18) map.setZoom(18); 
+        google.maps.event.removeListener(listener); 
+    });
+    */
+}
+</script>
+
+<script type="text/javascript">window.onload=initialize;</script>
+
+<div id="map_canvas" style="width:1280px; height:720px;border:3px solid black"></div>
+<br/>Total number of EMP samples: <%=total_count%><br/>
+Total number of unique lat/longs plotted: <%=len(used_lat_longs)%>
