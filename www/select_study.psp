@@ -94,9 +94,20 @@ if sess['portal_type'] == 'qiime':
                 
             </form>
             </li>
+            
+            
     </ul>
     
-    
+<b>Explore:</b>
+    <ul>
+        <li>
+            <form id="visualize_all_sample_locations" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="visualize_all_sample_locations.psp">
+                <a href="" onclick="document.forms['visualize_all_sample_locations'].submit(); return false;" target="<%=frame_target%>">
+                Visualize All Sample Locations</a>
+            </form>
+        </li>
+    </ul>    
     
     
 <%
