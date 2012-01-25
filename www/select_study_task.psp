@@ -357,7 +357,14 @@ if can_delete == 'y' or is_admin:
             <form id="visualize_sample_locations" action="fusebox.psp" method="post" target="<%=frame_target%>">
                 <input type="hidden" name="page" id="page" value="visualize_sample_locations.psp">
                 <a href="" onclick="document.forms['visualize_sample_locations'].submit(); return false;" target="<%=frame_target%>">
-                Visualize Sample Locations</a>
+                Visualize Study Sample Locations</a>
+            </form>
+        </li>
+        <li>
+            <form id="visualize_all_sample_locations" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="visualize_all_sample_locations.psp">
+                <a href="" onclick="document.forms['visualize_all_sample_locations'].submit(); return false;" target="<%=frame_target%>">
+                Visualize All Sample Locations</a>
             </form>
         </li>
     </ul>
