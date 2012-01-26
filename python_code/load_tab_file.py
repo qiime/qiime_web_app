@@ -25,6 +25,24 @@ except ImportError:
     print "Cannot import cx_Oracle"
     type_lookup_oracle = {}
     pass
+
+#
+def input_set_generator_for_OTU_failures(data, cursor, types, buffer_size=10000, 
+        type_lookup=type_lookup_oracle, delim='\t'):
+    """yields data parsed into oracle types in buffer_size rows at a time"""
+    buffer = []
+    seqs=[]
+    for line in data:
+        buffer.append((line[0],line[1],0,0))
+        if len(buffer) >= buffer_size:
+            res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types, type_lookup)
+            buffer = []
+            yield res,seqs
+
+    if buffer:
+        res = unzip_and_cast_to_cxoracle_types(buffer, cursor, types, type_lookup)
+        yield res,seqs
+
 def unzip_and_cast_to_cxoracle_types(data, cursor, types, \
         type_lookup=type_lookup_oracle):
     """Unzips data and casts each field to the corresponding oracle type

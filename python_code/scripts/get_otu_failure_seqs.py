@@ -16,7 +16,7 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, make_option
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
-from load_tab_file import input_set_generator
+from load_tab_file import input_set_generator_for_OTU_failures
 
 seq_methods=['GS FLX', 'Titanium','ILLUMINA']
 
@@ -90,20 +90,23 @@ def main():
     results = cur.execute(statement)
     #print results
     
-    types = ['i']
-    
-    num=1
-    for input_set in input_set_generator(results,cur,types,buffer_size=1000):
-        print num
+    types = ['i','s','i','i']
+    cur2 = con.cursor()
+    num=0
+    for input_set,seqs in input_set_generator_for_OTU_failures(results, cur, types, \
+                                                        buffer_size=1000):
+        #print input_set
         num=num+1
-        results2=cur2.callproc('CHECK_SSU_SEQ_ID_CTS_PKG.array_get',
-                                        input_set)
+        print num
+        results2=cur2.callproc('CHECK_SSU_SEQ_ID_CTS_PKG.array_get',input_set)
 
-        for j in results2:
+        for ct,db_min_seqs in enumerate(results2[2]):
+            db_min_samples=results2[3][ct]
             # check if sequence appears more than 20 times or in more than 
             # 1 sample or in more than 1 study
-            if (j[0]>=int(opts.min_seqs)) or (j[1]>=int(opts.min_samples)):
-                output_fp.write('>%s\n%s\n' % (i[0],i[1]))
+            if (db_min_seqs>=int(opts.min_seqs)) or \
+                (db_min_samples>=int(opts.min_samples)):
+                output_fp.write('>%s\n%s\n' % (int(results2[0][ct]),results2[1][ct]))
                 count=count+1
                 
     output_fp.close()
