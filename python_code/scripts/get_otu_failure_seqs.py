@@ -16,6 +16,7 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, make_option
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
+from load_tab_file import input_set_generator
 
 seq_methods=['GS FLX', 'Titanium','ILLUMINA']
 
@@ -88,20 +89,16 @@ def main():
     # write resulting fasta file
     results = cur.execute(statement)
     #print results
-    for i in results:
-        
-        # pull out the sample and sequence counts based on ssu_sequence_id
-        check_seq_count_statement="select count(slrm.ssu_sequence_id), " +\
-                                  "count(distinct slrm.sample_name) " +\
-                                  "from split_library_read_map slrm " +\
-                                  "where slrm.ssu_sequence_id=\'%s\'" % \
-                                  (i[0])
-                                  
+    
+    types = ['i']
+    
+    num=1
+    for input_set in input_set_generator(results,cur,types,buffer_size=1000):
+        print num
+        num=num+1
+        results2=cur2.callproc('CHECK_SSU_SEQ_ID_CTS_PKG.array_get',
+                                        input_set)
 
-        # write resulting fasta file
-        cur2 = con.cursor()
-        results2 = cur2.execute(check_seq_count_statement) 
-        
         for j in results2:
             # check if sequence appears more than 20 times or in more than 
             # 1 sample or in more than 1 study
