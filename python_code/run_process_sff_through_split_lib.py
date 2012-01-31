@@ -223,6 +223,80 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     # Return the fasta file paths
     return filenames
 
+#
+#
+## Begin task-specific workflow functions
+def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
+    mapping_fp, output_dir, 
+    command_handler, params, qiime_config,
+    write_to_all_fasta=False,
+    status_update_callback=print_to_stdout):
+    """ NOTE: Parts of this function are a directly copied from the
+        run_qiime_data_preparation function from the workflow.py library file 
+        in QIIME.
+    
+        The steps performed by this function are:
+          1) De-multiplex sequences. (split_libraries.py)
+    
+    """
+    
+    #print input_fp
+    if write_to_all_fasta:
+        split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' \
+                            % environ['HOME']
+        create_dir(split_lib_fastas)
+        
+    # Prepare some variables for the later steps
+    filenames=input_fp.split(',')
+    commands = []
+    create_dir(output_dir)
+    python_exe_fp = qiime_config['python_exe_fp']
+    script_dir = get_qiime_scripts_dir()
+    logger = WorkflowLogger(generate_log_fp(output_dir),
+                            params=params,
+                            qiime_config=qiime_config)
+    
+    copied_mapping=split(mapping_fp)[-1]
+    mapping_input_fp_copy=join(output_dir, copied_mapping)
+    copy_mapping_cmd='cp %s %s' % (mapping_fp,mapping_input_fp_copy)
+    commands.append([('CopyMapping', copy_mapping_cmd)])
+
+    filenames.sort()
+    split_library_output=join(output_dir,'split_libraries')
+    create_dir(split_library_output)
+    
+    # Call the command handler on the list of commands
+    command_handler(commands,status_update_callback,logger=logger)
+    
+    output_fp=join(split_library_output,'seqs.fna')
+    outf=open(output_fp,'w')
+    map_data,map_header,map_comments=parse_mapping_file(\
+                                        open(mapping_input_fp_copy,'U'))
+                                        
+    # create dictionary of original sample_ids to new sample_ids
+    sample_ids_from_mapping=zip(*map_data)[0]
+    sample_id_dict={}
+    for sample in sample_ids_from_mapping:
+        sample_id_dict['.'.join(sample.split('.')[:-1])]=sample
+    
+    sequences=MinimalFastaParser(open(input_fp),'U')
+    
+    # update fasta file with new DB SampleIDs and create split-lib seqs file
+    num=1
+    for seq_name,seq in sequences:
+        seq_name_arr=seq_name.split()
+        updated_seq_name =sample_id_dict['_'.join(seq_name_arr[0].split('_')[:-1])] + \
+                '_' + str(num) + ' ' + ' '.join(seq_name_arr[1:])
+        num=num+1
+        outf.write('>%s\n%s\n' % (updated_seq_name,seq))
+    outf.close()
+        
+        
+    # Return the fasta file paths
+    return filenames
+
+
+
 def web_app_call_commands_serially(commands,
                            status_update_callback,
                            logger):

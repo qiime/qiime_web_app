@@ -51,7 +51,7 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     cur = con.cursor()
     #print 'Rebuilding PK_SPLIT_LIBRARY_READ_MAP...'
     #cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
-    cur = con.cursor()
+    #cur = con.cursor()
     study_id_exists=data_access.checkIfStudyIdExists(metadata_study_id)
     print "Study ID exists: " + str(study_id_exists)
     alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
@@ -246,7 +246,7 @@ def submit_sff_and_split_lib(data_access,fasta_files,metadata_study_id):
     cur = con.cursor()
     #print 'Rebuilding PK_SPLIT_LIBRARY_READ_MAP...'
     #cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
-    cur = con.cursor()
+    #cur = con.cursor()
     open_fasta = open(split_lib_seqs)
     iterator=0
     
@@ -457,7 +457,7 @@ def submit_illumina_and_split_lib(data_access,fastq_files,metadata_study_id,
     cur = con.cursor()
     #print 'Rebuilding PK_SPLIT_LIBRARY_READ_MAP...'
     #cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
-    cur = con.cursor()
+    #cur = con.cursor()
     study_id_exists=data_access.checkIfStudyIdExists(metadata_study_id)
     print "Study ID exists: " + str(study_id_exists)
     alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
@@ -479,37 +479,8 @@ def submit_illumina_and_split_lib(data_access,fastq_files,metadata_study_id,
         input_fname, input_ext = splitext(split(fastq_fname)[-1])
         input_basename, input_ext = splitext(fastq_fname)
         
-        '''
-        if re.search('0\d$', input_fname)==None or re.search('0\d$', input_fname).group()==None:
-            sff_basename=input_fname
-        else:
-            sff_basename=input_fname[:-2]
-        print 'sff_basename: %s' % sff_basename
-        '''
         analysis_notes=split(input_basename)[0]
         
-        '''
-        #using the fasta basename, define qual and flow files
-        qual_fname=join(input_basename+'.qual')
-        flow_fname=join(input_basename+'.txt')
-        fasta_qual_files.append(fasta_fname)
-        fasta_qual_files.append(qual_fname)
-        
-        #Run the Oracle process_sff_files load package
-        ## Get the location and name of the SFF file, get it's MD5. .SFF is one 
-        # directory up from the other files
-        #rev = dirname(fastq_fname)[::-1]
-
-        #sffs_in_processed_folder = glob(join(input_dir, '*_FLX.sff'))
-
-        if len(sffs_in_processed_folder) == 0:
-            sff_file_dir = split(input_dir)[0]
-        else:
-            sff_file_dir=input_dir
-
-        sff_file = join(sff_file_dir, input_fname + '.sff')
-        #sff_file = input_basename+'.sff'
-        '''
         fastq_md5 = safe_md5(open(fastq_fname)).hexdigest()
 
         print 'MD5 is: %s' % str(fastq_md5)
@@ -551,7 +522,7 @@ def submit_illumina_and_split_lib(data_access,fastq_files,metadata_study_id,
     #print fasta_qual_files
     split_lib_input_md5sum=safe_md5(MD5Wrap(fastq_filenames)).hexdigest()
     print split_lib_input_md5sum
-    print 'Finished loading the processed SFF data!'
+    print 'Finished loading the processed ILLUMINA data!'
     print 'Run ID: %s' % seq_run_id
     print 'Analysis ID: %s' % analysis_id
 
@@ -619,7 +590,7 @@ def submit_illumina_and_split_lib(data_access,fastq_files,metadata_study_id,
     cur = con.cursor()
     #print 'Rebuilding PK_SPLIT_LIBRARY_READ_MAP...'
     #cur.execute('alter index "SFF"."PK_SPLIT_LIBRARY_READ_MAP" rebuild ')
-    cur = con.cursor()
+    #cur = con.cursor()
     open_fasta = open(split_lib_seqs)
     iterator=0
 
@@ -644,4 +615,163 @@ def submit_illumina_and_split_lib(data_access,fastq_files,metadata_study_id,
 
     return analysis_id
     
+#
+#
+def submit_fasta_and_split_lib(data_access,fasta_files,metadata_study_id,
+                                  input_dir):
+     
+    '''
+        This function takes the fasta filenames and using that path, determines
+        the location of the split-library and picked-otu files.  Once file
+        locations have been determined, it moves the files to the DB machine
+        and load the files into the DB.
+    '''
+    con = data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+
+    study_id_exists=data_access.checkIfStudyIdExists(metadata_study_id)
+    print "Study ID exists: " + str(study_id_exists)
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
+    alphabet += alphabet.lower()
+    alphabet += "01234567890"
+    random_fname=''.join([choice(alphabet) for i in range(10)])
+    tmp_filename ='_'+random_fname+'_'+strftime("%Y_%m_%d_%H_%M_%S")
+    fasta_filenames=fasta_files.split(',')
+    seq_run_id=0  
+    analysis_id=0    
+    split_lib_input_checksums=[]
+    #fasta_qual_files=[]
+
+    #valid = data_access.disableTableConstraints()
+    print "Disabled table constraints"
+
+    #split the fasta filenames and determine filepaths
+    for fasta_fname in fasta_filenames:
+        input_fname, input_ext = splitext(split(fasta_fname)[-1])
+        input_basename, input_ext = splitext(fasta_fname)
+        
+        analysis_notes=split(input_basename)[0]
+        
+        fasta_md5 = safe_md5(open(fasta_fname)).hexdigest()
+
+        print 'MD5 is: %s' % str(fasta_md5)
+
+        if analysis_id==0:
+            analysis_id=data_access.createAnalysis(metadata_study_id)
+         
+        fasta_exists=data_access.checkIfSFFExists(fasta_md5)
+        print 'fasta in database? %s' % str(fasta_exists)
+        
+        if not fasta_exists:
+            if seq_run_id==0:
+                seq_run_id=data_access.createSequencingRun(True,'FASTA',
+                                                           None,seq_run_id)
+            
+            count_seqs_cmd="grep '^>' %s | wc -l" % (fasta_fname)
+            o,e,r = qiime_system_call(count_seqs_cmd)
+            seq_counts = o.strip()
+            
+            valid=data_access.addSFFFileInfo(True,input_fname,
+                                          seq_counts,
+                                          None,
+                                          None,
+                                          None,
+                                          None,
+                                          None,
+                                          None,
+                                          fasta_md5,seq_run_id)
+        else:
+            seq_run_id=data_access.getSeqRunIDUsingMD5(fasta_md5)
+             
+    print 'sequence_run_id is: %s' % str(seq_run_id)
     
+    #print fasta_qual_files
+    split_lib_input_md5sum=safe_md5(MD5Wrap(fasta_filenames)).hexdigest()
+    print split_lib_input_md5sum
+    print 'Finished loading the processed FASTA data!'
+    print 'Run ID: %s' % seq_run_id
+    print 'Analysis ID: %s' % analysis_id
+
+    valid=data_access.updateAnalysisWithSeqRunID(True,analysis_id,seq_run_id)
+    if not valid:
+        raise ValueError, 'Error: Unable to append SEQ_RUN_ID into ANALYSIS table!'
+
+    #define the split library file paths using the original fasta input 
+    #directory
+    split_lib_seqs = join(input_dir, 'split_libraries', 'seqs.fna')
+    split_hist_str = None
+    split_log_str = None
+
+    #read in the workflow log file and determine timestamp and svn version of
+    #Qiime used for the analysis
+    svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
+    qiime_revision=get_qiime_svn_version()
+    run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
+    print run_date
+    full_log_fp = glob(join(input_dir, 'log*.txt'))[0]
+    full_log_str = open(full_log_fp, 'U').read()
+    log_str = open(full_log_fp, 'U').readlines()
+
+    #from the workflow log file get the split-library and pick-otus cmds
+    for substr in log_str:
+        if 'pick_otus.py' in substr:
+            pick_otus_cmd=substr
+    split_lib_cmd="Split-libraries was not run due to this being a FASTA-file"
+    
+    #Insert the split-library log information in the DB
+    valid,split_library_run_id=data_access.loadSplitLibInfo(True,analysis_id,\
+                                      run_date, split_lib_cmd,\
+                                      svn_version, split_log_str, \
+                                      split_hist_str, split_lib_input_md5sum)
+    print "Split-Lib ID: %s" % split_library_run_id
+    if not valid:
+        raise ValueError,'Error: Unable to load split-library info to database server!'
+
+    print "Finished loading the split-library log information!"
+
+    #process and load_fna_data
+
+    print "starting new fna load"
+    start = time.time()
+
+    ''' 
+    The output values and types for each value are as follows:
+    0: sequence run id (integer)
+    1: sample id (text)
+    2: barcode read group tag (text)
+    3: read id (text)    
+    4: original barcode (text)
+    5: new barcode (text)
+    6: number of barcode diffs (integer)
+    7: sequence length (integer)
+    8: sequence md5 hash (text)
+    9: sequence string (text)
+    '''
+
+    types = ['i','i', 's', 's', 's', 's', 's', 'i', 'i', 'fc', 's']
+    con = data_access.getSFFDatabaseConnection()
+    cur = con.cursor()
+
+    open_fasta = open(split_lib_seqs)
+    iterator=0
+
+    for res in input_set_generator(fasta_to_tab_delim(open_fasta, seq_run_id,\
+                                     split_library_run_id), cur, types,\
+                                     buffer_size=500):
+        #print str(res)
+        print 'running %i' % (iterator)
+        iterator=iterator+1
+        valid = data_access.loadFNAFile(True, res)
+        if not valid:
+            raise ValueError, 'Error: Unable to load FNA file into database!'
+
+    open_fasta.close()
+
+    end = time.time()
+    print 'Total processor time elapsed: %s' % str(end - start)
+
+    print 'Finished loading split_library FNA file.'
+
+    print 'End of function' 
+
+    return analysis_id
