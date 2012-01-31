@@ -25,7 +25,8 @@ from cogent.app.util import get_tmp_filename, ApplicationNotFoundError
 from qiime.util import load_qiime_config
 from qiime.parse import parse_qiime_parameters
 from run_process_sff_through_split_lib import (run_process_sff_through_split_lib,
-                                        run_process_illumina_through_split_lib)
+                                        run_process_illumina_through_split_lib,
+                                        run_process_fasta_through_split_lib)
 from qiime.workflow import (call_commands_serially,
 no_status_updates,WorkflowError,print_commands)
 ## The test case timing code included in this file is adapted from
@@ -62,7 +63,10 @@ class WorkflowTests(TestCase):
                                         's_8_2_sequence_100_records.txt')]
         self.illumina_map_fp = os.path.join(test_dir, 'support_files', \
                                         's8_map_incomplete.txt')
-                                        
+        self.fasta_fps=[os.path.join(test_dir,'support_files',
+                                   'test_split_lib_seqs.fasta')]
+        self.fasta_map_fp = os.path.join(test_dir, 'support_files', \
+                                        'fasta_mapping_file.txt')
         # copy sff file to working directory
         self.sff_dir = tempfile.mkdtemp()
         self.dirs_to_remove.append(self.sff_dir)
@@ -206,6 +210,30 @@ class WorkflowTests(TestCase):
                                     
         #sff_fp = join(self.wf_out,'Fasting_subset.sff')
         new_map_fp = join(self.wf_out,'Fasting_subset_mapping.txt')
+        
+        # check that the two final output files have non-zero size
+        self.assertTrue(getsize(split_lib_seqs_fp) > 0)
+        
+        # Check that the log file is created and has size > 0
+        log_fp = glob(join(self.wf_out,'log*.txt'))[0]
+        self.assertTrue(getsize(log_fp) > 0)
+    #
+    def test_run_process_fasta_through_split_lib(self):
+        """run_run_process_fasta_through_split_lib runs without error"""
+        run_process_fasta_through_split_lib(0,'Fasting_subset',\
+         input_fp=','.join(self.fasta_fps),\
+         mapping_fp=self.fasta_map_fp,\
+         output_dir=self.wf_out, \
+         command_handler=call_commands_serially,\
+         params=self.params,\
+         qiime_config=self.qiime_config,\
+         write_to_all_fasta=False,\
+         status_update_callback=no_status_updates)
+        
+        input_file_basename = splitext(split(self.sff_fp)[1])[0]
+        
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
+                                    'seqs.fna')
         
         # check that the two final output files have non-zero size
         self.assertTrue(getsize(split_lib_seqs_fp) > 0)
