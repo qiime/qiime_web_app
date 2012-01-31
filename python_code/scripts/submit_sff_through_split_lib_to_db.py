@@ -18,7 +18,9 @@ from os.path import split, join
 from qiime.util import load_qiime_config
 from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, \
                                              submit_illumina_and_split_lib,\
-                                             load_otu_mapping
+                                             load_otu_mapping,\
+                                             submit_fasta_and_split_lib
+                                             
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
 

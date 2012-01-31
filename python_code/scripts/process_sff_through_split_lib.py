@@ -20,8 +20,9 @@ from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable,\
                        create_dir
 from run_process_sff_through_split_lib import run_process_sff_through_split_lib,\
-                                          web_app_call_commands_serially,\
-                                          run_process_illumina_through_split_lib
+                                    web_app_call_commands_serially,\
+                                    run_process_illumina_through_split_lib,\
+                                    run_process_fasta_through_split_lib
 from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates
 from run_chain_pick_otus import run_chain_pick_otus
@@ -159,13 +160,13 @@ def main():
         fasta_file_paths = run_process_fasta_through_split_lib(\
          study_id=study_id,\
          run_prefix=run_prefix,\
-         sff_input_fp=sff_fname,\
+         input_fp=sff_fname,\
          mapping_fp=map_fname,\
          output_dir=output_dir,\
          command_handler=command_handler,\
          params=params,\
          qiime_config=qiime_config,\
-         write_to_all_fasta=write_to_all_fasta,\
+         write_to_all_fasta=False,\
          status_update_callback=status_update_callback)
     else:
         raise ValueError, 'Platform (%s) defined in metadata is not supported!'\
