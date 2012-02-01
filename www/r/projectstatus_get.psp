@@ -8,11 +8,16 @@ __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
+import json
+
 if 'identifier' in sess:
     study_id = sess['identifier']
 else:
     study_id = -1
 
+status = {}
+status['current_status'] = 'Study {0} received'.format(study_id)
+req.write(json.dumps(status))
 %>
-Project Status Page:<br/>
-Requested study id: <%=str(study_id)%>
+
+
