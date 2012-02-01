@@ -892,6 +892,7 @@ class QiimeDataAccess(object):
         # Set the proper target table name
         common_extra_table_name = None
         min_column_count = None
+        column_name = '"{0}"'.format(column_name.upper())
         
         if 'SAMPLE' in found_extra_table:
             common_extra_table_name = 'COMMON_EXTRA_SAMPLE'
@@ -1814,6 +1815,26 @@ class QiimeDataAccess(object):
             results = 0
             results = con.cursor().callproc('validate_ontology_value', [ontology_name, identifier_value, results])
             return results[2]
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
+
+    def get_column_ontology_details(self, column_name):
+        """ Returns ontology details for a particular column
+        """
+        ontology_details = []
+        
+        try:
+            con = self.getMetadataDatabaseConnection()
+            ontologies = con.cursor()
+            con.cursor().callproc('qiime_assets.get_column_ontologies', [column_name, ontologies])
+            query_results=[]
+            for row in ontologies:
+                # row[0] = short_name
+                # row[1] = bioportal_id
+                # row[2] = ontology_branch_id
+                ontology_details.append((row[0], row[1], row[2]))
+            return ontology_details
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
