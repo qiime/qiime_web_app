@@ -20,7 +20,8 @@ sess = Session.Session(req)
 
 # Function for loading requested pages
 def loadPage(page):
-    req.content_type = 'text/xml'
+    #req.content_type = 'text/xml'
+    req.content_type = 'text/html'
     doc_root = req.document_root() + '/r/'
     if ( os.path.isfile( doc_root + page ) ):
         req.write('<?xml version="1.0"?>')

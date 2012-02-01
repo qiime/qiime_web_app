@@ -9,10 +9,10 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
 import json
-
 study_id = 10001
-return_data = {}
-return_data['study_id'] = 10001
-req.write(str(return_data))
+
+# Define status URL for MoBeDAC portal to poll:
+callback_url = '/r/projectstatus/{1}'.format(req.hostname, study_id)
+req.write(callback_url)
 
 %>
