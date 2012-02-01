@@ -889,10 +889,9 @@ class QiimeDataAccess(object):
         """ Factors an extra column into the common table
         """
         debug = False
-        # Set the proper target table name
         common_extra_table_name = None
         min_column_count = None
-        column_name = '"{0}"'.format(column_name.upper())
+        quoted_column_name = '"{0}"'.format(column_name.upper())
         
         if 'SAMPLE' in found_extra_table:
             common_extra_table_name = 'COMMON_EXTRA_SAMPLE'
@@ -928,7 +927,7 @@ class QiimeDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor().execute(statement).fetchone()
         if results[0] == 0:
-            statement = 'alter table %s add %s %s' % (common_extra_table_name, column_name, database_data_type)
+            statement = 'alter table %s add %s %s' % (common_extra_table_name, quoted_column_name, database_data_type)
             if debug:
                 req.write('<pre>' + statement + '</pre><br/>')
             con.cursor().execute(statement)
@@ -947,7 +946,7 @@ class QiimeDataAccess(object):
             WHEN NOT MATCHED THEN 
               INSERT (e.sample_id, e.{0})
               VALUES (x.sample_id, x.{0})
-            """.format(column_name, found_extra_table)
+            """.format(quoted_column_name, found_extra_table)
         else:
             statement = """
             MERGE INTO common_extra_prep e
@@ -961,7 +960,7 @@ class QiimeDataAccess(object):
             WHEN NOT MATCHED THEN 
               INSERT (e.sample_id, e.row_number, e.{0})
               VALUES (x.sample_id, x.row_number, x.{0})
-            """.format(column_name, found_extra_table)
+            """.format(quoted_column_name, found_extra_table)
         
         if debug:
             req.write('<pre>' + statement + '</pre><br/>')
@@ -982,7 +981,7 @@ class QiimeDataAccess(object):
                 req.write('<pre>' + statement + '</pre><br/>')
             con.cursor().execute(statement)
         else:
-            statement = 'alter table %s drop column %s' % (found_extra_table, column_name)
+            statement = 'alter table %s drop column %s' % (found_extra_table, quoted_column_name)
             if debug:
                 req.write('<pre>' + statement + '</pre><br/>')
             con.cursor().execute(statement)
