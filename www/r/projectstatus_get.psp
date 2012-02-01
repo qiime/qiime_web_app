@@ -1,0 +1,18 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2011, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+if 'identifier' in sess:
+    study_id = sess['identifier']
+else:
+    study_id = -1
+
+%>
+Project Status Page:<br/>
+Requested study id: <%=str(study_id)%>
