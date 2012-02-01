@@ -20,6 +20,5 @@ ontology_list = data_access.get_list_of_ontologies()
 
 <ul>
     <li><a href="fusebox.psp?page=tools_ontology.psp">Ontology Lookup Service</a></li>
-    <li><a href="fusebox.psp?page=tools_controlled_vocab.psp">Controlled Vocabulary Lookup Service</a></li>
     <li><a href="fusebox.psp?page=tools_geo.psp">Georeference Utility</a></li>
 </ul>
