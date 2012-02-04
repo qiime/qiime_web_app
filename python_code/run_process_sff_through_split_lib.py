@@ -194,17 +194,17 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     split_library_output=join(output_dir,'split_libraries')
     create_dir(split_library_output)
 
-    '''
+    
     try:
-        params_str = get_params_str(params['split_libraries'])
+        params_str = get_params_str(params['split_libraries_fastq'])
     except KeyError:
         params_str = ''
-    '''
+    
     
     # Build the split libraries command
-    split_libraries_cmd = '%s %s/split_libraries_fastq.py -o %s -m %s %s' % \
+    split_libraries_cmd = '%s %s/split_libraries_fastq.py -o %s -m %s %s %s' % \
      (python_exe_fp, script_dir, split_library_output, mapping_input_fp_copy,
-      input_str)
+      input_str,params_str)
     
     commands.append([('SplitLibraries', split_libraries_cmd)])
     

@@ -18,6 +18,18 @@ split_libraries:qual_score_window	0
 split_libraries:disable_primers	False
 split_libraries:reverse_primers	disable
 
+# Split libraries parameters
+split_libraries_fastq:retain_unassigned_reads
+split_libraries_fastq:max_bad_run_length
+split_libraries_fastq:min_per_read_length
+split_libraries_fastq:sequence_max_n
+split_libraries_fastq:start_seq_id
+split_libraries_fastq:rev_comp_mapping_barcodes
+split_libraries_fastq:rev_comp
+split_libraries_fastq:barcode_type	hamming_8
+split_libraries_fastq:last_bad_quality_char
+split_libraries_fastq:max_barcode_errors	1.5
+
 # OTU picker parameters
 pick_otus:otu_picking_method	uclust_ref
 pick_otus:clustering_algorithm	furthest

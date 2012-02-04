@@ -75,7 +75,7 @@ for column in columns:
             continue
             
         # Add this to the appropriate shared extra table
-        #req.write('Found table: %s<br/>' % found_extra_table)
+        # req.write('study_id: {0}, found_extra_table: {1}, column_name: {2}, data_type: {3}, description: {4}'.format(str(study_id), found_extra_table, details['new_column_name'], details['data_type'], details['description']))
         data_access.addCommonExtraColumn(req, study_id, found_extra_table, details['new_column_name'], 
             details['data_type'], details['description'])
     
