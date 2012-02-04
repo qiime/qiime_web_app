@@ -2013,6 +2013,10 @@ class QiimeDataAccess(object):
                 run_prefix = row[4]
                 linker_primer_list = ''
                 
+                # handles null linkers
+                if linker is None:
+                    linker=''
+                    
                 # Create a comma-separated list of linker+primer sequences
                 if ',' in primers:
                     primer_list = primers.split(',')
