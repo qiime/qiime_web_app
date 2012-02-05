@@ -128,7 +128,7 @@ def submitJobsToQiime(study_id, user_id, mapping_file_dir,process_only,submit_to
                 
             # If the run_prefix is contained in the file name, find all that match
             # and submit them together with the current mapping file
-            elif run_prefix.upper() in sff_file_basename:
+            elif sff_file_basename.startswith(run_prefix.upper()):
                 # If it's the first item for this mapping file name, assign the list
                 if not file_map.get(mapping_file):
                     file_map[mapping_file] = matching_sff_files
