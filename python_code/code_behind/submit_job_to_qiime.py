@@ -105,6 +105,7 @@ def submitJobsToQiime(study_id, user_id, mapping_file_dir,process_only,submit_to
     
     # Figure out which mapping file pairs with each SFF file
     file_map = {}
+    param_map={}
     for mapping_file in mapping_files:
         # Skip the mapping file if it's not of the correct naming format
         if len(mapping_file.split('__')) != 2:
@@ -116,6 +117,7 @@ def submitJobsToQiime(study_id, user_id, mapping_file_dir,process_only,submit_to
         # Find the proper params file
         barcode_length = data_access.checkRunPrefixBarcodeLengths(study_id, run_prefix)
         param_file = '%s/projects/Qiime/qiime_web_app/python_code/parameter_files/%s__custom_parameters_uclust_ref_gg97.txt' % (ServerConfig.home,str(barcode_length))
+        param_map[mapping_file]=param_file
         
         for sff_file in sff_files:
             sff_file_basename = os.path.splitext(os.path.basename(sff_file))[0].upper()
@@ -140,4 +142,4 @@ def submitJobsToQiime(study_id, user_id, mapping_file_dir,process_only,submit_to
     
     # Submit jobs to the queue
     for mapping_file in file_map:
-        submitJob(study_id, user_id, param_file, mapping_file, sequencing_platform, file_map[mapping_file],process_only,submit_to_test_db, data_access)
+        submitJob(study_id, user_id, param_map[mapping_file], mapping_file, sequencing_platform, file_map[mapping_file],process_only,submit_to_test_db, data_access)

@@ -265,7 +265,7 @@ class Poller(Daemon):
             #### decompose job submission
             # submit job - if loading into DB use singleq
             if job_type=='LoadSFFHandler':
-                submit_queue = 'no_bad_touching'
+                submit_queue = 'singleq'
                 res = getoutput(QSUB_CMD % (cmd, job_name,submit_queue))
             else:
                 submit_queue = 'no_bad_touching'
