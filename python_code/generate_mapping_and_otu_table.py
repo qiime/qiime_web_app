@@ -391,7 +391,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
             if row[0] not in otus:
                 otus.append(str(row[0]))
             if sample_counts[sample_name1].has_key(str(row[0])):
-                raise ValueError, 'Duplicate prokmsa ids!'
+                raise ValueError, 'Duplicate prokmsa ids! - %s ' % sample_name1
             try:
                 sample_counts[sample_name1][str(row[0])]=row[1]
             except:
