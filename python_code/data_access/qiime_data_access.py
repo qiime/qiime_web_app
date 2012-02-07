@@ -2074,12 +2074,16 @@ class QiimeDataAccess(object):
             rows = results.fetchall()
             if len(rows) == 0:
                 raise ValueError('No barcodes were found for the given run prefix: %s' % run_prefix)
+            
+            # we now allow for variable barcode lengths
             if len(rows) > 1:
-                raise ValueError('All barcodes must be of the same length for a given run_prefix. Multiple barcode lengths found for run prefix: %s' % run_prefix)
-
-            # Figure out if the length is one of the expected barcde lengths:
-            barcode_length = rows[0][0]
-            acceptable_barcode_lengths = ['4', '5', '6', '7', '8', '9', '10', '11', '12']
+                #raise ValueError('All barcodes must be of the same length for a given run_prefix. Multiple barcode lengths found for run prefix: %s' % run_prefix)
+                barcode_length = 'variable_length'
+            else:
+                # Figure out if the length is one of the expected barcde lengths:
+                barcode_length = rows[0][0]
+                
+            acceptable_barcode_lengths = ['4', '5', '6', '7', '8', '9', '10', '11', '12','13','14','variable_length']
             if str(barcode_length) not in acceptable_barcode_lengths:
                 raise ValueError('Barcode lengths must be one of the following: ' + ', '.join(acceptable_barcode_lengths))
             
