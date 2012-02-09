@@ -11,6 +11,8 @@ __status__ = "Development"
 
 <%
 from submit_job_to_qiime import submitJobsToQiime
+from data_access_connections import data_access_factory
+from enums import *
 
 # Gather necessary values to create a new queue job
 sess = Session.Session(req)
@@ -18,8 +20,14 @@ study_id = int(sess['study_id'])
 user_id = int(sess['web_app_user_id'])
 mapping_file_dir = sess['mapping_file_dir']
 
-process_only=str(form['process_only'])
-submit_to_test_db=str(form['submit_to_test_db'])
+# Clear out any old database results
+data_access = data_access_factory(ServerConfig.data_access_type)
+result = data_access.deleteAllAnalysis(study_id)
+if result:
+    raise Exception(result)
+
+process_only = str(form['process_only'])
+submit_to_test_db = str(form['submit_to_test_db'])
 # Submit the jobs
 try:
     # Attempt the submission
