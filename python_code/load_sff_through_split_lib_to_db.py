@@ -13,7 +13,7 @@ __status__ = "Development"
 
 import time 
 from subprocess import Popen, PIPE, STDOUT
-from qiime.parse import parse_mapping_file,parse_otu_table
+from qiime.parse import parse_mapping_file,parse_classic_otu_table
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
 from cogent.parse.fastq import MinimalFastqParser
@@ -366,7 +366,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     print 'Loading OTU Table into the database!'
     pick_otus_table = join(input_dir, 'gg_97_otus','exact_uclust_ref_otu_table.txt')
     otu_table_lines=open(pick_otus_table).readlines()
-    sample_ids, otu_ids, otu_table, lineages = parse_otu_table(otu_table_lines)
+    sample_ids, otu_ids, otu_table, lineages = parse_classic_otu_table(otu_table_lines)
     # convert OTU table to tab-delimited list
     otu_table_load=[]
     for i,otu in enumerate(otu_ids):
@@ -380,7 +380,7 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     cur = con.cursor()
     
     # load otu table into DB
-    data_types=['s','s','i','i']   
+    data_types=['s','s','i','f']   
     set_count = 0      
     for input_set in input_set_generator(otu_table_load, cur,data_types,\
                                          buffer_size=1000):

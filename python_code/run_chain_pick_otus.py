@@ -208,9 +208,16 @@ def run_chain_pick_otus(fasta_file, output_dir, command_handler, params, qiime_c
     commands.append([('Merge OTUs - Failures', merge_otus_failures_cmd)])
     
     # Make OTU Table
+    otu_biom_fp = join(output_dir,'exact_uclust_ref_otu_table.biom')
+    make_otu_biom_cmd='%s %s/make_otu_table.py -i %s -o %s' %\
+            (python_exe_fp, script_dir, merged_otus_fp, otu_biom_fp)
+
+    commands.append([('Make Biom File', make_otu_biom_cmd)])
+    
+    # Convert to classic OTU table
     otu_table_fp = join(output_dir,'exact_uclust_ref_otu_table.txt')
-    make_otu_table_cmd='%s %s/make_otu_table.py -i %s -o %s' %\
-            (python_exe_fp, script_dir, merged_otus_fp, otu_table_fp)
+    make_otu_table_cmd='%s %s/convert_biom.py -i %s -o %s -b' %\
+            (python_exe_fp, script_dir, otu_biom_fp, otu_table_fp)
 
     commands.append([('Make OTU Table', make_otu_table_cmd)])
     
