@@ -11,6 +11,7 @@ from subprocess import Popen, PIPE, STDOUT
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 from cogent.app.util import get_tmp_filename
+from numpy import inf
 from os import system,path,makedirs
 import os
 from random import choice
@@ -31,8 +32,9 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
 from cogent.util.misc import get_random_directory_name
 from submit_job_to_qiime import submitQiimeJob
-from qiime.filter_otu_table import _filter_table_samples
+from qiime.filter import filter_samples_from_otu_table
 import socket
+from qiime.pycogent_backports.rich_otu_table import SparseOTUTable, DenseOTUTable, table_factory
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
 
@@ -413,15 +415,32 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
         if not tax_str:
             taxonomy.append('')
         else:
-            taxonomy.append(tax_str)
+            taxonomy.append({'taxonomy':tax_str.split(';')})
 
-    otu_table_fname = file_name_prefix+'_'+tmp_prefix+'_otu_table.txt'
+    otu_table_fname = file_name_prefix+'_'+tmp_prefix+'_otu_table.biom'
     otu_table_filepath=os.path.join(otu_table_file_dir, otu_table_fname)
     otu_table_filepath_db=os.path.join(otu_table_file_dir_db, otu_table_fname)
+
+    otu_biom=table_factory(otu_table,samples_list,otus,
+                           sample_metadata=None,
+                           observation_metadata=taxonomy,
+                           table_id=None,
+                           constructor=SparseOTUTable,
+                           dtype=int)
     
-    otu_lines=format_otu_table(samples_list,otus,otu_table,taxonomy=taxonomy)
+    # define filtering parameters to remove samples with no sequences hitting
+    # OTUs
+    sample_ids_to_keep=otu_biom.SampleIds
+    min_count=1
+    max_count=inf
+    
+    filtered_otu_table = filter_samples_from_otu_table(otu_biom,
+                                                       sample_ids_to_keep,
+                                                       min_count,
+                                                       max_count)
+    
     otu_table_write=open(otu_table_filepath,'w')
-    otu_table_write.write(_filter_table_samples(otu_lines.split('\n'),1))
+    otu_table_write.write(filtered_otu_table.getBiomFormatJsonString())
     otu_table_write.close()
 
 
