@@ -39,6 +39,7 @@ from wrap_files_for_md5 import MD5Wrap
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 from cogent.util.misc import safe_md5
+from enums import ServerConfig
 
 def generate_log_fp(output_dir,
                     basefile_name='log',
@@ -101,20 +102,53 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         input_basename, input_ext = splitext(input_filename)
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
-            process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
-                (python_exe_fp, script_dir, sff_input_fp,
-                 output_dir)
-            split_lib_fasta_input_files.append(join(output_dir,input_basename + '_FLX.fna'))
-            split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
-            denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
+            if study_id in ['749']:
+
+                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
+                                  (python_exe_fp, script_dir, sff_input_fp,
+                                   output_dir)
+                
+                commands.append([('ProcessSFFs', process_sff_cmd)])
+                
+                # define output fasta from process_sff
+                no_trim_fasta_fp=join(output_dir,input_basename + '_FLX.fna')
+                
+                # define pprospector scripts dir
+                pprospector_scripts_dir=join(ServerConfig.home,'software',
+                                                 'pprospector','scripts')
+                
+                # clean fasta - basically converting lowercase to uppercase
+                clean_fasta_cmd = '%s %s/clean_fasta.py -f %s -o %s' %\
+                                      (python_exe_fp, pprospector_scripts_dir, 
+                                       no_trim_fasta_fp,output_dir)
+                
+                commands.append([('CleanFasta', clean_fasta_cmd)])
+                
+                split_lib_fasta_input_files.append(join(output_dir,input_basename + '_FLX_filtered.fasta'))
+                split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
+                denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
+            else:
+                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
+                                  (python_exe_fp, script_dir, sff_input_fp,
+                                   output_dir)
+                
+                commands.append([('ProcessSFFs', process_sff_cmd)])
+                
+                split_lib_fasta_input_files.append(join(output_dir,input_basename + '_FLX.fna'))
+                split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
+                denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
+                
+                
         else:
             process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
-            (python_exe_fp, script_dir, sff_input_fp,
-             output_dir)
+                                (python_exe_fp, script_dir, sff_input_fp,
+                                 output_dir)
+            
+            commands.append([('ProcessSFFs', process_sff_cmd)])
+            
             split_lib_fasta_input_files.append(join(output_dir,input_basename + '.fna'))
             split_lib_qual_input_files.append(join(output_dir,input_basename + '.qual'))
             denoise_flow_input_files.append(join(output_dir,input_basename + '.txt'))
-        commands.append([('ProcessSFFs', process_sff_cmd)])
         
 
     split_lib_fasta_input=','.join(split_lib_fasta_input_files)
