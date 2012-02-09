@@ -2266,6 +2266,24 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
+            
+    def deleteAllAnalysis(self, study_id):
+        """ Removes rows from the DB given a study_id
+        """
+        error_flag = 1
+        
+        try:
+            con = self.getSFFDatabaseConnection()
+            results = con.cursor().execute('select analysis_id from analysis where study_id = %s' % study_id)
+            for result in results:
+                db_output = con.cursor().callproc('delete_test_analysis', [result[0], error_flag])
+                if db_output[1] == 0:
+                    continue
+                else:
+                    return 'Could not remove analysis results from analysis_id: %s' % str(analysis_id)
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False
 
     def loadOTUFailuresAll(self, start_job, input_set):
         """ starts process of importing failed otus
