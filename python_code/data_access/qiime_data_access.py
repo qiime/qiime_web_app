@@ -2274,13 +2274,9 @@ class QiimeDataAccess(object):
         
         try:
             con = self.getSFFDatabaseConnection()
-            results = con.cursor().execute('select analysis_id from analysis where study_id = %s' % study_id)
-            for result in results:
-                db_output = con.cursor().callproc('delete_test_analysis', [result[0], error_flag])
-                if db_output[1] == 0:
-                    continue
-                else:
-                    return 'Could not remove analysis results from analysis_id: %s' % str(analysis_id)
+            db_output = con.cursor().callproc('delete_all_analysis_results', [study_id, error_flag])
+            if db_output[1] != 0:
+                return 'Could not remove analysis results from analysis_id: %s' % str(analysis_id)
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
