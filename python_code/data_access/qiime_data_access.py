@@ -814,8 +814,8 @@ class QiimeDataAccess(object):
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_sample_detail_list', [study_id, results])
             sample_details = []
-            for sample_name, sample_id, public, collection_date in results:
-                sample_details.append((sample_name, sample_id, public, collection_date))
+            for sample_name, sample_id, public, collection_date, run_prefix in results:
+                sample_details.append((sample_name, sample_id, public, collection_date, run_prefix))
             return sample_details
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
