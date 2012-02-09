@@ -183,9 +183,10 @@ else:
 <%
     # List all samples names here
     req.write('<table width="100%">')
-    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>')
-    for sample_name, sample_id, public, collection_date in data_access.getSampleDetailList(study_id):
-        req.write('<tr><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date))
+    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th>')
+    sample_details = data_access.getSampleDetailList(study_id)
+    for sample_name, sample_id, public, collection_date, run_prefix in sample_details:
+        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix))
     req.write('</table>')
     
 %>
