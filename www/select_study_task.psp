@@ -14,29 +14,16 @@ __status__ = "Production"
 
 <script type="text/javascript">
 
-function toggleSamples()
+function toggleSection(section_name)
 {
-    sample_div = document.getElementById('sample_div');
+    sample_div = document.getElementById(section_name);
     if (sample_div.style.display == 'none')
     {
-        $('#sample_div').fadeIn('fast')
+        $('#' + section_name).fadeIn('fast')
     }
     else
     {
-        $('#sample_div').fadeOut('fast')
-    }
-}
-
-function toggleSFFs()
-{
-    sample_div = document.getElementById('sff_div');
-    if (sample_div.style.display == 'none')
-    {
-        $('#sff_div').fadeIn('fast')
-    }
-    else
-    {
-        $('#sff_div').fadeOut('fast')
+        $('#' + section_name).fadeOut('fast')
     }
 }
 
@@ -136,16 +123,13 @@ if portal_type == 'qiime':
         req.write('<br>')
         study_id = study_id
         sff_files = data_access.getSFFFiles(study_id)
-        req.write('%s SFFs uploaded. (<a href="" onclick="toggleSFFs(); return false;">show/hide SFFs</a>)' % (len(sff_files)))
-        req.write('<div id="sff_div" name="sff_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:500px; padding:5px; background-color:#b0c4de;">')
-        req.write('<ul>')
+        req.write('%s SFFs uploaded. (<a href="" onclick="toggleSection(\'sff_div\'); return false;">show/hide SFFs</a>)' % (len(sff_files)))
+        req.write('<div id="sff_div" name="sff_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">')
 
         for sff_file in sff_files:
             file_base = os.path.basename(sff_file)
-            req.write('<li>%s <a href="#" onClick="if(confirm(\'Are you sure you want to erase: %s?\')) location.href = \'clear_sff_file.psp?filename=%s\';">(remove file)</a></li>' % (file_base, file_base, file_base))
+            req.write('%s <a href="#" onClick="if(confirm(\'Are you sure you want to erase: %s?\')) location.href = \'clear_sff_file.psp?filename=%s\';">(remove file)</a>' % (file_base, file_base, file_base))
             
-
-        req.write('</ul>')
         req.write('</div>')
         #req.write('<p/>')
 
@@ -178,15 +162,15 @@ else:
                 Upload metadata to this study (complete)</a>
                 <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
                 <br/>
-                <%=sample_count%> samples uploaded. (<a href="" onclick="toggleSamples(); return false;">show/hide samples</a>)
-                <div id="sample_div" name="sample_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:500px; padding:5px; background-color:#b0c4de;">
+                <%=sample_count%> samples uploaded. (<a href="" onclick="toggleSection(\'sample_div\'); return false;">show/hide samples</a>)
+                <div id="sample_div" name="sample_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">
 <%
     # List all samples names here
     req.write('<table width="100%">')
-    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th>')
+    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th><th align="left">Sequence Count</th>')
     sample_details = data_access.getSampleDetailList(study_id)
-    for sample_name, sample_id, public, collection_date, run_prefix in sample_details:
-        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix))
+    for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in sample_details:
+        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix, sequence_count))
     req.write('</table>')
     
 %>
