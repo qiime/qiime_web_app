@@ -124,7 +124,14 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 
                 commands.append([('CleanFasta', clean_fasta_cmd)])
                 
-                split_lib_fasta_input_files.append(join(output_dir,input_basename + '_FLX_filtered.fasta'))
+                # move the cleaned file to be consistent with other processes
+                cleaned_fasta_fp=join(output_dir,input_basename + '_FLX_filtered.fasta')
+                moved_fasta_fp=join(output_dir,input_basename + '_FLX.fna')
+                mv_cmd='mv %s %s' %  (cleaned_fasta_fp,moved_fasta_fp)
+                
+                commands.append([('RenameFasta',mv_cmd)])
+                
+                split_lib_fasta_input_files.append(moved_fasta_fp)
                 split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
                 denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
             else:
