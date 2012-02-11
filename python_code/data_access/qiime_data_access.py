@@ -2003,7 +2003,7 @@ class QiimeDataAccess(object):
             result_sets = {}
             con.cursor().callproc('qiime_assets.get_split_libarary_data', [study_id, results])
 
-            mapping_file_header = '#SampleID\tBarcodeSequence\tLinkerPrimerSequence\tRunPrefix\tReversePrimer\tDescription'
+            mapping_file_header = '#SampleID\tBarcodeSequence\tLinkerPrimerSequence\tRunPrefix\tDescription'
             #for column in results.description:
             #    mapping_file_header += column[0] + '\t'
 
@@ -2012,16 +2012,6 @@ class QiimeDataAccess(object):
                 primers = row[3]
                 run_prefix = row[4]
                 linker_primer_list = ''
-
-                
-                # write the ReversePrimer Field in mapping file for future use
-                nonbarcoded_primer=''
-                if row[6]:
-                    primers_used=row[6].split(';')
-                    for prim in primers_used:
-                        primer_split=prim.split(':')
-                        if primer_split[0]=='FWD':
-                            nonbarcoded_primer=primer_split[1]
                     
                 # handles null linkers
                 if linker is None:
@@ -2039,7 +2029,7 @@ class QiimeDataAccess(object):
                     linker_primer_list = linker + primers
 
                 # Adjust the row contents
-                newrow = (row[0], row[1], linker_primer_list, row[4], nonbarcoded_primer, row[5])
+                newrow = (row[0], row[1], linker_primer_list, row[4], row[5])
 
                 # If this is the first time we've seen this run_prefix, create a new list 
                 # to hold the rows
