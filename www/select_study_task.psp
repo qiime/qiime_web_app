@@ -114,7 +114,7 @@ if portal_type == 'qiime':
             <form id="associate_sff_to_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="upload_sff.psp">
                 <a href="" onclick="document.forms['associate_sff_to_study'].submit(); return false;">
-                Add or remove SFF files for this study
+                Add or remove sequence files for this study
 <%
     if sff_complete == 'n':
         req.write('(not complete) </a><img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
@@ -123,7 +123,7 @@ if portal_type == 'qiime':
         req.write('<br>')
         study_id = study_id
         sff_files = data_access.getSFFFiles(study_id)
-        req.write('%s SFFs uploaded. (<a href="" onclick="toggleSection(\'sff_div\'); return false;">show/hide SFFs</a>)' % (len(sff_files)))
+        req.write('%s sequence file(s) uploaded. (<a href="" onclick="toggleSection(\'sff_div\'); return false;">show/hide sequence files</a>)' % (len(sff_files)))
         req.write('<div id="sff_div" name="sff_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">')
 
         for sff_file in sff_files:
@@ -241,14 +241,18 @@ if portal_type == 'qiime':
 <%
         # De-indent
 %>
-            </li>
+        </li>
 
-<%
+<%  
+    elif metadata_complete == 'y' and sff_complete == 'y' and  web_app_user_id not in approved_qiime_submitters:
+    
+        req.write("<br><font color='red'>Thank you for uploading your files, please email Gail Ackermann (<a href='mailto:gail.ackermann@colorado.edu?cc=jesse.stombaugh@colorado.edu,wendel@colorado.edu&subject=%s study uploaded'>email</a>) to verify and process your uploaded data, so it can be submitted to the database.</font><br>" % (study_name))
+        
     elif web_app_user_id in approved_qiime_submitters:
         # Indent
         
 %>
-            <li>Submit Job to Qiime (complete SFF and metadata upload first)</li>
+            <li>Submit Job to Qiime (complete sequence and metadata upload first)</li>
 <%
     if is_admin == 1:
         jobs2 = data_access.getJobInfo(study_id, 12)
