@@ -40,6 +40,7 @@ from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 from cogent.util.misc import safe_md5
 from enums import ServerConfig
+from qiime.validate_demultiplexed_fasta import run_fasta_checks
 
 def generate_log_fp(output_dir,
                     basefile_name='log',
@@ -317,10 +318,31 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
     # create dictionary of original sample_ids to new sample_ids
     sample_ids_from_mapping=zip(*map_data)[0]
     sample_id_dict={}
+    
     for sample in sample_ids_from_mapping:
         sample_id_dict['.'.join(sample.split('.')[:-1])]=sample
     
+    
+    # NEED to be able to just pass fasta file, since mapping sample_ids
+    # will not match input fasta file ever
+    
+    fasta_check=run_fasta_checks(input_fp,mapping_input_fp_copy)
+    
+    if float(fasta_check['invalid_labels']) > 0:
+        raise ValueError, "There are invalid sequence names in the sequence file"
+    elif float(fasta_check['barcodes_detected']) > 0:
+        raise ValueError, "There are barcode sequences found in the sequence file"
+    elif float(fasta_check['duplicate_labels']) > 0:
+        raise ValueError, "There are duplicate sequence names in the sequence file"
+    elif float(fasta_check['invalid_seq_chars']) > 0:
+        raise ValueError, "There are invalid nucleotides in the sequence file (i.e. not A,C,G,T or N)"
+    elif float(fasta_check['linkerprimers_detected']) > 0:
+        raise ValueError, "There are linker primer sequences in the sequence file"
+    #elif float(fasta_check['nosample_ids_map']) > 0.20:
+    #    raise ValueError, "More than 20% of the samples in the mapping file do not have sequences"
+        
     sequences=MinimalFastaParser(open(input_fp),'U')
+    
     
     # update fasta file with new DB SampleIDs and create split-lib seqs file
     num=1

@@ -30,6 +30,7 @@ from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, load_otu_
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
 from submit_job_to_qiime import submitQiimeJob
+from qiime.validate_demultiplexed_fasta import run_fasta_checks
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -173,7 +174,27 @@ def main():
             % (sequencing_platform)
         
     print 'Completed run_process_sff_through_split_lib.'
-   
+    
+    print 'Check Demultiplexed sequences'
+    split_lib_seqs_fp=join(output_dir,'split_libraries','seqs.fna')
+    
+    fasta_check=run_fasta_checks(split_lib_seqs_fp,map_fname)
+    
+    if float(fasta_check['invalid_labels']) > 0:
+        raise ValueError, "There are invalid sequence names in the sequence file"
+    elif float(fasta_check['barcodes_detected']) > 0:
+        raise ValueError, "There are barcode sequences found in the sequence file"
+    elif float(fasta_check['duplicate_labels']) > 0:
+        raise ValueError, "There are duplicate sequence names in the sequence file"
+    elif float(fasta_check['invalid_seq_chars']) > 0:
+        raise ValueError, "There are invalid nucleotides in the sequence file (i.e. not A,C,G,T or N)"
+    elif float(fasta_check['linkerprimers_detected']) > 0:
+        raise ValueError, "There are linker primer sequences in the sequence file"
+    elif float(fasta_check['nosample_ids_map']) > 0.20:
+        raise ValueError, "More than 20% of the samples in the mapping file do not have sequences"
+        
+    print 'Demultiplexed sequences appear to be valid'
+    
     # Chain Pick OTUS
     resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
     otu_output_dir=join(output_dir,'gg_97_otus')
