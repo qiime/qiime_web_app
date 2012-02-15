@@ -329,15 +329,15 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
     fasta_check=run_fasta_checks(input_fp,mapping_input_fp_copy)
     
     if float(fasta_check['invalid_labels']) > 0:
-        raise ValueError, "There are invalid sequence names in the sequence file"
+        raise ValueError, "There are invalid sequence names in the Original sequence file"
     elif float(fasta_check['barcodes_detected']) > 0:
-        raise ValueError, "There are barcode sequences found in the sequence file"
+        raise ValueError, "There are barcode sequences found in the Original sequence file"
     elif float(fasta_check['duplicate_labels']) > 0:
-        raise ValueError, "There are duplicate sequence names in the sequence file"
+        raise ValueError, "There are duplicate sequence names in the Original sequence file"
     elif float(fasta_check['invalid_seq_chars']) > 0:
-        raise ValueError, "There are invalid nucleotides in the sequence file (i.e. not A,C,G,T or N)"
+        raise ValueError, "There are invalid nucleotides in the sequence Original file (i.e. not A,C,G,T or N)"
     elif float(fasta_check['linkerprimers_detected']) > 0:
-        raise ValueError, "There are linker primer sequences in the sequence file"
+        raise ValueError, "There are linker primer sequences in the Original sequence file"
     #elif float(fasta_check['nosample_ids_map']) > 0.20:
     #    raise ValueError, "More than 20% of the samples in the mapping file do not have sequences"
         
