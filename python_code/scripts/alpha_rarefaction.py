@@ -14,12 +14,13 @@ __status__ = "Development"
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
 from os import makedirs,path,system
-from qiime.util import load_qiime_config
+from qiime.util import load_qiime_config,get_qiime_scripts_dir,create_dir
 from generate_mapping_and_otu_table import write_mapping_and_otu_table
 from submit_job_to_qiime import submitQiimeJob
 from qiime.parse import parse_qiime_parameters
-from qiime.workflow import run_qiime_alpha_rarefaction, print_commands,\
-    call_commands_serially, print_to_stdout, no_status_updates
+from qiime.workflow import print_to_stdout,WorkflowLogger,generate_log_fp,\
+                           call_commands_serially,no_status_updates,\
+                           WorkflowError,get_params_str
 from cogent.app.util import get_tmp_filename
 
 from data_access_connections import data_access_factory
@@ -83,6 +84,7 @@ def main():
     jobs_to_start=opts.jobs_to_start
     tree_fp=opts.tree_fp
     command_handler=call_commands_serially
+    status_update_callback=no_status_updates
     zip_fpath=opts.zip_fpath
     zip_fpath_db=opts.zip_fpath_db
     run_date=opts.run_date
@@ -117,18 +119,21 @@ def main():
             print "Output directory already exists. Please choose "+\
              "a different directory, or force overwrite with -f."
             exit(1)
-
-    # run alpha-diversity calculations and return fpaths
-    run_qiime_alpha_rarefaction(otu_table_fp=otu_table_fp,\
-     mapping_fp=mapping_file_fp,\
-     output_dir=output_dir,\
-     command_handler=command_handler,\
-     params=params,\
-     qiime_config=qiime_config,\
-     tree_fp=tree_fp,\
-     num_steps=10,\
-     parallel=False,\
-     status_update_callback=no_status_updates)
+    
+    commands=[]
+    python_exe_fp = qiime_config['python_exe_fp']
+    script_dir = get_qiime_scripts_dir()
+    logger = WorkflowLogger(generate_log_fp(output_dir),
+                            params=params,
+                            qiime_config=qiime_config)
+    
+    arare_cmd='%s %s/alpha_rarefaction.py -i %s -m %s -o %s -t %s -a -O 100 -p %s -f' %\
+        (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
+         output_dir,tree_fp,opts.params_path)
+    
+    commands.append([('Alpha-Rarefaction',arare_cmd)])
+    
+    command_handler(commands, status_update_callback, logger)
 
     #zip the distance matrices
     cmd_call='cd %s; zip -r %s %s' % (cd_dir,zip_fpath,'arare_'+tmp_prefix)
