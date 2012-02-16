@@ -123,13 +123,13 @@ def main():
     
     if 'disthist_bdiv_plots' in jobs_to_start:
         #start preparing the script call
-        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -c %s -f' %\
+        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -c %s -a -O 100 -f' %\
             (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
              output_dir,tree_fp,opts.params_path, \
              params['make_distance_histograms']['fields'])
     else:
         #start preparing the script call
-        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -f' %\
+        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -a -O 100 -f' %\
             (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
              tree_fp,opts.params_path)
     
