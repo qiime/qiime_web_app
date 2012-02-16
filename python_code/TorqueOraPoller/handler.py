@@ -16,7 +16,7 @@ __status__ = "Pre-release"
 import os
 from enums import ServerConfig
 
-PYTHON_BIN="/home/wwwuser/software/bin/python2.7"
+PYTHON_BIN="%s/software/bin/python2.7" % ServerConfig.home
 QIIME_WEBAPP_BASE = "%s/projects/Qiime/qiime_web_app/python_code/scripts" % ServerConfig.home
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_through_split_lib.py"
 QIIME_LOAD_SFF = QIIME_WEBAPP_BASE + "/submit_sff_through_split_lib_to_db.py"

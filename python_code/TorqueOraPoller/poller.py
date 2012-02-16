@@ -29,7 +29,7 @@ __status__ = "Pre-release"
 POLL_INTERVAL = 5
 STATUS_INTERVAL = 12
 QSTAT_NORMAL = "/usr/bin/qstat | grep %s"
-QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s -l pvmem=16gb -q %s'
+QSUB_CMD = 'echo "%s" | /usr/bin/qsub -k oe -N %s -l pvmem=%s -q %s'
 
 TORQUE_STATE_LOOKUP = {'R':'RUNNING',
                        'C':'COMPLETING',
@@ -138,11 +138,12 @@ class Poller(Daemon):
         Raises FileDoesNotExistError if the file does not exist
         Raises CannotOpenFileError if unable to open a file
         """
+        job_dir='qiime_jobs'
         # construct expected filename
         if filetype == 'stdout':
-            filename = '%s/%d.o%s' % (home, job_name, pbs_job_id)
+            filename = '%s/%s/%d.o%s' % (home,qiime_job, job_name, pbs_job_id)
         elif filetype == 'stderr':
-            filename = '%s/%d.e%s' % (home, job_name, pbs_job_id)
+            filename = '%s/%s/%d.e%s' % (home,qiime_job, job_name, pbs_job_id)
         else:
             raise IOError, "Unknown filetype"
 
@@ -266,10 +267,36 @@ class Poller(Daemon):
             # submit job - if loading into DB use singleq
             if job_type=='LoadSFFHandler':
                 submit_queue = 'singleq'
-                res = getoutput(QSUB_CMD % (cmd, job_name,submit_queue))
+                pvmem='8gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
+            elif job_type=='ProcessSFFHandler':
+                submit_queue = 'no_bad_touching'
+                pvmem='8gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
+            elif job_type=='betaDiversityThroughPlots':
+                submit_queue = 'no_bad_touching'
+                pvmem='4gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
+            elif job_type=='makeOTUHeatmap':
+                submit_queue = 'no_bad_touching'
+                pvmem='4gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
+            elif job_type=='alphaRarefaction':
+                submit_queue = 'no_bad_touching'
+                pvmem='4gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
+            elif job_type=='summarizeTaxa':
+                submit_queue = 'no_bad_touching'
+                pvmem='4gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
+            elif job_type=='generateMapOTUTableSubmitJobs':
+                submit_queue = 'no_bad_touching'
+                pvmem='4gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             else:
                 submit_queue = 'no_bad_touching'
-                res = getoutput(QSUB_CMD % (cmd, job_name,submit_queue))
+                pvmem='8gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             
             res_lines = res.splitlines()
 
