@@ -103,7 +103,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         input_basename, input_ext = splitext(input_filename)
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
-            if study_id in ['749']:
+            if study_id in ['496','968','969']:
 
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
