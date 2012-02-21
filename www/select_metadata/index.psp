@@ -34,16 +34,19 @@ qiime_emp_projects=[]
 for i in qiime_projects:
     study_id_exists=data_access.checkIfStudyIdExists(str(i[0]))
     study_info = data_access.getStudyInfo(str(i[0]), web_app_user_id)
-    if study_info['metadata_complete']=='y':
+    if study_info['metadata_complete']=='y' and study_info['investigation_type'].lower()=='mimarks-survey':
         qiime_emp_projects.append(i)
         req.write('study_types["'+str(i[0])+'"]=["qiime","'+str(study_id_exists).lower()+'"];\n')
+    elif study_info['metadata_complete']=='y' and study_info['investigation_type'].lower()=='metagenome':
+        qiime_emp_projects.append(i)
+        req.write('study_types["'+str(i[0])+'"]=["metagenome","'+str('false').lower()+'"];\n')
 
 for i in emp_projects:
     study_id_exists=data_access.checkIfStudyIdExists(str(i[0]))
     study_info = data_access.getStudyInfo(str(i[0]), web_app_user_id)
     if study_info['metadata_complete']=='y':
         qiime_emp_projects.append(i)
-        req.write('study_types["'+str(i[0])+'"]=new Array();\n')
+        #req.write('study_types["'+str(i[0])+'"]=new Array();\n')
         req.write('study_types["'+str(i[0])+'"]=["emp","'+str(study_id_exists).lower()+'"];\n')
 #
 %>
@@ -56,7 +59,7 @@ for i in emp_projects:
 req.write('<table><tr><th colspan=2>Select Studies (note: this will clear any previous value selections)</th></tr>')
 req.write('<tr><td>')
 req.write('<b>Show Type:&nbsp;</b><select id="study_types" onchange="javascript:showStudies(\'qiime_emp_studies\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">')
-req.write('<option id="all">All</option><option id="emp">EMP</option><option id="qiime">QIIME</option><option id="contains_seqs">Contains seqs</option></select><br>')
+req.write('<option id="all">All</option><option id="emp">EMP</option><option id="metagenome">Metagenome</option><<option id="qiime">QIIME</option><option id="contains_seqs">Contains seqs</option></select><br>')
 req.write('<select id="qiime_emp_studies" style="height:150px;width:300px;" multiple onchange="javascript:showColumns(\'metadata_left_col\',this.options[this.selectedIndex].id,this.options[this.selectedIndex].value);">')
 qiime_emp_projects.sort(key=lambda x: x[1].lower())
 for i in qiime_emp_projects:

@@ -506,7 +506,7 @@ function showColumns(input_textbox,column_id,column_value)
         if (xmlhttp2.readyState==4){
             //write the list of similar terms from the database  
             document.getElementById('sample_info').innerHTML=xmlhttp2.responseText;
-            document.getElementById('sample_info').innerHTML+="<p id='seqs_loaded'>Seqs loaded: "+contains_seqs+"</p>"
+            document.getElementById('sample_info').innerHTML+="<p id='seqs_loaded'>Processed by QIIME: "+contains_seqs+"</p>"
             document.getElementById('box2View').innerHTML=''
             document.getElementById('field_ref_table').innerHTML='';
             document.getElementById('field_ref_table').style.border="";
@@ -527,6 +527,10 @@ function showStudies(input_textbox,column_id,column_value){
             listbox_values.innerHTML+='<option id="'+j+'" onmouseover="return overlib(\'<b>Study Title:</b>'+available_studies[j][0]+'<br><br><b>Abstract:</b>'+available_studies[j][1]+'\',WIDTH, 500);" onmouseout="return nd();">'+available_studies[j][2]
         }else if (column_id=='qiime'){
             if (study_types[j][0]=='qiime'){
+                listbox_values.innerHTML+='<option id="'+j+'" onmouseover="return overlib(\'<b>Study Title:</b>'+available_studies[j][0]+'<br><br><b>Abstract:</b>'+available_studies[j][1]+'\',WIDTH, 500);" onmouseout="return nd();">'+available_studies[j][2]
+            }
+        }else if (column_id=='metagenome'){
+            if (study_types[j][0]=='metagenome'){
                 listbox_values.innerHTML+='<option id="'+j+'" onmouseover="return overlib(\'<b>Study Title:</b>'+available_studies[j][0]+'<br><br><b>Abstract:</b>'+available_studies[j][1]+'\',WIDTH, 500);" onmouseout="return nd();">'+available_studies[j][2]
             }
         }else if (column_id=='emp'){
