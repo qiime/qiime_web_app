@@ -2016,7 +2016,8 @@ class QiimeDataAccess(object):
                 # handles null linkers
                 if linker is None:
                     linker=''
-                    
+                if primers is None:
+                    primers=''
                 # Create a comma-separated list of linker+primer sequences
                 if ',' in primers:
                     primer_list = primers.split(',')
