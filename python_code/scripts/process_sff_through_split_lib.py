@@ -182,8 +182,8 @@ def main():
     
     if float(fasta_check['invalid_labels']) > 0:
         raise ValueError, "There are invalid sequence names in the split-library sequence file"
-    elif float(fasta_check['barcodes_detected']) > 0:
-        raise ValueError, "There are barcode sequences found in the split-library sequence file"
+    #elif float(fasta_check['barcodes_detected']) > 0:
+    #    raise ValueError, "There are barcode sequences found in the split-library sequence file"
     elif float(fasta_check['duplicate_labels']) > 0:
         raise ValueError, "There are duplicate sequence names in the split-library sequence file"
     elif float(fasta_check['invalid_seq_chars']) > 0:
