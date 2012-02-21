@@ -63,6 +63,7 @@ def main():
     study_id=opts.study_id
     output_dir=opts.output_dir
     platform=opts.platform
+    user_id=opts.user_id
     
     if submit_to_test_db == 'False':
         # Load the data into the database
@@ -81,9 +82,15 @@ def main():
     elif platform=='FASTA':
         print 'Submitting FASTA data to database...'
         analysis_id = submit_fasta_and_split_lib(data_access, fasta_file_paths, study_id, output_dir)
-        
-    print 'Submitting OTU data to database...'
-    load_otu_mapping(data_access, output_dir, analysis_id)
+    
+    study_info=data_access.getStudyInfo(study_id,user_id)
+    if study_info['investigation_type'].lower() == 'metagenome':
+        # skip OTU loading
+        pass
+    else:
+        print 'Submitting OTU data to database...'
+        load_otu_mapping(data_access, output_dir, analysis_id)
+    
     print 'Completed database loading.'
 
 if __name__ == "__main__":

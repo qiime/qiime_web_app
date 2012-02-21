@@ -195,21 +195,34 @@ def main():
         
     print 'Demultiplexed sequences appear to be valid'
     
-    # Chain Pick OTUS
-    resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
-    otu_output_dir=join(output_dir,'gg_97_otus')
-    create_dir(otu_output_dir)
-    print 'Running run_chain_pick_otus...'
-    if (sequencing_platform=='ILLUMINA'):
-        run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
-                            params, qiime_config, parallel=True, \
-                            status_update_callback=status_update_callback)
+    if submit_to_test_db == 'False':
+        # Load the data into the database
+        data_access = data_access_factory(ServerConfig.data_access_type)
     else:
-        run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
-                            params, qiime_config, parallel=False, \
-                            status_update_callback=status_update_callback)
-    print 'Completed run_chain_pick_otus.'
+        # Load the data into the database 
+        data_access = data_access_factory(DataAccessType.qiime_test)
+    
+    study_info=data_access.getStudyInfo(study_id,user_id)
+    if study_info['investigation_type'].lower() == 'metagenome':
+        # skip OTU picking
+        pass
+    else:
+        # Chain Pick OTUS
+        resulting_fasta=join(output_dir,'split_libraries/seqs.fna')
+        otu_output_dir=join(output_dir,'gg_97_otus')
+        create_dir(otu_output_dir)
+        print 'Running run_chain_pick_otus...'
+        if (sequencing_platform=='ILLUMINA'):
+            run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
+                                params, qiime_config, parallel=True, \
+                                status_update_callback=status_update_callback)
+        else:
+            run_chain_pick_otus(resulting_fasta, otu_output_dir, command_handler, \
+                                params, qiime_config, parallel=False, \
+                                status_update_callback=status_update_callback)
+        print 'Completed run_chain_pick_otus.'
 
+    
     params=[]
     params.append('OutputDir=%s' % output_dir)
     params.append('UserId=%s' % user_id)
@@ -219,13 +232,6 @@ def main():
     params.append('Platform=%s' % sequencing_platform)
     job_input='!!'.join(params)
     job_type='LoadSFFHandler'
-    
-    if submit_to_test_db == 'False':
-        # Load the data into the database
-        data_access = data_access_factory(ServerConfig.data_access_type)
-    else:
-        # Load the data into the database 
-        data_access = data_access_factory(DataAccessType.qiime_test)
     
     
     if process_only == 'False':
