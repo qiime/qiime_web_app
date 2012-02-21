@@ -31,8 +31,8 @@ beta_metrics=list_known_metrics();
 # set the help image location
 help_img="./img/help_icon.png"
 
-# get a list of public columns
-public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
+# get a list of public columns - NOT USED
+# public_columns=data_access.getPublicColumns(sess['web_app_user_id'])
 form_data=sess['form']
 
 # get column headers
