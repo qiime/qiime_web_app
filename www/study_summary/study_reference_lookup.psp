@@ -33,8 +33,8 @@ if not (sess.has_key('username')):
 #Get the values from the form fields
 study_id=str(form["study_id"]);
 study_name=str(form["study_name"]);
-sess['study_id']=study_id
-sess.save()
+#sess['study_id']=study_id
+#sess.save()
 #Try to get the summary info from the DB and write to the page.
 try:
     #Get summary info from DB
