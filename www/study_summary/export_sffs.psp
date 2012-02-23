@@ -37,7 +37,7 @@ except ImportError:
     pass
 
 #Get the values from the session fields
-study_id=sess.get('study_id');
+study_id=form['study_id'];
 
 con = data_access.getMetadataDatabaseConnection()
 cur = con.cursor()

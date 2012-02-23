@@ -31,7 +31,7 @@ if not (sess.has_key('username')):
 
 
 #Get the values from the session fields
-study_id=sess.get('study_id');
+study_id=form['study_id'];
 metadata_dir='study_'+study_id+'_metadata'
 data_output_dir=os.path.join(sess.get('user_dir'),'study_%s' % (study_id));
 link_output_dir=os.path.join(sess.get('db_root'),'study_%s' % (study_id));

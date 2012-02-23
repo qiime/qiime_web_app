@@ -73,12 +73,12 @@ def print_study_info_and_values_table(query_results,data_access):
     #Write out the project names selected
     for i in project_names:
         info_table.append('<h3>'+str(i)+\
-                          ' (<a href=\'./study_summary/export_metadata.psp\' '+\
+                          ' (<a href=\'./study_summary/export_metadata.psp?study_id='+study_id+'\' '+\
                           ' target="_blank">'+\
                           'download metadata</a>)&nbsp;')
         #
         if sffs[0]:
-            info_table.append('(<a href=\'./study_summary/export_sffs.psp\' '+\
+            info_table.append('(<a href=\'./study_summary/export_sffs.psp?study_id='+study_id+'\' '+\
                               ' target="_blank">'+\
                               'download sffs</a>)</h3>')
         else:
