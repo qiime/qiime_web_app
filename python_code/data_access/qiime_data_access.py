@@ -1639,13 +1639,10 @@ class QiimeDataAccess(object):
     def createTorqueJob(self, job_type, job_input, user_id, study_id, job_state_id=-1):
         """ submits a job to the queue and returns the job_id
         """
-        try:
-            con = self.getSFFDatabaseConnection()
-            job_id = 0
-            job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, study_id, job_state_id,job_id])
-            return job_id[5]
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+        con = self.getSFFDatabaseConnection()
+        job_id = 0
+        job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, study_id, job_state_id,job_id])
+        return job_id[5]
     
 
     def updateTorqueJob(self, job_id, new_state,job_notes):

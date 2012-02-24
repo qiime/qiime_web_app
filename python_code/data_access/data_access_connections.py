@@ -117,9 +117,6 @@ class QiimeDataAccessConnections(AbstractDataAccessConnections):
         super(QiimeDataAccessConnections, self).__init__()
         
         # Now define the actual connection strings
-        #self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
-        #self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@quarterbarrel.microbio.me:1521/qiimedb.microbio.me'
-        #self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb'
         self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@thebeast.colorado.edu/thebeast'
         self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@thebeast.colorado.edu/thebeast'
         self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@thebeast.colorado.edu/thebeast'
@@ -143,6 +140,3 @@ class TestDataAccessConnections(AbstractDataAccessConnections):
         self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@webdev.microbio.me:1521/dbdev'
         self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@webdev.microbio.me:1521/dbdev'
         self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@webdev.microbio.me:1521/dbdev'
-        #self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@thebeast.colorado.edu/thebeast'
-        #self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@thebeast.colorado.edu/thebeast'
-        #self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@thebeast.colorado.edu/thebeast'

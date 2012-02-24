@@ -270,9 +270,13 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
         sample_mdtable = None
         prep_mdtable = None
         
-        # Figure out if this study has timeseries data
-        study_info = data_access.getStudyInfo(study_id, web_app_user_id)
-        includes_timeseries = study_info['includes_timeseries']
+        # Figure out if this study has timeseries data if study_id > 0.
+        # study_id = 0 means it's validation not associated to a study
+        if study_id > 0:
+            study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+            includes_timeseries = study_info['includes_timeseries']
+        else:
+            includes_timeseries = 0
         
         for fullname in t.namelist():
             # Ignore directories
@@ -376,7 +380,8 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             required_file_count += 1
                     
         if len(templates) != required_file_count:
-            errors.append('One more more required files were not included in this upload.')
+            errors.append('One or more required files were not included in this upload.')
+            errors.append('{0} files supplied. {1} file expected.'.format(len(templates), required_file_count))
         
         # If there were errors, report them and stop processing. Note that writing to the req 
         # object is the signal for the JumpLoader to flag and error
