@@ -21,6 +21,7 @@ QIIME_WEBAPP_BASE = "%s/projects/Qiime/qiime_web_app/python_code/scripts" % Serv
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_through_split_lib.py"
 QIIME_LOAD_SFF = QIIME_WEBAPP_BASE + "/submit_sff_through_split_lib_to_db.py"
 QIIME_EXPORT_MGRAST = QIIME_WEBAPP_BASE + "/submit_metadata_to_mgrast.py"
+QIIME_EXPORT_EBISRA = QIIME_WEBAPP_BASE + "/submit_metadata_to_ebi_sra.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
 QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_through_metadata_to_db.py"
 QIIME_SUBMIT_OTU_MAPPING_TO_DB = QIIME_WEBAPP_BASE  + "/submit_otu_mapping_to_db.py"
@@ -244,6 +245,21 @@ class ProcessPickOTUHandler(JobHandler):
 class ExportToMGRASTHandler(JobHandler):
     """Handler for submit_metadata_to_mgrast.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_EXPORT_MGRAST, "-s %(StudyID)s"])
+    _base_args = {'StudyID':None}
+    _next_job_handler = ''
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+            
+# Exports study metadata and sequences to MG-RAST
+class ExportToEBISRAHandler(JobHandler):
+    """Handler for submit_metadata_to_mgrast.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_EXPORT_EBISRA, "-s %(StudyID)s"])
     _base_args = {'StudyID':None}
     _next_job_handler = ''
 
