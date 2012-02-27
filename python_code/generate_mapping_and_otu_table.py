@@ -70,7 +70,7 @@ def get_mapping_data(data_access,is_admin,table_col_value,user_id,
             study_id_array.append(study_id)
 
         # Required fields which much show up first. Skip as they are already in the statement
-        if column in ['SAMPLE_NAME', 'BARCODE', 'LINKER', 'PRIMER', 'EXPERIMENT_TITLE','DESCRIPTION','RUN_PREFIX']:
+        if column in ['SAMPLE_NAME', 'BARCODE','DESCRIPTION','RUN_PREFIX']:
             continue
 
         # Add to select list
@@ -85,7 +85,7 @@ def get_mapping_data(data_access,is_admin,table_col_value,user_id,
 
         # End for
 
-    statement += '"SEQUENCE_PREP".experiment_title as Description \n'
+    statement += '"SAMPLE".description as Description \n'
     unique_study_ids=list(set(study_id_array))
     
     ###this is for the website sample count
