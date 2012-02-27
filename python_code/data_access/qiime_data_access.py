@@ -809,17 +809,13 @@ class QiimeDataAccess(object):
     def getSampleDetailList(self, study_id):
         """ Returns a list of metadata fields
         """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            results = con.cursor()
-            con.cursor().callproc('qiime_assets.get_sample_detail_list', [study_id, results])
-            sample_details = []
-            for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in results:
-                sample_details.append((sample_name, sample_id, public, collection_date, run_prefix, sequence_count))
-            return sample_details
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('qiime_assets.get_sample_detail_list', [study_id, results])
+        sample_details = []
+        for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in results:
+            sample_details.append((sample_name, sample_id, public, collection_date, run_prefix, sequence_count))
+        return sample_details
             
     def getPrepList(self, sample_id):
         """ Returns a list of metadata fields
