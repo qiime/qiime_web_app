@@ -168,9 +168,9 @@ else:
     # List all samples names here
     req.write('<table width="100%">')
     req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th><th align="left">Sequence Count</th>')
-    #sample_details = data_access.getSampleDetailList(study_id)
-    #for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in sample_details:
-    #    req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix, sequence_count))
+    sample_details = data_access.getSampleDetailList(study_id)
+    for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in sample_details:
+        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix, sequence_count))
     req.write('</table>')
     
 %>
@@ -306,6 +306,7 @@ if len(jobs) > 0 and is_admin == 1:
         </li>
 
 <%
+
 elif is_admin == 1:
     # Indent
     
@@ -318,10 +319,47 @@ elif is_admin == 1:
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
         </li>
+<%
+# End if
+
+jobs = data_access.getJobInfo(study_id, 14)
+if len(jobs) > 0 and is_admin == 1:
+    # indent
+%>
+        <li>
+            Exporting to EBI-SRA...
+            <br/>
+            <ul>
+                <div id="ebi_sra_statis_div">
+                    Checking status...
+                </div>
+                <script type="text/javascript">
+                    //checkEBISRAJobStatus();
+                    //var timer = setInterval( "checkEBISRAJobStatus();", 6000 );
+                </script>
+            </ul>
+        </li>
+
+<%
+
+elif is_admin == 1:
+    # Indent
+    
+%>
+        <li>
+        <form id="submit_export_to_ebi_sra" action="submit_export_to_ebi_sra.psp" method="post">
+                <a href="" onclick="document.forms['submit_export_to_ebi_sra'].submit(); return false;">
+                Export Data to EBI-SRA</a>
+            <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
+            </form>
+        </li>
 
 
 <%
 # End if
+
+
+
 
 if can_delete == 'y' or is_admin:
     # indent
