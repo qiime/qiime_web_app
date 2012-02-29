@@ -29,12 +29,13 @@ from run_process_sff_through_split_lib import web_app_call_commands_serially
 from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates,generate_log_fp,\
                            get_params_str, WorkflowError,WorkflowLogger
-from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
+from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config,\
+                       get_qiime_library_version
 from cogent.util.misc import get_random_directory_name
 from submit_job_to_qiime import submitQiimeJob
 from qiime.filter import filter_samples_from_otu_table
 import socket
-from qiime.pycogent_backports.rich_otu_table import SparseOTUTable, DenseOTUTable, table_factory
+from biom.table import SparseOTUTable, DenseOTUTable, table_factory
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
 
@@ -440,7 +441,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
                                                        max_count)
     
     otu_table_write=open(otu_table_filepath,'w')
-    otu_table_write.write(filtered_otu_table.getBiomFormatJsonString())
+    otu_table_write.write(filtered_otu_table.getBiomFormatJsonString('QIIME-DB %s' % get_qiime_library_version()))
     otu_table_write.close()
 
 

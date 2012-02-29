@@ -188,7 +188,7 @@ def main():
         raise ValueError, "There are duplicate sequence names in the split-library sequence file"
     elif float(fasta_check['invalid_seq_chars']) > 0:
         raise ValueError, "There are invalid nucleotides in the split-library sequence file (i.e. not A,C,G,T or N)"
-    elif float(fasta_check['linkerprimers_detected']) > 0:
+    elif float(fasta_check['linkerprimers_detected']) > 0.05:
         raise ValueError, "There are linker primer sequences in split-library the sequence file"
     elif float(fasta_check['nosample_ids_map']) > 0.20:
         raise ValueError, "More than 20% of the samples in the mapping file do not have split-library sequences"

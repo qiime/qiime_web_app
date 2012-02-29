@@ -136,7 +136,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
                 denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
             else:
-                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
+                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --use_sfftools' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
                 
@@ -148,7 +148,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 
                 
         else:
-            process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
+            process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s --use_sfftools' %\
                                 (python_exe_fp, script_dir, sff_input_fp,
                                  output_dir)
             
