@@ -26,6 +26,8 @@ prep_file_name = 'tmp/prep_template_' + post_fix + '.txt'
 doc_file_name = 'tmp/field_reference_' + post_fix + '.html'
 zip_file_name = 'tmp/zip_archive_' + post_fix + '.zip'
 
+number_samples = form['number_samples']
+
 sample_fields = []
 prep_fields = []
 documentation_fields = []
@@ -47,7 +49,7 @@ for field in form:
     items = field.split(':')
     if items[0] == 'sample':
         sample_fields.append(items[1])
-    elif items[0] == 'prep' and portal_type != 'emp':
+    elif items[0] == 'prep' and portal_type in ['emp', 'qiime']:
         prep_fields.append(items[1])
     else:
         # Other form fields will simply be ignored.
@@ -91,6 +93,25 @@ if 'sample_name' in prep_fields:
 
 documentation_fields = sorted(documentation_fields)
 
+def writeFileWithData(field_list, f):
+    # Write headers
+    f.write('\t'.join(field_list))
+
+    # Write data
+    f.write('\n')
+    line = ''
+    for field in field_list:
+        default_field_name = field + '_default'
+        if default_field_name in form and form[default_field_name] != None and form[default_field_name] != '':
+            line += form[default_field_name] + '\t'
+        else:
+            line += '\t'
+    # Remove the trailing tab
+    line = line[:-1]
+    for x in range(int(number_samples)):
+        f.write(line)
+        f.write('\n')
+
 try:
     # Make sure the temp directory exists:
     template_path = os.path.join(sess['document_root'], 'tmp/')
@@ -98,12 +119,12 @@ try:
         os.makedirs(template_path)
             
     with open(sess['document_root'] + sample_file_name, 'w') as f:
-        f.write('\t'.join(sample_fields))
+        writeFileWithData(sample_fields, f)            
     req.write('<li><a href=\'%s\'>%s</a>' % (sample_file_name, 'Sample Template</li>'))
     
-    if portal_type != 'emp':
+    if portal_type in ['qiime', 'emp']:
         with open(sess['document_root'] + prep_file_name, 'w') as f:
-            f.write('\t'.join(prep_fields))
+            writeFileWithData(prep_fields, f)
         req.write('<li><a href=\'%s\'>%s</a>' % (prep_file_name, 'Library/Prep/Sequencing Template</li>'))
 
     # Write out documentation for the selected fields
@@ -129,7 +150,7 @@ try:
     # Create a zip archive
     zip = ZipFile(sess['document_root'] + zip_file_name, 'w')
     zip.write(sess['document_root'] + sample_file_name, os.path.basename(sample_file_name))
-    if portal_type != 'emp':
+    if portal_type in ['qiime', 'emp']:
         zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))
     zip.write(sess['document_root'] + doc_file_name, os.path.basename(doc_file_name))
     if includes_timeseries == 1:

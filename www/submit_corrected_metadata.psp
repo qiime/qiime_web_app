@@ -77,6 +77,7 @@ timeseries_template = None
 
 # Get references to our files
 files = []
+prep_template_present = False
 for item in form:
     if 'study_template' in item:
         files.append(form[item])
@@ -84,6 +85,7 @@ for item in form:
         files.append(form[item])
     elif 'prep_template' in item:
         files.append(form[item])
+        prep_template_present = True
     elif 'timeseries_template' in item:
         timeseries_template = form[item]
 
@@ -185,7 +187,7 @@ for item in validated_values:
 </div>
 
 <%
-if portal_type != 'emp':
+if prep_template_present:
     # Indent
 %>
 

@@ -106,7 +106,7 @@ class MetadataTable(object):
 
         # Get a column factory
         column_factory = ColumnFactory(self._is_invalid, self._data_access)
-
+        
         # Obtain the list of metadata columns for validation
         column_detail_list = self._data_access.getColumnDictionary()
         column_details = {}
@@ -146,7 +146,7 @@ class MetadataTable(object):
                 if column in column_details:
                     self._log.append('Column exists in dictionary.')
                     self._log.append('Creating column with details: %s...' % str(column_details[column]))
-                    result = column_factory.createColumn(column, column_details[column][0], column_details[column][1], column_details[column][2], True)
+                    result = column_factory.createColumn(column)
                     self._log.append('Existing column successfully created.')
                     if result:
                         self._addColumn(result)
@@ -166,10 +166,9 @@ class MetadataTable(object):
                         data_type = extra_column_details[column]['data_type']
                         if not data_type:
                             raise ValueError('Expected data type for extra column however none was found.')
-                        result = column_factory.createColumn(column, data_type, '8000', 0, False)
+                        result = column_factory.createColumn(column)
                     else:
-                        result = column_factory.createColumn(column, 'text', '8000', 0, False)
-
+                        result = column_factory.createColumn(column)
                     if result:
                         self._addColumn(result)
 
@@ -225,7 +224,7 @@ class MetadataTable(object):
 
                     # Add the current value to the appropriate metadata table column
                     self._log.append('Adding new value to metadata column %s: "%s"' % (self._columns[i].column_name, column.strip()))
-                    self._columns[i]._addValue(column.strip(), self._data_access, validate_contents)
+                    self._columns[i]._addValue(column.strip(), validate_contents)
                     i += 1
 
         except Exception, e:

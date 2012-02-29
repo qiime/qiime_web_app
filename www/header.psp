@@ -117,7 +117,7 @@ if sess.get('study_id'):
                     <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIMARKS Templates</a></li>
 
 <%
-    if portal_type == 'qiime':
+    if portal_type in ['qiime', 'emp']:
         req.write('<li><a href="fusebox.psp?page=upload_sff.psp" target="%s">Add/Remove SFF Files</a></li>' % (sess['frame_target']))
     
     # End if

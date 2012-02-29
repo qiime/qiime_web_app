@@ -32,16 +32,21 @@ sess['web_app_user_id'] = 0
 sess['user_dir'] = user_dir
 sess['study_dir'] = study_dir
 sess['document_root'] = req.document_root() + '/qiime/'
+sess['username'] = 'Validator'
+sess['title'] = 'Metadata Validation'
+sess['stylesheet'] = 'style/qiime.css'
+sess['is_admin'] = 0
+sess['frame_target'] = '_parent'
 sess.save()
 
 if form.has_key('page'):
-    # We have the page form variable so let's load it up    
+    # We have the page form variable so let's load it up
     sess['form'] = form
     sess.save()
     page = form["page"]
     loadPage(page)
 else:
-    # No page found and no user in session. To be safe, require user to log in...
+    # Initial entry point - upload a metadata file
     loadPage('upload_metadata.psp')
 %>
 

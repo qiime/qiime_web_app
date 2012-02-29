@@ -367,7 +367,7 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             errors.append('This study includes timeseries data however the timeseries file is missing from this upload.')
                 
         # Perform multi-file validations
-        if portal_type != 'emp' and sample_mdtable and prep_mdtable:
+        if portal_type in ['emp', 'qiime'] and sample_mdtable and prep_mdtable:
             logErrors(errors, multiFileValidation(sample_mdtable, prep_mdtable))
 
         # Check that the archive contains the correct number of files:
@@ -379,7 +379,7 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
         if portal_type == 'qiime':
             required_file_count += 1
                     
-        if len(templates) != required_file_count:
+        if len(templates) < required_file_count:
             errors.append('One or more required files were not included in this upload.')
             errors.append('{0} files supplied. {1} file expected.'.format(len(templates), required_file_count))
         

@@ -32,7 +32,11 @@ for template in templates:
 <input type="hidden" id="page" name="page" value="submit_corrected_metadata.psp"/>
 
 <%
-forward = True
+study_id = sess['study_id']
+if study_id > 0:
+    forward = True
+else:
+    forward = False
 
 if templates != None:
     draw_submit = True

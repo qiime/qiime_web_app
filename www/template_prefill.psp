@@ -78,8 +78,8 @@ try:
         req.write('</tr>')
     req.write('<table>')
                 
-    if portal_type != 'emp':
-        req.write('<h3>Fields in sample template:</h3>')
+    if portal_type in ['qiime', 'emp']:
+        req.write('<h3>Fields in prep template:</h3>')
         req.write('<table>')
         for item in prep_fields:
             req.write('<tr>')

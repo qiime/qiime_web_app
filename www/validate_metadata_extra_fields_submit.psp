@@ -14,6 +14,12 @@ from enums import ServerConfig
 from data_access_connections import data_access_factory
 data_access = data_access_factory(ServerConfig.data_access_type)
 
+def validateOnly():
+    pass
+    
+def validateAndStore():
+    pass
+
 sess = Session.Session(req)
 study_id = sess['study_id']
 
@@ -51,6 +57,7 @@ for item in form:
         columns[original_column_name]['data_type'] = value
 
 # Clear out the existing extra_column_metadata rows
+#if study_id > 0:
 data_access.deleteExtraColumnMetadata(study_id)
 
 # Write the additional column info into the database
@@ -63,17 +70,17 @@ for column in columns:
     elif 'sample' in details['template_name']:
         table_level = 'sample'
         extra_table = 'common_extra_sample'
-        
+    
     data_access.addExtraColumnMetadata(study_id, table_level, \
         details['new_column_name'], details['description'], details['data_type'])
-        
+    
     # Perform column refactoring if necessary
     existing_extra_tables = data_access.findExtraColumnMatch(column)
     for found_extra_table in existing_extra_tables:
         # Ignore if the extra table belongs to this study
         if str(study_id) in found_extra_table:
             continue
-            
+        
         # Add this to the appropriate shared extra table
         # req.write('study_id: {0}, found_extra_table: {1}, column_name: {2}, data_type: {3}, description: {4}'.format(str(study_id), found_extra_table, details['new_column_name'], details['data_type'], details['description']))
         data_access.addCommonExtraColumn(req, study_id, found_extra_table, details['new_column_name'], 

@@ -141,6 +141,33 @@ function checkMGRASTJobStatus()
     xmlhttp.send(null);
 }
 
+function checkEBISRAJobStatus()
+{
+    // check if browser can perform xmlhttp
+    xmlhttp = GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+    
+    div_name = "ebi_sra_statis_div";
+    var url = "check_job_status.psp?job_type_id=14";
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+        }
+    }
+    
+    // perform a GET 
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send(null);
+}
+
+
 // This function is for showing the mapping and OTU tables when using meta-analysis
 function checkMetaAnalysisStatus()
 {
