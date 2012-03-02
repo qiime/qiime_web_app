@@ -375,57 +375,60 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     mapping_file.write('\n'.join(result))
     mapping_file.close()
     
+    #flush result
+    result=[]
+    
     t2 = time()
     print 'Making map file: %s' % (t2 - t1)
     
     t1 = time()
     
-    
     # Get the OTU-Ids and counts for each sample
-    query=[]
-    data = []
+    sample_counts={}
+    otus=[]
     for i,sample_name1 in enumerate(samples_list):
-        user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97, 
-                                          'GREENGENES_REFERENCE',97)
-        for row in user_data:
-            try:
-                data.append((str(row[0]), sample_name1, row[1]))
-            except:
-                continue
-
-    # sort observations and sample-ids
-    sample_order = sorted(set([r[1] for r in data]))
-    obs_order = sorted(set([r[0] for r in data]))
-
-    # convert into dictionary
-    sample_idx = dict([(s,i) for i,s in enumerate(sample_order)])
-    obs_idx = dict([(o,i) for i,o in enumerate(obs_order)])
+       sample_counts[sample_name1]={}
+       user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97, 'GREENGENES_REFERENCE',97)
+       for row in user_data:
+           if row[0] not in otus:
+               otus.append(str(row[0]))
+           if sample_counts[sample_name1].has_key(str(row[0])):
+               raise ValueError, 'Duplicate prokmsa ids! - %s ' % sample_name1
+           try:
+               sample_counts[sample_name1][str(row[0])]=row[1]
+           except:
+               continue
 
     # prepare data for submission to table_factory
-    table_data = {}
-    for obs,sample,value in data:
-        table_data[obs_idx[obs], sample_idx[sample]] = value
-    
+    otu_table={}
+    for i,sample in enumerate(samples_list):
+       for j, otu in enumerate(otus):
+           if sample_counts.has_key(sample):
+               if sample_counts[sample].has_key(otu):
+                   otu_table[j,i]=sample_counts[sample][otu]
+
     # Get Taxonomy information for each observation
     taxonomy=[]
-    for i in obs_order:
-        tax_str=data_access.getGGTaxonomy(True,i,tax_name+'_tax_string')
-        if not tax_str:
-            taxonomy.append('')
-        else:
-            taxonomy.append({'taxonomy':tax_str.split(';')})
+    for i in otus:
+       tax_str=data_access.getGGTaxonomy(True,i,tax_name+'_tax_string')
 
+       if not tax_str:
+           taxonomy.append('')
+       else:
+           taxonomy.append({'taxonomy':tax_str.split(';')})
+
+    # create filepaths
     otu_table_fname = file_name_prefix+'_'+tmp_prefix+'_otu_table.biom'
     otu_table_filepath=os.path.join(otu_table_file_dir, otu_table_fname)
     otu_table_filepath_db=os.path.join(otu_table_file_dir_db, otu_table_fname)
 
     # create the biom object
-    otu_biom=table_factory(table_data,sample_order,obs_order,
-                           sample_metadata=None,
-                           observation_metadata=taxonomy,
-                           table_id=None,
-                           constructor=SparseOTUTable,
-                           dtype=int)
+    otu_biom=table_factory(otu_table,samples_list,otus,
+                          sample_metadata=None,
+                          observation_metadata=taxonomy,
+                          table_id=None,
+                          constructor=SparseOTUTable,
+                          dtype=int)
     
     # define filtering parameters to remove samples with no sequences hitting
     # OTUs
