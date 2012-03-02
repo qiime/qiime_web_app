@@ -121,17 +121,31 @@ def main():
     # on these
     beta_diversity_metrics = params['beta_diversity']['metrics'].split(',')
     
+    serial_or_parallel = params['serial_or_parallel']['method']
+    
     if 'disthist_bdiv_plots' in jobs_to_start:
         #start preparing the script call
-        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -c %s -a -O 50 -f' %\
-            (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
-             output_dir,tree_fp,opts.params_path, \
-             params['make_distance_histograms']['fields'])
+        if serial_or_parallel=='Serial':
+            beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -c %s -f' %\
+                (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
+                 output_dir,tree_fp,opts.params_path, \
+                 params['make_distance_histograms']['fields'])
+        else:
+            beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -c %s -a -O 50 -f' %\
+                (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
+                 output_dir,tree_fp,opts.params_path, \
+                 params['make_distance_histograms']['fields'])
+            
     else:
         #start preparing the script call
-        beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -a -O 50 -f' %\
-            (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
-             tree_fp,opts.params_path)
+        if serial_or_parallel=='Serial':
+            beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -f' %\
+                (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
+                 tree_fp,opts.params_path)
+        else:
+            beta_div_cmd='%s %s/beta_diversity_through_plots.py -i %s -m %s -o %s -t %s -p %s -a -O 50 -f' %\
+                (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
+                 tree_fp,opts.params_path)
     
     # add in optional parameters depending on whether they are supplied
     if bdiv_rarefied_at:

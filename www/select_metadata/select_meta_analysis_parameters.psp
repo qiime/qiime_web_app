@@ -194,6 +194,9 @@ def create_options(script_name,column_headers,help_img):
             }else if (script=='taxonomy'){
                 var taxonomy_class=document.getElementById("taxonomy").value;
                 form_object.innerHTML+='<input type="hidden" name="taxonomy" value="'+taxonomy_class+'">'
+            }else if (script=='serial_or_parallel'){
+                var serial_or_parallel_value=document.getElementById("serial_or_parallel").value;
+                form_object.innerHTML+='<input type="hidden" name="serial_or_parallel:method" value="'+serial_or_parallel_value+'">'
             }else if (pms[i].type=='select-one' || pms[i].type=='select-multiple'){
                 var selections=get_select_box_values(pms[i].id);
                 if (selections.join() != ''){
@@ -226,7 +229,6 @@ def create_options(script_name,column_headers,help_img):
                 alert(pms[i].type);
             }
         }
-        
         
         form_object.innerHTML=form_object.innerHTML+'<input type="hidden" name="jobs_to_start" value="'+jobs_to_start.join()+'">'
 
@@ -283,6 +285,15 @@ else:
 %>
 <h3>Meta-Analyses to Perform</h3>
 <input type="hidden" id="fname_prefix" name="fname_prefix" value="meta_analysis"/>
+
+<input type="checkbox" checked disabled><b>&nbsp;Select Processing Method:</b>
+    <select id="serial_or_parallel" name="serial_or_parallel">
+        <option selected>Serial
+        <option>Parallel
+    </select>
+</input>
+<br>
+<br>
 
 <input type="checkbox" checked disabled \><b>&nbsp;OTU Table</b><br>
 <a href="javascript:show_hide_optional('tax_assignment')"><img src="./img/toggle-small-expand.png" id="tax_assignment_icon"\> Optional Parameters </a>(taxonomy assignment and rarefaction)<br>

@@ -127,9 +127,16 @@ def main():
                             params=params,
                             qiime_config=qiime_config)
     
-    arare_cmd='%s %s/alpha_rarefaction.py -i %s -m %s -o %s -t %s -a -O 50 -p %s -f' %\
-        (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
-         output_dir,tree_fp,opts.params_path)
+    serial_or_parallel = params['serial_or_parallel']['method']
+    
+    if serial_or_parallel=='Serial':
+        arare_cmd='%s %s/alpha_rarefaction.py -i %s -m %s -o %s -t %s -p %s -f' %\
+            (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
+             output_dir,tree_fp,opts.params_path)
+    else:
+        arare_cmd='%s %s/alpha_rarefaction.py -i %s -m %s -o %s -t %s -a -O 50 -p %s -f' %\
+            (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
+             output_dir,tree_fp,opts.params_path)
     
     commands.append([('Alpha-Rarefaction',arare_cmd)])
     
