@@ -36,6 +36,10 @@ from submit_job_to_qiime import submitQiimeJob
 from qiime.filter import filter_samples_from_otu_table
 import socket
 from biom.table import SparseOTUTable, DenseOTUTable, table_factory
+from biom.parse import parse_biom_table
+from json import dumps
+
+
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
 
@@ -386,6 +390,7 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     # Get the OTU-Ids and counts for each sample
     sample_counts={}
     otus=[]
+
     for i,sample_name1 in enumerate(samples_list):
        sample_counts[sample_name1]={}
        user_data=data_access.getOTUTable(True,sample_name1,'UCLUST_REF',97, 'GREENGENES_REFERENCE',97)
@@ -399,29 +404,43 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
            except:
                continue
 
-    # prepare data for submission to table_factory
-    otu_table={}
+    # prepare data for json diction to table_factory
+    dict_for_json={}
+    dict_for_json['id']=None
+    dict_for_json['format']="Biological Observation Matrix v0.9"
+    dict_for_json['format_url']="http://www.qiime.org/svn_documentation/documentation/biom_format.html"
+    dict_for_json['type']="OTU table"
+    dict_for_json['generated_by']="QIIME revision XYZ"
+    dict_for_json['date']="2011-12-19T19:00:00"
+    dict_for_json['matrix_type']="sparse"
+    dict_for_json['matrix_element_type']="int"
+    dict_for_json['shape']=[len(otus),len(samples_list)]
+    dict_for_json['rows']=[]
+    dict_for_json["data"]=[]
+    dict_for_json["columns"]=[]
+
+    # create the sparse data output
     for i,sample in enumerate(samples_list):
-       for j, otu in enumerate(otus):
-           if sample_counts.has_key(sample):
-               if sample_counts[sample].has_key(otu):
-                   otu_table[j,i]=sample_counts[sample][otu]
+        dict_for_json["columns"].append({"id":sample, "metadata":None})
+        for j, otu in enumerate(otus):
+            if sample_counts.has_key(sample):
+                if sample_counts[sample].has_key(otu):
+                    dict_for_json["data"].append([j,i,sample_counts[sample][otu]])
 
     # Get Taxonomy information for each observation
     taxonomy=[]
     for i in otus:
        tax_str=data_access.getGGTaxonomy(True,i,tax_name+'_tax_string')
-
        if not tax_str:
-           taxonomy.append('')
+           dict_for_json['rows'].append({"id":"GG_OTU_1", "metadata":None})
        else:
-           taxonomy.append({'taxonomy':tax_str.split(';')})
+           dict_for_json['rows'].append({"id":i, "metadata":{'taxonomy':tax_str.split(';')}})
 
-    # create filepaths
-    otu_table_fname = file_name_prefix+'_'+tmp_prefix+'_otu_table.biom'
-    otu_table_filepath=os.path.join(otu_table_file_dir, otu_table_fname)
-    otu_table_filepath_db=os.path.join(otu_table_file_dir_db, otu_table_fname)
 
+    json_dump= dumps(dict_for_json)
+    
+    """
+    # we are dumping json now instead 
     # create the biom object
     otu_biom=table_factory(otu_table,samples_list,otus,
                           sample_metadata=None,
@@ -429,23 +448,27 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
                           table_id=None,
                           constructor=SparseOTUTable,
                           dtype=int)
-    
+    """
     # define filtering parameters to remove samples with no sequences hitting
     # OTUs
-    sample_ids_to_keep=otu_biom.SampleIds
+    sample_ids_to_keep=samples_list
     min_count=1
     max_count=inf
     
-    filtered_otu_table = filter_samples_from_otu_table(otu_biom,
+    filtered_otu_table = filter_samples_from_otu_table(parse_biom_table(json_dump),
                                                        sample_ids_to_keep,
                                                        min_count,
                                                        max_count)
+
+    # create filepaths
+    otu_table_fname = file_name_prefix+'_'+tmp_prefix+'_otu_table.biom'
+    otu_table_filepath=os.path.join(otu_table_file_dir, otu_table_fname)
+    otu_table_filepath_db=os.path.join(otu_table_file_dir_db, otu_table_fname)
     
     otu_table_write=open(otu_table_filepath,'w')
     otu_table_write.write(filtered_otu_table.getBiomFormatJsonString('QIIME-DB %s' % get_qiime_library_version()))
     otu_table_write.close()
-
-
+    
     # zip up the OTU table and Mapping file for easy download
     zip_fpath=os.path.join(zip_file_dir, file_name_prefix + '_' + tmp_prefix + '_map_and_otu_table.zip')
     zip_fpath_db=os.path.join(zip_file_dir_db, file_name_prefix + '_' + tmp_prefix+ '_map_and_otu_table.zip')
