@@ -127,7 +127,7 @@ def main():
                             params=params,
                             qiime_config=qiime_config)
     
-    arare_cmd='%s %s/alpha_rarefaction.py -i %s -m %s -o %s -t %s -a -O 100 -p %s -f' %\
+    arare_cmd='%s %s/alpha_rarefaction.py -i %s -m %s -o %s -t %s -a -O 50 -p %s -f' %\
         (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
          output_dir,tree_fp,opts.params_path)
     
