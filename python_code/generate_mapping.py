@@ -31,7 +31,6 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config
 from cogent.util.misc import get_random_directory_name
 from submit_job_to_qiime import submitQiimeJob
-from qiime.filter_otu_table import _filter_table_samples
 import socket
 from generate_mapping_and_otu_table import get_mapping_data
 qiime_config = load_qiime_config()
