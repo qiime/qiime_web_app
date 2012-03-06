@@ -16,7 +16,7 @@ from subprocess import Popen, PIPE, STDOUT
 from qiime.parse import parse_mapping_file
 from cogent.util.misc import app_path
 from cogent.app.util import ApplicationNotFoundError
-from os import system, popen, listdir, mkdir
+from os import system, popen, listdir, mkdir,environ
 from glob import glob
 import re, sys
 from random import choice
@@ -216,8 +216,8 @@ def run_chain_pick_otus(fasta_file, output_dir, command_handler, params, qiime_c
     
     # Convert to classic OTU table
     otu_table_fp = join(output_dir,'exact_uclust_ref_otu_table.txt')
-    make_otu_table_cmd='%s %s/convert_biom.py -i %s -o %s -b' %\
-            (python_exe_fp, script_dir, otu_biom_fp, otu_table_fp)
+    make_otu_table_cmd='%s %s/software/biom-format/scripts/convert_biom.py -i %s -o %s -b' %\
+            (python_exe_fp, environ['HOME'], otu_biom_fp, otu_table_fp)
 
     commands.append([('Make OTU Table', make_otu_table_cmd)])
     

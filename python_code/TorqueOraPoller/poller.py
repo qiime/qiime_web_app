@@ -276,7 +276,7 @@ class Poller(Daemon):
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='betaDiversityThroughPlots':
                 submit_queue = 'no_bad_touching'
-                pvmem='4gb'
+                pvmem='64gb'
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='makeOTUHeatmap':
                 submit_queue = 'no_bad_touching'
