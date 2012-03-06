@@ -163,7 +163,7 @@ function formComplete_setup_functions() {
       result_width += 200;
     }
 
-    jQuery(this).autocomplete(BP_SEARCH_SERVER + "/search/json_search/"+ontology_id, {
+    jQuery(this).bioportal_autocomplete(BP_SEARCH_SERVER + "/search/json_search/"+ontology_id, {
         extraParams: extra_params,
         lineSeparator: "~!~",
         matchSubset: 0,
@@ -176,7 +176,7 @@ function formComplete_setup_functions() {
         footer: '<div style="color: grey; font-size: 8pt; font-family: Verdana; padding: .8em .5em .3em;">Results provided by <a style="color: grey;" href="' + BP_SEARCH_SERVER + '">' + BP_ORG_SITE + '</a></div>',
         formatItem: formComplete_formatItem
     });
-
+    
     var html = "";
     if (document.getElementById(jQuery(this).attr('name') + "_bioportal_concept_id") == null)
       html += "<input type='hidden' id='" + jQuery(this).attr('name') + "_bioportal_concept_id'>";
@@ -222,31 +222,31 @@ function bpFormSelect(li) {
 }
 
 function truncateText(text, max_length) {
-  if (typeof max_length === 'undefined' || max_length == "") {
-    max_length = 70;
-  }
+    if (typeof max_length === 'undefined' || max_length == "") {
+        max_length = 70;
+    }
 
-  var more = '...';
+    var more = '...';
 
-  var content_length = $.trim(text).length;
-  if (content_length <= max_length)
+    var content_length = $.trim(text).length;
+    if (content_length <= max_length)
     return text;  // bail early if not overlong
 
-  var actual_max_length = max_length - more.length;
-  var truncated_node = jQuery("<div>");
-  var full_node = jQuery("<div>").html(text).hide();
+    var actual_max_length = max_length - more.length;
+    var truncated_node = jQuery("<div>");
+    var full_node = jQuery("<div>").html(text).hide();
 
-  text = text.replace(/^ /, '');  // node had trailing whitespace.
+    text = text.replace(/^ /, '');  // node had trailing whitespace.
 
-  var text_short = text.slice(0, max_length);
+    var text_short = text.slice(0, max_length);
 
-  // Ensure HTML entities are encoded
-  // http://debuggable.com/posts/encode-html-entities-with-jquery:480f4dd6-13cc-4ce9-8071-4710cbdd56cb
-  text_short = $('<div/>').text(text_short).html();
+    // Ensure HTML entities are encoded
+    // http://debuggable.com/posts/encode-html-entities-with-jquery:480f4dd6-13cc-4ce9-8071-4710cbdd56cb
+    text_short = $('<div/>').text(text_short).html();
 
-  var other_text = text.slice(max_length, text.length);
-
-  text_short += "<span class='expand_icon'><b>"+more+"</b></span>";
-  text_short += "<span class='long_text'>" + other_text + "</span>";
-  return text_short;
+    var other_text = text.slice(max_length, text.length);
+    
+    text_short += "<span class='expand_icon'><b>"+more+"</b></span>";
+    text_short += "<span class='long_text'>" + other_text + "</span>";
+    return text_short;
 }
