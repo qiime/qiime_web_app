@@ -12,9 +12,13 @@ __status__ = "Production"
 <%
 from data_access_connections import data_access_factory
 from enums import ServerConfig
-
 # Grab some required values for this page
 sess = Session.Session(req)
+
+if 'meta_analysis_id' not in sess and 'study_id' not in sess:
+    sess.invalidate()
+    req.write('<meta http-equiv="REFRESH" content="0;url=index.psp">')
+
 data_access = data_access_factory(ServerConfig.data_access_type)
 job_locator_id = 0
 study_id = sess['study_id']
@@ -64,5 +68,5 @@ for jobid in job_type_ids:
         req.write(display_text)
         if job['job_notes'] != None:
             req.write('<br/>Output: ' + job['job_notes'])
-
+#
 %>
