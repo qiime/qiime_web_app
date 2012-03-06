@@ -149,9 +149,13 @@ if portal_type == 'qiime':
                     <li><a href="fusebox.psp?page=tools_geo.psp" target="<%=sess['frame_target']%>">Georeference Utility</a></li>
                 </ul>
             </li>
-
-            <li><a href="docs/index.html" target="_blank">Help</a></li>
-            <li><a href="http://microbio.me/<%=portal_type%>" target="<%=sess['frame_target']%>">Log Out</a></li>
+            <li>
+            <form id="logout" action="index.psp" method="post">
+                <input type="hidden" name="portal_type" id="portal_type" value="<%=portal_type%>">
+                <a href="" onclick="document.forms['logout'].submit(); return false;">
+                Log Out</a>
+            </form>
+            </li>
         </ul>
         </td></tr></table>
     </div>
