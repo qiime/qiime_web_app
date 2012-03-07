@@ -183,11 +183,25 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         copy_to_split_lib_fastas_cmd=cp_files(input_fp,join(split_lib_fastas,
                                         copy_split_lib_seqs_location))
         commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
-   
+    
+    # create per sample fastq files
+    fastq_output=join(split_library_output,'per_sample_fastq')
+    create_dir(fastq_output)
+    try:
+        params_str = get_params_str(params['convert_fastaqual_to_fastq'])
+    except KeyError:
+        params_str = ''
+        
+    input_qual_fp=join(split_library_output,'seqs_filtered.qual')
+    
+    create_fastq_cmd = '%s %s/convert_fastaqual_to_fastq.py -f %s -q %s -o %s %s'%\
+     (python_exe_fp, script_dir, input_fp, input_qual_fp,
+      fastq_output, params_str)
+    commands.append([('Create FASTQ', create_fastq_cmd)])
    
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
-
+    
     # Return the fasta file paths
     return split_lib_fasta_input_files
     
