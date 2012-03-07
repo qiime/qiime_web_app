@@ -17,6 +17,7 @@ split_libraries:disable_bc_correction	False
 split_libraries:qual_score_window	0
 split_libraries:disable_primers	False
 split_libraries:reverse_primers	disable
+split_libraries:record_qual_scores True
 
 # Split libraries parameters
 split_libraries_fastq:retain_unassigned_reads
