@@ -101,3 +101,6 @@ make_rarefaction_plots:prefs_path
 # Collate alpha
 collate_alpha:example_path
 
+# Convert fna and qual to fastq
+convert_fastaqual_to_fastq:multiple_output_files True
+convert_fastaqual_to_fastq:full_fastq:False
