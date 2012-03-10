@@ -23,7 +23,7 @@ from qiime.util import (compute_seqs_per_library_stats,
 
 from qiime.alpha_diversity import list_known_metrics
 alpha_metrics=list_known_metrics();
-from qiime.sort import natsort
+from qiime.sort import natsort_case_insensitive
 from qiime.beta_diversity import list_known_metrics
 beta_metrics=list_known_metrics();
 
@@ -58,7 +58,7 @@ user_id=int(sess['web_app_user_id'])
 meta_id=sess['meta_analysis_id']
 
 # sort column headers
-column_headers=natsort(column_headers)
+column_headers=natsort_case_insensitive(column_headers)
 
 def create_options(script_name,column_headers,help_img):
     from html_from_script import get_html
