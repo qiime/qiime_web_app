@@ -129,7 +129,7 @@ def main():
                             qiime_config=qiime_config)
     
     #start preparing the script call
-    sum_taxa_cmd='%s %s/summarize_taxa_through_plots.py -i %s -m %s -o %s -p %s -f' %\
+    sum_taxa_cmd='%s %s/summarize_taxa_through_plots.py -i %s -m %s -o %s -p %s -s -f' %\
         (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, output_dir,\
          opts.params_path)
     

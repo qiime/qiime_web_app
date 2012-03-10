@@ -170,7 +170,9 @@ def generate_string_input(script_name,label_to_use,option_help,option,headers,
                 html_out+='<option>%s\n' % (i)
             
         html_out+='</select></td></tr>\n'
-    elif option_name in ['colorby','mapping_category']:
+    elif (script_name=='make_3d_plots' or script_name=='make_2d_plots' or \
+          script_name=='make_rarefaction_plots') and option_name in ['colorby']:
+        
         #create a multi-select box which uses the column headers passed in
         html_out='<tr><th>%s&nbsp;%s</th><td><select id="%s" multiple>\n' % \
                         (label_to_use,option_help,script_name+":"+option_name)
@@ -178,7 +180,13 @@ def generate_string_input(script_name,label_to_use,option_help,option,headers,
             html_out+='<option>%s\n' % (i)
             
         html_out+='</select></td></tr>\n'
-    elif option_name in ['custom_axes']:
+    elif (script_name=='plot_taxa_summary') and option_name in ['colorby']:
+        
+        # NEEDS to show list of SampleIDs or Values from a CATEGORY if 
+        # sum_by_cat checked -- Turned off for now
+        pass
+        
+    elif option_name in ['custom_axes','mapping_category','sort_field']:
         #create a single-select box which uses the column headers passed in
         html_out='<tr><th>%s&nbsp;%s</th><td><select id="%s">\n' % \
                         (label_to_use,option_help,script_name+":"+option_name)
@@ -260,7 +268,7 @@ def generate_False_input(script_name,label_to_use,option_help,option,option_name
 def get_html_for_options(script_name,script_info,option_type,column_headers,
                          help_img):
     '''determine the option type and produce an html input instance'''
-       
+    
     option_html=''
     options_list=script_info.get(option_type)
     # get either required or optional options

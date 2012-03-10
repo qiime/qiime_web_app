@@ -23,7 +23,7 @@ from qiime.util import (compute_seqs_per_library_stats,
 
 from qiime.alpha_diversity import list_known_metrics
 alpha_metrics=list_known_metrics();
-
+from qiime.sort import natsort
 from qiime.beta_diversity import list_known_metrics
 beta_metrics=list_known_metrics();
 
@@ -39,6 +39,7 @@ form_data=sess['form']
 column_headers=[]
 column_headers.append('SampleID')
 column_headers.append('LinkerPrimerSequence')
+column_headers.append('BarcodeSequence')
 #write the form data to be used for seq/sample summary
 req.write('<form onsubmit="return false;" id="otu_table_info">')
 for i in form_data:
@@ -46,8 +47,9 @@ for i in form_data:
         contains_seqs=form_data[i]
         req.write("<script type='text/javascript'>var contains_seqs='%s'</script>" % (contains_seqs))
     elif i != 'page':
-        column_headers.append(\
-                        i.split('####STUDIES####')[0].split('####SEP####')[1])
+        column_head=i.split('####STUDIES####')[0].split('####SEP####')[1]
+        if column_head not in ['sample_name','PRIMER','LINKER','BARCODE']:
+            column_headers.append(column_head)
         req.write('<input type="hidden" id="%s" value="%s" \>' % \
                                                             (i,form_data[i]))
 req.write('</form>')
@@ -56,7 +58,7 @@ user_id=int(sess['web_app_user_id'])
 meta_id=sess['meta_analysis_id']
 
 # sort column headers
-column_headers.sort()
+column_headers=natsort(column_headers)
 
 def create_options(script_name,column_headers,help_img):
     from html_from_script import get_html
@@ -182,6 +184,8 @@ def create_options(script_name,column_headers,help_img):
                 if (document.getElementById(script).checked){
                     jobs_to_start.push(split_script.slice(1,split_script.length).join('_'))
                 }
+            }else if (script=='combine_columns' || pms[i].type=='button'){
+                //do nothing
             }else if (script=='fname_prefix'){
                 form_object.innerHTML+='<input type="hidden" name="'+script+'" value="'+pms[i].value+'">'
             }else if (script=='bdiv_rarefied_at' || script=='otutable_rarefied_at'){
@@ -243,6 +247,7 @@ def create_options(script_name,column_headers,help_img):
             div_to_show_hide.style.display='none';
         }
     }
+    
     function show_hide_optional(div_id){
         div_to_show_hide=document.getElementById(div_id)
         icon_to_change=document.getElementById(div_id+'_icon')
@@ -254,6 +259,39 @@ def create_options(script_name,column_headers,help_img):
             icon_to_change.src='./img/toggle-small.png';
         }
     }
+    
+    function combine_mapping_categories(){
+        // this function takes an the categories from the combine_columns 
+        // select-box and merges them in the lists on the page
+        var selections=get_select_box_values('combine_columns');
+        if (selections.length > 1){
+            value="'"+selections.join('&&')+"'"
+            add_select_option("summarize_otu_by_cat:mapping_category",value)
+            add_select_option("make_rarefaction_plots:colorby",value)
+            add_select_option("make_2d_plots:colorby",value)
+            add_select_option("make_3d_plots:colorby",value)
+            
+            // add new combined column to page
+            result_text=document.getElementById("combined_column_result")
+            if (result_text.innerHTML==''){
+                result_text.innerHTML=value;
+            }else{
+                result_text.innerHTML+=(', '+value);
+            }
+        }
+    }
+    
+    function add_select_option(select_id,text){
+        // this function inserts an option to a select-box
+        var optn = document.createElement("OPTION");
+        optn.text = value;
+        
+        var select_box_to_update=document.getElementById(select_id)
+        select_box_to_update.options.add(optn);
+        
+        return;
+    }
+    
 </script>
 <link rel="stylesheet" href="./style/select_metadata_styles.css" type="text/css">
 
@@ -317,6 +355,27 @@ else:
     </tr>
     </table>
 </div>
+<a href="javascript:show_hide_optional('combine_samples')"><img src="./img/toggle-small-expand.png" id="combine_samples_icon"\> Optional Parameters </a>(Combine Mapping Categories)<br>
+
+<div id='combine_samples' class="optional" style="display:none;valign:top">
+    <table>
+    <tr><td><b>Select Categories: </b></td>
+    <td align="left">
+    <select id="combine_columns" name="combine_columns" multiple>
+<%
+    for i in column_headers:
+        req.write('<option>%s\n' % (i))
+    #
+%>
+    </select>
+    </td>
+    <td align="left"><input type='button' id='combine_columns_button' onclick="combine_mapping_categories()" value="Combine Categories" \>
+    </td>
+    </tr>
+    <tr><td colspan="3"><i>Note: all combined columns will appear at the end of the select-boxes containing categories</i></td></tr>
+    <tr><td colspan="2" ><h5>Combined Columns:</h5></td><td width="100px"><h5 id="combined_column_result"></h5></td></tr>
+    </table>
+</div>
 <br>
 <b><input type='checkbox' id='check_showTE'>&nbsp;TopiaryExplorer Visualization</input></b>
 <br>
@@ -342,7 +401,10 @@ else:
     req.write(create_options(script_name,column_headers,help_img))
 
     req.write('</div><br>')
-
+    
+    script_name='sort_otu_table'
+    req.write(create_options(script_name,column_headers,help_img))
+    
     script_name='summarize_taxa'
     req.write(create_options(script_name,column_headers,help_img))
 
