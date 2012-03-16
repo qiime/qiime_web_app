@@ -34,15 +34,40 @@ from qiime.util import get_qiime_scripts_dir,create_dir,load_qiime_config,\
 from cogent.util.misc import get_random_directory_name
 from submit_job_to_qiime import submitQiimeJob
 from qiime.filter import filter_samples_from_otu_table
-import socket
 from biom.table import SparseOTUTable, DenseOTUTable, table_factory,\
                        get_biom_format_version_string,get_biom_format_url_string
 from biom.parse import parse_biom_table
 from json import dumps
-
+from numpy import array
 
 qiime_config = load_qiime_config()
 script_dir = get_qiime_scripts_dir()
+
+def combine_map_header_cols(combinecolorby,mapping):
+    """Merge two or more mapping columns into one column"""
+    combinedmapdata=array(['']*len(mapping),dtype='a1000')
+    title=[]
+    match=False
+    for p in range(len(combinecolorby)):                    
+        for i in range(len(mapping[0])):
+            if str(combinecolorby[p])==str(mapping[0][i]):
+                match=True
+                for q in range(len(mapping)):
+                    if combinedmapdata[q]=='':
+                        combinedmapdata[q]=mapping[q][i]
+                    else:
+                        combinedmapdata[q]=combinedmapdata[q]+'_'+mapping[q][i]
+                break
+            else:
+                match=False
+        if not match:
+            raise ValueError, 'One of the columns you tried to combine does not exist!'
+        title.append(combinecolorby[p])
+    combinedmapdata[0]='_and_'.join(title)
+    for i in range(len(combinedmapdata)):
+        mapping[i].append(combinedmapdata[i])
+    
+    return mapping
 
 def get_mapping_data(data_access,is_admin,table_col_value,user_id,
                      get_count=False):
@@ -207,6 +232,7 @@ def get_mapping_data(data_access,is_admin,table_col_value,user_id,
         
     return result_arr,cur_description
 
+
 def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp, 
                                 file_name_prefix,user_id,meta_id,params_path,
                                 rarefied_at,otutable_rarefied_at,
@@ -370,17 +396,46 @@ def write_mapping_and_otu_table(data_access, table_col_value, fs_fp, web_fp,
     all_headers = ['SampleID','BarcodeSequence','LinkerPrimerSequence'] \
      + list(all_headers) + ['Description']
     
-    # generate the mapping file lines containing all fields
-    result.append('#' + '\t'.join(all_headers))
-    for mapping_line in mapping_lines:
-        result.append('\t'.join(\
-         [mapping_line.get(h,'NA') for h in all_headers if h!='']))
     
+    # generate the mapping file lines containing all fields
+    result.append(all_headers)
+    for mapping_line in mapping_lines:
+        result.append([mapping_line.get(h,'NA') for h in all_headers if h!=''])
+
+    
+    #Create an array using multiple columns from mapping file
+    try:
+        parameter_f = open(params_path)
+    except IOError:
+        raise IOError,\
+         "Can't open parameters file (%s). Does it exist? Do you have read access?"\
+         % params_path
+    
+    qiime_params=parse_qiime_parameters(parameter_f)
+    try:
+        combined_mapping_categories = \
+                        qiime_params['combine_metadata']['columns'].split(',')
+    except:
+        combined_mapping_categories=''
+        
+    if combined_mapping_categories:
+        for mapping_category in combined_mapping_categories:
+            combinecolorby=mapping_category.strip('\'').strip('"').split('_and_')
+            result=combine_map_header_cols(combinecolorby,result)
+        
+    final_mapping=[]
+    for i,mdata in enumerate(result):
+        if i==0:
+            final_mapping.append('#'+'\t'.join(mdata))
+        else:
+            final_mapping.append('\t'.join(mdata))
+        
     #test=merge_mapping_files([merged_file])
-    mapping_file.write('\n'.join(result))
+    mapping_file.write('\n'.join(final_mapping))
     mapping_file.close()
     
     #flush result
+    final_mapping=[]
     result=[]
     
     t2 = time()

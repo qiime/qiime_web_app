@@ -13,8 +13,30 @@ __status__ = "Development"
  
 
 from cogent.util.unit_test import TestCase, main
+from generate_mapping_and_otu_table import combine_map_header_cols
 
+class TopLevelTests(TestCase):
+    """Tests of top-level functions"""
 
-
+    def setUp(self):
+        
+        self.map = [['SampleID','BarcodeSequence','LinkerPrimerSequence',
+                     'Description'],['Sample1','AA','GGCC','Test1'],
+                     ['Sample2','CC','AAGG','Test2']]
+        
+        
+    def test_combine_map_header_cols(self):
+        """ combine_map_header_cols: this combines 2 cols in mapping file"""
+        
+        
+        obs=combine_map_header_cols(['SampleID','Description'],self.map)
+        exp = [['SampleID','BarcodeSequence','LinkerPrimerSequence',
+                     'Description','SampleID_and_Description'],
+                     ['Sample1','AA','GGCC','Test1','Sample1_Test1'],
+                     ['Sample2','CC','AAGG','Test2','Sample2_Test2']]
+        
+        self.assertEqual(obs,exp)
+        
+        
 if __name__ == "__main__":
     main()

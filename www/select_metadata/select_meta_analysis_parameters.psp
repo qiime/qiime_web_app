@@ -158,6 +158,7 @@ def create_options(script_name,column_headers,help_img):
         }
         return vals_to_use;
     }
+    
     /* 
        Following function was adapted from: 
        http://rickyrosario.com/blog/javascript-startswith-and-endswith-implementation-for-strings/
@@ -265,26 +266,25 @@ def create_options(script_name,column_headers,help_img):
         // select-box and merges them in the lists on the page
         var selections=get_select_box_values('combine_columns');
         if (selections.length > 1){
-            value="'"+selections.join('&&')+"'"
-            add_select_option("summarize_otu_by_cat:mapping_category",value)
-            add_select_option("make_rarefaction_plots:colorby",value)
-            add_select_option("make_2d_plots:colorby",value)
-            add_select_option("make_3d_plots:colorby",value)
+            value=selections.join('_and_')
+            add_select_option("summarize_otu_by_cat:mapping_category",value,false)
+            add_select_option("make_rarefaction_plots:colorby",value,false)
+            add_select_option("make_2d_plots:colorby",value,false)
+            add_select_option("make_3d_plots:colorby",value,false)
+            add_select_option("sort_otu_table:sort_field",value,false)
+            add_select_option("combine_metadata:columns",value,true)
             
-            // add new combined column to page
-            result_text=document.getElementById("combined_column_result")
-            if (result_text.innerHTML==''){
-                result_text.innerHTML=value;
-            }else{
-                result_text.innerHTML+=(', '+value);
-            }
+            
         }
     }
     
-    function add_select_option(select_id,text){
+    function add_select_option(select_id,text, is_selected){
         // this function inserts an option to a select-box
         var optn = document.createElement("OPTION");
         optn.text = value;
+        if (is_selected){
+            optn.selected=true;
+        }
         
         var select_box_to_update=document.getElementById(select_id)
         select_box_to_update.options.add(optn);
@@ -373,8 +373,8 @@ else:
     </td>
     </tr>
     <tr><td colspan="3"><i>Note: all combined columns will appear at the end of the select-boxes containing categories</i></td></tr>
-    <tr><td colspan="2" ><h5>Combined Columns:</h5></td><td width="100px"><h5 id="combined_column_result"></h5></td></tr>
     </table>
+    <table><tr><td><h5>Combined Columns:</h5></td><td><select id="combine_metadata:columns" name="combine_metadata:columns" multiple disabled></select></td></tr></table>
 </div>
 <br>
 <b><input type='checkbox' id='check_showTE'>&nbsp;TopiaryExplorer Visualization</input></b>
