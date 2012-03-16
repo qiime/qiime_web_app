@@ -48,11 +48,13 @@ for i in form_data:
         req.write("<script type='text/javascript'>var contains_seqs='%s'</script>" % (contains_seqs))
     elif i != 'page':
         column_head=i.split('####STUDIES####')[0].split('####SEP####')[1]
-        if column_head not in ['sample_name','PRIMER','LINKER','BARCODE']:
+        if column_head not in ['sample_name','PRIMER','LINKER','BARCODE','DESCRIPTION']:
             column_headers.append(column_head)
         req.write('<input type="hidden" id="%s" value="%s" \>' % \
                                                             (i,form_data[i]))
 req.write('</form>')
+column_headers.append('Description')
+
 
 user_id=int(sess['web_app_user_id'])
 meta_id=sess['meta_analysis_id']
