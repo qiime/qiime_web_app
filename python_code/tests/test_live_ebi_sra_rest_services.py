@@ -67,6 +67,7 @@ class Tests(TestCase):
         live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir)
         live.host_name = ''
         live.generate_metadata_files(debug = True)
+        life.submit_files()
 
 if __name__ == "__main__":
     main()
