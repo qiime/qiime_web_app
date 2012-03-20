@@ -37,11 +37,11 @@ class sequence_file_writer_factory(object):
         
         if platform in sff:
             # Note that even though we start with SFF files, we're actually writing out a fastq file for export
-            return SffSequenceWriter(self.data_access, study_id, sample_id, row_number, 'sff', root_dir, '.fastq')
+            return SffSequenceWriter(self.data_access, study_id, sample_id, row_number, 'sff', root_dir, 'fastq')
         elif platform in fastq:
-            return FastqSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fastq', root_dir, '.fastq')
+            return FastqSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fastq', root_dir, 'fastq')
         elif platform in fasta:
-            return FastaSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fasta', root_dir, '.fasta')
+            return FastaSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fasta', root_dir, 'fasta')
         else:
             raise ValueError('Could not determine sequence file writer type based on platform: "%s"' % platform)
             return None
