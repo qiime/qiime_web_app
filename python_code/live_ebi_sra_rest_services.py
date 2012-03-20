@@ -253,6 +253,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         # Create or reference sequence file
                         # Can be fastq, sff, or fasta, depending on what files we have available
                         file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
+                        print 'Writer type is {0}'.format(file_writer.writer_type)
                         file_path = ''
                         file_identifier = ''
                         try:
