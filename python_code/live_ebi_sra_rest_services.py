@@ -254,12 +254,14 @@ class LiveEBISRARestServices(BaseRestServices):
                         # Can be fastq, sff, or fasta, depending on what files we have available
                         file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
                         
+                        file_path = ''
                         try:
                             file_path = file_writer.write()
                             file_identifier = '{0}:{1}:{2}'.format(self.study_id, sample_id, row_number)
                             self.file_list[file_identifier] = file_path
                         except Exception, e:
                             self.errors.append(str(e))
+                            continue
                         
                         
                         ######################################
