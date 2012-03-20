@@ -102,7 +102,7 @@ class LiveEBISRARestServices(BaseRestServices):
         xml_file_list = []
         xml_file_list.append(self.study_file_path)
         xml_file_list.append(self.submission_file_path)
-        xml_file_list.append(self.study_filesample_file_path_path)
+        xml_file_list.append(self.sample_file_path)
         xml_file_list.append(self.experiment_file_path)
         xml_file_list.append(self.run_file_path)
         
