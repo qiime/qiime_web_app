@@ -15,6 +15,7 @@ import httplib, urllib
 from base_rest_services import BaseRestServices
 from sequence_file_writer import sequence_file_writer_factory
 import hashlib
+from ftplib import FTP
 #from data_access_connections import data_access_factory
 #from enums import ServerConfig
 
@@ -30,6 +31,30 @@ class LiveEBISRARestServices(BaseRestServices):
         self.root_dir = root_dir
         self.file_list = {}
         self.errors = []
+        
+        # File paths
+        self.submission_file_path = '/tmp/ebi_sra_submission_metadata_%s.xml' % self.study_id
+        self.study_file_path = '/tmp/ebi_sra_study_metadata_%s.xml' % self.study_id
+        self.sample_file_path = '/tmp/ebi_sra_sample_metadata_%s.xml' % self.study_id
+        self.experiment_file_path = '/tmp/ebi_sra_experiment_metadata_%s.xml' % self.study_id
+        self.run_file_path = '/tmp/ebi_sra_run_metadata_%s.xml' % self.study_id
+        
+        # EBI FTP info
+        self.ftp_url = 'ftp.sra.ebi.ac.uk'
+        self.ftp_user = 'era-drop-215'
+        self.ftp_pass = 'J7XoQJ8I'
+        
+        # Open the FTP connection, leave open for efficiency
+        self.ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
+
+    def __del__(self):
+        # Close the FTP connection
+        self.ftp.quit()
+        
+    def send_ftp_data(self, file_path):
+        f = open(file_path, 'rb')
+        self.ftp.storbinary('STOR {0}'.format(basename(file_path)), f)
+        f.close()
 
     def send_post_data(self, url_path, file_contents, debug = False):
         success = None
@@ -69,23 +94,29 @@ class LiveEBISRARestServices(BaseRestServices):
 
         return success, entity_id
         
-    def submit_files(self):
-        """ Sends all files to EBI
+    def submit_files(self, debug = False):
+        """ Sends all files to EBI via FTP
         """
         
-        # Read the study file
-        study_file = open(study_file_path, 'r')
-        file_contents = study_file.read()
-        study_file.close()
-
-        # Send the data to EBI via REST services
-        success, project_id = self.send_post_data(self.study_url, file_contents, self.hostname)
-        if not project_id:
-            print 'Failed to add study metadata to MG-RAST. Aborting...'
-            return
-            
-        # Send all other files in the same way.
+        # Send the XML files
+        xml_file_list = []
+        xml_file_list.append(self.study_file_path)
+        xml_file_list.append(self.submission_file_path)
+        xml_file_list.append(self.study_filesample_file_path_path)
+        xml_file_list.append(self.experiment_file_path)
+        xml_file_list.append(self.run_file_path)
         
+        for f in xml_file_list:
+            if debug:
+                print 'Sending XML file "{0}"'.format(f)
+            send_ftp_data(f)        
+        
+        # Send the sequence files
+        for f in self.file_list:
+            if debug:
+                print 'Sending sequence file "{0}"'.format(f)
+            send_ftp_data(f)
+                
     def generate_metadata_files(self, debug = False):
         """
         Submits data to EBI SRA via REST services.
@@ -97,16 +128,6 @@ class LiveEBISRARestServices(BaseRestServices):
         # A short name for the data helper
         helper = self.rest_data_helper
         
-        # File paths
-        submission_file_path = '/tmp/ebi_sra_submission_metadata_%s.xml' % self.study_id
-        study_file_path = '/tmp/ebi_sra_study_metadata_%s.xml' % self.study_id
-        sample_file_path = '/tmp/ebi_sra_sample_metadata_%s.xml' % self.study_id
-        experiment_file_path = '/tmp/ebi_sra_experiment_metadata_%s.xml' % self.study_id
-        run_file_path = '/tmp/ebi_sra_run_metadata_%s.xml' % self.study_id
-        
-        #sequence_file_path = '/tmp/ebi_sra_sequence_metadata_%s.xml' % study_id
-        #fasta_base_path = '/tmp/'
-
         # Set up a list of invalid values
         invalid_values = set(['', ' ', None, 'None'])
         
@@ -123,7 +144,7 @@ class LiveEBISRARestServices(BaseRestServices):
         print '------------------> STUDY <------------------'
         
         # Get the study info
-        study_file = open(study_file_path, 'w')
+        study_file = open(self.study_file_path, 'w')
 
         study_alias = 'qiime_study_{0}'.format(str(self.study_id))
         study_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -163,17 +184,17 @@ class LiveEBISRARestServices(BaseRestServices):
         samples = study_info['samples']
         
         # Reference to the sample file
-        sample_file = open(sample_file_path, 'w')
+        sample_file = open(self.sample_file_path, 'w')
         sample_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         sample_file.write('<SAMPLE_SET xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_3/SRA.sample.xsd">\n')
         
         # Reference to the experiment file
-        experiment_file = open(experiment_file_path, 'w')
+        experiment_file = open(self.experiment_file_path, 'w')
         experiment_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         experiment_file.write('<EXPERIMENT_SET xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_3/SRA.experiment.xsd">\n')
         
         # Reference to the run file
-        run_file = open(run_file_path, 'w')
+        run_file = open(self.run_file_path, 'w')
         run_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         run_file.write('<RUN_SET xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_3/SRA.run.xsd">\n')
 
@@ -313,22 +334,22 @@ class LiveEBISRARestServices(BaseRestServices):
     
         print '------------------> SUBMISSION <------------------'
     
-        submission_file = open(submission_file_path, 'w')
+        submission_file = open(self.submission_file_path, 'w')
         submission_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         submission_file.write('<SUBMISSION_SET xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_3/SRA.submission.xsd">\n')
         submission_file.write('<SUBMISSION alias="qiime_submission_{0}" center_name="CCME">\n'.format(str(self.study_id)))
         submission_file.write('<ACTIONS>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="study"/>\n'.format(basename(study_file_path)))
+        submission_file.write('        <ADD source="{0}" schema="study"/>\n'.format(basename(self.study_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="sample"/>\n'.format(basename(sample_file_path)))
+        submission_file.write('        <ADD source="{0}" schema="sample"/>\n'.format(basename(self.sample_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="experiment"/>\n'.format(basename(experiment_file_path)))
+        submission_file.write('        <ADD source="{0}" schema="experiment"/>\n'.format(basename(self.experiment_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="run"/>\n'.format(basename(run_file_path)))
+        submission_file.write('        <ADD source="{0}" schema="run"/>\n'.format(basename(self.run_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('</ACTIONS>\n')
 
