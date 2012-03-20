@@ -95,10 +95,10 @@ select  s.sample_name || '.' || sp.sequence_prep_id, sp.run_prefix
 from    sample s 
         inner join sequence_prep sp 
         on s.sample_id = sp.sample_id 
-where   s.study_id = 367
-        and sp.sample_id = {0}
-        and sp.row_number = {1}
-        """.format(str(self.sample_id), str(self.row_number))
+where   s.study_id = {0}
+        and sp.sample_id = {1}
+        and sp.row_number = {2}
+        """.format(str(self.study_id), str(self.sample_id), str(self.row_number))
         
         print 'Running query: {0}'.format(query)
         results = self.data_access.dynamicMetadataSelect(query).fetchone()[0]
