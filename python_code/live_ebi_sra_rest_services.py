@@ -109,13 +109,13 @@ class LiveEBISRARestServices(BaseRestServices):
         for f in xml_file_list:
             if debug:
                 print 'Sending XML file "{0}"'.format(f)
-            send_ftp_data(f)        
+            self.send_ftp_data(f)        
         
         # Send the sequence files
         for f in self.file_list:
             if debug:
                 print 'Sending sequence file "{0}"'.format(f)
-            send_ftp_data(f)
+            self.send_ftp_data(f)
                 
     def generate_metadata_files(self, debug = False):
         """
