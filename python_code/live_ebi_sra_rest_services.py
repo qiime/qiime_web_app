@@ -260,7 +260,9 @@ class LiveEBISRARestServices(BaseRestServices):
                             file_identifier = '{0}:{1}:{2}'.format(self.study_id, sample_id, row_number)
                             self.file_list[file_identifier] = file_path
                         except Exception, e:
-                            self.errors.append(str(e))
+                            error = 'Exception caught while attempting to obtain file_path: "{0}". '.format(str(e))
+                            error += 'file_path: "{0}", file_identifier: "{1}"'.format(str(file_path), str(file_identifier))
+                            self.errors.append(error)
                             continue
                         
                         
