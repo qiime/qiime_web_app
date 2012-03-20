@@ -21,8 +21,13 @@ class Tests(TestCase):
     def setUp(self):
         """ Setup
         """
-        self.study_id = 717
+        # self.study_id = 717 # doug_test_study
+        # self.study_id = 930 # bowers_Spatial_variability
+        # self.study_id = 314 # bowers_storm_peak_air
+        # self.study_id = 367 # Jesse_test
+        self.study_id = 1026 # stahringer_colorado_twin_saliva
         self.web_app_user_id = 12169
+        self.root_dir = '/home/wwwuser/user_data/studies'
 
     def tearDown(self):
         """ Clean up
@@ -32,11 +37,12 @@ class Tests(TestCase):
     def test_instantiate_object(self):
         """ Test instantiation of base services
         """
-        live = LiveEBISRARestServices(self.study_id, self.web_app_user_id)
+        live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir)
         self.assertNotEqual(live, None)
 
     def test_live_values(self):
-        live = LiveEBISRARestServices(self.study_id, self.web_app_user_id)
+        root_dir = '/home/wwwuser/user_data/studies'
+        live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir)
         self.assertIsNotNone(live.hostname)
         self.assertIsNotNone(live.study_url)
         self.assertIsNotNone(live.sample_url)
@@ -46,19 +52,19 @@ class Tests(TestCase):
         self.assertIsNotNone(live.study_id)
         self.assertIsNotNone(live.web_app_user_id)
 
-    def test_send_post_data(self):
-        live = LiveEBISRARestServices(self.study_id, self.web_app_user_id)
-        live.host_name = ''
-        
-        file_contents = 'I am the file contents'
-        url_path = '/the/url/path'
-        debug = True
-        
-        success, entity_id = live.send_post_data(url_path, file_contents, debug)
-        self.assertIsNotNone(success)
+    #def test_send_post_data(self):
+    #    live = LiveEBISRARestServices(self.study_id, self.web_app_user_id)
+    #    live.host_name = ''
+    #    
+    #    file_contents = 'I am the file contents'
+    #    url_path = '/the/url/path'
+    #    debug = True
+    #    
+    #    success, entity_id = live.send_post_data(url_path, file_contents, debug)
+    #    self.assertIsNotNone(success)
 
     def test_generate_metadata_files(self):
-        live = LiveEBISRARestServices(self.study_id, self.web_app_user_id)
+        live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir)
         live.host_name = ''
         live.generate_metadata_files(debug = True)
 

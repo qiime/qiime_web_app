@@ -28,12 +28,16 @@ class BaseRestServices(object):
         self.web_app_user_id = web_app_user_id
         self.rest_data_helper = RestDataHelper(study_id, web_app_user_id)
         self.data_access = data_access_factory(ServerConfig.data_access_type)
+        self.errors = []
 
     def send_post_data(self, url_path, file_contents, debug):
         raise NotImplementedError('Base class method has no implementation')
             
     def generate_metadata_files(self, debug = False):
         raise NotImplementedError('Base class method has no implementation')
+        
+    def clean_whitespace(self, text):
+        return ' '.join(text.split())
     
 class RestDataHelper(object):
     def __init__(self, study_id, web_app_user_id):
@@ -156,6 +160,26 @@ class RestDataHelper(object):
         """
         samples = self._data_access.getSampleList(self._study_id)
         return samples
+        
+    def get_platform_type(self, sample_id, row_number):
+        query = 'select platform from sequence_prep where sample_id = {0} and row_number = {1}'.format(str(sample_id), str(row_number))
+        #print query
+        platform = self.data_access.dynamicMetadataSelect(query).fetchone()[0].lower()
+        
+        sff = set(['tit', 'titanium', 'flx', '454', '454 flx'])
+        fastq = set(['illumina', 'illumina gaiix'])
+        fasta = set(['fasta'])
+        
+        if platform in sff:
+            # Note that even though we start with SFF files, we're actually writing out a fastq file for export
+            return SffSequenceWriter(self.data_access, study_id, sample_id, row_number, 'sff', root_dir, '.fastq')
+        elif platform in fastq:
+            return FastqSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fastq', root_dir, '.fastq')
+        elif platform in fasta:
+            return FastaSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fasta', root_dir, '.fasta')
+        else:
+            raise ValueError('Could not determine sequence file writer type based on platform: "%s"' % platform)
+            return None
 
 
         

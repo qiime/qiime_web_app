@@ -86,7 +86,6 @@ for column in columns:
         data_access.addCommonExtraColumn(req, study_id, found_extra_table, details['new_column_name'], 
             details['data_type'], details['description'])
     
-    
 # Redirect to the data validation page
 psp.redirect('validate_metadata.psp')
 

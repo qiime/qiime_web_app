@@ -68,6 +68,17 @@ class QiimeDataAccess(object):
             formatted_date = 'to_date(\'%s\', \'%s\')' % (date_string, 'MM/DD/YYYY HH24:MI:SS')
         
         return formatted_date
+        
+    def dynamicMetadataSelect(self, query_string):
+        # Make sure no tomfoolery is afoot
+        query_string_parts = set(query_string.lower().split())
+        verboten = set(['insert', 'update', 'delete'])
+        intersection = query_string_parts.intersection(verboten)
+        if len(intersection) > 0:
+            raise Exception('Only select statements are allowed. Your query: %s' % query_string)
+        
+        con = self.getMetadataDatabaseConnection()
+        return con.cursor().execute(query_string)
 
     #####################################
     # Users
@@ -1173,7 +1184,9 @@ class QiimeDataAccess(object):
             field_name.replace('"', '')
 
             # Fill out the field list if it's the first call
+            log.append('Length of fields is: {0}'.format(str(len(self.fields))))
             if len(self.fields) == 0:
+                log.append('Filling out field list for table lookup. Current field is "{0}"'.format(field_name))
                 lock.acquire()
                 con = self.getMetadataDatabaseConnection()
                 results = con.cursor()

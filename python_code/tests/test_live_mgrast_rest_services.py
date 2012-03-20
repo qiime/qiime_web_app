@@ -46,21 +46,21 @@ class Tests(TestCase):
         self.assertIsNotNone(live.study_id)
         self.assertIsNotNone(live.web_app_user_id)
 
-    def test_send_post_data(self):
-        live = LiveMGRASTRestServices(self.study_id, self.web_app_user_id)
-        live.host_name = ''
-        
-        file_contents = 'I am the file contents'
-        url_path = '/the/url/path'
-        debug = True
-        
-        success, entity_id = live.send_post_data(url_path, file_contents, live.host_name, debug)
-        self.assertIsNotNone(success)
+    #def test_send_post_data(self):
+    #    live = LiveMGRASTRestServices(self.study_id, self.web_app_user_id)
+    #    live.host_name = ''
+    #    
+    #    file_contents = 'I am the file contents'
+    #    url_path = '/the/url/path'
+    #    debug = True
+    #    
+    #    success, entity_id = live.send_post_data(url_path, file_contents, live.host_name, debug)
+    #    self.assertIsNotNone(success)
 
-    def test_generate_metadata_files(self):
-        live = LiveMGRASTRestServices(self.study_id, self.web_app_user_id)
-        live.host_name = ''
-        live.generate_metadata_files(debug = True)
+    #def test_generate_metadata_files(self):
+    #    live = LiveMGRASTRestServices(self.study_id, self.web_app_user_id)
+    #    live.hostname = ''
+    #    live.generate_metadata_files(debug = True)
 
 if __name__ == "__main__":
     main()
