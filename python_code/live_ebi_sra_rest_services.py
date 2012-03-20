@@ -114,8 +114,8 @@ class LiveEBISRARestServices(BaseRestServices):
         # Send the sequence files
         for f in self.file_list:
             if debug:
-                print 'Sending sequence file "{0}"'.format(f)
-            self.send_ftp_data(f)
+                print 'Sending sequence file "{0}"'.format(self.file_list[f])
+            self.send_ftp_data(self.file_list[f])
                 
     def generate_metadata_files(self, debug = False):
         """
