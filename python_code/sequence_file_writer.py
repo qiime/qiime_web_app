@@ -106,7 +106,7 @@ where   s.study_id = 367
         # File should already exist - go find it
         full_file_name = join(self.root_dir, 'study_{0}/processed_data_Fasting_subset_/split_libraries/per_sample_fastq/seqs_{1}.fastq'.format(str(self.study_id), sample_name))
         # print 'Full file name is "{0}"'.format(full_file_name)
-        if exists(full_file_name):
+        if full_file_name != None and full_file_name != '':
             return full_file_name
         else:
             raise Exception('SFF file does not exist: {0}. Skipping.'.format(full_file_name))        
