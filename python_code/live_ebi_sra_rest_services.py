@@ -253,7 +253,6 @@ class LiveEBISRARestServices(BaseRestServices):
                         # Create or reference sequence file
                         # Can be fastq, sff, or fasta, depending on what files we have available
                         file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
-                        
                         file_path = ''
                         file_identifier = ''
                         try:
@@ -262,7 +261,8 @@ class LiveEBISRARestServices(BaseRestServices):
                             self.file_list[file_identifier] = file_path
                         except Exception, e:
                             error = 'Exception caught while attempting to obtain file_path: "{0}". '.format(str(e))
-                            error += 'file_path: "{0}", file_identifier: "{1}"'.format(str(file_path), str(file_identifier))
+                            error += 'file_path: "{0}", file_identifier: "{1}" '.format(str(file_path), str(file_identifier))
+                            error += 'file_writer: {0} '.format(str(file_writer))
                             self.errors.append(error)
                             continue
                         
