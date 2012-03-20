@@ -255,6 +255,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
                         
                         file_path = ''
+                        file_identifier = ''
                         try:
                             file_path = file_writer.write()
                             file_identifier = '{0}:{1}:{2}'.format(self.study_id, sample_id, row_number)
