@@ -101,7 +101,7 @@ where   s.study_id = {0}
         """.format(str(self.study_id), str(self.sample_id), str(self.row_number))
         
         print 'Running query: {0}'.format(query)
-        results = self.data_access.dynamicMetadataSelect(query).fetchone()[0]
+        results = self.data_access.dynamicMetadataSelect(query).fetchone()
         print 'Query results: {0}'.format(str(results))
         sample_name = results[0]
         run_prefix = results[1]
