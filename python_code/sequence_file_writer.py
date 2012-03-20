@@ -108,7 +108,7 @@ where   s.study_id = 367
         print 'Run prefix is "{0}"'.format(run_prefix)
         
         # File should already exist - go find it
-        full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), sample_name))
+        full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
         # print 'Full file name is "{0}"'.format(full_file_name)
         if full_file_name != None and full_file_name != '':
             return full_file_name
