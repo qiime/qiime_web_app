@@ -321,6 +321,7 @@ def _errorCallback(e):
 lock = Lock()
 
 # Go workers go!
+data_access.fields.clear()
 for item in all_other_fields:
     #req.write(str(item) + '....' + validated_values[item] + '<br/>')
     item_list.append(item)
