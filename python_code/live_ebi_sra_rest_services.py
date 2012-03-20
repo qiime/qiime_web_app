@@ -281,7 +281,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         run_file.write('        <EXPERIMENT_REF refname="{0}"/>\n'.format(experiment_alias))
                         run_file.write('        <DATA_BLOCK>\n')
                         run_file.write('            <FILES>\n')
-                        run_file.write('                <FILE filename="{0}" filetype="sff"/>\n'.format(basename(file_path)))
+                        run_file.write('                <FILE filename="{0}" filetype="{1}"/>\n'.format(basename(file_path), file_writer.file_extension))
                         run_file.write('            </FILES>\n')
                         run_file.write('        </DATA_BLOCK>\n')
                         run_file.write('    </RUN>\n')
