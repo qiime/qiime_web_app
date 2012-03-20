@@ -346,17 +346,15 @@ class LiveEBISRARestServices(BaseRestServices):
             open_file.close()
             
             
-            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(checksum, file_name))
-            
+            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(checksum, file_name))    
         submission_file.write('</FILES>\n')
         
         submission_file.write('</SUBMISSION>\n')
         submission_file.write('</SUBMISSION_SET>\n')    
 
-        
         print 'File List:'
         for f in self.file_list:
-            print '{0} - {1}'.format(f, self.file_list[f])
+            print '{0} - {1}'.format(str(f), str(self.file_list[f]))
         
         if len(self.errors) > 0:
             print 'ERRORS FOUND:'
