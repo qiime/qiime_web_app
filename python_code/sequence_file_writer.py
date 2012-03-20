@@ -91,7 +91,7 @@ class SffSequenceWriter(BaseSequenceWriter):
         
         # Get the sample_name + sequence_prep_id from the sample_id
         query = """
-select  s.sample_name || '.' || sp.sequence_prep_id 
+select  s.sample_name || '.' || sp.sequence_prep_id, sp.run_prefix
 from    sample s 
         inner join sequence_prep sp 
         on s.sample_id = sp.sample_id 
@@ -100,16 +100,20 @@ where   s.study_id = 367
         and sp.row_number = {1}
         """.format(str(self.sample_id), str(self.row_number))
         
-        sample_name = self.data_access.dynamicMetadataSelect(query).fetchone()[0]
-        #print 'Sample name is "{0}"'.format(sample_name)
+        results = self.data_access.dynamicMetadataSelect(query).fetchone()[0]
+        sample_name = results[0]
+        run_prefix = results[1]
+        
+        print 'Sample name is "{0}"'.format(sample_name)
+        print 'Run prefix is "{0}"'.format(run_prefix)
         
         # File should already exist - go find it
-        full_file_name = join(self.root_dir, 'study_{0}/processed_data_Fasting_subset_/split_libraries/per_sample_fastq/seqs_{1}.fastq'.format(str(self.study_id), sample_name))
+        full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), sample_name))
         # print 'Full file name is "{0}"'.format(full_file_name)
         if full_file_name != None and full_file_name != '':
             return full_file_name
         else:
-            raise Exception('SFF file does not exist: {0}. Skipping.'.format(full_file_name))        
+            raise Exception('Sequence file does not exist: {0}. Skipping.'.format(full_file_name))        
                 
 # Fasta sequence file writer
 class FastqSequenceWriter(BaseSequenceWriter):
