@@ -87,7 +87,7 @@ class SffSequenceWriter(BaseSequenceWriter):
         the proper location with the right file name for later upload
         """
         
-        #print 'Writing SFF sequence file for study_id {0}, sample_id {1}, row_number {2}'.format(str(self.study_id), str(self.sample_id), str(self.row_number))
+        print 'Writing SFF sequence file for study_id {0}, sample_id {1}, row_number {2}'.format(str(self.study_id), str(self.sample_id), str(self.row_number))
         
         # Get the sample_name + sequence_prep_id from the sample_id
         query = """
