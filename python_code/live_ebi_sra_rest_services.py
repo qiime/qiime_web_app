@@ -149,7 +149,7 @@ class LiveEBISRARestServices(BaseRestServices):
         study_alias = 'qiime_study_{0}'.format(str(self.study_id))
         study_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         study_file.write('<STUDY_SET xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_3/SRA.study.xsd">\n')
-        study_file.write('    <STUDY alias="{0}" center_name="CCME">\n'.format(study_alias))
+        study_file.write('    <STUDY alias="{0}" center_name="CCME-COLORADO">\n'.format(study_alias))
         study_file.write('        <DESCRIPTOR>\n')
         study_file.write('            <STUDY_TITLE>{0}</STUDY_TITLE>\n'.format(study_info['study_title']))
         study_file.write('            <STUDY_TYPE existing_study_type="{0}"/>\n'.format(study_info['investigation_type']))
@@ -201,7 +201,7 @@ class LiveEBISRARestServices(BaseRestServices):
         # For every sample, get the details and write them to the sample file
         for sample_dict in samples:
             sample_alias = 'qiime_study_{0}:{1}'.format(str(self.study_id), sample_dict['sample_name'])
-            sample_file.write('    <SAMPLE alias="{0}" center_name="CCME"> \n'.format(sample_alias))
+            sample_file.write('    <SAMPLE alias="{0}" center_name="CCME-COLORADO"> \n'.format(sample_alias))
             sample_file.write('        <TITLE>{0}</TITLE>\n'.format(sample_dict['sample_name']))
             sample_file.write('        <SAMPLE_NAME>\n')
             if 'taxon_id' in sample_dict:
@@ -227,7 +227,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         row_number = str(prep_dict['row_number'])
                         
                         experiment_alias = 'qiime_experiment_{0}:{1}:{2}'.format(study_id, sample_id, row_number)
-                        experiment_file.write('   <EXPERIMENT alias="{0}" center_name="CCME">\n'.format(experiment_alias))
+                        experiment_file.write('   <EXPERIMENT alias="{0}" center_name="CCME-COLORADO">\n'.format(experiment_alias))
                         experiment_file.write('       <TITLE>{0}</TITLE>\n'.format(experiment_alias))
                         experiment_file.write('       <STUDY_REF refname="{0}"/>\n'.format(study_alias))
                         experiment_file.write('       <DESIGN>\n')
@@ -337,7 +337,7 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file = open(self.submission_file_path, 'w')
         submission_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         submission_file.write('<SUBMISSION_SET xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ftp://ftp.sra.ebi.ac.uk/meta/xsd/sra_1_3/SRA.submission.xsd">\n')
-        submission_file.write('<SUBMISSION alias="qiime_submission_{0}" center_name="CCME">\n'.format(str(self.study_id)))
+        submission_file.write('<SUBMISSION alias="qiime_submission_{0}" center_name="CCME-COLORADO">\n'.format(str(self.study_id)))
         submission_file.write('<ACTIONS>\n')
         submission_file.write('    <ACTION>\n')
         submission_file.write('        <ADD source="{0}" schema="study"/>\n'.format(basename(self.study_file_path)))
