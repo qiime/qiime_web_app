@@ -221,6 +221,23 @@ class LiveEBISRARestServices(BaseRestServices):
                 if sample_key == 'preps':
                     prep_list = sample_dict[sample_key]
                     for prep_dict in prep_list:
+                        
+                        # Create or reference sequence file writer
+                        # Can be fastq, sff, or fasta, depending on what files we have available
+                        file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
+                        print 'Writer type is {0}'.format(file_writer.writer_type)
+
+                        platform = ''
+                        
+                        if file_writer.writer_type == 'sff':
+                            platform = 'SFF'
+                        elif file_writer.writer_type = 'fastq':
+                            platform = 'ILLUMINA'
+                        elif file_writer.writer_type = 'fasta':
+                            platform = 'FASTA'
+                        else:
+                            platform = 'UNKNOWN'
+                        
                         # Extract a few values because they're frequently used
                         study_id = str(self.study_id)
                         sample_id = str(sample_dict['sample_id'])
@@ -235,9 +252,13 @@ class LiveEBISRARestServices(BaseRestServices):
                         experiment_file.write('           <SAMPLE_DESCRIPTOR refname="{0}"/>\n'.format(sample_alias))
                         experiment_file.write('           <LIBRARY_DESCRIPTOR>\n')
                         experiment_file.write('               <LIBRARY_NAME>{0}</LIBRARY_NAME>\n'.format(sample_dict['sample_name'] + ':' + row_number))
-                        experiment_file.write('               <LIBRARY_STRATEGY>OTHER</LIBRARY_STRATEGY>\n')
-                        experiment_file.write('               <LIBRARY_SOURCE>OTHER</LIBRARY_SOURCE>\n')
-                        experiment_file.write('               <LIBRARY_SELECTION>unspecified</LIBRARY_SELECTION>\n')
+                        
+                        # Put in the proper values here based on study type
+                        
+                        experiment_file.write('               <LIBRARY_STRATEGY>AMPLICON</LIBRARY_STRATEGY>\n')
+                        experiment_file.write('               <LIBRARY_SOURCE>METAGENOMIC</LIBRARY_SOURCE>\n')
+                        experiment_file.write('               <LIBRARY_SELECTION>PCR</LIBRARY_SELECTION>\n')
+                        
                         experiment_file.write('               <LIBRARY_LAYOUT>\n')
                         experiment_file.write('                   <SINGLE/>\n')
                         experiment_file.write('               </LIBRARY_LAYOUT>\n')
@@ -258,23 +279,25 @@ class LiveEBISRARestServices(BaseRestServices):
                         
                         
                         
-                        experiment_file.write('           <ILLUMINA>\n')
+                        experiment_file.write('           <{0}>\n'.format(platform))
                         experiment_file.write('               <INSTRUMENT_MODEL>unspecified</INSTRUMENT_MODEL>\n')
-                        experiment_file.write('           </ILLUMINA>\n')
+                        experiment_file.write('           </{0}>\n'.format(platform))
+                        
+                        
+                        
+                        
+                        
                         experiment_file.write('       </PLATFORM>\n')
-                        experiment_file.write('   </EXPERIMENT>\n')
-                        experiment_file.write('   <EXPERIMENT_ATTRIBUTES>\n')
+                        experiment_file.write('       <EXPERIMENT_ATTRIBUTES>\n')
                         for prep_key in prep_dict:                        
-                            experiment_file.write('       <EXPERIMENT_ATTRIBUTE>\n')
-                            experiment_file.write('           <TAG>{0}</TAG>\n'.format(prep_key))
-                            experiment_file.write('           <VALUE>{0}</VALUE>\n'.format(prep_dict[prep_key]))
-                            experiment_file.write('       </EXPERIMENT_ATTRIBUTE>\n')
-                        experiment_file.write('   </EXPERIMENT_ATTRIBUTES>\n')
+                            experiment_file.write('          <EXPERIMENT_ATTRIBUTE>\n')
+                            experiment_file.write('             <TAG>{0}</TAG>\n'.format(prep_key))
+                            experiment_file.write('             <VALUE>{0}</VALUE>\n'.format(prep_dict[prep_key]))
+                            experiment_file.write('          </EXPERIMENT_ATTRIBUTE>\n')
+                        experiment_file.write('       </EXPERIMENT_ATTRIBUTES>\n')
+                        experiment_file.write('   </EXPERIMENT>\n')
 
-                        # Create or reference sequence file
-                        # Can be fastq, sff, or fasta, depending on what files we have available
-                        file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
-                        print 'Writer type is {0}'.format(file_writer.writer_type)
+                        
                         file_path = ''
                         file_identifier = ''
                         try:
