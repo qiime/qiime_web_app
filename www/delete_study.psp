@@ -20,6 +20,6 @@ sess.save()
 
 # Delete the study
 data_access = data_access_factory(ServerConfig.data_access_type)
-data_access.deleteStudy(study_id, 1)
+data_access.deleteStudy(study_id, 2)
 psp.redirect('fusebox.psp?page=select_study.psp')
 %>

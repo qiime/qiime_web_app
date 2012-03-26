@@ -277,11 +277,14 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+"""
+DEPRECATED
     def prepareStudyForUpdate(self, study_id):
         """ Prepares a study for updating
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('qiime_assets.prepare_study_for_update', [study_id])
+"""
     
     def deleteStudy(self, study_id, full_delete):
         """ Removes a study from the database
@@ -289,7 +292,8 @@ class QiimeDataAccess(object):
         study_id: the numeric identifier for the study in the database
         full_delete: an integer value:
             0 = delete all BUT the study entry
-            1 = delete everything including the study
+            1 = delete all metadata including sample and sequence prep ids
+            2 = delete everything including the study
         """
         try:
             con = self.getMetadataDatabaseConnection()
