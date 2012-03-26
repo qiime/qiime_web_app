@@ -276,15 +276,6 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
-'''
-DEPRECATED
-    def prepareStudyForUpdate(self, study_id):
-        """ Prepares a study for updating
-        """
-        con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('qiime_assets.prepare_study_for_update', [study_id])
-'''
     
     def deleteStudy(self, study_id, full_delete):
         """ Removes a study from the database
