@@ -152,7 +152,7 @@ class LiveEBISRARestServices(BaseRestServices):
         study_file.write('    <STUDY alias="{0}" center_name="CCME-COLORADO">\n'.format(study_alias))
         study_file.write('        <DESCRIPTOR>\n')
         study_file.write('            <STUDY_TITLE>{0}</STUDY_TITLE>\n'.format(study_info['study_title']))
-        study_file.write('            <STUDY_TYPE existing_study_type="{0}"/>\n'.format(study_info['investigation_type']))
+        study_file.write('            <STUDY_TYPE existing_study_type="Other"/>\n')
         study_file.write('            <STUDY_ABSTRACT>{0}</STUDY_ABSTRACT>\n'.format(self.clean_whitespace(study_info['study_abstract'])))
         study_file.write('        </DESCRIPTOR>\n')
         study_file.write('        <STUDY_ATTRIBUTES>\n')
@@ -222,6 +222,11 @@ class LiveEBISRARestServices(BaseRestServices):
                     prep_list = sample_dict[sample_key]
                     for prep_dict in prep_list:
                         
+                        # Extract a few values because they're frequently used
+                        study_id = str(self.study_id)
+                        sample_id = str(sample_dict['sample_id'])
+                        row_number = str(prep_dict['row_number'])
+
                         # Create or reference sequence file writer
                         # Can be fastq, sff, or fasta, depending on what files we have available
                         file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
@@ -230,10 +235,10 @@ class LiveEBISRARestServices(BaseRestServices):
                         platform = ''
                         
                         if file_writer.writer_type == 'sff':
-                            platform = 'SFF'
-                        elif file_writer.writer_type = 'fastq':
+                            platform = 'LS454'
+                        elif file_writer.writer_type == 'fastq':
                             platform = 'ILLUMINA'
-                        elif file_writer.writer_type = 'fasta':
+                        elif file_writer.writer_type == 'fasta':
                             platform = 'FASTA'
                         else:
                             platform = 'UNKNOWN'
@@ -363,16 +368,16 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file.write('<SUBMISSION alias="qiime_submission_{0}" center_name="CCME-COLORADO">\n'.format(str(self.study_id)))
         submission_file.write('<ACTIONS>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="study"/>\n'.format(basename(self.study_file_path)))
+        submission_file.write('        <VALIDATE source="{0}" schema="study"/>\n'.format(basename(self.study_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="sample"/>\n'.format(basename(self.sample_file_path)))
+        submission_file.write('        <VALIDATE source="{0}" schema="sample"/>\n'.format(basename(self.sample_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="experiment"/>\n'.format(basename(self.experiment_file_path)))
+        submission_file.write('        <VALIDATE source="{0}" schema="experiment"/>\n'.format(basename(self.experiment_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <ADD source="{0}" schema="run"/>\n'.format(basename(self.run_file_path)))
+        submission_file.write('        <VALIDATE source="{0}" schema="run"/>\n'.format(basename(self.run_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('</ACTIONS>\n')
 
