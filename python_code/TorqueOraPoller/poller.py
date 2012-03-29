@@ -268,11 +268,11 @@ class Poller(Daemon):
             # submit job - if loading into DB use singleq
             if job_type=='LoadSFFHandler':
                 submit_queue = 'singleq'
-                pvmem='8gb'
+                pvmem='64gb'
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='ProcessSFFHandler':
                 submit_queue = 'no_bad_touching'
-                pvmem='16gb'
+                pvmem='40gb'
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='betaDiversityThroughPlots':
                 submit_queue = 'no_bad_touching'
@@ -288,7 +288,7 @@ class Poller(Daemon):
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='summarizeTaxa':
                 submit_queue = 'no_bad_touching'
-                pvmem='4gb'
+                pvmem='16gb'
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='generateMapOTUTableSubmitJobs':
                 submit_queue = 'no_bad_touching'

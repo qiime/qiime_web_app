@@ -16,6 +16,7 @@ from sample_export import *
 from qiime.convert_fastaqual_to_fastq import convert_fastq
 from os.path import join, exists
 from shutil import copyfile
+import gzip
 
 class sequence_file_writer_factory(object):
     def __init__(self):
@@ -113,7 +114,15 @@ where   s.study_id = {0}
         full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
         # print 'Full file name is "{0}"'.format(full_file_name)
         if full_file_name != None and full_file_name != '':
-            return full_file_name
+            # gzip file
+            #path_name, file_name = split(full_file_name)
+            gz_file_name = full_file_name + '.gz'
+            f_in = open(full_file_name, 'rb')
+            f_out = gzip.open(gz_file_name, 'wb')
+            f_out.writelines(f_in)
+            f_out.close()
+            f_in.close()
+            return gz_file_name
         else:
             raise Exception('Sequence file does not exist: {0}. Skipping.'.format(full_file_name))        
                 
