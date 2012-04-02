@@ -286,7 +286,7 @@ for item in prep_fields:
     primer = prep_primer_fields[row_num]
     run_prefix = prep_run_prefix_fields[row_num]
     
-    req.write('field_value: "{0}", row_num: "{1}", barcode: "{2}", linker: "{3}", primer: "{4}" run_prefix: "{5}"\n'.format(field_value, row_num, barcode, linker, primer, run_prefix))
+    req.write('field_value: "{0}", row_num: "{1}", barcode: "{2}", linker: "{3}", primer: "{4}" run_prefix: "{5}"\n<br/><br/>'.format(field_value, row_num, barcode, linker, primer, run_prefix))
     
     #data_access.createPrepKey(study_id, field_value, row_num)
     data_access.createPrepKey(study_id, field_value, row_num, barcode, linker, primer, run_prefix)
