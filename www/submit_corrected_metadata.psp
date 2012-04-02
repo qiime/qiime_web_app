@@ -171,6 +171,9 @@ for item in validated_values:
             req.write('<br/>ERROR: Key value is blank (%s -- "%s" )<br/>' % (str(item), validated_values[item]))
             key_field_errors.append(item)
             
+        prep_fields.append(item)
+        prep_key_fields[row_num] = field_value
+            
     # Specifics to insert prep rows without duplicate entries (row_num isn't enough if source file is reordered)
     # Need to collect barcode, linker, primer, run_prefix
     elif field_type == 'prep' and field_name == 'barcode':
@@ -283,8 +286,10 @@ for item in prep_fields:
     primer = prep_primer_fields[row_num]
     run_prefix = prep_run_prefix_fields[row_num]
     
+    req.write('field_value: {0}, row_num: {1}, barcode: {2}, linker: {3}, primer: {4} run_prefix: {5}\n'.format(field_value, row_num, barcode, linker, primer, run_prefix))
+    
     #data_access.createPrepKey(study_id, field_value, row_num)
-    data_access.createPrepKey(study_id, field_value, row_number, barcode, linker, primer, run_prefix)
+    data_access.createPrepKey(study_id, field_value, row_num, barcode, linker, primer, run_prefix)
     
     if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
         req.write('<script type="text/javascript">updateStatus(%s, %s, "prep");</script>' % (current_item, item_count))
