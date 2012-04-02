@@ -177,13 +177,13 @@ for item in validated_values:
     # Specifics to insert prep rows without duplicate entries (row_num isn't enough if source file is reordered)
     # Need to collect barcode, linker, primer, run_prefix
     elif field_type == 'prep' and field_name == 'barcode':
-        prep_barcode_fields[row_num] = field_value
+        prep_barcode_fields[row_num] = field_value if field_value is not None else None
     elif field_type == 'prep' and field_name == 'linker':
-        prep_linker_fields[row_num] = field_value
+        prep_linker_fields[row_num] = field_value if field_value is not None else None
     elif field_type == 'prep' and field_name == 'primer':
-        prep_primer_fields[row_num] = field_value
+        prep_primer_fields[row_num] = field_value if field_value is not None else None
     elif field_type == 'prep' and field_name == 'run_prefix':
-        prep_run_prefix_fields[row_num] = field_value    
+        prep_run_prefix_fields[row_num] = field_value if field_value is not None else None
     
     # All other fields will be inserted in step 3
     else:
@@ -286,7 +286,7 @@ for item in prep_fields:
     primer = prep_primer_fields[row_num]
     run_prefix = prep_run_prefix_fields[row_num]
     
-    req.write('field_value: {0}, row_num: {1}, barcode: {2}, linker: {3}, primer: {4} run_prefix: {5}\n'.format(field_value, row_num, barcode, linker, primer, run_prefix))
+    #req.write('field_value: {0}, row_num: {1}, barcode: {2}, linker: {3}, primer: {4} run_prefix: {5}\n'.format(field_value, row_num, barcode, linker, primer, run_prefix))
     
     #data_access.createPrepKey(study_id, field_value, row_num)
     data_access.createPrepKey(study_id, field_value, row_num, barcode, linker, primer, run_prefix)
