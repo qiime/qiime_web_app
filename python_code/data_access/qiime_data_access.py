@@ -1300,12 +1300,14 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
-    def createPrepKey(self, study_id, sample_name, row_num):
+    #def createPrepKey(self, study_id, sample_name, row_num):
+    def createPrepKey(self, study_id, sample_name, row_number, barcode, linker, primer, run_prefix):
         """ Writes a prep key row to the database
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_num])
+            #con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_num])
+            con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_number, barcode, linker, primer, run_prefix])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False

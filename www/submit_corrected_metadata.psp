@@ -64,6 +64,12 @@ sample_key_fields = {}
 prep_key_fields = {}
 host_key_fields = {}
 
+# For inserting prep rows
+prep_barcode_fields = {}
+prep_linker_fields = {}
+prep_primer_fields = {}
+prep_run_prefix_fields = {}
+
 key_field = None
 with_errors = False
 
@@ -163,10 +169,18 @@ for item in validated_values:
     elif field_type == 'prep' and field_name == 'sample_name':
         if field_value == '' or field_value == None:
             req.write('<br/>ERROR: Key value is blank (%s -- "%s" )<br/>' % (str(item), validated_values[item]))
-            key_field_errors.append(item)        
-
-        prep_fields.append(item)
-        prep_key_fields[row_num] = field_value
+            key_field_errors.append(item)
+            
+    # Specifics to insert prep rows without duplicate entries (row_num isn't enough if source file is reordered)
+    # Need to collect barcode, linker, primer, run_prefix
+    elif field_type == 'prep' and field_name == 'barcode':
+        prep_barcode_fields[row_num] = field_value
+    elif field_type == 'prep' and field_name == 'linker':
+        prep_linker_fields[row_num] = field_value
+    elif field_type == 'prep' and field_name == 'primer':
+        prep_primer_fields[row_num] = field_value
+    elif field_type == 'prep' and field_name == 'run_prefix':
+        prep_run_prefix_fields[row_num] = field_value    
     
     # All other fields will be inserted in step 3
     else:
@@ -264,7 +278,14 @@ for item in prep_fields:
     current_item += 1
     field_value = validated_values[item]
     row_num = item.split(':')[1]
-    data_access.createPrepKey(study_id, field_value, row_num)
+    barcode = prep_barcode_fields[row_num]
+    linker = prep_linker_fields[row_num]
+    primer = prep_primer_fields[row_num]
+    run_prefix = prep_run_prefix_fields[row_num]
+    
+    #data_access.createPrepKey(study_id, field_value, row_num)
+    data_access.createPrepKey(study_id, field_value, row_number, barcode, linker, primer, run_prefix)
+    
     if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
         req.write('<script type="text/javascript">updateStatus(%s, %s, "prep");</script>' % (current_item, item_count))
 
