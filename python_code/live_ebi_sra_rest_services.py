@@ -316,21 +316,12 @@ class LiveEBISRARestServices(BaseRestServices):
                             self.errors.append(error)
                             continue
                         
-                        
-                        ######################################
-                        ############################
-                        ############## NEED TO REPLACE RUN ALIAS AND RUN DATE
-                        
-                        
-                        
-                        
-                        
                         # The run file references
-                        run_file.write('    <RUN alias="july_09_488m_A_ECH2009_run" run_date="2010-10-11T00:00:00">\n')
+                        run_file.write('    <RUN alias="{0}_run" run_date="{1}">\n'.format(basename(file_path), prep_dict['run_date']))
                         run_file.write('        <EXPERIMENT_REF refname="{0}"/>\n'.format(experiment_alias))
                         run_file.write('        <DATA_BLOCK>\n')
                         run_file.write('            <FILES>\n')
-                        run_file.write('                <FILE filename="{0}" filetype="{1}"/>\n'.format(basename(file_path), file_writer.file_extension))
+                        run_file.write('                <FILE filename="{0}" filetype="{1}" quality_scoring_system="{2}"/>\n'.format(basename(file_path), file_writer.file_extension, 'long-odds'))
                         run_file.write('            </FILES>\n')
                         run_file.write('        </DATA_BLOCK>\n')
                         run_file.write('    </RUN>\n')
