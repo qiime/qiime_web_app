@@ -117,9 +117,11 @@ class LiveEBISRARestServices(BaseRestServices):
                 print 'Sending sequence file "{0}"'.format(self.file_list[f])
             self.send_ftp_data(self.file_list[f])
                 
-    def generate_metadata_files(self, debug = False):
+    def generate_metadata_files(self, debug = False, action_type = 'VALIDATE'):
         """
         Submits data to EBI SRA via REST services.
+        
+        action_type can be VALIDATE or ADD. Add will validate and add. VALIDATE will only validate
 
         This function takes the input options from the user and generates a url
         and request header for submitting to the EBI SRA system. 
@@ -352,6 +354,8 @@ class LiveEBISRARestServices(BaseRestServices):
         ######################################################
     
         print '------------------> SUBMISSION <------------------'
+        
+        # Actions are either ADD or VALIDATE. ADD validates and adds data. VALIDATE is validate only
     
         submission_file = open(self.submission_file_path, 'w')
         submission_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -359,16 +363,16 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file.write('<SUBMISSION alias="qiime_submission_{0}" center_name="CCME-COLORADO">\n'.format(str(self.study_id)))
         submission_file.write('<ACTIONS>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <VALIDATE source="{0}" schema="study"/>\n'.format(basename(self.study_file_path)))
+        submission_file.write('        <{0} source="{1}" schema="study"/>\n'.format(action_type, basename(self.study_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <VALIDATE source="{0}" schema="sample"/>\n'.format(basename(self.sample_file_path)))
+        submission_file.write('        <{0} source="{1}" schema="sample"/>\n'.format(action_type, basename(self.sample_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <VALIDATE source="{0}" schema="experiment"/>\n'.format(basename(self.experiment_file_path)))
+        submission_file.write('        <{0} source="{1}" schema="experiment"/>\n'.format(action_type, basename(self.experiment_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
-        submission_file.write('        <VALIDATE source="{0}" schema="run"/>\n'.format(basename(self.run_file_path)))
+        submission_file.write('        <{0} source="{1}" schema="run"/>\n'.format(action_type, basename(self.run_file_path)))
         submission_file.write('    </ACTION>\n')
         submission_file.write('</ACTIONS>\n')
 
