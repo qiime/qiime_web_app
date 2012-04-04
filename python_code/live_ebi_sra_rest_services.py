@@ -317,11 +317,11 @@ class LiveEBISRARestServices(BaseRestServices):
                             continue
                         
                         # The run file references
-                        run_file.write('    <RUN alias="{0}_run" run_date="{1}">\n'.format(basename(file_path), prep_dict['run_date']))
+                        run_file.write('    <RUN alias="{0}_run" run_date="1900-01-01T00:00:00">\n'.format(basename(file_path)))
                         run_file.write('        <EXPERIMENT_REF refname="{0}"/>\n'.format(experiment_alias))
                         run_file.write('        <DATA_BLOCK>\n')
                         run_file.write('            <FILES>\n')
-                        run_file.write('                <FILE filename="{0}" filetype="{1}" quality_scoring_system="{2}"/>\n'.format(basename(file_path), file_writer.file_extension, 'long-odds'))
+                        run_file.write('                <FILE filename="{0}" filetype="{1}" quality_scoring_system="{2}"/>\n'.format(basename(file_path), file_writer.file_extension, 'log-odds'))
                         run_file.write('            </FILES>\n')
                         run_file.write('        </DATA_BLOCK>\n')
                         run_file.write('    </RUN>\n')
