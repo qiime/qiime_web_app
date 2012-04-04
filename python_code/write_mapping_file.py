@@ -112,7 +112,7 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                 
 
             for table in new_tables:
-                if table.lower().startswith('extra_prep'):
+                if table.lower().startswith('"extra_prep'):
                     statement += '\
                     left join ' + table + '\n\
                     on "SEQUENCE_PREP".sample_id = ' + table + '.sample_id and "SEQUENCE_PREP".row_number = ' + table + '.row_number\n '
