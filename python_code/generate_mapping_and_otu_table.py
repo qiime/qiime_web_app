@@ -166,6 +166,10 @@ def get_mapping_data(data_access,is_admin,table_col_value,user_id,
             statement += '\
             left join ' + table + '\n\
             on "HOST_SAMPLE".host_id = ' + table + '.host_id\n '
+        elif table.lower().startswith('extra_prep'):
+            statement += '\
+            left join ' + table + '\n\
+            on "SEQUENCE_PREP".sample_id = ' + table + '.sample_id and "SEQUENCE_PREP".row_number = ' + table + '.row_number\n '
         elif table!='"HOST_SAMPLE"':
             statement += '\
             left join ' + table + '\n\

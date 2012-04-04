@@ -112,9 +112,14 @@ def write_mapping_file(study_id,write_full_mapping,dir_path,get_from_test_db):
                 
 
             for table in new_tables:
-                statement += '\
-                inner join ' + table + '\n\
-                on "SAMPLE".sample_id = ' + table + '.sample_id\n'
+                if table.lower().startswith('extra_prep'):
+                    statement += '\
+                    left join ' + table + '\n\
+                    on "SEQUENCE_PREP".sample_id = ' + table + '.sample_id and "SEQUENCE_PREP".row_number = ' + table + '.row_number\n '
+                else:
+                    statement += '\
+                    inner join ' + table + '\n\
+                    on "SAMPLE".sample_id = ' + table + '.sample_id\n'
                     
         statement += '\n\
         where "STUDY".study_id=%s and "SEQUENCE_PREP".run_prefix=\'%s\' \n' % (study_id,run_prefix[0])
