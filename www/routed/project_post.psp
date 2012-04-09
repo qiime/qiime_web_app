@@ -1,0 +1,42 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2011, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+import json
+
+debug = False
+
+# Attempt to parse the post body as JSON data
+json_data = json.loads(post_data)
+library_ids = json_data['library_ids']
+for library_id in library_ids:
+    req.write(str(library_id))
+    # Call out to MG-RAST server to get the entire object heirarchy
+    #http://api.metagenomics.anl.gov/library/mgl23544.1?auth=TkzmLuiSuwQEhivEveZ7tvYiB
+    #sequences: api.metagenomics.anl.gov/sequenceSet/$ssid
+
+if debug:
+    # Get the proper session variables
+    req.write(post_data)
+    req.write('\n\n')
+    req.write('json_data is: {0}'.format(str(json_data)))
+    req.write('\n\n')
+    for item in json_data:
+        req.write('Request Item: %s' % item)
+        req.write('\n')
+        req.write('Data Type: %s' % str(type(json_data[item])).replace('<', '').replace('>', ''))
+        req.write('\n')
+        req.write('Contents: %s' % str(json_data[item]))
+        req.write('\n\n')
+
+# Define status URL for MoBeDAC portal to poll:
+#study_id = 10001
+#callback_url = '/routed/projectstatus/{1}'.format(req.hostname, study_id)
+#req.write(callback_url)
+%>

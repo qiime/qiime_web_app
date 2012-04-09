@@ -1,0 +1,115 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+import gc
+
+
+# Instantiate a copy of data access
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+from mod_python.util import FieldStorage
+
+# Data access for this page. Cleaned up at bottom.
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+# Grab a reference to the session
+#sess = Session.Session(req)
+
+# Get our post data
+"""
+!!!!!!!!!!!!!!
+VERY IMPORTANT NOTE: In conjunction with the note posted below regarding the field storage object,
+you MUST also make sure you leave the POST data read BEFORE the accessing of the field storage object.
+"""
+post_data = req.read(100000)
+#req.write('{0}'.format(post_data))
+
+# Access to a field storage object. 
+"""
+!!!!!!!!!!!!!!! 
+VERY IMPORTANT NOTE: There appears to be a bug with mod_python and default access to form
+variables via the "form" reference. For whatever reason, if the "form" object is accessed
+on this page, it completely wipes out the POST data that was sent. I found a workaround 
+using the mod_python.util.FieldStorage object. It seems to preserve the POST data properly
+when accessed. 
+
+SO, do NOT ever reference the "form" object on this page. It will destroy the POST data and 
+break stuff.
+"""
+fs = FieldStorage(req)
+
+# Function for loading requested pages
+def loadPage(page):
+    #req.content_type = 'text/xml'
+    req.content_type = 'text/html'
+    doc_root = req.document_root() + '/routed/'
+    if ( os.path.isfile( doc_root + page ) ):
+        #req.write('<?xml version="1.0"?>')        
+        code = parse( page, doc_root )
+        exec ( code )
+    else:
+        req.write('<h3>Page not found: {0}</h3>\n'.format(page))
+        
+def getPage(page):
+    doc_root = req.document_root() + '/routed/'
+    if ( os.path.isfile( doc_root + page ) ):
+        code = parse( page, doc_root )
+        exec ( code )
+    else:
+        req.write('<h3>Page not found: {0}</h3>\n'.format(page))
+
+# Parse out the terms
+identifier = None
+resource = None
+
+query_string = fs.get('query', '')
+
+# Make sure 'query' exists in the form collection. Exit if not
+if query_string == '':
+    raise Exception('Query string not properly formed.')
+
+if '/' not in query_string:
+    #req.write('string type<br/>\n')
+    resource = query_string
+else:
+    #req.write('list type<br/>\n')
+    terms = query_string.split('/')
+    resource = terms[0]
+    if len(terms) > 1 and terms[1] != '':
+        identifier = terms[1]
+
+#req.write('Resource: {0}<br/>\n'.format(resource))
+#req.write('Identifier: {0}<br/>\n'.format(identifier))
+
+# Save the identifier in the session for use in the included page
+#sess['identifier'] = identifier
+#sess['post_data'] = post_data
+#sess.save()
+
+# Switchboard
+request_method = req.method
+if request_method == 'GET':
+    page = '%s_get.psp' % (resource)
+    loadPage(page)
+elif request_method == 'PUT':
+    page = '%s_put.psp' % (resource)
+    getPage(page)
+elif request_method == 'POST':
+    page = '%s_post.psp' % (resource)
+    getPage(page)
+elif request_method == 'DELETE':
+    page = '%s_delete.psp' % (resource)
+    getPage(page)
+else:
+    pass
+
+data_access = None
+gc.collect()
+%>
