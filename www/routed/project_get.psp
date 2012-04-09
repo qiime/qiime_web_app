@@ -17,5 +17,5 @@ req.write('<br/>')
 req.write('<br/>')
 req.write('project_get page')
 req.write('<br/>')
-req.write('Identifier: {0}'.format(sess['identifier']))
+req.write('Identifier: {0}'.format(query_string))
 %>
