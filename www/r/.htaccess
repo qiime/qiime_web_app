@@ -1,2 +1,2 @@
 RewriteEngine On
-RewriteRule ^(.*$) router.psp?query=$1 [QSA]
+RewriteRule ^(.*$) /routed/router.psp?query=$1 [NC]
