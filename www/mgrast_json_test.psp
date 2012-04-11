@@ -1,35 +1,55 @@
 <%
-import json
-import urllib2
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, The QIIME project"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.2.0-dev"
+__maintainer__ = "Doug Wendel"
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
 
-req.write('<h3>MG-RAST MOBEDAC REST/JSON Test</h3>')
+import sys
+import httplib, urllib
 
+url_path = '/r/project'
+#url_path = '/routed/router.psp?query=project'
+#url_path = '/routed/post_test.psp?query=project/1234'
 
-##### NOTE: None of this works to actually authenticate at the moment. Nothing
-##### reads it on the other end. But it will still open the un-authenticated page
-##### and read the sampel JSON contained there.
+#host = 'microbio.me'
+host = '192.168.56.101'
 
-# Create an OpenerDirector with support for Basic HTTP Authentication...
-auth_handler = urllib2.HTTPBasicAuthHandler()
-auth_handler.add_password(realm='MOBEDAC',
-                          uri='http://mobedac.org/api.cgi/project',
-                          user='duggus',
-                          passwd='humongous')
-opener = urllib2.build_opener(auth_handler)
-# ...and install it globally so it can be used with urlopen.
-urllib2.install_opener(opener)
-response = urllib2.urlopen('http://mobedac.org/api.cgi/project')
-raw_data = response.read()
+file_contents = '{"analysis_system":"QIIME","library_ids":["mgl23544.1"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac"}}'
 
-if raw_data:
-    json_data = json.loads(raw_data)
-    for item in json_data:
-        req.write('<b>Request Item:</b> %s' % item)
-        req.write('<br/>')
-        req.write('<b>Data Type:</b> %s' % str(type(json_data[item])).replace('<', '').replace('>', ''))
-        req.write('<br/>')
-        req.write('<b>Contents:</b> %s' % str(json_data[item]))
-        req.write('<p/>')
+success = None
+entity_id = None
+
+# Submit file data
+#headers = {"Content-type":"application/x-www-form-urlencoded", "Accept":"text/xml", "User-Agent":"qiime_website"}
+headers = {"Content-type":"application/x-www-form-urlencoded", "Accept":"text/html", "User-Agent":"qiime_website"}
+conn = httplib.HTTPConnection(host)
+conn.request(method = "POST", url = url_path, body = file_contents, headers = headers)
+response = conn.getresponse()
+data = response.read()
+req.write('<pre>')
+req.write('Request output:\n{0}'.format(str(data)))
+req.write('/<pre>')
+
+"""
+print '==============================================='
+
+print 'Response data is: ' + data
+print 'Connecting to poll url...'
+url_path = data
+
+conn.request(method = "GET", url = url_path, body = file_contents, headers = headers)
+response = conn.getresponse()
+data = response.read()
+
+print data
+
+conn.close()
+
+"""
 
 %>
 

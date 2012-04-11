@@ -10,33 +10,87 @@ __status__ = "Production"
 
 import json
 
-debug = False
+def get_resource(resource_name, base_url, resource_url, resource_id, auth_key, debug = True):
+    import json
+    import httplib
+    
+    if debug:
+        req.write('\n\n-----------------------Accessing {0} Data-----------------------\n\n'.format(resource_name))
+    #if debug:
+    #    req.write('Fetching info for {0} "{1}":\n'.format(str(library_id)))
+    # Call out to MG-RAST server to get the entire object heirarchy
+    conn = httplib.HTTPConnection(base_url)
+    if debug:
+        req.write('Connected to: "{0}":\n'.format(base_url))
+        resource = resource_url.format(resource_id, auth_key)
+        req.write('Accessing resource: "{0}":\n'.format(resource))
+        
+    conn.request('GET', resource)
+    if debug:
+        req.write('Attempting to access requested resource...\n')
+    resp = conn.getresponse()
+    status = resp.status
+    if debug:
+        req.write('Status: {0}\n'.format(str(status)))
+    reason = resp.reason
+    if debug:
+        req.write('Reason: {0}\n'.format((reason)))
+    
+    # 200 is the only acceptible status. Anything else indicates no data is coming
+    # back from MG-RAST
+    if status != 200:
+        raise Exception('Error accessing REST API. HTTP status was {0}\n'.format(status))
+    
+    # Get the library data 
+    data = resp.read()
+    if debug:
+        req.write('Data: ' + str(data))
+    
+    # If nothing comes back skip
+    if not data:
+        req.write('No data available for library "{0}". Skipping...\n'.format(library_id))
+        return None
+
+    # Parse the JSON object and extract parents and metadata
+    json_data = json.loads(data)
+    if debug:
+        req.write('\n\nJSON objects:\n')
+        for item in json_data:
+            req.write('{0}: {1}\n'.format(item, str(json_data[item])))
+            
+    return json_data
+
+# Some constants
+auth_key = 'TkzmLuiSuwQEhivEveZ7tvYiB'
+base_url = 'api.metagenomics.anl.gov'
+library_resource_url = '/library/{0}?auth={1}'
+sample_resource_url = '/sample/{0}?auth={1}'
+project_resource_url = '/project/{0}?auth={1}'
 
 # Attempt to parse the post body as JSON data
+# post_data comes from the router.psp
 json_data = json.loads(post_data)
 library_ids = json_data['library_ids']
 for library_id in library_ids:
-    req.write(str(library_id))
-    # Call out to MG-RAST server to get the entire object heirarchy
-    #http://api.metagenomics.anl.gov/library/mgl23544.1?auth=TkzmLuiSuwQEhivEveZ7tvYiB
-    #sequences: api.metagenomics.anl.gov/sequenceSet/$ssid
+    # Get the library data
+    library_json = get_resource('Library', base_url, library_resource_url, library_id, auth_key, debug = True)
+    sequence_sets = library_json['sequence_sets']
+    sample = library_json['sample']
+    reads = library_json['reads']
+    metagenome = library_json['metagenome']
+    metadata = library_json['metadata']
 
-if debug:
-    # Get the proper session variables
-    req.write(post_data)
-    req.write('\n\n')
-    req.write('json_data is: {0}'.format(str(json_data)))
-    req.write('\n\n')
-    for item in json_data:
-        req.write('Request Item: %s' % item)
-        req.write('\n')
-        req.write('Data Type: %s' % str(type(json_data[item])).replace('<', '').replace('>', ''))
-        req.write('\n')
-        req.write('Contents: %s' % str(json_data[item]))
-        req.write('\n\n')
+    # Get the sample data
+    sample_json = get_resource('Sample', base_url, sample_resource_url, sample, auth_key, debug = True)
+    project = sample_json['project']
+    
+    # Get the project data
+    project_json = get_resource('Project', base_url, project_resource_url, project, auth_key, debug = True)
+
+
 
 # Define status URL for MoBeDAC portal to poll:
-#study_id = 10001
-#callback_url = '/routed/projectstatus/{1}'.format(req.hostname, study_id)
-#req.write(callback_url)
+# study_id = 10001
+# callback_url = '/routed/projectstatus/{1}'.format(req.hostname, study_id)
+# req.write(callback_url)
 %>
