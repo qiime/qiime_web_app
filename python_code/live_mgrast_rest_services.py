@@ -16,6 +16,10 @@ from base_rest_services import BaseRestServices
 
 class LiveMGRASTRestServices(BaseRestServices):
     def __init__(self, study_id, web_app_user_id):
+        """ Sets up initial values
+        
+        Sets up file paths, urls, and other necessary details for submission to MG-RAST
+        """
         super(LiveMGRASTRestServices, self).__init__(study_id, web_app_user_id)
         self.key = 'B7VTrWDs4VURvG43vRWKDjRUH'
         self.hostname = 'metagenomics.anl.gov'
@@ -32,6 +36,10 @@ class LiveMGRASTRestServices(BaseRestServices):
         return value
         
     def send_post_data(self, url_path, file_contents, host, debug):
+        """ Post data to the MG-RAST web service
+        
+        This function takes in a file and issues a POST request to the supplied url.
+        """
         success = None
         entity_id = None
         

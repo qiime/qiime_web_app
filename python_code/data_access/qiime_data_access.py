@@ -247,18 +247,15 @@ class QiimeDataAccess(object):
         includes_timeseries):
         """ Creates a study.
         """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            study_id = 0
-            results = con.cursor().callproc('qiime_assets.study_insert', 
-                [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
-                portal_type, study_title, study_alias, pmid, study_abstract, study_description,
-                principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
-                includes_timeseries])
-            return results[0]
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+        con = self.getMetadataDatabaseConnection()
+        study_id = 0
+        results = con.cursor().callproc('qiime_assets.study_insert', 
+            [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+            portal_type, study_title, study_alias, pmid, study_abstract, study_description,
+            principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
+            includes_timeseries])
+            
+        return results[0]
             
     def updateStudy(self, study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,

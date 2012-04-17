@@ -15,10 +15,10 @@ from sample_export import export_fasta_from_sample
 import os
 import stat
 import threading
+import gc
 
 class BaseRestServices(object):
-    def __init__(self, study_id, web_app_user_id):
-        self.key = None
+    def __init__(self, study_id, web_app_user_id)
         self.hostname = None
         self.study_url = None
         self.sample_url = None
@@ -40,6 +40,8 @@ class BaseRestServices(object):
         return ' '.join(text.split())
     
 class RestDataHelper(object):
+    """ A class for consolidating complex or commonly used functions
+    """
     def __init__(self, study_id, web_app_user_id):
         self._data_access = data_access_factory(ServerConfig.data_access_type)
         self._study_id = study_id
@@ -48,7 +50,13 @@ class RestDataHelper(object):
         self._study_info = None
         
     def __del__(self):
+        """ Destructor
+        
+        Sets data_access to None to guarantee GC finds it. Have had issues in the past;
+        this seems to help prevent dangling connections.
+        """
         self._data_access = None
+        gc.collect()
         
     def get_study_info(self):
         """ Gets all study-level data
@@ -160,27 +168,4 @@ class RestDataHelper(object):
         """
         samples = self._data_access.getSampleList(self._study_id)
         return samples
-        
-    def get_platform_type(self, sample_id, row_number):
-        query = 'select platform from sequence_prep where sample_id = {0} and row_number = {1}'.format(str(sample_id), str(row_number))
-        #print query
-        platform = self.data_access.dynamicMetadataSelect(query).fetchone()[0].lower()
-        
-        sff = set(['tit', 'titanium', 'flx', '454', '454 flx'])
-        fastq = set(['illumina', 'illumina gaiix'])
-        fasta = set(['fasta'])
-        
-        if platform in sff:
-            # Note that even though we start with SFF files, we're actually writing out a fastq file for export
-            return SffSequenceWriter(self.data_access, study_id, sample_id, row_number, 'sff', root_dir, '.fastq')
-        elif platform in fastq:
-            return FastqSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fastq', root_dir, '.fastq')
-        elif platform in fasta:
-            return FastaSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fasta', root_dir, '.fasta')
-        else:
-            raise ValueError('Could not determine sequence file writer type based on platform: "%s"' % platform)
-            return None
-
-
-        
         

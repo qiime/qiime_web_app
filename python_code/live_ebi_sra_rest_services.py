@@ -16,11 +16,13 @@ from base_rest_services import BaseRestServices
 from sequence_file_writer import sequence_file_writer_factory
 import hashlib
 from ftplib import FTP
-#from data_access_connections import data_access_factory
-#from enums import ServerConfig
 
 class LiveEBISRARestServices(BaseRestServices):
     def __init__(self, study_id, web_app_user_id, root_dir):
+        """ Sets up initial values
+        
+        Sets up file paths, urls, and other necessary details for submission to the EBI SRA
+        """
         super(LiveEBISRARestServices, self).__init__(study_id, web_app_user_id)
         self.key = ''
         self.hostname = ''
@@ -48,15 +50,23 @@ class LiveEBISRARestServices(BaseRestServices):
         self.ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
 
     def __del__(self):
-        # Close the FTP connection
+        """ Closes the FTP connection
+        """
         self.ftp.quit()
         
     def send_ftp_data(self, file_path):
+        """ Sends a file to the EBI "dropbox" (FTP account)
+        """
         f = open(file_path, 'rb')
         self.ftp.storbinary('STOR {0}'.format(basename(file_path)), f)
         f.close()
 
     def send_post_data(self, url_path, file_contents, debug = False):
+        """ Sends POST data
+        
+        Currently unused for the EBI but will likely be activated for sending one
+        or more XML files to their REST service.
+        """
         success = None
         entity_id = None
 
@@ -323,7 +333,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         run_file.write('        <EXPERIMENT_REF refname="{0}"/>\n'.format(experiment_alias))
                         run_file.write('        <DATA_BLOCK>\n')
                         run_file.write('            <FILES>\n')
-                        run_file.write('                <FILE filename="{0}" filetype="{1}" quality_scoring_system="{2}"/>\n'.format(basename(file_path), file_writer.file_extension, 'log-odds'))
+                        run_file.write('                <FILE filename="{0}" filetype="{1}" quality_scoring_system="{2}"/>\n'.format(basename(file_path), file_writer.file_extension, 'phred'))
                         run_file.write('            </FILES>\n')
                         run_file.write('        </DATA_BLOCK>\n')
                         run_file.write('    </RUN>\n')
