@@ -329,7 +329,7 @@ class LiveEBISRARestServices(BaseRestServices):
                             continue
                         
                         # The run file references
-                        run_file.write('    <RUN alias="{0}_run">\n'.format(basename(file_path)))
+                        run_file.write('    <RUN alias="{0}_run" center_name="CCME-COLORADO">\n'.format(basename(file_path)))
                         run_file.write('        <EXPERIMENT_REF refname="{0}"/>\n'.format(experiment_alias))
                         run_file.write('        <DATA_BLOCK>\n')
                         run_file.write('            <FILES>\n')
