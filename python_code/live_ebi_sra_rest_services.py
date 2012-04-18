@@ -17,6 +17,12 @@ from sequence_file_writer import sequence_file_writer_factory
 import hashlib
 from ftplib import FTP
 
+class SequenceFile(object):
+    def __init__(self, file_path, file_id, checksum):
+        self.file_path = file_path
+        self.file_id = file_id
+        self.checksum = checksum
+
 class LiveEBISRARestServices(BaseRestServices):
     def __init__(self, study_id, web_app_user_id, root_dir):
         """ Sets up initial values
@@ -313,14 +319,27 @@ class LiveEBISRARestServices(BaseRestServices):
                             experiment_file.write('          </EXPERIMENT_ATTRIBUTE>\n')
                         experiment_file.write('       </EXPERIMENT_ATTRIBUTES>\n')
                         experiment_file.write('   </EXPERIMENT>\n')
-
                         
+                        checksum = None
                         file_path = ''
                         file_identifier = ''
+                        block_size = 8192
                         try:
                             file_path = file_writer.write()
+                            
+                            # Checksum for file. Done in chunks to prevent memory overflow for large files
+                            open_file = open(file_path)
+                            md5 = hashlib.md5()
+                            while True:
+                                data = open_file.read(block_size)
+                                if not data:
+                                    break
+                                md5.update(data)
+                            checksum = md5.hexdigest()
+                            open_file.close()
+
                             file_identifier = '{0}:{1}:{2}'.format(self.study_id, sample_id, row_number)
-                            self.file_list[file_identifier] = file_path
+                            self.file_list[file_identifier] = SequenceFile(file_path, file_identifier, checksum)
                         except Exception, e:
                             error = 'Exception caught while attempting to obtain file_path: "{0}". '.format(str(e))
                             error += 'file_path: "{0}", file_identifier: "{1}" '.format(str(file_path), str(file_identifier))
@@ -333,7 +352,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         run_file.write('        <EXPERIMENT_REF refname="{0}"/>\n'.format(experiment_alias))
                         run_file.write('        <DATA_BLOCK>\n')
                         run_file.write('            <FILES>\n')
-                        run_file.write('                <FILE filename="{0}" filetype="{1}" quality_scoring_system="{2}"/>\n'.format(basename(file_path), file_writer.file_extension, 'phred'))
+                        run_file.write('                <FILE filename="{0}" filetype="{1}" quality_scoring_system="{2}" checksum_method="MD5" checksum="{3}"/>\n'.format(basename(file_path), file_writer.file_extension, 'phred', checksum))
                         run_file.write('            </FILES>\n')
                         run_file.write('        </DATA_BLOCK>\n')
                         run_file.write('    </RUN>\n')
@@ -388,23 +407,8 @@ class LiveEBISRARestServices(BaseRestServices):
 
         # Sequence files here?
         submission_file.write('<FILES>\n')
-        
-        # Checksum for file. Done in chunks to prevent memory overflow for large files
-        block_size = 8192
         for seqs_file in self.file_list:
-            file_name = basename(self.file_list[seqs_file])
-            open_file = open(self.file_list[seqs_file])
-            md5 = hashlib.md5()
-            while True:
-                data = open_file.read(block_size)
-                if not data:
-                    break
-                md5.update(data)
-            checksum = md5.hexdigest()
-            open_file.close()
-            
-            
-            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(checksum, file_name))    
+            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(seqs_file.checksum, seqs_file.file_name))    
         submission_file.write('</FILES>\n')
         
         submission_file.write('</SUBMISSION>\n')
