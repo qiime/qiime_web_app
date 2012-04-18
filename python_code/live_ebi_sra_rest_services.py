@@ -408,7 +408,7 @@ class LiveEBISRARestServices(BaseRestServices):
         # Sequence files here?
         submission_file.write('<FILES>\n')
         for seqs_file in self.file_list:
-            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(seqs_file.checksum, seqs_file.file_name))    
+            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(seqs_file.checksum, seqs_file.file_path))    
         submission_file.write('</FILES>\n')
         
         submission_file.write('</SUBMISSION>\n')
@@ -417,7 +417,7 @@ class LiveEBISRARestServices(BaseRestServices):
         if debug:
             print 'File List:'
             for f in self.file_list:
-                print '{0} - {1}'.format(f.file_name, f.checksum)
+                print '{0} - {1}'.format(f.file_path, f.checksum)
         
         if len(self.errors) > 0:
             print 'ERRORS FOUND:'
