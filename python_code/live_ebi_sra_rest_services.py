@@ -408,7 +408,7 @@ class LiveEBISRARestServices(BaseRestServices):
         # Sequence files here?
         submission_file.write('<FILES>\n')
         for seqs_file in self.file_list:
-            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(seqs_file.checksum, seqs_file.file_path))    
+            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(seqs_file.checksum, basename(seqs_file.file_path)))
         submission_file.write('</FILES>\n')
         
         submission_file.write('</SUBMISSION>\n')
