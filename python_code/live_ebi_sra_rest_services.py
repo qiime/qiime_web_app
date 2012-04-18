@@ -37,7 +37,7 @@ class LiveEBISRARestServices(BaseRestServices):
         self.library_url = '/service/%s/preparation' % self.key
         self.sequence_url = '/service/%s/reads' % self.key
         self.root_dir = root_dir
-        self.file_list = {}
+        self.file_list = []
         self.errors = []
         
         # File paths
@@ -130,8 +130,8 @@ class LiveEBISRARestServices(BaseRestServices):
         # Send the sequence files
         for f in self.file_list:
             if debug:
-                print 'Sending sequence file "{0}"'.format(self.file_list[f])
-            self.send_ftp_data(self.file_list[f])
+                print 'Sending sequence file "{0}"'.format(f.file_path)
+            self.send_ftp_data(f.file_path)
                 
     def generate_metadata_files(self, debug = False, action_type = 'VALIDATE'):
         """
@@ -339,7 +339,7 @@ class LiveEBISRARestServices(BaseRestServices):
                             open_file.close()
 
                             file_identifier = '{0}:{1}:{2}'.format(self.study_id, sample_id, row_number)
-                            self.file_list[file_identifier] = SequenceFile(file_path, file_identifier, checksum)
+                            self.file_list.append(SequenceFile(file_path, file_identifier, checksum))
                         except Exception, e:
                             error = 'Exception caught while attempting to obtain file_path: "{0}". '.format(str(e))
                             error += 'file_path: "{0}", file_identifier: "{1}" '.format(str(file_path), str(file_identifier))
@@ -414,9 +414,10 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file.write('</SUBMISSION>\n')
         submission_file.write('</SUBMISSION_SET>\n')    
 
-        print 'File List:'
-        for f in self.file_list:
-            print '{0} - {1}'.format(str(f), str(self.file_list[f]))
+        if debug:
+            print 'File List:'
+            for f in self.file_list:
+                print '{0} - {1}'.format(f.file_name, f.checksum)
         
         if len(self.errors) > 0:
             print 'ERRORS FOUND:'
