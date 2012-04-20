@@ -283,12 +283,8 @@ class QiimeDataAccess(object):
             1 = delete all metadata including sample and sequence prep ids
             2 = delete everything including the study
         """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.study_delete', [study_id, full_delete])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('qiime_assets.study_delete', [study_id, full_delete])
         
     def getStudyNames(self):
         """ Returns a list of study names
@@ -1301,13 +1297,8 @@ class QiimeDataAccess(object):
     def createPrepKey(self, study_id, sample_name, row_number, barcode, linker, primer, run_prefix):
         """ Writes a prep key row to the database
         """
-        try:
-            con = self.getMetadataDatabaseConnection()
-            #con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_num])
-            con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_number, barcode, linker, primer, run_prefix])
-        except Exception, e:
-            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('qiime_assets.prep_insert', [study_id, sample_name, row_number, barcode, linker, primer, run_prefix])
 
     def createHostKey(self, study_id, sample_name, host_subject_id):
         """ Writes a host key row to the database
@@ -1350,6 +1341,7 @@ class QiimeDataAccess(object):
             log.append('Checking if table %s exists...' % extra_table)
             named_params = {'schema_owner':schema_owner, 'extra_table':extra_table}
             statement = 'select * from all_tables where owner = :schema_owner and table_name = :extra_table'
+            statement = str(statement)
             log.append(statement)
             log.append('schema_owner: %s' % schema_owner)
             log.append('extra_table: %s' % extra_table)
@@ -1362,6 +1354,7 @@ class QiimeDataAccess(object):
                 statement = 'create table %s (%s_id int not null, \
                     constraint fk_%s_sid foreign key (%s_id) references %s (%s_id))' % \
                     (extra_table, key_table, extra_table, key_table, key_table, key_table)
+                statement = str(statement)
                 log.append(statement)
                 results = con.cursor().execute(statement)
 
@@ -1369,6 +1362,7 @@ class QiimeDataAccess(object):
                 if field_type == 'prep':
                     log.append('Adding row_number to extra_prep table...')                        
                     statement = 'alter table %s add row_number integer' % (extra_table)
+                    statement = str(statement)
                     log.append(statement)
                     results = con.cursor().execute(statement)
 
@@ -1378,6 +1372,7 @@ class QiimeDataAccess(object):
                 else:
                     statement = 'alter table %s add constraint pk_%s primary key (%s_id)'\
                         % (extra_table, extra_table, key_table)
+                statement = str(statement)
                 log.append(statement)
                 results = con.cursor().execute(statement)
                     
@@ -1385,6 +1380,7 @@ class QiimeDataAccess(object):
                 if field_type == 'study':
                     log.append('Inserting study extra row...')                        
                     statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
+                    statement = str(statement)
                     log.append(statement)
                     results = con.cursor().execute(statement)
                     con.cursor().execute('commit')
@@ -1395,6 +1391,7 @@ class QiimeDataAccess(object):
             log.append('Checking if extra column exists: %s' % field_name)
             named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name.upper()}
             statement = 'select * from all_tab_columns where owner = :schema_owner and table_name = :extra_table_name and column_name = :column_name'
+            statement = str(statement)
             log.append(statement)
             log.append('schema_owner: %s, extra_table_name: %s, column_name: %s' %
                 (schema_owner, extra_table, field_name))
@@ -1405,6 +1402,7 @@ class QiimeDataAccess(object):
             if not results:
                 log.append('Column does not exist. Creating extra column: %s' % field_name)
                 statement = 'alter table %s add "%s" varchar2(4000) default \'\'' % (extra_table, field_name.upper())
+                statement = str(statement)
                 log.append(statement)
                 results = con.cursor().execute(statement)
                 log.append('Column added. Results are: %s. Extra table is: %s' % (str(results), extra_table))
@@ -1480,6 +1478,7 @@ class QiimeDataAccess(object):
                 log.append('Field is of type list. Looking up integer value...')
                 named_params = {'field_value':field_value.upper()}
                 statement = 'select vocab_value_id from controlled_vocab_values where upper(term) = :field_value'
+                statement = str(statement)
                 log.append(statement)
                 results = con.cursor().execute(statement, named_params).fetchone()
                 if results != None:
@@ -1504,6 +1503,7 @@ class QiimeDataAccess(object):
                 log.append('Updating study field...')
                 named_params = {'field_value':field_value, 'study_id':study_id}
                 statement = 'update %s set %s = :field_value where study_id = :study_id' % (table_name, field_name)
+                statement = str(statement)
                 log.append(statement)
                 log.append('field_value = "%s", study_id = "%s"' % (field_value, study_id))
                 results = con.cursor().execute(statement, named_params)
@@ -1523,11 +1523,13 @@ class QiimeDataAccess(object):
             or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_field':key_field, 'study_id':study_id}
                 statement = 'select sample_id from "SAMPLE" where sample_name = :key_field and study_id = :study_id'
+                statement = str(statement)
                 key_column = 'sample_id'
                 key_table = '"SAMPLE"'
             elif table_name in ['"HOST"']:
                 named_params = {'key_field':host_key_field}
                 statement = 'select host_id from "HOST" where host_subject_id = :key_field'
+                statement = str(statement)
                 key_column = 'host_id'
                 key_table = '"HOST"'
             else:
@@ -1571,6 +1573,7 @@ class QiimeDataAccess(object):
             else:
                 named_params = {'key_column_value':key_column_value}
                 statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
+            statement = str(statement)
             log.append(statement)
             results = con.cursor().execute(statement, named_params).fetchone()
                 
@@ -1584,6 +1587,7 @@ class QiimeDataAccess(object):
                 else:
                     named_params = {'key_column_value':key_column_value}
                     statement = 'insert into %s (%s) values (:key_column_value)' % (table_name, key_column)
+                statement = str(statement)
                 log.append(statement)
                 con.cursor().execute(statement, named_params)
 
@@ -1612,7 +1616,7 @@ class QiimeDataAccess(object):
                 else:  
                     statement = 'update %s set %s = \'%s\' where %s = %s'\
                         % (table_name, field_name, field_value, key_column, key_column_value)
-
+            statement = str(statement)
             log.append(statement)
             results = con.cursor().execute(statement)
             
@@ -2842,7 +2846,7 @@ class QiimeDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         cursor = con.cursor()
         
-        for table in sample_tables:        
+        for table in sample_tables:
             if 'extra_sample_' in table:
                 statement = 'select * from %s%s where sample_id = %s' % (table, study_id, sample_id)
             elif table == 'host':
