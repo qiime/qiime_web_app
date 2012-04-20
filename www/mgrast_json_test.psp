@@ -31,8 +31,8 @@ conn.request(method = "POST", url = url_path, body = file_contents, headers = he
 response = conn.getresponse()
 data = response.read()
 req.write('<pre>')
-req.write('Request output:\n{0}'.format(str(data)))
-req.write('/<pre>')
+req.write('{0}'.format(str(data)))
+req.write('</pre>')
 
 """
 print '==============================================='

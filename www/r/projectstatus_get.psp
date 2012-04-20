@@ -20,4 +20,3 @@ status['current_status'] = 'Study {0} received'.format(study_id)
 req.write(json.dumps(status))
 %>
 
-

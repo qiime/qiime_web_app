@@ -7,6 +7,18 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
-%>
 
-<project_get_page/>
+# Grab a reference to the session
+#sess = Session.Session(req)
+
+req.write('project_get page')
+req.write('<br/>')
+
+
+req.write('<br/>')
+req.write('<br/>')
+req.write('<br/>')
+req.write('<br/>')
+
+req.write('Identifier: {0}'.format(sess['identifier']))
+%>
