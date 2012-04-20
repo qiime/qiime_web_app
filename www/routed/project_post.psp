@@ -196,6 +196,7 @@ def create_library(study_id, sample_name, library_json, row_num, lock, debug):
     linker = None
     primer = None
     run_prefix = None
+    host_key_field = None
     
     if 'barcode' in metadata:
         barcode = metadata['barcode']
@@ -203,6 +204,8 @@ def create_library(study_id, sample_name, library_json, row_num, lock, debug):
         linker = metadata['linker']
     if 'primer' in metadata:
         primer = metadata['primer']
+    if 'host_key_field' in metadata:
+        host_key_field = metadata['host_key_field']
     run_prefix = library_json['id']
     
     if debug:
@@ -221,9 +224,8 @@ def create_library(study_id, sample_name, library_json, row_num, lock, debug):
     for item in metadata:
         value = metadata[item]
         if debug:
-            req.write('{0}: {1}<br/>'.format(item, str(value)))
+            req.write('{0}: {1}<br/>'.format(item, str(value)))        
         
-        host_key_field = None
         data_access.writeMetadataValue('prep', sample_name, item, value, study_id, host_key_field, row_num, lock)
     
 
@@ -266,8 +268,6 @@ lock = Lock()
 # post_data comes from the router.psp
 json_data = json.loads(post_data)
 library_ids = json_data['library_ids']
-
-
 
 for library_id in library_ids:
     # Increment the row number - needed for prep and sample inserts
@@ -319,6 +319,15 @@ for library_id in library_ids:
     for sequence_set in sequence_sets:
         data = get_resource('Sequence Set', base_url, sequenceSet_resource_url, sequence_set, auth_key, debug)
         if data:
+            """ Fasta data looks like this currently:
+            >SOMEIDENTIFIER
+            AGACGAGACGGACGACGACGACGACGAGCGAGAGTGAGAG
+            
+            This replaces the identifier with:
+            >samplename_SOMEIDENTIFIER
+            """
+            data.replace('>', '>{0}_'.format(sample_name))
+            
             # Create directories
             if debug:
                 req.write('attempting to create folder: {0}'.format(dirname))
