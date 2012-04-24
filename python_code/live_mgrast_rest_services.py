@@ -77,7 +77,7 @@ class LiveMGRASTRestServices(BaseRestServices):
 
         return success, entity_id
         
-    def generate_metadata_files(self, debug = False):
+    def generate_metadata_files(self, debug = False, send_sequence_data = True):
         """
         Generates MG-RAST formatted metadata files
     
@@ -286,6 +286,9 @@ class LiveMGRASTRestServices(BaseRestServices):
                 ######################################################
                 #### Fasta Submission
                 ######################################################
+                
+                if not send_sequence_data:
+                    continue
 
                 print 'FASTA'
             
