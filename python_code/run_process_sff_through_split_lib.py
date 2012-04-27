@@ -273,6 +273,7 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
                                         copy_split_lib_seqs_location))
         commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
     
+    """
     # create per sample fastq files
     fastq_output=join(split_library_output,'per_sample_fastq')
     create_dir(fastq_output)
@@ -287,7 +288,7 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
      (python_exe_fp, script_dir, input_fp, input_qual_fp,
       fastq_output, params_str)
     commands.append([('Create FASTQ', create_fastq_cmd)])
-    
+    """
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
 
