@@ -18,7 +18,7 @@ import threading
 import gc
 
 class BaseRestServices(object):
-    def __init__(self, study_id, web_app_user_id)
+    def __init__(self, study_id, web_app_user_id):
         self.hostname = None
         self.study_url = None
         self.sample_url = None

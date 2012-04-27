@@ -30,6 +30,7 @@ split_libraries_fastq:rev_comp
 split_libraries_fastq:barcode_type	hamming_8
 split_libraries_fastq:last_bad_quality_char
 split_libraries_fastq:max_barcode_errors	1.5
+split_libraries_fastq:store_qual_scores True
 
 # OTU picker parameters
 pick_otus:otu_picking_method	uclust_ref

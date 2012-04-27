@@ -103,7 +103,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         input_basename, input_ext = splitext(input_filename)
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
-            if study_id in ['496','968','969']:
+            if study_id in ['496','968','969','1069','1002']:
 
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
@@ -136,7 +136,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
                 denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
             else:
-                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --use_sfftools' %\
+                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
                 
@@ -148,7 +148,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 
                 
         else:
-            process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s --use_sfftools' %\
+            process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
                                 (python_exe_fp, script_dir, sff_input_fp,
                                  output_dir)
             
@@ -272,6 +272,21 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
         copy_to_split_lib_fastas_cmd=cp_files(input_fp,join(split_lib_fastas,
                                         copy_split_lib_seqs_location))
         commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
+    
+    # create per sample fastq files
+    fastq_output=join(split_library_output,'per_sample_fastq')
+    create_dir(fastq_output)
+    try:
+        params_str = get_params_str(params['convert_fastaqual_to_fastq'])
+    except KeyError:
+        params_str = ''
+        
+    input_qual_fp=join(split_library_output,'seqs.qual')
+    
+    create_fastq_cmd = '%s %s/convert_fastaqual_to_fastq.py -f %s -q %s -o %s %s'%\
+     (python_exe_fp, script_dir, input_fp, input_qual_fp,
+      fastq_output, params_str)
+    commands.append([('Create FASTQ', create_fastq_cmd)])
     
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)

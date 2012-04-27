@@ -13,6 +13,7 @@ import sys
 import httplib, urllib
 import threading
 from base_rest_services import BaseRestServices
+from sample_export import export_fasta_from_sample
 
 class LiveMGRASTRestServices(BaseRestServices):
     def __init__(self, study_id, web_app_user_id):

@@ -69,7 +69,7 @@ class Tests(TestCase):
         #live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
         #live.generate_metadata_files(debug = True, action_type = 'ADD')
         live.generate_metadata_files(debug = True, action_type = 'MODIFY')
-        #live.submit_files(debug = True)
+        live.submit_files(debug = True)
 
 if __name__ == "__main__":
     main()
