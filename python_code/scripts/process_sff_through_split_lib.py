@@ -175,6 +175,8 @@ def main():
         
     print 'Completed run_process_sff_through_split_lib.'
     
+    """
+    ####TOO SLOW FOR ILLUMINA
     print 'Check Demultiplexed sequences'
     split_lib_seqs_fp=join(output_dir,'split_libraries','seqs.fna')
     
@@ -194,7 +196,7 @@ def main():
         raise ValueError, "More than 20% of the samples in the mapping file do not have split-library sequences"
         
     print 'Demultiplexed sequences appear to be valid'
-    
+    """
     if submit_to_test_db == 'False':
         # Load the data into the database
         data_access = data_access_factory(ServerConfig.data_access_type)
