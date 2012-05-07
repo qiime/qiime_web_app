@@ -15,7 +15,6 @@ __status__ = "Development"
 from optparse import make_option
 from qiime.util import parse_command_line_parameters
 from live_mgrast_rest_services import LiveMGRASTRestServices
-from run_submit_metadata_to_mgrast import submit_metadata_for_study
 
 script_info = {}
 script_info['brief_description'] = "This script submits metadata to MG-RAST based on a study_id"
