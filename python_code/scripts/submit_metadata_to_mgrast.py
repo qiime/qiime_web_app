@@ -35,22 +35,14 @@ def main():
     study_id = opts.study_id
     debug = opts.debug
     
-    # call the main function
-    
-    # Old key
-    #key = 'VaLLv2abEpZvpbHHNUJhySydr'
-    
-    # Qiime
-    #key = 'B7VTrWDs4VURvG43vRWKDjRUH'
-    
     # User_ID. Mine for now for access to all studies.
     web_app_user_id = 12169
     
     # Get the live function reference
-    live_rest_services = LiveMGRASTRestServices()
+    live_rest_services = LiveMGRASTRestServices(study_id, web_app_user_id)
     
-    #result = submit_metadata_for_study(key, study_id, web_app_user_id, live_rest_services.send_data_to_mgrast, debug)
-    result = submit_metadata_for_study(study_id, web_app_user_id, live_rest_services, debug)
+    # Send the metadata and sequence data
+    result = submit_metadata_for_study(debug, True)
         
 if __name__ == "__main__":
     main()
