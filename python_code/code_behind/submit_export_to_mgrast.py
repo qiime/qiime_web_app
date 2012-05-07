@@ -13,7 +13,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
 from data_access_connections import data_access_factory
-from live_mgrast_rest_services import LiveMGRASTRestServices
+#from live_mgrast_rest_services import LiveMGRASTRestServices
 from enums import ServerConfig
 import os
 
@@ -22,7 +22,7 @@ def exportStudyToMGRAST(study_id, user_id):
     data_access = None
     try:
         data_access = data_access_factory(ServerConfig.data_access_type)
-        live_rest_services = LiveMGRASTRestServices()
+        #live_rest_services = LiveMGRASTRestServices(study_id, user_id)
     
         # Submit the job
         job_id = data_access.createTorqueJob('ExportToMGRASTHandler', 'StudyID=%s' % study_id, user_id, study_id)
