@@ -41,7 +41,7 @@ def main():
     live_rest_services = LiveMGRASTRestServices(study_id, web_app_user_id)
     
     # Send the metadata and sequence data
-    result = submit_metadata_for_study(debug, True)
+    result = live_rest_services.generate_metadata_files(debug, True)
         
 if __name__ == "__main__":
     main()
