@@ -13,6 +13,7 @@ import sys
 import httplib, urllib
 import threading
 import os
+import stat
 from base_rest_services import BaseRestServices
 from sample_export import export_fasta_from_sample
 
