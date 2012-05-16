@@ -15,8 +15,8 @@ url_path = '/r/project'
 #url_path = '/routed/router.psp?query=project'
 #url_path = '/routed/post_test.psp?query=project/1234'
 
-#host = 'microbio.me'
-host = '192.168.56.101'
+host = 'microbio.me'
+#host = '192.168.56.101'
 
 file_contents = '{"analysis_system":"QIIME","library_ids":["mgl23544.1"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac"}}'
 

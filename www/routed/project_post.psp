@@ -326,7 +326,7 @@ for library_id in library_ids:
             This replaces the identifier with:
             >samplename_SOMEIDENTIFIER
             """
-            data.replace('>', '>{0}_'.format(sample_name))
+            data = data.replace('>', '>{0}_'.format(sample_name))
             
             # Create directories
             if debug:
