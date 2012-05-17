@@ -24,8 +24,8 @@ QIIME_LOAD_SPLIT_LIB_SEQS = QIIME_WEBAPP_BASE + "/submit_split_lib_seqs_to_db.py
 QIIME_EXPORT_MGRAST = QIIME_WEBAPP_BASE + "/submit_metadata_to_mgrast.py"
 QIIME_EXPORT_EBISRA = QIIME_WEBAPP_BASE + "/submit_metadata_to_ebi_sra.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
-QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_through_metadata_to_db.py"
-QIIME_SUBMIT_OTU_MAPPING_TO_DB = QIIME_WEBAPP_BASE  + "/submit_otu_mapping_to_db.py"
+#QIIME_SUBMIT_SFF_METADATA_TO_DB = QIIME_WEBAPP_BASE  + "/submit_sff_through_metadata_to_db.py"
+#QIIME_SUBMIT_OTU_MAPPING_TO_DB = QIIME_WEBAPP_BASE  + "/submit_otu_mapping_to_db.py"
 QIIME_MAKE_MAPPING_OTU_TABLE = QIIME_WEBAPP_BASE + "/make_mapping_file_and_otu_table.py"
 QIIME_MAKE_MAPPING_FILE = QIIME_WEBAPP_BASE + "/make_mapping_file.py"
 QIIME_MAKE_MAPPING_PCOA_PLOT = QIIME_WEBAPP_BASE + "/make_mapping_file_and_pcoa_plots.py"
@@ -287,6 +287,7 @@ class ExportToEBISRAHandler(JobHandler):
         else:
             return False
 
+'''
 # Command for writing OTU mapping data to database
 class LoadOTUMappingHandler(JobHandler):
     """Handler for submit_otu_mapping_to_db.py"""
@@ -332,7 +333,7 @@ class TestLoadSFFAndMetadataHandler(JobHandler):
             return True
         else:
             return False
-
+'''
 class makeMappingAndOTUFiles(JobHandler):
     ###OLD FXN
     """Handler for make_mapping_file_and_otu_table.py"""
@@ -359,7 +360,8 @@ class generateMapSubmitJobs(JobHandler):
             return True
         else:
             return False
-                        
+
+'''                    
 class LoadSFFAndMetadataHandler(JobHandler):
     """Handler for submit_sff_and_metadata_to_db.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_SUBMIT_SFF_METADATA_TO_DB, \
@@ -373,8 +375,8 @@ class LoadSFFAndMetadataHandler(JobHandler):
             return True
         else:
             return False
-
-
+'''
+'''
 class makeMappingFileandPCoAPlots(JobHandler):
     ###OLD FXN
     """Handler for make_mapping_file_and_otu_table.py"""
@@ -388,7 +390,7 @@ class makeMappingFileandPCoAPlots(JobHandler):
             return True
         else:
             return False
-
+'''
 class generateMapOTUTableSubmitJobs(JobHandler):
     """Handler for bdiv_through_3d_plots.py"""
     _base_cmd = ' '.join([PYTHON_BIN, QIIME_MAKE_MAP_OTU_TABLE_AND_SUBMIT_JOBS, "--fs_fp %(fs_fp)s --web_fp %(web_fp)s --query %(query)s --fname_prefix %(fname_prefix)s --user_id %(user_id)s --meta_id %(meta_id)s --params %(params_path)s --bdiv_rarefied_at %(bdiv_rarefied_at)s --otutable_rarefied_at %(otutable_rarefied_at)s --jobs_to_start %(jobs_to_start)s --taxonomy %(taxonomy)s --tree_fp %(tree_fp)s" ])
@@ -401,11 +403,13 @@ class generateMapOTUTableSubmitJobs(JobHandler):
             return True
         else:
             return False
-            
+
+'''    
 def load_sff_and_metadata(input, output):
     """Wraps the QIIME-webapp submission of sff and metadata to db script"""
     str_fmt = "%s %s/submit_sff_and_metadata_to_db.py -i %s -s 0"
     cmd_str = str_fmt % (PYTHON_BIN, QIIME_WEBAPP_BASE, input)
+'''
 
 class betaDiversityThroughPlots(JobHandler):
     """Handler for bdiv_through_plots.py"""
