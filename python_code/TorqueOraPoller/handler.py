@@ -19,7 +19,8 @@ from enums import ServerConfig
 PYTHON_BIN="%s/software/bin/python2.7" % ServerConfig.home
 QIIME_WEBAPP_BASE = "%s/projects/Qiime/qiime_web_app/python_code/scripts" % ServerConfig.home
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_through_split_lib.py"
-QIIME_LOAD_SFF = QIIME_WEBAPP_BASE + "/submit_sff_through_split_lib_to_db.py"
+QIIME_LOAD_ANALYSIS_OTU_TABLE = QIIME_WEBAPP_BASE + "/submit_analysis_and_otu_table_to_db.py"
+QIIME_LOAD_SPLIT_LIB_SEQS = QIIME_WEBAPP_BASE + "/submit_split_lib_seqs_to_db.py"
 QIIME_EXPORT_MGRAST = QIIME_WEBAPP_BASE + "/submit_metadata_to_mgrast.py"
 QIIME_EXPORT_EBISRA = QIIME_WEBAPP_BASE + "/submit_metadata_to_ebi_sra.py"
 QIIME_PICK_OTU = QIIME_WEBAPP_BASE + "/chain_pick_otus.py"
@@ -211,12 +212,27 @@ class ProcessSFFHandler(JobHandler):
         else:
             return False
 #
-#
-class LoadSFFHandler(JobHandler):
-    """Handler for submit_sff_through_split_lib_to_db.py"""
-    _base_cmd = ' '.join([PYTHON_BIN, QIIME_LOAD_SFF, \
+# Load sequences into the DB
+class LoadAnalysisOTUTableHandler(JobHandler):
+    """Handler for submit_analysis_and_otu_table_to_db.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_LOAD_ANALYSIS_OTU_TABLE, \
             "-i %(ProcessedFastaFilepath)s -s %(StudyId)s -u %(UserId)s -o %(OutputDir)s -t %(TestDB)s -p %(Platform)s"])
     _base_args = {'ProcessedFastaFilepath':None, 'StudyId':None,'UserId':None,'OutputDir':None,'TestDB':None,'Platform':None}
+
+    def checkJobOutput(self, stdout_lines, stderr_lines):
+        """If stderr_lines is not empty an error has occured"""
+        if len(stderr_lines):
+            self._notes = '\n'.join(stderr_lines)
+            return True
+        else:
+            return False
+
+# Load OTU table into DB
+class LoadSplitLibSeqsHandler(JobHandler):
+    """Handler for submit_split_lib_seqs_to_db.py"""
+    _base_cmd = ' '.join([PYTHON_BIN, QIIME_LOAD_SPLIT_LIB_SEQS, \
+            "-i %(ProcessedFastaFilepath)s -s %(StudyId)s -u %(UserId)s -o %(OutputDir)s -t %(TestDB)s -a %(AnalysisId)s -r %(SeqRunId)s -m %(MDchecksum)s"])
+    _base_args = {'ProcessedFastaFilepath':None, 'StudyId':None,'UserId':None,'OutputDir':None,'TestDB':None,'AnalysisId':None,'SeqRunId':None,'MDchecksum':None}
 
     def checkJobOutput(self, stdout_lines, stderr_lines):
         """If stderr_lines is not empty an error has occured"""

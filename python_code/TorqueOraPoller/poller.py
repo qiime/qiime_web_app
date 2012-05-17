@@ -53,7 +53,8 @@ JOB_TYPE_LOOKUP = {'PollerTestHandlerOkay':PollerTestHandlerOkay,
                    'makeOTUHeatmap':makeOTUHeatmap,
                    'alphaRarefaction':alphaRarefaction,
                    'summarizeTaxa':summarizeTaxa,
-                   'LoadSFFHandler':LoadSFFHandler,
+                   'LoadAnalysisOTUTableHandler':LoadAnalysisOTUTableHandler,
+                   'LoadSplitLibSeqsHandler':LoadSplitLibSeqsHandler,
                    'generateMapSubmitJobs':generateMapSubmitJobs}
                    
 
@@ -266,7 +267,11 @@ class Poller(Daemon):
            
             #### decompose job submission
             # submit job - if loading into DB use singleq
-            if job_type=='LoadSFFHandler':
+            if job_type=='LoadAnalysisOTUTableHandler':
+                submit_queue = 'singleq'
+                pvmem='24gb'
+                res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
+            elif job_type=='LoadSplitLibSeqsHandler':
                 submit_queue = 'singleq'
                 pvmem='24gb'
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))

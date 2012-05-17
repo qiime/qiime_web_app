@@ -45,7 +45,7 @@ function checkQiimeJobLoadStatus()
     }
     
     div_name ="qiime_load_status_div";
-    var url = "check_job_status.psp?job_type_id=12";
+    var url = "check_job_status.psp?job_type_id=12,15";
 
     xmlhttp.onreadystatechange=function()
     {

@@ -26,7 +26,8 @@ from run_process_sff_through_split_lib import run_process_sff_through_split_lib,
 from qiime.workflow import print_commands,call_commands_serially,\
                            print_to_stdout, no_status_updates
 from run_chain_pick_otus import run_chain_pick_otus
-from load_sff_through_split_lib_to_db import submit_sff_and_split_lib, load_otu_mapping
+from load_analysis_seqs_through_otu_table import submit_sff_and_split_lib, \
+                                                 load_otu_mapping
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
 from submit_job_to_qiime import submitQiimeJob
@@ -233,7 +234,7 @@ def main():
     params.append('ProcessedFastaFilepath=%s' % ','.join(fasta_file_paths))
     params.append('Platform=%s' % sequencing_platform)
     job_input='!!'.join(params)
-    job_type='LoadSFFHandler'
+    job_type='LoadAnalysisOTUTableHandler'
     
     
     if process_only == 'False':

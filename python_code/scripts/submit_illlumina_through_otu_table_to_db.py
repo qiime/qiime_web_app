@@ -16,7 +16,7 @@ from optparse import make_option
 from os import makedirs
 from os.path import split, join
 from qiime.util import load_qiime_config
-from load_sff_through_split_lib_to_db import submit_illumina_and_split_lib, \
+from load_analysis_seqs_through_otu_table import submit_illumina_and_split_lib, \
                                              load_otu_mapping
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType

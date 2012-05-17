@@ -67,6 +67,8 @@ var meta_analysis_names=new Array();
     #
 %>
 
+
+
 //Check that the user-defined meta_analysis name is not in the database
 function check_meta_analysis_name()
 {
@@ -91,19 +93,35 @@ function check_meta_analysis_name()
 </script>
 
 <!-- Define the form-->
-<br>
+
+<form id="user_meta_analysis" action="select_meta_analysis_submit.psp" method="post">
+    <table>
+        <tr>
+            <th>
+                Select Previous Meta-Analyses:
+            </th>
+            <td>
+                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="document.forms['user_meta_analysis'].submit(); return false;">
+                <option value=""></option>
+<%
+    meta_analysis_names = data_access.getMetaAnalysisNames(sess['web_app_user_id'])
+    for meta_analysis_name in meta_analysis_names:
+        req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
+    # end
+%>
+                </select>
+            </td>
+        </tr>
+    </table>
+</form>
+<br><br>
 <form id="new_meta_analysis" action="new_meta_analysis_submit.psp" method="post">
     <!-- put the form fields in a table to add structure to the layout-->
     <table>
-        <tr>
-            <td>
-                Meta-Analysis Name:
-            </td>
+        <tr><th>Create New Meta-Analysis:</th>
             <td>
                 <input class="safename" type="text" name="meta_analysis_name" id="meta_analysis_name" />
             </td>
-        </tr>
-        <tr>
             <td>
                 <input type="submit" value="Next"/>
             </td>

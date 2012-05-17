@@ -262,6 +262,7 @@ split_libraries:disable_bc_correction	False
 split_libraries:qual_score_window	50
 split_libraries:disable_primers	False
 split_libraries:reverse_primers	disable
+split_libraries:record_qual_scores True
 
 # OTU picker parameters
 pick_otus:otu_picking_method	uclust_ref

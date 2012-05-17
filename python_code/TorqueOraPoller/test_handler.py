@@ -90,19 +90,25 @@ class PollerTestHandlerOkayTests(TestCase):
 
 class ProcessSFFTests(TestCase):
     def setUp(self):
-        self.job = ProcessSFFHandler('jobname', 'SFF=10!!Mapping=5!!Output=2')
+        self.job = ProcessSFFHandler('jobname', \
+            'SFF=10!!Mapping=5!!StudyID=2!!ParamFile=test.txt!!SubmitToTestDB=True!!SeqPlatform=FLX!!ProcessOnly=True!!UserId=1')
 
     def test_init(self):
         """Make sure shibby is inited correctly"""
-        self.assertEqual(self.job.InputArgs, {'SFF':'10',
-                                              'Mapping':'5',
-                                              'Output':'2'})
+        self.assertEqual(self.job.InputArgs, {'ParamFile': 'test.txt', 
+                                              'SubmitToTestDB': 'True', 
+                                              'UserId': '1', 'Mapping': '5', 
+                                              'ProcessOnly': 'True', 
+                                              'StudyID': '2', 'SFF': '10', 
+                                              'SeqPlatform': 'FLX'})
         self.assertEqual(self.job.OracleJobName, 'jobname')
 
     def test_checkJobOutput(self):
         self.assertFalse(self.job.checkJobOutput([],[]))
         self.assertTrue(self.job.checkJobOutput([],['1','2']))
         self.assertEqual(self.job.getJobNotes(),'1\n2')
+        
+        
 if __name__ == '__main__':
     main()
 
