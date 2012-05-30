@@ -359,11 +359,11 @@ def create_library(study_id, sample_name, library_json, row_num, lock, debug):
 		data_access.createPrepKey(study_id, sample_name, row_num, barcode, linker, primer, run_prefix)
 		req.write('Created prep key.<br/>')
 		# Write the additional metadata values. Add required values to the dict if they don't exist.
-		if 'platform' not in metadata:
-			if 'seq_meth' in metadata:
-				metadata['platform'] = metadata['seq_meth']
-			else:
-				metadata['platform'] = 'FASTA'
+		#if 'platform' not in metadata:
+			#if 'seq_meth' in metadata:
+			#	metadata['platform'] = metadata['seq_meth']
+			#else:
+		metadata['platform'] = 'FASTA'
 	
 		for item in metadata:
 			req.write('Current item: {0}<br/>'.format(str(item)))
@@ -523,6 +523,9 @@ for library_id in library_ids:
 			data_access.addSeqFile(study_id, seqs_filename, 'FNA')			
 
 			break
+
+# Update metadata flag as complete
+data_access.updateMetadataFlag(study_id, 'y')
 			
 # Metadata inserted and files written. Time to kick of a job:
 mapping_file_dir = join(dirname, 'mapping_files/')
