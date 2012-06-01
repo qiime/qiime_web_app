@@ -179,7 +179,7 @@ class FastaSequenceWriter(BaseSequenceWriter):
 	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension):
 		super(FastaSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension)
 		
-	self.write(self, debug = True)
+	self.write(debug = True)
 				
 class SffSequenceWriter(BaseSequenceWriter):
 	""" Returns per-library gzipped fastq references for SFF data
@@ -190,7 +190,7 @@ class SffSequenceWriter(BaseSequenceWriter):
 	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension):
 		super(SffSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension)
 		
-	self.write(self, debug = True)
+	self.write(debug = True)
 				
 class FastqSequenceWriter(BaseSequenceWriter):
 	""" Returns per-library gzipped fastq files
@@ -200,6 +200,6 @@ class FastqSequenceWriter(BaseSequenceWriter):
 	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension):
 		super(FastqSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension)
 		
-	self.write(self, debug = True)
+	self.write(debug = True)
 
 
