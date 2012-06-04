@@ -127,6 +127,13 @@ where	s.study_id = {0}
 
 		# Set the full file path and gzip file path
 		full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
+		if not exists(full_file_name):
+			# Try removing the seqs_ prefix and see if it exists...
+			full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
+		if not exists(full_file_name):
+			# If the file cannot be read or found, throw an exception.
+			raise IOError('Sequence file does not exist: {0}. Skipping.'.format(full_file_name))
+			
 		gz_file_name = full_file_name + '.gz'
 		
 		if debug:
