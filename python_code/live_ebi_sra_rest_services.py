@@ -24,6 +24,7 @@ class SequenceFile(object):
 		self.checksum = checksum
 
 class LiveEBISRARestServices(BaseRestServices):
+	
 	def __init__(self, study_id, web_app_user_id, root_dir):
 		""" Sets up initial values
 		
@@ -248,7 +249,8 @@ class LiveEBISRARestServices(BaseRestServices):
 						# Create or reference sequence file writer
 						# Can be fastq, sff, or fasta, depending on what files we have available
 						file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
-						print 'Writer type is {0}'.format(file_writer.writer_type)
+						if debug:
+							print 'Writer type is {0}'.format(file_writer.writer_type)
 
 						platform = ''
 						
