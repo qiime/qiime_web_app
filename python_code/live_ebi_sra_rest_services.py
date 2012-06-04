@@ -151,8 +151,6 @@ class LiveEBISRARestServices(BaseRestServices):
 		
 		# Sequence writer factory - used for generating sequence file writers based on type of data
 		writer_factory = sequence_file_writer_factory()
-		if debug:
-			print 'writer_type is {0}'.format(writer_factory.writer_type)
 		
 		# Get the study information
 		study_info = helper.get_study_info()
