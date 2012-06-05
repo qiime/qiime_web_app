@@ -127,11 +127,21 @@ where	s.study_id = {0}
 
 		# Set the full file path and gzip file path
 		full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
-		if not exists(full_file_name):
-			# Try removing the seqs_ prefix and see if it exists...
-			full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
-		if not exists(full_file_name):
-			# If the file cannot be read or found, throw an exception.
+		gz_file_name = full_file_name + '.gz'
+		alternate_full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
+		alternate_gz_file_name = alternate_full_file_name + '.gz'
+		
+		# Shortcut - if the file exists, just return it. Don't refresh the archive.
+		if exists(gz_file_name):
+			if debug:
+				print 'gzipped file exists. Returning name only.'
+			return gz_file_name
+		elif exists(alternate_gz_file_name):
+			if debug:
+				print 'Alternate gzipped file exists. Returning name only.'
+			return alternate_gz_file_name
+		
+		if not exists(full_file_name) and not exists(alternate_full_file_name):
 			raise IOError('Sequence file does not exist: {0}. Skipping.'.format(full_file_name))
 			
 		gz_file_name = full_file_name + '.gz'
@@ -139,12 +149,6 @@ where	s.study_id = {0}
 		if debug:
 			print 'Full file name is "{0}"'.format(full_file_name)
 			print 'gzip file name is "{0}"'.format(gz_file_name)
-		
-		# Shortcut - if the file exists, just return it. Don't refresh the archive.
-		if exists(gz_file_name):
-			if debug:
-				print 'gzipped file exists. Returning name only.'
-			return gz_file_name
 			
 		# If FASTA, create the sequence file from the database
 		if self.writer_type == 'fasta' and not exists(full_file_name):
