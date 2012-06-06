@@ -81,6 +81,27 @@ class Tests(TestCase):
 
         self.assertIsNotNone(study_info)
 
+	def test_ebi_controlled_vocab_lookup_nomatch(self):
+		live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir)
+		controlled_vocabulary = live.existing_study_type
+		search_term = 'asdf'
+		results = live.controlled_vocab_lookup(controlled_vocabulary, search_term)
+		self.assertIsNone(results)
+
+	def test_ebi_controlled_vocab_lookup_other(self):
+		live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir)
+		controlled_vocabulary = live.existing_study_type
+		search_term = 'other'
+		results = live.controlled_vocab_lookup(controlled_vocabulary, search_term)
+		self.assertIsNotNone(results)
+
+	def test_ebi_controlled_vocab_lookup_match(self):
+		live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir)
+		controlled_vocabulary = live.existing_study_type
+		search_term = 'Metagenomics'
+		results = live.controlled_vocab_lookup(controlled_vocabulary, search_term)
+		self.assertEqual(results, search_term)
+
 if __name__ == "__main__":
     main()
     

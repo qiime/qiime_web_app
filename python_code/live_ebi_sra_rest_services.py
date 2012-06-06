@@ -55,6 +55,33 @@ class LiveEBISRARestServices(BaseRestServices):
 		
 		# Open the FTP connection, leave open for efficiency
 		self.ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
+		
+		# Eventually we may want to database these entries, but here are references to EBI
+		# controlled vocabularies. These can be passed to the base class method 
+		# "controlled_vocab_lookup" which will attempt to find a good match for a term
+		self.existing_study_type = set([ \
+			'Whole Genome Sequencing', 'Metagenomics', 'Transcriptome Analysis', \
+			'Resequencing', 'Epigenetics', 'Synthetic Genomics', 'Forensic or Paleo-genomics', \
+			'Gene Regulation Study', 'Cancer Genomics', 'Population Genomics', 'RNASeq', 'Exome Sequencing', \
+			'Pooled Clone Sequencing', 'Other'])
+			
+		self.instrument_model = set([ \
+			'Illumina Genome Analyzer', 'Illumina Genome Analyzer II', 'Illumina Genome Analyzer IIx', \
+			'Illumina HiSeq 2000', 'Illumina HiSeq 1000', 'Illumina MiSeq', 'unspecified'])
+			
+		self.library_strategy = set([ \
+			'WGS', 'WXS', 'RNA-Seq', 'WCS', 'CLONE', 'POOLCLONE', 'AMPLICON', 'CLONEEND', 'FINISHING', \
+			'ChIP-Seq', 'MNase-Seq', 'DNase-Hypersensitivity', 'Bisulfite-Seq', 'EST', 'FL-cDNA', \
+			'CTS', 'MRE-Seq', 'MeDIP-Seq', 'MBD-Seq', 'OTHER'])
+
+		self.library_source = set([ \
+			'GENOMIC', 'TRANSCRIPTOMIC', 'METAGENOMIC', 'METATRANSCRIPTOMIC', 'SYNTHETIC', \
+			'VIRAL RNA', 'OTHER'])
+			
+		self.library_selection = set([ \
+			'RANDOM', 'PCR', 'RANDOM PCR', 'RT-PCR', 'HMPR', 'MF', 'CF-S', 'CF-M', 'CF-H', 'CF-T', \
+			'MSLL', 'cDNA', 'ChIP', 'MNase', 'DNAse', 'Hybrid Selection', 'Reduced Representation', \
+			'Restriction Digest', '5-methylcytidine antibody', 'MBD2', 'CAGE', 'RACE', 'other', 'unspecified'])
 
 	def __del__(self):
 		""" Closes the FTP connection
@@ -171,7 +198,15 @@ class LiveEBISRARestServices(BaseRestServices):
 		study_file.write('	  <STUDY alias="{0}" center_name="CCME-COLORADO">\n'.format(study_alias))
 		study_file.write('		  <DESCRIPTOR>\n')
 		study_file.write('			  <STUDY_TITLE>{0}</STUDY_TITLE>\n'.format(study_info['study_title']))
-		study_file.write('			  <STUDY_TYPE existing_study_type="Other"/>\n')
+		
+		# Determine the study type
+		existing_study_type = 'Other'
+		if 'investigation_type' in study_info:
+			result = self.controlled_vocab_lookup(self.existing_study_type, study_info['investigation_type'])
+			if result is not None:
+				existing_study_type = result
+		study_file.write('			  <STUDY_TYPE existing_study_type="{0}"/>\n'.format(existing_study_type))
+		
 		study_file.write('			  <STUDY_ABSTRACT>{0}</STUDY_ABSTRACT>\n'.format(self.clean_whitespace(study_info['study_abstract'])))
 		study_file.write('		  </DESCRIPTOR>\n')
 		study_file.write('		  <STUDY_ATTRIBUTES>\n')
@@ -277,12 +312,38 @@ class LiveEBISRARestServices(BaseRestServices):
 						experiment_file.write('			  <SAMPLE_DESCRIPTOR refname="{0}"/>\n'.format(sample_alias))
 						experiment_file.write('			  <LIBRARY_DESCRIPTOR>\n')
 						experiment_file.write('				  <LIBRARY_NAME>{0}</LIBRARY_NAME>\n'.format(sample_dict['sample_name'] + ':' + row_number))
+
+
+
+
+
+
+
+
+
+
+
+
+
 						
 						# Put in the proper values here based on study type
-						
 						experiment_file.write('				  <LIBRARY_STRATEGY>AMPLICON</LIBRARY_STRATEGY>\n')
 						experiment_file.write('				  <LIBRARY_SOURCE>METAGENOMIC</LIBRARY_SOURCE>\n')
 						experiment_file.write('				  <LIBRARY_SELECTION>PCR</LIBRARY_SELECTION>\n')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						
 						experiment_file.write('				  <LIBRARY_LAYOUT>\n')
 						experiment_file.write('					  <SINGLE/>\n')
@@ -290,29 +351,13 @@ class LiveEBISRARestServices(BaseRestServices):
 						experiment_file.write('				  <LIBRARY_CONSTRUCTION_PROTOCOL>{0}</LIBRARY_CONSTRUCTION_PROTOCOL>\n'.format(prep_dict['library_construction_protocol']))
 						experiment_file.write('			  </LIBRARY_DESCRIPTOR>\n')
 						experiment_file.write('		  </DESIGN>\n')
+						
 						experiment_file.write('		  <PLATFORM>\n')
-						
-						
-						
-						
-						##############################
-						##################
-						########## NEED TO PUT IN PROPER PLATFORM HERE
-						
-						
-						
-						
-						
-						
 						experiment_file.write('			  <{0}>\n'.format(platform))
 						experiment_file.write('				  <INSTRUMENT_MODEL>unspecified</INSTRUMENT_MODEL>\n')
-						experiment_file.write('			  </{0}>\n'.format(platform))
-						
-						
-						
-						
-						
+						experiment_file.write('			  </{0}>\n'.format(platform))						
 						experiment_file.write('		  </PLATFORM>\n')
+						
 						experiment_file.write('		  <EXPERIMENT_ATTRIBUTES>\n')
 						for prep_key in prep_dict:						  
 							experiment_file.write('			 <EXPERIMENT_ATTRIBUTE>\n')
@@ -320,6 +365,7 @@ class LiveEBISRARestServices(BaseRestServices):
 							experiment_file.write('				<VALUE>{0}</VALUE>\n'.format(prep_dict[prep_key]))
 							experiment_file.write('			 </EXPERIMENT_ATTRIBUTE>\n')
 						experiment_file.write('		  </EXPERIMENT_ATTRIBUTES>\n')
+						
 						experiment_file.write('	  </EXPERIMENT>\n')
 						
 						checksum = None
