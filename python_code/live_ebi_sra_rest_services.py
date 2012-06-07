@@ -93,7 +93,7 @@ class LiveEBISRARestServices(BaseRestServices):
 		""" Sends a file to the EBI "dropbox" (FTP account)
 		"""
 		with open(file_path, 'rb') as f:
-			self._logger.log_entry('FTP to {0}: \n{1}'.format(self.ftp_url, file_path))
+			self.logger.log_entry('FTP to {0}: \n{1}'.format(self.ftp_url, file_path))
 			ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
 			ftp.storbinary('STOR {0}'.format(basename(file_path)), f)
 			ftp.quit()
