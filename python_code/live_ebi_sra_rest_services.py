@@ -54,7 +54,7 @@ class LiveEBISRARestServices(BaseRestServices):
 		self.ftp_pass = 'J7XoQJ8I'
 		
 		# Open the FTP connection, leave open for efficiency
-		#self.ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
+		self.ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
 		
 		# Eventually we may want to database these entries, but here are references to EBI
 		# controlled vocabularies. These can be passed to the base class method 
@@ -86,17 +86,14 @@ class LiveEBISRARestServices(BaseRestServices):
 	def __del__(self):
 		""" Closes the FTP connection
 		"""
-		pass
-		#self.ftp.quit()
+		self.ftp.quit()
 		
 	def send_ftp_data(self, file_path, debug = False):
 		""" Sends a file to the EBI "dropbox" (FTP account)
 		"""
 		with open(file_path, 'rb') as f:
 			self.logger.log_entry('FTP to {0}: \n{1}'.format(self.ftp_url, file_path))
-			ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
-			ftp.storbinary('STOR {0}'.format(basename(file_path)), f)
-			ftp.quit()
+			self.ftp.storbinary('STOR {0}'.format(basename(file_path)), f)
 
 	def send_post_data(self, url_path, file_contents, debug = False):
 		""" Sends POST data
