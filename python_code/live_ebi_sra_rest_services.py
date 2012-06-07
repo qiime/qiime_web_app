@@ -275,6 +275,7 @@ class LiveEBISRARestServices(BaseRestServices):
 				if sample_key == 'preps':
 					prep_list = sample_dict[sample_key]
 					for prep_dict in prep_list:
+						print 'PREP DICT IS: {0}'.format(str(prep_dict))
 						
 						# Extract a few values because they're frequently used
 						study_id = str(self.study_id)

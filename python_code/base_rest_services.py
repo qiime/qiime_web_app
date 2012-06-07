@@ -171,7 +171,8 @@ class RestDataHelper(object):
 				results = self._data_access.dynamicMetadataSelect(statement).fetchone()
 				#print str(results)
 				
-				for column_value in results:
+				for idx, column_value in enumerate(results):
+					column_name = column_list[idx]
 					if column_value in self._invalid_values:
 						print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
 						continue
@@ -179,11 +180,11 @@ class RestDataHelper(object):
 					sample_dict[column_name] = column_value
 				
 			# Fill out the 'preps' list in the sample dict
-			tables_and_columns = {}
 			for sample_id, row_number in self._data_access.getPrepList(sample_id):
 				prep_dict = {}
+				tables_and_columns = {}
 				prep_dict['row_number'] = row_number
-				
+
 				for column_name in study_columns:
 					table_name = self._data_access.findMetadataTable(column_name, field_type, log, self._study_id, lock)
 					table_category = self._data_access.getTableCategory(table_name)
@@ -191,7 +192,7 @@ class RestDataHelper(object):
 					# Skip the prep and study columns
 					if table_category != 'prep':
 						continue
-		
+
 					# Pre-determine which columns to fetch so we can do it all at once for each table. 
 					# Pretty slow to do it for every field individually
 					# Will look like this: {table_name : [field1, field2, field3...]}
@@ -202,20 +203,21 @@ class RestDataHelper(object):
 				for table_name in tables_and_columns:
 					column_list = tables_and_columns[table_name]
 					statement = 'select {0} from {1} where sample_id = {2} and row_number = {3}'.format(', '.join(column_list), table_name, sample_id, row_number)
-
 					#print statement
 					results = self._data_access.dynamicMetadataSelect(statement).fetchone()
 					#print str(results)
 
-					for column_value in results:
+					for idx, column_value in enumerate(results):
+						column_name = column_list[idx]
+						#print 'idx: {0}, column: {1}, value: {2}'.format(idx, column_name, column_value)
 						if column_value in self._invalid_values:
 							print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
 							continue
-							
+						print 'valid column is {0}: {1}'.format(column_name, column_value)	
 						prep_dict[column_name] = column_value
 					
-					# Add this prep dict to the sample's collection
-					sample_dict['preps'].append(prep_dict)
+				# Add this prep dict to the sample's collection
+				sample_dict['preps'].append(prep_dict)
 					
 			# Add this sample info to the study's collection
 			self._study_info['samples'].append(sample_dict)
