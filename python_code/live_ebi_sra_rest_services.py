@@ -30,7 +30,7 @@ class LiveEBISRARestServices(BaseRestServices):
 		
 		Sets up file paths, urls, and other necessary details for submission to the EBI SRA
 		"""
-		super(LiveEBISRARestServices, self).__init__(study_id, web_app_user_id)
+		super(LiveEBISRARestServices, self).__init__(study_id, web_app_user_id, debug)
 		self.key = ''
 		self.hostname = ''
 		self.study_url = '/service/%s/study' % self.key
