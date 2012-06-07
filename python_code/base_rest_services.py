@@ -159,7 +159,10 @@ class RestDataHelper(object):
 				# Will look like this: {table_name : [field1, field2, field3...]}
 				if table_name not in tables_and_columns:
 					tables_and_columns[table_name] = []
-				tables_and_columns[table_name].append('"{0}"'.format(column_name.upper()))
+				# One exception - public is a keyword and must be quoted
+				if column_name.lower() in set(['public']):
+					column_name = '"{0}"'.format(column_name.upper())
+				tables_and_columns[table_name].append('{0}'.format(column_name))
 				
 			for table_name in tables_and_columns:
 				column_list = tables_and_columns[table_name]
@@ -167,7 +170,7 @@ class RestDataHelper(object):
 					statement = 'select {0} from {1} x inner join host_sample hs on x.host_id = hs.host_id where hs.sample_id = {2}'.format(', '.join(column_list), table_name, sample_id)
 				else:
 					statement = 'select {0} from {1} where sample_id = {2}'.format(', '.join(column_list), table_name, sample_id)
-				#print statement
+				print statement
 				results = self._data_access.dynamicMetadataSelect(statement).fetchone()
 				#print str(results)
 				
