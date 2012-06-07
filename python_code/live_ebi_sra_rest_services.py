@@ -9,7 +9,7 @@ __maintainer__ = "Doug Wendel"
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
-from os.path import basename
+from os.path import basename, exists
 import sys
 import httplib, urllib
 from base_rest_services import BaseRestServices
