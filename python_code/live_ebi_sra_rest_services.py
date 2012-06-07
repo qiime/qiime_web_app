@@ -313,38 +313,21 @@ class LiveEBISRARestServices(BaseRestServices):
 						experiment_file.write('			  <LIBRARY_DESCRIPTOR>\n')
 						experiment_file.write('				  <LIBRARY_NAME>{0}</LIBRARY_NAME>\n'.format(sample_dict['sample_name'] + ':' + row_number))
 
-
-
-
-
-
-
-
-
-
-
-
-
-						
-						# Put in the proper values here based on study type
-						experiment_file.write('				  <LIBRARY_STRATEGY>AMPLICON</LIBRARY_STRATEGY>\n')
-						experiment_file.write('				  <LIBRARY_SOURCE>METAGENOMIC</LIBRARY_SOURCE>\n')
+						# Figure out the library_strategy
+						library_strategy = 'OTHER'
+						library_source = 'metagenomic'
+						library_selection = 'unspecified'
+						if 'investigation_type' in study_info:
+							investigation_type = study_info['investigation_type']
+							if investigation_type == 'metagenome':
+								library_strategy = 'POOLCLONE'
+							elif investigation_type == 'mimarks-survey':
+								library_strategy = 'AMPLICON'
+								library_selection = 'PCR'
+						experiment_file.write('				  <LIBRARY_STRATEGY>{0}</LIBRARY_STRATEGY>\n'.format(library_strategy))
+						experiment_file.write('				  <LIBRARY_SOURCE>{0}</LIBRARY_SOURCE>\n'.format(library_source))
 						experiment_file.write('				  <LIBRARY_SELECTION>PCR</LIBRARY_SELECTION>\n')
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-						
 						experiment_file.write('				  <LIBRARY_LAYOUT>\n')
 						experiment_file.write('					  <SINGLE/>\n')
 						experiment_file.write('				  </LIBRARY_LAYOUT>\n')
@@ -374,17 +357,31 @@ class LiveEBISRARestServices(BaseRestServices):
 						block_size = 8192
 						try:
 							file_path = file_writer.write()
+							checksum_file_path = '{0}.checksum'.format(file_path)
+							checksum = None
 							
-							# Checksum for file. Done in chunks to prevent memory overflow for large files
-							open_file = open(file_path)
-							md5 = hashlib.md5()
-							while True:
-								data = open_file.read(block_size)
-								if not data:
-									break
-								md5.update(data)
-							checksum = md5.hexdigest()
-							open_file.close()
+							# Check to see if the md5 has already been calculated and skip if already done
+							checksum_file_path = '{0}.checksum'.format(file_path)
+							if exists(checksum_file_path):
+								with open(checksum_file_path) as f:
+									checksum = f.read()
+							
+							# Doesn't exist so calcuate and store result in file
+							else:									
+								# Checksum for file. Done in chunks to prevent memory overflow for large files
+								open_file = open(file_path)
+								md5 = hashlib.md5()
+								while True:
+									data = open_file.read(block_size)
+									if not data:
+										break
+									md5.update(data)
+								checksum = md5.hexdigest()
+								open_file.close()
+								
+								# Write the checksum file
+								with open(checksum_file_path, 'w') as f:
+									f.write(checksum)
 
 							file_identifier = '{0}:{1}:{2}'.format(self.study_id, sample_id, row_number)
 							self.file_list.append(SequenceFile(file_path, file_identifier, checksum))

@@ -137,13 +137,14 @@ class RestDataHelper(object):
 		study_columns = self._data_access.getStudyActualColumns(self._study_id)
 
 		# Iterate over all samples in the study
-		for sample_id in samples:
+		for sample_id in samples:				
 			sample_dict = {}
 			sample_dict['sample_name'] = samples[sample_id]
 			sample_dict['sample_id'] = sample_id
 			sample_dict['preps'] = []
 			
 			# Get all of the sample values stored in a dict
+			tables_and_columns = {}
 			for column_name in study_columns:
 				table_name = self._data_access.findMetadataTable(column_name, field_type, log, self._study_id, lock)
 				if not table_name:
@@ -151,16 +152,34 @@ class RestDataHelper(object):
 					
 				table_category = self._data_access.getTableCategory(table_name)
 				if table_category in ['study', 'prep']:
-					continue		  
-
-				column_value = self._data_access.getSampleColumnValue(sample_id, table_name, column_name)
-				if column_value in self._invalid_values:
-					print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
 					continue
+
+				# Pre-determine which columns to fetch so we can do it all at once for each table. 
+				# Pretty slow to do it for every field individually
+				# Will look like this: {table_name : [field1, field2, field3...]}
+				if table_name not in tables_and_columns:
+					tables_and_columns[table_name] = []
+				tables_and_columns[table_name].append('"{0}"'.format(column_name.upper()))
+				
+			for table_name in tables_and_columns:
+				column_list = tables_and_columns[table_name]
+				if table_name.lower() == 'host':
+					statement = 'select {0} from {1} x inner join host_sample hs on x.host_id = hs.host_id where hs.sample_id = {2}'.format(', '.join(column_list), table_name, sample_id)
+				else:
+					statement = 'select {0} from {1} where sample_id = {2}'.format(', '.join(column_list), table_name, sample_id)
+				#print statement
+				results = self._data_access.dynamicMetadataSelect(statement).fetchone()
+				#print str(results)
+				
+				for column_value in results:
+					if column_value in self._invalid_values:
+						print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
+						continue
 					
-				sample_dict[column_name] = column_value
+					sample_dict[column_name] = column_value
 				
 			# Fill out the 'preps' list in the sample dict
+			tables_and_columns = {}
 			for sample_id, row_number in self._data_access.getPrepList(sample_id):
 				prep_dict = {}
 				prep_dict['row_number'] = row_number
@@ -172,15 +191,31 @@ class RestDataHelper(object):
 					# Skip the prep and study columns
 					if table_category != 'prep':
 						continue
+		
+					# Pre-determine which columns to fetch so we can do it all at once for each table. 
+					# Pretty slow to do it for every field individually
+					# Will look like this: {table_name : [field1, field2, field3...]}
+					if table_name not in tables_and_columns:
+						tables_and_columns[table_name] = []
+					tables_and_columns[table_name].append('"{0}"'.format(column_name.upper()))
+			
+				for table_name in tables_and_columns:
+					column_list = tables_and_columns[table_name]
+					statement = 'select {0} from {1} where sample_id = {2} and row_number = {3}'.format(', '.join(column_list), table_name, sample_id, row_number)
+
+					#print statement
+					results = self._data_access.dynamicMetadataSelect(statement).fetchone()
+					#print str(results)
+
+					for column_value in results:
+						if column_value in self._invalid_values:
+							print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
+							continue
+							
+						prep_dict[column_name] = column_value
 					
-					column_value = self._data_access.getPrepColumnValue(sample_id, row_number, table_name, column_name)
-					if column_value in self._invalid_values:
-						continue
-					
-					prep_dict[column_name] = column_value
-					
-				# Add this prep dict to the sample's collection
-				sample_dict['preps'].append(prep_dict)
+					# Add this prep dict to the sample's collection
+					sample_dict['preps'].append(prep_dict)
 					
 			# Add this sample info to the study's collection
 			self._study_info['samples'].append(sample_dict)
