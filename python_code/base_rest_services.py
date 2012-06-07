@@ -201,7 +201,7 @@ class RestDataHelper(object):
 					# Will look like this: {table_name : [field1, field2, field3...]}
 					if table_name not in tables_and_columns:
 						tables_and_columns[table_name] = []
-					tables_and_columns[table_name].append('"{0}"'.format(column_name.upper()))
+					tables_and_columns[table_name].append('{0}'.format(column_name))
 			
 				for table_name in tables_and_columns:
 					column_list = tables_and_columns[table_name]
