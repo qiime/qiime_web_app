@@ -20,7 +20,7 @@ from shutil import copyfile
 import gzip
 import gc
 
-class sequence_file_writer_factory(object):
+class SequenceFileWriterFactory(object):
 	""" Factory for generating/returning sequence file references
 	
 	Depending on the type of file (sff/fastq/fasta), different methods are used to generate or
@@ -35,10 +35,11 @@ class sequence_file_writer_factory(object):
 	FASTA: *In progress* For files in which we have no originall quality information, per-library
 	fasta files are generated, gzipped, and a reference is returned to the caller.
 	"""
-	def __init__(self):
+	def __init__(self, logger):
 		""" Initial setup
 		"""
 		self.data_access = data_access_factory(ServerConfig.data_access_type)
+		self.logger = logger
 		
 	def __del__(self):
 		""" Destructor
@@ -67,11 +68,11 @@ class sequence_file_writer_factory(object):
 		
 		if platform in sff:
 			# Note that even though we start with SFF files, we're actually writing out a fastq file for export
-			return SffSequenceWriter(self.data_access, study_id, sample_id, row_number, 'sff', root_dir, 'fastq')
+			return SffSequenceWriter(self.data_access, study_id, sample_id, row_number, 'sff', root_dir, 'fastq', self.logger)
 		elif platform in fastq:
-			return FastqSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fastq', root_dir, 'fastq')
+			return FastqSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fastq', root_dir, 'fastq', self.logger)
 		elif platform in fasta:
-			return FastaSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fasta', root_dir, 'fasta')
+			return FastaSequenceWriter(self.data_access, study_id, sample_id, row_number, 'fasta', root_dir, 'fasta', self.logger)
 		else:
 			# If no type could be determined, throw exception to inform caller a serious issues has occurred
 			raise ValueError('Could not determine sequence file writer type based on platform: "%s"' % platform)
@@ -82,7 +83,7 @@ class BaseSequenceWriter(object):
 	
 	This base class implements some common functionality for subclasses.
 	"""
-	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension):
+	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger):
 		self.data_access = data_access
 		self.study_id = study_id
 		self.sample_id = sample_id
@@ -90,14 +91,14 @@ class BaseSequenceWriter(object):
 		self.writer_type = writer_type
 		self.root_dir = root_dir
 		self.file_extension = file_extension
+		self.logger = logger
 		
 	def write(self, debug = True):
 		""" 
 		Creates or locates the appropriate sequence file, gzips it if necessary, returns file reference
 		"""
 
-		if debug:
-			print 'Writing sequence file for study_id {0}, sample_id {1}, row_number {2}'.format(str(self.study_id), str(self.sample_id), str(self.row_number))
+		self.logger.log_entry('Writing sequence file for study_id {0}, sample_id {1}, row_number {2}'.format(str(self.study_id), str(self.sample_id), str(self.row_number)))
 
 		# Get the sample_name + sequence_prep_id from the sample_id
 		query = """
@@ -110,20 +111,17 @@ where	s.study_id = {0}
 		and sp.row_number = {2}
 		""".format(str(self.study_id), str(self.sample_id), str(self.row_number))
 
-		if debug:
-			print 'Running query: {0}'.format(query)
+		self.logger.log_entry('Running query: {0}'.format(query))
 
 		results = self.data_access.dynamicMetadataSelect(query).fetchone()
 
-		if debug: 
-			print 'Query results: {0}'.format(str(results))
+		self.logger.log_entry('Query results: {0}'.format(str(results)))
 
 		sample_name = results[0]
 		run_prefix = results[1]
 
-		if debug:
-			print 'Sample name is "{0}"'.format(sample_name)
-			print 'Run prefix is "{0}"'.format(run_prefix)
+		self.logger.log_entry('Sample name is "{0}"'.format(sample_name))
+		self.logger.log_entry('Run prefix is "{0}"'.format(run_prefix))
 
 		# Set the full file path and gzip file path
 		full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
@@ -133,12 +131,10 @@ where	s.study_id = {0}
 		
 		# Shortcut - if the file exists, just return it. Don't refresh the archive.
 		if exists(gz_file_name):
-			if debug:
-				print 'gzipped file exists. Returning name only.'
+			self.logger.log_entry('gzipped file exists. Returning name only.')
 			return gz_file_name
 		elif exists(alternate_gz_file_name):
-			if debug:
-				print 'Alternate gzipped file exists. Returning name only.'
+			self.logger.log_entry('Alternate gzipped file exists. Returning name only.')
 			return alternate_gz_file_name
 		
 		if not exists(full_file_name) and not exists(alternate_full_file_name):
@@ -146,27 +142,22 @@ where	s.study_id = {0}
 			
 		gz_file_name = full_file_name + '.gz'
 		
-		if debug:
-			print 'Full file name is "{0}"'.format(full_file_name)
-			print 'gzip file name is "{0}"'.format(gz_file_name)
+		self.logger.log_entry('Full file name is "{0}"'.format(full_file_name))
+		self.logger.log_entry('gzip file name is "{0}"'.format(gz_file_name))
 			
 		# If FASTA, create the sequence file from the database
 		if self.writer_type == 'fasta' and not exists(full_file_name):
-			if debug:
-				print 'File does not exist, writing FASTA file {0} from database...'.format(full_file_name)
+			self.logger.log_entry('File does not exist, writing FASTA file {0} from database...'.format(full_file_name))
 				
 			# Export the file from database
 			export_fasta_from_sample(self.study_id, self.sample_id, full_file_name)
-			
-			if debug:
-				print 'File {0} exported from database successfully.'.format(full_file_name)
+			self.logger.log_entry('File {0} exported from database successfully.'.format(full_file_name))
 
 		# Create the gzip archive if file base file exists
 		if full_file_name != None and full_file_name != '' and exists(full_file_name):
 
 			# Otherwise, create a gzip archive of the seqs file
-			if debug:
-				print 'Creating gzip archive...'
+			self.logger.log_entry('Creating gzip archive...')
 
 			f_in = open(full_file_name, 'rb')
 			f_out = gzip.open(gz_file_name, 'wb')
@@ -187,8 +178,8 @@ class FastaSequenceWriter(BaseSequenceWriter):
 	
 	This subclass creates per-library fasta files, gzips them, and returns file reference to caller
 	"""
-	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension):
-		super(FastaSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension)
+	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger):
+		super(FastaSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger)
 				
 class SffSequenceWriter(BaseSequenceWriter):
 	""" Returns per-library gzipped fastq references for SFF data
@@ -196,15 +187,15 @@ class SffSequenceWriter(BaseSequenceWriter):
 	This subclass locates, gzips, and returns per-library sequence data to the caller. The per-library
 	fastq files are generated from original SFF files during split_library runs.
 	"""
-	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension):
-		super(SffSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension)
+	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger):
+		super(SffSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger)
 				
 class FastqSequenceWriter(BaseSequenceWriter):
 	""" Returns per-library gzipped fastq files
 	
 	This subclass locates, gzips, and returns references to per-library fastq files to the caller. 
 	"""
-	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension):
-		super(FastqSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension)
+	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger):
+		super(FastqSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger)
 
 

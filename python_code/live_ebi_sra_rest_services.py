@@ -13,7 +13,7 @@ from os.path import basename, exists
 import sys
 import httplib, urllib
 from base_rest_services import BaseRestServices
-from sequence_file_writer import sequence_file_writer_factory
+from sequence_file_writer import SequenceFileWriterFactory
 import hashlib
 from ftplib import FTP
 
@@ -25,7 +25,7 @@ class SequenceFile(object):
 
 class LiveEBISRARestServices(BaseRestServices):
 	
-	def __init__(self, study_id, web_app_user_id, root_dir):
+	def __init__(self, study_id, web_app_user_id, root_dir, debug = False):
 		""" Sets up initial values
 		
 		Sets up file paths, urls, and other necessary details for submission to the EBI SRA
@@ -88,12 +88,13 @@ class LiveEBISRARestServices(BaseRestServices):
 		"""
 		self.ftp.quit()
 		
-	def send_ftp_data(self, file_path):
+	def send_ftp_data(self, file_path, debug = False):
 		""" Sends a file to the EBI "dropbox" (FTP account)
 		"""
-		f = open(file_path, 'rb')
-		self.ftp.storbinary('STOR {0}'.format(basename(file_path)), f)
-		f.close()
+		with open(file_path, 'rb') as f:
+			self._logger.log_entry('FTP to {0}: \n{1}'.format(self.ftp_url, file_path))
+				
+			self.ftp.storbinary('STOR {0}'.format(basename(file_path)), f)
 
 	def send_post_data(self, url_path, file_contents, debug = False):
 		""" Sends POST data
@@ -104,12 +105,11 @@ class LiveEBISRARestServices(BaseRestServices):
 		success = None
 		entity_id = None
 
-		# Output the file contents if debug mode is set
-		if debug:
-			if len(file_contents) < 10000:
-				print file_contents
-			print 'Host: %s' % self.hostname
-			print 'Service URL: %s' % url_path
+		# Output the file contents if
+		if len(file_contents) < 10000:
+			self.logger.log_entry(file_contents)
+		self.logger.log_entry('Host: %s' % self.hostname)
+		self.logger.log_entry('Service URL: %s' % url_path)
 
 		# Submit file data
 		headers = {"Content-type":"text/xml", "Accept":"text/xml", "User-Agent":"qiime_website"}
@@ -119,10 +119,9 @@ class LiveEBISRARestServices(BaseRestServices):
 		data = response.read()
 		conn.close()
 
-		# Output the status and response if debug mode is set
-		if debug:
-			print response.status, response.reason
-			print str(data)
+		# Output the status and response
+		self.logger.log_entry(response.status, response.reason)
+		self.logger.log_entry(str(data))
 
 		# Check for success
 		if '<success>0</success>' in data:
@@ -151,15 +150,13 @@ class LiveEBISRARestServices(BaseRestServices):
 		xml_file_list.append(self.run_file_path)
 		
 		for f in xml_file_list:
-			if debug:
-				print 'Sending XML file "{0}"'.format(f)
+			self.logger.log_entry('Sending XML file "{0}"'.format(f))
 			self.send_ftp_data(f)		 
 		
 		# Send the sequence files
 		for f in self.file_list:
-			if debug:
-				print 'Sending sequence file "{0}"'.format(f.file_path)
-			self.send_ftp_data(f.file_path)
+			self.logger.log_entry('Sending sequence file "{0}"'.format(f.file_path))
+			self.send_ftp_data(f.file_path, debug)
 				
 	def generate_metadata_files(self, debug = True, action_type = 'VALIDATE'):
 		"""
@@ -178,7 +175,7 @@ class LiveEBISRARestServices(BaseRestServices):
 		invalid_values = set(['', ' ', None, 'None'])
 		
 		# Sequence writer factory - used for generating sequence file writers based on type of data
-		writer_factory = sequence_file_writer_factory()
+		writer_factory = SequenceFileWriterFactory(self.logger)
 		
 		# Get the study information
 		study_info = helper.get_study_info()
@@ -187,7 +184,7 @@ class LiveEBISRARestServices(BaseRestServices):
 		#### Study XML
 		######################################################
 
-		print '------------------> STUDY <------------------'
+		self.logger.log_entry('------------------> STUDY <------------------')
 		
 		# Get the study info
 		study_file = open(self.study_file_path, 'w')
@@ -233,7 +230,7 @@ class LiveEBISRARestServices(BaseRestServices):
 		#### Sample XML
 		######################################################
 		
-		print '------------------> SAMPLE AND PREP <------------------'
+		self.logger.log_entry('------------------> SAMPLE AND PREP <------------------')
 		
 		samples = study_info['samples']
 		
@@ -275,7 +272,7 @@ class LiveEBISRARestServices(BaseRestServices):
 				if sample_key == 'preps':
 					prep_list = sample_dict[sample_key]
 					for prep_dict in prep_list:
-						print 'PREP DICT IS: {0}'.format(str(prep_dict))
+						self.logger.log_entry('PREP DICT IS: {0}'.format(str(prep_dict)))
 						
 						# Extract a few values because they're frequently used
 						study_id = str(self.study_id)
@@ -285,8 +282,7 @@ class LiveEBISRARestServices(BaseRestServices):
 						# Create or reference sequence file writer
 						# Can be fastq, sff, or fasta, depending on what files we have available
 						file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
-						if debug:
-							print 'Writer type is {0}'.format(file_writer.writer_type)
+						self.logger.log_entry('Writer type is {0}'.format(file_writer.writer_type))
 
 						platform = ''
 						
@@ -428,7 +424,7 @@ class LiveEBISRARestServices(BaseRestServices):
 		#### Submission XML
 		######################################################
 	
-		print '------------------> SUBMISSION <------------------'
+		self.logger.log_entry('------------------> SUBMISSION <------------------')
 		
 		# Actions are either ADD or VALIDATE. ADD validates and adds data. VALIDATE is validate only
 	
@@ -460,12 +456,11 @@ class LiveEBISRARestServices(BaseRestServices):
 		submission_file.write('</SUBMISSION>\n')
 		submission_file.write('</SUBMISSION_SET>\n')	
 
-		if debug:
-			print 'File List:'
-			for f in self.file_list:
-				print '{0} - {1}'.format(f.file_path, f.checksum)
+		self.logger.log_entry('File List:')
+		for f in self.file_list:
+			self.logger.log_entry('{0} - {1}'.format(f.file_path, f.checksum))
 		
 		if len(self.errors) > 0:
-			print 'ERRORS FOUND:'
+			self.logger.log_entry('ERRORS FOUND:')
 			for error in self.errors:
-				print 'Error: {0}'.format(error)
+				self.logger.log_entry('Error: {0}'.format(error))

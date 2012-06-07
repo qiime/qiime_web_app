@@ -18,18 +18,51 @@ import threading
 import gc
 from difflib import SequenceMatcher
 
+class DataLogger(object):
+	""" Generic logger for export services
+	
+	This class will log entries in a list, optionally output to the console if debug = True,
+	and can dump the log to a log file.
+	"""
+	def __init__(self, log_file_path, debug = False):
+		self._log_file_path = log_file_path
+		self._debug = debug
+		self._log = []
+		
+	def log_entry(self, entry):
+		""" Adds an entry to the log, prints to console if debug = True
+		"""
+		self._log.append(entry)
+		if self._debug:
+			print entry
+
+	def dump_log(self):
+		""" Write the contents of the log to the file path specified in constructor
+		"""
+		with open(self._log_file_path, 'w') as log_file:
+			log_file.write('EBI Export Log:\n\n')
+			for entry in self._log:
+				log_file.write('{0}\n'.format(entry))
+			log_file.write('\n\nEnd log')
+
 class BaseRestServices(object):
-	def __init__(self, study_id, web_app_user_id):
+	def __init__(self, study_id, web_app_user_id, debug = False):
 		self.hostname = None
 		self.study_url = None
 		self.sample_url = None
 		self.library_url = None
 		self.sequence_url = None
 		self.study_id = study_id
+
 		self.web_app_user_id = web_app_user_id
-		self.rest_data_helper = RestDataHelper(study_id, web_app_user_id)
+		# Set up a logger so we can see what's going on
+		log_file_path = '/home/wwwuser/user_data/studies/study_{0}/ebi_export_log.txt'.format(study_id)
+		self.logger = DataLogger(log_file_path, debug)
+		
+		self.rest_data_helper = RestDataHelper(study_id, web_app_user_id, self.logger)
 		self.data_access = data_access_factory(ServerConfig.data_access_type)
-		self.errors = []
+		#self.errors = []
+		self.debug = debug
 
 	def send_post_data(self, url_path, file_contents, debug):
 		raise NotImplementedError('Base class method has no implementation')
@@ -72,12 +105,13 @@ class BaseRestServices(object):
 class RestDataHelper(object):
 	""" A class for consolidating complex or commonly used functions
 	"""
-	def __init__(self, study_id, web_app_user_id):
-		self._data_access = data_access_factory(ServerConfig.data_access_type)
-		self._study_id = study_id
-		self._web_app_user_id = web_app_user_id
-		self._invalid_values = set(['', ' ', None, 'None'])
-		self._study_info = None
+	def __init__(self, study_id, web_app_user_id, logger):
+		self.data_access = data_access_factory(ServerConfig.data_access_type)
+		self.study_id = study_id
+		self.web_app_user_id = web_app_user_id
+		self.invalid_values = set(['', ' ', None, 'None'])
+		self.study_info = None
+		self.logger = logger
 		
 	def __del__(self):
 		""" Destructor
@@ -85,47 +119,47 @@ class RestDataHelper(object):
 		Sets data_access to None to guarantee GC finds it. Have had issues in the past;
 		this seems to help prevent dangling connections.
 		"""
-		self._data_access = None
+		self.data_access = None
 		gc.collect()
 		
 	def get_study_info(self):
 		""" Gets all study-level data
 		"""
 		# If it's already been filled out, just return it
-		if self._study_info:
-			return self._study_info
+		if self.study_info:
+			return self.study_info
 		
 		# Fill out the study info heirarchy
-		self._study_info = self._data_access.getStudyInfo(self._study_id, self._web_app_user_id)
+		self.study_info = self.data_access.getStudyInfo(self.study_id, self.web_app_user_id)
 		
 		# Remove any columns with invalid data or fields we do not want to submit
-		del self._study_info['mapping_file_complete']
-		del self._study_info['can_delete']
-		del self._study_info['project_id']
-		del self._study_info['lab_person_contact']
-		del self._study_info['emp_person']
-		del self._study_info['has_extracted_data']
-		del self._study_info['number_samples_promised']
-		del self._study_info['spatial_series']
-		del self._study_info['first_contact']
-		del self._study_info['has_physical_specimen']
-		del self._study_info['avg_emp_score']
-		del self._study_info['user_emp_score']
-		del self._study_info['lab_person']
-		del self._study_info['principal_investigator']
-		del self._study_info['principal_investigator_contact']
-		del self._study_info['most_recent_contact']
+		del self.study_info['mapping_file_complete']
+		del self.study_info['can_delete']
+		del self.study_info['project_id']
+		del self.study_info['lab_person_contact']
+		del self.study_info['emp_person']
+		del self.study_info['has_extracted_data']
+		del self.study_info['number_samples_promised']
+		del self.study_info['spatial_series']
+		del self.study_info['first_contact']
+		del self.study_info['has_physical_specimen']
+		del self.study_info['avg_emp_score']
+		del self.study_info['user_emp_score']
+		del self.study_info['lab_person']
+		del self.study_info['principal_investigator']
+		del self.study_info['principal_investigator_contact']
+		del self.study_info['most_recent_contact']
 
 		fields_to_remove = []
-		for field in self._study_info:
-			if self._study_info[field] in self._invalid_values:
+		for field in self.study_info:
+			if self.study_info[field] in self.invalid_values:
 				fields_to_remove.append(field)
 		
 		for field in fields_to_remove:
-			del self._study_info[field]
+			del self.study_info[field]
 		
 		# Add the list to hold the sample dicts
-		self._study_info['samples'] = []
+		self.study_info['samples'] = []
 		
 		# A few values necessary to run findMetadataTable
 		lock = threading.Lock()
@@ -133,8 +167,8 @@ class RestDataHelper(object):
 		field_type = 'text'
 
 		# Get the list of samples and column names for this study
-		samples = self._data_access.getSampleList(self._study_id)
-		study_columns = self._data_access.getStudyActualColumns(self._study_id)
+		samples = self.data_access.getSampleList(self.study_id)
+		study_columns = self.data_access.getStudyActualColumns(self.study_id)
 
 		# Iterate over all samples in the study
 		for sample_id in samples:				
@@ -146,11 +180,11 @@ class RestDataHelper(object):
 			# Get all of the sample values stored in a dict
 			tables_and_columns = {}
 			for column_name in study_columns:
-				table_name = self._data_access.findMetadataTable(column_name, field_type, log, self._study_id, lock)
+				table_name = self.data_access.findMetadataTable(column_name, field_type, log, self.study_id, lock)
 				if not table_name:
 					continue
 					
-				table_category = self._data_access.getTableCategory(table_name)
+				table_category = self.data_access.getTableCategory(table_name)
 				if table_category in ['study', 'prep']:
 					continue
 
@@ -170,27 +204,27 @@ class RestDataHelper(object):
 					statement = 'select {0} from {1} x inner join host_sample hs on x.host_id = hs.host_id where hs.sample_id = {2}'.format(', '.join(column_list), table_name, sample_id)
 				else:
 					statement = 'select {0} from {1} where sample_id = {2}'.format(', '.join(column_list), table_name, sample_id)
-				print statement
-				results = self._data_access.dynamicMetadataSelect(statement).fetchone()
-				#print str(results)
+				self.logger.log_entry(statement)
+				results = self.data_access.dynamicMetadataSelect(statement).fetchone()
+				self.logger.log_entry(str(results))
 				
 				for idx, column_value in enumerate(results):
 					column_name = column_list[idx]
-					if column_value in self._invalid_values:
-						print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
+					if column_value in self.invalid_values:
+						self.logger.log_entry('Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value)))
 						continue
 					
 					sample_dict[column_name] = column_value
 				
 			# Fill out the 'preps' list in the sample dict
-			for sample_id, row_number in self._data_access.getPrepList(sample_id):
+			for sample_id, row_number in self.data_access.getPrepList(sample_id):
 				prep_dict = {}
 				tables_and_columns = {}
 				prep_dict['row_number'] = row_number
 
 				for column_name in study_columns:
-					table_name = self._data_access.findMetadataTable(column_name, field_type, log, self._study_id, lock)
-					table_category = self._data_access.getTableCategory(table_name)
+					table_name = self.data_access.findMetadataTable(column_name, field_type, log, self.study_id, lock)
+					table_category = self.data_access.getTableCategory(table_name)
 			
 					# Skip the prep and study columns
 					if table_category != 'prep':
@@ -206,36 +240,36 @@ class RestDataHelper(object):
 				for table_name in tables_and_columns:
 					column_list = tables_and_columns[table_name]
 					statement = 'select {0} from {1} where sample_id = {2} and row_number = {3}'.format(', '.join(column_list), table_name, sample_id, row_number)
-					#print statement
-					results = self._data_access.dynamicMetadataSelect(statement).fetchone()
-					#print str(results)
+					self.logger.log_entry(statement)
+					results = self.data_access.dynamicMetadataSelect(statement).fetchone()
+					self.logger.log_entry(str(results))
 
 					for idx, column_value in enumerate(results):
 						column_name = column_list[idx]
-						#print 'idx: {0}, column: {1}, value: {2}'.format(idx, column_name, column_value)
-						if column_value in self._invalid_values:
-							print 'Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value))
+						self.logger.log_entry('idx: {0}, column: {1}, value: {2}'.format(idx, column_name, column_value))
+						if column_value in self.invalid_values:
+							self.logger.log_entry('Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value)))
 							continue
-						print 'valid column is {0}: {1}'.format(column_name, column_value)	
+							self.logger.log_entry('valid column is {0}: {1}'.format(column_name, column_value))
 						prep_dict[column_name] = column_value
 					
 				# Add this prep dict to the sample's collection
 				sample_dict['preps'].append(prep_dict)
 					
 			# Add this sample info to the study's collection
-			self._study_info['samples'].append(sample_dict)
+			self.study_info['samples'].append(sample_dict)
 	
-		return self._study_info
+		return self.study_info
 		
 	def get_study_columns(self):
 		""" Get the column for this study and bin them into sample and prep lists
 		"""
-		study_columns = self._data_access.getStudyActualColumns(self._study_id)
+		study_columns = self.data_access.getStudyActualColumns(self.study_id)
 		return study_columns
 		
 	def get_samples(self):
 		""" Find the samples for this study
 		"""
-		samples = self._data_access.getSampleList(self._study_id)
+		samples = self.data_access.getSampleList(self.study_id)
 		return samples
 		
