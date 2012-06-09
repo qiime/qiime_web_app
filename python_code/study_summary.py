@@ -98,7 +98,7 @@ def print_study_info_and_values_table(query_results,data_access):
     
     # if no link, then allow user to email about getting data
     if oracle_cursor_len==0:
-        info_table.append("<table><th>Download Sequence Data:</th><td style=\"color:red;\">Please send an email to Jesse Stombaugh to get the data (<a href='mailto:jesse.stombaugh@colorado.edu?subject=Get QIIME-DB Study: %s from thebeast'>email</a>)</table></table>" % (str(study_id)))
+        info_table.append("<table><th>Download Sequence Data:</th><td style=\"color:red;\">This dataset is not available. Feel free to contact Jesse Stombaugh for the status of this dataset (<a href='mailto:jesse.stombaugh@colorado.edu?subject=Status of QIIME-DB Study: %s'>email</a>)</td></table>" % (str(study_id)))
 
     
     return ''.join(info_table)

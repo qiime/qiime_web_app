@@ -55,9 +55,10 @@ This is a test dataset using the Fasting subset of mice.</td></tr><tr>\
 <th>Pubmed ID (pmid):</th><td style="color:black;text-decoration:none">\
 <a href=http://www.ncbi.nlm.nih.gov/pubmed?term=None[uid] target="_blank">\
 None</a></td></tr></table><br><table><th>Download Sequence Data:</th>\
-<td style="color:red;">Please send an email to Jesse Stombaugh to get the \
-data (<a href=\'mailto:jesse.stombaugh@colorado.edu?subject=Get QIIME-DB \
-Study: 609 from thebeast\'>email</a>)</table></table>\
+<td style="color:red;">This dataset is not available. Feel free to contact \
+Jesse Stombaugh for the status of this dataset (<a href=\
+'mailto:jesse.stombaugh@colorado.edu?subject=Status of QIIME-DB Study: 609 \
+from thebeast\'>email</a>)</td></table>\
 """
 
 if __name__ == "__main__":
