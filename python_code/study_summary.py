@@ -12,9 +12,6 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
  
 from qiime.colors import natsort
-#from data_access_connections import data_access_factory
-#from enums import ServerConfig
-#data_access = data_access_factory(ServerConfig.data_access_type)
 from enums import FieldGrouping
         
 
@@ -33,57 +30,6 @@ def print_study_info_and_values_table(query_results,data_access):
     study_titles=set(zip(*query_results)[2])
     study_abstracts=set(zip(*query_results)[3])
     pmids=set(zip(*query_results)[4])
-    sffs=list(set(zip(*query_results)[5]))
-    seq_run_ids=list(set(zip(*query_results)[6]))
-    numreads=set(zip(*query_results)[7])
-    
-    
-    samples={}
-    read_counts=[]
-
-    if sffs[0]:
-        # iterate over the sffs in this study
-        for i,sff in enumerate(sffs):
-            
-            # deprecation due to no longer loading into reads table
-            '''
-            #Get the number of reads in a given sff
-            results=data_access.getQiimeSffReadCounts(seq_run_ids[i])
-            for row in results:
-                read_counts.append(row[0])
-            '''
-            #Get a list of samples for a given sff
-            results=data_access.getQiimeSffSamples(study_id,seq_run_ids[i])
-            samples[seq_run_ids[i]]=[]
-            for row in results:
-                samples[seq_run_ids[i]].append(row[0])
-    
-        #get a list of sample counts for a given sff
-        sff_sample_count={}
-        for i,sff in enumerate(sffs):
-            sff_sample_count[sff]=[]
-            for j in samples[seq_run_ids[i]]:
-                results=0
-                query_results=data_access.getQiimeSffSamplesCount(j)
-                sff_sample_count[sff].append(list((j,query_results[1])))
-    
-    # start writing the data into an HTML table. The reason for the looping,is 
-    # that we want to make sure each SFF and Sample has the same information
-    
-    #Write out the project names selected
-    for i in project_names:
-        info_table.append('<h3>'+str(i)+\
-                          ' (<a href=\'./study_summary/export_metadata.psp?study_id='+study_id+'\' '+\
-                          ' target="_blank">'+\
-                          'download metadata</a>)&nbsp;')
-        #
-        if sffs[0]:
-            info_table.append('(<a href=\'./study_summary/export_sffs.psp?study_id='+study_id+'\' '+\
-                              ' target="_blank">'+\
-                              'download sffs</a>)</h3>')
-        else:
-            info_table.append('</h3>')
-    #
     
     #write out study information
     info_table.append('<table><tr><th><u>Study Information</u></th><td></tr>')
@@ -124,52 +70,36 @@ def print_study_info_and_values_table(query_results,data_access):
                 'This paper does not currently have a pmid!</em></td></tr>')
     info_table.append('</table><br>')
     
-    if sffs[0]:
-        #Write SFF information
-        #Write out each SFF and it's associated sample information
-        for i,sff in enumerate(sffs):
-            info_table.append('<table><tr><th><u>SFF(s) Information</u></th>')
-        
-            #write out SFF name
-            info_table.append('<td></td></tr><tr><th>SFF Filename:</th><td>' + \
-                    str(sff)+'</td></tr>')
-        
-            # deprecating due to no longer loading into reads table
-            '''
-            #write out number of reads
-            info_table.append('<tr><th>Number of Reads:</th><td>' + \
-                    str(read_counts[i])+'</td></tr>')
-            '''
-            #write out number of samples
-            info_table.append('<tr><th>Number of Samples:</th><td>' + \
-                    str(len(samples[seq_run_ids[i]]))+'</td></tr>')
-        
-            #write out total number of split-lib seqs
-            info_table.append('<tr><th>Split-Library Sequences:</th><td>' + \
-                    str(sum(zip(*sff_sample_count[sff])[1]))+'</td></tr>')
-        
-            #write out Samples
-            info_table.append('<tr><th><a id=\'sym_'+str(i) + \
-                    '\' onclick=\"show_hide_samples(\'div_'+str(i) + \
-                    '\',this.id);\" style=\"color:blue;\">&#x25BA;</a>&nbsp;Samples</th><td></td></tr>')
-            info_table.append('</table>')
-            info_table.append('<div id="div_'+str(i)+ \
-                    '" style="display:none;"><table border="1px" style="font-size:smaller;">')
-            info_table.append('<tr><th>SampleID</th><th>Sequences/Sample</th></tr>')
-            sff_sample_count[sff].sort(key=lambda x:x[1],reverse=True)
-            for j in sff_sample_count[sff]:
-                info_table.append('<tr><td>'+str(j[0])+'</td><td>'+str(j[1])+'</td></tr>')
-        
-            info_table.append('</table></div><br>')
-            
-        # deprecating due to no longer loading into reads table
-        '''
-        # write out total number of reads across all sffs
-        info_table.append('<table><tr><th>Total Number of Reads:</th><td>' + \
-                    str(sum(read_counts))+'</td></tr></table>')
-        '''
-    else:
-        info_table.append('<table><tr><th><u>SFF(s) Information</u></th></tr><tr><td style=\"color:red;\">The sequence data for this study has not been processed!</td></tr></table>')
-                
+    ### get a QIIME DB connection
+    try:
+        from data_access_connections import data_access_factory
+        from enums import ServerConfig,DataAccessType
+        import cx_Oracle
+        data_access = data_access_factory(ServerConfig.data_access_type)
+    except ImportError:
+        print "NOT IMPORTING QIIMEDATAACCESS"
+        pass
+    
+    con = data_access.getMetadataDatabaseConnection()
+    cur = con.cursor()
+    
+    # create the select command
+    for i in study_ids:
+        statement="select file_path from study_files where study_id=%s and file_type=\'SPLIT_LIB_SEQS_MAPPING\'" % (str(i))
+        study_id=str(i)
+    
+    # provide a link to the split-library data
+    file_path=cur.execute(statement)
+    oracle_cursor_len=0
+    for path in file_path:
+        oracle_cursor_len=oracle_cursor_len+1
+        if path:
+            info_table.append('<table><th>Download Sequence Data:</th><td><a href=%s>Sequences, Mapping and OTU Table</a></td></table>' % (path))
+    
+    # if no link, then allow user to email about getting data
+    if oracle_cursor_len==0:
+        info_table.append("<table><th>Download Sequence Data:</th><td style=\"color:red;\">Please send an email to Jesse Stombaugh to get the data (<a href='mailto:jesse.stombaugh@colorado.edu?subject=Get QIIME-DB Study: %s from thebeast'>email</a>)</table></table>" % (str(study_id)))
+
+    
     return ''.join(info_table)
     
