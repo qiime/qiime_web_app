@@ -57,8 +57,8 @@ This is a test dataset using the Fasting subset of mice.</td></tr><tr>\
 None</a></td></tr></table><br><table><th>Download Sequence Data:</th>\
 <td style="color:red;">This dataset is not available. Feel free to contact \
 Jesse Stombaugh for the status of this dataset (<a href=\
-'mailto:jesse.stombaugh@colorado.edu?subject=Status of QIIME-DB Study: 609 \
-from thebeast\'>email</a>)</td></table>\
+'mailto:jesse.stombaugh@colorado.edu?subject=Status of QIIME-DB Study: 609\'>\
+email</a>)</td></table>\
 """
 
 if __name__ == "__main__":
