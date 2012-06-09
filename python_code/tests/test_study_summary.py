@@ -45,16 +45,19 @@ class studySummary(TestCase):
         self.assertEqual(print_study_info_and_values_table(analysis_data,data_access),exp_output)
        
 exp_output="""\
-<h3>jesse_test (<a href=\'./study_summary/export_metadata.psp\'  target="_blank">download metadata</a>)&nbsp;\
-</h3><table><tr><th><u>Study Information</u></th><td></tr>\
-<tr><th>Study ID:</th>\
-<td style="color:black;text-decoration:none">609</td></tr><tr>\
-<th>Project Name:</th><td style="color:black;text-decoration:none">jesse_test</td></tr>\
-<tr><th>Study Title:</th><td style="color:black;text-decoration:none">Fasting subset mice for testing purposes</td></tr>\
-<tr><th>Study Abstract:</th><td style="color:black;text-decoration:none">This is a test dataset using the Fasting subset of mice.</td></tr>\
-<tr><th>Pubmed ID (pmid):</th><td style="color:black;text-decoration:none"><a href=http://www.ncbi.nlm.nih.gov/pubmed?term=None[uid] target="_blank">None</a></td></tr></table>\
-<br><table><tr><th><u>SFF(s) Information</u></th></tr>\
-<tr><td style="color:red;">The sequence data for this study has not been processed!</td></tr></table>\
+<table><tr><th><u>Study Information</u></th><td></tr><tr><th>Study ID:</th>\
+<td style="color:black;text-decoration:none">609</td></tr>\
+<tr><th>Project Name:</th><td style="color:black;text-decoration:none">\
+jesse_test_fasta</td></tr><tr><th>Study Title:</th>\
+<td style="color:black;text-decoration:none">Fasting subset mice for testing purposes</td>\
+</tr><tr><th>Study Abstract:</th><td style="color:black;text-decoration:none">\
+This is a test dataset using the Fasting subset of mice.</td></tr><tr>\
+<th>Pubmed ID (pmid):</th><td style="color:black;text-decoration:none">\
+<a href=http://www.ncbi.nlm.nih.gov/pubmed?term=None[uid] target="_blank">\
+None</a></td></tr></table><br><table><th>Download Sequence Data:</th>\
+<td style="color:red;">Please send an email to Jesse Stombaugh to get the \
+data (<a href=\'mailto:jesse.stombaugh@colorado.edu?subject=Get QIIME-DB \
+Study: 609 from thebeast\'>email</a>)</table></table>\
 """
 
 if __name__ == "__main__":
