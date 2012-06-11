@@ -110,12 +110,14 @@ class LiveEBISRARestServices(BaseRestServices):
         proc = Popen(ascp_command, shell=True, universal_newlines=True, stdout=None, stderr=STDOUT)
         return_value = proc.wait()
         subprocess_output.close()
-        print 'Return Value Was: %s' % str(return_value)
+        
+        self.logger.log_entry('Return Value Was: %s' % str(return_value))
+        subprocess_output = open(log_file, 'r')
+        file_contents = subprocess_output.read()
+        subprocess_output.close()
+        self.logger.log_entry(file_contents)        
+        
         if return_value != 0:
-            subprocess_output = open(log_file, 'r')
-            file_contents = subprocess_output.read()
-            subprocess_output.close()
-            print file_contents
             raise Exception(file_contents)
 
     def send_post_data(self, url_path, file_contents, debug = False):
@@ -186,6 +188,7 @@ class LiveEBISRARestServices(BaseRestServices):
                 unique_dirs.append(basedir)
         
         for unique_dir in unique_dirs:
+            self.logger.log_entry('Sending sequence file directory "{0}"'.format(unique_dir))
             ascp_command = 'ascp -QT -k2 -L- {0}/*.gz era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(unique_dir)
             self.call_ascp_command_line(ascp_command, debug = False)
                 
