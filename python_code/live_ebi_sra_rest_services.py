@@ -113,9 +113,10 @@ class LiveEBISRARestServices(BaseRestServices):
         print 'Return Value Was: %s' % str(return_value)
         if return_value != 0:
             subprocess_output = open(log_file, 'r')
-            print subprocess_output.read()
+            file_contents = subprocess_output.read()
             subprocess_output.close()
-            raise WorkflowError, msg
+            print file_contents
+            raise Exception(file_contents)
 
     def send_post_data(self, url_path, file_contents, debug = False):
         """ Sends POST data
