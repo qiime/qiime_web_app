@@ -176,7 +176,7 @@ class LiveEBISRARestServices(BaseRestServices):
             self.logger.log_entry('Sending XML file "{0}"'.format(f))
             #self.send_ftp_data(f)
             ascp_command = 'ascp -QT -k2 -L- {0} era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(f)
-            self.call_ascp_command_line(f, debug)
+            self.call_ascp_command_line(ascp_command, debug)
         
         # Send the sequence files by directory
         unique_dirs = []
@@ -187,7 +187,7 @@ class LiveEBISRARestServices(BaseRestServices):
         
         for unique_dir in unique_dirs:
             ascp_command = 'ascp -QT -k2 -L- {0}/*.gz era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(unique_dir)
-            call_ascp_command_line(self, ascp_command, debug = False)
+            call_ascp_command_line(ascp_command, debug = False)
                 
     def generate_metadata_files(self, debug = True, action_type = 'VALIDATE'):
         """
