@@ -104,7 +104,7 @@ class LiveEBISRARestServices(BaseRestServices):
         # Log file
         log_file = 'stdout.tmp'
         subprocess_output = open(log_file, 'w')
-        ascp_command = 'ascp -QT -L- {0} era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(file_path)
+        ascp_command = 'ascp -QT -k2 -L- {0} era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(file_path)
         
         #proc = Popen(ascp_command, shell=True, universal_newlines=True, stdout=subprocess_output, stderr=STDOUT)
         proc = Popen(ascp_command, shell=True, universal_newlines=True, stdout=None, stderr=STDOUT)
