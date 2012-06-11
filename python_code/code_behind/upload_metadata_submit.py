@@ -160,7 +160,7 @@ def validatePrepFile(mdtable, req, study_id, data_access):
     for file_sample_name in file_sample_names:
         for sample_name, linker, primer, barcode, run_prefix, platform in database_fields:
             if file_sample_name == sample_name:
-                if file_linkers[i] != linker or file_primers[i] != primer or file_barcodes[i] != barcode or file_run_prefixes[1] != run_prefix or file_platforms[i] != platform:
+                if file_linkers[i] != linker or file_primers[i] != primer or file_barcodes[i] != barcode or file_run_prefixes[i] != run_prefix or file_platforms[i] != platform:
                     key_fields_changed = True
         i += 1
     
