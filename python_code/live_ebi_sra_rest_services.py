@@ -191,7 +191,7 @@ class LiveEBISRARestServices(BaseRestServices):
                 unique_dirs.append(basedir)
         
         for unique_dir in unique_dirs:
-            call_ascp_command_line(self, unique_dir, debug = False):
+            call_ascp_command_line(self, unique_dir, debug = False)
                 
     def generate_metadata_files(self, debug = True, action_type = 'VALIDATE'):
         """
