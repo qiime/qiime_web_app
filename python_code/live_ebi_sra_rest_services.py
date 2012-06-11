@@ -115,8 +115,8 @@ class LiveEBISRARestServices(BaseRestServices):
             subprocess_output = open(log_file, 'r')
             print 'Output file is:'
             print subprocess_output.read()
-            msg = "\n\n*** ERROR RAISED DURING STEP: %s\n" % e[0] +\
-                "Command run was:\n %s\n" % e[1] +\
+            msg = "\n\n*** ERROR RAISED DURING STEP: %s\n" % ascp_command +\
+                "Command run was:\n %s\n" % ascp_command +\
                 "Command returned exit status: %d\n" % return_value +\
                 "Stdout/stderr:\n%s\n" % subprocess_output.read()
             logger.write(msg)
