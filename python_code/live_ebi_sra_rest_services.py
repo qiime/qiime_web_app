@@ -187,7 +187,7 @@ class LiveEBISRARestServices(BaseRestServices):
         
         for unique_dir in unique_dirs:
             ascp_command = 'ascp -QT -k2 -L- {0}/*.gz era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(unique_dir)
-            call_ascp_command_line(ascp_command, debug = False)
+            self.call_ascp_command_line(ascp_command, debug = False)
                 
     def generate_metadata_files(self, debug = True, action_type = 'VALIDATE'):
         """
