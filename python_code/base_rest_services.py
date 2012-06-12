@@ -38,8 +38,8 @@ class DataLogger(object):
 	def log_entry(self, entry):
 		""" Adds an entry to the log, prints to console if debug = True
 		"""
-		self._log.append('{0}\n'.format(entry))
-		self._log_file.write(entry)
+		self._log.append(entry)
+		self._log_file.write('{0}\n'.format(entry))
 		if self._debug:
 			print entry
 
