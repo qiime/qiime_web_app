@@ -347,7 +347,7 @@ class LiveEBISRARestServices(BaseRestServices):
 
                         # Figure out the library_strategy
                         library_strategy = 'OTHER'
-                        library_source = 'metagenomic'
+                        library_source = 'METAGENOMIC'
                         library_selection = 'unspecified'
                         if 'investigation_type' in study_info:
                             investigation_type = study_info['investigation_type']
