@@ -44,7 +44,7 @@ class LiveEBISRARestServices(BaseRestServices):
         self.errors = []
         
         # File paths
-        self.submission_file_path = join(self.base_study_path, 'ebi_ubmission_metadata_{0}.xml'.format(study_id))
+        self.submission_file_path = join(self.base_study_path, 'ebi_submission_metadata_{0}.xml'.format(study_id))
         self.study_file_path = join(self.base_study_path, 'ebi_study_metadata_{0}.xml'.format(study_id))
         self.sample_file_path = join(self.base_study_path, 'ebi_sample_metadata_{0}.xml'.format(study_id))
         self.experiment_file_path = join(self.base_study_path, 'ebi_experiment_metadata_{0}.xml'.format(study_id))
