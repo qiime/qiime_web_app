@@ -12,7 +12,7 @@ __status__ = "Development"
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 from sample_export import export_fasta_from_sample
-import os.path import join
+from os.path import join
 import stat
 import threading
 import gc
