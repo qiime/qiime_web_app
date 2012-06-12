@@ -28,22 +28,19 @@ class DataLogger(object):
 		self._log_file_path = log_file_path
 		self._debug = debug
 		self._log = []
+		self._log_file = open(log_file_path, 'w')
+		
+	def __del__(self):
+	    self._log_file.write('\n\nEnd log')
+	    self._log_file.close()
 		
 	def log_entry(self, entry):
 		""" Adds an entry to the log, prints to console if debug = True
 		"""
 		self._log.append(entry)
+		self._log_file.write(entry)
 		if self._debug:
 			print entry
-
-	def dump_log(self):
-		""" Write the contents of the log to the file path specified in constructor
-		"""
-		with open(self._log_file_path, 'w') as log_file:
-			log_file.write('EBI Export Log:\n\n')
-			for entry in self._log:
-				log_file.write('{0}\n'.format(entry))
-			log_file.write('\n\nEnd log')
 
 class BaseRestServices(object):
 	def __init__(self, study_id, web_app_user_id, debug = False):
