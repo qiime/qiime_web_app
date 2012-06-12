@@ -9,7 +9,7 @@ __maintainer__ = "Doug Wendel"
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
-from os.path import basename, exists
+from os.path import basename, exists, join
 import sys
 import httplib, urllib
 from base_rest_services import BaseRestServices
@@ -44,11 +44,11 @@ class LiveEBISRARestServices(BaseRestServices):
         self.errors = []
         
         # File paths
-        self.submission_file_path = '/tmp/ebi_sra_submission_metadata_%s.xml' % self.study_id
-        self.study_file_path = '/tmp/ebi_sra_study_metadata_%s.xml' % self.study_id
-        self.sample_file_path = '/tmp/ebi_sra_sample_metadata_%s.xml' % self.study_id
-        self.experiment_file_path = '/tmp/ebi_sra_experiment_metadata_%s.xml' % self.study_id
-        self.run_file_path = '/tmp/ebi_sra_run_metadata_%s.xml' % self.study_id
+        self.submission_file_path = join(self.base_study_path, 'ebi_ubmission_metadata_{0}.xml'.format(study_id))
+        self.study_file_path = join(self.base_study_path, 'ebi_study_metadata_{0}.xml'.format(study_id))
+        self.sample_file_path = join(self.base_study_path, 'ebi_sample_metadata_{0}.xml'.format(study_id))
+        self.experiment_file_path = join(self.base_study_path, 'ebi_experiment_metadata_{0}.xml'.format(study_id))
+        self.run_file_path = join(self.base_study_path, 'ebi_run_metadata_{0}.xml'.format(study_id))
         
         # EBI FTP info
         self.ftp_url = 'ftp.sra.ebi.ac.uk'

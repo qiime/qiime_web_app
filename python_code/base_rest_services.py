@@ -12,7 +12,7 @@ __status__ = "Development"
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 from sample_export import export_fasta_from_sample
-import os
+import os.path import join
 import stat
 import threading
 import gc
@@ -51,10 +51,11 @@ class BaseRestServices(object):
 		self.library_url = None
 		self.sequence_url = None
 		self.study_id = study_id
+		self.base_study_path = '/home/wwwuser/user_data/studies/study_{0}'.format(study_id)
 
 		self.web_app_user_id = web_app_user_id
 		# Set up a logger so we can see what's going on
-		log_file_path = '/home/wwwuser/user_data/studies/study_{0}/ebi_export_log.txt'.format(study_id)
+		log_file_path = join(self.base_study_path, 'ebi_export_log.txt')
 		self.logger = DataLogger(log_file_path, debug)
 		
 		self.rest_data_helper = RestDataHelper(study_id, web_app_user_id, self.logger)
