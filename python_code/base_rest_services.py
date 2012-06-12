@@ -29,6 +29,7 @@ class DataLogger(object):
 		self._debug = debug
 		self._log = []
 		self._log_file = open(log_file_path, 'w')
+		self._log_file.write('Begin Log\n\n')
 		
 	def __del__(self):
 	    self._log_file.write('\n\nEnd log')
@@ -37,7 +38,7 @@ class DataLogger(object):
 	def log_entry(self, entry):
 		""" Adds an entry to the log, prints to console if debug = True
 		"""
-		self._log.append(entry)
+		self._log.append('{0}\n'.format(entry))
 		self._log_file.write(entry)
 		if self._debug:
 			print entry
