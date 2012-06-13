@@ -46,7 +46,7 @@ if portal_type == 'qiime':
         <li>
             <form id="user_study" action="select_user_study_submit.psp" method="post">
                 Select an Existing Study:<br/>
-                <select validate="required:true" name="study_names" id="study_names" onchange="document.forms['user_study'].submit();  return false;">
+                <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
                 <option value=""></option>
 <%
 study_names = data_access.getUserStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
@@ -58,7 +58,6 @@ for study_name in study_names:
             </form>
             </li>
         </ul>
-        
 <%
 if sess['portal_type'] == 'qiime':
     # Indent
@@ -77,7 +76,7 @@ if sess['portal_type'] == 'qiime':
         <li>
             <form id="user_meta_analysis" action="select_meta_analysis_submit.psp" method="post">
                 Select Previous Meta-Analyses:
-                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="document.forms['user_meta_analysis'].submit(); return false;">
+                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="select_change_submit('user_meta_analysis', this); return false;">
                 <option value=""></option>
 <%
     meta_analysis_names = data_access.getMetaAnalysisNames(sess['web_app_user_id'])

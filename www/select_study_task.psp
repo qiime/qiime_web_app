@@ -9,7 +9,7 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 %>
 
-<script src="http://code.jquery.com/jquery-latest.js"></script>
+<!--<script src="http://code.jquery.com/jquery-latest.js"></script>-->
 <script type="text/javascript" src="js/jobs.js"></script>
 
 <script type="text/javascript">
@@ -38,7 +38,10 @@ web_app_user_id = sess['web_app_user_id']
 portal_type = sess['portal_type']
 frame_target = sess['frame_target']
 study_name = sess['study_name']
-study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+try:
+    study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+except Exception, e:
+    req.write(str(e))
 sample_count = study_info['sample_count']
 investigation_type = study_info['investigation_type']
 metadata_complete = study_info['metadata_complete']
@@ -73,7 +76,7 @@ approved_qiime_submitters = [12428,12169,12171]
         <li>
             <form id="user_study" action="select_user_study_submit.psp" method="post">
                 Select an Existing Study:<br/>
-                <select validate="required:true" name="study_names" id="study_names" onchange="document.forms['user_study'].submit();">
+                <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
 <%
 study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, portal_type)
 for item in study_names:
@@ -346,14 +349,14 @@ elif is_admin == 1:
     # Indent
     pass
 %>
-<!--
+
         <li>
         <form id="submit_export_to_ebi_sra" action="submit_export_to_ebi_sra.psp" method="post">
                 <a href="" onclick="document.forms['submit_export_to_ebi_sra'].submit(); return false;">
                 Export Data to EBI-SRA</a>
             </form>
         </li>
--->
+
 
 <%
 # End if
@@ -437,3 +440,8 @@ if portal_type == 'emp' and is_admin == 1:
 # End if
 
 %>
+
+<script type="text/javascript">
+	//toggleSection('sff_div');
+	//toggleSection('sample_div');
+</script>

@@ -47,8 +47,12 @@ portal_type = sess['portal_type']
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
+<script type="text/javascript" src="js/jquery_searchabledropdown/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="js/jquery_searchabledropdown/jquery.searchabledropdown-1.0.7.min.js"></script>
+
 <script type="text/javascript"> 
 $(document).ready(function(){
+    $("select").searchable();
 
 	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
@@ -70,10 +74,22 @@ $(document).ready(function(){
 	});
 
 });
+
+// Handles proper selections for dropdown navigation
+function select_change_submit(form_name, sender)
+{
+    // Must be a valid selection to continue
+    if (sender.selectedIndex == 0)
+    {
+        return false;
+    }
+    
+    document.forms[form_name].submit();
+    return false;
+}
 </script>
 
 </head>
-
 <body>
 
 <div class="container">
