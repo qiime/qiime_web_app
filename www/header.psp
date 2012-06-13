@@ -52,7 +52,7 @@ portal_type = sess['portal_type']
 
 <script type="text/javascript"> 
 $(document).ready(function(){
-    $("select").searchable();
+    
 
 	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
