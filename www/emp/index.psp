@@ -15,7 +15,23 @@ from enums import DataAccessType,ServerConfig
 data_access = data_access_factory(ServerConfig.data_access_type)
 %>
 
+<script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript">
 
+function toggleSection(section_name)
+{
+    div = document.getElementById(section_name);
+    if (div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+    }
+}
+
+</script>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -70,14 +86,20 @@ if form.has_key('username'):
 
 <br/>
 <hr/>
-<h3>Download Public Data:</h3>
+
+<h3>
+<a href="" onclick="toggleSection(\'download_div\'); return false;">Download Public Data</a>
+</h3>
+
+<div id="download_div" name="download_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">
 <%
 public_studies = data_access.getPublicEMPDownloadLinks()
-for study_id, project_name, file_path in public_studies:
+for study_id, project_name, file_path, study_abstract in public_studies:
 	req.write('<a href="{0}">{1}</a><br/>\n'.format(file_path, project_name))
+	req.write('{0}<br/><br/>\n'.format(study_abstract))
 # End indent
 %>
-</table>
+</div>
 
 </body>
 </html>

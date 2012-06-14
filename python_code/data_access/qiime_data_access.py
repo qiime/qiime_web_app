@@ -653,8 +653,8 @@ class QiimeDataAccess(object):
 			results = con.cursor()
 			con.cursor().callproc('get_public_emp_studies', [results])
 			for row in results:
-				# study_id, project_name, file_path
-				studies.append((row[0], row[1], row[2]))
+				# study_id, project_name, file_path, study_abstract
+				studies.append((row[0], row[1], row[2], row[3]))
 			return studies
 		except Exception, e:
 			print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
