@@ -643,6 +643,21 @@ class QiimeDataAccess(object):
 			return studies
 		except Exception, e:
 			print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+
+	def getPublicEMPDownloadLinks(self):
+		""" Returns a list of emp studies
+		"""
+		try:
+			studies = []
+			con = self.getMetadataDatabaseConnection()
+			results = con.cursor()
+			con.cursor().callproc('get_public_emp_studies', [results])
+			for row in results:
+				# study_id, project_name, file_path
+				studies.append((row[0], row[1], row[2]))
+			return studies
+		except Exception, e:
+			print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
 			
 	def getEMPSampleList(self, study_id, web_app_user_id):
 		""" Returns a list of emp studies
@@ -1473,6 +1488,7 @@ class QiimeDataAccess(object):
 				log.append('Read field database data type as "%s"' % database_data_type)
 			
 			# If the field value is 'unknown', switch to 'null' (empty string is the same as null)
+			#pass_values = 
 			if str(field_value).upper() == 'UNKNOWN':
 				field_value = ''
 			# Figure out if this needs to be an integer ID instead of a text value

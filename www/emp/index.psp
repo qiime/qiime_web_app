@@ -12,6 +12,7 @@ __status__ = "Production"
 
 from data_access_connections import data_access_factory
 from enums import DataAccessType,ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
 %>
 
 
@@ -26,9 +27,9 @@ from enums import DataAccessType,ServerConfig
 
 <body>
 <div class="container">
-    <div id="header">
-    	 <div class="disclaimer">Please Log In</div>
-    </div>
+	<div id="header">
+		 <div class="disclaimer">Please Log In</div>
+	</div>
 </div>
 <div class="content">
 
@@ -44,32 +45,39 @@ environment_vars=req.get_options()
 output_dir='%s/user_data' % environment_vars['HOME']
 link_path_dir = 'studies'
 if form.has_key('username'):
-    # begin
-    qiimeDataAccess = data_access_factory(ServerConfig.data_access_type)
-    user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
-    if ( user_data and user_data['verified']=='y'):
-        url = 'http://%s/qiime/index.psp?portal_type=emp&username=%s&password=%s&is_admin=%s' %\
-            (req.hostname, form["username"], form["password"], user_data['is_admin'])
-        req.write('<script language=\"javascript\">window.location = "%s";</script>' % url)
-    else:
-        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+	user_data = data_access.authenticateWebAppUser( form["username"], form["password"] )
+	if ( user_data and user_data['verified']=='y'):
+		url = 'http://%s/qiime/index.psp?portal_type=emp&username=%s&password=%s&is_admin=%s' %\
+			(req.hostname, form["username"], form["password"], user_data['is_admin'])
+		req.write('<script language=\"javascript\">window.location = "%s";</script>' % url)
+	else:
+		req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
 
 # end
 %>
 <p/>
 <form method="post" action="index.psp">
 <table>
-    <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
-    <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
-    <tr><td colspan="2"><input type="submit" value="Log In"></tr>
-    <tr><td colspan="2"><br></td></tr>
+	<tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
+	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
+	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
+	<tr><td colspan="2"><br></td></tr>
 </table>
 </form>
 <table>
-    <!--<tr><td>I just want data. <a href="./download_data.psp">Download sequence data</a></td></tr>-->
-    <tr><td>Don't have an account? Head here then return to this URL when you've set one up. <br/><a href="http://<%=req.hostname%>/qiime/register_user.psp">Create Account</a></td></tr>
-    <!--<tr><td>Forgot your password? <a href="./forgot_password.psp">Reset Password</a></td></tr>-->
-    <!--<tr><td>Would you like to change your password? <a href="./change_password.psp">Change Password</a></td></tr>-->
+	<tr><td>Don't have an account? Head here then return to this URL when you've set one up. <br/><a href="http://<%=req.hostname%>/qiime/register_user.psp">Create Account</a></td></tr>
 </table>
+
+<br/>
+<hr/>
+<h3>Download Public Data:</h3>
+<%
+public_studies = data_access.getPublicEMPDownloadLinks()
+for study_id, project_name, file_path in public_studies:
+	req.write('<a href="{0}">{1}</a><br/>\n'.format(file_path, project_name))
+# End indent
+%>
+</table>
+
 </body>
 </html>
