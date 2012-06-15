@@ -47,13 +47,23 @@ portal_type = sess['portal_type']
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
-<script type="text/javascript" src="js/jquery_searchabledropdown/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery_searchabledropdown/jquery.searchabledropdown-1.0.7.min.js"></script>
 
 <script type="text/javascript"> 
-$(document).ready(function(){
-    
 
+function toggleSection(section_name)
+{
+    toggle_div = document.getElementById(section_name);
+    if (toggle_div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+    }
+}
+
+$(document).ready(function(){
 	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
 	$("ul.topnav li span").click(function() { //When trigger is clicked...

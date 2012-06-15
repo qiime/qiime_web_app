@@ -13,6 +13,8 @@ is_admin = int(sess['is_admin'])
 frame_target = sess['frame_target']
 %>
 
+<script type="text/javascript" src="js/study_search.js"></script>
+
 <br>
 <p>
     <b>Study Options:</b>
@@ -57,7 +59,21 @@ for study_name in study_names:
                 </select>
             </form>
             </li>
+            <li>
+                <a href="" onclick="toggleSection(\'search_div\'); return false;">Search for a study...</a>
+                <div id="search_div" name="search_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">    
+                <input type="text" id="search_text" name="search_text" style="border-radius:5px;width:200px;"><br/>
+                    <ul id="list">    
+<%
+for item in study_names:
+    req.write('<li><a href="select_user_study_submit.psp?study_names={0}:{1}">{1}</a></li>\n'.format(str(item[0]), item[1]))
+# end
+%>
+                    <ul>
+                </div>
+            </li>
         </ul>
+        
 <%
 if sess['portal_type'] == 'qiime':
     # Indent

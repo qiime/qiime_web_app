@@ -11,23 +11,7 @@ __status__ = "Production"
 
 <!--<script src="http://code.jquery.com/jquery-latest.js"></script>-->
 <script type="text/javascript" src="js/jobs.js"></script>
-
-<script type="text/javascript">
-
-function toggleSection(section_name)
-{
-    sample_div = document.getElementById(section_name);
-    if (sample_div.style.display == 'none')
-    {
-        $('#' + section_name).fadeIn('fast')
-    }
-    else
-    {
-        $('#' + section_name).fadeOut('fast')
-    }
-}
-
-</script>
+<script type="text/javascript" src="js/study_search.js"></script>
 
 <%
 
@@ -89,6 +73,21 @@ for item in study_names:
                 </select>
             </form>
         </li>
+        
+        <li>
+            <a href="" onclick="toggleSection(\'search_div\'); return false;">Search for a study...</a>
+            <div id="search_div" name="search_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">    
+            <input type="text" id="search_text" name="search_text" style="border-radius:5px;width:200px;"><br/>
+                <ul id="list">    
+<%
+for item in study_names:
+    req.write('<li><a href="select_user_study_submit.psp?study_names={0}:{1}">{1}</a></li>\n'.format(str(item[0]), item[1]))
+# end
+%>
+                <ul>
+            </div>
+        </li>        
+        
     </ul>
     <b>Manage Study:</b>
     <ul>
