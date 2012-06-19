@@ -53,6 +53,10 @@ def validateSampleFile(mdtable, study_id, web_app_user_id, data_access):
     dupes = []
     samples_missing = False
     
+    # Make sure there are no duplicate column names
+    for dupe in mdtable.checkForDuplicateColumns():
+        errors.append('Error: Duplicate column found in sample tempalte: {0}'.format(dupe))
+    
     # If the sample_name is missing, exit immediately
     try:
         sample_values = mdtable.getColumn('sample_name').values
@@ -102,6 +106,10 @@ def validateSampleFile(mdtable, study_id, web_app_user_id, data_access):
 def validatePrepFile(mdtable, req, study_id, data_access):
     errors = []
     key_fields_changed = False
+    
+    # Make sure there are no duplicate column names
+    for dupe in mdtable.checkForDuplicateColumns():
+        errors.append('Error: Duplicate column found in prep tempalte: {0}'.format(dupe))
     
     # If any key fields are missing, exit immediately
     try:
@@ -160,7 +168,20 @@ def validatePrepFile(mdtable, req, study_id, data_access):
     for file_sample_name in file_sample_names:
         for sample_name, linker, primer, barcode, run_prefix, platform in database_fields:
             if file_sample_name == sample_name:
-                if file_linkers[i] != linker or file_primers[i] != primer or file_barcodes[i] != barcode or file_run_prefixes[i] != run_prefix or file_platforms[i] != platform:
+                if file_linkers[i] != linker:
+                    errors.append('Linker for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, linker, file_linkers[i]))
+                    key_fields_changed = True
+                if file_primers[i] != primer:
+                    errors.append('Primer for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, primer, file_primers[i]))
+                    key_fields_changed = True
+                if file_barcodes[i] != barcode:
+                    errors.append('Barcode for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, barcode, file_barcodes[i]))
+                    key_fields_changed = True
+                if file_run_prefixes[i] != run_prefix:
+                    errors.append('Run prefix for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, run_prefix, file_run_prefixes[i]))
+                    key_fields_changed = True
+                if file_platforms[i] != platform:
+                    errors.append('Platform for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, platform, file_platforms[i]))
                     key_fields_changed = True
         i += 1
     
