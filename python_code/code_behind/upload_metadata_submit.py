@@ -167,6 +167,13 @@ def validatePrepFile(mdtable, req, study_id, data_access):
     i = 0
     for file_sample_name in file_sample_names:
         for sample_name, linker, primer, barcode, run_prefix, platform in database_fields:
+            # Values can come across as the text 'None' - make sure this doesn't cause a problem
+            linker = '' if linker == None else linker
+            primer = '' if primer == None else primer
+            barcode = '' if barcode == None else barcode
+            run_prefix = '' if run_prefix == None else run_prefix
+            platform = '' if platform == None else platform
+            
             if file_sample_name == sample_name:
                 if file_linkers[i] != linker:
                     errors.append('Linker for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, linker, file_linkers[i]))
