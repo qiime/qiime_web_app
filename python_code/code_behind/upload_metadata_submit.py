@@ -54,8 +54,8 @@ def validateSampleFile(mdtable, study_id, web_app_user_id, data_access):
     samples_missing = False
     
     # Make sure there are no duplicate column names
-    for dupe in mdtable.checkForDuplicateColumns():
-        errors.append('Error: Duplicate column found in sample tempalte: {0}'.format(dupe))
+    #for dupe in mdtable.checkForDuplicateColumns():
+    #    errors.append('Error: Duplicate column found in sample tempalte: {0}'.format(dupe))
     
     # If the sample_name is missing, exit immediately
     try:
@@ -108,8 +108,8 @@ def validatePrepFile(mdtable, req, study_id, data_access):
     key_fields_changed = False
     
     # Make sure there are no duplicate column names
-    for dupe in mdtable.checkForDuplicateColumns():
-        errors.append('Error: Duplicate column found in prep tempalte: {0}'.format(dupe))
+    #for dupe in mdtable.checkForDuplicateColumns():
+    #    errors.append('Error: Duplicate column found in prep tempalte: {0}'.format(dupe))
     
     # If any key fields are missing, exit immediately
     try:
