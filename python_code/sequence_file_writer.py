@@ -124,9 +124,9 @@ where	s.study_id = {0}
 		self.logger.log_entry('Run prefix is "{0}"'.format(run_prefix))
 
 		# Set the full file path and gzip file path
-		full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
+		full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.{3}'.format(str(self.study_id), run_prefix, sample_name, self.file_extension))
 		gz_file_name = full_file_name + '.gz'
-		alternate_full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/{2}.fastq'.format(str(self.study_id), run_prefix, sample_name))
+		alternate_full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/{2}.{3}'.format(str(self.study_id), run_prefix, sample_name, self.file_extension))
 		alternate_gz_file_name = alternate_full_file_name + '.gz'
 		
 		# Shortcut - if the file exists, just return it. Don't refresh the archive.
