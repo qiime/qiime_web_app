@@ -505,7 +505,7 @@ class LiveEBISRARestServices(BaseRestServices):
         # Write out the curl command to a file for now
         curl_file_path = join(self.base_study_path, 'ebi_curl_command_{0}.txt'.format(study_id))
         curl_file = open(curl_file_path, 'w')
-        curl_file.write(generate_curl_command())
+        self.curl_file.write(generate_curl_command())
         curl_file.close()
         
         if len(self.errors) > 0:
