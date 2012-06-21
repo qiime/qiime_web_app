@@ -92,9 +92,11 @@ class LiveEBISRARestServices(BaseRestServices):
         pass
 
     def generate_curl_command(self):
-        curl command = 'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" -F "RUN=@{3}" -F"EXPERIMENT=@{4}" \
+        curl_command = 'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" -F "RUN=@{3}" -F"EXPERIMENT=@{4}" \
             "https://www.ebi.ac.uk/ena/submit/drop-box/submit/?auth=ERA%20era-drop-215%20UquRb+8GCPOaT56b6wzR5pFeF8E%3D"'.format(\
             self.submission_file_path, self.study_file_path, self.sample_file_path, self.run_file_path, self.experiment_file_path)
+            
+        return curl_command
                     
     def send_ftp_data(self, file_path, debug = False):
         """ Sends a file to the EBI "dropbox" (FTP account)
