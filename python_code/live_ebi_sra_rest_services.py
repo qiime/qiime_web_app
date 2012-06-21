@@ -90,7 +90,12 @@ class LiveEBISRARestServices(BaseRestServices):
         """
         #self.ftp.quit()
         pass
-        
+
+    def generate_curl_command(self):
+        curl command = 'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" -F "RUN=@{3}" -F"EXPERIMENT=@{4}" \
+            "https://www.ebi.ac.uk/ena/submit/drop-box/submit/?auth=ERA%20era-drop-215%20UquRb+8GCPOaT56b6wzR5pFeF8E%3D"'.format(\
+            self.submission_file_path, self.study_file_path, self.sample_file_path, self.run_file_path, self.experiment_file_path)
+                    
     def send_ftp_data(self, file_path, debug = False):
         """ Sends a file to the EBI "dropbox" (FTP account)
         """
@@ -494,6 +499,12 @@ class LiveEBISRARestServices(BaseRestServices):
         self.logger.log_entry('File List:')
         for f in self.file_list:
             self.logger.log_entry('{0} - {1}'.format(f.file_path, f.checksum))
+            
+        # Write out the curl command to a file for now
+        curl_file_path = join(self.base_study_path, 'ebi_curl_command_{0}.txt'.format(study_id))
+        curl_file = open(curl_file_path, 'w')
+        curl_file.write(generate_curl_command())
+        curl_file.close()
         
         if len(self.errors) > 0:
             self.logger.log_entry('ERRORS FOUND:')
