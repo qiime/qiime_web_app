@@ -32,6 +32,7 @@ metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
 mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
+ebi_accession = study_info['ebi_accession']
 
 approved_qiime_submitters = [12428,12169,12171]
 %>
@@ -344,11 +345,9 @@ if len(jobs) > 0 and is_admin == 1:
 
 <%
 
-elif is_admin == 1:
+elif is_admin == 1 and ebi_accession is None:
     # Indent
-    pass
 %>
-
         <li>
         <form id="submit_export_to_ebi_sra" action="submit_export_to_ebi_sra.psp" method="post">
                 <a href="" onclick="document.forms['submit_export_to_ebi_sra'].submit(); return false;">
@@ -356,12 +355,17 @@ elif is_admin == 1:
             </form>
         </li>
 
-
 <%
+elif ebi_accession is not None:
+    # Indent
+%>    
+        <li>
+            <a href="http://www.ebi.ac.uk/ena/data/view/<%=ebi_accession%>" target="_blank">View Study at EBI</a>
+        </li>
+<%
+
+# End indent
 # End if
-
-
-
 
 if can_delete == 'y' or is_admin:
     # indent
@@ -413,7 +417,6 @@ if can_delete == 'y' or is_admin:
                 Visualize All Sample Locations</a>
             </form>
         </li>
-    </ul>
 
 <%
 if portal_type == 'emp' and is_admin == 1:

@@ -386,6 +386,7 @@ class QiimeDataAccess(object):
 			study_info['funding'] = row[37]
 			study_info['includes_timeseries'] = row[38]
 			study_info['sample_count'] = row[39]
+			study_info['ebi_accession'] = row[40]
 		return study_info
 
 	def saveTimeseriesData(self, study_id, timeseries_file, req):
@@ -1021,7 +1022,9 @@ class QiimeDataAccess(object):
 			con.cursor().callproc('qiime_assets.extra_column_metadata_insert', [study_id, table_level, 
 				column_name, description, data_type])
 		except Exception, e:			
-			raise Exception('Exception caught in addExtraColumnMetadata(): %s.\nThe error is: %s' % (type(e), e))
+			raise Exception('Exception caught in addExtraColumnMetadata(): {0}.\nThe error is: {1}.\nstudy_id: \
+			    {2}\ntable_level: {3}\ncolumn_name: {4}\ndescription: {5}\n data_type: {6}'.format(type(e), e, \
+			    str(study_id), str(table_level), str(column_name), str(description), str(data_type)))
 			
 	def getExtraColumnMetadata(self, study_id):
 		""" Retrieves all metadata for extra columns
