@@ -176,19 +176,19 @@ def validatePrepFile(mdtable, req, study_id, data_access):
             
             if file_sample_name == sample_name:
                 if file_linkers[i] != linker:
-                    errors.append('Linker for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, linker, file_linkers[i]))
+                    #errors.append('Linker for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, linker, file_linkers[i]))
                     key_fields_changed = True
                 if file_primers[i] != primer:
-                    errors.append('Primer for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, primer, file_primers[i]))
+                    #errors.append('Primer for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, primer, file_primers[i]))
                     key_fields_changed = True
                 if file_barcodes[i] != barcode:
-                    errors.append('Barcode for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, barcode, file_barcodes[i]))
+                    #errors.append('Barcode for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, barcode, file_barcodes[i]))
                     key_fields_changed = True
                 if file_run_prefixes[i] != run_prefix:
-                    errors.append('Run prefix for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, run_prefix, file_run_prefixes[i]))
+                    #errors.append('Run prefix for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, run_prefix, file_run_prefixes[i]))
                     key_fields_changed = True
                 if file_platforms[i] != platform:
-                    errors.append('Platform for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, platform, file_platforms[i]))
+                    #errors.append('Platform for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, platform, file_platforms[i]))
                     key_fields_changed = True
         i += 1
     
