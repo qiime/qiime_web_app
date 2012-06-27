@@ -26,8 +26,9 @@ class Tests(TestCase):
         # self.study_id = 314 # bowers_storm_peak_air
         # self.study_id = 367 # Jesse_test
         # self.study_id = 1026 # stahringer_colorado_twin_saliva
-        # self.study_id = 850 # Global gut
-        self.study_id = 939 # ECUAVIDA
+        # self.study_id = 850 # Global gut illumina
+        self.study_id = 621 # global gut metagenome
+        # self.study_id = 939 # ECUAVIDA
 
         self.web_app_user_id = 12169
         self.root_dir = '/home/wwwuser/user_data/studies'
@@ -70,10 +71,10 @@ class Tests(TestCase):
         debug = True
         live = LiveEBISRARestServices(self.study_id, self.web_app_user_id, self.root_dir, debug)
         live.host_name = ''
-        #live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
-        live.generate_metadata_files(debug = True, action_type = 'ADD')
+        live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
+        #live.generate_metadata_files(debug = True, action_type = 'ADD')
         #live.generate_metadata_files(debug = True, action_type = 'MODIFY')
-        live.submit_files(debug = True)
+        #live.submit_files(debug = True)
         pass
 
 if __name__ == "__main__":
