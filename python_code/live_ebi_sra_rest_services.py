@@ -333,7 +333,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         elif file_writer.writer_type == 'fastq':
                             platform = 'ILLUMINA'
                         elif file_writer.writer_type == 'fasta':
-                            platform = 'FASTA'
+                            platform = 'LS454'
                         else:
                             platform = 'UNKNOWN'
                         
@@ -490,10 +490,10 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file.write('</ACTIONS>\n')
 
         # Sequence files here?
-        submission_file.write('<FILES>\n')
-        for seqs_file in self.file_list:
-            submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(seqs_file.checksum, basename(seqs_file.file_path)))
-        submission_file.write('</FILES>\n')
+        #submission_file.write('<FILES>\n')
+        #for seqs_file in self.file_list:
+        #    submission_file.write('    <FILE checksum="{0}" filename="{1}" checksum_method="MD5"/>\n'.format(seqs_file.checksum, basename(seqs_file.file_path)))
+        #submission_file.write('</FILES>\n')
         
         submission_file.write('</SUBMISSION>\n')
         submission_file.write('</SUBMISSION_SET>\n')    
