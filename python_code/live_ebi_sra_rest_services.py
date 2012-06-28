@@ -375,16 +375,16 @@ class LiveEBISRARestServices(BaseRestServices):
                         
                         # Spot descriptor required for LS454
                         if platform == 'LS454':
-                            experiment_file.write('        <SPOT_DESCRIPTOR>')
-                            experiment_file.write('            <SPOT_DECODE_SPEC>')
-                            experiment_file.write('                <READ_SPEC>')
-                            experiment_file.write('                    <READ_INDEX>0</READ_INDEX>')
-                            experiment_file.write('                    <READ_CLASS>Application Read</READ_CLASS>')
-                            experiment_file.write('                    <READ_TYPE>Forward</READ_TYPE>')
-                            experiment_file.write('                    <BASE_COORD>1</BASE_COORD>')
-                            experiment_file.write('                </READ_SPEC>')
-                            experiment_file.write('            </SPOT_DECODE_SPEC>')
-                            experiment_file.write('        </SPOT_DESCRIPTOR>')
+                            experiment_file.write('        <SPOT_DESCRIPTOR>\n')
+                            experiment_file.write('            <SPOT_DECODE_SPEC>\n')
+                            experiment_file.write('                <READ_SPEC>\n')
+                            experiment_file.write('                    <READ_INDEX>0</READ_INDEX>\n')
+                            experiment_file.write('                    <READ_CLASS>Application Read</READ_CLASS>\n')
+                            experiment_file.write('                    <READ_TYPE>Forward</READ_TYPE>\n')
+                            experiment_file.write('                    <BASE_COORD>1</BASE_COORD>\n')
+                            experiment_file.write('                </READ_SPEC>\n')
+                            experiment_file.write('            </SPOT_DECODE_SPEC>\n')
+                            experiment_file.write('        </SPOT_DESCRIPTOR>\n')
                         
                         experiment_file.write('       </DESIGN>\n')
                         
