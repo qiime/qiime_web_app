@@ -372,6 +372,20 @@ class LiveEBISRARestServices(BaseRestServices):
                         experiment_file.write('               </LIBRARY_LAYOUT>\n')
                         experiment_file.write('               <LIBRARY_CONSTRUCTION_PROTOCOL>{0}</LIBRARY_CONSTRUCTION_PROTOCOL>\n'.format(prep_dict['library_construction_protocol']))
                         experiment_file.write('           </LIBRARY_DESCRIPTOR>\n')
+                        
+                        # Spot descriptor required for LS454
+                        if platform == 'LS454':
+                            experiment_file.write('        <SPOT_DESCRIPTOR>')
+                            experiment_file.write('            <SPOT_DECODE_SPEC>')
+                            experiment_file.write('                <READ_SPEC>')
+                            experiment_file.write('                    <READ_INDEX>0</READ_INDEX>')
+                            experiment_file.write('                    <READ_CLASS>Application Read</READ_CLASS>')
+                            experiment_file.write('                    <READ_TYPE>Forward</READ_TYPE>')
+                            experiment_file.write('                    <BASE_COORD>1</BASE_COORD>')
+                            experiment_file.write('                </READ_SPEC>')
+                            experiment_file.write('            </SPOT_DECODE_SPEC>')
+                            experiment_file.write('        </SPOT_DESCRIPTOR>')
+                        
                         experiment_file.write('       </DESIGN>\n')
                         
                         experiment_file.write('       <PLATFORM>\n')
@@ -379,7 +393,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         experiment_file.write('               <INSTRUMENT_MODEL>unspecified</INSTRUMENT_MODEL>\n')
                         experiment_file.write('           </{0}>\n'.format(platform))                       
                         experiment_file.write('       </PLATFORM>\n')
-                        
+                                                
                         experiment_file.write('       <EXPERIMENT_ATTRIBUTES>\n')
                         for prep_key in prep_dict:                        
                             experiment_file.write('          <EXPERIMENT_ATTRIBUTE>\n')
