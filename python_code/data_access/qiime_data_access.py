@@ -386,7 +386,7 @@ class QiimeDataAccess(object):
 			study_info['funding'] = row[37]
 			study_info['includes_timeseries'] = row[38]
 			study_info['sample_count'] = row[39]
-			study_info['ebi_accession'] = row[40]
+			study_info['ebi_study_accession'] = row[40]
 		return study_info
 
 	def saveTimeseriesData(self, study_id, timeseries_file, req):

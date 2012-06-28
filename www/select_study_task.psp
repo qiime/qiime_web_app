@@ -32,7 +32,7 @@ metadata_complete = study_info['metadata_complete']
 sff_complete = study_info['sff_complete']
 mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
-ebi_accession = study_info['ebi_accession']
+ebi_study_accession = study_info['ebi_study_accession']
 
 approved_qiime_submitters = [12428,12169,12171]
 %>
@@ -282,49 +282,6 @@ if portal_type in ['qiime', 'emp']:
 
 # End if
 
-%>
-
-
-
-
-
-<%
-jobs = data_access.getJobInfo(study_id, 6)
-if len(jobs) > 0 and is_admin == 1:
-    # indent
-%>
-        <li>
-            Exporting to MG-RAST...
-            <br/>
-            <ul>
-                <div id="mg_rast_statis_div">
-                    Checking status...
-                </div>
-                <script type="text/javascript">
-                    //checkMGRASTJobStatus();
-                    var timer = setInterval( "checkMGRASTJobStatus();", 5000 );
-
-                </script>
-            </ul>
-        </li>
-
-<%
-
-elif is_admin == 1:
-    # Indent
-    
-%>
-
-        <li>
-        <form id="submit_export_to_mgrast" action="submit_export_to_mgrast.psp" method="post">
-                <a href="" onclick="document.forms['submit_export_to_mgrast'].submit(); return false;">
-                Export Data to MG-RAST</a>
-            <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
-            </form>
-        </li>
-<%
-# End if
-
 jobs = data_access.getJobInfo(study_id, 14)
 if len(jobs) > 0 and is_admin == 1:
     # indent
@@ -345,7 +302,7 @@ if len(jobs) > 0 and is_admin == 1:
 
 <%
 
-elif is_admin == 1 and ebi_accession is None:
+elif is_admin == 1 and ebi_study_accession is None and web_app_user_id == 12169:
     # Indent
 %>
         <li>
@@ -356,11 +313,11 @@ elif is_admin == 1 and ebi_accession is None:
         </li>
 
 <%
-elif ebi_accession is not None:
+elif ebi_study_accession is not None:
     # Indent
 %>    
         <li>
-            <a href="http://www.ebi.ac.uk/ena/data/view/<%=ebi_accession%>" target="_blank">View Study at EBI</a>
+            <a href="http://www.ebi.ac.uk/ena/data/view/<%=ebi_study_accession%>" target="_blank">View Study at EBI</a>
         </li>
 <%
 
