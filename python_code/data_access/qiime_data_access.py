@@ -1590,11 +1590,11 @@ class QiimeDataAccess(object):
 			# Must append row_num if sequence table
 			if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
 				named_params = {'key_column_value':key_column_value, 'row_number':row_num}
-				statement = 'select * from %s where %s = :key_column_value and row_number = :row_number'\
+				statement = 'select 1 from %s where %s = :key_column_value and row_number = :row_number'\
 					% (table_name, key_column)
 			else:
 				named_params = {'key_column_value':key_column_value}
-				statement = 'select * from %s where %s = :key_column_value' % (table_name, key_column)
+				statement = 'select 1 from %s where %s = :key_column_value' % (table_name, key_column)
 			statement = str(statement)
 			log.append(statement)
 			results = con.cursor().execute(statement, named_params).fetchone()
