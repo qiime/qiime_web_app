@@ -1023,8 +1023,8 @@ class QiimeDataAccess(object):
 				column_name, description, data_type])
 		except Exception, e:			
 			raise Exception('Exception caught in addExtraColumnMetadata(): {0}.\nThe error is: {1}.\nstudy_id: \
-			    {2}\ntable_level: {3}\ncolumn_name: {4}\ndescription: {5}\n data_type: {6}'.format(type(e), e, \
-			    str(study_id), str(table_level), str(column_name), str(description), str(data_type)))
+				{2}\ntable_level: {3}\ncolumn_name: {4}\ndescription: {5}\n data_type: {6}'.format(type(e), e, \
+				str(study_id), str(table_level), str(column_name), str(description), str(data_type)))
 			
 	def getExtraColumnMetadata(self, study_id):
 		""" Retrieves all metadata for extra columns
@@ -1324,6 +1324,7 @@ class QiimeDataAccess(object):
 		""" Writes a host key row to the database
 		"""
 		try:
+			host_subject_id = '{0}:{1}'.format(str(study_id), host_subject_id)
 			con = self.getMetadataDatabaseConnection()
 			con.cursor().callproc('qiime_assets.host_insert', [study_id, sample_name, host_subject_id])
 		except Exception, e:
@@ -1548,7 +1549,7 @@ class QiimeDataAccess(object):
 				key_column = 'sample_id'
 				key_table = '"SAMPLE"'
 			elif table_name in ['"HOST"']:
-				named_params = {'key_field':host_key_field}
+				named_params = {'key_field':'{0}:{1}'.format(str(study_id), host_key_field)}
 				statement = 'select host_id from "HOST" where host_subject_id = :key_field'
 				statement = str(statement)
 				key_column = 'host_id'
