@@ -269,11 +269,11 @@ class Poller(Daemon):
             # submit job - if loading into DB use singleq
             if job_type=='LoadAnalysisOTUTableHandler':
                 submit_queue = 'singleq'
-                pvmem='24gb'
+                pvmem='48gb'
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='LoadSplitLibSeqsHandler':
                 submit_queue = 'singleq'
-                pvmem='24gb'
+                pvmem='48gb'
                 res = getoutput(QSUB_CMD % (cmd, job_name,pvmem,submit_queue))
             elif job_type=='ProcessSFFHandler':
                 submit_queue = 'no_bad_touching'

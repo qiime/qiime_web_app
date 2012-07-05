@@ -103,7 +103,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         input_basename, input_ext = splitext(input_filename)
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
-            if study_id in ['496','968','969','1069','1002','1066','1194','1195']:
+            if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460']:
 
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
@@ -355,7 +355,7 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
     
     # NEED to be able to just pass fasta file, since mapping sample_ids
     # will not match input fasta file ever
-    
+    '''
     fasta_check=run_fasta_checks(input_fp,mapping_input_fp_copy)
     
     if float(fasta_check['invalid_labels']) > 0:
@@ -366,11 +366,11 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
         raise ValueError, "There are duplicate sequence names in the Original sequence file"
     elif float(fasta_check['invalid_seq_chars']) > 0:
         raise ValueError, "There are invalid nucleotides in the sequence Original file (i.e. not A,C,G,T or N)"
-    elif float(fasta_check['linkerprimers_detected']) > 0:
-        raise ValueError, "There are linker primer sequences in the Original sequence file"
+    #elif float(fasta_check['linkerprimers_detected']) > 0:
+    #    raise ValueError, "There are linker primer sequences in the Original sequence file"
     #elif float(fasta_check['nosample_ids_map']) > 0.20:
     #    raise ValueError, "More than 20% of the samples in the mapping file do not have sequences"
-        
+    '''    
     sequences=MinimalFastaParser(open(input_fp),'U')
     
     
