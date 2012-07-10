@@ -122,14 +122,14 @@ def fasta_to_tab_delim(data, seq_run_id,split_library_run_id):
             new_bc = ''
             bc_diffs = '0'
             
-            if len(items) > 2 and '=' in items[2]:
-                orig_bc = items[2].split('=')[1]
-                            
-            if len(items) > 3 and '=' in items[3]:
-                new_bc = items[3].split('=')[1]
-            
-            if len(items) > 4 and '=' in items[4]:
-                bc_diffs = items[4].split('=')[1]
+            if len(items) > 2:
+                for it in items[2:]:
+                    if 'orig_bc=' in it:
+                        orig_bc = it.split('=')[1]
+                    elif 'new_bc=' in it:
+                        new_bc = it.split('=')[1]
+                    elif 'bc_diffs=' in it:
+                        bc_diffs = it.split('=')[1]
                 
             to_yield.append(str(split_library_run_id))
             to_yield.append(str(seq_run_id))
