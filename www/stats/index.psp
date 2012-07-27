@@ -1,6 +1,10 @@
 <%
 from qiime.parse import parse_mapping_file
-data, header, comments = parse_mapping_file("/Users/antoniog/Sites/emp/mapping_file.txt","U")
+from enums import ServerConfig
+from os.path import join
+
+mapping_fp=join(ServerConfig.home,"projects/Qiime/qiime_web_app/www/stats/mapping_file.txt")
+data, header, comments = parse_mapping_file(mapping_fp,"U")
 
 # list of plots to create
 plots_columns = [["ENV_MATTER", "Samples per environmental matter"], 
