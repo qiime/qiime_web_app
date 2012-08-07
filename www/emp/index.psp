@@ -13,6 +13,92 @@ __status__ = "Production"
 from data_access_connections import data_access_factory
 from enums import DataAccessType,ServerConfig
 data_access = data_access_factory(ServerConfig.data_access_type)
+
+def createJQueryPlot(field_name, plot_title):
+    plot_data = []
+    cutoff_percent = .03
+    other_count = 0
+    
+    query_string = """ 
+    select  count(*)
+    from    sample sa
+            inner join study s
+            on sa.study_id = s.study_id
+            inner join sff.analysis an 
+            on s.study_id = an.study_id 
+    where   s.portal_type = 'emp'
+            and s.project_name not like '%%test%%'
+    """
+    total_num_samples = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
+    
+    query_string = """ 
+    select  {0}, count(sa.{0}) as cnt 
+    from    sample sa 
+            inner join study s 
+            on sa.study_id = s.study_id 
+            inner join sff.analysis an 
+            on s.study_id = an.study_id 
+    where   s.portal_type = 'emp' 
+            and s.project_name not like '%%test%%' 
+            and sa.env_matter is not null 
+    group by sa.{0} 
+    order by cnt desc 
+    """.format(field_name)
+    results = data_access.dynamicMetadataSelect(query_string)
+
+    for row in results:
+        item_label = row[0]
+        item_count = row[1]
+        
+        if item_count / float(total_num_samples) < cutoff_percent:
+            other_count += item_count
+        else:
+            plot_data.append((row[0], row[1]))
+        
+    plot_data.append(('Other', other_count))
+
+    data_string = '['
+    for label, count in plot_data:
+        data_string = data_string + """['{0}',{1}],""".format(label, count)
+    data_string = data_string[:-1] + ']'
+
+    # Generate the JavaScript string
+    js = """
+    
+    {1}
+    <div id="{0}" style="height:300px; width:500px;"></div>
+    
+    <script>
+    var data = {2};
+    var plot = jQuery.jqplot ('{0}', [data], 
+        {{ 
+            seriesDefaults: 
+            {{ 
+                // Make this a pie chart. 
+                renderer: jQuery.jqplot.PieRenderer, 
+                rendererOptions: 
+                {{ 
+                    // Put data labels on the pie slices. 
+                    // By default, labels show the percentage of the slice. 
+                    showDataLabels: true, 
+                    sliceMargin: 4, 
+                    lineWidth: 5 
+                }} 
+            }}, 
+            legend: {{ show:true, location: 'e' }} 
+        }} 
+    ); 
+    </script> 
+    """.format(field_name, plot_title, data_string)
+
+    return js
+
+plots = {}
+plots['env_matter'] = 'Samples by Environmental Matter'
+plots['env_feature'] = 'Samples by Environmental Feature'
+plots['env_biome'] = 'Samples by Environmental Biome'
+plots['country'] = 'Samples by Country'
+
 %>
 
 <script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
@@ -39,6 +125,12 @@ function toggleSection(section_name)
 <title>Earth Microbiome Project - Metadata Portal</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" href="emp.css" type="text/css">
+
+<link class="include" rel="stylesheet" type="text/css" href="/qiime/style/jquery.jqplot.min.css" />    
+<script class="include" type="text/javascript" src="/qiime/js/jquery.min.js"></script>
+<script class="include" type="text/javascript" src="/qiime/js/jquery.jqplot.min.js"></script>
+<script class="include" language="javascript" type="text/javascript" src="/qiime/js/plugins/jqplot.pieRenderer.min.js"></script>
+
 </head>
 
 <body>
@@ -49,7 +141,7 @@ function toggleSection(section_name)
 </div>
 <div class="content">
 
-<hr/>
+
 
 <table class="header_table">
 <tr><td>Please Log In</td></tr>
@@ -77,15 +169,38 @@ if form.has_key('username'):
 	<tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
 	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
 	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
-	<tr><td colspan="2"><br></td></tr>
 </table>
 </form>
+
+
+
+
 <table>
 	<tr><td>Don't have an account? Head here then return to this URL when you've set one up. <br/><a href="http://<%=req.hostname%>/qiime/register_user.psp">Create Account</a></td></tr>
 </table>
 
 <br/>
 <hr/>
+
+
+
+
+
+<h3>
+<a href="" onclick="toggleSection(\'stats_div\'); return false;">EMP Statistics</a>
+</h3>
+
+<div id="stats_div" name="stats_div" style="border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; float:left">
+<%
+for plot in plots:
+    js = createJQueryPlot(plot, plots[plot])
+    req.write(js)
+# end
+%>
+</div>
+
+
+
 
 <h3>
 <a href="" onclick="toggleSection(\'download_div\'); return false;">Download Public Data</a>
@@ -99,6 +214,7 @@ for study_id, project_name, file_path, study_abstract in public_studies:
 	req.write('{0}<br/><br/>\n'.format(study_abstract))
 # End indent
 %>
+</div>
 </div>
 
 </body>
