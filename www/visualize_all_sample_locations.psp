@@ -12,7 +12,7 @@ __status__ = "Production"
 %>
 
 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
-<script type="text/javascript" src="./js/StyledMarker.js"></script>
+<script type="text/javascript" src="/qiime/js/StyledMarker.js"></script>
 <script type="text/javascript">
 function initialize() {
   var myOptions = {
@@ -47,19 +47,18 @@ req.write('var latlongs_db = [')
 result_list=[]
 
 portal_type = sess['portal_type']
-public_studies=data_access.getUserAndPublicStudyNames(12171,1,portal_type)
-statement="select distinct st.study_alias,s.latitude,s.longitude from sample s inner join study st on s.study_id=st.study_id where portal_type='%s'" % (portal_type)
+public_studies = data_access.getUserAndPublicStudyNames(12169, 1, portal_type)
+statement="select distinct st.study_alias, s.latitude, s.longitude from sample s inner join study st on s.study_id = st.study_id where portal_type = '%s'" % (portal_type)
 con = data_access.getMetadataDatabaseConnection()
 cur = con.cursor()
 results = cur.execute(statement)
 
-for i,val in enumerate(results):
+for i, val in enumerate(results):
     if val[0] and val[1] and val[2]:
         result_list.append('[\''+str(val[0])+'\','+str(val[1])+','+str(val[2])+','+str(i+1)+',\'00B2EE\']')
 
 req.write('%s];' % ','.join(result_list))
 req.write('window.onload=initialize;</script>')
-
 
 %>
 
@@ -109,5 +108,5 @@ req.write('window.onload=initialize;</script>')
 </style>
 
 
-<div id="map_canvas" style="width:100%; height:800px;border:1px solid black"></div>
+<div id="map_canvas" style="width:95%; height:600px;border:1px solid black"></div>
 
