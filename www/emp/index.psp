@@ -21,7 +21,7 @@ sess.save()
 
 def createJQueryPlot(field_name, plot_title):
     plot_data = []
-    cutoff_percent = .03
+    cutoff_percent = .02
     other_count = 0
     other_items = []
     
@@ -34,20 +34,32 @@ def createJQueryPlot(field_name, plot_title):
             on s.study_id = an.study_id 
     where   s.portal_type = 'emp'
             and s.project_name not like '%%test%%'
+            and an.analysis_id = 
+            (
+                select  max(an2.analysis_id)
+                from    sff.analysis an2
+                where   an2.study_id = s.study_id                
+            )
     """
     total_num_samples = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
     
     query_string = """ 
-    select  {0}, count(sa.{0}) as cnt 
+    select  lower({0}), count({0}) as cnt 
     from    sample sa 
             inner join study s 
-            on sa.study_id = s.study_id 
+            on sa.study_id = s.study_id
             inner join sff.analysis an 
-            on s.study_id = an.study_id 
+            on s.study_id = an.study_id
     where   s.portal_type = 'emp' 
             and s.project_name not like '%%test%%' 
-            and sa.env_matter is not null 
-    group by sa.{0} 
+            and {0} is not null 
+            and an.analysis_id = 
+            (
+                select  max(an2.analysis_id)
+                from    sff.analysis an2
+                where   an2.study_id = s.study_id                
+            )
+    group by lower({0}) 
     order by cnt desc 
     """.format(field_name)
     results = data_access.dynamicMetadataSelect(query_string)
@@ -124,12 +136,7 @@ plots = {}
 plots['env_matter'] = 'Samples by Environmental Matter'
 plots['env_feature'] = 'Samples by Environmental Feature'
 plots['env_biome'] = 'Samples by Environmental Biome'
-plots['country'] = 'Samples by Country'
-
-# Header variables
-stats_div_header_text = '[+] EMP Statistics'
-map_div_header_text = '[+] EMP Sample Locations'
-download_div_header_text = '[+] Download Public Data'
+plots['country'] = 'Samples by Location'
 
 %>
 
@@ -174,7 +181,7 @@ function toggleSection(section_name)
 <body>
 <div class="container">
 	<div id="header">
-		 <div class="disclaimer">Please Log In</div>
+		 <div class="disclaimer"></div>
 	</div>
 </div>
 <div class="content">
@@ -200,11 +207,11 @@ if form.has_key('username'):
 # end
 %>
 <p/>
-<table>
+<table width="100%">
 <tr>
 <td>
 <form method="post" action="index.psp">
-<table>
+<table width="100%">
 	<tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
 	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
 	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
@@ -213,8 +220,12 @@ if form.has_key('username'):
 </td>
 
 <td>
-<table>
-	<tr><td>Don't have an account? Head here then return to this URL when you've set one up. <br/><a href="http://<%=req.hostname%>/qiime/register_user.psp">Create Account</a></td></tr>
+<table width="100%">
+	<tr>
+	    <td style="text-align:right;">Don't have an account? Head here then return to this URL when you've set one up:<br/>
+	    <a href="http://<%=req.hostname%>/qiime/register_user.psp">Create Account</a>
+	    </td>
+	</tr>
 </table>
 </td>
 </tr>
