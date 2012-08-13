@@ -374,7 +374,7 @@ if can_delete == 'y' or is_admin:
                 Visualize All Sample Locations</a>
             </form>
         </li>
-
+    </ul>
 <%
 if portal_type == 'emp' and is_admin == 1:
     # indent
