@@ -42,12 +42,16 @@ function initialize()
 {
     var center_point = new google.maps.LatLng(<%=lats[0]%>, <%=longs[0]%>);
     var latlngbounds = new google.maps.LatLngBounds();
-
-    map = new google.maps.Map(document.getElementById('map_canvas'), {
+    
+    var mapOptions = 
+    {
         center: center_point,
         zoom: 0,
-        mapTypeId: 'satellite'
-    });
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
+        scrollwheel: false
+    };
+    
+    map = new google.maps.Map(document.getElementById('map_canvas'), mapOptions);
     
 <%
 for position, lat in enumerate(lats):
