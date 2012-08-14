@@ -13,7 +13,7 @@ __status__ = "Development"
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 from sample_export import *
-from qiime.convert_fastaqual_to_fastq import convert_fastq
+from qiime.convert_fastaqual_fastq import convert_fastq
 from os.path import join, exists
 from os import remove
 from shutil import copyfile
