@@ -69,9 +69,11 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
           4) Pick OTUs;
           
     """
+    """
     if write_to_all_fasta:
         split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' % environ['HOME']
         create_dir(split_lib_fastas)
+    """
     # Prepare some variables for the later steps
     sff_filenames=sff_input_fp.split(',')
     commands = []
@@ -107,7 +109,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
             if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536']:
 
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
-                                  (python_exe_fp, script_dir, sff_input_fp,
+                                  (python_exe_fp, script_dir, input_dir,
                                    output_dir)
                 
                 commands.append([('ProcessSFFs', process_sff_cmd)])
@@ -138,7 +140,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
             else:
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
-                                  (python_exe_fp, script_dir, sff_input_fp,
+                                  (python_exe_fp, script_dir, input_dir,
                                    output_dir)
                 
                 commands.append([('ProcessSFFs', process_sff_cmd)])
@@ -150,7 +152,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 
         else:
             process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
-                                (python_exe_fp, script_dir, sff_input_fp,
+                                (python_exe_fp, script_dir, input_dir,
                                  output_dir)
             
             commands.append([('ProcessSFFs', process_sff_cmd)])
@@ -186,23 +188,25 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         
     input_fp=join(split_library_output,'seqs.fna')
     
+    """
     if write_to_all_fasta:
         copy_split_lib_seqs_location='%s_%s_seqs.fna' % (study_id,run_prefix)
         copy_to_split_lib_fastas_cmd=cp_files(input_fp,join(split_lib_fastas,
                                         copy_split_lib_seqs_location))
         commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
+    """
     
     # create per sample fastq files
     fastq_output=join(split_library_output,'per_sample_fastq')
     create_dir(fastq_output)
     try:
-        params_str = get_params_str(params['convert_fastaqual_to_fastq'])
+        params_str = get_params_str(params['convert_fastaqual_fastq'])
     except KeyError:
         params_str = ''
         
     input_qual_fp=join(split_library_output,'seqs_filtered.qual')
     
-    create_fastq_cmd = '%s %s/convert_fastaqual_to_fastq.py -f %s -q %s -o %s %s'%\
+    create_fastq_cmd = '%s %s/convert_fastaqual_fastq.py -f %s -q %s -o %s %s'%\
      (python_exe_fp, script_dir, input_fp, input_qual_fp,
       fastq_output, params_str)
     commands.append([('Create FASTQ', create_fastq_cmd)])
@@ -228,13 +232,13 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
           1) De-multiplex sequences. (split_libraries.py)
     
     """
-    
+    """
     #print input_fp
     if write_to_all_fasta:
         split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' \
                             % environ['HOME']
         create_dir(split_lib_fastas)
-        
+    """
     # Prepare some variables for the later steps
     filenames=input_fp.split(',')
     commands = []
@@ -274,29 +278,37 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     
     input_fp=join(split_library_output,'seqs.fna')
     
-    
+    """
     if write_to_all_fasta:
         copy_split_lib_seqs_location='%s_%s_seqs.fna' % (study_id,run_prefix)
         copy_to_split_lib_fastas_cmd=cp_files(input_fp,join(split_lib_fastas,
                                         copy_split_lib_seqs_location))
         commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
-    
     """
+    
     # create per sample fastq files
     fastq_output=join(split_library_output,'per_sample_fastq')
     create_dir(fastq_output)
+    """
+    # not used for the one-off
     try:
-        params_str = get_params_str(params['convert_fastaqual_to_fastq'])
+        params_str = get_params_str(params['convert_fastaqual_fastq'])
     except KeyError:
         params_str = ''
-        
-    input_qual_fp=join(split_library_output,'seqs.qual')
+    """
     
-    create_fastq_cmd = '%s %s/convert_fastaqual_to_fastq.py -f %s -q %s -o %s %s'%\
+    input_qual_fp=join(split_library_output,'seqs.qual')
+    create_fastq_cmd = '%s %s/projects/Qiime/qiime_web_app/python_code/scripts/make_per_sample_fastq.py -i %s -q %s -m %s -o %s' % \
+    (python_exe_fp, environ['HOME'], input_fp, input_qual_fp, mapping_fp, fastq_output)
+    
+    """
+    # TURN ON when convert_fastaqual_fastq can handle Illumina qual file
+    create_fastq_cmd = '%s %s/convert_fastaqual_fastq.py -f %s -q %s -o %s %s'%\
      (python_exe_fp, script_dir, input_fp, input_qual_fp,
       fastq_output, params_str)
-    commands.append([('Create FASTQ', create_fastq_cmd)])
     """
+    commands.append([('Create FASTQ', create_fastq_cmd)])
+    
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
 
@@ -319,13 +331,13 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
           1) De-multiplex sequences. (split_libraries.py)
     
     """
-    
+    """
     #print input_fp
     if write_to_all_fasta:
         split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' \
                             % environ['HOME']
         create_dir(split_lib_fastas)
-        
+    """
     # Prepare some variables for the later steps
     filenames=input_fp.split(',')
     commands = []

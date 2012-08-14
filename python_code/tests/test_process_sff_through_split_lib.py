@@ -109,7 +109,6 @@ class WorkflowTests(TestCase):
         """ """
         # turn off the alarm
         signal.alarm(0)
-        
         remove_files(self.files_to_remove)
         # remove directories last, so we don't get errors
         # trying to remove files which may be in the directories
@@ -263,6 +262,19 @@ split_libraries:qual_score_window	50
 split_libraries:disable_primers	False
 split_libraries:reverse_primers	disable
 split_libraries:record_qual_scores True
+
+# Split libraries parameters
+split_libraries_fastq:retain_unassigned_reads
+split_libraries_fastq:max_bad_run_length
+split_libraries_fastq:min_per_read_length
+split_libraries_fastq:sequence_max_n
+split_libraries_fastq:start_seq_id
+split_libraries_fastq:rev_comp_mapping_barcodes
+split_libraries_fastq:rev_comp
+split_libraries_fastq:barcode_type	golay_12
+split_libraries_fastq:last_bad_quality_char
+split_libraries_fastq:max_barcode_errors	1.5
+split_libraries_fastq:store_qual_scores True
 
 # OTU picker parameters
 pick_otus:otu_picking_method	uclust_ref
