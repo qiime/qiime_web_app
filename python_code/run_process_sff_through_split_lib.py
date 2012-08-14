@@ -39,8 +39,9 @@ from wrap_files_for_md5 import MD5Wrap
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
 from cogent.util.misc import safe_md5
-from enums import ServerConfig
 from qiime.validate_demultiplexed_fasta import run_fasta_checks
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
 
 def generate_log_fp(output_dir,
                     basefile_name='log',
@@ -103,7 +104,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         input_basename, input_ext = splitext(input_filename)
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
-            if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460']:
+            if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536']:
 
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
@@ -163,8 +164,15 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     split_lib_qual_input=','.join(split_lib_qual_input_files)
     denoise_flow_input=','.join(denoise_flow_input_files)
     
+    # If dataset is metagenomic disable primer check
+    data_access = data_access_factory(ServerConfig.data_access_type)
+    study_info=data_access.getStudyInfo(study_id,12171)
+    if study_info['investigation_type'].lower() == 'metagenome':
+        params['split_libraries']['disable_primers']=None
+        
     split_library_output=join(output_dir,'split_libraries')
     create_dir(split_library_output)
+    
     try:
         params_str = get_params_str(params['split_libraries'])
     except KeyError:
@@ -175,7 +183,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
      (python_exe_fp, script_dir, split_lib_fasta_input, split_lib_qual_input,
       mapping_fp, split_library_output, params_str)
     commands.append([('SplitLibraries', split_libraries_cmd)])
-    
+        
     input_fp=join(split_library_output,'seqs.fna')
     
     if write_to_all_fasta:

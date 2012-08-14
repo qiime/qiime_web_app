@@ -304,17 +304,27 @@ def generate_full_split_lib_fastq(study, study_input_dir, zip_fname,
     for processed_folder in processed_folders:
         # determine if the file startswith the word "processed"
         if processed_folder.startswith('processed'):
+            
             # define split-lib seq fp
             split_lib_seqs=join(study_input_dir,processed_folder,
                                 'split_libraries','seqs.fna')
             
-            #
-            split_lib_qual=join(study_input_dir,processed_folder,
-                                'split_libraries','seqs.qual')
             # open sequence files
             seqs=MinimalFastaParser(open(split_lib_seqs,'U'))
-            qual_sequences=MinimalFastaParser(open(split_lib_qual,'U'))
-        
+            
+            try:
+                # for illumina
+                split_lib_qual=join(study_input_dir,processed_folder,
+                                    'split_libraries','seqs.qual')
+                # open sequence files
+                qual_sequences=MinimalFastaParser(open(split_lib_qual,'U'))
+            except:
+                # for 454
+                split_lib_qual=join(study_input_dir,processed_folder,
+                                    'split_libraries','seqs_filtered.qual')
+                # open sequence files
+                qual_sequences=MinimalFastaParser(open(split_lib_qual,'U'))
+                
             # open split-lib seq fp
             seqs=MinimalFastaParser(open(split_lib_seqs,'U'))
             # iterate over sequences
