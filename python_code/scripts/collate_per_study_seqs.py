@@ -38,6 +38,8 @@ script_info['optional_options'] = [\
              help='is the study public [%default]', default=False),\
  make_option('-f','--generate_fastq',action="store_true",
              help='generate a split-lib fastq file [%default]', default=False),\
+ make_option('-m','--metagenomic_seqs',action="store_true",
+             help='is this a metagenomic study (without otu-table) [%default]', default=False),\
 ]
 script_info['version'] = __version__
 
@@ -51,6 +53,7 @@ def main():
     studies=opts.study_ids.split(',')
     public=opts.public
     generate_fastq=opts.generate_fastq
+    metagenomic_seqs=opts.metagenomic_seqs
     
     # define the input location of all studies
     input_dir='%s/user_data/studies/' % environ['HOME']
@@ -87,10 +90,10 @@ def main():
         files_to_remove=generate_split_lib_log(study, study_input_dir,
                                                zip_fname, files_to_remove,
                                                samples,output_dir)
-        
-        files_to_remove=generate_full_otu_table(study, study_input_dir, 
-                                                zip_fname, files_to_remove,
-                                                biom_files,output_dir)
+        if not metagenomic_seqs:
+            files_to_remove=generate_full_otu_table(study, study_input_dir, 
+                                                    zip_fname, files_to_remove,
+                                                    biom_files,output_dir)
         
         # zip the full split-library sequence file
         cmd_call='cd %s; tar czvf %s %s' % (study_input_dir,zip_fname,folder_name)
