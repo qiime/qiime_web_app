@@ -7,13 +7,12 @@ study_ids = []
 seq_prep_counts = []
 
 query_string = """
-select  distinct study_id 
+select  distinct s.study_id 
 from    study s 
         inner join sample sa 
         on s.study_id = sa.study_id 
         inner join sequence_prep sp 
         on sa.sample_id = sp.sample_id 
-where   study_id = 721 
 """
 
 results = data_access.dynamicMetadataSelect(query_string)
@@ -32,6 +31,7 @@ from    sff.split_library_read_map slrm
         inner join qiime_metadata.sequence_prep sp 
         on sp.sequence_prep_id = substr(slrm.sample_name, instr(slrm.sample_name, '.', -1) + 1) 
 where   a.study_id = {0} 
+        and sp.num_sequences is null
 group by substr(slrm.sample_name, instr(slrm.sample_name, '.', -1) + 1) 
 """
 
@@ -50,10 +50,9 @@ where   sequence_prep_id = {1}
 """
 
 for sequence_prep_id, seq_count in seq_prep_counts:
-    seq_count = seq_prep_counts[sequence_prep_id]
-    run_string = query_string.format(sequence_prep_id, seq_count)
+    run_string = query_string.format(seq_count, sequence_prep_id)
     print run_string
-    #con.cursor().execute(run_string)
-    #con.cursor().execute('commit')
+    con.cursor().execute(run_string)
+    con.cursor().execute('commit')
 
 # end
