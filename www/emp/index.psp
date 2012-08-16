@@ -13,35 +13,38 @@ __status__ = "Production"
 from data_access_connections import data_access_factory
 from enums import DataAccessType,ServerConfig
 import operator
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US')
 
 data_access = data_access_factory(ServerConfig.data_access_type)
 sess = Session.Session(req)
 sess['portal_type'] = 'emp'
 sess.save()
 
+total_num_samples = 0
+query_string = """ 
+select  count(*)
+from    sample sa
+        inner join study s
+        on sa.study_id = s.study_id
+        inner join sff.analysis an 
+        on s.study_id = an.study_id 
+where   s.portal_type = 'emp'
+        and s.project_name not like '%%test%%'
+        and an.analysis_id = 
+        (
+            select  max(an2.analysis_id)
+            from    sff.analysis an2
+            where   an2.study_id = s.study_id                
+        )
+"""
+total_num_samples = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
+
 def createJQueryPlot(field_name, plot_title):
     plot_data = []
     cutoff_percent = .02
     other_count = 0
     other_items = []
-    
-    query_string = """ 
-    select  count(*)
-    from    sample sa
-            inner join study s
-            on sa.study_id = s.study_id
-            inner join sff.analysis an 
-            on s.study_id = an.study_id 
-    where   s.portal_type = 'emp'
-            and s.project_name not like '%%test%%'
-            and an.analysis_id = 
-            (
-                select  max(an2.analysis_id)
-                from    sff.analysis an2
-                where   an2.study_id = s.study_id                
-            )
-    """
-    total_num_samples = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
     
     query_string = """ 
     select  lower({0}), count({0}) as cnt 
@@ -68,11 +71,14 @@ def createJQueryPlot(field_name, plot_title):
         item_label = row[0]
         item_count = row[1]
         
+        if ':' in item_label:
+            item_label = item_label[item_label.index(':') + 1:]
+        
         if item_count / float(total_num_samples) < cutoff_percent:
             other_count += item_count
-            other_items.append(row[0])
+            other_items.append(item_label)
         else:
-            plot_data.append((row[0], row[1]))
+            plot_data.append((item_label, item_count))
         
     plot_data.append(('Other', other_count))
 
@@ -123,19 +129,18 @@ def createJQueryPlot(field_name, plot_title):
           }}
 
           return tooltip;
-      }});    
-    
-    
+      }}); 
+
     </script> 
-    """.format(field_name, plot_title, data_string, '<br/>'.join(other_items))
+    """.format(field_name, plot_title, data_string, '<br/>'.join(sorted(other_items)))
 
     return js
 
 # The list of plots to generate. The dict key must be a column in the sample table.
 plots = {}
-plots['env_matter'] = 'Samples by Environmental Matter'
-plots['env_feature'] = 'Samples by Environmental Feature'
-plots['env_biome'] = 'Samples by Environmental Biome'
+plots['env_matter'] = 'Samples by Env Matter'
+plots['env_feature'] = 'Samples by Env Feature'
+plots['env_biome'] = 'Samples by Env Biome'
 plots['country'] = 'Samples by Location'
 
 %>
@@ -232,9 +237,93 @@ if form.has_key('username'):
 </table>
 
 <br/>
+
+
+
+
+
+
+
+<%
+query_string = """
+select  sum(num_sequences) 
+from    study s 
+        inner join sample sa 
+        on s.study_id = sa.study_id 
+        inner join sequence_prep sp 
+        on sa.sample_id = sp.sample_id 
+where   s.portal_type = 'emp' 
+"""
+total_seqs = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
+
+query_string = """
+select  count(distinct reference_id)
+from    study s
+        inner join sff.analysis a
+        on s.study_id = a.study_id
+        inner join sff.otu_table o
+        on a.otu_run_set_id = o.otu_run_set_id
+where   s.portal_type = 'emp'
+"""
+total_otus = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
+
+query_string = """
+select  count(*)
+from
+(
+    select  distinct trim(principal_investigator) as collaborator
+    from    study
+    where   trim(principal_investigator) is not null
+            and project_name not like '%test%'
+            and portal_type = 'emp'
+    union
+    select  distinct trim(lab_person)
+    from    study
+    where   trim(lab_person) is not null
+            and project_name not like '%test%'
+            and portal_type = 'emp'
+    order by collaborator
+)
+"""
+total_collaborators = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
+
+query_string = """
+select  count (distinct env_biome)
+from    study s
+        inner join sample sa
+        on s.study_id = sa.study_id
+        inner join sequence_prep sp
+        on sa.sample_id = sp.sample_id
+        inner join sff.analysis an
+        on s.study_id = an.study_id
+where   s.portal_type = 'emp'
+        and env_biome is not null
+"""
+total_biomes = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
+
+%>
+
+<table  bgcolor="#DDDDDD" padding="0" width="100%"><tr><td>
+<table>
+    <tr>
+        <td><b>Total EMP Samples:</b> <%=locale.format("%d", total_num_samples, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Total Sequences:</b> <%=locale.format("%d", total_seqs, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Biomes Represented:</b> <%=locale.format("%d", total_biomes, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Total GG97 OTUs:</b> <%=locale.format("%d", total_otus, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Collaborators:</b> <%=locale.format("%d", total_collaborators, grouping=True)%></td>
+    </tr>
+</table>
+</td></tr></table>
+<br/>
+
+
+
+
 <hr/>
-
-
 
 
 
@@ -257,6 +346,7 @@ if form.has_key('username'):
 </h3>
 
 <div id="stats_div" name="stats_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px;">
+
 <%
 
 sorted_plots = sorted(plots.iteritems(), key=operator.itemgetter(0))
