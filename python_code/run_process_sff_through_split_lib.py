@@ -109,7 +109,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
             if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536']:
 
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
-                                  (python_exe_fp, script_dir, input_dir,
+                                  (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
                 
                 commands.append([('ProcessSFFs', process_sff_cmd)])
@@ -140,7 +140,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
             else:
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
-                                  (python_exe_fp, script_dir, input_dir,
+                                  (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
                 
                 commands.append([('ProcessSFFs', process_sff_cmd)])
@@ -152,7 +152,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 
         else:
             process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
-                                (python_exe_fp, script_dir, input_dir,
+                                (python_exe_fp, script_dir, sff_input_fp,
                                  output_dir)
             
             commands.append([('ProcessSFFs', process_sff_cmd)])
