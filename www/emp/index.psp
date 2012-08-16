@@ -245,62 +245,8 @@ if form.has_key('username'):
 
 
 <%
-query_string = """
-select  sum(num_sequences) 
-from    study s 
-        inner join sample sa 
-        on s.study_id = sa.study_id 
-        inner join sequence_prep sp 
-        on sa.sample_id = sp.sample_id 
-where   s.portal_type = 'emp' 
-"""
-total_seqs = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
-
-query_string = """
-select  count(distinct reference_id)
-from    study s
-        inner join sff.analysis a
-        on s.study_id = a.study_id
-        inner join sff.otu_table o
-        on a.otu_run_set_id = o.otu_run_set_id
-where   s.portal_type = 'emp'
-"""
-total_otus = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
-
-query_string = """
-select  count(*)
-from
-(
-    select  distinct trim(principal_investigator) as collaborator
-    from    study
-    where   trim(principal_investigator) is not null
-            and project_name not like '%test%'
-            and portal_type = 'emp'
-    union
-    select  distinct trim(lab_person)
-    from    study
-    where   trim(lab_person) is not null
-            and project_name not like '%test%'
-            and portal_type = 'emp'
-    order by collaborator
-)
-"""
-total_collaborators = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
-
-query_string = """
-select  count (distinct env_biome)
-from    study s
-        inner join sample sa
-        on s.study_id = sa.study_id
-        inner join sequence_prep sp
-        on sa.sample_id = sp.sample_id
-        inner join sff.analysis an
-        on s.study_id = an.study_id
-where   s.portal_type = 'emp'
-        and env_biome is not null
-"""
-total_biomes = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
-
+query_string = 'select * from emp_statistics'
+total_otus, total_seqs, total_collaborators, total_biomes, total_samples = data_access.dynamicMetadataSelect(query_string).fetchone()
 %>
 
 <table  bgcolor="#DDDDDD" padding="0" width="100%"><tr><td>
