@@ -21,24 +21,9 @@ sess = Session.Session(req)
 sess['portal_type'] = 'emp'
 sess.save()
 
-total_num_samples = 0
-query_string = """ 
-select  count(*)
-from    sample sa
-        inner join study s
-        on sa.study_id = s.study_id
-        inner join sff.analysis an 
-        on s.study_id = an.study_id 
-where   s.portal_type = 'emp'
-        and s.project_name not like '%%test%%'
-        and an.analysis_id = 
-        (
-            select  max(an2.analysis_id)
-            from    sff.analysis an2
-            where   an2.study_id = s.study_id                
-        )
-"""
-total_num_samples = data_access.dynamicMetadataSelect(query_string).fetchone()[0]
+# Get the general statistics
+query_string = 'select * from emp_statistics'
+total_otus, total_seqs, total_collaborators, total_biomes, total_num_samples = data_access.dynamicMetadataSelect(query_string).fetchone()
 
 def createJQueryPlot(field_name, plot_title):
     plot_data = []
@@ -152,7 +137,7 @@ plots['country'] = 'Samples by Location'
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
 <link rel="stylesheet" href="emp.css" type="text/css">
-<link class="include" rel="stylesheet" type="text/css" href="/qiime/js/jqChartJQueryPlugin_3_0_0_0/css/jquery.jqChart.css" />    
+<link class="include" rel="stylesheet" type="text/css" href="/qiime/js/jqChartJQueryPlugin_3_0_0_0/css/jquery.jqChart.css" />
 
 <script type="text/javascript" src="/qiime/js/jquery.min.js"></script>
 <script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
@@ -244,10 +229,6 @@ if form.has_key('username'):
 
 
 
-<%
-query_string = 'select * from emp_statistics'
-total_otus, total_seqs, total_collaborators, total_biomes, total_samples = data_access.dynamicMetadataSelect(query_string).fetchone()
-%>
 
 <table  bgcolor="#DDDDDD" padding="0" width="100%"><tr><td>
 <table>

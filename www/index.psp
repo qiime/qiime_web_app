@@ -14,12 +14,19 @@ from mod_python import Session
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 import os
+import locale
+import operator
+locale.setlocale(locale.LC_ALL, 'en_US')
 
-# Get the session
+data_access = data_access_factory(ServerConfig.data_access_type)
 sess = Session.Session(req)
+sess['portal_type'] = 'qiime'
+sess.save()
 
-# Set the correct host and referrer
-#req.write(str(req.headers_in))
+# Get the general statistics
+query_string = 'select * from qiime_statistics'
+total_otus, total_seqs, total_collaborators, total_biomes, total_num_samples = data_access.dynamicMetadataSelect(query_string).fetchone()
+
 
 def setPortalType():
     if 'portal_type' in form:
@@ -39,6 +46,109 @@ def setPortalType():
         sess['title'] = 'Qiime'
     sess.save()
     
+def createJQueryPlot(field_name, plot_title):
+    plot_data = []
+    cutoff_percent = .02
+    other_count = 0
+    other_items = []
+
+    query_string = """ 
+    select  lower({0}), count({0}) as cnt 
+    from    sample sa 
+            inner join study s 
+            on sa.study_id = s.study_id
+            inner join sff.analysis an 
+            on s.study_id = an.study_id
+    where   s.portal_type = 'qiime' 
+            and s.project_name not like '%%test%%' 
+            and {0} is not null 
+            and an.analysis_id = 
+            (
+                select  max(an2.analysis_id)
+                from    sff.analysis an2
+                where   an2.study_id = s.study_id                
+            )
+    group by lower({0}) 
+    order by cnt desc 
+    """.format(field_name)
+    results = data_access.dynamicMetadataSelect(query_string)
+
+    for row in results:
+        item_label = row[0]
+        item_count = row[1]
+
+        if ':' in item_label:
+            item_label = item_label[item_label.index(':') + 1:]
+
+        if item_count / float(total_num_samples) < cutoff_percent:
+            other_count += item_count
+            other_items.append(item_label)
+        else:
+            plot_data.append((item_label, item_count))
+
+    plot_data.append(('Other', other_count))
+
+    # The plot data
+    data_string = '['
+    for label, count in plot_data:
+        data_string = data_string + """['{0}',{1}],""".format(label, count)
+    data_string = data_string[:-1] + ']'
+
+    # Generate the JavaScript string
+    js = """
+    <div id="{0}" style="height:300px; width:500px; float:left; margin:10px;"></div>
+    <script>
+    $('#{0}').jqChart({{
+        title: 
+        {{ 
+            text: '{1}',
+            font: '18px sans-serif',
+            margin: 3
+        }},
+        legend: {{ title: {{ text: '{0}'}} }},
+        //background: '#E8F0FA',
+        //background: '#FFFFFF',
+        series: [
+              {{
+                  type: 'pie',
+                  data: {2},
+                  labels: {{
+                      stringFormat: '%d%%',
+                      valueType: 'percentage',
+                       font: '15px sans-serif',
+                       fillStyle: 'white'
+                  }},
+                  strokeStyle : 'black',
+                  lineWidth : 2
+              }}
+            ]
+    }});
+
+    $('#{0}').bind('tooltipFormat', function (e, data) {{
+          var percentage = data.series.getPercentage(data.value);
+          percentage = data.chart.stringFormat(percentage, '%.2f%%');
+
+          var tooltip = '<b>' + data.dataItem[0] + '</b></br>' + data.value + ' (' + percentage + ')';
+          if (data.dataItem[0] == 'Other')
+          {{
+            tooltip = tooltip + '<br/>{3}'
+          }}
+
+          return tooltip;
+      }}); 
+
+    </script> 
+    """.format(field_name, plot_title, data_string, '<br/>'.join(sorted(other_items)))
+
+    return js
+
+# The list of plots to generate. The dict key must be a column in the sample table.
+plots = {}
+plots['env_matter'] = 'Samples by Env Matter'
+plots['env_feature'] = 'Samples by Env Feature'
+plots['env_biome'] = 'Samples by Env Biome'
+plots['country'] = 'Samples by Location'
+
 setPortalType()
 %>
 
@@ -51,11 +161,15 @@ setPortalType()
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="<%=sess['stylesheet']%>" type="text/css">
+<link class="include" rel="stylesheet" type="text/css" href="/qiime/js/jqChartJQueryPlugin_3_0_0_0/css/jquery.jqChart.css" />
 <script type="text/javascript" src="./js/qiime.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
+<script type="text/javascript" src="/qiime/js/jqChartJQueryPlugin_3_0_0_0/js/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="/qiime/js/jqChartJQueryPlugin_3_0_0_0/js/excanvas.js"></script>
+<script type="text/javascript" src="/qiime/js/jqChartJQueryPlugin_3_0_0_0/js/jquery.jqChart.min.js"></script>
 <script type="text/javascript"> 
 $(document).ready(function(){
 
@@ -79,6 +193,25 @@ $(document).ready(function(){
 	});
 
 });
+
+function toggleSection(section_name)
+{
+    div = document.getElementById(section_name);
+    header_name = section_name + '_header';
+    if (div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('+', '-');
+        window.scrollBy(0, 200);
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('-', '+');
+    }
+}
 </script>
 
 </head>
@@ -98,7 +231,9 @@ $(document).ready(function(){
 <input type="hidden" name="page" value="./select_study.psp">
 </form>
 <table class="header_table">
-<tr><td>Please Log In</td></tr>
+<tr><td>
+<b>Please Log In</b>
+</td></tr>
 </table>
 
 <%
@@ -152,14 +287,99 @@ else:
     <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
     <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
     <tr><td colspan="2"><input type="submit" value="Log In"></tr>
-    <tr><td colspan="2"><br></td></tr>
 </table>
 </form>
+
 <table>
-    <!--<tr><td>I just want data. <a href="./download_data.psp">Download sequence data</a></td></tr>-->
-    <tr><td>Don't have an account? <a href="./register_user.psp">Create Account</a></td></tr>
-    <tr><td>Forgot your password? <a href="./forgot_password.psp">Reset Password</a></td></tr>
-    <tr><td>Would you like to change your password? <a href="./change_password.psp">Change Password</a></td></tr>
+    <tr>
+        <td><a href="./register_user.psp">Create Account</a></td>
+        <td> | </td>
+        <td><a href="./forgot_password.psp">Reset Password</a></td>
+        <td> | </td>
+        <td><a href="./change_password.psp">Change Password</a></td>
 </table>
+
+<br/>
+
+<table class="header_table"><tr><td>
+<table>
+    <tr>
+        <td><b>Total Qiime Samples:</b> <%=locale.format("%d", total_num_samples, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Total Qiime Sequences:</b> <%=locale.format("%d", total_seqs, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Biomes Represented:</b> <%=locale.format("%d", total_biomes, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Total GG97 OTUs:</b> <%=locale.format("%d", total_otus, grouping=True)%></td>
+        <td width="10"></td>
+        <td><b>Collaborators:</b> <%=locale.format("%d", total_collaborators, grouping=True)%></td>
+    </tr>
+</table>
+</td></tr></table>  
+
+<br/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- STATISTICS -->
+
+<h3 id="stats_div_header">
+<a href="" onclick="toggleSection(\'stats_div\'); return false;">[+] Qiime Statistics</a>
+</h3>
+
+<div id="stats_div" name="stats_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px;">
+
+<%
+
+sorted_plots = sorted(plots.iteritems(), key=operator.itemgetter(0))
+for plot_name, plot_title in sorted_plots:
+    js = createJQueryPlot(plot_name, plot_title)
+    req.write(js)
+# end
+%>
+</div>
+<div style="clear:both;"></div>
+
+
+<!-- SAMPLE LOCATIONS -->
+
+
+<h3 id="map_div_header">
+<a href="" onclick="toggleSection(\'map_div\'); return false;">[+] Qiime Sample Locations</a>
+</h3>
+
+<div id="map_div" name="map_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:98%; height=100%; padding:5px;">
+    <%@ include file="visualize_all_sample_locations.psp"%>
+</div>
+
+<script>
+//toggleSection(\'download_div\');
+toggleSection(\'map_div\');
+toggleSection(\'map_div\');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
 </body>
 </html>
