@@ -1,7 +1,7 @@
 .. _check_fasta:
 
-Check FASTA
---------------
+Valid FASTA and Common Problems
+-----------------------------------
 The processing protocal permits the user to upload FASTA-formatted files (with the extension of ".fna" or ".fasta"). Normally, users submitting FASTA files do not have access to the raw data from their study, such as the case where a sequencing center only sends them demultiplexed data. Another case is where a user performs their own filtering of the data (i.e. human-screening, quality filtering, assembly of the sequences, etc.), which normally happens for metagenomic sequences, but is not limited to metagenomic sequences. In the case that a user uploads a FASTA file, you need to make sure that the PLATFORM is **FASTA**. I suggest adding another column called "sequencing_technology", so the user can define the original sequencing method (e.g. FLX, Titanium, etc.).
 
 Common Problems
