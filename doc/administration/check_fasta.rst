@@ -23,7 +23,7 @@ Here is an example of a normal post-split-libraries FASTA-formatted file:
    >PC.481_4 FLP3FBN01DEHK3 orig_bc=ACCAGCGACTAG new_bc=ACCAGCGACTAG bc_diffs=0
    CTGGGCCGTGTCTCAGTCCCAATGTGGCCGTTCAACCTCTCAGTCCGGCTACTGATCGTCGACTTGGTGAGCCGTT
 
-Problem 1
+Problem
 ***********
 If the end-user did not use QIIME for demultiplexing, they may supply their own per sample files, which contain the SampleID (e.g.,  :file:`USinfTw1.2.HumScreened.fna`) where the contents of the file may look like the following. It should be noted that this file will not be processed correctly using the DB and usually throws a **Key Error** since the Sequence Names do not match SampleIDs within the DB:
 
@@ -43,13 +43,13 @@ If the end-user did not use QIIME for demultiplexing, they may supply their own 
    TTTCATCTTTTTGACTTCACGGCTGCCCATGAGTTTTTGCAAAGCAGGGGGCATCCCATCTGTCAGGTCTTCGATACGGG
    GAAGTTTTGCCTCCCAGTCGTAGAGTTCAGAATCCACGCCGTTAATCACACA
 
-Solution 1.1
+Solution 1
 **************
 When coming across this scenario for the first time, your best solution is to email the person uploading the files and ask them to properly format their FASTA files, so the DB can process them correctly. You can point them to the following location for formatting details `Demultiplexed Sequence Formats <http://qiime.org/documentation/file_formats.html#demultiplexed-sequences>`_. If this is too difficult for the end-user, then you may need write a script for properly formatting the data, such as the example in :ref:`check_fasta_sol_2`. Sometimes you will find that it is easier to do this for the end-user than spending lots of time discussing how they should properly format their data.
 
 .. _check_fasta_sol_2:
 
-Solution 1.2
+Solution 2
 **************
 For this particular case, you may need to write a script that uses the filename as the Sequence Name and then you should also have an iterator to distinguish each sequence.
 
