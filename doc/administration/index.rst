@@ -10,3 +10,4 @@ The QIIME-DB Administration Section is for the Developers and Maintainers of the
 
    processing_and_loading
    reprocessing_and_reloading
+   updating_web_server
