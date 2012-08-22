@@ -127,4 +127,4 @@ ANALYSIS_ID SEQ_RUN_ID SPLIT_LIBRARY_RUN_ID OTU_PICKING_RUN_ID OTU_RUN_SET_ID ST
 =========== ========== ==================== ================== ============== ======== ======
 =========== ========== ==================== ================== ============== ======== ======
 
-Now that the study has been deleted from the DB, I would reload the data according to the procedure described in :doc:`processing_and_loading`.
+Finally, I would go to the study folder on the Web Server (i.e., :file:`/home/wwwuser/user_data/studies/study_0/`) and remove all the :file:`processed_data_*` folders. Now that the study has been deleted from the DB, I would process the data according to the procedure described in :doc:`processing_and_loading`.
