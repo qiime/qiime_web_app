@@ -4,7 +4,7 @@
 Reprocessing and Reloading Studies into DB
 ==============================================
 
-Here we will describe the steps involved in re-processing and re-loading a study into the DB. This is **NOT** an ideal situation, since studies should be loaded once and not require reprocessing and reloading, but in the event it is necessary, here is what you will need to do. **PLEASE BE CAREFUL** when running any of the commands described here. It is much better to double and triple-check the command to make sure it is correct, than it is to reload data you screwed up.
+Here we will describe the steps involved in reprocessing and reloading a study into the DB. This is **NOT** an ideal situation, since studies should be loaded once and not require reprocessing and reloading, but in the event it is necessary, here is what you will need to do. **PLEASE BE CAREFUL** when running any of the commands described here. It is much better to double and triple-check the command to make sure it is correct, than it is to reload data you screwed up.
 
 First you should determine if the study is broken or requires reprocesing and reloading by referring to :doc:`determine_if_study_invalid`.
 
