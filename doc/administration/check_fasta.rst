@@ -25,7 +25,7 @@ Here is an example of a normal post-split-libraries FASTA-formatted file:
 
 Problem
 ***********
-If the end-user did not use QIIME for demultiplexing, they may supply their own per sample files, which contain the SampleID (e.g.,  :file:`USinfTw1.2.HumScreened.fna`) where the contents of the file may look like the following. It should be noted that this file will not be processed correctly using the DB and usually throws a **Key Error** since the Sequence Names do not match SampleIDs within the DB:
+If the end-user did not use QIIME for demultiplexing, they may supply their own per sample files, which contain the SampleID (e.g.,  :file:`USinfTw1.2.HumScreened.fna`) where the contents of the file may look like the following.
 
 ::
 
@@ -42,6 +42,19 @@ If the end-user did not use QIIME for demultiplexing, they may supply their own 
    AGATCCTTGGATGCATCCTCGCCGTCCATGGGATTGCAGTTCCAGGTGGTGCCATCTTCCGTCCAGACGCAGAAGGTGCT
    TTTCATCTTTTTGACTTCACGGCTGCCCATGAGTTTTTGCAAAGCAGGGGGCATCCCATCTGTCAGGTCTTCGATACGGG
    GAAGTTTTGCCTCCCAGTCGTAGAGTTCAGAATCCACGCCGTTAATCACACA
+
+It should be noted that this file will not be processed correctly using the DB and usually throws a **Key Error** since the Sequence Names do not match SampleIDs within the DB, similar to the following error:
+
+::
+
+   Traceback (most recent call last):
+     File "/home/wwwuser//projects/Qiime/qiime_web_app/python_code/scripts/process_sff_through_split_lib.py", line 248, in <module>
+       main()
+     File "/home/wwwuser//projects/Qiime/qiime_web_app/python_code/scripts/process_sff_through_split_lib.py", line 172, in main
+       status_update_callback=status_update_callback)
+     File "/home/wwwuser/projects/Qiime/qiime_web_app/python_code/run_process_sff_through_split_lib.py", line 402, in run_process_fasta_through_split_lib
+       '_' + str(num) + ' ' + ' '.join(seq_name_arr[1:])
+   KeyError: 'TSDC23.PTS4002.3.'
 
 Solution 1
 **************

@@ -9,4 +9,4 @@ The QIIME-DB Administration Section is for the Developers and Maintainers of the
    :maxdepth: 2
 
    processing_and_loading
-
+   reprocessing_and_reloading
