@@ -12,8 +12,8 @@ __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
 
 from cogent.parse.fasta import MinimalFastaParser
-from os import listdir,remove,system
-from os.path import join,split,splitext,exists,getsize
+from os import listdir,remove,system,environ
+from os.path import join,split,splitext,exists,getsize,abspath
 from numpy import mean
 import gzip
 import operator
@@ -22,11 +22,12 @@ from qiime.merge_mapping_files import merge_mapping_files, write_mapping_file
 import zipfile
 from biom.parse import parse_biom_table
 from qiime.format import format_biom_table
+from qiime.util import get_qiime_scripts_dir
 
 def write_full_mapping_file(study, study_input_dir,zip_fname,files_to_remove,
                             output_dir):
+    """ Generate a merged mapping file """
     
-    ### Generate a merged mapping file
     # write per_run mapping files and then return the prefixes
     run_prefixes=write_db_mapping_files(study,True,study_input_dir,False)
     
@@ -60,7 +61,8 @@ def write_full_mapping_file(study, study_input_dir,zip_fname,files_to_remove,
     
 def generate_full_split_lib_seqs(study, study_input_dir, zip_fname,
                                  files_to_remove,output_dir):
-    ### Generate the full split-library sequence file
+    """ Generate the full split-library sequence file """
+    
     # define sequence output file
     seq_fname='study_%s_split_library_seqs.fna.gz' % (str(study))
     output_seq_fp=join(output_dir,seq_fname)
@@ -120,8 +122,8 @@ def generate_full_split_lib_seqs(study, study_input_dir, zip_fname,
     
 def generate_split_lib_log(study, study_input_dir, zip_fname, files_to_remove,\
                            samples,output_dir):
-    #
-    ### Generate log information for split-library sequences
+    """ Generate log information for split-library sequences """
+    
     # define log fp
     log_fname='study_%s_split_library_log.txt' % (str(study))
     log_fp=join(output_dir,log_fname)
@@ -154,7 +156,8 @@ def generate_split_lib_log(study, study_input_dir, zip_fname, files_to_remove,\
     
 def generate_full_otu_table(study, study_input_dir, zip_fname, files_to_remove,
                             biom_files,output_dir):
-    ### Merge OTU tables
+    """ Merge OTU tables """
+    
     master = parse_biom_table(open(biom_files[0],'U'))
     # only merge if there is more than 1 biom file
     if len(biom_files) > 1:
@@ -180,7 +183,8 @@ def generate_full_otu_table(study, study_input_dir, zip_fname, files_to_remove,
     return files_to_remove
     
 def scp_files_to_thebeast(study,zip_fp,zip_fname,public):
-    ### Move the zipped file to thebeast ftp site
+    """ Move the zipped file to thebeast ftp site """
+    
     if public:
         # use scp to copy file
         system("scp %s thebeast.colorado.edu:/qiimedb_studies/public/" % (zip_fp))
@@ -222,7 +226,7 @@ def scp_files_to_thebeast(study,zip_fp,zip_fname,public):
 #
 def generate_full_split_lib_qual(study, study_input_dir, zip_fname,
                                  files_to_remove,output_dir):
-    ### Generate the full split-library sequence file
+    """ Generate the full split-library quality file """
     # define sequence output file
     seq_fname='study_%s_split_library_seqs.qual.gz' % (str(study))
     output_seq_fp=join(output_dir,seq_fname)
@@ -283,7 +287,8 @@ def generate_full_split_lib_qual(study, study_input_dir, zip_fname,
 #
 def generate_full_split_lib_fastq(study, study_input_dir, zip_fname,
                                  files_to_remove,output_dir):
-    ### Generate the full split-library sequence file
+    """ Generate the full split-library fastq file """
+    
     # define sequence output file
     seq_fname='study_%s_split_library_seqs.fastq.gz' % (str(study))
     fna_fname='study_%s_split_library_seqs.fna.gz' % (str(study))
@@ -373,3 +378,41 @@ def generate_full_split_lib_fastq(study, study_input_dir, zip_fname,
     #system(cmd_call)
     
     return files_to_remove, biom_files, samples
+    
+# 
+def add_taxa_to_biom(input_dir,study):
+    """ Add the retrained taxonomy assignments to the biom-table """
+    
+    # get the study directory
+    study_input_dir=join(input_dir,'study_%s' % (str(study)))
+    
+    # get a list of all processed folders
+    processed_folders=listdir(study_input_dir)
+    for processed_folder in processed_folders:
+        
+        # make sure it is processed folder produced by DB
+        if processed_folder.startswith('processed'):
+            # get the biom file for this particular run
+            gg_biom_fp=join(study_input_dir, processed_folder, \
+                            'gg_97_otus', 'exact_uclust_ref_otu_table.biom')
+            
+            # make sure the path exists and if not create the biom-table
+            # only applicable to studies processed prior to biom-format
+            if not exists(gg_biom_fp):
+                # get the classic OTU table path
+                gg_otu_table_fp=join(study_input_dir, processed_folder, \
+                                     'gg_97_otus', \
+                                     'exact_uclust_ref_otu_table.txt')
+                                     
+                # make sure path exists and convert classic to biom-table
+                if exists(gg_otu_table_fp):
+                    system("python %s/software/biom-format/scripts/convert_biom.py -i %s -o %s --biom_table_type='otu table'" % \
+                    (environ['HOME'],gg_otu_table_fp,gg_biom_fp))
+            try:
+                # add the taxa to the biom-table
+                # if it exists already, this will fail out
+                system("python %s/add_taxa.py -i %s -t %s/phpr_taxonomy.txt -o %s" % \
+                (get_qiime_scripts_dir(), gg_biom_fp, environ['HOME'], \
+                 gg_biom_fp))
+            except:
+                pass

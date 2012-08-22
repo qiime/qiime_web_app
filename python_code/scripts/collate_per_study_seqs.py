@@ -20,7 +20,8 @@ from collate_per_study_seqs_lib import (write_full_mapping_file,
                                         generate_full_split_lib_fastq,
                                         generate_split_lib_log,
                                         generate_full_otu_table,
-                                        scp_files_to_thebeast)
+                                        scp_files_to_thebeast,
+                                        add_taxa_to_biom)
                                         
 script_info = {}
 script_info['brief_description'] = ""
@@ -62,6 +63,11 @@ def main():
         # create a list of files to remove
         files_to_remove=[]
         print study
+        
+        # update the biom-table to include the taxonomy assignments
+        if not metagenomic_seqs:
+            add_taxa_to_biom(input_dir,study)
+        
         # define study input directory
         study_input_dir=join(input_dir,'study_%s' % (str(study)))
         output_dir=join(study_input_dir,'study_%s_split_library_seqs_and_mapping'  % (str(study)))
