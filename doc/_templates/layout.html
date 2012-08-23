@@ -29,19 +29,23 @@ Commented out for now
 
     {{ super() }}
 
-	<!--<h3><a href="{{ pathto('index') }}">Site index</a></h3>-->
-	<ul><li><ul>
-		
-	 <li><a href="{{ pathto('index')}}">Home</a><br /></li>
-	 <li><a href="{{ pathto('tutorials/index')}}">Tutorials</a><br /></li>
-	 <li><a href="http://qiime.wordpress.com">Blog</a><br /></li>
-	</ul></li></ul>
+    <!--<h3><a href="{{ pathto('index') }}">Site index</a></h3>-->
+
+    <p>
+        &nbsp;&nbsp;<a href="{{ pathto('tutorials/index')}}">Tutorials</a><br />
+        &nbsp;&nbsp;<a href="{{ pathto('administration/index')}}">Administration</a><br />
+        <br />
+    </p>
 
 {% endblock %}
 
 
 {# include the Google Analytics Tracker #}
 {% block footer %}
+<div style="text-align: center; padding: 0px;"><br />
+<a href="http://pycogent.sourceforge.net" target="_blank"><img src="{{
+pathto("_static/PoweredByPycogent.jpg", 1) }}" border="0" alt="sampledoc" height="70px"/></a>
+<br /></div>
 {{ super() }}
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");

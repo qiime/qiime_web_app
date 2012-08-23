@@ -1,21 +1,20 @@
-
 .. QIIME documentation master file, created by
    sphinx-quickstart on Mon Jan 25 12:57:02 2010.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-######################################################
-QIIME: Quantitative Insights Into Microbial Ecology
-######################################################
-QIIME (canonically pronounced 'Chime') is a pipeline for performing microbial community analysis that integrates many third party tools which have become standard in the field. 
+#################################################################
+QIIME-DB: Quantitative Insights Into Microbial Ecology Database
+#################################################################
+The QIIME-DB is a web-interface, which allows users to process, load and compare their studies against other publicly available studies that are present in the DB. For processing, the QIIME-DB uses the QIIME software package for processing all studies uploaded to the DB.
 
-A standard QIIME analysis begins with sequence data from one or more sequencing platforms, including Sanger, Roche/454, and Illumina GAIIx. QIIME can perform library de-multiplexing and quality filtering; denoising with PyroNoise; OTU and representative set picking with uclust, cdhit, mothur, BLAST, or other tools; taxonomy assignment with BLAST or the RDP classifier; sequence alignment with PyNAST, muscle, infernal, or other tools; phylogeny reconstruction with FastTree, raxml, clearcut, or other tools; alpha diversity and rarefaction, including visualization of results, using over 20 metrics including Phylogenetic Diversity, chao1, and observed species; beta diversity and rarefaction, including visualization of results, using over 25 metrics including weighted and unweighted UniFrac, Euclidean distance, and Bray-Curtis; summarization and visualization of taxonomic composition of samples using pie charts and histograms; and many other features.
+A standard QIIME-DB analysis begins with sequence data from one or more sequencing platforms, including Sanger, Roche/454, and Illumina. QIIME-DB performs library de-multiplexing and quality filtering and OTU-picking using the closed-reference OTU-picking protocol. The QIIME-DB also supports meta-analyses, which allow the end-user to perform alpha diversity and rarefaction, including visualization of results, using over 20 metrics including Phylogenetic Diversity, chao1, and observed species; beta diversity and rarefaction, including visualization of results, using over 25 metrics including weighted and unweighted UniFrac, Euclidean distance, and Bray-Curtis; summarization and visualization of taxonomic composition of samples using pie charts and histograms; and many other features.
 
-QIIME includes parallelization capabilities for many of the computationally intensive steps. By default, these are configured to utilize a mutli-core environment, and are easily configured to run in a cluster environment. QIIME is built in Python using the open-source PyCogent_ toolkit. It makes extensive use of unit tests, and is highly modular to facilitate custom analyses.
+QIIME-DB is built in Python using the open-source PyCogent_ toolkit. It makes extensive use of unit tests, and is highly modular to facilitate custom analyses.
 
 Blog and Mailing List
 ======================
-We recommend that all QIIME users keep an eye on the QIIME blog for important announcements. You can `subscribe to the RSS feed <http://qiime.wordpress.com/feed/>`_ or `sign up for e-mail notifications on the front page of the blog <http://qiime.wordpress.com>`_. This is a very low traffic list (typically around one message per month), and we will not share subscriber information with anyone.
+We recommend that all QIIME-DB users keep an eye on the QIIME blog for important announcements, since we update the Web Server periodically. You can `subscribe to the RSS feed <http://qiime.wordpress.com/feed/>`_ or `sign up for e-mail notifications on the front page of the blog <http://qiime.wordpress.com>`_. This is a very low traffic list (typically around one message per month), and we will not share subscriber information with anyone.
 
 
 Contact Us
@@ -27,8 +26,8 @@ If your question can't be posted in the public forum because you would need to s
 Users can also submit `bug reports <http://sourceforge.net/tracker/?group_id=272178&atid=1157164>`_ and `feature requests <http://sourceforge.net/tracker/?group_id=272178&atid=1157167>`_ using via Sourceforge.
 
 
-Citing QIIME
-============
+Citing QIIME-DB
+===================
 If you use QIIME for any published research, please include the following citation:
 
 	**QIIME allows analysis of high-throughput community sequencing data**

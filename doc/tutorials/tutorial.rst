@@ -25,9 +25,12 @@ MIMARKS-Compliant Metadata Files (.xls or .txt)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 These are the tab-delimited templates generated using the QIIME Web-Interface, once you have created a unique study for your experiment and identified the type of study (i.e., host-associated, human-gut, human-oral, etc.).
 
-Flowgram File (.sff)
+Sequence Files (FASTA, FASTQ, or SFF)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-This is the 454-machine generated file which stores the sequencing trace data. This is the largest file returned from a 454 run.
+The QIIME-DB can process 3 types of sequence files:
+    #. **FASTA**: The specific format of these file expected is the post-split-libraries FASTA-format. For more information pertaining to this format, please refer to `here <http://qiime.org/documentation/file_formats.html#demultiplexed-sequences>`_. Each FASTA file should be zipped using the "zip" tool prior to uploading.
+    #. **FASTQ**: The QIIME-DB can only handle FASTQ files produced from Illumina's HiSeq/MiSeq technologies, therefore there should be 1 sequence file and 1 barcode file. Each FASTQ file should be gzipped with the "gzip" tool, prior to uploading.
+    #. **SFF**: These are binary files produced from Roche's 454 FLX and Titanium chemistries. For the Titanium SFFs, they will be trimmed to FLX length prior to loading into the DB. Each SFF should be zipped using the "zip" tool prior to uploading.
 
 Create a Study
 ---------------
@@ -282,10 +285,10 @@ This will redirect the user to another page, where they can observe the loading 
     :align: center
     :width: 600 px
 
-Upload SFFs
-------------
+Upload Sequences
+-------------------
 
-To upload your SFF files, you must first zip one or more SFFs into a single archive, depending on the SFFs listed in the RUN_PREFIX of your MIMARKS-compliant metadata templates.  First you must select the link Upload SFF files to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
+For this example, we will consider you have SFF files. To upload your SFF files, you must first zip one or more SFFs into a single archive, depending on the SFFs listed in the RUN_PREFIX of your MIMARKS-compliant metadata templates.  First you must select the link Upload SFF files to this study.  Note: once you successfully upload the SFF files, the "(not complete)" message and X will change to "(complete)" and a checkmark will appear next to this link.
 
 .. image:: ../images/QWA_Upload_SFF_1.png
     :align: center
