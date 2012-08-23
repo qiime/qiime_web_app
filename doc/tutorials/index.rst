@@ -9,7 +9,6 @@ The QIIME tutorials are documents that illustrate how to use various features of
    :maxdepth: 2
 
    tutorial
-
-
+   meta_analysis
 
 

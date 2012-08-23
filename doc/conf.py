@@ -37,8 +37,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'qiime'
-copyright = u'2010, QIIME Team'
+project = u'qiimedb'
+copyright = u'2012, QIIME-DB Team'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
