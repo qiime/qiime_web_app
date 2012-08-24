@@ -1,0 +1,234 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Meta-Analysis Tutorial &mdash; Homepage</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0-web_app',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="Homepage" href="../index.html" />     
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<!--
+Commented out for now
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAbW_pA971hrPgosv-Msv7hRRE2viNBUPuU405tK6p2cguOFmlFBQSwZMG6_q_v6Z42nkdo9ejT1aHmA"></script>--
+<script type="text/javascript" src="../_static/google_feed.js"></script>
+
+-->
+
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 0px">
+<a href="../index.html"><img src="../_static/wordpressheader.png" border="0" alt="sampledoc"/></a>
+</div>
+<!-- 
+Commented out for now
+<div class="news" style="background-color:#ccc;"><table style="font-size:12pt;padding: 5px;"><tr id="feed"><td><b>News and Announcements &raquo;</b></td>
+</tr></table></div>
+-->
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="meta-analysis-tutorial">
+<h1>Meta-Analysis Tutorial<a class="headerlink" href="#meta-analysis-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This tutorial explains how to use the QIIME (Quantitative Insights Into Microbial Ecology) web-interface to perform cross-sectional analyses of taxonomic and phylogenetic profiles generated from different studies. The advantage of the web-interface over a local analysis, is access to a more datasets, quicker computations, and an intuitive interface. The only requirement to successfully complete a meta-analysis, is that each study must have MIMARKS-compliant metadata and sequence files. The objective of each meta-analysis can be varied, but in general, it provides a unique perspective of the user&#8217;s data.</p>
+<p>The essential steps to perform a meta-analysis are outlined below:</p>
+<ul class="simple">
+<li>Start a new meta-analysis</li>
+<li>Study and metadata selection</li>
+<li>Meta-analysis design</li>
+<li>Retrieve the results</li>
+</ul>
+<p>The features of the QIIME web-interface will be demonstrated here with publicly available datasets.</p>
+</div>
+<div class="section" id="start-a-new-meta-analysis">
+<h2>Start a New Meta-Analysis<a class="headerlink" href="#start-a-new-meta-analysis" title="Permalink to this headline">¶</a></h2>
+<p>To begin a new meta-analysis, users must be registered with the QIIME-DB. Users can register at <a class="reference external" href="http://www.microbio.me/qiime">www.microbio.me/qiime</a>. After registration, a new meta-analysis can be started by clicking &#8220;Create New Meta-Analysis&#8221; or clicking the &#8220;Meta Analysis&#8221; tab in the header of the home page. In the new page, enter a name for the meta-analysis, and then you will be ready to perform a meta-analysis. For each study, multiple meta-analyses can be performed and previous analyses can be re-opened from the &#8220;Select Previous Meta-Analyses&#8221; drop-down menu on the home page.</p>
+<p><strong>Step 1</strong>: Create a New Meta-Analysis entitled &#8220;Tutorial&#8221;, then click &#8220;Perform Meta-Analysis&#8221;.</p>
+<img alt="../_images/home-page_ed.png" class="align-center" src="../_images/home-page_ed.png" />
+</div>
+<div class="section" id="study-and-metadata-selection">
+<h2>Study and Metadata Selection<a class="headerlink" href="#study-and-metadata-selection" title="Permalink to this headline">¶</a></h2>
+<p>When a study is opened or a new one is started, the users are directed to a new page where they can select which datasets and metadata fields will be included in the meta-analysis.</p>
+<div class="section" id="select-studies-select-box">
+<h3>Select Studies Select-Box<a class="headerlink" href="#select-studies-select-box" title="Permalink to this headline">¶</a></h3>
+<p>From this select-box, users can select which datasets will be analyzed. When hovering the cursor over a study will cause it to display the study abstract and title. By selecting a study, relevant information about the study size will be displayed to the right. Multiple studies can be selected using &#8220;Ctrl+Click&#8221; on Windows or &#8220;Command+Click&#8221; on Mac OS X. The &#8220;Show Type&#8221; drop-down menu above the Select Studies select-box allows users to filter the studies based on some simple criteria:</p>
+<ul class="simple">
+<li><strong>EMP</strong>: Earth Microbiome Projects (both processed and unprocessed studies)</li>
+<li><strong>Metagenome</strong>: Metagenomic studies</li>
+<li><strong>QIIME</strong>: QIIME studies (both processed and unprocessed studies)</li>
+<li><strong>Contains seqs</strong>: <em>Only</em> studies that have been processed and contain sequence hits to the Greengenes 97% reference sequences (closed-reference OTU-picking)</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><strong>NOTE</strong>: Once the user selects their studies, they should check the statistics to the right of the Select Studies select-box. If the field &#8220;Processed by QIIME&#8221; is set to &#8220;false&#8221; the user will only receive a QIIME-formatted mapping file for the studies selected. If the value is &#8220;true&#8221; it means that there is corresponding OTU table information for all studies selected and they will be allowed to perform downstream visualizations using QIIME.</p>
+</div>
+<p><strong>Step 2</strong>: Select &#8220;Contains seqs&#8221; from the Show Type drop-down menu, and select the &#8220;Koenig_infant_time_series&#8221; and &#8220;Defilippo_children_and_diets&#8221; studies from the Select Study select-box, as shown below:</p>
+<img alt="../_images/Select-data_ed.png" class="align-center" src="../_images/Select-data_ed.png" />
+</div>
+<div class="section" id="available-metadata-select-box">
+<h3>Available Metadata Select-Box<a class="headerlink" href="#available-metadata-select-box" title="Permalink to this headline">¶</a></h3>
+<p>This select-box lists all the metadata associated with the studies selected above. If the &#8220;Show Common Fields Only&#8221; option is selected, then only the metadata fields that exist between the selected studies will be displayed. Use the buttons to the right of the window to move Available Metadata Field into the Selected Metadata Fields. Only the fields displayed in the &#8220;Selected Metadata Fields&#8221; window will be included in the meta-analysis.</p>
+<p><strong>Step 3</strong>: Select &#8220;age_in_years&#8221;, &#8220;country&#8221;, and &#8220;experiment title&#8221;, then press the &#8220;&gt;&#8221; button.</p>
+<img alt="../_images/select-metadata_ed.png" class="align-center" src="../_images/select-metadata_ed.png" />
+</div>
+<div class="section" id="selected-metadata-fields-select-box">
+<h3>Selected Metadata Fields Select-Box<a class="headerlink" href="#selected-metadata-fields-select-box" title="Permalink to this headline">¶</a></h3>
+<p>For each of the metadata fields listed in this select-box, users can select an element and the study-associated field values will be displayed in the box below the select-box. A description of the type of information in the metadata field is also included in the display. Once all the desired datasets and metadata have been selected, click the &#8220;Continue&#8221; button at the bottom of the page.</p>
+<img alt="../_images/view-metadata_ed.png" class="align-center" src="../_images/view-metadata_ed.png" />
+</div>
+</div>
+<div class="section" id="meta-analyses-to-perform">
+<h2>Meta-Analyses To Perform<a class="headerlink" href="#meta-analyses-to-perform" title="Permalink to this headline">¶</a></h2>
+<p>The &#8220;Meta-Analyses to Perform&#8221; page allows users to pick which QIIME scripts to run on the selected datasets. The OTU Table and processing method are required for each meta-analysis. The processing method refers to how the QIIME server will manage the selected operations. In &#8220;Serial&#8221; mode, each meta-analysis operation will be processed serially, however; in &#8220;Parallel&#8221;, the operations will be processed using the parallel scripts in QIIME, which primarily affects rarefaction and beta-diversity calculations. If you select over a few thousand samples, then it is recommend to run in Parallel.</p>
+<p>Users have the option to create a phylogenetic tree by selecting &#8220;TopiaryExplorer Visualization&#8221;. Visualizing the tree requires the TopiaryExplorer software, which can be downloaded <a class="reference external" href="http://topiaryexplorer.sourceforge.net/">here</a>. The optional parameters for the other operations are summarized in the links below.</p>
+<blockquote>
+<ul class="simple">
+<li><a class="reference internal" href="../documentation/otu_table_parameters.html"><em>OTU Table Parameters</em></a></li>
+<li><a class="reference internal" href="../documentation/heatmap_parameters.html"><em>Heatmap Parameters</em></a></li>
+<li><a class="reference internal" href="../documentation/taxonomy_summary_parameters.html"><em>Taxonomy Summary Parameters</em></a></li>
+<li><a class="reference internal" href="../documentation/alpha_diversity_parameters.html"><em>Alpha-Diversity Parameters</em></a></li>
+<li><a class="reference internal" href="../documentation/beta_diversity_parameters.html"><em>Beta-Diversity Parameters</em></a></li>
+</ul>
+</blockquote>
+<p><strong>Step 4</strong>: Click on the following check-boxes:</p>
+<blockquote>
+<ul class="simple">
+<li>Check beta-diversity<ul>
+<li>Click <em>Optional parameters (rarefaction.py)</em><ul>
+<li>Set rarefied at 100.</li>
+</ul>
+</li>
+<li>Click <em>Optional parameters (beta-diversity.py)</em><ul>
+<li>Select only the &#8220;unweighted_unifrac&#8221; metric.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Check 3D PCoA plots<ul>
+<li>Click <em>Optional parameters (make_3d_plots.py)</em><ul>
+<li>Select &#8220;AGE_IN_YEARS&#8221; as a custom axis</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Click Submit</li>
+</ul>
+</blockquote>
+<img alt="../_images/prepare-plots_ed.png" class="align-center" src="../_images/prepare-plots_ed.png" />
+</div>
+<div class="section" id="retrieve-the-results">
+<h2>Retrieve the Results<a class="headerlink" href="#retrieve-the-results" title="Permalink to this headline">¶</a></h2>
+<p>For every meta-analysis, three necessary files are always produced: the OTU table (in BIOM-format), the mapping file, and a zipped file containing all the QIIME output files. If QIIME is locally installed on the user&#8217;s computer, the output contained in the zipped file can be passed into the QIIME pipeline for a more customized analyses. By default, all the figures produced (with the exception of the phylogenetic tree) are in HTML format. The data can be represented in several different ways.</p>
+<p><strong>Step 5</strong>: Click either link for the 3D plot to view the meta-analysis results and enjoy!</p>
+<p>Multiple meta-analyses can be performed within the same study. This is a convenient way to organize each meta-analysis.</p>
+<p><strong>Step 6</strong>: Try repeating this meta-analysis but on the individual datasets or add additional datasets.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+
+    
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Meta-Analysis Tutorial</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#start-a-new-meta-analysis">Start a New Meta-Analysis</a></li>
+<li><a class="reference internal" href="#study-and-metadata-selection">Study and Metadata Selection</a><ul>
+<li><a class="reference internal" href="#select-studies-select-box">Select Studies Select-Box</a></li>
+<li><a class="reference internal" href="#available-metadata-select-box">Available Metadata Select-Box</a></li>
+<li><a class="reference internal" href="#selected-metadata-fields-select-box">Selected Metadata Fields Select-Box</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#meta-analyses-to-perform">Meta-Analyses To Perform</a></li>
+<li><a class="reference internal" href="#retrieve-the-results">Retrieve the Results</a></li>
+</ul>
+</li>
+</ul>
+
+
+    <!--<h3><a href="../index.html">Site index</a></h3>-->
+
+    <p>
+        &nbsp;&nbsp;<a href="index.html">Tutorials</a><br />
+    </p>
+
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+<div style="text-align: center; padding: 0px;"><br />
+<a href="http://pycogent.sourceforge.net" target="_blank"><img src="../_static/PoweredByPycogent.jpg" border="0" alt="sampledoc" height="70px"/></a>
+<br /></div>
+
+    <div class="footer">
+        &copy; Copyright 2012, QIIME-DB Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6636235-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+  </body>
+</html>
