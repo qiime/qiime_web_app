@@ -387,6 +387,7 @@ class QiimeDataAccess(object):
 			study_info['includes_timeseries'] = row[38]
 			study_info['sample_count'] = row[39]
 			study_info['ebi_study_accession'] = row[40]
+			study_info['locked'] = row[41]
 		return study_info
 
 	def saveTimeseriesData(self, study_id, timeseries_file, req):
@@ -557,7 +558,7 @@ class QiimeDataAccess(object):
 		"""
 		try:
 			con = self.getMetadataDatabaseConnection()
-			con.cursor().callproc('qiime_assets.calc_age_in_years', [study_id])
+			con.cursor().callproc('calc_age_in_years', [study_id])
 			return True
 		except Exception, e:
 			print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -2407,7 +2408,6 @@ class QiimeDataAccess(object):
 		except Exception, e:
 			print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
 			return False
-
 
 	def updateAnalysisWithSeqRunID(self, start_job, analysis_id,seq_run_id):
 		""" updates the ANALYSIS table with the SEQ_RUN_ID
