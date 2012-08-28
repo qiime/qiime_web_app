@@ -1,0 +1,11 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2012, QIIME-DB"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Development"
+%>
+
