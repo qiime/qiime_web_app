@@ -22,7 +22,6 @@ def exportStudyToEBISRA(study_id, user_id):
     data_access = None
     try:
         data_access = data_access_factory(ServerConfig.data_access_type)
-        live_rest_services = LiveEBISRARestServices()
 
         # Submit the job
         job_id = data_access.createTorqueJob('ExportToEBISRAHandler', 'StudyID=%s' % study_id, user_id, study_id)

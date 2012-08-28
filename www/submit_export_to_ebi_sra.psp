@@ -21,7 +21,7 @@ user_id = int(sess['web_app_user_id'])
 try:
     pass
     # Attempt the export
-    # exportStudyToEBISRA(study_id, user_id)
+    exportStudyToEBISRA(study_id, user_id)
 
     # Redirect to the home page for this study
     # psp.redirect('fusebox.psp?page=select_study_task.psp')
