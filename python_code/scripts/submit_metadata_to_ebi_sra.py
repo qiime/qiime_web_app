@@ -16,6 +16,7 @@ from optparse import make_option
 from qiime.util import parse_command_line_parameters
 from live_ebi_sra_rest_services import LiveEBISRARestServices
 from run_submit_metadata_to_ebi_sra import submit_metadata_for_study
+from os.path import join
 
 script_info = {}
 script_info['brief_description'] = "This script submits metadata to the EBI SRA based on a study_id"
@@ -24,26 +25,39 @@ script_info['script_usage'] = [("Example","This is an example usage", "python su
 script_info['output_description']= "There is no output from the script."
 script_info['required_options'] = [make_option('-s','--study_id', help='The study id to be exported')]
 script_info['optional_options'] = [\
-    make_option('-d','--debug', action='store_true', help='Specifies that verbose debug output should be displayed.',default=False)
+    make_option('-d','--debug', action='store_true', help='Specifies that verbose debug output should be displayed.',default=True)
 ]
 script_info['version'] = __version__
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
 
-    # define the variables
+    # Some needed variables
     study_id = opts.study_id
     debug = opts.debug
-
-
-    # User_ID. Mine for now for access to all studies.
     web_app_user_id = 12169
+    root_dir = '/home/wwwuser/user_data/studies'
+    study_dir = root_dir + '/study_{0}'.format(str(study_id))
+    ebi_export_log_fp = join(study_dir, 'ebi_export_log.txt')
+    curl_output_fp = join(study_dir, 'curl_output.xml')
 
-    # Get the live function reference
-    live_rest_services = LiveEBISRARestServices()
-
-    #result = submit_metadata_for_study(key, study_id, web_app_user_id, live_rest_services.send_data_to_mgrast, debug)
-    result = submit_metadata_for_study(study_id, web_app_user_id, live_rest_services, debug)
+    # Get the live EBI function reference
+    live = LiveEBISRARestServices(study_id, web_app_user_id, root_dir, debug)
+    live.host_name = ''
+    
+    # Always submit a validate command first
+    live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
+    
+    # Read the output file
+    curl_output = open(curl_output_fp, 'r')
+    curl_output.close()
+    
+    # If success, then submit with 'ADD' or 'MODIFY'
+    # Read output
+    # If error then display to user. If success then proceed with actual submit
+    
+    # If this is a first-time submission ('ADD' is action_type), send the files
+    #live.submit_files(debug = True)
 
 if __name__ == "__main__":
     main()
