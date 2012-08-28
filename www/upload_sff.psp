@@ -16,7 +16,15 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 %>
 
 <h3>Sequence File Upload</h3>
-
+<p>
+    We currently support sequence files from 454 and Illumina (HiSeq/MiSeq), along with demultiplexed FASTA files produced from split-libraries.py in QIIME. The filename should not contain spaces or non-alphanumeric characters.
+    <ul>
+        <li><b>SFF:</b> You should zip using "zip" for each SFF file individually prior to uploading.</li>
+        <li><b>FASTQ:</b> For each Illumina lane, there should be a single barcode file that associates to a single amplicon read file. Each of these files should be gzipped using "gzip" prior to uploading. We do not currently support assembly, so only one amplicon read file is permitted for each barcode file.</li>
+        <li><b>FASTA:</b> We are expecting a FASTA-formatted file that is formatted similar to the file produced from split-libraries.py. For more information on the format, please refer to <a href="http://qiime.org/documentation/file_formats.html#demultiplexed-sequences">here</a>. Make sure the extension for each FASTA file is either ".fna", ".fasta" or "fa", then zip using "zip" for each file individually prior to uploading.</li>
+        <li><i>Allowable file extensions:</i> .sff.zip, .fastq.gz, .fastq.gz.zip, .fa.zip, .fna.zip, or .fasta.zip</li>
+    </ul>
+</p>
 <script type="text/javascript">
 
 var study_dir = \'<%=sess['study_dir']%>\'+'/'
@@ -24,6 +32,7 @@ var study_dir = \'<%=sess['study_dir']%>\'+'/'
 window.onload="resizeApplet()";
 
 /*Create a random filename for uploading the zip file.*/
+/*
 var keylist="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789"
 var temp=''
 var output_fname
@@ -35,18 +44,23 @@ function generatepass(plength)
     }
     return temp
 }
+*/
 
 /*Initialize the jumploader applet*/
 function appletInitialized( uploader ) {
-    output_fname='tmp'+generatepass(10)
+    output_fname='' /*''tmp'+generatepass(10)*/
     var attributeSet = uploader.getUploader().getAttributeSet();
-    var attribute = attributeSet.createStringAttribute( "output_fname", output_fname);
+    var attribute = attributeSet.createStringAttribute( "output_fname",
+                                                        output_fname);
     attribute.setSendToServer( true );
-    var attribute2 = attributeSet.createStringAttribute( "output_dir", study_dir);
+    var attribute2 = attributeSet.createStringAttribute( "output_dir",
+                                                         study_dir);
     attribute2.setSendToServer( true );
-    var attribute3 = attributeSet.createStringAttribute( "web_app_user_id", <%=sess['web_app_user_id']%>);
+    var attribute3 = attributeSet.createStringAttribute( "web_app_user_id",
+                                                <%=sess['web_app_user_id']%>);
     attribute3.setSendToServer( true );
-    var attribute4 = attributeSet.createStringAttribute( "study_id", <%=sess['study_id']%>);
+    var attribute4 = attributeSet.createStringAttribute( "study_id", 
+                                                <%=sess['study_id']%>);
     attribute4.setSendToServer( true );
 }
 
@@ -145,13 +159,7 @@ function setCompleteBox()
 <tr><td>
 <div id='applet'>
 <!--this is the jumploader applet-->
-<b>Sequence File Upload: Please upload only zipped files.</b><br/>
-The filename should not contain spaces or non-alphanumeric characters.
-<br/>
-<br/>
-You can either submit SFF files (.sff), FASTQ files (.fastq), and/or FASTA files (.fasta/.fna).
 
-<p/>
 
 <applet name="jumpLoaderApplet" code="jmaster.jumploader.app.JumpLoaderApplet.class" 
         archive="jar/jumploader_z.jar" height="250" width="600" mayscript>
@@ -162,9 +170,10 @@ You can either submit SFF files (.sff), FASTQ files (.fastq), and/or FASTA files
     <param name="vc_uploadViewStopUploadButtonText" value="Stop upload"/>
     <param name="vc_uploadViewStopUploadButtonImageUrl" value="/img/media_stop_red.png"/>
     <param name="ac_fireAppletInitialized" value="true"/> 
-    <param name="uc_fileNamePattern" value='^.+\.((zip))' />
+    <param name="uc_fileNamePattern" value='^.+\.((zip|fastq.gz))' />
     <param name="ac_fireUploaderFileStatusChanged" value="true"/>
     <param name="uc_uploadUrl" value="upload_sff_submit.psp">
+    <param name="gc_loggingLevel" value="DEBUG"/>
 </applet>
 </div>
 </td></tr></table>

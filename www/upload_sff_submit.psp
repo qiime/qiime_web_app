@@ -19,7 +19,7 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig
 from cogent.parse.fasta import MinimalFastaParser
 from cogent.parse.fastq import MinimalFastqParser
-
+from qiime.util import gzip_open
 data_access = data_access_factory(ServerConfig.data_access_type)
 
 #determine if a file has been passed
@@ -38,97 +38,130 @@ if form.has_key('file') and form['file'].filename:
     if fileitem.filename:
         # strip leading path from file name to avoid directory traversal attacks
         fname = form['output_fname']+fileitem.filename.strip().replace(" ","")
-        dir_path = os.path.join(os.path.dirname(req.filename), form['output_dir'])
+        dir_path = os.path.join(os.path.dirname(req.filename), 
+                                form['output_dir'])
         zip_file_name = os.path.join(dir_path, fname)
         
-        # write the zipped file on the server
-        zippedf = open(zip_file_name, 'wb')
-        zippedf.write(fileitem.file.read())
-        zippedf.close()
-    
-        # create a zipfile object
-        t = zipfile.ZipFile(zip_file_name,'r')
-        
-        contains_valid_file = False
-        # iterate through the list of files in the zipped file
-        for f in t.namelist():
+        if zip_file_name.endswith(".zip"):
+            # write the zipped file on the server
+            zippedf = open(zip_file_name, 'wb')
+            zippedf.write(fileitem.file.read())
+            zippedf.close()
             
-            # if the name is a folder, create a directory
-            if not f.endswith('/'):
-                # Write a file
-                filename = os.path.basename(f)
+            # create a zipfile object
+            t = zipfile.ZipFile(zip_file_name,'r')
+        
+            contains_valid_file = False
+            # iterate through the list of files in the zipped file
+            for f in t.namelist():
+            
+                # if the name is a folder, create a directory
+                if not f.endswith('/'):
+                    # Write a file
+                    filename = os.path.basename(f)
                 
-                # Validating for 454/Titanium
-                if filename.endswith('.sff') and not filename.startswith('.'):
-                    # Unzip the file using the system's unzip command. Python has a bug which prevents
-                    # it from successfully unzipping a files larger than 1 GB in size
-                    outfname = os.path.join(dir_path, filename)
-                    process = Popen(['unzip', '-u', zip_file_name, f, '-d', os.path.dirname(outfname)], stdout=PIPE, stderr=PIPE, shell=False)
-                    stdout_value, stderr_value = process.communicate()
-                    #req.write(repr(stdout_value) + '\n\n')
-                    #req.write(repr(stderr_value) + '\n\n')
+                    # Validating for 454/Titanium
+                    if filename.endswith('.sff') and not filename.startswith('.'):
+                        # Unzip the file using the system's unzip command. Python has a bug which prevents
+                        # it from successfully unzipping a files larger than 1 GB in size
+                        outfname = os.path.join(dir_path, filename)
+                        process = Popen(['unzip', '-u', zip_file_name, f, '-d', 
+                                        os.path.dirname(outfname)], stdout=PIPE, 
+                                        stderr=PIPE, shell=False)
+                        stdout_value, stderr_value = process.communicate()
+                        #req.write(repr(stdout_value) + '\n\n')
+                        #req.write(repr(stderr_value) + '\n\n')
                     
-                    # If stderr_value isn't empty, output the error
-                    if stderr_value:
-                        req.write('An error was logged: %s' % stderr_value)
+                        # If stderr_value isn't empty, output the error
+                        if stderr_value:
+                            req.write('An error was logged: %s' % stderr_value)
                     
-                    # determine if the file written is an sff, in which the sffinfo
-                    # is called on the file.
-                    contains_valid_file = True
-                    try: 
-                        process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, shell=False)
-                        if not int(process.wait())==0:
-                            req.write("Error: the SFF file could not be parsed!")
-                        data_access.addSeqFile(form['study_id'], outfname, 'SFF')
-                    except Exception, e:
-                        req.write("Error: there was a problem parsing the SFF file. Requested path: %s. The error was: %s" % (dir_path, str(e)))  
-                # Validating for Illumina
-                elif filename.endswith('.fastq') and not filename.startswith('.'):
-                    # Unzip the file using the system's unzip command. Python has a bug which prevents
-                    # it from successfully unzipping a files larger than 1 GB in size
-                    outfname = os.path.join(dir_path, filename)
-                    process = Popen(['unzip', '-u', zip_file_name, f, '-d', os.path.dirname(outfname)], stdout=PIPE, stderr=PIPE, shell=False)
-                    stdout_value, stderr_value = process.communicate()
-                    #req.write(repr(stdout_value) + '\n\n')
-                    #req.write(repr(stderr_value) + '\n\n')
+                        # determine if the file written is an sff, in which the 
+                        # sffinfo is called on the file.
+                        contains_valid_file = True
+                        try: 
+                            process=Popen(['sffinfo', '-m', outfname], stdout=PIPE, 
+                                                                        shell=False)
+                            if not int(process.wait())==0:
+                                req.write("Error: the SFF file could not be parsed!")
+                            data_access.addSeqFile(form['study_id'], outfname, 
+                                                   'SFF')
+                        except Exception, e:
+                            req.write("Error: there was a problem parsing the SFF file. Requested path: %s. The error was: %s" % (dir_path, str(e)))  
+                    # Validating for Illumina
+                    elif filename.endswith('.fastq.gz') and \
+                                                    not filename.startswith('.'):
+                        # Unzip the file using the system's unzip command. Python has a bug which prevents
+                        # it from successfully unzipping a files larger than 1 GB in size
+                        outfname = os.path.join(dir_path, filename)
+                        process = Popen(['unzip', '-u', zip_file_name, f, '-d', 
+                                        os.path.dirname(outfname)], stdout=PIPE, 
+                                        stderr=PIPE, shell=False)
+                        stdout_value, stderr_value = process.communicate()
+                        # If stderr_value isn't empty, output the error
+                        if stderr_value:
+                            req.write('An error was logged: %s' % stderr_value)
+
+                        sequence_read_f = gzip_open(outfname)
                     
-                    # If stderr_value isn't empty, output the error
-                    if stderr_value:
-                        req.write('An error was logged: %s' % stderr_value)
+                        contains_valid_file = True
+                        try: 
+                            MinimalFastqParser(sequence_read_f)
+                            data_access.addSeqFile(form['study_id'], outfname, 
+                                                                        'FASTQ')
+                        except Exception, e:
+                            req.write("Error: there was a problem parsing the FASTQ file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
+                    # Validating for FNA
+                    elif (filename.endswith('.fna') or filename.endswith('.fasta') \
+                          or filename.endswith('.fa')) and \
+                          not filename.startswith('.'):
+                        # Unzip the file using the system's unzip command. 
+                        # Python has a bug which prevents
+                        # it from successfully unzipping a files larger 
+                        # than 1 GB in size
+                        outfname = os.path.join(dir_path, filename)
+                        process = Popen(['unzip', '-u', zip_file_name, f, '-d', 
+                                        os.path.dirname(outfname)], stdout=PIPE, 
+                                        stderr=PIPE, shell=False)
+                        stdout_value, stderr_value = process.communicate()
+                        #req.write(repr(stdout_value) + '\n\n')
+                        #req.write(repr(stderr_value) + '\n\n')
                     
-                    # determine if the file written is an FASTQ, in which the MinimalFastqParser
-                    # is called on the file.
-                    contains_valid_file = True
-                    try: 
-                        MinimalFastqParser(open(outfname,'U'))
-                        data_access.addSeqFile(form['study_id'], outfname, 'FASTQ')
-                    except Exception, e:
-                        req.write("Error: there was a problem parsing the FASTAQ file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
-                # Validating for FNA
-                elif (filename.endswith('.fna') or filename.endswith('.fasta')) and not filename.startswith('.'):
-                    # Unzip the file using the system's unzip command. Python has a bug which prevents
-                    # it from successfully unzipping a files larger than 1 GB in size
-                    outfname = os.path.join(dir_path, filename)
-                    process = Popen(['unzip', '-u', zip_file_name, f, '-d', os.path.dirname(outfname)], stdout=PIPE, stderr=PIPE, shell=False)
-                    stdout_value, stderr_value = process.communicate()
-                    #req.write(repr(stdout_value) + '\n\n')
-                    #req.write(repr(stderr_value) + '\n\n')
+                        # If stderr_value isn't empty, output the error
+                        if stderr_value:
+                            req.write('An error was logged: %s' % stderr_value)
                     
-                    # If stderr_value isn't empty, output the error
-                    if stderr_value:
-                        req.write('An error was logged: %s' % stderr_value)
-                    
-                    # determine if the file written is an FNA, in which the MinimalFastParser
-                    # is called on the file.
-                    contains_valid_file = True
-                    try: 
-                        MinimalFastaParser(open(outfname,'U'))
-                        data_access.addSeqFile(form['study_id'], outfname, 'FNA')
-                    except Exception, e:
-                        req.write("Error: there was a problem parsing the FNA file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
+                        # determine if the file written is an FNA, in which the MinimalFastParser
+                        # is called on the file.
+                        contains_valid_file = True
+                        try: 
+                            MinimalFastaParser(open(outfname,'U'))
+                            data_access.addSeqFile(form['study_id'], outfname, 
+                                                   'FNA')
+                        except Exception, e:
+                            req.write("Error: there was a problem parsing the FNA file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
                         
-        #if the zip does not have any sff files, raise an error
+        elif zip_file_name.endswith(".fastq.gz") and \
+                                        not zip_file_name.startswith('.'):
+            # Unzip the file using the system's unzip command. Python has a 
+            # bug which prevents
+            # it from successfully unzipping a files larger than 1 GB in size
+            # write the zipped file on the server
+            zippedf = open(zip_file_name, 'wb')
+            zippedf.write(fileitem.file.read())
+            zippedf.close()
+            #outfname = os.path.join(dir_path, os.path.basename(zip_file_name))
+            sequence_read_f = gzip_open(zip_file_name)
+    
+            contains_valid_file = True
+            try: 
+                MinimalFastqParser(sequence_read_f)
+                data_access.addSeqFile(form['study_id'], zip_file_name, 
+                                                                'FASTQ')
+            except Exception, e:
+                req.write("Error: there was a problem parsing the FASTQ file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
+        
+        #if the zip does not have any sff,fastq, or fasta files, raise an error
         if contains_valid_file==False:
             req.write("Error: This zip does not contain any valid files (.sff, .fastq, .fna)!")
-            
 %>

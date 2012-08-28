@@ -283,43 +283,7 @@ make_option('--suppress_html_output',
         help='Suppress HTML output. [default: %default]'),\
 ]
     
-exp_get_html_for_options='''<tr><th>colorby&nbsp;<a class="tooltip" href="#">\
-<img src="./test_img.png" \\>\
-<span class="custom help">\
-Comma-separated list categories metadata categories (column headers) \
-</span></a></th><td><select id="make_distance_histograms:colorby" multiple>\n\
-<option>head1\n<option>head2\n<option>head3\n</select>\
-</td></tr>\n<tr><th>custom_axes&nbsp;<a class="tooltip" href="#">\
-<img src="./test_img.png" \\><span class="custom help">\
-This is the category from the metadata mapping file </span></a></th><td>\
-<select id="make_distance_histograms:custom_axes">\n\
-<option>\n<option>head1\n<option>head2\n<option>head3\n</select>\
-</td></tr>\n<tr><th>background_color&nbsp;<a class="tooltip" href="#">\
-<img src="./test_img.png" \\>\
-<span class="custom help">Background color to use in the plots.</span>\
-</a></th><td><select id="make_distance_histograms:background_color">\n\
-<option selected>black\n<option>white\n</select></td></tr>\n\
-<tr><th>ellipsoid_opacity&nbsp;<a class="tooltip" href="#">\
-<img src="./test_img.png" \\>\
-<span class="custom help">\
-Used only when plotting ellipsoids for jackknifed beta diversity (i.e. \
-using a directory of coord files </span></a></th>\
-<td><input class="float" type="text" \
-id="make_distance_histograms:ellipsoid_opacity" value="0.33" \\></td></tr>\n\
-<tr><th>n_taxa_keep&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \
-\\><span class="custom help">Used only when generating BiPlots. This is the \
-number  to display. Use -1 to display all. </span></a></th>\
-<td><input class="int" type="text" id="make_distance_histograms:n_taxa_keep" \
-value="10" \\></td></tr>\n<tr><th>suppress_html_output&nbsp;<a class="tooltip" \
-href="#"><img src="./test_img.png" \\>\
-<span class="custom help">Suppress HTML output. </span></a></th>\
-<td><input class="check" type="checkbox" \
-id="make_distance_histograms:suppress_html_output" \\></td></tr>\n\
-<tr><th>suppress_html_output&nbsp;<a class="tooltip" href="#">\
-<img src="./test_img.png" \\>\
-<span class="custom help">Suppress HTML output. </span></a></th>\
-<td><input class="check" type="checkbox" \
-id="make_distance_histograms:suppress_html_output" checked \\></td></tr>\n'''
+exp_get_html_for_options='''<tr><th>colorby&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \\><span class="custom help">Comma-separated list categories metadata categories (column headers) </span></a></th><td><input class="string" type="text" id="make_distance_histograms:colorby" \\></td></tr>\n<tr><th>custom_axes&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \\><span class="custom help">This is the category from the metadata mapping file </span></a></th><td><select id="make_distance_histograms:custom_axes">\n<option>\n<option>head1\n<option>head2\n<option>head3\n</select></td></tr>\n<tr><th>background_color&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \\><span class="custom help">Background color to use in the plots.</span></a></th><td><select id="make_distance_histograms:background_color">\n<option selected>black\n<option>white\n</select></td></tr>\n<tr><th>ellipsoid_opacity&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \\><span class="custom help">Used only when plotting ellipsoids for jackknifed beta diversity (i.e. using a directory of coord files </span></a></th><td><input class="float" type="text" id="make_distance_histograms:ellipsoid_opacity" value="0.33" \\></td></tr>\n<tr><th>n_taxa_keep&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \\><span class="custom help">Used only when generating BiPlots. This is the number  to display. Use -1 to display all. </span></a></th><td><input class="int" type="text" id="make_distance_histograms:n_taxa_keep" value="10" \\></td></tr>\n<tr><th>suppress_html_output&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \\><span class="custom help">Suppress HTML output. </span></a></th><td><input class="check" type="checkbox" id="make_distance_histograms:suppress_html_output" \\></td></tr>\n<tr><th>suppress_html_output&nbsp;<a class="tooltip" href="#"><img src="./test_img.png" \\><span class="custom help">Suppress HTML output. </span></a></th><td><input class="check" type="checkbox" id="make_distance_histograms:suppress_html_output" checked \\></td></tr>\n'''
 
 exp_get_html=('<tr><th>input_script&nbsp;<a class="tooltip" href="#">'+\
               '<img src="./test_img.png" \\><span class="custom help">'+\
