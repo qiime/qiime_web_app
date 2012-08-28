@@ -67,13 +67,15 @@ def main():
         if seq_name==qual_seq_name:
             # get the SampleID
             samp_id='_'.join(seq_name.split()[0].split('_')[:-1])
-            
+            samp_filename='seqs_%s' % (str(samp_id))
             # open files for output
-            if not output_fps.has_key(str(samp_id)):
-                output_fps[str(samp_id)]=open(join(output_dir,'%s.fastq' % (str(samp_id))),'w')
+            if not output_fps.has_key(str(samp_filename)):
+                output_fps[str(samp_filename)] = open(join(output_dir,
+                                        '%s.fastq' % (str(samp_filename))),'w')
             
             # write out the fastq format for seqs
-            output_fps[str(samp_id)].write('@%s\n%s\n+\n%s\n' % (seq_name,seq,qual_seq))
+            output_fps[str(samp_filename)].write('@%s\n%s\n+\n%s\n' % \
+                                                 (seq_name,seq,qual_seq))
         else:
             print seq_name
     
