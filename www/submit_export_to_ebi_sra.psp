@@ -24,7 +24,7 @@ try:
     exportStudyToEBISRA(study_id, user_id)
 
     # Redirect to the home page for this study
-    # psp.redirect('fusebox.psp?page=select_study_task.psp')
+    psp.redirect('fusebox.psp?page=select_study_task.psp')
 except Exception, e:
     req.write(str(e))
 
