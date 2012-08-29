@@ -18,6 +18,8 @@ import hashlib
 from ftplib import FTP
 from subprocess import Popen, PIPE, STDOUT
 from os.path import split
+from os import chmod
+from sys import stdout
 
 class SequenceFile(object):
     def __init__(self, file_path, file_id, checksum):
@@ -97,6 +99,34 @@ class LiveEBISRARestServices(BaseRestServices):
             self.submission_file_path, self.study_file_path, self.sample_file_path, self.run_file_path, self.experiment_file_path)
             
         return curl_command
+
+    def send_curl_data(self, curl_output_fp, curl_command_fp):
+        curl_output = open(curl_output_fp, 'w')
+        run_list = ['{0}'.format(curl_command_fp)]
+        proc = Popen(run_list, shell=True, universal_newlines=True, stdout=PIPE)
+        complete = False
+        while True:
+            out = proc.stdout.read(1)
+            if out == '' and proc.poll() != None:
+                break
+            if out != '':
+                curl_output.write(out)
+        curl_output.close()
+
+        # Read the output file
+        curl_output = open(curl_output_fp, 'r')
+        curl_result = curl_output.read()
+        curl_output.close()
+        
+        status = ''
+        if 'success="true"' in curl_result:
+            status = 'VALID'
+        elif 'success="false"' in curl_result:
+            status = 'INVALID'
+        else:
+            status = 'UNKNOWN'
+        
+        return status, curl_result
                     
     def send_ftp_data(self, file_path, debug = False):
         """ Sends a file to the EBI "dropbox" (FTP account)
@@ -521,6 +551,9 @@ class LiveEBISRARestServices(BaseRestServices):
         curl_file = open(curl_file_path, 'w')
         curl_file.write(self.generate_curl_command())
         curl_file.close()
+        
+        # Fix permissions
+        chmod(curl_file_path, 0755)
         
         if len(self.errors) > 0:
             self.logger.log_entry('ERRORS FOUND:')

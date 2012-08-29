@@ -16,11 +16,8 @@ from optparse import make_option
 from qiime.util import parse_command_line_parameters
 from live_ebi_sra_rest_services import LiveEBISRARestServices
 from os.path import join
-from os import chmod
 from data_access_connections import data_access_factory
 from enums import ServerConfig
-from subprocess import Popen, PIPE, STDOUT
-from sys import stdout
 
 script_info = {}
 script_info['brief_description'] = "This script submits metadata to the EBI SRA based on a study_id"
@@ -63,36 +60,16 @@ def main():
 
     # Generate metadata and curl command
     live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
-    chmod(curl_command_fp, 0755)
 
-    # Call curl command
-    curl_output = open(curl_output_fp, 'w')
-    run_list = ['{0}'.format(curl_command_fp)]
-    proc = Popen(run_list, shell=True, universal_newlines=True, stdout=PIPE)
-    complete = False
-    while True:
-        out = proc.stdout.read(1)
-        if out == '' and proc.poll() != None:
-            break
-        if out != '':
-            curl_output.write(out)
-    curl_output.close()
-
-    # Read the output file
-    curl_output = open(curl_output_fp, 'r')
-    curl_result = curl_output.read()
-    curl_output.close()
-    if 'success="true"' in curl_result:
-        print 'VALID'
-    elif 'success="false"' in curl_result:
-        print 'INVALID'
+    # Check if valid, if so regenerate with ADD attribute and send again for reals
+    result, curl_result = live.send_curl_data(curl_output_fp, curl_command_fp):
+    if result == 'VALID':
+        print 'VALID, resending to EBI with ADD attribute.'
+        live.generate_metadata_files(debug = True, action_type = 'ADD')
+        result, curl_result = live.send_curl_data(curl_output_fp, curl_command_fp):
     else:
-        print 'Unknown result'
-
-    
-    # If success, then submit with 'ADD' or 'MODIFY'
-    # Read output
-    # If error then display to user. If success then proceed with actual submit
+        print 'INVALID'
+        print curl_result
 
 
 if __name__ == "__main__":
