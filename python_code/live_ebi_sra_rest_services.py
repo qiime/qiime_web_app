@@ -93,7 +93,7 @@ class LiveEBISRARestServices(BaseRestServices):
 
     def generate_curl_command(self):
         curl_command = 'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" -F "RUN=@{3}" -F"EXPERIMENT=@{4}" \
-            "https://www.ebi.ac.uk/ena/submit/drop-box/submit/?auth=ERA%20era-drop-215%20UquRb+8GCPOaT56b6wzR5pFeF8E%3D" > curl_output.xml'.format(\
+            "https://www.ebi.ac.uk/ena/submit/drop-box/submit/?auth=ERA%20era-drop-215%20UquRb+8GCPOaT56b6wzR5pFeF8E%3D"'.format(\
             self.submission_file_path, self.study_file_path, self.sample_file_path, self.run_file_path, self.experiment_file_path)
             
         return curl_command
