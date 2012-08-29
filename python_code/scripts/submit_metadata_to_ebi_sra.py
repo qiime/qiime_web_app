@@ -15,7 +15,6 @@ __status__ = "Development"
 from optparse import make_option
 from qiime.util import parse_command_line_parameters
 from live_ebi_sra_rest_services import LiveEBISRARestServices
-from run_submit_metadata_to_ebi_sra import submit_metadata_for_study
 from os.path import join
 
 script_info = {}
