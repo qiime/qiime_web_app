@@ -15,6 +15,7 @@ __status__ = "Development"
 from optparse import make_option
 from qiime.util import parse_command_line_parameters
 from live_ebi_sra_rest_services import LiveEBISRARestServices
+
 from os.path import join
 
 script_info = {}
@@ -44,19 +45,23 @@ def main():
     live = LiveEBISRARestServices(study_id, web_app_user_id, root_dir, debug)
     live.host_name = ''
     
-    # Always submit a validate command first
-    live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
+    # Send the sequence files first - required for metadata to validate. If files have already been
+    # sent then skip this step.
+    statement = 'select ebi_files_sent from study where study_id = {0}'.format(study_id)
+    ebi_files_sent = data_access.dynamicMetadataSelect(statement).fetchone()[0]
+    if ebi_files_sent != 1:
+        live.submit_files(debug = True)
     
-    # Read the output file
+    # Submit the metadata with the VALIDATE attribute first. Performs no other actions
+    # on EBI server other than ensuring that XML validates. 
+    live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
     curl_output = open(curl_output_fp, 'r')
     curl_output.close()
     
     # If success, then submit with 'ADD' or 'MODIFY'
     # Read output
     # If error then display to user. If success then proceed with actual submit
-    
-    # If this is a first-time submission ('ADD' is action_type), send the files
-    #live.submit_files(debug = True)
+
 
 if __name__ == "__main__":
     main()
