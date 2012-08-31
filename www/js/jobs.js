@@ -34,6 +34,7 @@ function GetXmlHttpObject()
     }
     return null;
 }
+
 function checkQiimeJobLoadStatus()
 {
     // check if browser can perform xmlhttp
@@ -51,7 +52,14 @@ function checkQiimeJobLoadStatus()
     {
         if (xmlhttp.readyState==4)
         {
-            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            try
+            {
+                document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            }
+            catch(e)
+            {
+                // Do nothing
+            }
         }
     }
     
@@ -77,7 +85,14 @@ function checkQiimeJobStatus()
     {
         if (xmlhttp.readyState==4)
         {
-            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            try
+            {
+                document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            }
+            catch(e)
+            {
+                // Do nothing
+            }
         }
     }
     
@@ -105,7 +120,14 @@ function checkQiimeMetaAnalysisStatus()
     {
         if (xmlhttp.readyState==4)
         {
-            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            try
+            {
+                document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            }
+            catch(e)
+            {
+                // Do nothing
+            }
         }
     }
     
@@ -132,7 +154,14 @@ function checkMGRASTJobStatus()
     {
         if (xmlhttp.readyState==4)
         {
-            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            try
+            {
+                document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            }
+            catch(e)
+            {
+                // Do nothing
+            }
         }
     }
     
@@ -158,7 +187,14 @@ function checkEBISRAJobStatus()
     {
         if (xmlhttp.readyState==4)
         {
-            document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            try
+            {
+                document.getElementById(div_name).innerHTML = xmlhttp.responseText;
+            }
+            catch(e)
+            {
+                // Do nothing
+            }
         }
     }
     
@@ -185,7 +221,14 @@ function checkMetaAnalysisStatus()
  {
      if (xmlhttp2.readyState==4)
      {
-         document.getElementById("meta_status_div").innerHTML = xmlhttp2.responseText;
+         try
+         {
+             document.getElementById("meta_status_div").innerHTML = xmlhttp2.responseText;
+         }
+         catch(e)
+         {
+             // Do nothing
+         }
      }
  }
 
@@ -202,3 +245,14 @@ function VerifyDeletion(input_url)
         window.location=input_url
 
 }
+
+function checkAllStudyJobs()
+{
+    // Looks a little strange... but not all divs refererenced in the below functions
+    // may exist at any time. We still want to run all of them because setting individual
+    // timers causes many of them to hang.
+    setTimeout(checkQiimeJobStatus, 0);
+    setTimeout(checkQiimeJobLoadStatus, 1000);
+    setTimeout(checkEBISRAJobStatus, 2000);
+}
+

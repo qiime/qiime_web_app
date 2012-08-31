@@ -198,10 +198,6 @@ if portal_type in ['qiime', 'emp']:
                 <div id="qiime_status_div">
                     Checking status...
                 </div>
-                <script type="text/javascript">
-                    //checkQiimeJobStatus();
-                    var timer = setInterval( "checkQiimeJobStatus()", 2000 );
-                </script>
             </ul>
             </li>
             <br/>
@@ -267,10 +263,6 @@ if portal_type in ['qiime', 'emp']:
                 <div id="qiime_load_status_div">
                     Checking status...
                 </div>
-                <script type="text/javascript">
-                    //checkQiimeJobStatus();
-                    var timer = setInterval( "checkQiimeJobLoadStatus()", 3000 );
-                </script>
             </ul>
             <br/>
 <%
@@ -293,10 +285,6 @@ if len(jobs) > 0 and is_admin == 1:
                 <div id="ebi_sra_statis_div">
                     Checking status...
                 </div>
-                <script type="text/javascript">
-                    //checkEBISRAJobStatus();
-                    //var timer = setInterval( "checkEBISRAJobStatus();", 6000 );
-                </script>
             </ul>
         </li>
 
@@ -403,4 +391,8 @@ if portal_type == 'emp' and is_admin == 1:
 <script type="text/javascript">
 	//toggleSection('sff_div');
 	//toggleSection('sample_div');
+    
+    // Check all job status elements for this page
+    checkAllStudyJobs();
+    var timer = setInterval( "checkAllStudyJobs();", 5000 );
 </script>
