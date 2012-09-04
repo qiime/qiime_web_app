@@ -13,7 +13,8 @@ __status__ = "Development"
  
 
 from cogent.util.unit_test import TestCase, main
-from generate_mapping_and_otu_table import combine_map_header_cols
+from generate_mapping_and_otu_table import (combine_map_header_cols,
+                                           get_mapping_data)
 
 class TopLevelTests(TestCase):
     """Tests of top-level functions"""
@@ -37,6 +38,10 @@ class TopLevelTests(TestCase):
         
         self.assertEqual(obs,exp)
         
+    def test_get_mapping_data(self):
+        """ get_mapping_data: this gets the metadata from DB """
+        
+        {'SAMPLE####SEP####COUNTRY####STUDIES####613': '####ALL####'}
         
 if __name__ == "__main__":
     main()

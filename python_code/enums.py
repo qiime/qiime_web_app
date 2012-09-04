@@ -3,10 +3,10 @@
 from __future__ import division
 
 __author__ = "Doug Wendel"
-__copyright__ = "Copyright 2011, The QIIME-webdev project"
+__copyright__ = "Copyright 2012, The QIIME-webdev project"
 __credits__ = [" Doug Wendel","Jesse Stombaugh"]
 __license__ = "GPL"
-__version__ = "1.2.1-dev"
+__version__ = "1.0.0-dev"
 __maintainer__ = "Jesse Stombaugh"
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
@@ -47,15 +47,18 @@ class ServerConfig:
         production or development server
     """
     
+    # define the filepath to the server configuration
     config_fp='/home/%s/qiime_web.conf' % getpass.getuser()
     
+    # convert text file into dictionary
     filefp=open(config_fp).read().split('\n')
     config_options={}
     for line in filefp:
         if line != '':
             key,val=line.strip().split('=')
             config_options[key]=val
-        
+    
+    # using eval is not a good thing to do
     data_access_type = eval(config_options['data_access_type'])
     home = config_options['home']
 
