@@ -34,7 +34,7 @@ mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
 ebi_study_accession = study_info['ebi_study_accession']
 
-approved_qiime_submitters = [12428,12169,12171]
+approved_qiime_submitters = [12428,12169,12171,12768,12782]
 %>
 
     <h3>Selected Study: <%=study_name%></h3>
@@ -205,30 +205,18 @@ if portal_type in ['qiime', 'emp']:
     elif metadata_complete == 'y' and sff_complete == 'y' and web_app_user_id in approved_qiime_submitters:
         # Indent
 %>
+            <!--
             <li>
             <form id="submit_job_to_qiime" action="submit_job_to_qiime.psp" method="post">
                 <input type="hidden" name="process_only" id="process_only" value="False">
                 <input type="hidden" name="submit_to_test_db" id="submit_to_test_db"  value="False">
                 <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
                 Submit job to Qiime</a>
-                <!--Submit job to Qiime (currently disabled)-->
-            <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
-            
-<%
-        if is_admin == 1:
-            #
-%>
-            </li><li>
-            <form id="submit_job_to_qiime2" action="submit_job_to_qiime.psp" method="post">
-                <input type="hidden" name="process_only" id="process_only" value="False">
-                <input type="hidden" name="submit_to_test_db" id="submit_to_test_db" value="True">
-                <a href="" onclick="document.forms['submit_job_to_qiime2'].submit(); return false;">
-                Submit job to Qiime (Test DB)</a>
-                <!--Submit job to Qiime (currently disabled)-->
-            <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
-            </form>
-            </li><li>
+            </li>
+            -->
+
+            <li>
             <form id="submit_job_to_qiime3" action="submit_job_to_qiime.psp" method="post">
                 <input type="hidden" name="process_only" id="process_only" value="True">
                 <input type="hidden" name="submit_to_test_db" id="submit_to_test_db" value="False">
@@ -237,12 +225,10 @@ if portal_type in ['qiime', 'emp']:
                 <!--Submit job to Qiime (currently disabled)-->
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
+            </li>
 <%
         # De-indent
-%>
-        </li>
 
-<%  
     elif metadata_complete == 'y' and sff_complete == 'y' and  web_app_user_id not in approved_qiime_submitters:
     
         req.write("<br><font color='red'>Thank you for uploading your files, please email Gail Ackermann (<a href='mailto:gail.ackermann@colorado.edu?cc=jesse.stombaugh@colorado.edu,wendel@colorado.edu&subject=%s study uploaded'>email</a>) to verify and process your uploaded data, so it can be submitted to the database.</font><br>" % (study_name))
@@ -255,7 +241,8 @@ if portal_type in ['qiime', 'emp']:
 <%
     if is_admin == 1:
         jobs2 = data_access.getJobInfo(study_id, 12)
-        # indent
+        if len(jobs) > 0:
+            # indent
 %>
             <li>
             Queued Data to Load:
@@ -266,7 +253,7 @@ if portal_type in ['qiime', 'emp']:
             </ul>
             <br/>
 <%
-    # End if
+        # End if
 %>
         </li>
         
