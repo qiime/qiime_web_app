@@ -71,6 +71,7 @@ class BaseRestServices(object):
         
     def clean_whitespace(self, text):
         return ' '.join(text.split())
+
         
     def clean_text_value(self, value):
         # Order matters! Leave & as the first replace
