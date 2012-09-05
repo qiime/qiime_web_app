@@ -400,7 +400,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         experiment_file.write('               <LIBRARY_LAYOUT>\n')
                         experiment_file.write('                   <SINGLE/>\n')
                         experiment_file.write('               </LIBRARY_LAYOUT>\n')
-                        experiment_file.write('               <LIBRARY_CONSTRUCTION_PROTOCOL>{0}</LIBRARY_CONSTRUCTION_PROTOCOL>\n'.format(prep_dict['library_construction_protocol']))
+                        experiment_file.write('               <LIBRARY_CONSTRUCTION_PROTOCOL>{0}</LIBRARY_CONSTRUCTION_PROTOCOL>\n'.format(self.clean_text_value(prep_dict['library_construction_protocol'])))
                         experiment_file.write('           </LIBRARY_DESCRIPTOR>\n')
                         
                         # Spot descriptor required for LS454

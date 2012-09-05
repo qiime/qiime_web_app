@@ -71,6 +71,13 @@ class BaseRestServices(object):
 		
 	def clean_whitespace(self, text):
 		return ' '.join(text.split())
+		
+    def clean_text_value(self, value):
+        # Order matters! Leave & as the first replace
+        value = str(value).replace('&', '&amp;')
+        value = value.replace('<', '&lt;')
+        value = value.replace('>', '&gt;')
+        return value
 
 	def controlled_vocab_lookup(self, controlled_vocab, search_term):
 		""" Performs a semi-fuzzy search for a term match in specified vocabulary
