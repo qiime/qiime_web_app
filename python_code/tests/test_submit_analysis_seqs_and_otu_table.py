@@ -17,12 +17,12 @@ import tempfile
 import shutil
 from shutil import rmtree,copy
 from glob import glob
-from os.path import join, exists, getsize, split, splitext,abspath, dirname
+from os.path import join, exists, getsize, split, splitext, abspath, dirname
 from os import makedirs,environ,removedirs,remove
 from cogent.util.unit_test import TestCase, main
 from cogent.util.misc import remove_files
 from cogent.app.util import get_tmp_filename, ApplicationNotFoundError
-from qiime.util import load_qiime_config,get_qiime_project_dir
+from qiime.util import load_qiime_config,get_qiime_project_dir,create_dir
 from qiime.parse import parse_qiime_parameters
 from load_analysis_seqs_through_otu_table import (submit_sff_and_split_lib,
                                               submit_illumina_and_split_lib,
@@ -41,92 +41,90 @@ from enums import ServerConfig,DataAccessType
 from run_chain_pick_otus import run_chain_pick_otus
 data_access = data_access_factory(DataAccessType.qiime_test)
 
-## The test case timing code included in this file is adapted from
-## recipes provided at:
-##  http://code.activestate.com/recipes/534115-function-timeout/
-##  http://stackoverflow.com/questions/492519/timeout-on-a-python-function-call
-
-class TimeExceededError(Exception):
-    pass
-
-allowed_seconds_per_test = 600
-
-def timeout(signum, frame):
-    raise TimeExceededError,\
-     "Test failed to run in allowed time (%d seconds)."\
-      % allowed_seconds_per_test
     
 class WorkflowTests(TestCase):
     
     def setUp(self):
-        """ """
+        """ set up the default values """
         
         self.qiime_config = load_qiime_config()
         self.dirs_to_remove = []
         self.files_to_remove = []
         
-        #this is specific to the web-apps only
+        # define study_id
+        self.study_id=-1
+        
+        # create output directory
+        self.wf_out="/%s/tmp" % environ['HOME']
+        create_dir(self.wf_out)
+        
+        # this is specific to the web-apps only
         test_dir = abspath(dirname(__file__))
         sff_original_fp = os.path.join(test_dir, 'support_files', \
                                         'Fasting_subset.sff')
         
-        self.sff_fp = os.path.join('/%s/' % environ['HOME'], 
-                                   'Fasting_subset.sff')
-        self.files_to_remove.append(self.sff_fp)
+        # move SFF into place but also make sure to remove it
+        self.sff_fp = os.path.join(environ['HOME'], 'Fasting_subset.sff')
         copy(sff_original_fp, self.sff_fp)
+        self.files_to_remove.append(self.sff_fp)
         
+        # define illumina filepaths
         self.illumina_fps = [os.path.join(test_dir, 'support_files', \
-                                        's_8_1_sequence_100_records.txt'),
+                                        's_8_1_sequence_100_records.txt.gz'),
                              os.path.join(test_dir, 'support_files', \
-                                        's_8_2_sequence_100_records.txt')]
+                                        's_8_2_sequence_100_records.txt.gz')]
         self.illumina_map_fp = os.path.join(test_dir, 'support_files', \
                                         's8_map_incomplete.txt')
-    
+        
+        # define fasta filepaths
         self.fasta_fps=[os.path.join(test_dir,'support_files',
                                    'test_split_lib_seqs.fasta')]
         self.fasta_map_fp = os.path.join(test_dir, 'support_files', \
                                         'fasta_mapping_file.txt')
-
-        tmp_dir = "/%s/test_wf" % environ['HOME']
-        self.dirs_to_remove.append(tmp_dir)
         
-        #self.qiime_config['temp_dir'] or '/tmp/'
-        if not exists(tmp_dir):
-            makedirs(tmp_dir)
-            # if test creates the temp dir, also remove it
-            #self.dirs_to_remove.append(tmp_dir)
-            
-        self.wf_out="/%s/test_processed_data" % environ['HOME']
-        #print self.wf_out
-        self.dirs_to_remove.append(self.wf_out)
+        # create the gg_97_otus folder
         self.gg_out=os.path.join(self.wf_out,'gg_97_otus')
-        if not exists(self.gg_out):
-            makedirs(self.gg_out)
-            #self.dirs_to_remove.append(self.gg_out)
-            
-        self.fasting_mapping_fp = get_tmp_filename(tmp_dir=tmp_dir,
+        create_dir(self.gg_out)
+        self.dirs_to_remove.append(self.gg_out)
+        
+        # create the split_libraries folder
+        self.split_lib_out=os.path.join(self.wf_out,'split_libraries')
+        create_dir(self.split_lib_out)
+        self.dirs_to_remove.append(self.split_lib_out)
+        
+        # write SFF/Fasta mapping files
+        self.fasting_mapping_fp = get_tmp_filename(tmp_dir='/tmp/',
          prefix='qiime_wf_mapping',suffix='.txt')
         fasting_mapping_f = open(self.fasting_mapping_fp,'w')
         fasting_mapping_f.write(fasting_map)
         fasting_mapping_f.close()
         self.files_to_remove.append(self.fasting_mapping_fp)
         
-        self.params = parse_qiime_parameters(qiime_parameters_f)
-
-        signal.signal(signal.SIGALRM, timeout)
-        # set the 'alarm' to go off in allowed_seconds seconds
-        signal.alarm(allowed_seconds_per_test)
+        # remove the default log file
+        self.files_to_remove.append(join(self.wf_out,'log.txt'))
         
-    
+        # parse params file
+        self.params = parse_qiime_parameters(qiime_parameters_f)
+        
+        
     def tearDown(self):
-        """ """
+        '''This function removes the generated files'''
+
         map(remove,self.files_to_remove)
-        for dirpath in self.dirs_to_remove:
-            rmtree(dirpath)
-    
+        map(rmtree,self.dirs_to_remove)
+        
     def test_submit_processed_data_to_db(self):
         """run_process_sff_through_pick_otus runs without error"""
         
+        self.files_to_remove.append(join(self.wf_out,'Fasting_subset.fna'))
+        self.files_to_remove.append(join(self.wf_out,'Fasting_subset.qual'))
+        self.files_to_remove.append(join(self.wf_out,'Fasting_subset.txt'))
+        
+        # remove generated mapping file
+        moved_mapping_file=join(self.wf_out,split(self.fasting_mapping_fp)[-1])
+        self.files_to_remove.append(moved_mapping_file)
+        
+        # process the sequence data first before loading
         run_process_sff_through_split_lib(0,'Fasting_subset',
           sff_input_fp=self.sff_fp, 
           mapping_fp=self.fasting_mapping_fp,
@@ -137,11 +135,15 @@ class WorkflowTests(TestCase):
           write_to_all_fasta=False,
           status_update_callback=no_status_updates)
         
+        # get the file basename
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
+        
+        # get key filepaths
         otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
         split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
                                  'seqs.fna')
-                                 
+        
+        # run chained OTU-picking
         run_chain_pick_otus(split_lib_seqs_fp,
                             output_dir=self.gg_out,
                             command_handler=call_commands_serially,
@@ -152,15 +154,20 @@ class WorkflowTests(TestCase):
         input_fname = splitext(split(self.sff_fp)[-1])[0]
         db_input_fp = join(self.wf_out,input_fname)
 
+        # submit the data
         analysis_id, input_dir, seq_run_id, split_lib_input_md5sum = \
-            submit_sff_and_split_lib(data_access,db_input_fp+'.fna',0)
-                                                
+            submit_sff_and_split_lib(data_access,db_input_fp+'.fna',
+                                     self.study_id)
+        # load OTU picking
         load_otu_mapping(data_access,self.wf_out,analysis_id)
-                                                
+        
+        # load split-lib sequences
         split_library_id=load_split_lib_sequences(data_access,input_dir,
                                                 analysis_id, seq_run_id,
                                                 split_lib_input_md5sum)
-                                                
+        
+        ### TEST raw sequence data load
+        # expected results
         print 'Analysis ID is: %s' % str(analysis_id)
         print 'Testing the FLOW_DATA loading!'
         exp_sff_md5='314f4000857668d45a413d2e94a755fc'
@@ -168,8 +175,8 @@ class WorkflowTests(TestCase):
         exp_read_id='FLP3FBN01ELBSX'
         exp_instr_code='GS FLX'
         exp_sff_fname='Fasting_subset'
-       
-       
+        
+        # define the query to pull data from DB
         con = data_access.getSFFDatabaseConnection()
         cur = con.cursor()
         seq_run_info="""select j.seq_run_id,f.sff_filename,f.number_of_reads,f.md5_checksum,
@@ -182,44 +189,25 @@ class WorkflowTests(TestCase):
         seq_run_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_1\'" % (str(analysis_id))
         results = cur.execute(seq_run_info)
         
-        #print 'Calling getTestFlowData...'
+        # get observed values
         for data in results:
             obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
             obs_instrument_code = data
         
+        # check results
         self.assertEqual(obs_sff_filename,exp_sff_fname)
         self.assertEqual(obs_num_of_reads,exp_num_seqs)
         self.assertEqual(obs_sff_md5,exp_sff_md5)
         self.assertEqual(obs_instrument_code,exp_instr_code)
         
-        '''
-        print 'After getTestFlowData...'
-        #print 'Calling getTestFlowData...' 
-        obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
-        obs_instrument_code,obs_read_id,obs_read_seq,obs_flow_string,\
-        obs_qual_string = data_access.getTestFlowData(True,analysis_id,
-                                                            'test.PCx634_1')
-
-        #print 'After getTestFlowData...'  
-        self.assertEqual(obs_sff_filename,exp_sff_fname)    
-        self.assertEqual(obs_num_of_reads,exp_num_seqs)            
-        self.assertEqual(obs_sff_md5,exp_sff_md5)
-        self.assertEqual(obs_instrument_code,exp_instr_code)
-        self.assertEqual(obs_read_id,exp_read_id)
-        self.assertEqual(obs_read_seq,exp_read_seq)
-        self.assertEqual(str(obs_flow_string),exp_flow_string)
-        self.assertEqual(str(obs_qual_string),exp_qual_string)
-        
-        print 'Done testing Flow_Data!'
-        
-        '''
-        
+        # TEST split-library data load
+        # expected results
         print 'Testing Split-Library Data'
         exp_split_lib_seq='CTGGGCCGTGTCTCAGTCCCAATGTGGCCGTTTACCCTCTCAGGCCGGCTACGCATCATCGCCTTGGTGGGCCGTTACCTCACCAACTAGCTAATGCGCCGCAGGTCCATCCATGTTCACGCCTTGATGGGCGCTTTAATATACTGAGCATGCGCTCTGTATACCTATCCGGTTTTAGCTACCGTTTCCAGCAGTTATCCCGGACACATGGGCTAGG'
         exp_split_lib_md5='2c67e0acf745bef73e26c36f0b3bd00a'
         exp_split_lib_seq_md5='008918f7469f8e33d5dd6e01075d5194'
 
-        
+        # define the query to pull data from DB
         split_lib_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,l.command,l.md5_checksum,
               s.sequence_string,s.md5_checksum
               from analysis j
@@ -227,34 +215,25 @@ class WorkflowTests(TestCase):
               inner join ssu_sequence s on slrm.ssu_sequence_id=s.ssu_sequence_id
               inner join split_library_run l on j.split_library_run_id=l.split_library_run_id"""
         split_lib_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_1\'" % (str(analysis_id))
-    
         results = cur.execute(split_lib_info)
         
-        #print 'Calling getTestFlowData...'
+        # get observed values
         for data in results:
             obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
             obs_split_lib_seq,obs_split_lib_seq_md5 = data
-                                                            
+        
+        # check results                                            
         self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
         self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
         self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
         
-        '''
-        obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
-        obs_split_lib_seq,obs_split_lib_seq_md5 = \
-                    data_access.getTestSplitLibData(True,analysis_id,
-                                                            'test.PCx634_1')
-                                                            
-        self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
-        self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
-        self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
-        '''
+        # TEST OTU-table data load
+        # expected results
         print 'Testing OTU Data!'
-        
-        #exp_prokmsa=83669
         exp_otu_md5='0b8edcf8a4275730001877496b41cf55'
         exp_threshold=97
         
+        # define the query to pull data from DB
         otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,ot.reference_id,gr.ssu_sequence_id,
             ot.reference_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
             p.threshold
@@ -264,25 +243,20 @@ class WorkflowTests(TestCase):
             inner join gg_plus_denovo_reference gr on ot.reference_id=gr.reference_id
             inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
         otu_info+=" where j.analysis_id=%s and slrm.sequence_name=\'test.PCx634_2\'" % (str(analysis_id))
-    
         results = cur.execute(otu_info)
         
+        # get observed values
         for data in results:
             obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
             obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
             obs_otu_md5,obs_threshold = data
         
-        '''
-        obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
-        obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
-        obs_otu_md5,obs_threshold = \
-                    data_access.getTestOTUData(True,analysis_id,
-                                                            'test.PCx634_2')
-        '''
-        #self.assertEqual(obs_prokmsa,exp_prokmsa)
+        # check results  
         self.assertEqual(obs_otu_md5,exp_otu_md5)
         self.assertEqual(obs_threshold,exp_threshold)
         
+        # TEST OTU-failures data load
+        # define the query to pull data from DB
         otu_fail_info="""select distinct j.seq_run_id,f.ssu_sequence_id
               from analysis j
               inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
@@ -291,18 +265,15 @@ class WorkflowTests(TestCase):
     
         results = cur.execute(otu_fail_info)
         
+        # get observed values
         for data in results:
             obs_seq_run_id,obs_ssu_id= data
         
-        '''
-        obs_seq_run_id,obs_ssu_id = \
-                    data_access.getTestOTUFailureData(True,analysis_id,
-                                                            'test.PCx634_14')
-        '''
-        
+        # check results  
         self.failIfEqual(obs_seq_run_id,0)
         self.failIfEqual(obs_ssu_id,0)
         
+        # delete the loaded data
         valid=data_access.deleteTestAnalysis(True,analysis_id)
         if not valid:
             print "Error: Could not delete data from DB!"
@@ -311,6 +282,9 @@ class WorkflowTests(TestCase):
     def test_submit_processed_data_to_db_illumina(self):
         """run_process_illumina_through_pick_otus runs without error"""
         
+        self.files_to_remove.append(join(self.wf_out,'s8_map_incomplete.txt'))
+        
+        # process the sequence data first before loading
         run_process_illumina_through_split_lib(0,'Fasting_subset',\
          input_fp=','.join(self.illumina_fps),\
          mapping_fp=self.illumina_map_fp,\
@@ -321,12 +295,13 @@ class WorkflowTests(TestCase):
          write_to_all_fasta=False,\
          status_update_callback=no_status_updates)
         
-        
+        # get the filepaths of key files
         input_file_basename = splitext(split(self.sff_fp)[1])[0]
         otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
         split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
                                  'seqs.fna')
-                                 
+        
+        # run chained OTU-picking
         run_chain_pick_otus(split_lib_seqs_fp,
                             output_dir=self.gg_out,
                             command_handler=call_commands_serially,
@@ -337,25 +312,30 @@ class WorkflowTests(TestCase):
         input_fname = splitext(split(self.sff_fp)[-1])[0]
         db_input_fp = join(self.wf_out,input_fname)
         
-        
+        # load the study
         analysis_id, input_dir, seq_run_id, split_lib_input_md5sum = \
             submit_illumina_and_split_lib(data_access,
                                           ','.join(self.illumina_fps),
-                                          0, self.wf_out)
-                                          
+                                          self.study_id, self.wf_out)
+        
+        # load the OTU table data
         load_otu_mapping(data_access,self.wf_out,analysis_id)
 
+        # load the split-library sequence data
         split_library_id=load_split_lib_sequences(data_access,input_dir,
                                               analysis_id, seq_run_id,
                                               split_lib_input_md5sum)
         
+        ### TEST raw sequence data load
+        # get expected results 
         print 'Analysis ID is: %s' % str(analysis_id)
         print 'Testing the SEQ_RUN loading!'
-        exp_sff_md5=['2b14442f7df4d06ac1e241816bf3ce4a','53181ca3427e5b4ce28a6b13cb3b98dd']
+        exp_fastq_md5=['6e3c114cec9bdc8708aaa9077fd71aa6','685cac31968b74c5d99b294ac29e9fd9']
         exp_num_seqs=100
-       
         exp_instr_code='ILLUMINA'
-        exp_sff_fname=['s_8_2_sequence_100_records','s_8_1_sequence_100_records']
+        exp_fastq_fname=['s_8_2_sequence_100_records.txt','s_8_1_sequence_100_records.txt']
+        
+        # define the query to pull data from DB
         con = data_access.getSFFDatabaseConnection()
         cur = con.cursor()
         seq_run_info="""select j.seq_run_id,f.sff_filename,f.number_of_reads,f.md5_checksum,
@@ -368,25 +348,27 @@ class WorkflowTests(TestCase):
         seq_run_info+=" where j.analysis_id=%s and slrm.sample_name=\'HKE08Aug07\'" % (str(analysis_id))
         results = cur.execute(seq_run_info)
         
-        #print 'Calling getTestFlowData...'
+        # get observed values
         for data in results:
-            obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
+            obs_seq_run_id,obs_fastq_filename,obs_num_of_reads,obs_fastq_md5,\
             obs_instrument_code = data
             
-        print 'After getTestSeqRunData...'
-        
-        self.assertTrue(obs_sff_filename in exp_sff_fname)
+        # check results
+        self.assertTrue(obs_fastq_filename in exp_fastq_fname)
         self.assertEqual(obs_num_of_reads,exp_num_seqs)
-        self.assertTrue(obs_sff_md5 in exp_sff_md5)
+        self.assertTrue(obs_fastq_md5 in exp_fastq_md5)
         self.assertEqual(obs_instrument_code,exp_instr_code)
         
         print 'Done testing SEQ_RUN!'
         
+        # TEST split-library sequence data
+        # get expected results 
         print 'Testing Split-Library Data'
         exp_split_lib_seq='TACGAAGGGAGCTAGCGTTATTCGGAATGATTGGGTGTAAAGAGTTTGTAGATTGCAAAATTTTTGTTATTAGTAAAAAATTGAATTTATTATTTAAAGATGCTTTTAATACAATTTTGCTTGAGTATAGTAGAGGAAAAT'
-        exp_split_lib_md5='1443e25614090e660b003c5774ed4cba'
+        exp_split_lib_md5='700a9b08947589cfdd96525c97f9bcb4'
         exp_split_lib_seq_md5='7e8278ef1f5561d997cad48eabe40847'
-
+        
+        # define the query to pull data from DB
         split_lib_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,l.command,l.md5_checksum,
               s.sequence_string,s.md5_checksum
               from analysis j
@@ -394,24 +376,25 @@ class WorkflowTests(TestCase):
               inner join ssu_sequence s on slrm.ssu_sequence_id=s.ssu_sequence_id
               inner join split_library_run l on j.split_library_run_id=l.split_library_run_id"""
         split_lib_info+=" where j.analysis_id=%s and slrm.sample_name=\'HKE08Aug07\'" % (str(analysis_id))
-    
         results = cur.execute(split_lib_info)
         
-        #print 'Calling getTestFlowData...'
+        # get observed values
         for data in results:
             obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
             obs_split_lib_seq,obs_split_lib_seq_md5 = data
-                                                            
+        
+        # check results                                                    
         self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
         self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
         self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
         
+        ### TEST OTU table load
+        # get expected results
         print 'Testing OTU Data!'
-        
-        #exp_prokmsa=97550
         exp_otu_md5='6bc1d4693d57ddfa6abe9bd94103476d'
         exp_threshold=97
         
+        # define the query to pull data from DB
         otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,ot.reference_id,gr.ssu_sequence_id,
             ot.reference_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
             p.threshold
@@ -421,182 +404,199 @@ class WorkflowTests(TestCase):
             inner join gg_plus_denovo_reference gr on ot.reference_id=gr.reference_id
             inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
         otu_info+=" where j.analysis_id=%s and slrm.sample_name=\'SSBH05July07\'" % (str(analysis_id))
-    
         results = cur.execute(otu_info)
         
+        # get observed values
         for data in results:
             obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
             obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
             obs_otu_md5,obs_threshold = data
         
-        #self.assertEqual(obs_prokmsa,exp_prokmsa)
+        # check results 
         self.assertEqual(obs_otu_md5,exp_otu_md5)
         self.assertEqual(obs_threshold,exp_threshold)
         
+        ### TEST OTU failures load
+        # define the query to pull data from DB
         otu_fail_info="""select distinct j.seq_run_id,f.ssu_sequence_id
               from analysis j
               inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
               inner join otu_picking_failures f on slrm.ssu_sequence_id=f.ssu_sequence_id"""
         otu_fail_info+=" where j.analysis_id=%s and slrm.sample_name=\'HKE08Aug07\'" % (str(analysis_id))
-    
         results = cur.execute(otu_fail_info)
         
+        # get observed values
         for data in results:
             obs_seq_run_id,obs_ssu_id= data
         
-        
+        # check results 
         self.failIfEqual(obs_seq_run_id,0)
         self.failIfEqual(obs_ssu_id,0)
-
+        
+        # delete loaded study data
         valid=data_access.deleteTestAnalysis(True,analysis_id)
         if not valid:
             print "Error: Could not delete data from DB!"
     
-    #
+    
     def test_submit_processed_data_to_db_fasta(self):
-           """submit_processed_data_to_db_fasta runs without error"""
+        """submit_processed_data_to_db_fasta runs without error"""
+          
+        self.files_to_remove.append(join(self.wf_out,'fasta_mapping_file.txt'))
+        # process the sequence data first before loading
+        run_process_fasta_through_split_lib(0,'Fasting_subset',\
+                                input_fp=','.join(self.fasta_fps),\
+                                mapping_fp=self.fasta_map_fp,\
+                                output_dir=self.wf_out, \
+                                command_handler=call_commands_serially,\
+                                params=self.params,\
+                                qiime_config=self.qiime_config,\
+                                write_to_all_fasta=False,\
+                                status_update_callback=no_status_updates)
 
-           run_process_fasta_through_split_lib(0,'Fasting_subset',\
-            input_fp=','.join(self.fasta_fps),\
-            mapping_fp=self.fasta_map_fp,\
-            output_dir=self.wf_out, \
-            command_handler=call_commands_serially,\
-            params=self.params,\
-            qiime_config=self.qiime_config,\
-            write_to_all_fasta=False,\
-            status_update_callback=no_status_updates)
-
-
-           input_file_basename = splitext(split(self.sff_fp)[1])[0]
-           otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
-           split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
-                                    'seqs.fna')
-
-           run_chain_pick_otus(split_lib_seqs_fp,
-                               output_dir=self.gg_out,
-                               command_handler=call_commands_serially,
-                               params=self.params,
-                               qiime_config=self.qiime_config,parallel=True,
-                               status_update_callback=no_status_updates)
-
-           input_fname = splitext(split(self.sff_fp)[-1])[0]
-           db_input_fp = join(self.wf_out,input_fname)
-
-
-           analysis_id, input_dir, seq_run_id, split_lib_input_md5sum = \
-                submit_fasta_and_split_lib(data_access,
-                                           ','.join(self.fasta_fps),
-                                           0, self.wf_out)
-           
-           load_otu_mapping(data_access,self.wf_out,analysis_id)
-
-           split_library_id=load_split_lib_sequences(data_access,input_dir,
-                                                   analysis_id, seq_run_id,
-                                                   split_lib_input_md5sum)
-
-           print 'Analysis ID is: %s' % str(analysis_id)
-           print 'Testing the SEQ_RUN loading!'
-           exp_sff_md5=['412eee0be168a285415d9e4db3dbbf2f']
-           exp_num_seqs=22
-
-           exp_instr_code='FASTA'
-           exp_sff_fname=['test_split_lib_seqs']
-           con = data_access.getSFFDatabaseConnection()
-           cur = con.cursor()
-           seq_run_info="""select j.seq_run_id,f.sff_filename,f.number_of_reads,f.md5_checksum,
-                 h.instrument_code
-                 from analysis j
-                 inner join seq_run_to_sff_file s on j.seq_run_id=s.seq_run_id
-                 inner join sff_file f on f.sff_file_id=s.sff_file_id
-                 inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
-                 inner join sequencing_run h on h.seq_run_id=s.seq_run_id"""
-           seq_run_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx354.281526\'" % (str(analysis_id))
-           results = cur.execute(seq_run_info)
-
-           #print 'Calling getTestFlowData...'
-           for data in results:
-               obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
-               obs_instrument_code = data
-
-           print 'After getTestSeqRunData...'
-
-           self.assertTrue(obs_sff_filename in exp_sff_fname)
-           self.assertEqual(obs_num_of_reads,exp_num_seqs)
-           self.assertTrue(obs_sff_md5 in exp_sff_md5)
-           self.assertEqual(obs_instrument_code,exp_instr_code)
-
-           print 'Done testing SEQ_RUN!'
-
-           print 'Testing Split-Library Data'
-           exp_split_lib_seq='TTGGGCCGTGTCTCAGTCCCAATGTGGCCGATCAGTCTCTTAACTCGGCTATGCATCATTGCCTTGGTAAGCCGTTACCTTACCAACTAGCTAATGCACCGCAGGTCCATCCAAGAGTGATAGCAGAACCATCTTTCAAACTCTAGACATGCGTCTAGTGTTGTTATCCGGTATTAGCATCTGTTTCCAGGTGTTATCCCAGTCTCTTGGG'
-           exp_split_lib_md5='412eee0be168a285415d9e4db3dbbf2f'
-           exp_split_lib_seq_md5='59843d3394983f2caa26f583014a3389'
-
-           split_lib_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,l.command,l.md5_checksum,
-                 s.sequence_string,s.md5_checksum
-                 from analysis j
-                 inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
-                 inner join ssu_sequence s on slrm.ssu_sequence_id=s.ssu_sequence_id
-                 inner join split_library_run l on j.split_library_run_id=l.split_library_run_id"""
-           split_lib_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx354.281526\'" % (str(analysis_id))
-
-           results = cur.execute(split_lib_info)
-
-           #print 'Calling getTestFlowData...'
-           for data in results:
-               obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
-               obs_split_lib_seq,obs_split_lib_seq_md5 = data
-
-           self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
-           self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
-           self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
-
-           print 'Testing OTU Data!'
-
-           #exp_prokmsa=97550
-           exp_otu_md5='cec9b6c184ffdb12d9de4450034ab775'
-           exp_threshold=97
-
-           otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,ot.reference_id,gr.ssu_sequence_id,
-               ot.reference_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
-               p.threshold
-               from analysis j
-               inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
-               inner join otu_table ot on j.otu_run_set_id=ot.otu_run_set_id
-               inner join gg_plus_denovo_reference gr on ot.reference_id=gr.reference_id
-               inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
-           otu_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx354.281526\'" % (str(analysis_id))
-
-           results = cur.execute(otu_info)
-
-           for data in results:
-               obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
-               obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
-               obs_otu_md5,obs_threshold = data
-
-           #self.assertEqual(obs_prokmsa,exp_prokmsa)
-           self.assertEqual(obs_otu_md5,exp_otu_md5)
-           self.assertEqual(obs_threshold,exp_threshold)
-
-           otu_fail_info="""select distinct j.seq_run_id,f.ssu_sequence_id
-                 from analysis j
-                 inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
-                 inner join otu_picking_failures f on slrm.ssu_sequence_id=f.ssu_sequence_id"""
-           otu_fail_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx635.281531\'" % (str(analysis_id))
-
-           results = cur.execute(otu_fail_info)
-
-           for data in results:
-               obs_seq_run_id,obs_ssu_id= data
-
-
-           self.failIfEqual(obs_seq_run_id,0)
-           self.failIfEqual(obs_ssu_id,0)
-
-           valid=data_access.deleteTestAnalysis(True,analysis_id)
-           if not valid:
-               print "Error: Could not delete data from DB!"
+        # get key filepaths
+        input_file_basename = splitext(split(self.sff_fp)[1])[0]
+        otu_fp = join(self.wf_out,'picked_otus','seqs_otus.txt')
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries',\
+                                 'seqs.fna')
         
+        # run chained OTU-picking
+        run_chain_pick_otus(split_lib_seqs_fp,
+                           output_dir=self.gg_out,
+                           command_handler=call_commands_serially,
+                           params=self.params,
+                           qiime_config=self.qiime_config,parallel=True,
+                           status_update_callback=no_status_updates)
+
+        input_fname = splitext(split(self.sff_fp)[-1])[0]
+        db_input_fp = join(self.wf_out,input_fname)
+
+        # submit raw data to DB
+        analysis_id, input_dir, seq_run_id, split_lib_input_md5sum = \
+            submit_fasta_and_split_lib(data_access,
+                                       ','.join(self.fasta_fps),
+                                       self.study_id, self.wf_out)
+        
+        # Load OTU table data
+        load_otu_mapping(data_access,self.wf_out,analysis_id)
+        
+        # load split-library data
+        split_library_id=load_split_lib_sequences(data_access,input_dir,
+                                               analysis_id, seq_run_id,
+                                               split_lib_input_md5sum)
+        
+        ### TEST raw sequence data load
+        # get expected results
+        print 'Analysis ID is: %s' % str(analysis_id)
+        print 'Testing the SEQ_RUN loading!'
+        exp_sff_md5=['412eee0be168a285415d9e4db3dbbf2f']
+        exp_num_seqs=22
+        exp_instr_code='FASTA'
+        exp_sff_fname=['test_split_lib_seqs']
+        
+        # define the query to pull data from DB
+        con = data_access.getSFFDatabaseConnection()
+        cur = con.cursor()
+        seq_run_info="""select j.seq_run_id,f.sff_filename,f.number_of_reads,f.md5_checksum,
+             h.instrument_code
+             from analysis j
+             inner join seq_run_to_sff_file s on j.seq_run_id=s.seq_run_id
+             inner join sff_file f on f.sff_file_id=s.sff_file_id
+             inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
+             inner join sequencing_run h on h.seq_run_id=s.seq_run_id"""
+        seq_run_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx354.281526\'" % (str(analysis_id))
+        results = cur.execute(seq_run_info)
+
+        # get observed values
+        for data in results:
+            obs_seq_run_id,obs_sff_filename,obs_num_of_reads,obs_sff_md5,\
+            obs_instrument_code = data
+
+        # check results
+        self.assertTrue(obs_sff_filename in exp_sff_fname)
+        self.assertEqual(obs_num_of_reads,exp_num_seqs)
+        self.assertTrue(obs_sff_md5 in exp_sff_md5)
+        self.assertEqual(obs_instrument_code,exp_instr_code)
+
+        ### TEST split-library sequence load
+        # get expected results
+        print 'Testing Split-Library Data'
+        exp_split_lib_seq='TTGGGCCGTGTCTCAGTCCCAATGTGGCCGATCAGTCTCTTAACTCGGCTATGCATCATTGCCTTGGTAAGCCGTTACCTTACCAACTAGCTAATGCACCGCAGGTCCATCCAAGAGTGATAGCAGAACCATCTTTCAAACTCTAGACATGCGTCTAGTGTTGTTATCCGGTATTAGCATCTGTTTCCAGGTGTTATCCCAGTCTCTTGGG'
+        exp_split_lib_md5='412eee0be168a285415d9e4db3dbbf2f'
+        exp_split_lib_seq_md5='59843d3394983f2caa26f583014a3389'
+
+        # define the query to pull data from DB
+        split_lib_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,l.command,l.md5_checksum,
+             s.sequence_string,s.md5_checksum
+             from analysis j
+             inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
+             inner join ssu_sequence s on slrm.ssu_sequence_id=s.ssu_sequence_id
+             inner join split_library_run l on j.split_library_run_id=l.split_library_run_id"""
+        split_lib_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx354.281526\'" % (str(analysis_id))
+        results = cur.execute(split_lib_info)
+
+        # get observed values
+        for data in results:
+            obs_seq_run_id,obs_ssu_seq_id,obs_split_lib_cmd,obs_split_lib_md5,\
+            obs_split_lib_seq,obs_split_lib_seq_md5 = data
+
+        # check results
+        self.assertEqual(obs_split_lib_md5,exp_split_lib_md5)
+        self.assertEqual(obs_split_lib_seq,exp_split_lib_seq)
+        self.assertEqual(obs_split_lib_seq_md5,exp_split_lib_seq_md5)
+        
+        ### TEST OTU table load
+        # get expected results
+        print 'Testing OTU Data!'
+        exp_otu_md5='cec9b6c184ffdb12d9de4450034ab775'
+        exp_threshold=97
+        
+        # define the query to pull data from DB
+        otu_info="""select distinct j.seq_run_id,slrm.ssu_sequence_id,ot.reference_id,gr.ssu_sequence_id,
+           ot.reference_id,j.otu_picking_run_id,p.command,p.md5_sum_input_file,
+           p.threshold
+           from analysis j
+           inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id and j.split_library_run_id=slrm.split_library_run_id
+           inner join otu_table ot on j.otu_run_set_id=ot.otu_run_set_id
+           inner join gg_plus_denovo_reference gr on ot.reference_id=gr.reference_id
+           inner join otu_picking_run p on j.otu_picking_run_id=p.otu_picking_run_id"""
+        otu_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx354.281526\'" % (str(analysis_id))
+        results = cur.execute(otu_info)
+        
+        # get observed values
+        for data in results:
+            obs_seq_run_id,obs_ssu_seq_id,obs_otu_id,obs_otu_ssu_id,\
+            obs_prokmsa,obs_otu_picking_run_id,obs_pick_otu_cmd,\
+            obs_otu_md5,obs_threshold = data
+
+        # check results
+        self.assertEqual(obs_otu_md5,exp_otu_md5)
+        self.assertEqual(obs_threshold,exp_threshold)
+        
+        ### TEST OTU failures load
+        # define the query to pull data from DB
+        otu_fail_info="""select distinct j.seq_run_id,f.ssu_sequence_id
+             from analysis j
+             inner join split_library_read_map slrm on j.seq_run_id=slrm.seq_run_id
+             inner join otu_picking_failures f on slrm.ssu_sequence_id=f.ssu_sequence_id"""
+        otu_fail_info+=" where j.analysis_id=%s and slrm.sample_name=\'test.PCx635.281531\'" % (str(analysis_id))
+        results = cur.execute(otu_fail_info)
+        
+        # get observed values
+        for data in results:
+            obs_seq_run_id,obs_ssu_id= data
+
+        # check results
+        self.failIfEqual(obs_seq_run_id,0)
+        self.failIfEqual(obs_ssu_id,0)
+        
+        # delete study data from DB
+        valid=data_access.deleteTestAnalysis(True,analysis_id)
+        if not valid:
+            print "Error: Could not delete data from DB!"
+            
+            
+            
 exp_read_seq='tcagACAGAGTCGGCTCATGCTGCCTCCCGTAGGAGTCTGGGCCGTGTCTCAGTCCCAATGTGGCCGTTTACCCTCTCAGGCCGGCTACGCATCATCGCCTTGGTGGGCCGTTACCTCACCAACTAGCTAATGCGCCGCAGGTCCATCCATGTTCACGCCTTGATGGGCGCTTTAATATACTGAGCATGCGCTCTGTATACCTATCCGGTTTTAGCTACCGTTTCCAGCAGTTATCCCGGACACATGGGCTAGG'
 exp_split_lib_md5='Fasting_subset.fna:fd90ec77f6e426e7eebd5a1c11f3f8ab,Fasting_subset.qual:c992bb0e6dd74b39ec448d87f92a0fb9'
 exp_split_lib_log='''Number raw input seqs\t22\n\nLength outside bounds of 0 and 1000\t0\nNum ambiguous bases exceeds limit of 0\t0\nMissing Qual Score\t0\nMean qual score below minimum of 25\t0\nMean window qual score below minimum of 25\t3\nMax homopolymer run exceeds limit of 6\t0\nNum mismatches in primer exceeds limit of 0: 0\n\nRaw len min/max/avg\t240.0/285.0/262.9\nWrote len min/max/avg\t240.0/285.0/263.6\n\nBarcodes corrected/not\t0/0\nUncorrected barcodes will not be written to the output fasta file.\nCorrected barcodes will be written with the appropriate barcode category.\nCorrected but unassigned sequences will be written as such unless disabled via the -r option.\n\nTotal valid barcodes that are not in mapping file\t0\nSequences associated with valid barcodes that are not in the mapping file will not be written. -r option enabled.\n\nBarcodes in mapping file\nNum Samples\t8\nSample ct min/max/mean: 1 / 11 / 2.38\nSample\tSequence Count\tBarcode\ntest_PCx634\t11\tACAGAGTCGGCT\ntest_PCx593\t2\tAGCAGCACTTGT\ntest_PCx354\t1\tAGCACGAGCCTA\ntest_PCx636\t1\tACGGTGAGTGTC\ntest_PCx635\t1\tACCGCAGAGTCA\ntest_PCx481\t1\tACCAGCGACTAG\ntest_PCx356\t1\tACAGACCACTCA\ntest_PCx355\t1\tAACTCGTCGATG\ntest_PCx607\t0\tAACTGTGCGTAC\n\nTotal number seqs written\t19'''
@@ -622,6 +622,19 @@ split_libraries:qual_score_window	50
 split_libraries:disable_primers	False
 split_libraries:reverse_primers	disable
 split_libraries:record_qual_scores True
+
+# Split libraries parameters
+split_libraries_fastq:retain_unassigned_reads
+split_libraries_fastq:max_bad_run_length
+split_libraries_fastq:min_per_read_length
+split_libraries_fastq:sequence_max_n
+split_libraries_fastq:start_seq_id
+split_libraries_fastq:rev_comp_mapping_barcodes
+split_libraries_fastq:rev_comp
+split_libraries_fastq:barcode_type	golay_12
+split_libraries_fastq:last_bad_quality_char
+split_libraries_fastq:max_barcode_errors	1.5
+split_libraries_fastq:store_qual_scores True
 
 # OTU picker parameters
 pick_otus:otu_picking_method	uclust_ref

@@ -273,7 +273,7 @@ def get_mapping_data(data_access,is_admin,table_col_value,user_id,
     # Run the statement
     con = data_access.getMetadataDatabaseConnection()
     cur = con.cursor()
-    print statement
+    # print statement
     
     results = cur.execute(statement)
         
@@ -762,7 +762,7 @@ def run_other_qiime_analysis(data_access, fs_fp, web_fp, otu_table_filepath,
     
     # Prepare TopiaryExplorer job
     if 'showTE' in analyses_to_start:
-        tree_fpath=path.abspath('software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre')
+        tree_fpath=path.abspath('%s/software/gg_otus_4feb2011/trees/gg_97_otus_4feb2011.tre' % (os.environ['HOME']))
         python_exe_fp = qiime_config['python_exe_fp']
         commands=[]
         command_handler=call_commands_serially
@@ -859,4 +859,9 @@ def run_other_qiime_analysis(data_access, fs_fp, web_fp, otu_table_filepath,
         except Exception, e:
             raise ValueError,e
 
-        
+def check_job_state_id(data_access, meta_id, job_type_id):
+    """ get the job_state_ids """
+    
+    jobs = data_access.getJobInfo(meta_id, job_type_id)
+    
+    return jobs[0]
