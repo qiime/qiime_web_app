@@ -24,7 +24,7 @@ from cogent.util.misc import remove_files
 from cogent.app.util import get_tmp_filename, ApplicationNotFoundError
 from qiime.util import load_qiime_config,get_qiime_project_dir
 from qiime.parse import parse_qiime_parameters
-from run_chain_pick_otus import run_chain_pick_otus,web_app_call_commands_serially
+from run_chain_pick_otus import run_chain_pick_otus
 from qiime.workflow import (call_commands_serially,
 no_status_updates,WorkflowError,print_commands,print_to_stdout)
 
@@ -52,12 +52,10 @@ class WorkflowTests(TestCase):
         self.dirs_to_remove = []
         self.files_to_remove = []
         
-
         #this is specific to the web-apps only
         test_dir = abspath(dirname(__file__))
         self.fna_original_fp = os.path.join(test_dir, 'support_files', \
                                         'test.fna')
-
 
         tmp_dir = self.qiime_config['temp_dir'] or '/tmp/'
         if not exists(tmp_dir):

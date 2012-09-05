@@ -65,21 +65,17 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
           1) Process SFFs to generate .fna, .qual and flowgram file.
              (process_sff.py)
           2) De-multiplex sequences. (split_libraries.py)
-          3) Optionally denoise the sequences (set sff_input_fp=True);
-          4) Pick OTUs;
           
     """
-    """
-    if write_to_all_fasta:
-        split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' % environ['HOME']
-        create_dir(split_lib_fastas)
-    """
+
     # Prepare some variables for the later steps
     sff_filenames=sff_input_fp.split(',')
     commands = []
     create_dir(output_dir)
     python_exe_fp = qiime_config['python_exe_fp']
     script_dir = get_qiime_scripts_dir()
+    
+    # generate a log file
     logger = WorkflowLogger(generate_log_fp(output_dir),
                             params=params,
                             qiime_config=qiime_config)
@@ -87,27 +83,32 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     split_lib_fasta_input_files=[]
     split_lib_qual_input_files=[]
     denoise_flow_input_files=[]
-    
+
+    # make a copy of the mapping file
     copied_mapping=split(mapping_fp)[-1]
     mapping_input_fp_copy=join(output_dir, copied_mapping)
     copy_mapping_cmd='cp %s %s' % (mapping_fp,mapping_input_fp_copy)
     commands.append([('CopyMapping', copy_mapping_cmd)])
+    
+    # iterate over SFFs and match to the mapping file
     for sff_input_fp in sff_filenames:
-        ##### GENERATE THE MD5 HERE AND STORE IN THE DATABASE AFTER FILE SUCCESSFULLY PROCESSED
+        # GENERATE THE MD5 HERE AND STORE IN THE DATABASE AFTER FILE 
+        # SUCCESSFULLY PROCESSED
         
         # Copy the SFF into the processed files directory
         copied_sff=split(sff_input_fp)[-1]
         sff_input_fp_copy=join(output_dir, copied_sff)
-        #copy_sff_cmd='cp %s %s' % (sff_input_fp,sff_input_fp_copy)
-        #commands.append([('CopySFF', copy_sff_cmd)])
-        
+
         #Generate filenames for split_libraries
         input_dir, input_filename = split(sff_input_fp)
         input_basename, input_ext = splitext(input_filename)
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
             if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536']:
-
+                ### this function is for handling files where the barcode and
+                ### linkerprimer are all lowercase (i.e. HMP data or SRA data)
+                
+                # write process_sff command
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
@@ -129,34 +130,45 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 commands.append([('CleanFasta', clean_fasta_cmd)])
                 
                 # move the cleaned file to be consistent with other processes
-                cleaned_fasta_fp=join(output_dir,input_basename + '_FLX_filtered.fasta')
+                cleaned_fasta_fp=join(output_dir,input_basename + \
+                                      '_FLX_filtered.fasta')
                 moved_fasta_fp=join(output_dir,input_basename + '_FLX.fna')
                 mv_cmd='mv %s %s' %  (cleaned_fasta_fp,moved_fasta_fp)
-                
+
                 commands.append([('RenameFasta',mv_cmd)])
                 
+                # update the split-lib files to use the cleaned file
                 split_lib_fasta_input_files.append(moved_fasta_fp)
-                split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
-                denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
+                split_lib_qual_input_files.append(join(output_dir,
+                                                input_basename + '_FLX.qual'))
+                denoise_flow_input_files.append(join(output_dir,
+                                                input_basename + '_FLX.txt'))
             else:
+                # write process_sff command
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
                 
                 commands.append([('ProcessSFFs', process_sff_cmd)])
                 
-                split_lib_fasta_input_files.append(join(output_dir,input_basename + '_FLX.fna'))
-                split_lib_qual_input_files.append(join(output_dir,input_basename + '_FLX.qual'))
-                denoise_flow_input_files.append(join(output_dir,input_basename + '_FLX.txt'))
+                # get filepaths for generated files
+                split_lib_fasta_input_files.append(join(output_dir,
+                                                input_basename + '_FLX.fna'))
+                split_lib_qual_input_files.append(join(output_dir,
+                                                input_basename + '_FLX.qual'))
+                denoise_flow_input_files.append(join(output_dir,
+                                                input_basename + '_FLX.txt'))
                 
                 
         else:
+            # write process_sff command
             process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s' %\
                                 (python_exe_fp, script_dir, sff_input_fp,
                                  output_dir)
             
             commands.append([('ProcessSFFs', process_sff_cmd)])
             
+            # get filepaths for generated files
             split_lib_fasta_input_files.append(join(output_dir,input_basename + '.fna'))
             split_lib_qual_input_files.append(join(output_dir,input_basename + '.qual'))
             denoise_flow_input_files.append(join(output_dir,input_basename + '.txt'))
@@ -171,10 +183,12 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     study_info=data_access.getStudyInfo(study_id,12171)
     if study_info['investigation_type'].lower() == 'metagenome':
         params['split_libraries']['disable_primers']=None
-        
+    
+    # create split-libraries folder
     split_library_output=join(output_dir,'split_libraries')
     create_dir(split_library_output)
     
+    # get params string
     try:
         params_str = get_params_str(params['split_libraries'])
     except KeyError:
@@ -188,14 +202,6 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         
     input_fp=join(split_library_output,'seqs.fna')
     
-    """
-    if write_to_all_fasta:
-        copy_split_lib_seqs_location='%s_%s_seqs.fna' % (study_id,run_prefix)
-        copy_to_split_lib_fastas_cmd=cp_files(input_fp,join(split_lib_fastas,
-                                        copy_split_lib_seqs_location))
-        commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
-    """
-    
     # create per sample fastq files
     fastq_output=join(split_library_output,'per_sample_fastq')
     create_dir(fastq_output)
@@ -206,9 +212,11 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         
     input_qual_fp=join(split_library_output,'seqs_filtered.qual')
     
+    # build the convert fasta/qual to fastq command
     create_fastq_cmd = '%s %s/convert_fastaqual_fastq.py -f %s -q %s -o %s %s'%\
      (python_exe_fp, script_dir, input_fp, input_qual_fp,
       fastq_output, params_str)
+      
     commands.append([('Create FASTQ', create_fastq_cmd)])
    
     # Call the command handler on the list of commands
@@ -217,8 +225,6 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
     # Return the fasta file paths
     return split_lib_fasta_input_files
     
-#
-## Begin task-specific workflow functions
 def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     mapping_fp, output_dir, 
     command_handler, params, qiime_config,
@@ -229,16 +235,10 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
         in QIIME.
     
         The steps performed by this function are:
-          1) De-multiplex sequences. (split_libraries.py)
+          1) De-multiplex sequences. (split_libraries_fastq.py)
     
     """
-    """
-    #print input_fp
-    if write_to_all_fasta:
-        split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' \
-                            % environ['HOME']
-        create_dir(split_lib_fastas)
-    """
+
     # Prepare some variables for the later steps
     filenames=input_fp.split(',')
     commands = []
@@ -249,25 +249,29 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
                             params=params,
                             qiime_config=qiime_config)
     
+    # copy the mapping file
     copied_mapping=split(mapping_fp)[-1]
     mapping_input_fp_copy=join(output_dir, copied_mapping)
     copy_mapping_cmd='cp %s %s' % (mapping_fp,mapping_input_fp_copy)
     commands.append([('CopyMapping', copy_mapping_cmd)])
 
+    # sort the filenames
     filenames.sort()
-
+    
+    # determine which file is seq-file and which is barcode-file and associate
+    # to mapping file
     input_str=get_split_libraries_fastq_params_and_file_types(filenames,
                                                               mapping_fp)
     
+    # create split_libaries folder
     split_library_output=join(output_dir,'split_libraries')
     create_dir(split_library_output)
-
     
+    # get params string
     try:
         params_str = get_params_str(params['split_libraries_fastq'])
     except KeyError:
         params_str = ''
-    
     
     # Build the split libraries command
     split_libraries_cmd = '%s %s/split_libraries_fastq.py -o %s -m %s %s %s' % \
@@ -276,19 +280,13 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     
     commands.append([('SplitLibraries', split_libraries_cmd)])
     
+    # define the generate files
     input_fp=join(split_library_output,'seqs.fna')
-    
-    """
-    if write_to_all_fasta:
-        copy_split_lib_seqs_location='%s_%s_seqs.fna' % (study_id,run_prefix)
-        copy_to_split_lib_fastas_cmd=cp_files(input_fp,join(split_lib_fastas,
-                                        copy_split_lib_seqs_location))
-        commands.append([('cpSplitLib', copy_to_split_lib_fastas_cmd)])
-    """
     
     # create per sample fastq files
     fastq_output=join(split_library_output,'per_sample_fastq')
     create_dir(fastq_output)
+    
     """
     # not used for the one-off
     try:
@@ -297,6 +295,7 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
         params_str = ''
     """
     
+    # build the per-sample fastq command
     input_qual_fp=join(split_library_output,'seqs.qual')
     create_fastq_cmd = '%s %s/projects/Qiime/qiime_web_app/python_code/scripts/make_per_sample_fastq.py -i %s -q %s -o %s' % \
     (python_exe_fp, environ['HOME'], input_fp, input_qual_fp, fastq_output)
@@ -315,9 +314,7 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     # Return the fasta file paths
     return filenames
 
-#
-#
-## Begin task-specific workflow functions
+
 def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
     mapping_fp, output_dir, 
     command_handler, params, qiime_config,
@@ -328,16 +325,10 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
         in QIIME.
     
         The steps performed by this function are:
-          1) De-multiplex sequences. (split_libraries.py)
+          1) Update sequence names using DB accessions
     
     """
-    """
-    #print input_fp
-    if write_to_all_fasta:
-        split_lib_fastas='%s/user_data/studies/all_split_lib_fastas' \
-                            % environ['HOME']
-        create_dir(split_lib_fastas)
-    """
+
     # Prepare some variables for the later steps
     filenames=input_fp.split(',')
     commands = []
@@ -348,27 +339,35 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
                             params=params,
                             qiime_config=qiime_config)
     
+    # copy the mapping file
     copied_mapping=split(mapping_fp)[-1]
     mapping_input_fp_copy=join(output_dir, copied_mapping)
     copy_mapping_cmd='cp %s %s' % (mapping_fp,mapping_input_fp_copy)
     commands.append([('CopyMapping', copy_mapping_cmd)])
 
+    # sort filenames
     filenames.sort()
+    
+    # create split_libraries directory
     split_library_output=join(output_dir,'split_libraries')
     create_dir(split_library_output)
     
     # Call the command handler on the list of commands
     command_handler(commands,status_update_callback,logger=logger)
     
+    # define output filepath
     output_fp=join(split_library_output,'seqs.fna')
+    
+    # re-write the sequence file
     outf=open(output_fp,'w')
+    
+    # get sample-info from mapping file
     map_data,map_header,map_comments=parse_mapping_file(\
                                         open(mapping_input_fp_copy,'U'))
                                         
     # create dictionary of original sample_ids to new sample_ids
     sample_ids_from_mapping=zip(*map_data)[0]
     sample_id_dict={}
-    
     for sample in sample_ids_from_mapping:
         sample_id_dict['.'.join(sample.split('.')[:-1])]=sample
     
@@ -390,11 +389,13 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
     #    raise ValueError, "There are linker primer sequences in the Original sequence file"
     #elif float(fasta_check['nosample_ids_map']) > 0.20:
     #    raise ValueError, "More than 20% of the samples in the mapping file do not have sequences"
-    '''    
+    ''' 
+    
+    # parse the sequences
     sequences=MinimalFastaParser(open(input_fp),'U')
     
-    
-    # update fasta file with new DB SampleIDs and create split-lib seqs file
+    # update fasta file with new DB SampleIDs and create new split-lib seqs 
+    # file
     num=1
     for seq_name,seq in sequences:
         seq_name_arr=seq_name.split()
@@ -407,7 +408,6 @@ def run_process_fasta_through_split_lib(study_id,run_prefix,input_fp,
         
     # Return the fasta file paths
     return filenames
-
 
 
 def web_app_call_commands_serially(commands,
@@ -435,12 +435,14 @@ def web_app_call_commands_serially(commands,
             
 def check_scp():
     """Raise error if scp is not in $PATH """
+    
     if not app_path('scp'):
         raise ApplicationNotFoundError,\
         "scp is not in $PATH. Is it installed? Have you added it to $PATH?"
          
 def scp_file_transfer(port,filepath,username,host,location):
     """Transfers files to another server."""
+    
     check_scp()
     cmd_call='scp -P %d %s %s@%s:%s' % (port,filepath,username,host,location)
     print 'scp command is: %s' % cmd_call
@@ -448,16 +450,17 @@ def scp_file_transfer(port,filepath,username,host,location):
     return cmd_call
     
 def cp_files(filepath,location):
-    """Transfers files to another server."""
+    """Copy files """
+    
     check_cp()
     cmd_call='cp %s %s' % (filepath,location)
     #print 'cp command is: %s' % cmd_call
     return cmd_call
     
 def zip_files(filepath1,filepath2,directory,location):
-    """Transfers files to another server."""
-    check_zip()
+    """Zip files"""
     
+    check_zip()
     cmd_call='cd %s | zip -jX split_library_input.zip %s' % (directory,filepath1)
     print 'zip command is: %s' % cmd_call
     system(cmd_call)
@@ -467,7 +470,8 @@ def zip_files(filepath1,filepath2,directory,location):
     return cmd_call
 
 def get_qiime_svn_version():
-    """Transfers files to another server."""
+    """Get qiime svn version"""
+    
     qiime_dir=get_qiime_scripts_dir()
     cmd_call='svn info %s | egrep "Revision: "' % (qiime_dir)
     #print 'svn command is: %s' % cmd_call
@@ -478,18 +482,21 @@ def get_qiime_svn_version():
 
 def check_cat():
     """Raise error if cat is not in $PATH """
+    
     if not app_path('cat'):
         raise ApplicationNotFoundError,\
         "cat is not in $PATH. Is it installed? Have you added it to $PATH?"\
         
 def check_cp():
     """Raise error if cp is not in $PATH """
+    
     if not app_path('cp'):
         raise ApplicationNotFoundError,\
         "cp is not in $PATH. Is it installed? Have you added it to $PATH?"\
 
 def check_zip():
     """Raise error if zip is not in $PATH """
+    
     if not app_path('zip'):
         raise ApplicationNotFoundError,\
         "zip is not in $PATH. Is it installed? Have you added it to $PATH?"\

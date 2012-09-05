@@ -20,8 +20,7 @@ from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable,\
                         create_dir
-from run_chain_pick_otus import run_chain_pick_otus,get_fasta_files,\
-web_app_call_commands_serially
+from run_chain_pick_otus import run_chain_pick_otus
 from qiime.workflow import print_commands,\
                            print_to_stdout, no_status_updates
 

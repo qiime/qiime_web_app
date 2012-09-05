@@ -98,12 +98,13 @@ def main():
     process_only=opts.process_only
     user_id=opts.user_id
     
+    # determine if platform is Titanium. If so, then convert_to_flx
     if sequencing_platform=='TITANIUM':
         convert_to_flx=True
     else:
         convert_to_flx=False
         
-        
+    # parse the params file
     try:
         parameter_f = open(opts.parameter_fp)
     except IOError:
@@ -111,6 +112,7 @@ def main():
         "Can't open parameters file (%s). Does it exist? Do you have read access?"\
         % opts.parameter_fp
 
+    # create the output directory
     try:
         print 'output dir is: %s ' % output_dir 
         makedirs(output_dir)
@@ -118,6 +120,7 @@ def main():
     except OSError:
         pass
 
+    # determine command_handler to use
     if print_only:
         command_handler = print_commands
     else:
@@ -225,7 +228,7 @@ def main():
                                 status_update_callback=status_update_callback)
         print 'Completed run_chain_pick_otus.'
 
-    
+    # Define the loading parameters
     params=[]
     params.append('OutputDir=%s' % output_dir)
     params.append('UserId=%s' % user_id)
@@ -236,7 +239,7 @@ def main():
     job_input='!!'.join(params)
     job_type='LoadAnalysisOTUTableHandler'
     
-    
+    # submit loading job to DB
     if process_only == 'False':
         submitQiimeJob(study_id, user_id, job_type, job_input, data_access)
     else:
