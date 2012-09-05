@@ -50,7 +50,7 @@ def main():
     # Send the sequence files first - required for metadata to validate. If files have already been
     # sent then skip this step.
     data_access = data_access_factory(ServerConfig.data_access_type)
-    statement = 'select ebi_files_sent from study where study_id = {0}'.format(study_id)
+    statement = 'select case when ebi_files_sent is null then 0 else ebi_files_sent end as ebi_files_sent from study where study_id = {0}'.format(study_id)
     ebi_files_sent = data_access.dynamicMetadataSelect(statement).fetchone()[0]
     if ebi_files_sent != 1:
         live.submit_files(debug = True)
