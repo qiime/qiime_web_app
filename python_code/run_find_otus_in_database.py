@@ -17,6 +17,7 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map,
                  data_access, leftovers_fasta_file):
     """ This fxn processes the md5's and checks against the DB
     """
+    
     # Get our list of found items
     results = data_access.getFoundOTUArray(md5_list)
     
@@ -56,10 +57,11 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map,
         leftovers_fasta_file.write(line)
 
 def find_otus(input_fasta, leftover_fasta, otu_map):
+    """This fxn checks for otu assignment of a set of sequences"""
+
     input_fasta_file = open(input_fasta, 'r')
     leftovers_fasta_file = open(leftover_fasta, 'w')
     otu_map_file = open(otu_map, 'w')
-    """This fxn checks for otu assignment of a set of sequences"""
     
     # OTU map will be a dict of lists: otu_id, [list of sequence names]
     otu_map = {}
@@ -96,7 +98,8 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
     
         # Determine if it's time to submit check existence in DB:
         if i == items_to_submit_to_db:
-            process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file)
+            process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, 
+                          data_access, leftovers_fasta_file)
             i = 0
 
             # Clear containers for next round
@@ -105,12 +108,14 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
 
     # If there are leftovers, process the last batch
     if i > 1:
-        process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, data_access, leftovers_fasta_file)
+        process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, 
+                      data_access, leftovers_fasta_file)
 
     # Write out the otu_map if there are entries in the dict
     for otu_id in otu_map:
         seq_id_list = '\t'.join(otu_map[otu_id])
-        line = '{otu_id}\t{seq_id_list}\n'.format(otu_id = otu_id, seq_id_list = seq_id_list)
+        line = '{otu_id}\t{seq_id_list}\n'.format(otu_id = otu_id, 
+                                                  seq_id_list = seq_id_list)
         otu_map_file.write(line)
     
     # Close our files

@@ -47,7 +47,8 @@ def combine_otu_files(otu_map_files, output_otu_map):
     # Write out the combined file
     for otu_id in otu_map:
         seq_id_list = '\t'.join(otu_map[otu_id])
-        line = '{otu_id}\t{seq_id_list}\n'.format(otu_id = otu_id, seq_id_list = seq_id_list)
+        line = '{otu_id}\t{seq_id_list}\n'.format(otu_id = otu_id, 
+                                                  seq_id_list = seq_id_list)
         combined_output.write(line)    
         
     combined_output.close()
