@@ -212,12 +212,14 @@ class LiveEBISRARestServices(BaseRestServices):
         xml_file_list.append(self.run_file_path)
 
         # Send the xml data
+        """
         for f in xml_file_list:
             self.logger.log_entry('Sending XML file "{0}"'.format(f))
             #self.send_ftp_data(f)
             ascp_command = 'ascp -QT -k2 -L- {0} era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(f)
             self.call_ascp_command_line(ascp_command, debug)
-        
+        """
+
         # Send the sequence files by directory
         unique_dirs = []
         for f in self.file_list:
