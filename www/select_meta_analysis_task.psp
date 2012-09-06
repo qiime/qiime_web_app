@@ -90,12 +90,10 @@ req.write('''<div name="meta_status_div" id="meta_status_div">\
 
 #
 %>
-<!--
+<br><br>
 <p>
-    <form id="delete_meta_analysis" action="fusebox.psp" method="post">
-        <input type="hidden" name="page" id="page" value="delete_meta_analysis.psp">
-        <a href="" onclick="document.forms['delete_meta_analysis'].submit(); return false;">
+    <form id="delete_meta_analysis" action="delete_meta_analysis.psp" method="post">
+        <a href="" onclick="if(confirm('Are you sure you want to remove this Meta-Analysis? All associated data will be removed.')) {document.forms['delete_meta_analysis'].submit(); } return false;">
         Delete Meta-Analysis</a>
     </form>
 </p>
--->

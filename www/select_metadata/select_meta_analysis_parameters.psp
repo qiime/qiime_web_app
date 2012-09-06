@@ -15,7 +15,7 @@ from enums import ServerConfig
 import os
 data_access = data_access_factory(ServerConfig.data_access_type)
 from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str,\
-                            get_otu_table,get_table_col_values_from_form
+                            get_table_col_values_from_form
 from enums import FieldGrouping
 from qiime.util import (compute_seqs_per_library_stats, 
     parse_command_line_parameters, get_options_lookup, 
