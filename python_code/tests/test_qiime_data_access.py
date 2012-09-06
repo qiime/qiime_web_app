@@ -169,13 +169,11 @@ class QiimeDataAccessTests(unittest.TestCase):
     
     def test_getSampleIDsFromStudy(self):
         """ test_getSampleIDsFromStudy:get SampleIDs from a study.
-            Note: Currently using study 609 which may change
+            Note: Currently using study 0 which may change
         """
-        result = self._qiime_data_access.getSampleIDsFromStudy(609)
+        result = self._qiime_data_access.getSampleIDsFromStudy(0)
 
-        exp=[234891, 234892, 234893, 234894, 234895, 234896, 234897,
-             234889, 234890]
-        self.assertEqual(result,exp)
+        self.assertEqual(len(result),9)
         
     def test_createStudy(self):
         """ test_createStudy: test method for creating Study
@@ -183,11 +181,14 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
 
         values = self._qiime_data_access.createStudy(1, 'test', 3, 'y', 'y',
-                                                     'qiime','test','test','',
-                                                     'test','test','test',
-                                                     'test','test','test')
+                                                     'qiime','test_title',
+                                                     'test_alias','',
+                                                     'test_abstract',
+                                                     'test_desc','test_pi',
+                                                     'test_pi_con','test_lab',
+                                                     'test_lab_con',0)
         self.assertTrue(values)
-        values = self._qiime_data_access.deleteStudy(values, 1)
+        values = self._qiime_data_access.deleteStudy(values, 2)
 
     def test_updateStudy(self):
         """ test_updateStudy: test method for updating Study
@@ -195,16 +196,20 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
 
         values = self._qiime_data_access.createStudy(1, 'test', 3, 'y', 'y',
-                                                     'qiime','test','test','',
-                                                     'test','test','test',
-                                                      'test','test','test')
+                                                     'qiime','test_title',
+                                                     'test_alias','',
+                                                     'test_abstract',
+                                                     'test_desc','test_pi',
+                                                     'test_pi_con','test_lab',
+                                                     'test_lab_con',0)
                                                      
         values2 = self._qiime_data_access.updateStudy(values, 3, 'y', 'y',
                                                      'qiime','test2','test2','',
                                                      'test2','test2','test2',
-                                                      'test2','test2','test2')
+                                                      'test2','test2','test2',
+                                                      False,0)
     
-        values = self._qiime_data_access.deleteStudy(values, 1)
+        values = self._qiime_data_access.deleteStudy(values, 2)
 
     def test_getStudyNames(self):
         """ test_getStudyNames: test method for getStudyNames 
@@ -218,13 +223,8 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         
         study_names = self._qiime_data_access.getUserStudyNames(12171,0,'qiime')
-
-        if (609, 'jesse_test', 'Fasting subset mice for testing purposes', 'This is a test dataset using the Fasting subset of mice.') in study_names:
-            value=True
-        else:
-            value=False
             
-        self.assertTrue(value)
+        self.assertTrue(len(study_names)>0)
         
     def test_getUserAndPublicStudyNames(self):
         """ test_getUserAndPublicStudyNames: test method for 
@@ -233,33 +233,29 @@ class QiimeDataAccessTests(unittest.TestCase):
         
         study_names = self._qiime_data_access.getUserAndPublicStudyNames(12171,
                                                                     0,'qiime')
-        if (609, 'jesse_test', 'Fasting subset mice for testing purposes', 'This is a test dataset using the Fasting subset of mice.') in study_names:
-            value=True
-        else:
-            value=False
         
-        self.assertTrue(value)
+        self.assertTrue(len(study_names)>0)
 
     def test_getStudyInfo(self):
         """ test_getStudyInfo: test method for getStudyInfo
         """
         
-        study_info = self._qiime_data_access.getStudyInfo(609,12171)
+        study_info = self._qiime_data_access.getStudyInfo(0,12171)
         
         if study_info['metadata_complete']=='y' and \
                     study_info['sff_complete']=='y' and \
-                    study_info['project_name']=='jesse_test':
+                    study_info['project_name']=='study_0':
             value=True
         else:
             value=False
-        
+
         self.assertTrue(value)
         
     def test_getStudyPlatform(self):
         """ test_getStudyPlatform: test method for getStudyPlatform
         """
         
-        platform = self._qiime_data_access.getStudyPlatform(609)
+        platform = self._qiime_data_access.getStudyPlatform(0)
         exp='FLX'
         
         self.assertEqual(platform,exp)
@@ -607,23 +603,23 @@ class QiimeDataAccessTests(unittest.TestCase):
         """ test_getSFFFiles: Gets a list of SFF files for this study
         """
         
-        result = self._qiime_data_access.getSFFFiles(609)
-        self.assertTrue(result==['/home/wwwdevuser/user_data/studies/study_609/Fasting_subset.sff'])
+        result = self._qiime_data_access.getSFFFiles(0)
+        self.assertTrue(result==['/home/wwwdevuser/user_data/studies/study_0/Fasting_subset.sff'])
     
     
     def test_getMappingFiles(self):
         """ test_getSFFFiles: Gets a list of metadata files for this study
         """
         
-        result = self._qiime_data_access.getMappingFiles(609)
-        self.assertTrue(result==['/home/wwwdevuser/user_data/studies/study_609/mapping_files/Fasting_subset__split_libraries_mapping_file.txt'])
+        result = self._qiime_data_access.getMappingFiles(0)
+        self.assertTrue(result==['/home/wwwdevuser/user_data/studies/study_0/mapping_files/Fasting_subset__split_libraries_mapping_file.txt'])
     
     def test_getStudyTemplates(self):
         """ test_getStudyTemplates: Gets a list of study template files for 
             this study
         """
         
-        result = self._qiime_data_access.getStudyTemplates(609)
+        result = self._qiime_data_access.getStudyTemplates(0)
         self.assertTrue(result)
 
     def test_getSplitLibrariesMappingFileData(self):
@@ -631,7 +627,7 @@ class QiimeDataAccessTests(unittest.TestCase):
             mapping files for study
         """
         
-        result = self._qiime_data_access.getSplitLibrariesMappingFileData(609)
+        result = self._qiime_data_access.getSplitLibrariesMappingFileData(0)
         self.assertTrue(result)
         
     def test_clearSplitLibrariesMappingFiles(self):
@@ -643,7 +639,7 @@ class QiimeDataAccessTests(unittest.TestCase):
             lengths are the same for a given run_prefix
         """
         
-        result = self._qiime_data_access.checkRunPrefixBarcodeLengths(609,
+        result = self._qiime_data_access.checkRunPrefixBarcodeLengths(0,
                                                             'Fasting_subset')
         self.assertTrue(result==12)
     
@@ -797,7 +793,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         
         result=self._qiime_data_access.checkIfStudyIdExists(0)
-        self.assertFalse(result)
+        self.assertTrue(result)
         
         
     def test_checkIfColumnControlledVocab(self):
@@ -895,7 +891,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         
         result=self._qiime_data_access.getQiimeSffDbSummary(0)
         for exp in result:
-            self.assertEqual(exp,None)
+            self.assertEqual(exp,(0, 'study_0', 'study_0', 'study_0', None))
             
     def test_getGGTaxonomy(self):
         """ test_getGGTaxonomy: gets the gg taxonomy for a prokmsa

@@ -20,7 +20,6 @@ def process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map,
     
     # Get our list of found items
     results = data_access.getFoundOTUArray(md5_list)
-    
     if results == None:
         return
     
@@ -80,6 +79,7 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
     parser = FastaParser(input_fasta_file)
 
     for rec in parser:
+        
         # Increment the batch counter
         i += 1
     
@@ -95,7 +95,7 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
         md5_list.append(m)
         md5_sequence_map[m] = sequence
         md5_seq_id_map[m] = seq_id
-    
+        
         # Determine if it's time to submit check existence in DB:
         if i == items_to_submit_to_db:
             process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, 
@@ -107,7 +107,7 @@ def find_otus(input_fasta, leftover_fasta, otu_map):
             md5_sequence_map.clear()
 
     # If there are leftovers, process the last batch
-    if i > 1:
+    if i > 0:
         process_items(md5_list, md5_sequence_map, md5_seq_id_map, otu_map, 
                       data_access, leftovers_fasta_file)
 

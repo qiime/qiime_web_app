@@ -3,10 +3,10 @@
 from __future__ import division
 
 __author__ = "Jesse Stombaugh"
-__copyright__ = "QIIME Web App"
+__copyright__ = "QIIME-DB Project"
 __credits__ = ["Jesse Stombaugh"]
 __license__ = "GPL"
-__version__ = "1.1.0-dev"
+__version__ = "1.0.0-dev"
 __maintainer__ = "Jesse Stombaugh"
 __email__ = "jesse.stombaugh@colorado.edu"
 __status__ = "Development"
@@ -16,7 +16,7 @@ from cogent.util.unit_test import TestCase, main
 from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str,\
                             print_metadata_info_and_values_table,\
                             get_selected_column_values,\
-                            get_table_col_values_from_form,get_otu_table
+                            get_table_col_values_from_form
 
 from types import *
 from exceptions import *
@@ -116,6 +116,11 @@ class SelectMetadataTests(TestCase):
                              ('HOST', '"EXTRA_SAMPLE_89"', 89), 
                              ('RUN_CENTER', '"SEQUENCE_PREP"', 89), 
                              ('DONOR', '"EXTRA_SAMPLE_89"', 89)]
+        self.public_columns=[('run_date','"SEQUENCE_PREP"',0),
+                             ('dob','"EXTRA_SAMPLE_0"',0),
+                             ('longitude','"SAMPLE"',0),
+                             ('platform','"SEQUENCE_PREP"',0),
+                             ('host_subject_id','"HOST"',0)]
         self.table='TEST'
         self.col='TEST_COL'
         self.studies='100'
@@ -127,16 +132,10 @@ class SelectMetadataTests(TestCase):
          '''
         obs=public_cols_to_dict(self.public_columns)
         
-        exp=({'HOST####SEP####HOST_TAXID': [89], 
-             'SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG': [77], 
-             'SEQUENCE_PREP####SEP####POOL_MEMBER_NAME': [77], 
-             'SEQUENCE_PREP####SEP####RUN_DATE': [77], 
-             'SAMPLE####SEP####ELEVATION': [77], 
-             'STUDY####SEP####STUDY_ALIAS': [89, 77], 
-             'SEQUENCE_PREP####SEP####KEY_SEQ': [77], 
-             'HOST_ASSOC_VERTIBRATE####SEP####DIET': [77], 
-             'SEQUENCE_PREP####SEP####RUN_CENTER': [89], 
-             'SEQUENCE_PREP####SEP####EXPERIMENT_TITLE': [77]}, ['77', '89'])
+        exp=({'SAMPLE####SEP####longitude': [0], 
+              'SEQUENCE_PREP####SEP####platform': [0], 
+              'SEQUENCE_PREP####SEP####run_date': [0], 
+              'HOST####SEP####host_subject_id': [0]}, ['0'])
              
         self.assertEqual(obs,exp)
 
@@ -188,7 +187,8 @@ class SelectMetadataTests(TestCase):
         table_name='HOST_ASSOC_VERTIBRATE' # this table is mispelled in the DB
         exp_values=['female', 'hermaphrodite', 'male', 'neuter', \
                     'not determined']
-        obs=get_selected_column_values(controlled_vocab,col_name,table_name,1,'609',data_access)
+        obs=get_selected_column_values(controlled_vocab,col_name,table_name,1,
+                                       '0',data_access)
 
         self.assertEqual(obs,exp_values)
         
@@ -199,15 +199,14 @@ class SelectMetadataTests(TestCase):
         form1={'fname_prefix': [StringField('fname_prefix:')]}
         
         form2={'fname_prefix': [StringField('fname_prefix:')], 
-               'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:####ALL####')}
+               'HOST####SEP####host_subject_id####STUDIES####0': StringField('HOST####SEP####host_subject_id####STUDIES####0:####ALL####')}
         form3={'fname_prefix': [StringField('fname_prefix')], 
-               'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:female')}
+               'HOST####SEP####host_subject_id####STUDIES####0': StringField('HOST####SEP####host_subject_id####STUDIES####0:Input1')}
         
         exp1={}
-        exp2={'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:####ALL####')}
-        exp3={'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####89S101S77S289:female')}
-        exp_values=['female', 'hermaphrodite', 'male', 'neuter', \
-                    'not determined']
+        exp2={'HOST####SEP####host_subject_id####STUDIES####0': 'HOST####SEP####host_subject_id####STUDIES####0:####ALL####'}
+        exp3={'HOST####SEP####host_subject_id####STUDIES####0': 'HOST####SEP####host_subject_id####STUDIES####0:Input1'}
+
                 
         obs1=get_table_col_values_from_form(form1)
         self.assertEqual(obs1,exp1)
@@ -218,37 +217,17 @@ class SelectMetadataTests(TestCase):
         obs3=get_table_col_values_from_form(form3)
         self.assertEqual(obs3,exp3)
         
-    #
-    def test_get_otu_table(self):
-        ''' test_get_otu_table: get OTU table for given set of params
-        '''
-    
-        obs1=get_otu_table(data_access, {'HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0': StringField('HOST_ASSOC_VERTIBRATE####SEP####SEX####STUDIES####0:female')},'12171',0,'PHPR')
-        #self.assertEqual(obs1,'# QIIME v1.5.0-dev OTU table\n#OTU ID')
-        
         
 exp_select_box_str='''\
 available_cols=new Array();
-available_cols["HOST####SEP####HOST_TAXID"]=new Array();
-available_cols["HOST####SEP####HOST_TAXID"]=["unique_study","ADD#ENDGRP#HOST####SEP####HOST_TAXID","HOST####SEP####HOST_TAXID####STUDIES####77S89","HOST_TAXID"]
-available_cols["SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG"]=new Array();
-available_cols["SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG"]=["unique_study","ADD#ENDGRP#SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG","SEQUENCE_PREP####SEP####PRIMER_READ_GROUP_TAG####STUDIES####77S89","PRIMER_READ_GROUP_TAG"]
-available_cols["SEQUENCE_PREP####SEP####POOL_MEMBER_NAME"]=new Array();
-available_cols["SEQUENCE_PREP####SEP####POOL_MEMBER_NAME"]=["unique_study","ADD#ENDGRP#SEQUENCE_PREP####SEP####POOL_MEMBER_NAME","SEQUENCE_PREP####SEP####POOL_MEMBER_NAME####STUDIES####77S89","POOL_MEMBER_NAME"]
-available_cols["SEQUENCE_PREP####SEP####RUN_DATE"]=new Array();
-available_cols["SEQUENCE_PREP####SEP####RUN_DATE"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_DATE","SEQUENCE_PREP####SEP####RUN_DATE####STUDIES####77S89","RUN_DATE"]
-available_cols["SAMPLE####SEP####ELEVATION"]=new Array();
-available_cols["SAMPLE####SEP####ELEVATION"]=["unique_study","SAMPLE#ENDGRP#SAMPLE####SEP####ELEVATION","SAMPLE####SEP####ELEVATION####STUDIES####77S89","ELEVATION"]
-available_cols["STUDY####SEP####STUDY_ALIAS"]=new Array();
-available_cols["STUDY####SEP####STUDY_ALIAS"]=["common_study","STUDY#ENDGRP#STUDY####SEP####STUDY_ALIAS","STUDY####SEP####STUDY_ALIAS####STUDIES####77S89","STUDY_ALIAS"]
-available_cols["SEQUENCE_PREP####SEP####KEY_SEQ"]=new Array();
-available_cols["SEQUENCE_PREP####SEP####KEY_SEQ"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####KEY_SEQ","SEQUENCE_PREP####SEP####KEY_SEQ####STUDIES####77S89","KEY_SEQ"]
-available_cols["HOST_ASSOC_VERTIBRATE####SEP####DIET"]=new Array();
-available_cols["HOST_ASSOC_VERTIBRATE####SEP####DIET"]=["unique_study","ADD#ENDGRP#HOST_ASSOC_VERTIBRATE####SEP####DIET","HOST_ASSOC_VERTIBRATE####SEP####DIET####STUDIES####77S89","DIET"]
-available_cols["SEQUENCE_PREP####SEP####RUN_CENTER"]=new Array();
-available_cols["SEQUENCE_PREP####SEP####RUN_CENTER"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####RUN_CENTER","SEQUENCE_PREP####SEP####RUN_CENTER####STUDIES####77S89","RUN_CENTER"]
-available_cols["SEQUENCE_PREP####SEP####EXPERIMENT_TITLE"]=new Array();
-available_cols["SEQUENCE_PREP####SEP####EXPERIMENT_TITLE"]=["unique_study","PREP#ENDGRP#SEQUENCE_PREP####SEP####EXPERIMENT_TITLE","SEQUENCE_PREP####SEP####EXPERIMENT_TITLE####STUDIES####77S89","EXPERIMENT_TITLE"]
+available_cols["SAMPLE####SEP####longitude"]=new Array();
+available_cols["SAMPLE####SEP####longitude"]=["common_study","ADD#ENDGRP#SAMPLE####SEP####longitude","SAMPLE####SEP####longitude####STUDIES####0","longitude"]
+available_cols["SEQUENCE_PREP####SEP####platform"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####platform"]=["common_study","ADD#ENDGRP#SEQUENCE_PREP####SEP####platform","SEQUENCE_PREP####SEP####platform####STUDIES####0","platform"]
+available_cols["SEQUENCE_PREP####SEP####run_date"]=new Array();
+available_cols["SEQUENCE_PREP####SEP####run_date"]=["common_study","ADD#ENDGRP#SEQUENCE_PREP####SEP####run_date","SEQUENCE_PREP####SEP####run_date####STUDIES####0","run_date"]
+available_cols["HOST####SEP####host_subject_id"]=new Array();
+available_cols["HOST####SEP####host_subject_id"]=["common_study","ADD#ENDGRP#HOST####SEP####host_subject_id","HOST####SEP####host_subject_id####STUDIES####0","host_subject_id"]
 '''
 
 exp_info_table1='''\

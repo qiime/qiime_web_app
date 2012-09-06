@@ -15,7 +15,7 @@ from qiime.colors import natsort
 from enums import FieldGrouping
         
 
-def print_study_info_and_values_table(query_results,data_access):
+def print_study_info_and_values_table(query_results, data_access):
     ''' This function write the Study summary information below the select-box'''
 
     info_table=[]
