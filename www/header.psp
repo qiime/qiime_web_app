@@ -187,4 +187,5 @@ if portal_type == 'qiime':
         </td></tr></table>
     </div>
 </div>
+<h3>&nbsp;&nbsp;NOTE: Please read the <a href="fusebox.psp?page=db_processing_protocol.psp" target="<%=sess['frame_target']%>">QIIME-DB Processing Protocol</a> to understand how all uploaded data is handled.</h3>
 <div class="content">
