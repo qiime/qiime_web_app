@@ -33,18 +33,12 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Submit processed SFF and metadata through picking OTUs into the Oracle DB"
+script_info['brief_description'] = "Run run_make_otu_heatmap_html function from handler_workflows.py in python_code of QIIME-DB"
 script_info['script_description'] = """\
-This script takes an processed sff fasta file and performs the \
-following steps:
-
-    1) 
-    2) 
-    3) 
-    4) 
-"""
+This script takes input from the DB, then associates the appropriate files and
+parameters to the run_make_otu_heatmap_html function in the QIIME-DB """
 script_info['script_usage'] = [("Example:","This is an example of a basic use case",
-"%prog -i 454_Reads.fna")]
+"%prog -f /files/on/server/ -w http://www.microbio.me/files/ -o /files/on/server/otu_table.biom -q /files/on/server/mapping_file.txt -p meta_analysis -u 0 -m 0 -b /files/on/server/params.txt -r 0 -s 1 -g /files/on/server/tree.tre -d 1/1/2012 -z /files/on/server/zip_files.zip -x http://www.microbio.me/zip_files.zip")]
 script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
 script_info['required_options'] = [\
     make_option('-f','--fs_fp',help='this is the location of the actual files on the linux box'),\
@@ -88,6 +82,7 @@ def main():
     run_date=opts.run_date
     force=True
     
+    # get database connection
     try:
         from data_access_connections import data_access_factory
         from enums import ServerConfig
@@ -97,6 +92,7 @@ def main():
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
         
+    # parse params
     try:
         parameter_f = open(opts.params_path)
     except IOError:
@@ -124,110 +120,19 @@ def main():
         output_dir, params, qiime_config,command_handler,tree_fp, 
         status_update_callback=no_status_updates)
     
+    # zip the heatmap folder
     cd_dir=path.join(opts.fs_fp,'heatmap')
-    #zip the heatmap folder
     cmd_call='cd %s; zip -r %s %s' % (cd_dir,zip_fpath,output_dir.split('/')[-1])
     system(cmd_call)
     
     #convert link into web-link
     web_link=path.join(web_fp,path.splitext(otu_table_fp.split('/')[-1])[0]+'.html')
-    #add the distance matrices
+    
+    # add the distance matrices
     valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'HEATMAP',run_date,'HEATMAP')
     if not valid:
         raise ValueError, 'There was an issue uploading the filepaths to the DB!'
 
-    '''
-    analyses_to_start=jobs_to_start.split(',')
-    if '3d_bdiv_plots' in analyses_to_start or '2d_bdiv_plots' in analyses_to_start:
-        
-        pc_files=run_principal_coordinates(bdiv_files,output_dir, params,
-                                           qiime_config,command_handler,
-                                           status_update_callback=no_status_updates)
-    
-        #iterate over files generated and put the paths in the database for display    
-        for pc_file in pc_files:
-        
-            #zip the distance matrices
-            cmd_call='cd %s; zip %s %s' % (output_dir,zip_fpath,pc_file[1].split('/')[-1])
-            system(cmd_call)
-        
-            #convert link into web-link
-            web_link=path.join(web_fp,pc_file[1].split('/')[-1])
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,pc_file[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-    
-
-   
-
-    if '3d_bdiv_plots' in analyses_to_start:
-        
-        bdiv_3d_fpaths=run_3d_plots(pc_files,mapping_file_fp,output_dir, params,
-                                    qiime_config,command_handler,
-                                    status_update_callback=no_status_updates)
-
-
-        #iterate over files generated and put the paths in the database for display
-        for bdiv_3d_plots in bdiv_3d_fpaths:
-
-            #zip the distance matrices
-            cmd_call='cd %s; zip -r %s %s' % (output_dir,zip_fpath,bdiv_3d_plots[2].split('/')[0])
-            system(cmd_call)
-
-            #convert link into web-link
-            web_link=path.join(web_fp,bdiv_3d_plots[2])
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,bdiv_3d_plots[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-                
-    #
-    if '2d_bdiv_plots' in analyses_to_start:
-        
-        bdiv_2d_fpaths=run_2d_plots(pc_files,mapping_file_fp,output_dir, params,
-                                    qiime_config,command_handler,
-                                    status_update_callback=no_status_updates)
-
-
-        #iterate over files generated and put the paths in the database for display
-        for bdiv_2d_plots in bdiv_2d_fpaths:
-
-            #zip the distance matrices
-            cmd_call='cd %s; zip -r %s %s' % (output_dir,zip_fpath,bdiv_2d_plots[2].split('/')[0])
-            system(cmd_call)
-
-            #convert link into web-link
-            web_link=path.join(web_fp,bdiv_2d_plots[2])
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,bdiv_2d_plots[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-
-    #
-    if 'disthist_bdiv_plots' in analyses_to_start:
-        
-        bdiv_disthist_fpaths=run_make_distance_histograms(bdiv_files,mapping_file_fp,
-                                    output_dir, params,
-                                    qiime_config,command_handler,
-                                    status_update_callback=no_status_updates)
-
-
-        #iterate over files generated and put the paths in the database for display
-        for bdiv_disthist_plots in bdiv_disthist_fpaths:
-
-            #zip the distance matrices
-            cmd_call='cd %s; zip -r %s %s' % (output_dir,zip_fpath,bdiv_disthist_plots[1].split('/')[-1])
-            system(cmd_call)
-
-            #convert link into web-link
-            web_link=path.join(web_fp,bdiv_disthist_plots[1].split('/')[-1],'QIIME_Distance_Histograms.html')
-            #add the distance matrices
-            valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'BDIV',run_date,bdiv_disthist_plots[0].upper())
-            if not valid:
-                raise ValueError, 'There was an issue uploading the filepaths to the DB!'
-                
-    '''
     
     
 if __name__ == "__main__":

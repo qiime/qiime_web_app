@@ -33,19 +33,13 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Submit processed SFF and metadata through picking OTUs into the Oracle DB"
+script_info['brief_description'] = "Run alpha_rarefaction.py in QIIME"
 script_info['script_description'] = """\
-This script takes an processed sff fasta file and performs the \
-following steps:
-
-    1) 
-    2) 
-    3) 
-    4) 
-"""
+This script takes input from the DB, then associates the appropriate files and
+parameters to the alpha_rarefaction.py script in QIIME"""
 script_info['script_usage'] = [("Example:","This is an example of a basic use case",
-"%prog -i 454_Reads.fna")]
-script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
+"%prog -f /files/on/server/ -w http://www.microbio.me/files/ -o /files/on/server/otu_table.biom -q /files/on/server/mapping_file.txt -p meta_analysis -u 0 -m 0 -b /files/on/server/params.txt -r 0 -s 1 -g /files/on/server/tree.tre -d 1/1/2012 -z /files/on/server/zip_files.zip -x http://www.microbio.me/zip_files.zip")]
+script_info['output_description']= "The output is generated and can be downloaded from the QIIME-DB website"
 script_info['required_options'] = [\
     make_option('-f','--fs_fp',help='this is the location of the actual files on the linux box'),\
     make_option('-w','--web_fp',help='this is the location that the webserver can find the files'),\
@@ -127,8 +121,8 @@ def main():
                             params=params,
                             qiime_config=qiime_config)
     
+    # determine whether to run alpha-diversity in serial or parallel
     serial_or_parallel = params['serial_or_parallel']['method']
-    
     if serial_or_parallel=='Serial':
         arare_cmd='%s %s/alpha_rarefaction.py -i %s -m %s -o %s -t %s -p %s -f' %\
             (python_exe_fp, script_dir, otu_table_fp, mapping_file_fp, \
@@ -147,9 +141,12 @@ def main():
     system(cmd_call)
 
     #convert link into web-link
-    web_link=path.join(web_fp,'alpha_rarefaction_plots','rarefaction_plots.html')
+    web_link=path.join(web_fp, 'alpha_rarefaction_plots',
+                       'rarefaction_plots.html')
+    
     #add the distance matrices
-    valid=data_access.addMetaAnalysisFiles(True,int(meta_id),web_link,'ARARE',run_date,'ARARE')
+    valid=data_access.addMetaAnalysisFiles(True, int(meta_id), web_link, 
+                                           'ARARE', run_date, 'ARARE')
     if not valid:
         raise ValueError, 'There was an issue uploading the filepaths to the DB!'
     

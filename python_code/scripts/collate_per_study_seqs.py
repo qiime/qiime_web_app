@@ -24,10 +24,13 @@ from collate_per_study_seqs_lib import (write_full_mapping_file,
                                         add_taxa_to_biom)
                                         
 script_info = {}
-script_info['brief_description'] = ""
-script_info['script_description'] = ""
-script_info['script_usage'] = [("","","")]
-script_info['output_description']= ""
+script_info['brief_description'] = "Collate all the processed data into single files and move to thebeast"
+script_info['script_description'] = "This script will collate all the sequences from a study into a single sequence file, while producing a single mapping file and seqs/sample log file. Additionally, the user can generate a single fastq file. Once the files are created they are passed to the ftp server on thebeast"
+script_info['script_usage'] = [("Example:","Move to private location on thebeast:","%prog -s 0")]
+script_info['script_usage'].append(("","Move to public location on thebeast:","%prog -s 0 -p"))
+script_info['script_usage'].append(("","Generate a single FASTQ file:","%prog -s 0 -f"))
+script_info['script_usage'].append(("","If metagenomic, there is no OTU-table, so you should do this:","%prog -s 0 -m"))
+script_info['output_description']= "The output is a tgz file on thebeast under /qiimedb_studies/public/ or /qiimedb_studies/private/"
 script_info['required_options'] = [\
  # Example required option
  make_option('-s','--study_ids',type="string",

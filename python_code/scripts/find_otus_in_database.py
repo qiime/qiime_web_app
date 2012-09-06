@@ -32,7 +32,7 @@ generate an otu_map.txt file with a list of the otu_id and the sequecnes which m
 it. For those it does not find, it will produce a new fasta file with the sequences which
 still need to be run through OTU picking.
 """
-script_info['script_usage'] = [("Example:","This is an example of a basic use case", "")]
+script_info['script_usage'] = [("Example:","This is an example of a basic use case", "%prog -i input_fasta.fasta -f leftovers.fasta -m otu_map.txt")]
 script_info['output_description'] = "This script produces an otu_map.txt file and a leftover_sequences.fna file."
 script_info['required_options'] = [\
     make_option('-i', '--input_fasta', help = 'This is the path to the input fasta file.'),\

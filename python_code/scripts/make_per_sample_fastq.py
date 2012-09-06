@@ -21,10 +21,10 @@ from os.path import join, split, splitext
 options_lookup=get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = ""
-script_info['script_description'] = ""
-script_info['script_usage'] = [("","","")]
-script_info['output_description']= ""
+script_info['brief_description'] = "Make per-sample FASTQ files"
+script_info['script_description'] = "This script will convert a split-library fna/qual into per-sample fastqs"
+script_info['script_usage'] = [("Example:","","%prog -i seqs.fna -q seqs.qual -o per_sample_fastq")]
+script_info['output_description']= "The output will be per-sample fastq files"
 script_info['required_options'] = [\
  # Example required option
  options_lookup['fasta_as_primary_input'],

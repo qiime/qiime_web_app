@@ -33,29 +33,24 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Submit processed SFF and metadata through picking OTUs into the Oracle DB"
+script_info['brief_description'] = "Run summarize_taxa_through_plots.py in QIIME"
 script_info['script_description'] = """\
-"""
-script_info['script_usage'] = [("","","")]
-script_info['output_description']= ""
+This script takes input from the DB, then associates the appropriate files and
+parameters to the summarize_taxa_through_plots.py script in QIIME"""
+script_info['script_usage'] = [("Example:","This is an example of a basic use case",
+"%prog -f /files/on/server/ -w http://www.microbio.me/files/ -o /files/on/server/otu_table.biom -q /files/on/server/mapping_file.txt -p meta_analysis -u 0 -m 0 -b /files/on/server/params.txt -r 0 -s 1 -g /files/on/server/tree.tre -d 1/1/2012 -z /files/on/server/zip_files.zip -x http://www.microbio.me/zip_files.zip")]
+script_info['output_description']= "The output is generated and can be downloaded from the QIIME-DB website"
 script_info['required_options'] = [\
-    make_option('-f','--fs_fp',
-        help='this is the location of the actual files on the linux box'),\
-    make_option('-w','--web_fp',
-        help='this is the location that the webserver can find the files'),\
-    make_option('-o','--otu_table_fp',
-        help='this is the path to the otu table'),\
-    make_option('-q','--mapping_file_fp',
-        help='this is the path to the qiime mapping file'),\
-    make_option('-p','--fname_prefix',
-        help='this is the prefix to append to the users files'),\
+    make_option('-f','--fs_fp',help='this is the location of the actual files on the linux box'),\
+    make_option('-w','--web_fp',help='this is the location that the webserver can find the files'),\
+    make_option('-o','--otu_table_fp',help='this is the path to the otu table'),\
+    make_option('-q','--mapping_file_fp',help='this is the path to the qiime mapping file'),\
+    make_option('-p','--fname_prefix',help='this is the prefix to append to the users files'),\
     make_option('-u','--user_id',help='this is the user id'),\
     make_option('-m','--meta_id',help='this is the meta analysis id'),\
     make_option('-b','--params_path',help='this is the parameters file used'),\
-    make_option('-r','--bdiv_rarefied_at',
-        help='this is the rarefaction number'),\
-    make_option('-s','--jobs_to_start',
-        help='these are the jobs that should be started'),\
+    make_option('-r','--bdiv_rarefied_at',help='this is the rarefaction number'),\
+    make_option('-s','--jobs_to_start',help='these are the jobs that should be started'),\
     make_option('-g','--tree_fp',help='this is the gg tree to use'),\
     make_option('-d','--run_date',help='this is the run date'),\
     make_option('-z','--zip_fpath',help='this is the zip fpath'),\
@@ -89,6 +84,7 @@ def main():
     run_date=opts.run_date
     force=True
     
+    # get database connection
     try:
         from data_access_connections import data_access_factory
         from enums import ServerConfig
@@ -98,6 +94,7 @@ def main():
         print "NOT IMPORTING QIIMEDATAACCESS"
         pass
         
+    # parse params
     try:
         parameter_f = open(opts.params_path)
     except IOError:
@@ -107,6 +104,7 @@ def main():
     
     params=parse_qiime_parameters(parameter_f)
     
+    # write output directory
     try:
         makedirs(output_dir)
     except OSError:
@@ -134,8 +132,7 @@ def main():
          opts.params_path)
     
     chart_types=params['plot_taxa_summary']['chart_type'].split(',')
-    # add distance histograms params
-    
+
     html_fpaths=[]
     for ctype in chart_types:
         html_fpaths.append((path.join(web_fp,'taxa_summary_plots',

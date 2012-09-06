@@ -37,18 +37,30 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Process SFF and metadata through picking OTUs"
+script_info['brief_description'] = "Process Sequences and metadata through picking OTUs"
 script_info['script_description'] = """\
-This script takes an SFF file and a mapping file and performs the \
+This script takes Sequence file(s) and a mapping file and performs the \
 following steps:
-
+    
+    454:
     1) Process SFFs to generate .fna, .qual and flowgram file. (process_sff.py)
     2) De-multiplex sequences. (split_libraries.py)
+    3) Chained OTU-picking
+    
+    Illumina:
+    1) De-multiplex sequences. (split_libraries_fastq.py)
+    2) Chained OTU-picking
+    
+    FASTA:
+    1) Associate DB accesions to sequence_names provided
+    2) Chained OTU-picking
 
 """
-script_info['script_usage'] = [("Example:","This is an example of a basic use case",
-"%prog -i 454_Reads.sff -m mapping.txt -p custom_parameters.txt -o Output_Directory")]
-script_info['output_description']= "The output of this script produces the FNA, QUAL, and flowgram files, the output of split_libraries.py and pick_otus.py."
+script_info['script_usage'] = [("Example:","454 FLX", "%prog -i 454_Reads.sff -s 0 -m mapping.txt -p custom_parameters.txt -q FLX -r -u 0")]
+script_info['script_usage'].append(("","454 Ti", "%prog -i 454_Reads.sff -s 0 -m mapping.txt -p custom_parameters.txt -q TITANIUM -rt -u 0"))
+script_info['script_usage'].append(("","Illumina", "%prog -i s_1_1_sequences.fastq.gz,s_1_1_sequences_barcodes.fastq.gz -s 0 -m mapping.txt -p custom_parameters.txt -q ILLUMINA -r -u 0"))
+script_info['script_usage'].append(("","FASTA", "%prog -i seqs.fna -s 0 -m mapping.txt -p custom_parameters.txt -q FASTA -r -u 0"))
+script_info['output_description']= "The output of this script produces the output of demultiplexing and chained OTU-picking"
 script_info['required_options'] = [\
     make_option('-i','--sff_fname',help='This is the input sff filepath(s)'),\
     make_option('-s','--study_id',help='This is the study id assigned by the web-interface'),\

@@ -30,19 +30,12 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Submit processed SFF and metadata through picking OTUs into the Oracle DB"
+script_info['brief_description'] = "Submit OTU-table data into DB"
 script_info['script_description'] = """\
-This script takes an processed sff fasta file and performs the \
-following steps:
-
-    1) 
-    2) 
-    3) 
-    4) 
-"""
+Create an analysis and submit the OTU-table data into the QIIME-DB"""
 script_info['script_usage'] = [("Example:","This is an example of a basic use case",
-"%prog -i 454_Reads.fna")]
-script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
+"%prog -i /path/to/files/processed_data_/454_Reads.fna -t False -s 0 -u 0 -o /path/to/files/processed_data_/ -p FLX")]
+script_info['output_description']= "There is no output from the script, since it puts the processed data into the QIIME-DB."
 script_info['required_options'] = [\
     make_option('-i','--fasta_file_paths',help='This is the processed fasta filepath(s) from process_sff.py'),\
     make_option('-t','--submit_to_test_db',help='By setting this parameter, the data will be submitted to the test database.'),\

@@ -32,12 +32,13 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "This script call the beta_diversity_through_plots workflow script in QIIME"
+script_info['brief_description'] = "Run beta_diversity_through_plots.py in QIIME"
 script_info['script_description'] = """\
-This script call the beta_diversity_through_plots workflow script in QIIME
-"""
-script_info['script_usage'] = [("","","")]
-script_info['output_description']= "Output beta diversity plots and puts links in the DB associated to the files generated"
+This script takes input from the DB, then associates the appropriate files and
+parameters to the beta_diversity_through_plots.py script in QIIME"""
+script_info['script_usage'] = [("Example:","This is an example of a basic use case",
+"%prog -f /files/on/server/ -w http://www.microbio.me/files/ -o /files/on/server/otu_table.biom -q /files/on/server/mapping_file.txt -p meta_analysis -u 0 -m 0 -b /files/on/server/params.txt -r 0 -s 1 -g /files/on/server/tree.tre -d 1/1/2012 -z /files/on/server/zip_files.zip -x http://www.microbio.me/zip_files.zip")]
+script_info['output_description']= "The output is generated and can be downloaded from the QIIME-DB website"
 script_info['required_options'] = [\
     make_option('-f','--fs_fp',
         help='this is the location of the actual files on the linux box'),\
@@ -121,6 +122,7 @@ def main():
     # on these
     beta_diversity_metrics = params['beta_diversity']['metrics'].split(',')
     
+    # determine if beta-diversity should be run in serial or parallel
     serial_or_parallel = params['serial_or_parallel']['method']
     
     if 'disthist_bdiv_plots' in jobs_to_start:

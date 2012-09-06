@@ -22,18 +22,13 @@ qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
 
 script_info = {}
-script_info['brief_description'] = "Submit processed SFF and metadata through picking OTUs into the Oracle DB"
+script_info['brief_description'] = "Write QIIME-formatted mapping file"
 script_info['script_description'] = """\
-This script takes an processed sff fasta file and performs the \
-following steps:
-
-    1) 
-    2) 
-    3) 
-    4) 
-"""
-script_info['script_usage'] = [("Example:","This is an example of a basic use case",
-"%prog -i 454_Reads.fna")]
+This script will pull the metadata from the QIIME-DB and produce a QIIME-formatted mapping file"""
+script_info['script_usage'] = [("Example:","This is an example of a basic use case where a minimal mapping file is generated containing only key-fields for processing:",
+"%prog -s 0 -o output_directory")]
+script_info['script_usage'].append(("","Write full-mapping file with all the metadata associated to study:",
+"%prog -s 0 -o output_directory -f"))
 script_info['output_description']= "There is no output from the script is puts the processed data into the Oracle DB."
 script_info['required_options'] = [\
     make_option('-s','--study_id',help='This is the study id assigned from loading the metadata'),\
@@ -49,6 +44,7 @@ def main():
     option_parser, opts, args =\
        parse_command_line_parameters(**script_info)
 
+    # create output directory
     if opts.output_dir:
         if path.exists(opts.output_dir):
             dir_path=opts.output_dir
