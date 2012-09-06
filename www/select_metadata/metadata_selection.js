@@ -405,35 +405,6 @@ function select_invert_col_values(listbox_id){
 }
 
 
-function getStats(form_object)
-{
-    xmlhttp=GetXmlHttpObject()
-    
-    //check if browser can perform xmlhttp
-    if (xmlhttp==null){
-        alert("Your browser does not support XML HTTP Request");
-        return;
-    }
-    
-    form_object=form_object['otu_table_info']
-    //generate a url string where we pass our variables
-    var url="select_metadata/get_otu_table_stats.psp";
-
-    xmlhttp.onreadystatechange=function()
-    {
-        if (xmlhttp.readyState==4){
-            //write the list of similar terms from the database  
-            document.getElementById('field_ref_table').innerHTML=xmlhttp.responseText;
-            document.getElementById('field_ref_table').style.border="1px solid #A5ACB2";
-        }
-    }
-
-    //perform a POST 
-    xmlhttp.open("POST",url,true);
-    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xmlhttp.setRequestHeader("Content-length", form_object.length);
-    xmlhttp.send(form_object)
-}
 
 /* 
     This is the AJAX function which produces the list of terms below each input

@@ -304,10 +304,6 @@ the list of ontologies and function buttons.
 Onsubmit returns false, since the form is not formally submitted and
 it will remove the return key functionality.
 
-<script>
-    /* use AJAX to load the seq/sample stats */
-    getStats(document.forms);
-</script>
 
 <table class='stats' id='field_ref_table' class="column_values" bgcolor="#C0C0C0">
     <tr><th>Loading Stats...</th></th>
