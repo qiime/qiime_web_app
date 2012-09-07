@@ -61,10 +61,13 @@ In the case that users are unable to upload their FASTQ files via the website, w
 Next you should login to the Web Server, change the ownership on the FASTQ files and move them into the appropriate study location. 
 
 ::
-
+    
+    ### Login to your account
     ssh [user-acct]@www.microbio.me
-    chown wwwuser /home/wwwuser/s_1_1_sequence.fastq
-    chgrp wwwuser /home/wwwuser/s_1_1_sequence.fastq
+    
+    ### From your user-account, type the following:
+    sudo chown wwwuser /home/wwwuser/s_1_1_sequence.fastq
+    sudo chgrp wwwuser /home/wwwuser/s_1_1_sequence.fastq
     sudo su - wwwuser
     mv /home/wwwuser/s_1_1_sequence.fastq /home/wwwuser/user_data/studies/study_#/
     
