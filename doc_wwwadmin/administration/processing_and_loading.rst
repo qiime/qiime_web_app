@@ -177,7 +177,16 @@ Prior to loading a study into the DB you should always check the following:
     
         The data in this output only accounts for the sequences that successfully hit the 97% Greengenes sequences. Normally, these number are anywhere from 50%-100% the same as the seqs/sample in the :file:`split_library_log.txt` file. This tends to depend on the environment of the sample, since Greengenes has better coverage of certain environments.
 
-#. Now that you have verified the :file:`split_library_log.txt` file and :file:`per_library_stats.py` output, you can load the Study into the DB. There are 2 options for loading the data:
+#. As a double-check, you can collate the study data and send it to the collaborator, so they can verify the seqs/sample correspond to what they expect.:
+    #. To collate the study data and have it transferred to thebeast FTP server (under :file:`/qiimedb_studies/public/` or :file:`/qiimedb_studies/private/`), you can run the following commands when logged in as the wwwuser under the home directory (:file:`/home/wwwuser/`). Prior to running the command you should note whether the data is public (use "-p" option for :file:`collate_per_study_seqs.py` script) or private. In the case that the study is private, you may need to upload the :file:`.tgz` file onto `tajmahal <http://tajmahal.colorado.edu/qiime/upload/>`_  for download, since public studies on thebeast are persistent, whereas files on tajmahal are temporary:
+
+        ::
+
+            echo "python2.7 /home/wwwuser/projects/Qiime/qiime_web_app/python_code/scripts/collate_per_study_seqs.py -s 0" > job_scripts/job.txt
+            python2.7 make_cluster_jobs.py job_scripts/job.txt "SCP0_"
+    
+
+#. Once you have verified the :file:`split_library_log.txt` file and :file:`per_library_stats.py` output (or double-checked with the collaborator), you can load the Study into the DB. There are 2 options for loading the data:
     #. You can click on the "(admin option: submit job)" link on the Study Page.
     #. You can submit the job via SQL from the SFF tablespace using a command similar to the following:
     
