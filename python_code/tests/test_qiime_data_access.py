@@ -9,6 +9,7 @@ from cogent.util.unit_test import TestCase, main
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 import datetime
+from os import environ
 
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
@@ -604,7 +605,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         
         result = self._qiime_data_access.getSFFFiles(0)
-        self.assertTrue(result==['/home/wwwdevuser/user_data/studies/study_0/Fasting_subset.sff'])
+        self.assertTrue(result==['%s/user_data/studies/study_0/Fasting_subset.sff' % (environ['HOME'])])
     
     
     def test_getMappingFiles(self):
@@ -612,7 +613,7 @@ class QiimeDataAccessTests(unittest.TestCase):
         """
         
         result = self._qiime_data_access.getMappingFiles(0)
-        self.assertTrue(result==['/home/wwwdevuser/user_data/studies/study_0/mapping_files/Fasting_subset__split_libraries_mapping_file.txt'])
+        self.assertTrue(result==['%s/user_data/studies/study_0/mapping_files/Fasting_subset__split_libraries_mapping_file.txt' % (environ['HOME'])])
     
     def test_getStudyTemplates(self):
         """ test_getStudyTemplates: Gets a list of study template files for 
