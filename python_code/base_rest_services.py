@@ -201,7 +201,7 @@ class RestDataHelper(object):
                 if table_name not in tables_and_columns:
                     tables_and_columns[table_name] = []
                 # One exception - public is a keyword and must be quoted
-                if column_name.lower() in set(['public']):
+                if column_name.lower() in set(['public', 'level']):
                     column_name = '"{0}"'.format(column_name.upper())
                 tables_and_columns[table_name].append('{0}'.format(column_name))
                 
