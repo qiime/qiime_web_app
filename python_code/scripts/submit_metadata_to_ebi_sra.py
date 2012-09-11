@@ -46,6 +46,10 @@ def main():
     # Get the live EBI function reference
     live = LiveEBISRARestServices(study_id, web_app_user_id, root_dir, debug)
     live.host_name = ''
+
+    # Make one pass through metadata to generate files to validate. Also
+    # necessary to populate the list of sequence files to send.
+    live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
     
     # Send the sequence files first - required for metadata to validate. If files have already been
     # sent then skip this step.
@@ -57,9 +61,6 @@ def main():
     
     # Submit the metadata with the VALIDATE attribute first. Performs no other actions
     # on EBI server other than ensuring that XML validates. 
-
-    # Generate metadata and curl command
-    live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
 
     # Check if valid, if so regenerate with ADD attribute and send again for reals
     result, curl_result = live.send_curl_data(curl_output_fp, curl_command_fp)
