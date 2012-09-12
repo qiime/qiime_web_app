@@ -68,9 +68,12 @@ def main():
         print 'VALID, resending to EBI with ADD attribute.'
         live.generate_metadata_files(debug = True, action_type = 'ADD')
         result, curl_result = live.send_curl_data(curl_output_fp, curl_command_fp)
+        print curl_result
+        print 'SUCCESS'
     else:
         print 'INVALID'
         print curl_result
+        PRINT 'FAILED'
 
 
 if __name__ == "__main__":
