@@ -540,7 +540,7 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file.write('    </ACTION>\n')
         submission_file.write('    <ACTION>\n')
         one_year = str(date.today() + timedelta(365))
-        submission_file.write('         <HOLD HoldUntilDate"{0}"/>\n'.format(one_year))
+        submission_file.write('         <HOLD HoldUntilDate="{0}"/>\n'.format(one_year))
         submission_file.write('    </ACTION>\n')
         submission_file.write('</ACTIONS>\n')
 
