@@ -20,6 +20,7 @@ from subprocess import Popen, PIPE, STDOUT
 from os.path import split
 from os import chmod
 from sys import stdout
+from datetime import date, timedelta
 
 class SequenceFile(object):
     def __init__(self, file_path, file_id, checksum):
@@ -51,6 +52,7 @@ class LiveEBISRARestServices(BaseRestServices):
         self.sample_file_path = join(self.base_study_path, 'ebi_sample_metadata_{0}.xml'.format(study_id))
         self.experiment_file_path = join(self.base_study_path, 'ebi_experiment_metadata_{0}.xml'.format(study_id))
         self.run_file_path = join(self.base_study_path, 'ebi_run_metadata_{0}.xml'.format(study_id))
+        self.curl_file_path = join(self.base_study_path, 'ebi_curl_command_{0}.sh'.format(study_id))
         
         # EBI FTP info
         self.ftp_url = 'ftp.sra.ebi.ac.uk'
@@ -231,6 +233,9 @@ class LiveEBISRARestServices(BaseRestServices):
             self.logger.log_entry('Sending sequence file directory "{0}"'.format(unique_dir))
             ascp_command = 'ascp -QT -k2 -L- {0}/*.gz era-drop-215@fasp.sra.ebi.ac.uk:/.'.format(unique_dir)
             self.call_ascp_command_line(ascp_command, debug = False)
+            
+    def parse_ebi_output(self):
+        pass
                 
     def generate_metadata_files(self, debug = True, action_type = 'VALIDATE'):
         """
@@ -533,6 +538,10 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file.write('    <ACTION>\n')
         submission_file.write('        <{0} source="{1}" schema="run"/>\n'.format(action_type, basename(self.run_file_path)))
         submission_file.write('    </ACTION>\n')
+        submission_file.write('    <ACTION>\n')
+        one_year = str(date.today() + timedelta(365))
+        submission_file.write('         <HOLD HoldUntilDate"{0}"/>\n'.format(one_year))
+        submission_file.write('    </ACTION>\n')
         submission_file.write('</ACTIONS>\n')
 
         # Sequence files here?
@@ -549,13 +558,12 @@ class LiveEBISRARestServices(BaseRestServices):
             self.logger.log_entry('{0} - {1}'.format(f.file_path, f.checksum))
             
         # Write out the curl command to a file for now
-        curl_file_path = join(self.base_study_path, 'ebi_curl_command_{0}.sh'.format(study_id))
-        curl_file = open(curl_file_path, 'w')
+        curl_file = open(self.curl_file_path, 'w')
         curl_file.write(self.generate_curl_command())
         curl_file.close()
         
         # Fix permissions
-        chmod(curl_file_path, 0755)
+        chmod(self.curl_file_path, 0755)
         
         if len(self.errors) > 0:
             self.logger.log_entry('ERRORS FOUND:')
