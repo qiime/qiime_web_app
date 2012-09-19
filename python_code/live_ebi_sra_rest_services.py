@@ -435,7 +435,8 @@ class LiveEBISRARestServices(BaseRestServices):
                         for prep_key in prep_dict:                        
                             experiment_file.write('          <EXPERIMENT_ATTRIBUTE>\n')
                             experiment_file.write('             <TAG>{0}</TAG>\n'.format(prep_key))
-                            experiment_file.write('             <VALUE>{0}</VALUE>\n'.format(prep_dict[prep_key]))
+                            clean_value = self.clean_text_value(prep_dict[prep_key])
+                            experiment_file.write('             <VALUE>{0}</VALUE>\n'.format(clean_value))
                             experiment_file.write('          </EXPERIMENT_ATTRIBUTE>\n')
                         experiment_file.write('       </EXPERIMENT_ATTRIBUTES>\n')
                         
