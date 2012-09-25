@@ -174,7 +174,14 @@ def validatePrepFile(mdtable, req, study_id, data_access):
             run_prefix = '' if run_prefix == None else run_prefix
             platform = '' if platform == None else platform
             
+            database_values = (linker, primer, barcode, run_prefix, platform)
+            file_values = (file_linkers[i], file_primers[i], file_barcodes[i], file_run_prefixes[i], file_platforms[i])
+            
             if file_sample_name == sample_name:
+                if database_values != file_values:
+                    errors.append('Key values have changed. Database: "{0}", File: "{1}"'.format(str(database_values), str(file_values)))
+                    key_fields_changed = True
+                """
                 if file_linkers[i] != linker:
                     #errors.append('Linker for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, linker, file_linkers[i]))
                     key_fields_changed = True
@@ -190,6 +197,7 @@ def validatePrepFile(mdtable, req, study_id, data_access):
                 if file_platforms[i] != platform:
                     #errors.append('Platform for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, platform, file_platforms[i]))
                     key_fields_changed = True
+                """
         i += 1
     
     return errors, key_fields_changed
@@ -422,17 +430,23 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             return None, errors
         # study_id > 0 ensures that this is not the anonymous case. If so, we skip the
         # next two validations.
-        elif study_id > 0:
+        elif study_id > 0:            
             # Handle sample database validation issues
             if samples_missing:
                 # Do not change this string. It's checked for on the respose page.
-                req.write('missing samples')
+                if study_info['locked - missing samples'] == 1:
+                    req.write('locked')
+                else:
+                    req.write('missing samples')
                 return templates, errors
             
             # Handle immutable field issues
             if key_fields_changed:
                 # Do not change this string. It's checked for on the respose page.
-                req.write('immutable fields changed')
+                if study_info['locked'] == 1:
+                    req.write('locked - immutable fields changed')
+                else:
+                    req.write('immutable fields changed')
                 return templates, errors
             
             # Delete the old files
