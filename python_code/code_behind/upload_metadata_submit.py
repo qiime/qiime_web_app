@@ -163,42 +163,29 @@ def validatePrepFile(mdtable, req, study_id, data_access):
     # ordered by sample_name
     database_fields = data_access.getImmutableDatabaseFields(study_id)
     
-    # Compare. If they do not match, we must ask the user to reload all metadata or abort
-    i = 0
-    for file_sample_name in file_sample_names:
-        for sample_name, linker, primer, barcode, run_prefix, platform in database_fields:
-            # Values can come across as the text 'None' - make sure this doesn't cause a problem
-            linker = '' if linker == None else linker
-            primer = '' if primer == None else primer
-            barcode = '' if barcode == None else barcode
-            run_prefix = '' if run_prefix == None else run_prefix
-            platform = '' if platform == None else platform
-            
-            database_values = (linker, primer, barcode, run_prefix, platform)
-            file_values = (file_linkers[i], file_primers[i], file_barcodes[i], file_run_prefixes[i], file_platforms[i])
-            
-            if file_sample_name == sample_name:
-                if database_values != file_values:
-                    errors.append('Key values have changed. Database: "{0}", File: "{1}"'.format(str(database_values), str(file_values)))
-                    key_fields_changed = True
-                """
-                if file_linkers[i] != linker:
-                    #errors.append('Linker for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, linker, file_linkers[i]))
-                    key_fields_changed = True
-                if file_primers[i] != primer:
-                    #errors.append('Primer for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, primer, file_primers[i]))
-                    key_fields_changed = True
-                if file_barcodes[i] != barcode:
-                    #errors.append('Barcode for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, barcode, file_barcodes[i]))
-                    key_fields_changed = True
-                if file_run_prefixes[i] != run_prefix:
-                    #errors.append('Run prefix for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, run_prefix, file_run_prefixes[i]))
-                    key_fields_changed = True
-                if file_platforms[i] != platform:
-                    #errors.append('Platform for sample {0} has been changed from "{1}" to "{2}"'.format(sample_name, platform, file_platforms[i]))
-                    key_fields_changed = True
-                """
-        i += 1
+    # Build a list of all of file tuples
+    file_tuples = []
+    for i, file_sample_name in enumerate(file_sample_names)
+        file_tuples.append((file_sample_name, file_linkers[i], file_primers[i], file_barcodes[i], file_run_prefixes[i], file_platforms[i]))
+    
+    # Verify that we at least have the same count of items. If not this is an error.    
+    if len(file_tuples) > len(database_fields):
+        errors.append('Error: There are more entries in this file than in the database.')
+        key_fields_changed = True
+        return errors, key_fields_changed
+    elif len(file_tuples) < len(database_fields):
+        errors.append('Error: There are fewer entries in this file than in the database.')
+        key_fields_changed = True
+        return errors, key_fields_changed
+    
+    # Assuming the number of entries matches, let's make sure that we find a match for each database tuple
+    # in the uploaded file tuples
+    for database_tuple in database_fields:
+        if database_tuple in file_tuples:
+            continue
+        else:
+            errors.append('Error: no matching entry for: "{0}"'.format(str(database_tuple)))
+            key_fields_changed = True
     
     return errors, key_fields_changed
 
