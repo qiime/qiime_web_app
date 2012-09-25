@@ -180,11 +180,19 @@ def validatePrepFile(mdtable, req, study_id, data_access):
     
     # Assuming the number of entries matches, let's make sure that we find a match for each database tuple
     # in the uploaded file tuples
-    for database_tuple in database_fields:
-        if database_tuple in file_tuples:
+    for sample_name, linker, primer, barcode, run_prefix, platform in database_fields:
+        # Do a little cleaning of empty/null values so they match the file entries
+        linker = '' if linker == None else linker
+        primer = '' if primer == None else primer
+        barcode = '' if barcode == None else barcode
+        run_prefix = '' if run_prefix == None else run_prefix
+        platform = '' if platform == None else platform
+        dt = (sample_name, linker, primer, barcode, run_prefix, platform)
+        
+        if dt in file_tuples:
             continue
         else:
-            errors.append('Error: no matching entry for: "{0}"'.format(str(database_tuple)))
+            errors.append('Error: no matching entry for: "{0}"'.format(str(dt)))
             key_fields_changed = True
     
     return errors, key_fields_changed
