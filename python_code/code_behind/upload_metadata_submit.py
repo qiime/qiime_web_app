@@ -168,8 +168,11 @@ def validatePrepFile(mdtable, req, study_id, data_access):
     for i, file_sample_name in enumerate(file_sample_names):
         file_tuples.append((file_sample_name, file_linkers[i], file_primers[i], file_barcodes[i], file_run_prefixes[i], file_platforms[i]))
     
-    # Verify that we at least have the same count of items. If not this is an error.    
-    if len(file_tuples) > len(database_fields):
+    # Verify that we at least have the same count of items. If not this is an error.
+    if len(database_fields) == 0:
+        # First upload, always okay
+        pass
+    elif len(file_tuples) > len(database_fields):
         errors.append('Error: There are more entries in this file than in the database.')
         key_fields_changed = True
         return errors, key_fields_changed
