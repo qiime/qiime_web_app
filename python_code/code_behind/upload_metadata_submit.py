@@ -436,8 +436,8 @@ def validateFileContents(study_id, portal_type, sess, form, req, web_app_user_id
             # Handle sample database validation issues
             if samples_missing:
                 # Do not change this string. It's checked for on the respose page.
-                if study_info['locked - missing samples'] == 1:
-                    req.write('locked')
+                if study_info['locked'] == 1:
+                    req.write('locked - missing samples')
                 else:
                     req.write('missing samples')
                 return templates, errors
