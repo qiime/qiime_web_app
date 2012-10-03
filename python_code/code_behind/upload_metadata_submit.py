@@ -177,13 +177,13 @@ def validatePrepFile(mdtable, req, study_id, data_access):
         # First upload, always okay
         pass
     elif len(file_tuples) > len(database_fields):
-        errors.append('Error: There are more entries in this file than in the database.')
+        #errors.append('Error: There are more entries in this file than in the database.')
         key_fields_changed = True
-        return errors, key_fields_changed
+        #return errors, key_fields_changed
     elif len(file_tuples) < len(database_fields):
-        errors.append('Error: There are fewer entries in this file than in the database.')
+        #errors.append('Error: There are fewer entries in this file than in the database.')
         key_fields_changed = True
-        return errors, key_fields_changed
+        #return errors, key_fields_changed
     else:
         # Assuming the number of entries matches, let's make sure that we find a match for each database tuple
         # in the uploaded file tuples
@@ -199,7 +199,7 @@ def validatePrepFile(mdtable, req, study_id, data_access):
             if dt in file_tuples:
                 continue
             else:
-                errors.append('Error: no matching entry for: "{0}"'.format(str(dt)))
+                #errors.append('Error: no matching entry for: "{0}"'.format(str(dt)))
                 key_fields_changed = True
     
     return errors, key_fields_changed
