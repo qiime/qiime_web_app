@@ -68,6 +68,7 @@ def getPage(page):
 # Parse out the terms
 identifier = None
 resource = None
+terms = None
 
 query_string = fs.get('query', '')
 
@@ -77,6 +78,7 @@ if query_string == '':
 
 if '/' not in query_string:
     #req.write('string type<br/>\n')
+
     resource = query_string
 else:
     #req.write('list type<br/>\n')
