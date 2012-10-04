@@ -1,0 +1,55 @@
+<%
+# Sample specific URL:
+# http://192.168.56.101/r/library/139824
+
+# Sample generic URL:
+# http://192.168.56.101/r/library
+
+def handle_generic_request():
+    req.write('Libraries')
+
+def handle_specific_request():
+    import json
+    
+    query = """
+    select  sp.sequence_prep_id, sa.sample_id, sa.sample_name, sa.collection_date 
+    from    sequence_prep sp 
+            inner join sample sa 
+            on sp.sample_id = sa.sample_id 
+    where   sp.sequence_prep_id = {0} 
+    """.format(identifier)
+    # identifier is defined on the router.psp page. It's the numerical value after the resource 
+    # name (i.e. a sequence_prep_id in this case)
+    results = data_access.dynamicMetadataSelect(query).fetchone()
+    if not results:
+        raise ValueError('No results found.')
+
+    sequence_prep_id = results[0]
+    sample_id = results[1]
+    sample_name =results[2]
+    collection_date = results[3]
+
+    library_data = \
+    {\
+    'id':sequence_prep_id,\
+    'about':sample_name,\
+    'version':0,\
+    'created':collection_date,\
+    'url':'http://www.microbio.me/r/library/{0}'.format(sequence_prep_id),\
+    'sample':sample_id,\
+    'metagenome':None,\
+    'reads':None,\
+    'sequence_sets':['This will contain a sequence file reference'],\
+    'metadata':{'metadata1':'value1', 'metadata2':'value2'}\
+    }
+
+    json_dump = json.dumps(library_data)
+    req.write(json_dump)    
+
+# If identifier is None, it's a generic request
+if identifier == None:
+    handle_generic_request()
+else:
+    handle_specific_request()
+    
+%>
