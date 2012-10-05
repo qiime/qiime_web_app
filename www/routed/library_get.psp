@@ -39,7 +39,7 @@ def handle_specific_request():
     'sample':sample_id,\
     'metagenome':None,\
     'reads':None,\
-    'sequence_sets':['This will contain a sequence file reference'],\
+    'sequence_sets':[{'stage_name':'upload', 'file_name':'File1', 'file_type':'FASTQ'}],\
     'metadata':{'metadata1':'value1', 'metadata2':'value2'}\
     }
 
