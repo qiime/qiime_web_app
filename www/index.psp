@@ -41,6 +41,9 @@ def setPortalType():
     elif sess['portal_type'] == 'qiime':
         sess['stylesheet'] = 'style/qiime.css'
         sess['title'] = 'Qiime'
+    elif sess['portal_type'] == 'mobedac':
+        sess['stylesheet'] = 'style/mobedac.css'
+        sess['title'] = 'MoBEDAC'
     else:
         sess['stylesheet'] = 'style/qiime.css'
         sess['title'] = 'Qiime'
@@ -356,7 +359,7 @@ for plot_name, plot_title in sorted_plots:
 
 
 <h3 id="map_div_header">
-<a href="" onclick="toggleSection(\'map_div\'); return false;">[+] Qiime Sample Locations</a>
+<a href="" onclick="toggleSection(\'map_div\'); return false;">[+] Qiime Sample Breakdown</a>
 </h3>
 
 <div id="map_div" name="map_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:98%; height=100%; padding:5px;">

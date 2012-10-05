@@ -123,10 +123,10 @@ def createJQueryPlot(field_name, plot_title):
 
 # The list of plots to generate. The dict key must be a column in the sample table.
 plots = {}
-plots['env_matter'] = 'Samples by Env Matter'
-plots['env_feature'] = 'Samples by Env Feature'
-plots['env_biome'] = 'Samples by Env Biome'
-plots['country'] = 'Samples by Location'
+plots['env_matter'] = 'By Env Matter'
+plots['env_feature'] = 'By Env Feature'
+plots['env_biome'] = 'By Env Biome'
+plots['country'] = 'By Location'
 
 %>
 
@@ -136,7 +136,7 @@ plots['country'] = 'Samples by Location'
 <title>Earth Microbiome Project - Metadata Portal</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
-<link rel="stylesheet" href="emp.css" type="text/css">
+<link rel="stylesheet" href="/qiime/style/emp.css" type="text/css">
 <link class="include" rel="stylesheet" type="text/css" href="/qiime/js/jqChartJQueryPlugin_3_0_0_0/css/jquery.jqChart.css" />
 
 <script type="text/javascript" src="/qiime/js/jquery.min.js"></script>
@@ -269,7 +269,7 @@ if form.has_key('username'):
 <!-- STATISTICS -->
 
 <h3 id="stats_div_header">
-<a href="" onclick="toggleSection(\'stats_div\'); return false;">[+] EMP Statistics</a>
+<a href="" onclick="toggleSection(\'stats_div\'); return false;">[+] EMP Sample Breakdown</a>
 </h3>
 
 <div id="stats_div" name="stats_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px;">

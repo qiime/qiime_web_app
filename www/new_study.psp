@@ -268,7 +268,7 @@ for item in sorted(list):
         </tr>
         <input type="hidden" name="miens_compliant" id="miens_compliant" value="y">        
         <tr>
-            <td>Includes Timeseries Data?
+            <td>Includes Event-Based Data?
             </td>
             <td>
 <%

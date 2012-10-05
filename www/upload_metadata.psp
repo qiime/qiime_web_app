@@ -69,12 +69,22 @@ function uploaderFileStatusChanged(uploader, file)
         var ask_user_to_reload = false;
         var message = '';
         
-        if (response_text == "missing samples")
+        if (response_text == "locked - missing samples")
+        {
+            message = "Samples currently in the database are not represented in the supplied files. The study is locked and key fields cannot be modified at this time.";
+            ask_user_to_reload = false;
+        }
+        elif (response_text == "locked - immutable fields changed")
+        {
+            message = "One or more key fields has been changed: sample_name, linker, primer, barcode, run_prefix, or platform). The study is locked and key fields cannot be modified at this time.";
+            ask_user_to_reload = false;
+        }
+        elif (response_text == "missing samples")
         {
             message = "Samples currently in the database are not represented in the supplied files.";
             ask_user_to_reload = true;
         }
-        else if (response_text == "immutable fields changed")
+        elif (response_text == "immutable fields changed")
         {
             message = "One or more key fields has been changed: sample_name, linker, primer, barcode, run_prefix, or platform).";
             ask_user_to_reload = true;
@@ -102,7 +112,7 @@ function uploaderFileStatusChanged(uploader, file)
             }
             else
             {
-                response_text = "Upload aborted - You have selected not to repace the current set of metadata.";
+                response_text = "Upload aborted";
             }
         }
         document.getElementById("complete").innerHTML = response_text;

@@ -1,7 +1,10 @@
 <html>
 <head>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
 <script type="text/javascript" src="./js/form_complete.js"></script>
-<script type="text/javascript" src="./js/quick_jump.js"></script>
+
 </head>
 
 <body>

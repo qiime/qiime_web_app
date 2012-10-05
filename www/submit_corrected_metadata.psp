@@ -14,14 +14,14 @@ __status__ = "Development"
 <script type="text/javascript">
 function updateStatus(currentItem, totalFieldCount, divPrefix)
 {
-    // Build our output
-    var pcent = parseInt((currentItem / totalFieldCount) * 100);
-    var message = "Writing " + currentItem + " of " + totalFieldCount + " items (" + pcent + "%)<br/>";
-    
-    // Write the message
-    document.getElementById(divPrefix + "_container").style.visibility = "visible";
-    document.getElementById(divPrefix + "_status").innerHTML = message;
-    document.getElementById(divPrefix + "_progress").style.width = pcent + "%";
+	// Build our output
+	var pcent = parseInt((currentItem / totalFieldCount) * 100);
+	var message = "Writing " + currentItem + " of " + totalFieldCount + " items (" + pcent + "%)<br/>";
+	
+	// Write the message
+	document.getElementById(divPrefix + "_container").style.visibility = "visible";
+	document.getElementById(divPrefix + "_status").innerHTML = message;
+	document.getElementById(divPrefix + "_progress").style.width = pcent + "%";
 }
 </script>
 
@@ -45,19 +45,19 @@ study_id = sess['study_id']
 portal_type = sess['portal_type']
 
 if sess.has_key('load_type'):
-    load_type = sess['load_type']
-    del sess['load_type']
-    sess.save()
+	load_type = sess['load_type']
+	del sess['load_type']
+	sess.save()
 else:
-    load_type = 'update'
+	load_type = 'update'
 
 req.write('LOAD TYPE: %s' % load_type)
 
 # Remove any existing metadata if a reload is required
 if load_type == 'reload':
-    data_access.deleteStudy(study_id, 1)
+	data_access.deleteStudy(study_id, 1)
 else:
-    data_access.deleteStudy(study_id, 0)
+	data_access.deleteStudy(study_id, 0)
 
 # Variables to collect our data
 sample_key_fields = {}
@@ -85,155 +85,156 @@ timeseries_template = None
 files = []
 prep_template_present = False
 for item in form:
-    if 'study_template' in item:
-        files.append(form[item])
-    elif 'sample_template' in item:
-        files.append(form[item])
-    elif 'prep_template' in item:
-        files.append(form[item])
-        prep_template_present = True
-    elif 'timeseries_template' in item:
-        timeseries_template = form[item]
+	if 'study_template' in item:
+		files.append(form[item])
+	elif 'sample_template' in item:
+		files.append(form[item])
+	elif 'prep_template' in item:
+		files.append(form[item])
+		prep_template_present = True
+	elif 'timeseries_template' in item:
+		timeseries_template = form[item]
 
 # If not EMP, make sure we have 2 files. If not we're screeeeewd.
 if portal_type == 'emp':
-    pass
+	pass
 elif len(files) != 2:
-    req.write('Missing files! I could only find these:<br/>')
-    for item in files:
-        req.write(item + '<br/>')
+	req.write('Missing files! I could only find these:<br/>')
+	for item in files:
+		req.write(item + '<br/>')
 
 # Clear and re-insert our study templates
 data_access.clearStudyTemplates(study_id)
 for filename in sess['templates']:
-    data_access.addTemplateFile(study_id, filename)
+	data_access.addTemplateFile(study_id, filename)
 
 # Read in the files and put into da bucket of values
 validated_values = {}
 for name in files:
-    f = open(name, 'r')
-    for line in f:
-        vals = line.split('::')
-        validated_values[str(vals[0]).strip()] = str(vals[1]).strip()
-        
+	f = open(name, 'r')
+	for line in f:
+		vals = line.split('::')
+		validated_values[str(vals[0]).strip()] = str(vals[1]).strip()
+		
 # Add any corrected values passed in the form...
 for item in form:
-    parts = item.split(':')
-    
-    # Not a metadata field if length of parts is wrong
-    if len(parts) != 4:
-        continue
-    else:
-        validated_values[item] = form[item]
+	parts = item.split(':')
+	
+	# Not a metadata field if length of parts is wrong
+	if len(parts) != 4:
+		continue
+	else:
+		validated_values[item] = form[item]
 
 # Make one pass to shuffle all fields into the right buckets
 for item in validated_values:
-    parts = item.split(':')
-    
-    # Not a metadata field if length of parts is wrong
-    if len(parts) != 4:
-        continue
-    
-    # Sort the parts into more meaningful variable names
-    field_type = parts[0]
-    row_num = parts[1]
-    field_name = parts[3]
-    field_value = validated_values[item]
-    
-    # Skip the project name field here since we don't want to
-    # change the name the user typed when creating their study. This value
-    # may show up in some legacy files or could be added by the user at a
-    # later time. 
-    if field_name.upper() == 'PROJECT_NAME':
-        continue
-    
-    # Sample rows
-    if  field_type == 'sample' and field_name == 'sample_name':
-        if field_value == '' or field_value == None:
-            req.write('<br/>ERROR: Key value is blank (%s)<br/>' % str(item))
-            key_field_errors.append(item)
+	parts = item.split(':')
+	
+	# Not a metadata field if length of parts is wrong
+	if len(parts) != 4:
+		continue
+	
+	# Sort the parts into more meaningful variable names
+	field_type = parts[0]
+	row_num = parts[1]
+	field_name = parts[3]
+	field_value = validated_values[item]
+	
+	# Skip the project name field here since we don't want to
+	# change the name the user typed when creating their study. This value
+	# may show up in some legacy files or could be added by the user at a
+	# later time. 
+	if field_name.upper() == 'PROJECT_NAME':
+		continue
+	
+	# Sample rows
+	if	field_type == 'sample' and field_name == 'sample_name':
+		if field_value == '' or field_value == None:
+			req.write('<br/>ERROR: Key value is blank (%s)<br/>' % str(item))
+			key_field_errors.append(item)
  
-        sample_fields.append(item)
-        sample_key_fields[row_num] = field_value
-        
-    # Host rows 
-    elif field_type == 'sample' and field_name == 'host_subject_id':
-        if field_value == '' or field_value == None:
-            req.write('<br/>ERROR: Key value is blank (%s)<br/>' % str(item))
-            key_field_errors.append(item)
+		sample_fields.append(item)
+		req.write('adding ')
+		sample_key_fields[row_num] = field_value
+		
+	# Host rows 
+	elif field_type == 'sample' and field_name == 'host_subject_id':
+		if field_value == '' or field_value == None:
+			req.write('<br/>ERROR: Key value is blank (%s)<br/>' % str(item))
+			key_field_errors.append(item)
 
-        host_fields.append(item)
-        host_key_fields[row_num] = field_value
-    
-    # Prep rows 
-    elif field_type == 'prep' and field_name == 'sample_name':
-        if field_value == '' or field_value == None:
-            req.write('<br/>ERROR: Key value is blank (%s -- "%s" )<br/>' % (str(item), validated_values[item]))
-            key_field_errors.append(item)
-            
-        prep_fields.append(item)
-        prep_key_fields[row_num] = field_value
-            
-    # Specifics to insert prep rows without duplicate entries (row_num isn't enough if source file is reordered)
-    # Need to collect barcode, linker, primer, run_prefix
-    elif field_type == 'prep' and field_name == 'barcode':
-        prep_barcode_fields[row_num] = field_value if field_value is not '' else None
-    elif field_type == 'prep' and field_name == 'linker':
-        prep_linker_fields[row_num] = field_value if field_value is not '' else None
-    elif field_type == 'prep' and field_name == 'primer':
-        prep_primer_fields[row_num] = field_value if field_value is not '' else None
-    elif field_type == 'prep' and field_name == 'run_prefix':
-        prep_run_prefix_fields[row_num] = field_value if field_value is not '' else None
-    
-    # All other fields will be inserted in step 3
-    else:
-        all_other_fields.append(item)
+		host_fields.append(item)
+		host_key_fields[row_num] = field_value
+	
+	# Prep rows 
+	elif field_type == 'prep' and field_name == 'sample_name':
+		if field_value == '' or field_value == None:
+			req.write('<br/>ERROR: Key value is blank (%s -- "%s" )<br/>' % (str(item), validated_values[item]))
+			key_field_errors.append(item)
+			
+		prep_fields.append(item)
+		prep_key_fields[row_num] = field_value
+			
+	# Specifics to insert prep rows without duplicate entries (row_num isn't enough if source file is reordered)
+	# Need to collect barcode, linker, primer, run_prefix
+	elif field_type == 'prep' and field_name == 'barcode':
+		prep_barcode_fields[row_num] = field_value if field_value is not '' else None
+	elif field_type == 'prep' and field_name == 'linker':
+		prep_linker_fields[row_num] = field_value if field_value is not '' else None
+	elif field_type == 'prep' and field_name == 'primer':
+		prep_primer_fields[row_num] = field_value if field_value is not '' else None
+	elif field_type == 'prep' and field_name == 'run_prefix':
+		prep_run_prefix_fields[row_num] = field_value if field_value is not '' else None
+	
+	# All other fields will be inserted in step 3
+	else:
+		all_other_fields.append(item)
 
 # de-indent
 %>
 
 <!-- Divs for sample -->
 <div name="sample_container" id="sample_container" style="visibility:hidden;">
-    <p style="font-size:12px; font-weight:bold;">Sample Key Values:</p>
-    <div name="sample_status" id="sample_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="sample_progress" id="sample_progress">
-        </div>
-    </div>
-    <br/><br/>
+	<p style="font-size:12px; font-weight:bold;">Sample Key Values:</p>
+	<div name="sample_status" id="sample_status" style="font-size:12px"></div>
+	<div class="progress-container">
+		<div style="width: 0%" name="sample_progress" id="sample_progress">
+		</div>
+	</div>
+	<br/><br/>
 </div>
 
 <%
 if prep_template_present:
-    # Indent
+	# Indent
 %>
 
 <!-- Divs for prep -->
 <div name="prep_container" id="prep_container" style="visibility:hidden;">
-    <p style="font-size:12px; font-weight:bold;">Prep Key Values:</p>
-    <div name="prep_status" id="prep_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="prep_progress" id="prep_progress">
-        </div>
-    </div>
-    <br/><br/>
+	<p style="font-size:12px; font-weight:bold;">Prep Key Values:</p>
+	<div name="prep_status" id="prep_status" style="font-size:12px"></div>
+	<div class="progress-container">
+		<div style="width: 0%" name="prep_progress" id="prep_progress">
+		</div>
+	</div>
+	<br/><br/>
 </div>
 
 <%
 
 if len(host_fields) > 0:
-    # Indent
+	# Indent
 %>
-    
+	
 <!-- Divs for host -->
 <div name="host_container" id="host_container" style="visibility:hidden;">
-    <p style="font-size:12px; font-weight:bold;">Host Key Values:</p>
-    <div name="host_status" id="host_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="host_progress" id="host_progress">
-        </div>
-    </div>
-    <br/><br/>
+	<p style="font-size:12px; font-weight:bold;">Host Key Values:</p>
+	<div name="host_status" id="host_status" style="font-size:12px"></div>
+	<div class="progress-container">
+		<div style="width: 0%" name="host_progress" id="host_progress">
+		</div>
+	</div>
+	<br/><br/>
 </div>
 
 <%
@@ -244,13 +245,13 @@ if len(host_fields) > 0:
 
 <!-- Divs for the rest of the fields -->
 <div name="the_rest_container" id="the_rest_container" style="visibility:hidden;">
-    <p style="font-size:12px; font-weight:bold;">Metadata Values (this may take a while):</p>
-    <div name="the_rest_status" id="the_rest_status" style="font-size:12px"></div>
-    <div class="progress-container">
-        <div style="width: 0%" name="the_rest_progress" id="the_rest_progress">
-        </div>
-    </div>
-    <br/><br/>
+	<p style="font-size:12px; font-weight:bold;">Metadata Values (this may take a while):</p>
+	<div name="the_rest_status" id="the_rest_status" style="font-size:12px"></div>
+	<div class="progress-container">
+		<div style="width: 0%" name="the_rest_progress" id="the_rest_progress">
+		</div>
+	</div>
+	<br/><br/>
 </div>
 
 <%
@@ -263,56 +264,56 @@ item_count = len(sample_fields)
 current_item = 0
 batch_size = item_count / update_intervals
 if batch_size == 0:
-    batch_size = 1
+	batch_size = 1
 for item in sample_fields:
-    current_item += 1
-    field_value = validated_values[item]
-    data_access.createSampleKey(study_id, field_value)
-    if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
-        req.write('<script type="text/javascript">updateStatus(%s, %s, "sample");</script>' % (current_item, item_count))
+	current_item += 1
+	field_value = validated_values[item]
+	data_access.createSampleKey(study_id, field_value)
+	if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
+		req.write('<script type="text/javascript">updateStatus(%s, %s, "sample");</script>' % (current_item, item_count))
 
 # Insert the prep key rows now that sample rows all exist
 item_count = len(prep_fields)
 current_item = 0
 batch_size = item_count / update_intervals
 if batch_size == 0:
-    batch_size = 1 
+	batch_size = 1 
 for item in prep_fields:
-    current_item += 1
-    field_value = validated_values[item]
-    row_num = item.split(':')[1]
-    barcode = prep_barcode_fields[row_num]
-    linker = prep_linker_fields[row_num]
-    primer = prep_primer_fields[row_num]
-    run_prefix = prep_run_prefix_fields[row_num]
-    
-    #req.write('field_value: "{0}", row_num: "{1}", barcode: "{2}", linker: "{3}", primer: "{4}" run_prefix: "{5}", study_id: "{6}"\n<br/><br/>'.format(field_value, row_num, barcode, linker, primer, run_prefix, study_id))
-    
-    #data_access.createPrepKey(study_id, field_value, row_num)
-    data_access.createPrepKey(study_id, field_value, row_num, barcode, linker, primer, run_prefix)
-    
-    if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
-        req.write('<script type="text/javascript">updateStatus(%s, %s, "prep");</script>' % (current_item, item_count))
+	current_item += 1
+	field_value = validated_values[item]
+	row_num = item.split(':')[1]
+	barcode = prep_barcode_fields[row_num]
+	linker = prep_linker_fields[row_num]
+	primer = prep_primer_fields[row_num]
+	run_prefix = prep_run_prefix_fields[row_num]
+	
+	#req.write('field_value: "{0}", row_num: "{1}", barcode: "{2}", linker: "{3}", primer: "{4}" run_prefix: "{5}", study_id: "{6}"\n<br/><br/>'.format(field_value, row_num, barcode, linker, primer, run_prefix, study_id))
+	
+	#data_access.createPrepKey(study_id, field_value, row_num)
+	data_access.createPrepKey(study_id, field_value, row_num, barcode, linker, primer, run_prefix)
+	
+	if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
+		req.write('<script type="text/javascript">updateStatus(%s, %s, "prep");</script>' % (current_item, item_count))
 
 # Insert the host key rows now that sample rows all exist
 item_count = len(host_fields)
 batch_size = item_count / update_intervals
 if batch_size == 0:
-    batch_size = 1
+	batch_size = 1
 current_item = 0
 if len(host_fields) > 0:
-    # Add host_subject_id to study_actual_columns
-    data_access.addStudyActualColumn(study_id, 'host_subject_id', '"HOST"');
-    
-    for item in host_fields:
-        current_item += 1
-        parts = item.split(':')
-        row_num = parts[1]
-        field_value = validated_values[item]
-        sample_name = sample_key_fields[row_num]
-        data_access.createHostKey(study_id, sample_name, field_value)
-        if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
-            req.write('<script type="text/javascript">updateStatus(%s, %s, "host");</script>' % (current_item, item_count))
+	# Add host_subject_id to study_actual_columns
+	data_access.addStudyActualColumn(study_id, 'host_subject_id', '"HOST"');
+	
+	for item in host_fields:
+		current_item += 1
+		parts = item.split(':')
+		row_num = parts[1]
+		field_value = validated_values[item]
+		sample_name = sample_key_fields[row_num]
+		data_access.createHostKey(study_id, sample_name, field_value)
+		if current_item % batch_size == 0 or (item_count - current_item) < update_intervals:
+			req.write('<script type="text/javascript">updateStatus(%s, %s, "host");</script>' % (current_item, item_count))
 
 # To hold the current bucket of metadata values
 item_list = []
@@ -326,73 +327,73 @@ bucket_size = item_count / thread_count
 
 # Define the thread callback
 def _updateCallback():
-    global update_intervals
-    global current_item
-    global item_count
-    
-    batch_size = item_count / update_intervals
-    if batch_size == 0:
-        batch_size = 1
-    current_item += 1
-    if current_item % batch_size == 0 or (item_count - current_item) < 100:
-        req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' \
-            % (current_item, item_count))
-    
+	global update_intervals
+	global current_item
+	global item_count
+	
+	batch_size = item_count / update_intervals
+	if batch_size == 0:
+		batch_size = 1
+	current_item += 1
+	if current_item % batch_size == 0 or (item_count - current_item) < 100:
+		req.write('<script type="text/javascript">updateStatus(%s, %s, "the_rest");</script>' \
+			% (current_item, item_count))
+	
 def _errorCallback(e):
-    global with_errors
-    
-    with_errors = True
-    req.write(str(e) + '<p/>')
+	global with_errors
+	
+	with_errors = True
+	req.write(str(e) + '<p/>')
 
 lock = Lock()
 
 # Go workers go!
 data_access.fields.clear()
 for item in all_other_fields:
-    #req.write(str(item) + '....' + validated_values[item] + '<br/>')
-    item_list.append(item)
-    if len(item_list) == bucket_size:
-        t = MetadataWorkerThread(validated_values, copy.deepcopy(item_list), sample_key_fields, \
-            prep_key_fields, host_key_fields, study_name, study_id, data_access, _updateCallback,\
-            _errorCallback, lock)
-        threads.append(t)
-        t.start()
-        item_list = []
-        
+	#req.write(str(item) + '....' + validated_values[item] + '<br/>')
+	item_list.append(item)
+	if len(item_list) == bucket_size:
+		t = MetadataWorkerThread(validated_values, copy.deepcopy(item_list), sample_key_fields, \
+			prep_key_fields, host_key_fields, study_name, study_id, data_access, _updateCallback,\
+			_errorCallback, lock)
+		threads.append(t)
+		t.start()
+		item_list = []
+		
 # If there are any items left, process those last
 if len(item_list) > 0:
-    t = MetadataWorkerThread(validated_values, item_list, sample_key_fields, prep_key_fields, \
-        host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback, lock)
-    threads.append(t)
-    t.start()
+	t = MetadataWorkerThread(validated_values, item_list, sample_key_fields, prep_key_fields, \
+		host_key_fields, study_name, study_id, data_access, _updateCallback, _errorCallback, lock)
+	threads.append(t)
+	t.start()
 
 for t in threads:
-    t.join()
-    
+	t.join()
+	
 # Load the timeseries file into a new table
 if timeseries_template:
-    data_access.saveTimeseriesData(study_id, timeseries_template, req)
+	data_access.saveTimeseriesData(study_id, timeseries_template, req)
 
 if with_errors:
-    req.write('<h3>Upload Completed With Errors</h3>')
-    req.write('<p style="font-size:12px">You should review the errors above, make the appropriate adjustments to your metadata files, then re-submit them to your study.</p>')
-    req.write('<a href="fusebox.psp?page=upload_metadata.psp">Upload corrected metadata</a>')
-    
-    # Update the database flag for the failed upload
-    data_access.updateMetadataFlag(study_id, 'n')
+	req.write('<h3>Upload Completed With Errors</h3>')
+	req.write('<p style="font-size:12px">You should review the errors above, make the appropriate adjustments to your metadata files, then re-submit them to your study.</p>')
+	req.write('<a href="fusebox.psp?page=upload_metadata.psp">Upload corrected metadata</a>')
+	
+	# Update the database flag for the failed upload
+	data_access.updateMetadataFlag(study_id, 'n')
 else:
-    if sess['is_admin'] == 1:
-        req.write('<p/><h3>Thread count: %s</h3>' % thread_count)
-        
-    req.write('<p/><h3>Upload Completed!</h3>')
-    req.write('<p style="font-size:8px">yahoo!</p>')
-    req.write('<img src="img/firework3.gif"/>')
-    
-    # One more calc to perform - figure out the age in years for host studies
-    data_access.calcAgeInYears(study_id)
-    
-    # Update the database flag for successful metadata upload
-    data_access.updateMetadataFlag(study_id, 'y')
+	if sess['is_admin'] == 1:
+		req.write('<p/><h3>Thread count: %s</h3>' % thread_count)
+		
+	req.write('<p/><h3>Upload Completed!</h3>')
+	req.write('<p style="font-size:8px">yahoo!</p>')
+	req.write('<img src="img/firework3.gif"/>')
+	
+	# One more calc to perform - figure out the age in years for host studies
+	data_access.calcAgeInYears(study_id)
+	
+	# Update the database flag for successful metadata upload
+	data_access.updateMetadataFlag(study_id, 'y')
 
 # end if/else
 %>
