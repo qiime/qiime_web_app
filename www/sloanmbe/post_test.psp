@@ -1,11 +1,15 @@
 <%
 
+import json
 import sys
 import httplib, urllib
 
 url_path = '/mobedac_ws/submission'
 host = 'vamps.mbl.edu'
-file_contents = """{"analysis_system":"VAMPS","library_ids":["139824", "139820"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac","vamps_user":"plustig"}}"""
+#file_contents = """{"analysis_system":"VAMPS","library_ids":["139824", "139820"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac","vamps_user":"plustig"}}"""
+
+file_data = {"analysis_system":"VAMPS","library_ids":["139824", "139820"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac","vamps_user":"plustig"}}
+file_contents = json.dumps(file_data)
 
 debug = True
 success = None
@@ -19,7 +23,7 @@ if debug:
 
 # Submit file data
 #headers = {"Content-type":"application/x-www-form-urlencoded", "Accept":"text/xml", "User-Agent":"qiime_website"}
-headers = {"Content-type":"application/x-www-form-urlencoded", "Accept":"text/html", "User-Agent":"qiime_website"}
+headers = {"Content-type":"text/plain", "Accept":"text/plain", "User-Agent":"qiime_website"}
 conn = httplib.HTTPConnection(host)
 conn.request(method = "POST", url = url_path, body = file_contents, headers = headers)
 response = conn.getresponse()

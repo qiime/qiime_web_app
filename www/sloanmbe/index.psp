@@ -35,15 +35,15 @@ sess.save()
 
 <div class="container">
 	<div id="header">
-		 <div class="disclaimer">MoBEDAC</div>
+		<div class="login_disclaimer">SloanMBE</div>
 	</div>
 </div>
 
-<div class="content">
-
 <table class="header_table">
-<tr><td>Please Log In</td></tr>
+    <tr><td class="login_header_table_cell">Please Log In</td></tr>
 </table>
+
+<div class="content">
 
 <%
 # This is the location where the user directories are written
@@ -53,7 +53,7 @@ link_path_dir = 'studies'
 if form.has_key('username'):
 	user_data = data_access.authenticateWebAppUser( form["username"], form["password"] )
 	if ( user_data and user_data['verified']=='y'):
-		url = 'http://%s/qiime/index.psp?portal_type=mobedac&username=%s&password=%s&is_admin=%s' %\
+		url = 'http://%s/qiime/index.psp?portal_type=sloanmbe&username=%s&password=%s&is_admin=%s' %\
 			(req.hostname, form["username"], form["password"], user_data['is_admin'])
 		req.write('<script language=\"javascript\">window.location = "%s";</script>' % url)
 	else:
@@ -88,11 +88,6 @@ if form.has_key('username'):
 
 <br/>
 
-
-
-
-
-<hr/>
 
 </div>
 
