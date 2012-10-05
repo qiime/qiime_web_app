@@ -29,6 +29,9 @@ def handle_specific_request():
     sample_name =results[2]
     collection_date = results[3]
 
+    ######### TEMPORARY VALUE
+    tmp_sequence_file = 'http://www.microbio.me/qiime/studies/study_314/processed_data_FA6P1OK_/split_libraries/per_sample_fastq/seqs_3.23.CL.N.139821.fastq.gz'
+
     library_data = \
     {\
     'id':sequence_prep_id,\
@@ -39,7 +42,7 @@ def handle_specific_request():
     'sample':sample_id,\
     'metagenome':None,\
     'reads':None,\
-    'sequence_sets':[{'stage_name':'upload', 'file_name':'File1', 'file_type':'FASTQ'}],\
+    'sequence_sets':[{'stage_name':'upload', 'file_name':tmp_sequence_file, 'file_type':'FASTQ', 'id':sequence_prep_id, 'stage_id':sequence_prep_id}],\
     'metadata':{'metadata1':'value1', 'metadata2':'value2'}\
     }
 
