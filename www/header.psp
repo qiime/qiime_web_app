@@ -42,6 +42,7 @@ portal_type = sess['portal_type']
 <title><%=sess['title']%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="style/style.css" type="text/css">
 <link rel="stylesheet" href="<%=sess['stylesheet']%>" type="text/css">
 <script type="text/javascript" src="./js/qiime.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
