@@ -64,7 +64,7 @@ function toggleSection(section_name)
 }
 
 $(document).ready(function(){
-	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	$("ul.subnav").parent().append("<span>.</span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
 	
 	$("ul.topnav li span").click(function() { //When trigger is clicked...
 		
@@ -103,44 +103,42 @@ function select_change_submit(form_name, sender)
 <body>
 
 <div class="container">
-
+<div id="header">
 <% 
-req.write('<div id="header">')
-
 # puts in development text
 if str(ServerConfig.config_options['data_access_type'])=='DataAccessType.qiime_test':
     req.write('<div class="development"><h1>Development</h1></div>')
     req.write('<div class="qiime_version">QIIME %s: Revision:%s</div>' % (qiime_version,str(get_qiime_svn_version())))
 
-if sess['is_admin'] == 1:
-    study_id = ''
-    if sess.has_key('study_id'):
-        study_id = sess['study_id']
-    req.write('<div class="disclaimer">Logged in as %s. Study ID: %s</div>' % (sess['username'], study_id))
+study_id = ''
+if sess.has_key('study_id'):
+    study_id = sess['study_id']
+#req.write('<div class="disclaimer">')
+req.write('<div class="disclaimer">')
+#req.write(sess['portal_type'])
+req.write('</div>')
+#if study_id:
+#    req.write('<br/>Selected study_id: {0}'.format(study_id))
+#req.write('<br/>Logged in as {0}'.format(sess['username']))
+#req.write('</div>')
 # End indent
 %>
 
-
-    	 
-    	 
-    	 <table border="0px" width="100%" background="img/topnav_bg_tall.gif" cellspacing="0" cellpadding="0">
-    	    <tr width="100%">
-    	        <td width="100%">
-    	                
-        <ul class="topnav">
-            <li>
-                <a href="fusebox.psp?page=select_study.psp">Home</a>
-            </li>
+<table class="header_table">
+    <tr>
+        <td class="header_table_cell">        
+            <ul class="topnav">
+                <li><a href="fusebox.psp?page=select_study.psp">Home</a></li>
+                
 <%
 if sess.get('study_id'):
     # Indent
 %>
-            <li>
-                <a href="fusebox.psp" target="<%=sess['frame_target']%>">Manage Study Data</a>
-
-                <ul class="subnav">
-                    <li><a href="fusebox.psp?page=new_study.psp" target="<%=sess['frame_target']%>">Create New Study</a></li>
-                    <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIMARKS Templates</a></li>
+                <li>
+                    <a href="fusebox.psp" target="<%=sess['frame_target']%>">Manage Study Data</a>
+                    <ul class="subnav">
+                        <li><a href="fusebox.psp?page=new_study.psp" target="<%=sess['frame_target']%>">Create New Study</a></li>
+                        <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIMARKS Templates</a></li>
 
 <%
     if portal_type in ['qiime', 'emp']:
@@ -149,43 +147,48 @@ if sess.get('study_id'):
     # End if
 %>
                     
-                    <li><a href="fusebox.psp?page=upload_metadata.psp" target="<%=sess['frame_target']%>">Upload Metadata</a></li>
-                </ul>
-            </li>
+                        <li><a href="fusebox.psp?page=upload_metadata.psp" target="<%=sess['frame_target']%>">Upload Metadata</a></li>
+                    </ul>
+                </li>
 <%
 # End if
 
 if portal_type == 'qiime':
     # Indent
 %>
-            <li>
-                <a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Meta Analysis</a>
-                <ul class="subnav">
-                    <li><a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Create New Meta-Analysis</a></li>
-                </ul>
-            </li>
+                <li>
+                    <a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Meta Analysis</a>
+                    <ul class="subnav">
+                        <li><a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Create New Meta-Analysis</a></li>
+                    </ul>
+                </li>
 <%
 
 # End if
 %>
-            <li>
-                <a href="fusebox.psp?page=tools_ontology_and_geo.psp" target="<%=sess['frame_target']%>">Tools</a>
-                <ul class="subnav">
-                    <li><a href="fusebox.psp?page=tools_ontology.psp" target="<%=sess['frame_target']%>">Ontology Lookup Service</a></li>
-                    <li><a href="fusebox.psp?page=tools_geo.psp" target="<%=sess['frame_target']%>">Georeference Utility</a></li>
-                </ul>
-            </li>
-            <li><a href="docs/index.html" target="_blank">Help</a></li>
-            <li>
-            <form id="logout" action="index.psp" method="post">
-                <input type="hidden" name="portal_type" id="portal_type" value="<%=portal_type%>">
-                <a href="" onclick="document.forms['logout'].submit(); return false;">
-                Log Out</a>
-            </form>
-            </li>
-        </ul>
-        </td></tr></table>
-    </div>
+                <li>
+                    <a href="fusebox.psp?page=tools_ontology_and_geo.psp" target="<%=sess['frame_target']%>">Tools</a>
+                    <ul class="subnav">
+                        <li><a href="fusebox.psp?page=tools_ontology.psp" target="<%=sess['frame_target']%>">Ontology Lookup Service</a></li>
+                        <li><a href="fusebox.psp?page=tools_geo.psp" target="<%=sess['frame_target']%>">Georeference Utility</a></li>
+                    </ul>
+                </li>
+                <li><a href="docs/index.html" target="_blank">Help</a></li>
+                <li>
+                <form id="logout" action="index.psp" method="post">
+                    <input type="hidden" name="portal_type" id="portal_type" value="<%=portal_type%>">
+                    <a href="" onclick="document.forms['logout'].submit(); return false;">
+                    Log Out</a>
+                </form>
+                </li>
+            </ul>
+            </td>
+        </tr>
+    </table>
 </div>
-<h3>&nbsp;&nbsp;NOTE: Please read the <a href="fusebox.psp?page=db_processing_protocol.psp" target="<%=sess['frame_target']%>">QIIME-DB Processing Protocol</a> to understand how all uploaded data is handled.</h3>
+    
+</div>
+
 <div class="content">
+
+<h3>&nbsp;&nbsp;NOTE: Please read the <a href="fusebox.psp?page=db_processing_protocol.psp" target="<%=sess['frame_target']%>">QIIME-DB Processing Protocol</a> to understand how all uploaded data is handled.</h3>
