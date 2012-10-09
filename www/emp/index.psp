@@ -136,6 +136,7 @@ plots['country'] = 'By Location'
 <title>Earth Microbiome Project - Metadata Portal</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
+<link rel="stylesheet" href="/qiime/style/style.css" type="text/css">
 <link rel="stylesheet" href="/qiime/style/emp.css" type="text/css">
 <link class="include" rel="stylesheet" type="text/css" href="/qiime/js/jqChartJQueryPlugin_3_0_0_0/css/jquery.jqChart.css" />
 
