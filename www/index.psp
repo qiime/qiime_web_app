@@ -41,9 +41,9 @@ def setPortalType():
     elif sess['portal_type'] == 'qiime':
         sess['stylesheet'] = 'style/qiime.css'
         sess['title'] = 'Qiime'
-    elif sess['portal_type'] == 'mobedac':
-        sess['stylesheet'] = 'style/mobedac.css'
-        sess['title'] = 'MoBEDAC'
+    elif sess['portal_type'] == 'sloanmbe':
+        sess['stylesheet'] = 'style/sloanmbe.css'
+        sess['title'] = 'SloanMBE'
     else:
         sess['stylesheet'] = 'style/qiime.css'
         sess['title'] = 'Qiime'
@@ -220,23 +220,19 @@ function toggleSection(section_name)
 </head>
 
 <body>
+
 <div class="container">
     <div id="header">
     	 <div class="disclaimer">Please Log In</div>
     </div>
 </div>
-<div class="content">
-
-<hr/>
-
 
 <form action="fusebox.psp" method="post" name="login_form" id="login_form">
 <input type="hidden" name="page" value="./select_study.psp">
 </form>
+
 <table class="header_table">
-<tr><td>
-<b>Please Log In</b>
-</td></tr>
+    <tr><td class="login_header_table_cell">Please Log In</td></tr>
 </table>
 
 <%
@@ -304,22 +300,23 @@ else:
 
 <br/>
 
-<table class="header_table"><tr><td>
-<table>
+<table class="header_table">
     <tr>
-        <td><b>Total Qiime Samples:</b> <%=locale.format("%d", total_num_samples, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Total Qiime Sequences:</b> <%=locale.format("%d", total_seqs, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Biomes Represented:</b> <%=locale.format("%d", total_biomes, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Total GG97 OTUs:</b> <%=locale.format("%d", total_otus, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Collaborators:</b> <%=locale.format("%d", total_collaborators, grouping=True)%></td>
+        <td class="login_header_table_cell">
+            <table padding="0">
+                <td><b>Total Qiime Samples:</b> <%=locale.format("%d", total_num_samples, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Total Qiime Sequences:</b> <%=locale.format("%d", total_seqs, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Biomes Represented:</b> <%=locale.format("%d", total_biomes, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Total GG97 OTUs:</b> <%=locale.format("%d", total_otus, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Collaborators:</b> <%=locale.format("%d", total_collaborators, grouping=True)%></td>
+            </table>
+        </td>
     </tr>
 </table>
-</td></tr></table>  
-
 <br/>
 
 
@@ -332,7 +329,7 @@ else:
 
 
 
-
+<div class="content">
 
 
 <!-- STATISTICS -->

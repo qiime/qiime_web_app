@@ -174,10 +174,9 @@ function toggleSection(section_name)
 		 <div class="disclaimer"></div>
 	</div>
 </div>
-<div class="content">
 
 <table class="header_table">
-<tr><td>Please Log In</td></tr>
+    <tr><td class="login_header_table_cell">Please Log In</td></tr>
 </table>
 
 <%
@@ -230,27 +229,29 @@ if form.has_key('username'):
 
 
 
-<table  bgcolor="#DDDDDD" padding="0" width="100%"><tr><td>
-<table>
+
+<table class="header_table">
     <tr>
-        <td><b>Total EMP Samples:</b> <%=locale.format("%d", total_num_samples, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Total Sequences:</b> <%=locale.format("%d", total_seqs, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Biomes Represented:</b> <%=locale.format("%d", total_biomes, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Total GG97 OTUs:</b> <%=locale.format("%d", total_otus, grouping=True)%></td>
-        <td width="10"></td>
-        <td><b>Collaborators:</b> <%=locale.format("%d", total_collaborators, grouping=True)%></td>
+        <td class="login_header_table_cell">
+            <table padding="0">
+                <td><b>Total EMP Samples:</b> <%=locale.format("%d", total_num_samples, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Total Sequences:</b> <%=locale.format("%d", total_seqs, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Biomes Represented:</b> <%=locale.format("%d", total_biomes, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Total GG97 OTUs:</b> <%=locale.format("%d", total_otus, grouping=True)%></td>
+                <td width="10"></td>
+                <td><b>Collaborators:</b> <%=locale.format("%d", total_collaborators, grouping=True)%></td>
+            </table>
+        </td>
     </tr>
 </table>
-</td></tr></table>
 <br/>
 
 
 
 
-<hr/>
 
 
 
@@ -263,6 +264,7 @@ if form.has_key('username'):
 
 
 
+<div class="content">
 
 
 
