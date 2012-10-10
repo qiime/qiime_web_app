@@ -114,14 +114,12 @@ if str(ServerConfig.config_options['data_access_type'])=='DataAccessType.qiime_t
 study_id = ''
 if sess.has_key('study_id'):
     study_id = sess['study_id']
-#req.write('<div class="disclaimer">')
-req.write('<div class="disclaimer">')
+req.write('<div id="study_info">')
 #req.write(sess['portal_type'])
+if study_id:
+    req.write('<br/>Selected study_id: {0}'.format(study_id))
+req.write('<br/>Logged in as {0}'.format(sess['username']))
 req.write('</div>')
-#if study_id:
-#    req.write('<br/>Selected study_id: {0}'.format(study_id))
-#req.write('<br/>Logged in as {0}'.format(sess['username']))
-#req.write('</div>')
 # End indent
 %>
 
