@@ -161,7 +161,7 @@ where   s.study_id = {0}
                 break
             elif exists(path):
                 # Attempt to compress file
-                self.compress_file(self, path, gz_path)
+                self.compress_file(path, gz_path)
                 if exists(gz_path):
                     found = gz_path
                 break
@@ -221,7 +221,7 @@ where   s.study_id = {0}
             found = gz_fna_path
         elif exists(fna_path):
             # Attempt to compress file
-            self.compress_file(self, fna_path, gz_fna_path)
+            self.compress_file(fna_path, gz_fna_path)
             if exists(gz_fna_path):
                 found = gz_fna_path
 
