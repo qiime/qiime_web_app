@@ -227,7 +227,7 @@ where   s.study_id = {0}
 
         # If none of the possibilities exist in the filesystem we must abort
         if not found:
-            raise IOError('Sequence file does not exist: {0}. Skipping.'.format(str(possible_file_paths)))
+            raise IOError('Sequence file does not exist: {0}. Skipping.'.format(str(fna_path)))
 
         # Otherwise, we found a real file (and maybe even gzipped it too)! Return that path to the caller.
         return found    
