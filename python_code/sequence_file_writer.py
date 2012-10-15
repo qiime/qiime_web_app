@@ -217,13 +217,13 @@ where   s.study_id = {0}
         found = None
         if exists(gz_fna_path):
             self.logger.log_entry('gzipped file exists. Returning name only.')
-            self.logger.log_entry('gzip file name is "{0}"'.format(gz_path))
-            found = gz_path
+            self.logger.log_entry('gzip file name is "{0}"'.format(gz_fna_path))
+            found = gz_fna_path
         elif exists(fna_path):
             # Attempt to compress file
-            self.compress_file(self, path, gz_path)
-            if exists(gz_path):
-                found = gz_path
+            self.compress_file(self, fna_path, gz_fna_path)
+            if exists(gz_fna_path):
+                found = gz_fna_path
 
         # If none of the possibilities exist in the filesystem we must abort
         if not found:
