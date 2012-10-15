@@ -211,8 +211,8 @@ where   s.study_id = {0}
         self.logger.log_entry('sample_and_prep is "{0}"'.format(sample_and_prep))
         self.logger.log_entry('run_prefix is "{0}"'.format(run_prefix))
 
-        gz_fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/{2}.gz'.format(str(self.study_id), sample_name, sample_and_prep))
-        fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/seqs.fna'.format(str(self.study_id), sample_name))
+        gz_fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/{2}.gz'.format(str(self.study_id), sample_name, sample_and_prep))
+        fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/seqs.fna'.format(str(self.study_id), sample_name))
 
         found = None
         if exists(gz_fna_path):
