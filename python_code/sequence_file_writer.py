@@ -92,6 +92,17 @@ class BaseSequenceWriter(object):
 		self.root_dir = root_dir
 		self.file_extension = file_extension
 		self.logger = logger
+
+    def compress_file(self, source_path, gz_path):
+        self.logger.log_entry('Non-zipped file exists. Creating gzipped file...')
+		f_in = open(source_path, 'rb')
+		f_out = gzip.open(gz_path, 'wb')
+		f_out.writelines(f_in)
+		f_out.close()
+		f_in.close()
+		self.logger.log_entry('Gzip archive successfully created.')
+		self.logger.log_entry('Full file name is "{0}"'.format(source_path))
+		self.logger.log_entry('gzip file name is "{0}"'.format(gz_path))
 		
 	def write(self, debug = True):
 		""" 
@@ -102,7 +113,7 @@ class BaseSequenceWriter(object):
 
 		# Get the sample_name + sequence_prep_id from the sample_id
 		query = """
-select	s.sample_name || '.' || sp.sequence_prep_id, sp.run_prefix
+select	s.sample_name, s.sample_name || '.' || sp.sequence_prep_id as sample_and_prep, sp.run_prefix
 from	sample s 
 		inner join sequence_prep sp 
 		on s.sample_id = sp.sample_id 
@@ -112,67 +123,56 @@ where	s.study_id = {0}
 		""".format(str(self.study_id), str(self.sample_id), str(self.row_number))
 
 		self.logger.log_entry('Running query: {0}'.format(query))
-
 		results = self.data_access.dynamicMetadataSelect(query).fetchone()
-
 		self.logger.log_entry('Query results: {0}'.format(str(results)))
 
 		sample_name = results[0]
-		run_prefix = results[1]
+		sample_and_prep = results[1]
+		run_prefix = results[2]
 
-		self.logger.log_entry('Sample name is "{0}"'.format(sample_name))
-		self.logger.log_entry('Run prefix is "{0}"'.format(run_prefix))
+		self.logger.log_entry('sample_name is "{0}"'.format(sample_name))
+		self.logger.log_entry('sample_and_prep is "{0}"'.format(sample_and_prep))
+		self.logger.log_entry('run_prefix is "{0}"'.format(run_prefix))
 
-		# Set the full file path and gzip file path
-		full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.{3}'.format(str(self.study_id), run_prefix, sample_name, self.file_extension))
-		gz_file_name = full_file_name + '.gz'
-		alternate_full_file_name = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/{2}.{3}'.format(str(self.study_id), run_prefix, sample_name, self.file_extension))
-		alternate_gz_file_name = alternate_full_file_name + '.gz'
-		
-		# Shortcut - if the file exists, just return it. Don't refresh the archive.
-		if exists(gz_file_name):
-			self.logger.log_entry('gzipped file exists. Returning name only.')
-			return gz_file_name
-		elif exists(alternate_gz_file_name):
-			self.logger.log_entry('Alternate gzipped file exists. Returning name only.')
-			return alternate_gz_file_name
-		
-		if not exists(full_file_name) and not exists(alternate_full_file_name):
-			raise IOError('Sequence file does not exist: {0}. Skipping.'.format(full_file_name))
-			
-		gz_file_name = full_file_name + '.gz'
-		
-		self.logger.log_entry('Full file name is "{0}"'.format(full_file_name))
-		self.logger.log_entry('gzip file name is "{0}"'.format(gz_file_name))
-			
-		# If FASTA, create the sequence file from the database
-		if self.writer_type == 'fasta' and not exists(full_file_name):
-			self.logger.log_entry('File does not exist, writing FASTA file {0} from database...'.format(full_file_name))
-				
-			# Export the file from database
-			export_fasta_from_sample(self.study_id, self.sample_id, full_file_name)
-			self.logger.log_entry('File {0} exported from database successfully.'.format(full_file_name))
+        # Let's see if we can find the sequence files. SFF and FASTQ studies processed recently
+        # should have per-library fastq files in the per_sample_fastq folder. FASTA studies
+        # do not share this convention. In this case, we look for the FASTA files in the root directory.
+        # In addition to the base filenames, they may or may not be gzipped. If the gzipped file and 
+        # checksum file already exists, we just return the .gz filename and checksum. If not, we gzip,
+        # generate a checksum, and then return.
+        
+        # The list of possible sequence file paths
+        possible_file_paths = []
+        # Per-library FASTQ with seqs_ prefix
+        possible_file_paths.append(join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/seqs_{2}.{3}'.format(str(self.study_id), run_prefix, sample_and_prep, self.file_extension)))
+        # Per-library FASTQ with no prefix
+        possible_file_paths.append(join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/per_sample_fastq/{2}.{3}'.format(str(self.study_id), run_prefix, sample_and_prep, self.file_extension)))
 
-		# Create the gzip archive if file base file exists
-		if full_file_name != None and full_file_name != '' and exists(full_file_name):
+        # Try to find one of these files...
+        found = None
+        for path in possible_file_paths:
+            gz_path = path + '.gz'
 
-			# Otherwise, create a gzip archive of the seqs file
-			self.logger.log_entry('Creating gzip archive...')
+            # Look for the .gz file first
+            if exists(gz_path):
+                self.logger.log_entry('gzipped file exists. Returning name only.')
+        		self.logger.log_entry('gzip file name is "{0}"'.format(gz_path))
+    			found = gz_path
+    			break
+    		elif exists(path):
+    		    # Attempt to compress file
+    		    self.compress_file(self, path, gz_path)
+    		    if exists(gz_path):
+    			    found = gz_path
+    			break
+    	
+    	# If none of the possibilities exist in the filesystem we must abort
+    	if not found:
+    	    raise IOError('Sequence file does not exist: {0}. Skipping.'.format(str(possible_file_paths)))
 
-			f_in = open(full_file_name, 'rb')
-			f_out = gzip.open(gz_file_name, 'wb')
-			f_out.writelines(f_in)
-			f_out.close()
-			f_in.close()
-
-			# Remove the original file to save space
-			#remove(full_file_name)
-
-			return gz_file_name
-		else:
-			# If the file cannot be read or found, throw an exception.
-			raise IOError('Sequence file does not exist: {0}. Skipping.'.format(full_file_name))
-
+        # Otherwise, we found a real file (and maybe even gzipped it too)! Return that path to the caller.
+        return found
+    	
 class FastaSequenceWriter(BaseSequenceWriter):
 	""" Writes per-library fasta files
 	
@@ -180,6 +180,57 @@ class FastaSequenceWriter(BaseSequenceWriter):
 	"""
 	def __init__(self, data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger):
 		super(FastaSequenceWriter, self).__init__(data_access, study_id, sample_id, row_number, writer_type, root_dir, file_extension, logger)
+	
+    def write(self, debug = True):
+		""" 
+		Creates or locates the appropriate sequence file, gzips it if necessary, returns file reference
+		"""
+
+		self.logger.log_entry('Writing FNA sequence file for study_id {0}, sample_id {1}, row_number {2}'.format(str(self.study_id), str(self.sample_id), str(self.row_number)))
+
+		# Get the sample_name + sequence_prep_id from the sample_id
+		query = """
+select	s.sample_name, s.sample_name || '.' || sp.sequence_prep_id as sample_and_prep, sp.run_prefix
+from	sample s 
+		inner join sequence_prep sp 
+		on s.sample_id = sp.sample_id 
+where	s.study_id = {0}
+		and sp.sample_id = {1}
+		and sp.row_number = {2}
+		""".format(str(self.study_id), str(self.sample_id), str(self.row_number))
+
+		self.logger.log_entry('Running query: {0}'.format(query))
+		results = self.data_access.dynamicMetadataSelect(query).fetchone()
+		self.logger.log_entry('Query results: {0}'.format(str(results)))
+
+		sample_name = results[0]
+		sample_and_prep = results[1]
+		run_prefix = results[2]
+
+		self.logger.log_entry('sample_name is "{0}"'.format(sample_name))
+		self.logger.log_entry('sample_and_prep is "{0}"'.format(sample_and_prep))
+		self.logger.log_entry('run_prefix is "{0}"'.format(run_prefix))
+
+        gz_fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/{2}.gz'.format(str(self.study_id), sample_name, sample_and_prep))
+        fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/seqs.fna'.format(str(self.study_id), sample_name))
+
+        found = None
+        if exists(gz_fna_path):
+            self.logger.log_entry('gzipped file exists. Returning name only.')
+    		self.logger.log_entry('gzip file name is "{0}"'.format(gz_path))
+			found = gz_path
+		elif exists(fna_path):
+		    # Attempt to compress file
+		    self.compress_file(self, path, gz_path)
+		    if exists(gz_path):
+			    found = gz_path
+
+    	# If none of the possibilities exist in the filesystem we must abort
+    	if not found:
+    	    raise IOError('Sequence file does not exist: {0}. Skipping.'.format(str(possible_file_paths)))
+
+        # Otherwise, we found a real file (and maybe even gzipped it too)! Return that path to the caller.
+        return found	
 				
 class SffSequenceWriter(BaseSequenceWriter):
 	""" Returns per-library gzipped fastq references for SFF data
