@@ -20,7 +20,7 @@ frame_target = sess['frame_target']
     <b>Study Options:</b>
     <ul>
 <%
-if portal_type == 'qiime':
+if portal_type == 'qiime' or portal_type == 'emp':
     # Indent
     
 %>
