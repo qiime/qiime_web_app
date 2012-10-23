@@ -169,11 +169,11 @@ def validatePrepFile(mdtable, req, study_id, data_access):
         file_tuples.append((file_sample_name, file_linkers[i], file_primers[i], file_barcodes[i], file_run_prefixes[i], file_platforms[i]))
     
     # Determine if the data has been processed. If not, then don't worry about metadata changes
-    results = data_access.dynamicMetadataSelect('select 1 from sff.analysis where study_id = {0}'.format(study_id)).fetchone()
-    if not results:
-        pass
+    #results = data_access.dynamicMetadataSelect('select 1 from sff.analysis where study_id = {0}'.format(study_id)).fetchone()
+    #if not results:
+    #    pass
     # Verify that we at least have the same count of items. If not this is an error.
-    elif len(database_fields) == 0:
+    if len(database_fields) == 0:
         # First upload, always okay
         pass
     elif len(file_tuples) > len(database_fields):
