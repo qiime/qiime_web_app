@@ -54,7 +54,7 @@ var complete = false
 
 function uploaderFileStatusChanged(uploader, file)
 {
-    if (file.getStatus() == file.STATUS_FAILED || file.getStatus() == 2)
+    if (file.getStatus() == file.STATUS_FAILED)
     {
         alert('failed');
         document.getElementById("complete").innerHTML = file.getResponseContent();
