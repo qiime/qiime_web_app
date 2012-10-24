@@ -97,7 +97,7 @@ class MetadataTable(object):
                 names.append(column)
             
             for column in dupes:
-                errors.append('Column names must be unique within the sample file: %s' % column)
+                errors.append('Column names must be unique within the file: %s' % column)
                 
         return errors
         
