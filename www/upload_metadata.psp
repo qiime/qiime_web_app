@@ -54,15 +54,15 @@ var complete = false
 
 function uploaderFileStatusChanged(uploader, file)
 {
-    if (file.getStatus() == file.STATUS_FAILED)
+    if (file.getStatus() == file.STATUS_FAILED || file.getStatus() == 2)
     {
         alert('failed');
         document.getElementById("complete").innerHTML = file.getResponseContent();
         return;
     }
     
-    var filecount = uploader.getFileCount()
-    var index = file.getIndex()
+    var filecount = uploader.getFileCount();
+    var index = file.getIndex();
     if (file.getResponseContent() != null && file.getResponseContent() != '')
     {
         var response_text = file.getResponseContent();

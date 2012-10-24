@@ -121,6 +121,7 @@ def validatePrepFile(mdtable, req, study_id, data_access):
         mdtable.getColumn('sample_name')
     except Exception, e:
         errors.append('"linker", "primer", "barcode", "run_prefix", "platform", and "sample_name" must exist in your prep template.')
+        errors.append(str(e))
         return errors, key_fields_changed
     
     # Combo of run_prefix and barcode must be unique
