@@ -1,0 +1,77 @@
+<!--
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+-->
+
+<script type="text/javascript">
+
+$.validator.setDefaults({
+    submitHandler:function(){
+        sample_types.submit();
+    }
+});
+
+$.metadata.setType("attr","validate");
+    
+$(document).ready(function(){
+    $("#sample_types").validate();
+});
+</script>
+
+<form id="sample_types" name="sample_types" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="parameters.psp">
+
+<table>
+<tr>
+
+<%
+# Grab the list of study names and metadata headers from the previous page
+studies=form['study_names']
+metadata_type=form['metadata_headers']
+
+if isinstance(studies,list):
+    combined_studies=[]
+    for study in studies:
+        combined_studies.append('\'' + str(study) + '\'')
+    studies_to_get=','.join(combined_studies)    
+else: 
+    studies_to_get="\'" + str(studies) + "\'"
+
+sess['study_names'] = studies_to_get
+sess.save()
+
+# Instantiate a new instance of QiimeDataAccess
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+if isinstance(metadata_type,list):
+    combined_metadata=[]
+    for s_type in metadata_type:
+        combined_metadata.append('\'' + str(s_type) + '\'')
+        column_values = data_access.getMetadataByStudyList(s_type, studies_to_get)        
+	req.write("<td><h5>"+str(s_type)+"</h5>\n")
+        req.write('<select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);"><option value="javascript:"><option value="javascript:select_all(\''+str(s_type)+'\');">All<option value="javascript:select_none(\''+str(s_type)+'\');">None<option value="Javascript:select_invert(\''+str(s_type)+'\');">Invert</select>\n<br>\n')
+
+        req.write('\t\t\t<select validate="required:true, minlength:1" name="'+str(s_type)+'" id="'+str(s_type)+'" multiple>\n')
+        for item in column_values:
+            req.write('\t\t\t\t<option value="' + item + '">' + item + '</option>\n')
+        req.write('</select></td>')
+    metadata_to_get=','.join(combined_metadata)
+else:
+    column_values = data_access.getMetadataByStudyList(metadata_type, studies_to_get)
+    req.write("<td><h5>"+str(metadata_type)+"</h5>\n")
+    req.write('\t\t\t<select validate="required:true, minlength:1" name="'+str(metadata_type)+'" id="'+str(metadata_type)+'" multiple>\n')
+    for item in column_values:
+        req.write('\t\t\t\t<option value="' + item + '">' + item + '</option>\n')
+    req.write('</select>')
+    metadata_to_get="\'" + str(metadata_type) + "\'"
+%>
+</table>
+<input type="submit" value="Next">
+</form>
+

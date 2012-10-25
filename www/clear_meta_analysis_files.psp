@@ -1,0 +1,39 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+"""
+This script is the upload handler for uploading metadata files using JumpLoader'
+"""
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+from os import system
+
+def clearMetaFiles(meta_anal_id,fpaths):
+    # Get a copy of data_acess
+    data_access = data_access_factory(ServerConfig.data_access_type)
+
+    for i in fpaths:
+        # Clear the job
+        data_access.clearMetaFiles(meta_anal_id,i)
+
+
+# Clear the job
+fpaths = form['fpath'].split(',')
+meta_anal_id = form['meta_id']
+
+clearMetaFiles(meta_anal_id,fpaths)
+
+
+
+psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
+
+#
+%>

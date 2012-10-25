@@ -1,0 +1,48 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from submit_job_to_qiime import submitJobsToQiime
+from data_access_connections import data_access_factory
+from enums import *
+
+# Gather necessary values to create a new queue job
+sess = Session.Session(req)
+study_id = int(sess['study_id'])
+user_id = int(sess['web_app_user_id'])
+mapping_file_dir = sess['mapping_file_dir']
+
+# Clear out any old database results
+data_access = data_access_factory(ServerConfig.data_access_type)
+result = data_access.deleteAllAnalysis(study_id)
+if result:
+    raise Exception(result)
+
+process_only = str(form['process_only'])
+submit_to_test_db = str(form['submit_to_test_db'])
+# Submit the jobs
+try:
+    # Attempt the submission
+    #req.write(str(sess) + '<p/>')
+    #req.write(str(study_id) + '<p/>')
+    #req.write(str(user_id) + '<p/>')
+    #req.write(mapping_file_dir + '<p/>')
+    #req.write(process_only + '<p/>')
+    #req.write(submit_to_test_db + '<p/>')
+    
+    submitJobsToQiime(study_id, user_id, mapping_file_dir, process_only, submit_to_test_db)
+
+    # Redirect to the home page for this study
+    psp.redirect('fusebox.psp?page=select_study_task.psp')
+except Exception, e:
+    req.write(str(e))
+
+%>

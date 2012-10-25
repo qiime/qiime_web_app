@@ -1,0 +1,154 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+portal_type = sess['portal_type']
+is_admin = int(sess['is_admin'])
+frame_target = sess['frame_target']
+%>
+
+<script type="text/javascript" src="js/study_search.js"></script>
+
+<br>
+<p>
+    <b>Study Options:</b>
+    <ul>
+<%
+if portal_type == 'qiime' or portal_type == 'emp':
+    # Indent
+    
+%>
+        <li>
+            <form id="study_summary" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="./study_summary/index.psp">
+                <a href="" onclick="document.forms['study_summary'].submit(); return false;">
+                Get Study Summary and Raw Data</a>
+            </form>
+        </li>
+        
+<%
+# End indent
+
+%>
+        
+        <li>
+            <form id="create_new_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="new_study.psp">
+                <input type="hidden" name="mode" id="mode" value="new">
+                <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
+                Create a New Study</a>
+            </form>
+        </li>
+        <li>
+            <form id="user_study" action="select_user_study_submit.psp" method="post">
+                Select an Existing Study:<br/>
+                <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
+                <option value=""></option>
+<%
+study_names = data_access.getUserStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
+for study_name in study_names:
+    req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + study_name[1] + '</option>\n')
+# end
+%>
+                </select>
+            </form>
+            </li>
+            <li>
+                <a href="" onclick="toggleSection(\'search_div\'); $('#search_text').focus(); return false;">Search for a study...</a>
+                <div id="search_div" name="search_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">    
+                <input type="text" id="search_text" name="search_text" style="border-radius:5px;width:200px;"><br/>
+                    <ul id="list">    
+<%
+for item in study_names:
+    req.write('<li><a href="select_user_study_submit.psp?study_names={0}:{1}">{1}</a></li>\n'.format(str(item[0]), item[1]))
+# end
+%>
+                    <ul>
+                </div>
+            </li>
+        </ul>
+        
+<%
+if sess['portal_type'] == 'qiime':
+    # Indent
+    
+%>        
+        
+        <b>Perform Meta-Analysis:</b>
+        <ul>
+            <li>
+                <form id="create_new_meta_analysis" action="fusebox.psp" method="post">
+                    <input type="hidden" name="page" id="page" value="./new_meta_analysis.psp">
+                    <a href="" onclick="document.forms['create_new_meta_analysis'].submit(); return false;">
+                    Create a New Meta-Analysis</a>
+                </form>
+            </li>
+        <li>
+            <form id="user_meta_analysis" action="select_meta_analysis_submit.psp" method="post">
+                Select Previous Meta-Analyses:
+                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="select_change_submit('user_meta_analysis', this); return false;">
+                <option value=""></option>
+<%
+    meta_analysis_names = data_access.getMetaAnalysisNames(sess['web_app_user_id'])
+    for meta_analysis_name in meta_analysis_names:
+        req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
+    # end
+%>
+                </select>
+                
+<%
+# End if
+
+%>
+                
+            </form>
+            </li>
+            
+            
+    </ul>
+    
+<b>Explore:</b>
+    <ul>
+        <li>
+            <form id="visualize_all_sample_locations" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="visualize_all_sample_locations.psp">
+                <a href="" onclick="document.forms['visualize_all_sample_locations'].submit(); return false;" target="<%=frame_target%>">
+                Visualize All Sample Locations</a>
+            </form>
+        </li>
+    </ul>    
+    
+    
+<%
+if portal_type == 'emp' and is_admin == 1:
+    # indent
+    
+%>
+    
+    
+    <b>EMP Administrators:</b>
+    <ul>
+        <li>
+            <form id="view_emp_submissions" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="view_emp_submissions.psp">
+                <a href="" onclick="document.forms['view_emp_submissions'].submit(); return false;" target="<%=frame_target%>">
+                View EMP Submissions</a>
+            </form>
+        </li>
+    </ul>
+    
+</p>
+
+<%
+# End if
+%>    
+    
+    
+    
+</p>

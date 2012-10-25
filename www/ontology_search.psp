@@ -1,0 +1,62 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+script_description="""This script takes a single term and determines if they
+are substrings a values in a list of ontologies and returns a list"""
+
+#Get the values from the form fields
+q=form["q"];
+input_id=form["inputid"]
+ontology_id=form["ont"]
+txt_id=form["txt_id"]
+
+#convert the query to uppercase, so there is no case-sensitive issues
+q=q.upper()
+
+#call stored procedure and return rows if the query is a substring of a value
+#in one of the ontologies
+
+new_query=q.split(':')
+
+if len(new_query)<>1:
+    ontology_id='\''+str(new_query[0])+'\''
+    q=str(new_query[1])
+    
+query_results = data_access.get_ontology_terms(ontology_id,q)
+
+#determine how many rows were returned and if more than 20 print on the first 20
+#if less than 20 print all of the terms.
+if len(query_results)>20:
+    for i in range(20):
+        #create a hyperlink, so it can perform javascript functions when clicked
+        req.write('<a id=\''+str(query_results[i])+' \' \
+                    onfocus="this.style.background=\'cyan\'" \
+                    onblur="this.style.background=\'white\'" \
+                    href="javascript:change_form_value(\''+txt_id+'\',\'' + \
+                    str(query_results[i])+'\',\''+input_id+'\')" \
+                    style="color:black;text-decoration:none">' + \
+                    str(query_results[i])+'</a><br>')
+else:
+    for row in query_results:
+        #create a hyperlink, so it can perform javascript functions when clicked
+        req.write('<a id=\''+str(row)+'\' \
+        onfocus="this.style.background=\'cyan\'" \
+        onblur="this.style.background=\'white\'" \
+        href="javascript:change_form_value(\''+txt_id+'\',\'' + str(row) + '\',\'' + \
+        input_id+'\')" style="color:black;text-decoration:none">' + str(row) + \
+        '</a><br>')
+#
+%>

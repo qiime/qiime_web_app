@@ -1,0 +1,15 @@
+<metadata width="300" height="380" title="Metadata" ok="Ok" cancel="Cancel">
+	<input type="text" name="fileName" label="Title"/>
+	<input type="textarea" rows="4" name="description" label="Description" required="true"/>
+	<input type="checkbox" name="check" label="Enabled"/>
+	<input type="select" name="select" label="Select">
+		<option value="1" name="option 1"/>
+		<option value="2" name="option 2"/>
+		<option value="3" name="option 3"/>
+	</input>
+	<input type="radio" name="radio" label="Radio">
+		<option value="1" name="option 1"/>
+		<option value="2" name="option 2"/>
+		<option value="3" name="option 3"/>
+	</input>
+</metadata>

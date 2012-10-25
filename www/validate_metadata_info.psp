@@ -1,0 +1,28 @@
+<html>
+<head>
+<link rel="stylesheet" href="style/qiime.css" type="text/css">
+</head>
+
+<body style="background-color:#CCCCCC">
+
+<table class="metadata_table">
+    <tr>
+        <td>
+            <table class="metadata_table">
+                <tr>
+                    <td style="vertical-align:top">
+                        <table id="selected_field_details" class="metadata_table">
+                        </table>
+                    </td>
+                    <td style="width:300px">
+                        <table id="selected_field_values" class="metadata_table" rheight="100%">
+                        </table>
+                    </td>
+                </td>
+            </table>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

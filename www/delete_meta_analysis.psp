@@ -1,0 +1,39 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+sess = Session.Session(req)
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+
+# Grab some required values for this page
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+# get the meta_analysis ID from the session
+meta_analysis_id=sess['meta_analysis_id']
+user_id=sess['web_app_user_id']
+
+# remove all files associated from meta-analysis
+con = data_access.getMetadataDatabaseConnection()
+cur = con.cursor()
+statement="delete from meta_analysis_files where meta_analysis_id=%s" % (str(meta_analysis_id))
+results = cur.execute(statement)
+cur.execute('commit')
+
+# remove the meta-analysis
+cur2 = con.cursor()
+statement="delete from meta_analysis where meta_analysis_id=%s and web_app_user_id=%s" % (str(meta_analysis_id),str(user_id))
+results = cur2.execute(statement)
+cur2.execute('commit')
+
+# redirect
+psp.redirect('fusebox.psp?page=new_meta_analysis.psp')
+%>

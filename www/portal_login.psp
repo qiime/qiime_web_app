@@ -1,0 +1,108 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+'''This script is the portal login page'''
+
+from mod_python import Session
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+import os
+
+
+# Set the correct host and referrer
+#req.write(str(req.headers_in))
+
+def setPortalType():
+    # Get request parameters
+    parameters = util.FieldStorage(req)
+    if len(parameters) == 0:
+        req.write('Error: No variables supplied.')
+        return
+        
+    portal_type = parameters.get('portal_type', None)    
+    username = parameters.get('username', None)
+    password = parameters.get('password', None)
+    is_admin = parameters.get('is_admin', None)
+    
+    error = ''
+    
+    if portal_type:
+        sess['portal_type'] = portal_type
+    else:
+        error += 'Error: Portal type must be specified.</br>'
+
+    if username:
+        sess['username'] = username
+    else:
+        error += 'Error: No username specified.<br/>'
+
+    if password:
+        sess['password'] = password
+    else:
+        error += 'Error: No password specified.<br/>'
+
+    if is_admin:
+        sess['is_admin'] = is_admin
+    else:
+        error += 'Error: Admin level must be supplied.</br>'
+        
+    if error:
+        req.write(error)
+        return
+    
+    # Find or create the appropriate login information:
+    data_access = data_access_factory(ServerConfig.data_access_type)
+    user_data = data_access.authenticateWebAppUser( username, password )
+    
+    if user_data:
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+    elif portal_type == 'emp':
+        # Login failed so create this user
+        user_data = data_access.registerWebAppUser(username, password, 'emp_registration')
+
+    if user_data:
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+    else:
+        # Login failed
+        req.write('Authenciation failed.')
+        return
+    
+    environment_vars=req.get_options()
+    output_dir='%s/user_data' % environment_vars['HOME']
+    sess['study_name'] = ''
+    sess['document_root'] = req.document_root() + '/qiime/'
+    sess['user_dir'] = os.path.join(output_dir, 'studies')
+    sess['db_root'] = output_dir
+    sess.save()
+
+    if sess['portal_type'] == 'emp':
+        sess['stylesheet'] = 'style/emp.css'
+        sess['title'] = 'Earth Microbiome Project'
+        sess['frame_target'] = 'qiime_frame'
+    elif sess['portal_type'] == 'qiime':
+        sess['stylesheet'] = 'style/qiime.css'
+        sess['title'] = 'Qiime'
+        sess['frame_target'] = '_parent'
+    else:
+        sess['stylesheet'] = 'style/qiime.css'
+        sess['title'] = 'Qiime'
+        sess['frame_target'] = '_parent'
+    sess.save()
+
+    psp.redirect('fusebox.psp?page=select_study.psp')
+
+
+# Get the session
+sess = Session.Session(req)
+
+# Set up the session and redirect if all looks good    
+setPortalType()
+%>
+

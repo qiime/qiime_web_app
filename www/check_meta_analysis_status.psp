@@ -1,0 +1,102 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+from datetime import datetime
+from time import strftime
+'''
+# This is for OTU Table and Mapping File
+# Grab some required values for this page
+sess = Session.Session(req)
+data_access = data_access_factory(ServerConfig.data_access_type)
+meta_analysis_id = int(sess['meta_analysis_id'])
+mapping_otu_files = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
+if mapping_otu_files:
+    req.write('<br><br><table>')
+    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 12px;" colspan="8"><b>Generated Files</b></td></tr>')
+    req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 11px;"><b>Mapping Files</b></td><td style="font-size: 11px;"><b>OTU Tables</b></td><td style="font-size: 11px;"><b>Zipped Files</b></td><td bgcolor="#FAAFBE" style="font-size: 11px;"><b>Remove Files</b></td></tr>')
+
+    for files in mapping_otu_files:
+        req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[0],os.path.basename(files[0])))
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[1],os.path.basename(files[1])))
+        req.write('<td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td>' % (files[2],os.path.basename(files[2])))
+        req.write('<td bgcolor="#FAAFBE" style="font-size: 10px;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?map_fname=%s&otu_fname=%s&zip_fname=%s\')">(clear files)</a></td></tr>' % (files[0],files[1],files[2]))
+
+    req.write('</table>')
+#
+'''
+# Grab some required values for this page
+sess = Session.Session(req)
+data_access = data_access_factory(ServerConfig.data_access_type)
+meta_analysis_id = int(sess['meta_analysis_id'])
+filepaths = data_access.getMetaAnalysisFilepaths(meta_analysis_id)
+if filepaths:
+    req.write('<br><br><table>')
+    req.write('<tr><td style="font-size: 12px;text-align:left;" colspan="2"><b>Generated Files</b></td></tr>')
+    
+    filepath_dict={}
+    for i in filepaths:
+        process_date=str(i[1].strftime("%m/%d/%Y @ %H:%M:%S"))
+
+        if filepath_dict.has_key(process_date):
+            filepath_dict[process_date].append((i[0],i[3]))
+        else:
+            filepath_dict[process_date]=[]
+            filepath_dict[process_date].append((i[0],i[3]))
+            
+    keys=filepath_dict.keys()
+    keys.sort()
+    for key in keys:
+        req.write('<tr><td style="font-size: 10px;"><b>Job: %s</b></td></tr>' % (key))
+        for fpath in filepath_dict[key]:
+            if fpath[1]=='MAPPING':
+                filetype='QIIME Mapping File:'
+            elif fpath[1]=='OTU_TABLE':
+                filetype='OTU Table:'
+            elif fpath[1]=='ZIP':
+                filetype='Zip Archive:'
+            elif fpath[1].endswith('DISTANCE_MATRIX'):
+                filetype='Distance Matrix:'
+            elif fpath[1].startswith('3D_CONTINUOUS'):
+                filetype='3D Plots (continuous colors):'
+            elif fpath[1].startswith('3D_DISCRETE') :
+                filetype='3D Plots (discrete colors):'
+            elif fpath[1].startswith('2D_CONTINUOUS'):
+                filetype='2D Plots (continuous colors):'
+            elif fpath[1].startswith('2D_DISCRETE') :
+                filetype='2D Plots (discrete colors):'
+            elif fpath[1].endswith('PC'):
+                filetype='Principal Coordinates File:'
+            elif fpath[1].endswith('DISTANCE_HISTOGRAM'):
+                filetype='Distance Histograms:'
+            elif fpath[1]=='HEATMAP':
+                filetype='OTU Heatmap:'
+            elif fpath[1]=='ARARE':
+                filetype='Alpha Rarefaction Plots:'
+            elif fpath[1]=='SUMTAXA':
+                filetype='Summarized Taxonomy Plots:'
+            else:
+                filetype='Other:'
+                
+            file_path = (fpath[0], os.path.basename(fpath[0]))
+            req.write('<tr bgcolor="#D0F5A9"><td style="font-size: 10px;"><b>%s</b></td><td style="font-size: 10px;"><b><a href="%s" target="_blank">%s</a></b></td></tr>' % (filetype,file_path[0], file_path[1]))
+        #req.write('<tr bgcolor="#D0F5A9"><td bgcolor="#FAAFBE" style="font-size: 11px;"><b>Remove Files</b></td>')
+        req.write('<tr><td colspan="2" bgcolor="#FAAFBE" style="font-size: 10px;"><a href="javascript:VerifyDeletion(\'clear_meta_analysis_files.psp?fpath=%s&meta_id=%s\')">(clear files)</a></td></tr>' % (','.join([x for (x,y) in filepath_dict[key]]),meta_analysis_id))
+        #req.write('<tr><td colspan="2">&nbsp;</td></tr>')
+    
+    
+
+    req.write('</table>')
+
+#
+%>

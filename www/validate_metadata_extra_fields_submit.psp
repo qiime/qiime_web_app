@@ -1,0 +1,92 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from enums import ServerConfig
+from data_access_connections import data_access_factory
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+def validateOnly():
+    pass
+    
+def validateAndStore():
+    pass
+
+sess = Session.Session(req)
+study_id = sess['study_id']
+
+# The storage structure to hold form values
+# e.g. 'original_column_name':original_column_name, 'new_name':value, 'description':description, 'data_type':data_type
+columns = {}
+
+# Figure out which columns were renamed and fix the files
+for item in form:
+
+    # Skip the form field if it's not in the correct format
+    parts = item.split('!!')
+    if len(parts) != 3:
+        continue
+    
+    field_type = parts[0]
+    template_name = parts[1]
+    original_column_name = parts[2]
+    value = form[item]
+    full_filename = ''
+    
+    # Fill out what we can in our dict
+    if original_column_name not in columns:
+        columns[original_column_name] = {'new_column_name':'', 'template_name':template_name, 'data_type':'', 'description':''}
+
+    # Deal with column names
+    if field_type == 'column_name':
+        
+        # Add value to the dict
+        columns[original_column_name]['new_column_name'] = value
+                    
+    elif field_type == 'column_description':
+        columns[original_column_name]['description'] = value
+    elif field_type == 'data_type':
+        columns[original_column_name]['data_type'] = value
+
+# Clear out the existing extra_column_metadata rows
+#if study_id > 0:
+data_access.deleteExtraColumnMetadata(study_id)
+
+# Write the additional column info into the database
+table_level = ''
+for column in columns:
+    details = columns[column]
+    if 'prep' in details['template_name']:
+        table_level = 'sequence_prep'
+        extra_table = 'common_extra_prep'
+    elif 'sample' in details['template_name']:
+        table_level = 'sample'
+        extra_table = 'common_extra_sample'
+    
+    data_access.addExtraColumnMetadata(study_id, table_level, \
+        details['new_column_name'], details['description'], details['data_type'])
+    
+    # Perform column refactoring if necessary
+    existing_extra_tables = data_access.findExtraColumnMatch(column)
+    for found_extra_table in existing_extra_tables:
+        # Ignore if the extra table belongs to this study
+        if str(study_id) in found_extra_table:
+            continue
+        
+        # Add this to the appropriate shared extra table
+        # req.write('study_id: {0}, found_extra_table: {1}, column_name: {2}, data_type: {3}, description: {4}'.format(str(study_id), found_extra_table, details['new_column_name'], details['data_type'], details['description']))
+        data_access.addCommonExtraColumn(req, study_id, found_extra_table, details['new_column_name'], 
+            details['data_type'], details['description'])
+    
+# Redirect to the data validation page
+psp.redirect('validate_metadata.psp')
+
+%>

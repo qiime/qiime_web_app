@@ -1,0 +1,15 @@
+<%
+from mod_python.util import FieldStorage
+
+
+############## req.read of POST data MUST be first
+post_data = req.read(100000)
+req.write('Post data is: "{0}"\n'.format(post_data))
+
+############# access to field storage MUST be after POST read
+fs = FieldStorage(req)
+resource = fs.get('query', '')
+req.write(resource)
+
+
+%>

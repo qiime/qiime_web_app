@@ -1,0 +1,24 @@
+#header 
+{
+	background: url(/qiime/img/emp_logo.png) no-repeat left top;
+	padding-top: 130px;
+}
+
+.container 
+{
+	margin: 0 auto;
+	position: relative;
+	background: #FFF;
+}
+
+#study_info
+{
+        position: absolute;
+        text-align: right;
+        top: 75px;
+        right: 10px;
+        width: 100%;
+        color: #777;
+        font: 15px normal Arial, Helvetica, sans-serif;
+}
+

@@ -1,0 +1,395 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Beta-Diversity Parameters &mdash; Homepage</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0-web_app',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="Homepage" href="../index.html" />     
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<!--
+Commented out for now
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAbW_pA971hrPgosv-Msv7hRRE2viNBUPuU405tK6p2cguOFmlFBQSwZMG6_q_v6Z42nkdo9ejT1aHmA"></script>--
+<script type="text/javascript" src="../_static/google_feed.js"></script>
+
+-->
+
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 0px">
+<a href="../index.html"><img src="../_static/wordpressheader.png" border="0" alt="sampledoc"/></a>
+</div>
+<!-- 
+Commented out for now
+<div class="news" style="background-color:#ccc;"><table style="font-size:12pt;padding: 5px;"><tr id="feed"><td><b>News and Announcements &raquo;</b></td>
+</tr></table></div>
+-->
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="beta-diversity-parameters">
+<span id="id1"></span><h1>Beta-Diversity Parameters<a class="headerlink" href="#beta-diversity-parameters" title="Permalink to this headline">¶</a></h1>
+<p>Beta-diversity allows for calculating <em>between</em> sample diversity in an OTU table, using a variety of beta-diversity metrics.</p>
+<dl class="docutils">
+<dt>The steps performed by this option are:</dt>
+<dd><ol class="first last arabic simple">
+<li>Generate rarefied OTU table</li>
+<li>Compute beta-diversity metrics on rarefied OTU table</li>
+<li>Perform principal coordinate analysis on beta-diversity table</li>
+<li>Generate a preferences file</li>
+<li>Generate 2D/3D PCoA Plots or distance histograms.</li>
+</ol>
+</dd>
+</dl>
+<ul>
+<li><dl class="first docutils">
+<dt>Beta-Diversity checkbox: Visual representation of the distance between each sample&#8217;s phylogenetic diversity</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters</em> (<a class="reference external" href="http://qiime.org/scripts/single_rarefaction.html">rarefaction.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Rarefied at</dt>
+<dd><ul class="first last simple">
+<li>Number of seqs/sample used to calculate beta-diversity.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters</em> BETA_DIVERSITY.PY</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>List of samples to compute</dt>
+<dd><ul class="first last simple">
+<li>Compute only these rows of the distance matrix. User should pass a list of sample names. This allows the user to essentially filter the OTU table and compute the beta-diversity calculations for only the samples passed</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Metrics to use</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://qiime.org/scripts/beta_diversity_metrics.html">List of beta-diversity metrics</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Tree already trimmed</dt>
+<dd><ul class="first last simple">
+<li>By default, tips not corresponding to OTUs in the OTU table are removed from the for diversity calculations. Select this option to skip step if you&#8217;re already passing a minimal tree. Beware with &#8220;full_tree&#8221; metrics, as extra tips in the tree will change the result.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>2D PCoA Plots checkbox (<a class="reference external" href="http://qiime.org/scripts/make_2d_plots.html">make_2d_plots.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Color by category</dt>
+<dd><ul class="first last">
+<li><p class="first">Comma-separated list of metadata categories to color by in the plots. The categories must match the column header in the mapping file exactly. Multiple categories can be listed by comma separating them without spaces. The user can also combine columns by separating  the categories by &#8220;&amp;&amp;&#8221; without spaces.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Background color</dt>
+<dd><ul class="first last simple">
+<li>Background color to be used in the plots.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Ellipsoid opacity</dt>
+<dd><ul class="first last simple">
+<li>Used only plotting ellipsoids for jackknifed beta-diversity (i.e. using a directory of coord files instead of a single coord file). Valid range is 0-1, with 0 being completely  transparent.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Ellipsoid method</dt>
+<dd><ul class="first last simple">
+<li>Used only plotting ellipsoids for jackknifed beta-diversity (i.e. using a directory of coord files instead of a single coord file). Valid values are IQR or sdev.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Scree</dt>
+<dd><ul class="first last simple">
+<li>The scree plot is a simple line segment plot that shows the fraction of total variance in the data as explained or represented by each principal coordinate (PC).</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>3D PCoA Plots checkbox (<a class="reference external" href="http://qiime.org/scripts/make_3d_plots.html">make_3d_plots.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Color by category</dt>
+<dd><ul class="first last simple">
+<li>Comma-separated list of metadata categories to color by in the plots. The categories must match the column header in the mapping file exactly. Multiple categories can be listed by comma separating them without spaces. The user can also combine columns by separating  the categories by &#8220;&amp;&amp;&#8221; without spaces</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Custom axis</dt>
+<dd><ul class="first last simple">
+<li>This is the category from the metadata mapping file to use as a custom axis in the plot.  For example, if there is a pH category and you like to see the samples plotted on that axis instead of PC1, or PC2, etc., one can use this option. It is also useful for plotting time-series data. NOTE: if there are any non-numeric data in the column, it will not be plotted.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Background color</dt>
+<dd><ul class="first last simple">
+<li>Background color of the plot.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Ellipsoid smoothness</dt>
+<dd><ul class="first last simple">
+<li>Used only when plotting ellipsoids for jackknifed beta-diversity (i.e. using a directory of coord files instead of a single coord file). Valid choices are 0-3. A value of 0produces very coarse ellipsoids but is fast to render. If you encounter a memory error when generating or displaying your plots, try including just one metadata column in the analysis. If you still have problems, reduce the smoothness to 0.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Ellipsoid opacity</dt>
+<dd><ul class="first last simple">
+<li>Used only plotting ellipsoids for jackknifed beta-diversity (i.e. using a directory of coord files instead of a single coord file). Valid range is 0-1, with 0 being completely transparent.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Ellipsoid method</dt>
+<dd><ul class="first last simple">
+<li>Used only plotting ellipsoids for jackknifed beta-diversity (i.e. using a directory of coord files instead of a single coord file). Valid values are IQR or sdev.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt># of taxa to keep</dt>
+<dd><ul class="first last simple">
+<li>Used only when generating BiPlots. This is the number of taxa to display. Use -1 to display all.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Output format</dt>
+<dd><ul class="first last simple">
+<li>If this option is set to inVUE, you will also need to use the -b option to define which columns from the metadata file the script should use when writing the output file.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt># of interpolation points</dt>
+<dd><ul class="first last simple">
+<li>Used only when generating inVUE plots. Number of points between samples for interpolation.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt># of polyhedron points</dt>
+<dd><ul class="first last simple">
+<li>Used only when generating inVUE plots. The number of points to be generated when creating a frame around the the PCoA plots.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Polyhedron offset</dt>
+<dd><ul class="first last simple">
+<li>Used only when generating inVUE plots. The offset to be added to each point being created when using the &#8211;polyhedron_points option. This is only used when using the invue output_format.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Create vectors based on metadata</dt>
+<dd><ul class="first last simple">
+<li>Create vectors based on a column of the mapping file. This parameter accepts up to two columns: (1) create the vectors, (2) sort them. If you want to group by Species and order by SampleID, you will pass, &#8220;&#8211;add_vectors=Species&#8221; but if you want to group by species but order by DOB you will pass, &#8220;&#8211;add_vectors=Species,DOB; this is useful when you use &#8211;custom_axes param.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>RMS algorithm</dt>
+<dd><ul class="first last simple">
+<li>The algorithm to calculate RMS, either avg or trajectory; both algorithms use all the dimensions and weights them using their percentage explained; return the norm of the vectors created. and their confidence using ANOVA. The vectors are created as follows: for avg, it calculates the average at each timepoint (averaging within the group), then calculated the norm for each point; for trajectory, calculates the norm from the 1st-2nd, 2nd-3rd, etc.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>RMS output path calculations</dt>
+<dd><ul class="first last simple">
+<li>Name of the file to save the RMS of the vectors grouped by the column used with the &#8211;add_vectors function. NOTE: this option only works with &#8211;add_vectors. The file is going to be created inside the output_dir and its name will start with &#8220;RMS&#8221;.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Distance Histograms checkbox (<a class="reference external" href="http://qiime.org/scripts/make_distance_histograms.html">make_distance_histograms.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Background color</dt>
+<dd><ul class="first last simple">
+<li>Background color of the plot.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Suppress HTML</dt>
+<dd><ul class="first last simple">
+<li>This gives the user the ability to only plot out the calculations, so they can replot the data in other tools (e.g. Excel)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Categories to compare</dt>
+<dd><ul class="first last simple">
+<li>Comma-separated list of fields to compare, where the list of fields should be in quotes. NOTE: if this option is passed on the command-line, it will overwrite the fields in prefs file...</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt># of monte carlo iterations</dt>
+<dd><ul class="first last simple">
+<li>Number of iterations to perform for Monte Carlo analysis.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+
+    
+
+    <!--<h3><a href="../index.html">Site index</a></h3>-->
+
+    <p>
+        &nbsp;&nbsp;<a href="../tutorials/index.html">Tutorials</a><br />
+    </p>
+
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+<div style="text-align: center; padding: 0px;"><br />
+<a href="http://pycogent.sourceforge.net" target="_blank"><img src="../_static/PoweredByPycogent.jpg" border="0" alt="sampledoc" height="70px"/></a>
+<br /></div>
+
+    <div class="footer">
+        &copy; Copyright 2012, QIIME-DB Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6636235-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+  </body>
+</html>

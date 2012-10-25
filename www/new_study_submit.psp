@@ -1,0 +1,144 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+'''
+This script adds the users new study to the database, then asks them how they
+want to proceed.
+'''
+%>
+
+<%
+import os
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+
+data_access = data_access_factory(ServerConfig.data_access_type)
+sess = Session.Session(req)
+
+portal_type = sess['portal_type']
+page_mode = form['page_mode']
+if page_mode == 'edit':
+    study_id = sess['study_id']
+
+study_name = form['study_name']
+sess['study_name'] = study_name
+
+# Check to see if the form contains 'includes_timeseries'. It's a checkbox and thus
+# does not get submitted if not checked. If absent, add it with value of '0'
+if not form.has_key('includes_timeseries'):
+    form['includes_timeseries'] = 0
+
+# Add the new study to the database
+if portal_type == 'emp' and page_mode == 'new':
+    study_id = data_access.createEMPStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
+        form['pmid'], form['study_abstract'], form['study_description'],
+        form['number_samples_collected'], form['number_samples_promised'] , form['lab_person'],
+        form['lab_person_contact'], form['emp_person'], form['first_contact'],
+        form['most_recent_contact'], form['sample_type'], form['has_physical_specimen'],
+        form['has_extracted_data'], form['timeseries'], form['spatial_series'],
+        form['principal_investigator'], form['principal_investigator_contact'],
+        form['default_emp_status'], form['funding'], form['includes_timeseries'])
+elif portal_type == 'emp' and page_mode == 'edit':
+    data_access.updateEMPStudy(study_id, study_name, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
+        form['pmid'], form['study_abstract'], form['study_description'],
+        form['number_samples_collected'], form['number_samples_promised'] , form['lab_person'],
+        form['lab_person_contact'], form['emp_person'], form['first_contact'],
+        form['most_recent_contact'], form['sample_type'], form['has_physical_specimen'],
+        form['has_extracted_data'], form['timeseries'], form['spatial_series'],
+        form['principal_investigator'], form['principal_investigator_contact'],
+        form['default_emp_status'], form['funding'], form['includes_timeseries'])
+elif page_mode == 'edit':
+    data_access.updateStudy(study_id, study_name, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
+        form['pmid'], form['study_abstract'], form['study_description'],
+        form['principal_investigator'], form['principal_investigator_contact'],
+        form['lab_person'], form['lab_person_contact'], form['includes_timeseries'])
+else:
+    study_id = data_access.createStudy(sess['web_app_user_id'], study_name, form['investigation_type'],
+        form['miens_compliant'], form['submit_to_insdc'], portal_type, form['study_title'], form['study_alias'], 
+        form['pmid'], form['study_abstract'], form['study_description'],
+        form['principal_investigator'], form['principal_investigator_contact'],
+        form['lab_person'], form['lab_person_contact'], form['includes_timeseries'])
+
+# Insert the fields into study_actual_columns
+study_fields = []
+study_fields.append('includes_timeseries')
+study_fields.append('investigation_type')
+study_fields.append('miens_compliant')
+study_fields.append('submit_to_insdc')
+study_fields.append('study_title')
+study_fields.append('study_alias')
+study_fields.append('pmid')
+study_fields.append('study_abstract')
+study_fields.append('study_description')
+study_fields.append('principal_investigator')
+study_fields.append('principal_investigator_contact')
+study_fields.append('lab_person')
+study_fields.append('lab_person_contact')
+if portal_type == 'emp': 
+    study_fields.append('number_samples_collected')
+    study_fields.append('number_samples_promised')
+    study_fields.append('emp_person')
+    study_fields.append('first_contact')
+    study_fields.append('most_recent_contact')
+    study_fields.append('sample_type')
+    study_fields.append('has_physical_specimen')
+    study_fields.append('has_extracted_data')
+    study_fields.append('timeseries')
+    study_fields.append('spatial_series')    
+    study_fields.append('default_emp_status')
+    study_fields.append('funding')
+    
+# Add only the fields that have data associated with them
+for field in study_fields:
+    field_value = form[field].strip()
+    if field_value == '' or field_value == None:
+        data_access.removeStudyActualColumn(study_id, field)
+    else:
+        data_access.addStudyActualColumn(study_id, field, '"STUDY"')
+
+# Add the default study_actual column entries
+data_access.addStudyActualColumn(study_id, 'project_name', '"STUDY"')
+
+# Clear the existing package mappings
+data_access.clearStudyPackages(study_id)
+
+# Associate the chosen environmental packages to the study. If only one is selected,
+# mod_python returns a string. If more than one, a list of fields. Thus the logic below...
+packages = form['environmental_package']
+if ',' in str(packages):
+    for env_package in packages:
+        data_access.createStudyPackage(study_id, env_package)
+else:
+    data_access.createStudyPackage(study_id, packages)
+
+# Add the study id to the session.
+sess['study_id'] = study_id
+
+study_dir = os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
+
+sess['study_dir'] = str(study_dir)
+sess.save()
+
+#See if the study folder exists and if not, creates it.
+try:
+    if not os.path.exists(study_dir):
+        os.mkdir(study_dir)
+except Exception, e:
+    req.write('<h1>Error: The study directory could not be created.</h1>')
+    req.write(str(e))
+    sys.exit()
+
+psp.redirect('fusebox.psp?page=select_study_task.psp')
+
+%>
+

@@ -1,0 +1,24 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
+ontology_list = data_access.get_list_of_ontologies()
+%>
+
+<h3>Tools</h3>
+
+<ul>
+    <li><a href="fusebox.psp?page=tools_ontology.psp">Ontology Lookup Service</a></li>
+    <li><a href="fusebox.psp?page=tools_geo.psp">Georeference Utility</a></li>
+</ul>

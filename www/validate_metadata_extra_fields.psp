@@ -1,0 +1,128 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<script type='text/javascript'>
+    //Set the validation for each form field
+    $(document).ready(function(){$("#extra_form").validate();});
+</script>
+
+<form id="no_custom_fields" name="no_custom_fields" method="post" action="validate_metadata.psp"></form>
+
+<%
+from metadata_table import *
+
+templates = sess['templates']
+study_id = sess['study_id']
+has_existing_custom_columns = False
+
+# Preprocess the files to see if we have extras. Forward if not
+templates_with_extras = {}
+for template in templates:
+    # Skip the timeseries template - they're all treated as extras
+    if 'timeseries_template' in template:
+        continue
+    table = MetadataTable(template, study_id)
+    user_defined_columns = table.getUserDefinedColumns()
+    if len(user_defined_columns):
+        templates_with_extras[template] = user_defined_columns
+
+if not templates_with_extras:
+    req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
+else:
+    req.write('<h2>Please tell us about your user-defined columns:</h2>')
+    req.write('<form target="_top" name="extra_form" id="extra_form" method="post" action="validate_metadata_extra_fields_submit.psp">')
+
+    for template in templates_with_extras:
+        log = []
+        try:
+            user_defined_columns = templates_with_extras[template]
+            template_filename = os.path.basename(template)
+            
+            req.write('<h3 class="header_light_blue"> User-defined columns found in file: %s</h3>' % template_filename)
+            log.append('Listing user-defined columns...')
+        
+            req.write('<table>')
+            req.write('<th>Column Name</th><th>Description of Column</th><th>Type of Data</th>')
+            for column in user_defined_columns:
+                # Figure out if this column has already been factored into a common table
+                custom_column_details = data_access.getCustomColumnDetails(column.column_name)
+                req.write('<tr>')
+                
+                # If the column was already factored, display a message only
+                if custom_column_details['extra_table_name'] != None or custom_column_details['common_table_name'] != None:
+                    log.append(str(custom_column_details))
+                    has_existing_custom_columns = True
+                    
+                    # Validate that the details are okay
+                    if custom_column_details == None:
+                        raise Exception('Custom column details could not be loaded for "%s".' % column.column_name)
+                    elif custom_column_details['description'] == None:
+                        raise Exception('Custom column detail "description" could not be loaded for "%s". Custom column details: %s' % (column.column_name, str(custom_column_details)))
+                    elif custom_column_details['data_type'] == None:
+                        raise Exception('Custom column detail "data_type" could not be loaded for "%s".' % column.column_name)
+                    
+                    req.write('<td width="250">\n')
+                    req.write(column.column_name + ' (already in database)\n<input type="hidden" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
+                    req.write('</td>\n')
+                    
+                    req.write('<td>\n')
+                    req.write(custom_column_details['description'])
+                    req.write('<input type="hidden" name="column_description!!%s!!%s" id="column_description!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, custom_column_details['description']))
+                    req.write('</td>\n')
+                    
+                    req.write('<td width="150">\n')
+                    req.write(custom_column_details['data_type'])
+                    req.write('<input type="hidden" name="data_type!!%s!!%s" id="data_type!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, custom_column_details['data_type']))
+                    req.write('</td>\n')
+                else:
+                    req.write('<td>\n')
+                    req.write(column.column_name + '\n<input type="hidden" name="column_name!!%s!!%s" id="column_name!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
+                    req.write('</td>\n')
+            
+                    req.write('<td>\n')
+                    req.write('<input type="text" class="required" style="width:400" name="column_description!!%s!!%s" id="column_description!!%s!!%s" value="%s">\n' % (template_filename, column.column_name, template_filename, column.column_name, column.column_name))
+                    req.write('</td>\n')
+            
+                    req.write('<td>\n')
+                    req.write('<select name="data_type!!%s!!%s" id="data_type!!%s!!%s">\n' % (template_filename, column.column_name, template_filename, column.column_name))
+                    req.write('<option value="text">anything (e.g. "text is good", 5, 4.23)</option>\n')
+                    req.write('<option value="numeric">number (e.g. 123, 4.54)</option>\n')
+                    req.write('<option value="range">number range (e.g. 4-6, 5.3-5.5)</option>\n')
+                    req.write('<option value="date">date (e.g. 10/31/2010 14:45:00, 4/1/2010)</option>\n')
+                    req.write('</select>\n')
+                    req.write('</td>\n')
+            
+                req.write('</tr>\n')
+            req.write('</table>\n')
+                
+        except Exception, e:
+            for entry in log:
+                req.write(entry + '<br/>')
+            req.write(str(e) + '<p/>')
+            req.write('<p/>Please send a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
+            draw_submit = False
+            break
+
+    if templates_with_extras:
+        req.write('<p/>')
+        if has_existing_custom_columns:
+            req.write('<h3>Important Notes:</h3><ul><li>Your template contains custom fields that have already been submitted to the database. If the details for these columns is correct you may continue.</li><li>If the fields do not agree with your study, rename the fields in your templates and re-upload these files.</li></ul>Click "Continue" if you are satisfied with the column details.<br/><br/>')
+        req.write('<input type="submit" value="Continue"><br/>')
+        req.write('<p/>')
+    else:
+        req.write('<script type="text/javascript">document.forms["no_custom_fields"].submit();</script>')
+
+    req.write('</form>')
+
+# End if
+%>
+
+

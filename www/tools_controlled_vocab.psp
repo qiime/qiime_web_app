@@ -1,0 +1,40 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+
+data_access = data_access_factory(ServerConfig.data_access_type)
+vocab_list = data_access.getAllControlledVocabs()
+%>
+
+<div>
+
+    <div style="float:left;">
+        <h3>Vocabulary</h3>
+        <select size="27" onchange="alert(this.value);">
+<%
+for vocab in vocab_list:
+    req.write('<option value="%s">%s</option>' % (vocab, vocab))
+# End Indent
+%>
+        </select>
+    <div>
+
+    <div style="float:left;">
+        <h3>Search Term</h3>
+        <input id="" name=""/ size="40">
+        <h3>Vocabulary Values</h3>
+        <select size="20" onchange="alert(this.value);">
+    </div>
+    
+</div>

@@ -1,0 +1,547 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2011, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+import json
+from threading import Lock
+import thread
+from os import makedirs
+from os.path import exists, join
+from submit_job_to_qiime import submitJobsToQiime
+import gzip
+import urllib2
+
+def prepare_column(study_id, item_name, table_level, lock, debug):
+	log = []
+	statement = ''
+	extra_table_created = False
+	
+	db_table_name = data_access.findMetadataTable(item_name, table_level, log, study_id, lock).upper()
+	if debug:
+		req.write('<br/>')
+		req.write('Current database table name is: "{0}"<br/>'.format(db_table_name))
+				
+	if db_table_name is None or db_table_name is False or 'extra' in db_table_name.lower():
+		con = data_access.getMetadataDatabaseConnection()
+		table_name = 'extra_{0}_{1}'.format(table_level, str(study_id)).upper()
+
+		if debug:
+			req.write('Does {0} == {1}? '.format(db_table_name, table_name))
+			
+		if db_table_name == table_name:
+			extra_table_created = True
+			
+		if debug:
+			req.write('{0}<br/>'.format(str(extra_table_created)))
+		
+		if debug:
+			req.write('Field name: {0}<br/>'.format(item_name))
+			req.write('Requested table name: {0}<br/>'.format(str(table_name)))
+		
+		if not extra_table_created:
+			# Check if table is actually in database
+			if debug:
+				req.write('Checking if table actually exists in database...<br/>')
+			statement = "select table_name from all_tab_columns where table_name = '{0}'".format(table_name)
+			results = con.cursor().execute(statement).fetchone()
+			
+			if results == None:			
+				if debug:
+					req.write('Table check results: {0}<br/>'.format(str(results)))
+					req.write('Creating extra table: {0}<br/>'.format(table_name))
+				statement = 'create table {0} (sample_id int not null, {1} varchar2(4000))'.format(table_name, item_name)
+				if debug:
+					req.write(statement)
+					req.write('<br/>')
+				con.cursor().execute(statement)
+				if debug:
+					req.write('Extra table created.<br/>')
+					
+			extra_table_created = True
+
+		# Add the new table_name to data_access so findMetadataTable will pull the correct
+		# extra table when fields are submitted
+		item_upper = item_name.upper()
+		table_name_upper = table_name.upper()
+		
+		if debug:
+			#req.write('data_access.fields for column: "{0}"<br/>'.format(data_access.fields[item_upper]))
+			req.write('item_upper: "{0}"<br/>'.format(item_upper))
+			req.write('table_name_upper: "{0}"<br/>'.format(table_name_upper))
+
+		if item_upper not in data_access.fields:
+			data_access.fields[item_upper] = []
+			
+		# If our new table_name isn't in the table list for this column, add it
+		if table_name_upper not in data_access.fields[item_upper]:
+			data_access.fields[item_upper].append(table_name_upper)
+		
+		if debug:
+			req.write('"{0}" added to data_access.fields for "{1}".<br/>'.format(table_name_upper, item_upper))
+			
+		#statement = 'alter table {0} add {1} varchar2(4000)'.format(table_name, item_name)
+		#if debug:
+		#	req.write('Creating extra column:"{0}"<br/>'.format(item_name))
+		#	req.write(statement)
+		#	req.write('<br/>')
+
+		#con.cursor().execute(statement)
+		
+		#if debug:
+		#	req.write('Extra column created.<br/>')
+
+def get_resource(resource_name, base_url, resource_url, resource_id, auth_key, debug = True):
+	import json
+	import httplib
+	
+	if debug:
+		req.write('\n\n-----------------------Accessing {0} Data-----------------------\n\n'.format(resource_name))
+	#if debug:
+	#	 req.write('Fetching info for {0} "{1}":\n'.format(str(library_id)))
+	# Call out to MG-RAST server to get the entire object heirarchy
+	conn = httplib.HTTPConnection(base_url)
+	if debug:
+		req.write('Connected to: "{0}":\n'.format(base_url))
+		resource = resource_url.format(resource_id, auth_key)
+		req.write('Accessing resource: "{0}":\n'.format(resource))
+		
+	conn.request('GET', resource)
+	if debug:
+		req.write('Attempting to access requested resource...\n')
+	resp = conn.getresponse()
+	status = resp.status
+	if debug:
+		req.write('Status: {0}\n'.format(str(status)))
+	reason = resp.reason
+	if debug:
+		req.write('Reason: {0}\n'.format((reason)))
+	
+	# 200 is the only acceptible status. Anything else indicates no data is coming
+	# back from MG-RAST
+	if status != 200:
+		raise Exception('Error accessing REST API. HTTP status was {0}\n'.format(status))
+	
+	# Get the library data 
+	data = resp.read()
+	if debug:
+		if 'sequence'.lower() in resource_name.lower():
+			pass
+		else:
+			req.write('Data: ' + str(data))
+	
+	# If nothing comes back skip
+	if not data:
+		req.write('No data available for library "{0}". Skipping...\n'.format(library_id))
+		return None
+
+	# If this is sequence data just return the raw string
+	if 'sequence'.lower() in resource_name.lower():
+		return data
+	
+	# Parse the JSON object and extract parents and metadata
+	json_data = json.loads(data)
+	if debug:
+		req.write('\n\nJSON objects:\n')
+		for item in json_data:
+			req.write('{0}: {1}\n'.format(item, str(json_data[item])))
+			if item == 'metadata':
+				stuff = json_data[item]
+				#req.write('stuff: {0}<br/>'.format(str(stuff)))
+				for i in json_data[item]:
+					req.write('{0}: {1}\n'.format(i, str(stuff[i])))
+					item_data = stuff[i]
+					#req.write('item_data: {0}<br/>'.format(str(item_data)))
+					if isinstance(item_data, dict):
+						for j in item_data:
+							req.write('&nbsp;&nbsp;&nbsp;&nbsp;{0}: {1}\n'.format(j, str(item_data[j])))
+				
+	return json_data
+
+def create_project(mgrast_user_id, project_json, debug):
+	global prepare_column
+	import shutil
+	from os.path import exists
+	
+	study_id = None
+	project_metadata = project_json['metadata']
+	project = project_json['id']
+	
+	# Check to see if we already have this study. If so, remove it first
+	studies = data_access.getUserStudyNames(mgrast_user_id, 0, 'qiime')
+	for study_id, project_name, study_title, study_abstract in studies:
+		if project_name == project:
+			if debug:
+				req.write('Performing delete on study "{0}" ({1})\n'.format(project, str(study_id)))
+			# Perform a full delete
+			data_access.deleteStudy(study_id, 2)
+			
+			# Remove file system entries
+			dirname = '/home/wwwuser/user_data/studies/study_{0}'.format(str(study_id))
+			if exists(dirname):
+				shutil.rmtree(dirname)
+
+	# Insert the study as new
+
+	# Default to bacteria_archaea (19) if no metadata exists
+	investigation_type = 19
+	if 'investigation_type' in project_metadata:
+		investigation_type = project_metadata['investigation_type']
+	miens_compliant = 'n'
+	if 'miens_compliant' in project_metadata:
+		miens_compliant = project_metadata['miens_compliant']
+	submit_to_insdc = 'n'
+	portal_type = 'qiime'
+	study_title = project
+	study_alias = project_json['name']
+	pmid = ''
+	study_abstract = project_json['name']
+	if 'study_abstract' in project_metadata:
+		study_abstract = project_metadata['study_abstract']
+	study_description = project_json['name']
+	if 'study_description' in project_metadata:
+		study_abstract = project_metadata['study_description']
+	principal_investigator = ''
+	if 'principal_investigator' in project_metadata:
+		study_abstract = project_metadata['principal_investigator']
+	principal_investigator_contact = ''
+	if 'principal_investigator_contact' in project_metadata:
+		study_abstract = project_metadata['principal_investigator_contact']
+	lab_person = ''
+	if 'lab_person' in project_metadata:
+		study_abstract = project_metadata['lab_person']
+	lab_person_contact = ''
+	if 'lab_person_contact' in project_metadata:
+		study_abstract = project_metadata['lab_person_contact']
+	includes_timeseries = 0
+
+	# Clean values that should be IDs.
+	results = data_access.dynamicMetadataSelect("select vocab_value_id from controlled_vocab_values where lower(term) = 'mimarks-survey'")
+	if results:
+		investigation_type = results.fetchone()[0]
+
+	if debug:
+		req.write('Inserting study values:\n')
+		req.write('mgrast_user_id: {0}\n'.format(mgrast_user_id))
+		req.write('project: {0}\n'.format(project))
+		req.write('investigation_type: {0}\n'.format(investigation_type))
+		req.write('miens_compliant: {0}\n'.format(miens_compliant))
+		req.write('submit_to_insdc: {0}\n'.format(submit_to_insdc))
+		req.write('portal_type: {0}\n'.format(portal_type))
+		req.write('study_title: {0}\n'.format(study_title))
+		req.write('study_alias: {0}\n'.format(study_alias))
+		req.write('pmid: {0}\n'.format(pmid))
+		req.write('study_abstract: {0}\n'.format(study_abstract))
+		req.write('study_description: {0}\n'.format(study_description))
+		req.write('principal_investigator: {0}\n'.format(principal_investigator))
+		req.write('principal_investigator_contact: {0}\n'.format(principal_investigator_contact))
+		req.write('lab_person: {0}\n'.format(lab_person))
+		req.write('lab_person_contact: {0}\n'.format(lab_person_contact))
+		req.write('includes_timeseries: {0}\n'.format(includes_timeseries))
+
+	study_id = data_access.createStudy(mgrast_user_id, project, investigation_type,
+		miens_compliant, submit_to_insdc, portal_type, study_title, study_alias, 
+		pmid, study_abstract, study_description,
+		principal_investigator, principal_investigator_contact,
+		lab_person, lab_person_contact, includes_timeseries)
+	
+	# Halt processing if study_id is bad
+	if not study_id:
+		raise ValueError('study_id is None. Cannot continue processing.')
+	
+	if debug:
+		req.write('study_id is: {0}<br/><br/>'.format(str(study_id)))
+		
+	return study_id
+
+	# Now that the study exists, create the directory structure and store the sequence data
+	# in fasta format
+
+def create_sample(study_id, sample_json, row_num, lock, debug):
+	if debug:
+		req.write('sample_json: {0}<br/>'.format(sample_json))
+		req.write('row_num: {0}<br/>'.format(str(row_num)))
+	
+	sample_id = None
+	if debug:
+		req.write('Obtaining sample data...<br/>')
+	sample_metadata = sample_json['metadata']
+	
+	if debug:
+		req.write('Obtaining sample_name...<br/>')
+	sample_name = sample_json['id']
+	
+	if debug:
+		req.write('Checking if sample_name in metadata...<br/>')
+	if 'sample_name' in sample_metadata:
+		if debug:
+			req.write('sample_name in metadata.<br/>')
+		sample_name = sample_metadata['sample_name']
+	
+	if debug:
+		req.write('sample_metadata: {0}<br/>'.format(str(sample_metadata)))
+		req.write('sample_name: {0}<br/>'.format(str(sample_name)))
+	
+	# Create the sample_id
+	if debug:
+		req.write('Creating the sample key...<br/>')
+	data_access.createSampleKey(study_id, sample_name)
+	
+	for item in sample_metadata:
+		# Figure out if this is "extra". If so, always add to it's own extra table since
+		# we cannot guarantee the content or the datatype
+		try:
+			item_name = item
+			value = sample_metadata[item]
+			if debug:
+				req.write('value: {0}<br/>'.format(value))
+			value = value.replace("'", "''")
+			
+			if debug:
+				req.write('Preparing column for data...<br/>')
+			prepare_column(study_id, item_name, 'sample', lock, debug)
+		except Exception, e:
+			req.write(str(e))
+			return False
+
+		host_key_field = None
+		
+		try:
+			if debug:
+				req.write('<br/>')
+				req.write('<br/>Writing metadata value...<br/>')
+				req.write('<br/>')
+			data_access.writeMetadataValue('sample', sample_name, item_name, value, study_id, host_key_field, row_num, lock)
+		except Exception, e:
+			req.write(str(e))
+			req.write('<br/>')
+			req.write('<br/>')
+			continue
+
+	return sample_name
+
+def create_library(study_id, sample_name, library_json, row_num, lock, debug):
+	metadata = library_json['metadata']
+	
+	barcode = 'AAAA'
+	linker = 'AAAA'
+	primer = 'AAAA'
+	run_prefix = library_json['id']
+	host_key_field = None
+	library_metadata = library_json['metadata']
+	
+	if 'barcode' in metadata:
+		barcode = metadata['barcode']
+	if 'linker' in metadata:
+		linker = metadata['linker']
+	if 'primer' in metadata:
+		primer = metadata['primer']
+	if 'host_key_field' in metadata:
+		host_key_field = metadata['host_key_field']
+	
+	if debug:
+		req.write('study_id: {0}\n'.format(study_id))
+		req.write('sample_name: {0}\n'.format(sample_name))
+		req.write('row_num: {0}\n'.format(row_num))
+		req.write('barcode: {0}\n'.format(barcode))
+		req.write('linker: {0}\n'.format(linker))
+		req.write('primer: {0}\n'.format(primer))
+		req.write('run_prefix: {0}\n'.format(run_prefix))
+	
+	# Create the prep key
+	try:
+		req.write('Creating prep key...<br/>')
+		data_access.createPrepKey(study_id, sample_name, row_num, barcode, linker, primer, run_prefix)
+		req.write('Created prep key.<br/>')
+		# Write the additional metadata values. Add required values to the dict if they don't exist.
+		#if 'platform' not in metadata:
+			#if 'seq_meth' in metadata:
+			#	metadata['platform'] = metadata['seq_meth']
+			#else:
+		metadata['platform'] = 'FASTA'
+	
+		for item in metadata:
+			req.write('Current item: {0}<br/>'.format(str(item)))
+			item_name = item
+			value = library_metadata[item]
+			value = value.replace("'", "''")
+		
+			if debug:
+				req.write('<br/>')			
+				req.write('Item name is: {0}'.format(item_name))
+				req.write('<br/>')
+				req.write('{0}: {1}<br/>'.format(item, str(value)))
+				req.write('<br/>')
+			
+			try:
+				data_access.writeMetadataValue('prep', sample_name, item, value, study_id, host_key_field, row_num, lock)
+			except Exception, e:
+				req.write(str(e))
+				continue
+				
+	except Exception, e:
+		req.write(str(e))
+		return False
+	
+
+
+######################## Initial Values ########################
+
+# Some constants
+debug = True
+
+# Base values for accessing MoBeDAC REST API
+auth_key = 'TkzmLuiSuwQEhivEveZ7tvYiB'
+base_url = 'api.metagenomics.anl.gov'
+
+# URLs for accessing MoBeDAC REST API
+library_resource_url = '/library/{0}?auth={1}'
+sample_resource_url = '/sample/{0}?auth={1}'
+project_resource_url = '/project/{0}?auth={1}'
+reads_resource_url = '/reads/{0}?auth={1}'
+sequenceSet_resource_url = '/sequenceSet/{0}?auth={1}'
+metagenome_resource_url = '/metagenome/{0}?auth={1}'
+
+# Base directory, filled out later
+dirname = None
+
+# User id in web_app_user for the account under which the MoBeDAC data will be written
+mgrast_user_id = 12583
+
+# Initial row number - incremented at start of loop
+row_num = -1
+
+# Since we read the objects bottom-up, project creation winds up happening
+# in the first iteration of the loop. We obviously only want to do this once...
+project_created = False
+
+# Locking for metadata value insert
+lock = Lock()
+
+######################## Start Reading Data ########################
+
+# Attempt to parse the post body as JSON data
+# post_data comes from the router.psp
+json_data = json.loads(post_data)
+library_ids = json_data['library_ids']
+
+for library_id in library_ids:
+	# Increment the row number - needed for prep and sample inserts
+	row_num += 1
+
+	
+	# Get the library data
+	library_json = get_resource('Library', base_url, library_resource_url, library_id, auth_key, debug)
+	sequence_sets = library_json['sequence_sets']
+	sample = library_json['sample']
+	reads = library_json['reads']
+	metagenome = library_json['metagenome']
+	metadata = library_json['metadata']
+
+	# Get the sample data
+	sample_json = get_resource('Sample', base_url, sample_resource_url, sample, auth_key, debug)
+	project = sample_json['project']
+	
+	# Get the project data
+	project_json = get_resource('Project', base_url, project_resource_url, project, auth_key, debug)
+	
+	# Get the read data
+	#reads_json = get_resource('Reads', base_url, reads_resource_url, reads, auth_key, debug = True)
+	
+	# Get the metagenome data
+	metagenome_json = get_resource('Metagenome', base_url, metagenome_resource_url, metagenome, auth_key, debug)
+	
+	# Assuming all went well, start creating objects in database
+	if debug:
+		req.write('\n\n')
+		req.write('-----------------------Creating Database Objects-----------------------')
+		req.write('\n\n')
+
+	# STUDY
+	study_id = None
+	if not project_created:	   
+		study_id = create_project(mgrast_user_id, project_json, debug)
+		if study_id is False:
+			break
+		else:
+			project_created = True
+	
+	dirname = '/home/wwwuser/user_data/studies/study_{0}'.format(str(study_id))
+	
+	# SAMPLE
+	sample_name = create_sample(study_id, sample_json, row_num, lock, debug)
+	if sample_name is False:
+		break
+
+	# LIBRARY
+	create_library(study_id, sample_name, library_json, row_num, lock, debug)
+
+	# SEQUENCE FILES
+	for s in sequence_sets:
+		if debug:
+			req.write('s: {0}<br/>'.format(s))
+		
+		stage_name = s['stage_name']
+		stage_type = s['stage_type']
+		
+		if debug:
+			req.write('stage_name: {0}<br/>'.format(stage_name))
+			req.write('stage_type: {0}<br/>'.format(stage_type))
+			
+		if stage_name == 'upload' and stage_type == 'fna':
+			sequence_set = s['id']
+			
+			if debug:
+				req.write('sequence_set: {0}<br/>'.format(sequence_set))
+
+			handle = 'http://api.metagenomics.anl.gov/sequenceSet/mgm4492980.3-050-2?auth=TkzmLuiSuwQEhivEveZ7tvYiB'
+			tmp_filename = '/tmp/sequences_{0}.gz'.format(sequence_set)
+			u = urllib2.urlopen(handle)
+			localFile = open(tmp_filename, 'w')
+			localFile.write(u.read())
+			localFile.close()
+
+			# Create directories
+			if debug:
+				req.write('attempting to create folder: {0}'.format(dirname))
+			if not exists(dirname):
+				makedirs(dirname)
+
+			seqs_filename = join(dirname, '{0}.fasta'.format(library_json['id']))
+			handle = gzip.open(tmp_filename)
+			with open(seqs_filename, 'w') as out:
+				for line in handle:
+					line = line.replace('>', '>{0}_'.format(sample_name))
+					out.write(line)
+
+			# Associate file to the study
+			data_access.addSeqFile(study_id, seqs_filename, 'FNA')			
+
+			break
+
+# Update metadata flag as complete
+data_access.updateMetadataFlag(study_id, 'y')
+			
+# Metadata inserted and files written. Time to kick of a job:
+mapping_file_dir = join(dirname, 'mapping_files/')
+if debug:
+	req.write('mapping_file_dir: {0}\n'.format(mapping_file_dir))
+if not exists(mapping_file_dir):
+	makedirs(mapping_file_dir)
+
+process_only = False
+submit_to_test_db = False
+submitJobsToQiime(study_id, mgrast_user_id, mapping_file_dir, process_only, submit_to_test_db)
+
+# Define status URL for MoBeDAC portal to poll:
+# study_id = 10001
+# callback_url = '/routed/projectstatus/{1}'.format(req.hostname, study_id)
+# req.write(callback_url)
+
+%>
+

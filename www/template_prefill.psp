@@ -1,0 +1,93 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+from datetime import datetime
+from zipfile import ZipFile
+from linkamafy import link_urls
+import os
+
+portal_type = sess['portal_type']
+post_fix = str(datetime.now())
+
+sample_fields = []
+prep_fields = []
+documentation_fields = []
+
+# Put the fields into the right buckets so we can write them to the
+# proper template files below
+for field in form:
+    items = field.split(':')
+    if items[0] == 'sample':
+        sample_fields.append(items[1])
+    elif items[0] == 'prep' and portal_type != 'emp':
+        prep_fields.append(items[1])
+    else:
+        # Other form fields will simply be ignored.
+        pass
+
+# Get the documentation for the list of fields
+"""
+Code here works as follows:
+* Get a copy of the column dictionary and interate over the entire contents
+* For every entry that matches one found in the list of sample or prep fields for this study,
+  add it to the documentation_fields list
+* Before adding, make sure that the field has not already been added. If so, skip.
+"""
+column_dictionary = data_access_factory(ServerConfig.data_access_type).getColumnDictionary()
+for entry in column_dictionary:
+    lower_sample_fields = [x.lower() for x in sample_fields]
+    lower_prep_fields = [x.lower() for x in prep_fields]
+    lower_entry = entry[0].lower()
+
+    if lower_entry in lower_sample_fields or lower_entry in lower_prep_fields:
+        # Extract a slice of data from the list of tuples which represents the column names
+        names = [x[0] for x in documentation_fields]
+        if entry[0] not in names:
+            documentation_fields.append(entry)
+
+# Sort the fields
+sample_fields = sorted(sample_fields)
+if 'sample_name' in sample_fields:
+    sample_fields.remove('sample_name')
+    sample_fields.insert(0, 'sample_name')
+if 'project_name' in sample_fields:
+    sample_fields.remove('project_name')
+    sample_fields.insert(0, 'project_name')
+prep_fields = sorted(prep_fields)
+if 'sample_name' in prep_fields:
+    prep_fields.remove('sample_name')
+    prep_fields.insert(0, 'sample_name')
+
+try:
+    req.write('<h2>Prefill Template Data</h2>')
+    req.write('# of samples in study: <input type="text" id="number_of_samples" name="number_of_samples">')
+    req.write('<h3>Fields in sample template:</h3>')
+    req.write('<table>')
+    for item in sample_fields:
+        req.write('<tr>')
+        req.write('<td><b>%s</b></td><td><input type="text" name="" id=""></td>' % item)
+        req.write('</tr>')
+    req.write('<table>')
+                
+    if portal_type in ['qiime', 'emp']:
+        req.write('<h3>Fields in prep template:</h3>')
+        req.write('<table>')
+        for item in prep_fields:
+            req.write('<tr>')
+            req.write('<td><b>%s</b></td><td><input type="text" name="" id=""></td>' % item)
+            req.write('</tr>')
+        req.write('</table>')
+
+except Exception, e:
+    req.write(str(e))
+
+%>

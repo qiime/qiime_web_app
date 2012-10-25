@@ -1,0 +1,150 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+''' 
+This page is used to create a new meta_analysis in the database (i.e. the user 
+wants to select studies and its associated data.
+'''
+
+# Adding login info to bypass for now
+form['meta_login'] = 'I_want_in!'
+
+if 'meta_login' in form and form['meta_login'] == 'I_want_in!':
+    # Indent
+%>
+
+<script type='text/javascript'>
+
+/*
+This function performs validation on the form fields and then submits the
+form if the fields are valid.
+*/
+$.validator.setDefaults({
+    submitHandler:function(){
+        //check the the user-defined meta_analysis is not present in the database
+        valid=check_meta_analysis_name()
+        if (valid=='True'){
+            study=document.getElementById('new_meta_analysis');
+            study.submit();
+        }
+    }
+});
+
+//Create the validation attribute
+$.metadata.setType("attr","validate");
+
+//Set the validation for each form field
+$(document).ready(function(){
+    $("#new_meta_analysis").validate();
+ 
+});
+
+//Create an array of meta_analysis names retrieved from the database
+var meta_analysis_names=new Array();
+
+<%
+    # Check to see if a login has been performed. This is quite a 
+    # hack for now, will be removed once feature is open for 
+    # general use.
+
+    from data_access_connections import data_access_factory
+    from enums import ServerConfig
+    qda = data_access_factory(ServerConfig.data_access_type)
+
+    # get a list of studies from the database
+    meta_analysis_names = qda.getMetaAnalysisNames(sess['web_app_user_id'])
+
+    # iterate through the studies and write them into a javascript array
+    for i in range(len(meta_analysis_names)):
+        req.write('meta_analysis_names['+str(i)+']="'+str(meta_analysis_names[i][1])+'"\n');
+    #
+%>
+
+
+
+//Check that the user-defined meta_analysis name is not in the database
+function check_meta_analysis_name()
+{
+    meta_analysis=document.getElementById('meta_analysis_name').value;
+    var meta_analysis1=meta_analysis.toUpperCase();
+    var valid='True'
+    for (var i=0;i<meta_analysis_names.length;i++)
+    {
+        var meta_analysis_names1=meta_analysis_names[i].toUpperCase();
+        if (meta_analysis1==meta_analysis_names1){
+            valid='False'
+        }
+    }
+    //If the meta_analysis name is already taken, alert the user
+    if(valid=='False')
+    {
+        alert("The selected meta_analysis name has already been taken. Please enter a different name.");
+    }
+    return valid
+}
+
+</script>
+
+<!-- Define the form-->
+
+<form id="user_meta_analysis" action="select_meta_analysis_submit.psp" method="post">
+    <table>
+        <tr>
+            <th>
+                Select Previous Meta-Analyses:
+            </th>
+            <td>
+                <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="document.forms['user_meta_analysis'].submit(); return false;">
+                <option value=""></option>
+<%
+    meta_analysis_names = data_access.getMetaAnalysisNames(sess['web_app_user_id'])
+    for meta_analysis_name in meta_analysis_names:
+        req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
+    # end
+%>
+                </select>
+            </td>
+        </tr>
+    </table>
+</form>
+<br><br>
+<form id="new_meta_analysis" action="new_meta_analysis_submit.psp" method="post">
+    <!-- put the form fields in a table to add structure to the layout-->
+    <table>
+        <tr><th>Create New Meta-Analysis:</th>
+            <td>
+                <input class="safename" type="text" name="meta_analysis_name" id="meta_analysis_name" />
+            </td>
+            <td>
+                <input type="submit" value="Next"/>
+            </td>
+        </tr>
+    </table>
+</form>
+
+<%
+
+else:
+    # Indent
+%>
+<br/>
+<form action="fusebox.psp?page=new_meta_analysis.psp" method="post">
+Password for Meta-Analysis: <input type="password" name="meta_login" id="meta_login" value="">
+<br/>
+<br/>
+<input type="submit" value="Authenticate for Meta-Analysis">
+</form>
+
+<%
+# End indent
+
+%>
+
+

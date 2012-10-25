@@ -1,0 +1,64 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, The QIIME project"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.2.0-dev"
+__maintainer__ = "Doug Wendel"
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+import sys
+import httplib, urllib
+
+url_path = '/r/project'
+#url_path = '/routed/router.psp?query=project'
+#url_path = '/routed/post_test.psp?query=project/1234'
+
+host = 'microbio.me'
+#host = '192.168.56.101'
+
+#file_contents = '{"analysis_system":"QIIME","library_ids":["mgl23544.1"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac"}}'
+#file_contents = '{"analysis_system":"QIIME","library_ids":["mgl190"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac"}}'
+# Global Gut
+#file_contents = '{"analysis_system":"QIIME","library_ids":["mgl4608"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac"}}'
+
+# Bowers storm peak air
+#file_contents = '{"analysis_system":"QIIME","library_ids":["mgl183"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac"}}'
+
+# equencing of bacterial 16S gene from air in and around a hospital in Oregon
+file_contents = '{"analysis_system":"QIIME","library_ids":["mgl62781"],"analysis_params":{"auth":"TkzmLuiSuwQEhivEveZ7tvYiB","user":"mobedac"}}'
+
+success = None
+entity_id = None
+
+# Submit file data
+#headers = {"Content-type":"application/x-www-form-urlencoded", "Accept":"text/xml", "User-Agent":"qiime_website"}
+headers = {"Content-type":"application/x-www-form-urlencoded", "Accept":"text/html", "User-Agent":"qiime_website"}
+conn = httplib.HTTPConnection(host)
+conn.request(method = "POST", url = url_path, body = file_contents, headers = headers)
+response = conn.getresponse()
+data = response.read()
+req.write('<pre>')
+req.write('{0}'.format(str(data)))
+req.write('</pre>')
+
+"""
+print '==============================================='
+
+print 'Response data is: ' + data
+print 'Connecting to poll url...'
+url_path = data
+
+conn.request(method = "GET", url = url_path, body = file_contents, headers = headers)
+response = conn.getresponse()
+data = response.read()
+
+print data
+
+conn.close()
+
+"""
+
+%>
+

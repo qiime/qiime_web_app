@@ -1,0 +1,56 @@
+<link rel="stylesheet" href="style/qiime.css" type="text/css">
+
+<div class="container">
+    <div id="header"></div>
+</div>
+
+<%
+from data_access_connections import data_access_factory
+from enums import *
+from mod_python import *
+import os
+
+data_access = data_access_factory(ServerConfig.data_access_type)
+sess = Session.Session(req)
+
+def loadPage(page):
+    if ( os.path.isfile( sess['document_root'] + page ) ):
+        code = parse( page, sess['document_root'] )
+        exec ( code )
+    else:
+        req.write('<h3>Page not found.</h3>')
+
+# Set up the session for the anonymous user
+environment_vars=req.get_options()
+output_dir='%s/user_data' % environment_vars['HOME']
+user_dir = os.path.join(output_dir, 'studies')
+study_dir = os.path.join(user_dir, 'study_0')
+
+sess['study_id'] = 0
+sess['portal_type'] = 'qiime'
+sess['web_app_user_id'] = 0
+sess['user_dir'] = user_dir
+sess['study_dir'] = study_dir
+sess['document_root'] = req.document_root() + '/qiime/'
+sess['username'] = 'Validator'
+sess['title'] = 'Metadata Validation'
+sess['stylesheet'] = 'style/qiime.css'
+sess['is_admin'] = 0
+sess['frame_target'] = '_parent'
+sess.save()
+
+if form.has_key('page'):
+    # We have the page form variable so let's load it up
+    sess['form'] = form
+    sess.save()
+    page = form["page"]
+    loadPage(page)
+else:
+    # Initial entry point - upload a metadata file
+    loadPage('upload_metadata.psp')
+%>
+
+<%
+# end if
+%>
+

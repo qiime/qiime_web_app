@@ -1,0 +1,23 @@
+#header 
+{
+	background: url(../img/qiime_logo.jpg) no-repeat left top;
+	padding-top: 140px;
+}
+
+.container 
+{
+	margin: 0 auto;
+	position: relative;
+	background: #000;
+}
+
+#study_info
+{
+	position: absolute;
+	text-align: right;
+	top: 85px;
+	right: 10px;
+	width: 100%;
+	color: #ccc;
+	font: 15px normal Arial, Helvetica, sans-serif;
+}

@@ -1,0 +1,56 @@
+<html>
+<head><title>Metadata Download</title></head>
+<body>
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+
+import os
+from write_mapping_file import write_mapping_file
+from os import system
+script_description="""This script exports a full mapping file for the user to 
+download."""
+
+
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+if not (sess.has_key('username')):
+	sess.invalidate()
+	psp.redirect('../index.psp')
+
+try:
+    from data_access_connections import data_access_factory
+    from enums import ServerConfig,DataAccessType
+    import cx_Oracle
+    data_access = data_access_factory(ServerConfig.data_access_type)
+except ImportError:
+    print "NOT IMPORTING QIIMEDATAACCESS"
+    pass
+
+#Get the values from the session fields
+study_id=form['study_id'];
+
+con = data_access.getMetadataDatabaseConnection()
+cur = con.cursor()
+
+run_prefixes = cur.execute('select distinct sp.RUN_PREFIX \
+                            from SEQUENCE_PREP sp inner join "SAMPLE" s \
+                            on s.sample_id=sp.sample_id where s.study_id=%s' \
+                            % (str(study_id)))
+req.write('<p><b><u>SFF Files:</u></b><br>')
+for run_prefix in run_prefixes:
+    req.write('<a href=\'ftp://thebeast.colorado.edu/pub/QIIME_DB_Study_SFFs/study_%s_%s.sff.tgz\' target="_blank">study_%s_%s.sff.tgz</a>&nbsp;' % (str(study_id),run_prefix[0],str(study_id),run_prefix[0]))
+    
+    req.write('(<a href=\'ftp://thebeast.colorado.edu/pub/QIIME_DB_Study_SFFs/study_%s_%s.sff.tgz.md5\' target="_blank">md5</a>)</p>' % (str(study_id),run_prefix[0]))
+%>
+</body>
+</html>

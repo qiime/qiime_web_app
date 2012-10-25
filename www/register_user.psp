@@ -1,0 +1,216 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+'''This page is for registering for the QIIME web app, where the user supplies
+a username and password.'''
+
+from mod_python import Session
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+from random import choice
+from time import strftime
+import gc
+from send_mail_from_server import process_and_send_email
+%>
+<!-- header information -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Qiime</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="style/qiime.css" type="text/css">
+<script type="text/javascript" src="./js/qiime.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
+<script type="text/javascript"> 
+$(document).ready(function(){
+
+	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("ul.topnav li span").click(function() { //When trigger is clicked...
+		
+		//Following events are applied to the subnav itself (moving subnav up and down)
+		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+		$(this).parent().hover(function() {
+		}, function(){	
+			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+		});
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+
+});
+</script>
+
+<!-- javascript for setting up the validation fields onload -->
+<script type="text/javascript">
+$.metadata.setType("attr","validate");
+$(document).ready(function(){
+    $("#new_user").validate({
+        rules: {
+            username: {
+                required: true,
+                email: true
+            },
+            password: "required",
+            password_again: {
+            equalTo: "#password"
+            },
+        },
+    });
+});
+
+</script>
+
+<!-- stylesheet information for the validaton fields -->
+<style type="text/css">
+    label {  width: 10em; }
+    br { clear: both; }
+    input { margin-left: .5em; float: left; border: 1px solid black; margin-bottom: .5em;  }
+    input.submit { float: none; }
+    input.error { border: 1px solid red; width: auto; }
+    label.error {
+        background: url('http://dev.jquery.com/view/trunk/plugins/validate/demo/images/unchecked.gif') no-repeat;
+        padding-left: 16px;
+        margin-left: .3em;
+    }
+    label.valid {
+        background: url('http://dev.jquery.com/view/trunk/plugins/validate/demo/images/checked.gif') no-repeat;
+        display: block;
+        width: 16px;
+        height: 16px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div id="header">
+    	 <div class="disclaimer">Please Log In</div>
+    </div>
+</div>
+<div class="content">
+
+<hr/>
+
+<form target="_top" id="send_me_home" name="send_me_home" action="fusebox.psp" method="post">
+    <input type="hidden" id="page" name="page" value="select_task.psp" />
+</form>
+
+<table class="header_table">
+<tr><td>New Account</td></tr>
+</table>
+<br/>
+<%
+# This function validates that the user's password is a good password and not
+# just letters or numbers
+def validate_password(passwd):
+    conditions_met = 0
+    conditions_total = 3
+    if len(passwd) >= 6: 
+        conditions_met += 1
+        if passwd.lower() != passwd: conditions_met += 1
+        if len([x for x in passwd if x.isdigit()]) > 0: conditions_met += 1
+        if len([x for x in passwd if not x.isalnum()]) > 0: conditions_met += 1
+    result = False
+    if conditions_met >= 1: result = True
+    return result
+
+# if the form was submitted and contains a username, then we want to 
+# check the availability of the username and then register the user and send
+# them an email
+if form.has_key('username'):
+     # validate that the username provided is available
+    data_access= data_access_factory(ServerConfig.data_access_type)
+    available = data_access.checkWebAppUserAvailability(form["username"])
+    good_password=validate_password(form["password"])
+    
+    # if the password is a good one and the username is available create
+    # an activation code in insert in the db
+    if available and good_password:
+        alphabet = "ABCDEFGHIJKLMNOPQRSTUZWXYZ"
+        alphabet += alphabet.lower()
+        alphabet += "01234567890"
+
+        activation_code=''.join([choice(alphabet) for i in range(20)])
+        user_data=data_access.registerWebAppUser( form["username"], form["password"] ,activation_code)
+        
+        # send an email with an activation link for the user
+        process_and_send_email('qiime.web.app@colorado.edu',form["username"], \
+            'QIIME account activation', \
+            'Please click on the link below to activate your QIIME Account:\n\nhttp://microbio.me/qiime/activate_account.psp?username=%s&activation_code=%s' % (form['username'],activation_code))
+        req.write('<p>Thank you for registering for QIIME.<br><br>You will receive an email shortly containing a link to activate your account.</p>')
+    elif not available and good_password:
+        # if the username is not available, then let the user know
+        req.write('<p style="color:red;">This username is already taken!</p>')
+%>
+        <form id="new_user" method="post" action="register_user.psp">
+            <table>
+            <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+            <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+            <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+            </table>
+        </form>
+<%
+    elif available and not good_password:
+        # if the username is available but the password is bad, let the user
+        # know
+        #req.write('<div style="color:red;"><p><b>Invalid Password!</b> Your password must contain at least 2 of following and have a length greater than 6 characters:</p><ul><li>non-alphanumeric characters </li><li> upper-case alphanumeric characters </li><li> lower-case alphanumeric characters </li><li> numbers </li></ul><p>For Example: "Password","password1" or "password*"</p></div>')
+        req.write('<div style="color:red;"><p><b>Invalid Password! Your password must be 6 or more characters.</b></p></div>')
+%>
+        <form id="new_user" method="post" action="register_user.psp">
+            <table>
+            <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+            <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+            <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+            </table>
+        </form>
+<%
+    else:
+        # Alert the user that their username is taken
+        req.write('<p style="color:red;">This username is already taken!</p>')
+%>
+        <form id="new_user" method="post" action="register_user.psp">
+            <table>
+            <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+            <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+            <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+            <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+            </table>
+        </form>
+<%
+else:
+    # if this page was not a submitted form, then load default page
+%>
+    <form id="new_user" method="post" action="register_user.psp">
+        <table>
+        <tr><td>Username (email):</td><td><input type="text" id="username" name="username" /></td></tr>
+        <tr><td>New Password:</td><td><input type="password" id="password" name="password" /></td></tr>
+        <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
+        <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
+        </table>
+    </form>
+<%
+#
+data_access = None
+gc.collect()
+%>
+</body>
+</html>

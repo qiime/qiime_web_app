@@ -1,0 +1,129 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
+ontology_list = data_access.get_list_of_ontologies()
+%>
+
+<h3>Ontology Lookup Service</h3>
+
+    <script type="text/javascript" src="./js/ontology.js"></script>
+    <style type="text/css">
+        td{
+            text-align:left;
+        }
+        th{
+            text-align:left;
+        }
+        .overlay td{
+            font-family:"Helvetica","Arial",serif;
+            text-align:right;
+            font-size:8pt;
+        }
+        .overlay th{
+            font-family:"Helvetica","Arial",serif;
+            text-align:center;
+            font-size:8pt;
+        }
+        .usual th {
+            text-decoration:none!important;
+            height: 30px;
+            font-size:10pt;
+            color:#FFF;
+            background:black;
+            text-align:center;
+            cursor:pointer;
+            cursor:hand;
+            vertical-align:middle;
+            font-family:"Helvetica","Arial",serif;
+        }
+        .usual td {
+            text-decoration:none!important;
+            height: 30px;
+            font-size:10pt;
+            color:#FFF;
+            background:black;
+        }
+        .usual{
+            width:100%;
+            color:#FFF;
+        }
+        .usual th:hover{
+            background:blue;
+        }
+    </style>
+
+    <!-- 
+        This form contains the input box for the list of terms, along with
+        the list of ontologies and function buttons.
+    
+        Onsubmit returns false, since the form is not formally submitted and
+        it will remove the return key functionality.
+    -->
+    <form id="ontology_lookup" onsubmit="return false;" action="#">
+    <br>
+        <table id='table1'>
+            <tr>
+                <!-- Define Two Column headers -->
+                <th colspan="2">Paste your list here:</th>
+                <th>Select Ontologies: 
+                    <select onchange="window.location.href=this.options[this.selectedIndex].value;reset_select(this);">
+                        <option value="javascript:">
+                        <option value="javascript:select_all('ontologies');">All
+                        <option value="javascript:select_none('ontologies');">None
+                        <option value="Javascript:select_invert('ontologies');">Invert
+                    </select>
+                </th>
+            </tr>
+            <tr>
+                <!-- Define list input area and ontology select list -->
+                <td colspan="2">
+                    <textarea id="ont_term_list" rows="19" cols="50"></textarea>
+                </td>
+                <td>
+                    <select id="ontologies" multiple size="20">
+                    <!-- Using psp, generate a list of ontologies -->
+<%
+for ont in ontology_list:
+    req.write("<option value="+str(ont[1])+">"+str(ont[1])+": "+str(ont[2])+"</option>\n")
+#
+%>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <!-- 
+                    Input buttons ... for validateInput function, we are 
+                    submitting 5 values: 
+                    1) the form id for the list of of ontologies
+                    2) values from the input textarea
+                    3) form id for writing the results
+                    4) True/False - meaning are we inputting new data
+                    5) True/False - are we outputting data to a new window 
+                -->
+                <td>
+                    <input type="button" onclick="validateInput('ontologies',ont_term_list.value,'ont_table','True','False');" value="Submit Values" />
+                </td>
+                <td><br/></td>
+                <td>
+                    <input type="button" onclick="validateInput('ontologies',ont_term_list.value,'ont_table','False','True');" value="Output Data" />
+                </td>
+            </tr>
+        </table>
+            <!-- 
+                The following table is where we will be dynamically writing
+                the results.
+            -->
+        <table id='ont_table'></table>
+    </form>

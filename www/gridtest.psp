@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>Grid Test</title>
+</head>
+
+<link rel="STYLESHEET" type="text/css" href="dhtmlxGrid/codebase/dhtmlxgrid.css">
+<script src="dhtmlxGrid/codebase/dhtmlxcommon.js"></script>
+<script src="dhtmlxGrid/codebase/dhtmlxgrid.js"></script>
+<script src="dhtmlxGrid/codebase/dhtmlxgridcell.js"></script>
+<script>
+    var mygrid;
+    function doInitGrid()
+    { 
+        mygrid = new dhtmlXGridObject('mygrid_container');
+        mygrid.setImagePath("codebase/imgs/");
+        mygrid.setHeader("Model,Qty,Price");
+        mygrid.setInitWidths("*,150,150");
+        mygrid.setColAlign("left,right,right");
+        mygrid.setSkin("light");
+        
+        // Sorting types
+        mygrid.setColSorting("str,int,int");
+        
+        // Data load
+        mygrid.loadXML("dhtmlxGrid/data.xml");
+        
+        // Seting editing types
+        mygrid.setColTypes("ed,ed,price");
+        
+        // Event handling
+        mygrid.attachEvent("onRowSelect",doOnRowSelected);
+        
+        mygrid.init();
+    }
+    
+    function addRow()
+    {
+        var newId = (new Date()).valueOf()
+        mygrid.addRow(newId,"",mygrid.getRowsNum())
+        mygrid.selectRow(mygrid.getRowIndex(newId),false,false,true);
+    }
+    
+    function removeRow()
+    {
+        var selId = mygrid.getSelectedId()
+        mygrid.deleteRow(selId);
+    }
+    
+    function doOnRowSelected(rowID,celInd)
+    {
+        alert("Selected row ID is "+rowID+"\nUser clicked cell with index "+celInd);
+    }
+    
+</script>
+    
+<body onload="doInitGrid();">
+
+    <div id="mygrid_container" style="width:600px;height:150px;"></div>
+    <button onclick="addRow()">Add Row</button>
+    <button onclick="removeRow()">Remove Row</button>
+
+</body>
+</html>

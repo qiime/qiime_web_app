@@ -1,0 +1,111 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+from hashlib import md5
+from metadata_table import *
+%>
+
+<%@ include file="header.psp" %>
+
+<script type="text/javascript" src="js/template.js"></script>
+
+<h2>Metadata Validation</h2>
+
+<form target="_top" id="invalid_metadata_form" method="post" action="submit_invalid_metadata.psp">
+<%
+templates = sess["templates"]
+for template in templates:
+    req.write('<input type="hidden" id="{0}" name="{0}" value="{0}">\n'.format(template))
+
+# End indent
+%>
+</form>
+
+<form target="_top" name="metadata_form" id="metadata_form" method="post" action="fusebox.psp" onsubmit="return validateCorrectedMetadata();">
+<input type="hidden" id="page" name="page" value="submit_corrected_metadata.psp"/>
+
+<%
+study_id = sess['study_id']
+if study_id > 0:
+    forward = True
+else:
+    forward = False
+
+if templates != None:
+    draw_submit = True
+    
+    for template in templates:
+        # Skip the timeseries template. Because it consists mostly of custom columns
+        # It's minimally validated earlier. 
+        if 'timeseries' in template:
+            req.write('<input type="hidden" id="{0}" name="{0}" value="{0}">'.format(template))
+            continue
+            
+        req.write('<h3>Results for file: ' + os.path.basename(template) + '</h3>')
+        log = []
+        try:
+            tmp_filename = '/tmp/t_html_%s.html' % md5(template).hexdigest()
+            req.write('<input type="hidden" id="{0}" name="{0}" value="{1}">'.format(template, tmp_filename))
+            log.append('Creating metadata table for file "%s"' % template)
+            table = MetadataTable(template, sess['study_id'])
+            log.append('Reading metadata file...')
+            table.processMetadataFile()
+            log.append('Printing HTML table...')
+            validated_items, html_table, error_log, visible_elements = table.printHTMLTable()
+
+            # Write out our valid items to file...
+            f = open(tmp_filename, 'w')
+            for item in validated_items:
+                f.write('%s::%s\n' % (item, validated_items[item]))
+            f.close()
+
+            if not visible_elements:
+                req.write('No corrections necessary.')
+            else:
+                # Write out the HTML table - will only contain 
+                req.write(str(html_table))
+                forward = False
+            
+            if error_log:
+                draw_submit = False
+                for line in error_log:
+                    req.write(line + '<br/>\n')
+
+            req.write('<p/>')
+        
+        except Exception, e:
+            req.write('An error has occurred:<br/>')
+            for entry in log:
+                req.write(entry + '<br/>')
+            
+            req.write('<br/>The Exception was:')
+            req.write(str(e) + '<p/>')
+            req.write('<p/>Please email your metadata archive and a copy of this error page to: <a href="mailto:wendel@colorado.edu">wendel@colorado.edu</a>.')
+            draw_submit = False
+            forward = False
+            break
+    
+    if forward:
+        req.write('<script type="text/javascript">document.forms["metadata_form"].submit();</script>')
+    elif draw_submit and not forward:
+        req.write('<p/>')
+        req.write('<input type="submit" id="metadata_submit" value="Submit Validated Metadata">') 
+        if portal_type == 'emp':
+            req.write('&nbsp;&nbsp;or&nbsp;&nbsp;<input type="button" value="Submit With Validation Errors" onClick="submitInvalidMetadata();"><br/>')
+        req.write('<p/>')
+        
+    # End if
+
+# End if
+%>
+
+</form>
+
+<%@ include file="footer.psp" %>

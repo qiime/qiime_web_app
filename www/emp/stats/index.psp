@@ -1,0 +1,79 @@
+<%
+from qiime.parse import parse_mapping_file
+from enums import ServerConfig
+from os.path import join
+
+mapping_fp=join(ServerConfig.home,"projects/Qiime/qiime_web_app/www/emp/stats/mapping_file.txt")
+data, header, comments = parse_mapping_file(mapping_fp,"U")
+
+# list of plots to create
+plots_columns = [["ENV_MATTER", "Samples per environmental matter"], 
+                 ["ENV_FEATURE", "Samples per environmental feature"], 
+                 ["COUNTRY", "Samples per country"]]
+indexes = []
+for elem in plots_columns:
+    indexes.append(header.index(elem[0]))
+
+# getting values for each plot
+for total_samples,elem in enumerate(data):
+    if total_samples==0:
+        elements = [[elem[idx]] for idx in indexes]
+    else:
+        [elements[i].append(elem[idx]) for i,idx in enumerate(indexes)]
+
+# getting unique values and its counts
+js_plots = []
+html_plots = []
+for i,val in enumerate(elements):
+    uniq_values = list(set(val))
+    
+    data = []
+    other = 0
+    for name in uniq_values:
+        total = val.count(name)
+        if total <= total_samples*0.03:
+            other += total
+        else:
+            data.append("['%s', %d]" % (name, total))
+    if other:
+        data.append("['Other', %d]" % other)
+    
+    js_plots.append("var %s = [%s];" % (plots_columns[i][0], ','.join(data)))
+    js_plots.append("var plot_%s = jQuery.jqplot('chart_%s', [%s], { seriesDefaults: { renderer: jQuery.jqplot.PieRenderer, rendererOptions: { showDataLabels: true, sliceMargin: 4, lineWidth: 5 } }, legend: { show:true, location: 'e' } });" % (plots_columns[i][0], plots_columns[i][0], plots_columns[i][0]))
+    
+    html_plots.append('<br> %s <div id="chart_%s" style="height:300px; width:500px;"></div><hr>' %  (plots_columns[i][1], plots_columns[i][0]))
+
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>EMP Sample Stats</title>
+
+    <link class="include" rel="stylesheet" type="text/css" href="css/jquery.jqplot.min.css" />
+    
+    <script class="include" type="text/javascript" src="js/jquery.min.js"></script>
+    <script class="include" type="text/javascript" src="js/jquery.jqplot.min.js"></script>
+    <script class="include" language="javascript" type="text/javascript" src="js/plugins/jqplot.pieRenderer.min.js"></script>
+    
+    <script class="code" type="text/javascript">
+    $(document).ready(function() {
+         <% req.write('\n\n'.join(js_plots)) %>
+    });
+    </script>
+
+</head>
+<body>
+
+The total amount of samples <% req.write(str(total_samples+1)) %>
+
+<br>
+<br>
+
+<% req.write('\n'.join(html_plots)) %>
+
+</body>
+
+
+</html>

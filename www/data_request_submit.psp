@@ -1,0 +1,68 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "dev"
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+
+# Grab the sesison object if the header was not included
+if 'sess' not in locals():
+    if 'sess' not in globals():
+        sess = Session.Session(req)
+    
+# Figure out if the user is logged in or not
+if not (sess.has_key('web_app_user_id')):
+    web_app_user_id = 0
+else:
+    web_app_user_id = int(sess['web_app_user_id'])
+
+if not (sess.has_key('is_admin')):
+    is_admin = 0
+else:
+    is_admin = int(sess['is_admin'])
+
+# Draw the page header if user_id is not found. This happens in the case where
+# an anonymous user has accessed the download link prior to logging in
+if web_app_user_id == 0:
+    #Indent
+%>
+
+<html>
+<head>
+<link rel="stylesheet" href="style/qiime.css" type="text/css">
+<title>Request a Data Download</title>
+</head>
+<body>
+<img src="./img/wordpressheader.png" alt="Qiime Logo" border=0 />
+<table class="header_table">
+<tr><td>Request a Data Download</td></tr>
+</table>
+
+<%
+# Unindent
+
+%>
+
+<h3>Your request has been received.</h3>
+A download URL will be sent to your email address.<br/><br/>
+
+<%
+if web_app_user_id == 0:
+    #Indent
+    
+%>
+<a href="index.psp">Take me home</a>
+</body>
+</html>
+
+<%
+# Unindent
+
+%>
+

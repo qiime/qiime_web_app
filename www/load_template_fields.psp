@@ -1,0 +1,212 @@
+<%
+__author__ = 'Doug Wendel'
+__copyright__ = 'Copyright 2009-2010, Qiime Web Analysis'
+__credits__ = ['Doug Wendel', 'Jesse Stombaugh']
+__license__ = 'GPL'
+__version__ = '1.0.0.dev'
+__maintainer__ = ['Doug Wendel']
+__email__ = 'wendel@colorado.edu'
+__status__ = 'Development'
+%>
+
+<%
+from column_factory import ColumnFactory
+
+portal_type = sess['portal_type']
+study_id = sess['study_id']
+web_app_user_id = sess['web_app_user_id']
+study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+investigation_type = study_info['investigation_type']
+%>
+
+<script type='text/javascript' src='js/template.js'></script>
+<script type="text/javascript" src="js/form_complete.js"></script>
+<script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="./js/quick_jump.js"></script>
+
+<script type="text/javascript">
+function geo_ref_select(field_name)
+{
+    alert(field_name);
+}
+</script>
+
+<h3>Select Template Fields</h3>
+<ul>
+    <li>Fields in red are required</li>
+    <li>Select any other fields to include them in your templates</li>
+    <li>Entering a value for number of samples and filling in some of the defaults will pre-fill your templates for you</li>
+</ul>
+<br/>
+
+<form action='new_template_submit.psp' target='_blank' method="post" name="new_template_form" id="new_template_form">
+<!--<form method="post" action="fusebox.psp?page=template_prefill.psp">-->
+<table id='package_fields'>
+<tr><td colspan="4"><b>Number of samples:</b> <input type="text" name="number_samples" id="number_samples"/> </td></tr>
+<tr><td colspan="4"></td></tr>
+
+<script type="text/javascript">
+    $("#number_samples").ForceNumericOnly();
+    $("#new_template_form").validate({
+        rules: {
+            number_samples: "required"
+        }
+});
+</script>
+
+<%
+
+def outputFields(field_list, prefix, header_text):
+    from column_factory import ColumnFactory
+    from linkamafy import link_urls
+    
+    def _is_invalid(column_name, invalid_row):
+        """ A callback that is fired when an invalid field has been found
+        Does not need to do anything in this case but is required by column factory
+        """ 
+        pass
+    
+    column_factory = ColumnFactory(_is_invalid, data_access)
+    count = 0
+
+    # Sort the fields
+    field_list = sorted(field_list)
+    for field in field_list:
+        sess["field_list"].append(field[0].lower())
+        if field[0] == 'sample_name':
+            field_list.remove(field)
+            field_list.insert(0, field)
+        elif field[0] == 'project_name':
+            field_list.remove(field)
+            #field_list.insert(0, field)
+    sess.save()
+                
+    # Output a header row
+    if header_text != '':
+        style = 'background:#444444;color:#FFFFFF;vertical-align:middle;font-size:20px'
+        req.write('<tr style=\'%s\'><td colspan="4">%s</td><tr>' % (style, header_text))
+        
+    for field in field_list:
+        # Extract the variables for readability
+        column_name = field[0]
+        column_name_with_prefix = prefix + ':' + column_name
+        column_default_value_name = column_name + '_default'
+        required = field[1]
+        data_type = field[2]
+        desc_or_value = field[3]        
+        definition = link_urls(field[4])
+        
+        # For alternate coloring of rows
+        if required == 'M':
+            row_color = '#FFCCCC'
+        else:
+            row_color = '#DDDDEE'
+        #elif count % 2 == 0: 
+        #    row_color = '#FFFFFF'
+        #else:
+        #    row_color = '#EEEEFF'
+
+        # Output each table row
+        column = column_factory.createColumn(column_name)
+        js_validation = column.writeJSValidation()
+
+        no_edit_columns = set(['sample_name', 'ANONYMIZED_NAME', 'DESCRIPTION', 'host_subject_id'])
+        geo_ref_columns = set(['latitude', 'longitude', 'elevation'])
+        if column_name in geo_ref_columns:
+            req.write('<tr style="background:%s"><td><b>%s</b></td><td width="400">Default Value: <input type="text" name="%s" %s/><a href="#" onclick="geo_ref_select(\'%s\'); return false;">[@]</a></td><td width="150">Data Type: %s</td><td>Additional Info: %s</td></tr>' \
+                % (row_color, column_name, column_default_value_name, js_validation, column_name, data_type, desc_or_value))
+            req.write('<tr style="background:{0}"><td colspan="4" style="padding-left:25px;">{1}</td></tr>'.format(row_color, definition))
+            req.write('<tr><td colspan="4"></td></tr>')
+            req.write('\n<input type=hidden id=\'%s\' name = \'%s\' value=\'%s\'>' % \
+                (column_name_with_prefix, column_name_with_prefix, 'on'))
+        if column_name in no_edit_columns:
+            req.write('<tr style="background:%s"><td colspan="2"><b>%s</b></td><td width="150">Data Type: %s</td><td>Additional Info: %s</td></tr>' \
+                % (row_color, column_name, data_type, desc_or_value))
+            req.write('<tr style="background:{0}"><td colspan="4" style="padding-left:25px;">{1}</td></tr>'.format(row_color, definition))
+            req.write('<tr><td colspan="4"></td></tr>')
+            req.write('\n<input type=hidden id=\'%s\' name = \'%s\' value=\'%s\'>' % \
+                (column_name_with_prefix, column_name_with_prefix, 'on'))
+        elif required == 'M': # Manditory
+            req.write('<tr style="background:%s"><td><b>%s</b></td><td>Default Value: <input type="text" name="%s" %s/></td><td width="150">Data Type: %s</td><td>Additional Info: %s</td></tr>' \
+                % (row_color, column_name, column_default_value_name, js_validation, data_type, desc_or_value))
+            req.write('<tr style="background:{0}"><td colspan="4" style="padding-left:25px;">{1}</td></tr>'.format(row_color, definition))
+            req.write('<tr><td colspan="4"></td></tr>')
+            req.write('\n<input type=hidden id=\'%s\' name = \'%s\' value=\'%s\'>' % \
+                (column_name_with_prefix, column_name_with_prefix, 'on'))
+        elif required == 'H': # Manditory but hide from user until export
+            req.write('\n<input type=hidden id=\'%s\' name = \'%s\' value=\'%s\'>' % \
+                (column_name_with_prefix, column_name_with_prefix, 'on'))
+        else: # Optional fields
+            req.write('<tr style=\'background:%s\'><td><input type=\'checkbox\' id=\'%s\' name=\'%s\'><b> %s</b></td><td>Default Value: <input type="text" name="%s" %s/></td><td width="150">Data Type: %s</td><td>Additional Info: %s</td></tr>' \
+                % (row_color, column_name_with_prefix, column_name_with_prefix, column_name, column_default_value_name, js_validation, data_type, desc_or_value))    
+            req.write('<tr style="background:{0}"><td colspan="4"  style="padding-left:25px;">{1}</td></tr>'.format(row_color, definition))
+            req.write('<tr><td colspan="4"></td></tr>')
+        
+        # For source readability
+        req.write('\n')
+        
+        # Increment for alternating coloring
+        count += 1
+
+
+# Make sure the field list is an empty list
+sess["field_list"] = []
+sess.save()
+
+# Write out the required sample fields along with the package-specific fields
+field_list = data_access.getPackageColumns(FieldGrouping.sample_level)
+field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_sample_level))
+
+# If EMP portal, add EMP fields
+if portal_type == 'emp':
+    field_list.extend(data_access.getPackageColumns(FieldGrouping.emp_level))
+    #field_list.append(('extracted_dna_avail_now', 'M', 'yn', '[y/n]', 'Whether the extracted dna is available now for this sample'))
+    #field_list.append(('physical_samp_avail_now', 'M', 'yn', '[y/n]', 'Whether the physical sample is available now for this sample'))
+    
+field_list.sort()
+outputFields(field_list, 'sample', 'Sample Fields')
+
+# Write out the prep fields
+if sess['portal_type'] in ['qiime', 'emp']:
+    field_list = data_access.getPackageColumns(FieldGrouping.prep_level)
+    field_list.extend(data_access.getPackageColumns(FieldGrouping.sra_experiment_level))
+    if investigation_type == 'metagenome':
+        field_list.extend(data_access.getPackageColumns(FieldGrouping.mims_prep))
+    else:
+        field_list.extend(data_access.getPackageColumns(FieldGrouping.mimarks_prep))
+    field_list.sort()
+    outputFields(field_list, 'prep', 'Library/Prep/Sequence Fields')
+
+# Write out the rest of the package fields
+packages = data_access.getStudyPackages(sess['study_id'])
+unique_package_fields = []
+for package in packages:
+    field_list = data_access.getPackageColumns(package)
+    for field in field_list:
+        if field not in unique_package_fields:
+            unique_package_fields.append(field)
+
+outputFields(unique_package_fields, 'sample', 'Package-Specific Sample Fields')
+# end
+%>
+
+<tr>
+    <td colspan='5'>
+        <table id="selected_additional_fields">
+        </table>
+        <h3>Couldn't find what you were looking for?</h3>
+        <p/>Search for additional fields:
+        <p/><input type="text" name="search_term" id="search_term" onkeyup="loadAdditionalFields();" onclick="loadAdditionalFields();">
+        <p/>
+        <table id="additional_fields_results">
+        </table>
+    </td>
+</tr>
+<tr>
+    <td colspan='5'><input type='submit' value='Generate Templates'></td>
+    <!--<td colspan='5'><input type='submit' value='Continue'></td>-->
+</tr>
+
+</table>
+</form>
+

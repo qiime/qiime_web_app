@@ -1,0 +1,62 @@
+<!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+'''
+This is the main handler for all pages in this web app, where it checks to
+make sure that the user is logged in and then performs page redirects.
+'''
+
+-->
+
+<%@ include file="header.psp" %>
+
+<%
+import os
+import gc
+
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+def loadPage(page):
+    if ( os.path.isfile( sess['document_root'] + page ) ):
+        code = parse( page, sess['document_root'] )
+        exec ( code )
+    else:
+        req.write('<h3>Page not found.</h3>')
+
+if form.has_key('page'):
+    # We have the page form variable so let's load it up    
+    sess['form']=form
+    sess.save()
+    page = form["page"]
+    loadPage(page)
+
+elif sess.get('web_app_user_id'):
+    # No page specified but user is logged in - return to select_study_task.psp
+    if sess.get('study_id'):
+        loadPage('select_study_task.psp')
+    else:
+        loadPage('select_study.psp')
+    
+else:
+    # No page found and no user in session. To be safe, require user to log in...
+    sess.invalidate()
+    psp.redirect('index.psp')
+%>
+
+<%
+# end if
+%>
+
+<%@ include file="footer.psp" %>
+
+<%
+data_access = None
+gc.collect()
+%>

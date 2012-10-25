@@ -1,0 +1,385 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<!--<script src="http://code.jquery.com/jquery-latest.js"></script>-->
+<script type="text/javascript" src="js/jobs.js"></script>
+<script type="text/javascript" src="js/study_search.js"></script>
+
+<%
+
+# Grab some required values for this page
+study_id = int(sess['study_id'])
+is_admin = int(sess['is_admin'])
+web_app_user_id = sess['web_app_user_id']
+portal_type = sess['portal_type']
+frame_target = sess['frame_target']
+study_name = sess['study_name']
+try:
+    study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+except Exception, e:
+    req.write(str(e))
+sample_count = study_info['sample_count']
+investigation_type = study_info['investigation_type']
+metadata_complete = study_info['metadata_complete']
+sff_complete = study_info['sff_complete']
+mapping_file_complete = study_info['mapping_file_complete']
+can_delete = study_info['can_delete']
+ebi_study_accession = study_info['ebi_study_accession']
+
+approved_qiime_submitters = [12428,12169,12171,12768,12782]
+%>
+
+    <h3>Selected Study: <%=study_name%></h3>
+    <br/>
+
+    <b>Study Options:</b>
+    <ul>
+        <li>
+            <form id="edit_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="new_study.psp">
+                <input type="hidden" name="mode" id="mode" value="edit">
+                <a href="" onclick="document.forms['edit_study'].submit(); return false;">
+                Edit study information</a>
+            </form>
+        </li>
+        <li>
+            <form id="create_new_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="new_study.psp">
+                <input type="hidden" name="mode" id="mode" value="new">
+                <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
+                Create a new study</a>
+            </form>
+        </li>
+        <li>
+            <form id="user_study" action="select_user_study_submit.psp" method="post">
+                Select an Existing Study:<br/>
+                <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
+<%
+study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, portal_type)
+for item in study_names:
+    if (study_name == item[1]):
+        req.write('<option value="' + str(item[0]) + ':' + item[1] + '" selected>' + item[1] + '</option>\n')
+    else:
+        req.write('<option value="' + str(item[0]) + ':' + item[1] + '">' + item[1] + '</option>\n')
+# end
+%>
+                </select>
+            </form>
+        </li>
+        
+        <li>
+            <a href="" onclick="toggleSection(\'search_div\'); $('#search_text').focus(); return false;">Search for a study...</a>
+            <div id="search_div" name="search_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">    
+            <input type="text" id="search_text" name="search_text" style="border-radius:5px;width:200px;"><br/>
+                <ul id="list">    
+<%
+for item in study_names:
+    req.write('<li><a href="select_user_study_submit.psp?study_names={0}:{1}">{1}</a></li>\n'.format(str(item[0]), item[1]))
+# end
+%>
+                <ul>
+            </div>
+        </li>        
+        
+    </ul>
+    <b>Manage Study:</b>
+    <ul>
+        <li>
+            <form id="create_new_template" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="load_template_fields.psp">
+                <a href="" onclick="document.forms['create_new_template'].submit(); return false;">
+<%
+if investigation_type == 'metagenome':
+    study_type_text = 'MIMS'
+else:
+    study_type_text = 'MIMARKS'
+# End indent
+%>
+                Generate <%=study_type_text%>-compliant metadata templates</a>
+            </form>
+        </li>
+        
+<%
+if portal_type in ['qiime', 'emp']:
+    # Indent
+    
+%>
+        
+        <li>
+            <form id="associate_sff_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_sff.psp">
+                <a href="" onclick="document.forms['associate_sff_to_study'].submit(); return false;">
+                Add or remove sequence files for this study
+<%
+    if sff_complete == 'n':
+        req.write('(not complete) </a><img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
+    else:
+        req.write('</a><img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>')
+        req.write('<br>')
+        study_id = study_id
+        sff_files = data_access.getSFFFiles(study_id)
+        req.write('%s sequence file(s) uploaded. (<a href="" onclick="toggleSection(\'sff_div\'); return false;">show/hide sequence files</a>)' % (len(sff_files)))
+        req.write('<div id="sff_div" name="sff_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">')
+
+        for sff_file in sff_files:
+            file_base = os.path.basename(sff_file)
+            req.write('%s <a href="#" onClick="if(confirm(\'Are you sure you want to erase: %s?\')) location.href = \'clear_sff_file.psp?filename=%s\';">(remove file) </a>' % (file_base, file_base, file_base))
+            
+        req.write('</div>')
+        #req.write('<p/>')
+
+    # End if
+%>
+                </form>
+        </li>
+        
+<%
+# End if
+
+%>
+        
+        <li>        
+            <form id="associate_metadata_to_study" action="fusebox.psp" method="post">
+                <input type="hidden" name="page" id="page" value="upload_metadata.psp">
+                <input type="hidden" name="metadata_complete" id="metadata_complete" value="<%=metadata_complete%>">
+                <a href="" onclick="document.forms['associate_metadata_to_study'].submit(); return false;">
+                
+<%
+if metadata_complete == 'n':
+    # indent
+%>
+                Upload metadata to this study (not complete)</a>
+                <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+<%
+else:
+    # indent
+%>
+                Upload metadata to this study (complete)</a>
+                <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
+                <br/>
+                <%=sample_count%> samples uploaded. (<a href="" onclick="toggleSection(\'sample_div\'); return false;">show/hide samples</a>)
+                <div id="sample_div" name="sample_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">
+<%
+    # List all samples names here
+    req.write('<table width="100%">')
+    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th><th align="left">Sequence Count</th>')
+    sample_details = data_access.getSampleDetailList(study_id)
+    for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in sample_details:
+        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix, sequence_count))
+    req.write('</table>')
+    
+%>
+                </div>
+
+<%
+# End indent
+%>
+            </form>
+        </li>
+
+<%
+if portal_type in ['qiime', 'emp']:
+    jobs = data_access.getJobInfo(study_id, 3)
+    if len(jobs) > 0:
+        # indent
+%>
+            <li>
+            Submitted Qiime Jobs:
+            <br/>
+            <ul>
+                <div id="qiime_status_div">
+                    Checking status...
+                </div>
+            </ul>
+            </li>
+            <br/>
+<%
+    elif metadata_complete == 'y' and sff_complete == 'y' and web_app_user_id in approved_qiime_submitters:
+        # Indent
+%>
+            <!--
+            <li>
+            <form id="submit_job_to_qiime" action="submit_job_to_qiime.psp" method="post">
+                <input type="hidden" name="process_only" id="process_only" value="False">
+                <input type="hidden" name="submit_to_test_db" id="submit_to_test_db"  value="False">
+                <a href="" onclick="document.forms['submit_job_to_qiime'].submit(); return false;">
+                Submit job to Qiime</a>
+            </form>
+            </li>
+            -->
+
+            <li>
+            <form id="submit_job_to_qiime3" action="submit_job_to_qiime.psp" method="post">
+                <input type="hidden" name="process_only" id="process_only" value="True">
+                <input type="hidden" name="submit_to_test_db" id="submit_to_test_db" value="False">
+                <a href="" onclick="document.forms['submit_job_to_qiime3'].submit(); return false;">
+                Submit job to Qiime (Process Only)</a>
+                <!--Submit job to Qiime (currently disabled)-->
+            <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
+            </form>
+            </li>
+<%
+        # De-indent
+
+    elif metadata_complete == 'y' and sff_complete == 'y' and  web_app_user_id not in approved_qiime_submitters:
+    
+        req.write("<br><font color='red'>Thank you for uploading your files, please email Gail Ackermann (<a href='mailto:gail.ackermann@colorado.edu?cc=jesse.stombaugh@colorado.edu,wendel@colorado.edu&subject=%s study uploaded'>email</a>) to verify and process your uploaded data, so it can be submitted to the database.</font><br>" % (study_name))
+        
+    elif web_app_user_id in approved_qiime_submitters:
+        # Indent
+        
+%>
+            <li>Submit Job to Qiime (complete sequence and metadata upload first)</li>
+<%
+    if is_admin == 1:
+        jobs2 = data_access.getJobInfo(study_id, 12)
+        if len(jobs) > 0:
+            # indent
+%>
+            <li>
+            Queued Data to Load:
+            <ul>
+                <div id="qiime_load_status_div">
+                    Checking status...
+                </div>
+            </ul>
+            <br/>
+<%
+        # End if
+%>
+        </li>
+        
+<%
+
+# End if
+
+jobs = data_access.getJobInfo(study_id, 14)
+if len(jobs) > 0 and is_admin == 1:
+    # indent
+%>
+        <li>
+            Exporting to EBI-SRA...
+            <br/>
+            <ul>
+                <div id="ebi_sra_statis_div">
+                    Checking status...
+                </div>
+            </ul>
+        </li>
+
+<%
+
+elif is_admin == 1 and ebi_study_accession is None and web_app_user_id == 12169:
+    # Indent
+%>
+        <li>
+        <form id="submit_export_to_ebi_sra" action="submit_export_to_ebi_sra.psp" method="post">
+                <a href="" onclick="document.forms['submit_export_to_ebi_sra'].submit(); return false;">
+                Export Data to EBI-SRA</a>
+            </form>
+        </li>
+
+<%
+elif ebi_study_accession is not None:
+    # Indent
+%>    
+        <li>
+            <a href="http://www.ebi.ac.uk/ena/data/view/<%=ebi_study_accession%>" target="_blank">View Study at EBI</a>
+        </li>
+<%
+
+# End indent
+# End if
+
+if can_delete == 'y' or is_admin:
+    # indent
+    
+%>
+        
+        <li>
+            <form id="delete_study" action="delete_study.psp" method="post">
+                <a href="" onclick="if(confirm('Are you sure you want to remove this study? All associated data will be removed.')) {document.forms['delete_study'].submit(); } return false;">
+                Remove study from database</a>
+            </form>
+        </li>
+<%
+# End if can_delete
+
+%>
+    </ul>
+    <b>Tools:</b>
+    <ul>
+        <li>
+            <form id="open_ontolgoy" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="tools_ontology.psp">
+                <a href="" onclick="document.forms['open_ontolgoy'].submit(); return false;" target="<%=frame_target%>">
+                Ontology Lookup</a>
+            </form>
+        </li>
+        <li>
+            <form id="open_geo" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="tools_geo.psp">
+                <a href="" onclick="document.forms['open_geo'].submit(); return false;" target="<%=frame_target%>">
+                Georeferencing Utility</a>
+            </form>
+        </li>
+    </ul>
+    
+    <b>Explore:</b>
+    <ul>
+        <li>
+            <form id="visualize_sample_locations" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="visualize_sample_locations.psp">
+                <a href="" onclick="document.forms['visualize_sample_locations'].submit(); return false;" target="<%=frame_target%>">
+                Visualize Study Sample Locations</a>
+            </form>
+        </li>
+        <li>
+            <form id="visualize_all_sample_locations" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="visualize_all_sample_locations.psp">
+                <a href="" onclick="document.forms['visualize_all_sample_locations'].submit(); return false;" target="<%=frame_target%>">
+                Visualize All Sample Locations</a>
+            </form>
+        </li>
+    </ul>
+<%
+if portal_type == 'emp' and is_admin == 1:
+    # indent
+    
+%>
+    
+    
+    <b>EMP Administrators:</b>
+    <ul>
+        <li>
+            <form id="view_emp_submissions" action="fusebox.psp" method="post" target="<%=frame_target%>">
+                <input type="hidden" name="page" id="page" value="view_emp_submissions.psp">
+                <a href="" onclick="document.forms['view_emp_submissions'].submit(); return false;" target="<%=frame_target%>">
+                View EMP Submissions</a>
+            </form>
+        </li>
+    </ul>
+    
+</p>
+
+<%
+# End if
+
+%>
+
+<script type="text/javascript">
+	//toggleSection('sff_div');
+	//toggleSection('sample_div');
+    
+    // Check all job status elements for this page
+    checkAllStudyJobs();
+    var timer = setInterval( "checkAllStudyJobs();", 5000 );
+</script>

@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>jQuery Uploader Test</title>
+
+</head>
+<body>
+
+Testing
+
+<%
+import os
+
+filename = 'output.txt'
+f = open(filename, 'w')
+f.write('asdfasdfasdfasdf')
+f.close()
+
+f = open(filename)
+f.read()
+f.close()
+
+%>
+
+</body>
+</html>

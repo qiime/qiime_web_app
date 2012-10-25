@@ -1,0 +1,96 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2012, QIIME-DB"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Development"
+%>
+
+<!-- This webpage describes the current processing protocols being used by the QIIME-DB -->
+
+<!-- Place the pipeline image -->
+<img src="./img/QIIME_DB_processing_protocol.png" height="550px" \>
+
+<!-- Describe the steps within the pipeline image -->
+<p><b>Description of QIIME-DB Processing Pipeline</b>
+    <ol>
+        <li><b>Platform:</b> The user supplies the platform in the <i>prep_template.txt</i> under the PLATFORM field. This value should be based on the type of sequence files supplied. For instance, if the user sequenced their data on 454 FLX, but only have the demultiplexed FASTA-formatted file, then the PLATFORM should be FASTA.
+            <ul>
+                <li>
+                    <b>Titanium:</b> This technology produces a binary SFF file, which has 800 flows.</li>
+                <li>
+                    <b>FLX:</b> This technology produces a binary SFF file, which has 400 flows.</li>
+                <li>
+                    <b>Illumina:</b> This technology usually produces 2 amplicon read files and a single barcode file. When uploading the user should upload the first amplicon read file along with the barcode file. Currently, we do not use the second amplicon read file, since we do not perform assembly.</li>
+                <li>
+                    <b>FASTA:</b>These files are referring to the FASTA-format generated post-split-libraries in QIIME. For more information on the expected FASTA-format, please refer to <a href="http://qiime.org/documentation/file_formats.html#demultiplexed-sequences">here</a>.
+                </li>
+            </ul>
+        </li>
+        <li>
+            <b>Pre-Processing:</b> This step prepares the sequence files for demultiplexing with QIIME.
+            <ul>
+                <li>
+                    <b>Titanium:</b> The DB will trim all sequences to FLX length, using the trim_to_flx option in <a href="http://qiime.org/scripts/process_sff.html">process_sff.py</a>. The DB trims all Titanium reads to FLX length for 2 reasons: 1) The quality of Titanium reads tends to drop off around position 300, 2) Allows for better comparison with sequence data produced from FLX.
+                </li>
+                <li>
+                    <b>FLX:</b> The DB will run <a href="http://qiime.org/scripts/process_sff.html">process_sff.py</a> with default parameters.
+                </li>
+                <li>
+                    <b>Illumina:</b> There is no pre-processing done.
+                </li>
+                <li>
+                    <b>FASTA:</b> The sequence_names supplied in the FASTA-formatted files are updated to include the unique accession assigned by the DB.
+                </li>
+            </ul>
+        </li>
+        <li>
+            <b>Demultiplexing:</b> This step performs demultiplexing, where sequences are assigned to a given sample. First, the DB will determine the length of the barcodes, based on the BARCODE values supplied in the <i>prep_template.txt</i>.
+            <ul>
+                <li>
+                    <b>Titanium:</b> The pre-processed FASTA/QUAL files are passed to <a href="http://qiime.org/scripts/split_libraries.html">split_libraries.py</a> where default parameters are used.
+                </li>
+                <li>
+                    <b>FLX:</b> The pre-processed FASTA/QUAL files are passed to <a href="http://qiime.org/scripts/split_libraries.html">split_libraries.py</a> where default parameters are used.
+                </li>
+                <li>
+                    <b>Illumina:</b> The original amplicon read file and barcode file are passed to <a href="http://qiime.org/scripts/split_libraries_fastq.html">split_libraries_fastq.py</a> where default parameters are used.
+                </li>
+                <li>
+                    <b>FASTA:</b> There is no demultiplexing done, since the submitted file should have been demultiplexed.
+                </li>
+            </ul>
+        </li>
+        <li>
+            <b>Post-Split-Libraries:</b> This step is where we check if shotgun metagenomic sequences were uploaded. This is also the step where we can send the sequence data to EBI-SRA if the study is public.
+            <ul>
+                <li>
+                    If these are shotgun metagenomic sequences, then we stop processing, otherwise we move onto chained OTU-picking (described below).
+                </li>
+                <li>
+                    If the user wants their data sent to EBI-SRA, we can send the demultiplexed sequences as per-sample FASTQ-formatted files.
+                </li>
+            </ul>
+        </li>
+        <li>
+            <b>Chained OTU-picking:</b> This step is where we perform the closed-reference OTU-picking protocol. Since all the platforms consist of a FASTA-formatted file after demultiplexing, the OTU-picking protocol is universal for all platforms.
+            <ol>
+                <li>
+                    <b>Prefix-Suffix OTU-picking:</b> This method collapses all identical sequences and sequences that are a prefix or suffix of a longer sequence into a single cluster. For this method the DB uses the <a href="http://qiime.org/scripts/pick_otus.html">pick_otus.py</a> script, where the method is "prefix_suffix" and the prefix_length ("-p") is set to "5000".
+                </li>
+                <li>
+                    <b>Pick Representative Sequence Set:</b> From the prefix-suffix clusters, we pick a representative set of sequences using the default parameters of <a href="http://qiime.org/scripts/pick_rep_set.html">pick_rep_set.py</a>.
+                </li>
+                <li>
+                    <b>Check Against DB:</b> Now that we have a representative set of sequences, we compute the MD5 of each sequence and compare against the MD5 for sequences already loaded into the DB. For MD5's that match, we already have OTU assignments for those sequences, so the OTU ID is returned and used to build the OTU-mapping file.
+                </li>
+                <li>
+                    <b>OTU-picking with uclust-ref:</b> For the sequences that failed to match sequences that already have been loaded into the DB, we perform OTU-picking using the <a href="http://qiime.org/scripts/parallel_pick_otus_uclust_ref.html">parallel_pick_otus_uclust_ref.py</a> script, where default parameters are used and the reference dataset is the Greengenes 97% representative set (produced on February 4th, 2011).
+                </li>
+            </ol>
+        </li>
+    </ol>
+</p>

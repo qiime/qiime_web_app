@@ -1,0 +1,46 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+try:
+    from data_access_connections import data_access_factory
+    from enums import ServerConfig
+    sess = Session.Session(req)
+    data_access = data_access_factory(ServerConfig.data_access_type)
+    study_id = form['study_id']
+    
+    sample_array_string = '['
+    samples = data_access.getEMPSampleList(study_id, sess['web_app_user_id'])
+        
+    #f = open('/tmp/jsarray.txt', 'w')
+    #f.write(str(samples))
+    #f.write('\n\n')
+    #f.close()
+    
+    if len(samples) == 0:
+        sample_array_string += ']'
+    else:
+        for sample_info in samples:
+            sample_array_string += '["%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s"],' % sample_info
+        sample_array_string = sample_array_string[:-1]
+        sample_array_string += ']'
+    req.write(sample_array_string)    
+except Exception, e:
+    f.write('\n\n')
+    f = open('/tmp/jsarray.txt', 'w')
+    f.write(sample_array_string)
+    f.write('\n\n')
+    f.write(str(e))
+    f.write('\n\n')
+    f.close()
+
+# End indent
+%>

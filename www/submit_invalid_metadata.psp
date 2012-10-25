@@ -1,0 +1,46 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+
+<%
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+data_access = data_access_factory(ServerConfig.data_access_type)
+sess = Session.Session(req)
+
+# Grab a couple of session variables
+study_id = sess['study_id']
+
+# Remove any existing metadata before upload. 0 = delete all but study specific data
+data_access.deleteStudy(study_id, 0)
+
+# Get references to our files
+files = []
+for item in form:
+    if 'study_template' in item:
+        files.append(form[item])
+    elif 'sample_template' in item:
+        files.append(form[item])
+    elif 'prep_template' in item:
+        files.append(form[item])
+
+# Clear and re-insert our study templates
+data_access.clearStudyTemplates(study_id)
+for filename in files:
+    data_access.addTemplateFile(study_id, filename)
+
+# Update the database flag for successful metadata upload
+data_access.updateMetadataFlag(study_id, 'i')
+
+# Back to the main page
+psp.redirect('fusebox.psp?page=select_study_task.psp')
+%>

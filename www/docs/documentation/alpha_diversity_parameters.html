@@ -1,0 +1,274 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Alpha-Diversity Parameters &mdash; Homepage</title>
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0.0-web_app',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+    <link rel="top" title="Homepage" href="../index.html" />     
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<!--
+Commented out for now
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAbW_pA971hrPgosv-Msv7hRRE2viNBUPuU405tK6p2cguOFmlFBQSwZMG6_q_v6Z42nkdo9ejT1aHmA"></script>--
+<script type="text/javascript" src="../_static/google_feed.js"></script>
+
+-->
+
+  </head>
+  <body>
+
+<div style="background-color: white; text-align: left; padding: 0px">
+<a href="../index.html"><img src="../_static/wordpressheader.png" border="0" alt="sampledoc"/></a>
+</div>
+<!-- 
+Commented out for now
+<div class="news" style="background-color:#ccc;"><table style="font-size:12pt;padding: 5px;"><tr id="feed"><td><b>News and Announcements &raquo;</b></td>
+</tr></table></div>
+-->
+
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="alpha-diversity-parameters">
+<span id="id1"></span><h1>Alpha-Diversity Parameters<a class="headerlink" href="#alpha-diversity-parameters" title="Permalink to this headline">¶</a></h1>
+<p>Alpha-diversity allows for calculating <em>within</em> sample diversity in an OTU table, using a variety of alpha-diversity metrics.</p>
+<dl class="docutils">
+<dt>The steps performed by this option are:</dt>
+<dd><ol class="first last arabic simple">
+<li>Generate rarefied OTU tables</li>
+<li>Compute alpha diversity metrics for each rarefied OTU table</li>
+<li>Collate alpha diversity results</li>
+<li>Generate alpha rarefaction plots</li>
+</ol>
+</dd>
+</dl>
+<ul>
+<li><dl class="first docutils">
+<dt>Alpha Diversity checkbox: Plots the alpha-diversity for each sample using various sequences/sample constraints</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required</em> (<a class="reference external" href="http://qiime.org/scripts/multiple_rarefactions.html">multiple_rarefactions.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>Min # of seqs/sample</dt>
+<dd><ul class="first last simple">
+<li>Minimum number of seqs/sample to be used to calculate alpha-diversity.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Max # of seqs/sample</dt>
+<dd><ul class="first last simple">
+<li>Maximum number of seqs/sample to be used to calculate alpha-diversity.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Step size</dt>
+<dd><ul class="first last simple">
+<li>Increment of seqs/sample between successive alpha-diversity calculations.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters</em> (<a class="reference external" href="http://qiime.org/scripts/multiple_rarefactions.html">multiple_rarefactions.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt># of iterations</dt>
+<dd><ul class="first last simple">
+<li>For each seqs/sample constraint, the number of times the alpha-diversity is calculated.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Include lineages</dt>
+<dd><ul class="first last simple">
+<li>For some calculations, such as alpha-diversity the taxonomy information may not be required, so you can choose to either include or exclude. It can be useful for very large OTU tables, since it reduces the size of the table in memory.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Retain empty OTUs</dt>
+<dd><ul class="first last simple">
+<li>Retain OTUs of all zeros, which are usually omitted from the output of the OTU table.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters</em> (<a class="reference external" href="http://qiime.org/scripts/alpha_diversity.html">alpha_diversity.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>metrics</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://qiime.org/scripts/alpha_diversity_metrics.html#index-0">List of alpha-diversity metrics</a></li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters</em> (<a class="reference external" href="http://qiime.org/scripts/make_rarefaction_plots.html">make_rarefaction_plots.py</a>)</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>color by category</dt>
+<dd><ul class="first last simple">
+<li>Comma-separated list of metadata categories to color by in the plots. The categories must match the column header in the mapping file exactly. Multiple categories can be listed by comma separating them without spaces. The user can also combine columns by separating the categories by &#8220;&amp;&amp;&#8221; without spaces.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>background color</dt>
+<dd><ul class="first last simple">
+<li>Background color of the plot.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Image type</dt>
+<dd><ul class="first last simple">
+<li>Type of image to produce. WARNING: some formats may not open properly in some browsers.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Image resolution</dt>
+<dd><ul class="first last simple">
+<li>Resolution of the plot (units = dpi)</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Y-axis height</dt>
+<dd><ul class="first last simple">
+<li>Maximum Y-value to be used in the plots. Allows for directly comparable rarefaction plots between analyses.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Suppress HTML</dt>
+<dd><ul class="first last simple">
+<li>This gives the user the ability to only print out the calculations, so they can replot the data in other tools (e.g. Excel) std type  Method for calculating error bars.</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+
+    
+
+    <!--<h3><a href="../index.html">Site index</a></h3>-->
+
+    <p>
+        &nbsp;&nbsp;<a href="../tutorials/index.html">Tutorials</a><br />
+    </p>
+
+
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="../index.html">Home</a> &raquo;</li> 
+      </ul>
+    </div>
+<div style="text-align: center; padding: 0px;"><br />
+<a href="http://pycogent.sourceforge.net" target="_blank"><img src="../_static/PoweredByPycogent.jpg" border="0" alt="sampledoc" height="70px"/></a>
+<br /></div>
+
+    <div class="footer">
+        &copy; Copyright 2012, QIIME-DB Team.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.4.
+    </div>
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-6636235-4");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+  </body>
+</html>

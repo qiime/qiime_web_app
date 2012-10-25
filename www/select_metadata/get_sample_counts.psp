@@ -1,0 +1,46 @@
+
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+import os
+data_access = data_access_factory(ServerConfig.data_access_type)
+from select_metadata import print_metadata_info_and_values_table,\
+                            get_selected_column_values
+from select_metadata import public_cols_to_dict,unique_cols_to_select_box_str
+from generate_mapping_and_otu_table import get_mapping_data
+script_description="""This script writes out information for a given column in 
+the database. It also writes out the select box containing the distinct values
+in that column."""
+
+
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+if not (sess.has_key('username')):
+	sess.invalidate()
+	psp.redirect('../index.psp')
+
+#Get the values from the form fields
+tab_col_vals={}
+for i in form:
+    tab_col_vals[i]=form[i].value
+
+#req.write(str(tab_col_vals))
+results,cur=get_mapping_data(data_access,sess['is_admin'],tab_col_vals,
+                             sess['web_app_user_id'],get_count=True)
+for i in results:
+    req.write('# of Samples: %s<br>' % str(i[0]))
+#
+
+%>

@@ -1,0 +1,99 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+<script type="text/javascript" src="js/jobs.js"></script>
+
+<%
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+
+# Grab some required values for this page
+data_access = data_access_factory(ServerConfig.data_access_type)
+%>
+
+<script language="javascript">
+    function showDiv(div_name)
+    {
+        var ele = document.getElementById(div_name);
+        ele.style.display = "block";
+    }
+
+    function hideDiv(div_name)
+    {
+        var ele = document.getElementById(div_name);
+        ele.style.display = "none";
+    }
+</script>
+
+<%
+# get the meta_analysis ID from the session
+meta_analysis_id=sess['meta_analysis_id']
+sess['job_type_id']=7
+job_type_id=[7,8,9,10,11,13]
+sess.save()
+%>
+
+<div id="simplediv" style="background-color:#CCCCCC;border:1px solid black;display:none;width:600px;height:500px;position:absolute;top:50;left:50;">
+</div>
+<p>
+<h3>Selected Meta-Analysis: <%=sess['meta_analysis_name']%></h3>
+
+    <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
+        <input type="hidden" name="page" id="page" value="select_metadata/index.psp">
+        <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
+        Perform Meta-Analysis</a>
+    </form>
+</p>
+<br>
+<%
+for i in job_type_id:
+    jobs = data_access.getJobInfo(meta_analysis_id,i)
+    if len(jobs) > 0:
+        #Indent
+%>
+
+Submitted Meta-Analyses:
+<br/>
+<ul>
+    <div id="qiime_status_div">
+        Checking status...
+    </div>
+    <script type="text/javascript">
+        //checkQiimeJobStatus();
+        var timer = setInterval( "checkQiimeMetaAnalysisStatus()", 3000 );
+    </script>
+</ul>
+<br/>
+<%
+        break
+    #
+# print a llst of the mapping and otu files already generated for this 
+# meta_analysis
+
+# write the file paths into an HTML table
+
+req.write('''<div name="meta_status_div" id="meta_status_div">\
+    <!-- Contents will be replaced by javascript dynamically -->\
+    Checking status...\
+</div>\
+<script type="text/javascript">\
+    checkMetaAnalysisStatus();\
+    var timer2 = setInterval( "checkMetaAnalysisStatus();", 5000 );\
+</script>''')
+
+#
+%>
+<br><br>
+<p>
+    <form id="delete_meta_analysis" action="delete_meta_analysis.psp" method="post">
+        <a href="" onclick="if(confirm('Are you sure you want to remove this Meta-Analysis? All associated data will be removed.')) {document.forms['delete_meta_analysis'].submit(); } return false;">
+        Delete Meta-Analysis</a>
+    </form>
+</p>

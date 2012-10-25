@@ -1,0 +1,33 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from metadata_table import *
+
+column_name = form["column_name"]
+%>
+
+<th width="200" class="meta_th">Field Name</th>
+<th width="80" class="meta_th">Data Type</th>
+<th width="250" class="meta_th">Description/Expected Values</th>
+<th class="meta_th">Details</th>
+
+<%
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+field_details = data_access_factory(ServerConfig.data_access_type).getFieldDetails(column_name)
+req.write('<tr>\n')
+req.write('<td>%s</td>' % field_details[0])
+req.write('<td>%s</td>' % field_details[1])
+req.write('<td>%s</td>' % field_details[2])
+req.write('<td>%s</td>' % field_details[3])
+req.write('</tr>\n')
+%>

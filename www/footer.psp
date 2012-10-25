@@ -1,0 +1,27 @@
+<!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+-->
+
+</div>
+
+
+<!--
+<br/><br/>
+
+<table class="header_table">
+    <tr>
+    	<td style="font-size: 12px;">Logged in as <%=sess['username']%></td>
+    	<td style="text-align:right; font-size: 12px;"></td>
+    </tr>
+</table>
+-->
+
+</body>
+</html>

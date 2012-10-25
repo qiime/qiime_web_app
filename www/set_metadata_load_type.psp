@@ -1,0 +1,5 @@
+<%
+sess = Session.Session(req)
+sess['load_type'] = 'reload'
+sess.save()
+%>

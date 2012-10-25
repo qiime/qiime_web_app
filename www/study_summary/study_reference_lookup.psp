@@ -1,0 +1,53 @@
+
+<%
+#!/usr/bin/env python
+
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+import os
+data_access = data_access_factory(ServerConfig.data_access_type)
+from study_summary import print_study_info_and_values_table
+
+
+script_description="""This script writes out information for a given study in 
+the database. It also lists out information regarding the SFFs and samples."""
+
+
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+if not (sess.has_key('username')):
+	sess.invalidate()
+	psp.redirect('../index.psp')
+
+
+#Get the values from the form fields
+study_id=str(form["study_id"]);
+study_name=str(form["study_name"]);
+
+#Try to get the summary info from the DB and write to the page.
+try:
+    #Get summary info from DB
+    analysis_data=[]
+    results=data_access.getQiimeSffDbSummary(study_id)
+    for row in results:
+        analysis_data.append(row)
+
+except:
+    #if all the data is not present, the report that data is not available
+    req.write('<h3>'+str(study_name) + \
+            ':</h3><em style="color:red;"> No data currently available!</em>')
+
+#Write the output to the screen
+req.write(print_study_info_and_values_table(analysis_data,data_access))
+#
+%>

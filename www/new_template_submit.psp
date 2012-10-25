@@ -1,0 +1,168 @@
+<%
+
+from datetime import datetime
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+from zipfile import ZipFile
+from linkamafy import link_urls
+import os
+
+# Retrieve the session. If None the redirect
+sess = Session.Session(req)
+if sess == None:
+    psp.redirect('index.psp')
+
+# Some useful items
+data_access = data_access_factory(ServerConfig.data_access_type)
+study_id = sess['study_id']
+web_app_user_id = sess['web_app_user_id']
+portal_type = sess['portal_type']
+study_info = data_access.getStudyInfo(study_id, web_app_user_id)
+includes_timeseries = study_info['includes_timeseries']
+post_fix = str(datetime.now())
+
+sample_file_name = 'tmp/sample_template_' + post_fix + '.txt'
+prep_file_name = 'tmp/prep_template_' + post_fix + '.txt'
+doc_file_name = 'tmp/field_reference_' + post_fix + '.html'
+zip_file_name = 'tmp/zip_archive_' + post_fix + '.zip'
+
+number_samples = form['number_samples']
+
+sample_fields = []
+prep_fields = []
+documentation_fields = []
+
+if includes_timeseries == 1:
+    # For the moment, fields will be listed here. 
+    timeseries_file_name = 'tmp/timeseries_template_' + post_fix + '.txt'
+    timeseries_fields = []
+    timeseries_fields.append('event_date_time')
+    timeseries_fields.append('event_description')
+    timeseries_fields.append('event_duration')
+    timeseries_fields.append('hours_since_experiment_start')
+    timeseries_fields.append('sample_names')
+    timeseries_fields.append('host_subject_ids')
+
+# Put the fields into the right buckets so we can write them to the
+# proper template files below
+for field in form:
+    items = field.split(':')
+    if items[0] == 'sample':
+        sample_fields.append(items[1])
+    elif items[0] == 'prep' and portal_type in ['emp', 'qiime']:
+        prep_fields.append(items[1])
+    else:
+        # Other form fields will simply be ignored.
+        pass
+
+# Get the documentation for the list of fields
+"""
+Code here works as follows:
+* Get a copy of the column dictionary and interate over the entire contents
+* For every entry that matches one found in the list of sample or prep fields for this study,
+  add it to the documentation_fields list
+* Before adding, make sure that the field has not already been added. If so, skip.
+"""
+column_dictionary = data_access.getColumnDictionary()
+for entry in column_dictionary:
+    lower_sample_fields = [x.lower() for x in sample_fields]
+    lower_prep_fields = [x.lower() for x in prep_fields]
+    lower_entry = entry[0].lower()
+
+    if lower_entry in lower_sample_fields or lower_entry in lower_prep_fields:
+        # Extract a slice of data from the list of tuples which represents the column names
+        names = [x[0] for x in documentation_fields]
+        if entry[0] not in names:
+            documentation_fields.append(entry)
+
+req.write('<h3>Please download your templates and documentation:</h3>')
+req.write('<ul>')
+
+# Sort the fields
+sample_fields = sorted(sample_fields)
+if 'sample_name' in sample_fields:
+    sample_fields.remove('sample_name')
+    sample_fields.insert(0, 'sample_name')
+if 'project_name' in sample_fields:
+    sample_fields.remove('project_name')
+    sample_fields.insert(0, 'project_name')
+prep_fields = sorted(prep_fields)
+if 'sample_name' in prep_fields:
+    prep_fields.remove('sample_name')
+    prep_fields.insert(0, 'sample_name')
+
+documentation_fields = sorted(documentation_fields)
+
+def writeFileWithData(field_list, f):
+    # Write headers
+    f.write('\t'.join(field_list))
+
+    # Write data
+    f.write('\n')
+    line = ''
+    for field in field_list:
+        default_field_name = field + '_default'
+        if default_field_name in form and form[default_field_name] != None and form[default_field_name] != '':
+            line += form[default_field_name] + '\t'
+        else:
+            line += '\t'
+    # Remove the trailing tab
+    line = line[:-1]
+    for x in range(int(number_samples)):
+        f.write(line)
+        f.write('\n')
+
+try:
+    # Make sure the temp directory exists:
+    template_path = os.path.join(sess['document_root'], 'tmp/')
+    if not os.path.exists(template_path):
+        os.makedirs(template_path)
+            
+    with open(sess['document_root'] + sample_file_name, 'w') as f:
+        writeFileWithData(sample_fields, f)            
+    req.write('<li><a href=\'%s\'>%s</a>' % (sample_file_name, 'Sample Template</li>'))
+    
+    if portal_type in ['qiime', 'emp']:
+        with open(sess['document_root'] + prep_file_name, 'w') as f:
+            writeFileWithData(prep_fields, f)
+        req.write('<li><a href=\'%s\'>%s</a>' % (prep_file_name, 'Library/Prep/Sequencing Template</li>'))
+
+    # Write out documentation for the selected fields
+    with open(sess['document_root'] + doc_file_name, 'w') as f:
+        f.write('<html><head><title>Field Reference Documentation</title></head><body>')
+        f.write('<h2>Field Reference Documentation for Study: "%s"</h2>' % (sess['study_name']))
+        f.write('%s' % datetime.now().strftime('Generated on %A %d/%m/%Y at %H:%M:%S'))
+        for field in documentation_fields:
+            f.write('<h3>%s</h3>' % field[0])
+            f.write('<ul>')
+            f.write('<li><b>Data Type:</b> %s</li>' % field[1])
+            f.write('<li><b>Expected Values:</b> %s</li>' % link_urls(field[3]))
+            f.write('<li><b>Description:</b> %s</li>' % link_urls(field[2]))
+            f.write('</ul>')            
+        f.write('</body></html>')
+    req.write('<li><a href=\'%s\'>%s</a>' % (doc_file_name, 'Field Reference Documentation</li>'))
+    
+    if includes_timeseries == 1: 
+        with open(sess['document_root'] + timeseries_file_name, 'w') as f:
+            f.write('\t'.join(timeseries_fields))
+        req.write('<li><a href=\'%s\'>%s</a>' % (timeseries_file_name, 'Timeseries Template</li>'))
+    
+    # Create a zip archive
+    zip = ZipFile(sess['document_root'] + zip_file_name, 'w')
+    zip.write(sess['document_root'] + sample_file_name, os.path.basename(sample_file_name))
+    if portal_type in ['qiime', 'emp']:
+        zip.write(sess['document_root'] + prep_file_name, os.path.basename(prep_file_name))
+    zip.write(sess['document_root'] + doc_file_name, os.path.basename(doc_file_name))
+    if includes_timeseries == 1:
+        zip.write(sess['document_root'] + timeseries_file_name, os.path.basename(timeseries_file_name))
+    zip.close()
+    req.write('<li><a href=\'%s\'>%s</a>' % (zip_file_name, 'Download zip archive of all files</li>'))
+    
+except Exception, e:
+    req.write(str(e))
+
+req.write('</ul>')
+
+req.write('You may close this page when finished.')
+
+%>

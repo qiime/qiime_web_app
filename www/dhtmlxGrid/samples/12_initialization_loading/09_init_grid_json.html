@@ -1,0 +1,1243 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title>Loading from JSON</title>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="title" content="Samples" />
+		<meta name="keywords" content="" />
+		<meta name="description" content="" />
+		<link rel="icon" href="../common/favicon.ico" type="image/x-icon" />
+		<link rel="shortcut icon" href="../common/favicon.ico" type="image/x-icon" />
+		<link rel="stylesheet" href="../common/css/style.css" type="text/css" media="screen" />
+
+	</head>
+	<body>
+        <div class="header">
+            <a class="logo" href="http://www.dhtmlx.com" title="DHTMLX homepage"></a>
+            <div class="tittle-dhtmlx">DHTMLX Docs & Samples Explorer</div>
+            <div class="search-field">
+                <form action="http://docs.dhtmlx.com/doku.php" accept-charset="utf-8" id="dw__search"><div class="no"><input type="hidden" name="do" value="search" /><input type="text" id="qsearch__in" accesskey="f" name="id" title="Search" /><button type="submit">Search</button><div id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>
+            </div>
+            <div class="buttons">
+                <a class="doc_inact" href="../../../docsExplorer/index.html" title="DHTMLX Documentation homepage"></a>
+                <a class="sample"></a>
+            </div>
+        </div>
+        <div class="content">
+            <div class="navigation-div">
+                <a href="../../../docsExplorer/samples.html" class="navigation"><img src="../common/icons/file.gif" alt="" >All components</a>
+                <div class="arrow"></div>
+                <a href="../index.html" class="navigation"><img height="22" src="../common/icons/grid.gif" alt="" >dhtmlxGrid</a>
+                <div class="arrow"></div>
+                <a href="./index.html" class="navigation"><img src="../common/icons/none.gif" alt="" >Initialazation/Loading</a>
+            </div>
+            <div style="display:block;">
+                <h3>Loading from JSON</h3>
+            </div>
+            <div class="navigation-div">
+                <a href="#code" class="navigation view-source"><img src="../common/icons/source.gif" alt="" >View page source</a>
+            </div>
+            <link rel="STYLESHEET" type="text/css" href="../../codebase/dhtmlxgrid.css">
+	<link rel="stylesheet" type="text/css" href="../../codebase/skins/dhtmlxgrid_dhx_skyblue.css">
+	<script  src="../../codebase/dhtmlxcommon.js"></script>
+	<script  src="../../codebase/dhtmlxgrid.js"></script>		
+	<script  src="../../codebase/dhtmlxgridcell.js"></script>	
+
+
+
+	
+	
+	<p>Grid allows to load data from JSON file and object.</p>
+	
+		<div id="gridbox" style="width:500px; height:270px; background-color:white;"></div>
+	<br>	
+	<a href="javascript:void(0)" onclick='mygrid.clearAll();alert("old data cleared\nloading new one..."); mygrid.parse(data,"json")'>Reload from JSON object</a><br/>
+	
+
+
+<script>
+data={
+rows:[
+    { id:1001, 
+ data:[
+      "100",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1002, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1003, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1004, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1005, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1006, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1007, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1008, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1009, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10010, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+    { id:1011, 
+ data:[
+      "101",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1012, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1013, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1014, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1015, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1016, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1017, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1018, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1019, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10110, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1021, 
+ data:[
+      "102",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1022, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1023, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1024, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1025, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1026, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1027, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1028, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1029, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10210, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1031, 
+ data:[
+      "103",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1032, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1033, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1034, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1035, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1036, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1037, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1038, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1039, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10310, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1041, 
+ data:[
+      "104",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1042, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1043, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1044, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1045, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1046, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1047, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1048, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1049, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10410, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1051, 
+ data:[
+      "105",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1052, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1053, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1054, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1055, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1056, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1057, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1058, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1059, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10510, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1061, 
+ data:[
+      "106",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1062, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1063, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1064, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1065, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1066, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1067, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1068, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1069, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10610, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1071, 
+ data:[
+      "107",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1072, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1073, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1074, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1075, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1076, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1077, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1078, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1079, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10710, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1081, 
+ data:[
+      "108",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1082, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1083, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1084, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1085, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1086, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1087, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1088, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1089, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10810, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+
+    
+
+    { id:1091, 
+ data:[
+      "109",
+      "A Time to Kill",
+      "John Grisham",
+      "12.99",
+      "1",
+      "05/01/1998"] },
+   { id:1092, 
+ data:[
+      "1000",
+      "Blood and Smoke",
+      "Stephen King",
+      "0",
+      "1",
+      "01/01/2000"] },
+   { id:1093, 
+ data:[
+      "-200",
+      "The Rainmaker",
+      "John Grisham",
+      "7.99",
+      "0",
+      "12/01/2001"] },
+   { id:1094, 
+ data:[
+      "350",
+      "The Green Mile",
+      "Stephen King",
+      "11.10",
+      "1",
+      "01/01/1992"] },
+   { id:1095, 
+ data:[
+      "700",
+      "Misery",
+      "Stephen King",
+      "7.70",
+      "0",
+      "01/01/2003"] },
+   { id:1096, 
+ data:[
+      "-1200",
+      "The Dark Half",
+      "Stephen King",
+      "0",
+      "0",
+      "10/30/1999"] },
+   { id:1097, 
+ data:[
+      "1500",
+      "The Partner",
+      "John Grisham",
+      "12.99",
+      "1",
+      "01/01/2005"] },
+   { id:1098, 
+ data:[
+      "500",
+      "It",
+      "Stephen King",
+      "9.70",
+      "0",
+      "10/15/2001"] },
+   { id:1099, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] },
+   { id:10910, 
+ data:[
+      "400",
+      "Cousin Bette",
+      "Honore de Balzac",
+      "0",
+      "1",
+      "12/01/1991"] }
+      ]
+}
+	mygrid = new dhtmlXGridObject('gridbox');
+	mygrid.setImagePath("../../codebase/imgs/");
+	mygrid.setHeader("Sales, Book Title, Author");
+	mygrid.setInitWidths("70,250,*")
+	mygrid.setColAlign("right,left,left")
+	mygrid.setColTypes("dyn,ed,ed");
+	mygrid.setColSorting("int,str,str")
+	mygrid.init();
+	mygrid.setSkin("dhx_skyblue")
+	mygrid.load("../common/data.json","json");
+</script>
+			
+			
+         </div>
+    <div class="source">
+        <div class="teg">Source</div>
+        <div class="code" id="code">
+		<div class="hl-main"><pre><span class="hl-brackets">&lt;</span><span class="hl-reserved">link</span><span class="hl-code"> </span><span class="hl-var">rel</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">STYLESHEET</span><span class="hl-quotes">&quot;</span><span class="hl-code"> </span><span class="hl-var">type</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">text/css</span><span class="hl-quotes">&quot;</span><span class="hl-code"> </span><span class="hl-var">href</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">../../codebase/dhtmlxgrid.css</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">link</span><span class="hl-code"> </span><span class="hl-var">rel</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">stylesheet</span><span class="hl-quotes">&quot;</span><span class="hl-code"> </span><span class="hl-var">type</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">text/css</span><span class="hl-quotes">&quot;</span><span class="hl-code"> </span><span class="hl-var">href</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">../../codebase/skins/dhtmlxgrid_dhx_skyblue.css</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">script</span><span class="hl-code">  </span><span class="hl-var">src</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">../../codebase/dhtmlxcommon.js</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">&gt;</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">script</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">script</span><span class="hl-code">  </span><span class="hl-var">src</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">../../codebase/dhtmlxgrid.js</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">&gt;</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">script</span><span class="hl-brackets">&gt;</span><span class="hl-code">        
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">script</span><span class="hl-code">  </span><span class="hl-var">src</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">../../codebase/dhtmlxgridcell.js</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">&gt;</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">script</span><span class="hl-brackets">&gt;</span><span class="hl-code">    
+ 
+ 
+ 
+    </span><span class="hl-brackets">&lt;</span><span class="hl-reserved">div</span><span class="hl-code"> </span><span class="hl-var">id</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">gridbox</span><span class="hl-quotes">&quot;</span><span class="hl-code"> </span><span class="hl-var">style</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">width:500px; height:270px; background-color:white;</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">&gt;</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">div</span><span class="hl-brackets">&gt;</span><span class="hl-code">
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">br</span><span class="hl-brackets">&gt;</span><span class="hl-code">    
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">a</span><span class="hl-code"> </span><span class="hl-var">href</span><span class="hl-code">=</span><span class="hl-quotes">&quot;</span><span class="hl-string">javascript:void(0)</span><span class="hl-quotes">&quot;</span><span class="hl-code"> </span><span class="hl-var">onclick</span><span class="hl-code">='</span><span class="hl-var">mygrid</span><span class="hl-code">.</span><span class="hl-var">clearAll</span><span class="hl-code">();</span><span class="hl-var">alert</span><span class="hl-code">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">old data cleared\nloading new one...</span><span class="hl-quotes">&quot;</span><span class="hl-code">); </span><span class="hl-var">mygrid</span><span class="hl-code">.</span><span class="hl-var">parse</span><span class="hl-code">(</span><span class="hl-var">data</span><span class="hl-code">,</span><span class="hl-quotes">&quot;</span><span class="hl-string">json</span><span class="hl-quotes">&quot;</span><span class="hl-code">)'</span><span class="hl-brackets">&gt;</span><span class="hl-code">Reload from JSON object</span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">a</span><span class="hl-brackets">&gt;</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">br</span><span class="hl-brackets">/&gt;</span><span class="hl-code">
+ 
+</span><span class="hl-brackets">&lt;</span><span class="hl-reserved">script</span><span class="hl-brackets">&gt;</span><span class="hl-code"><div class="hl-main"><pre><span class="hl-identifier">data</span><span class="hl-code"> = </span><span class="hl-brackets">{</span><span class="hl-code">
+    </span><span class="hl-identifier">rows</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1001</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">100</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1002</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1003</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1004</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1005</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1006</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1007</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1008</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1009</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10010</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1011</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">101</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1012</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1013</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1014</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1015</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1016</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1017</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1018</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1019</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10110</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1021</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">102</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1022</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1023</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1024</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1025</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1026</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1027</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1028</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1029</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10210</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1031</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">103</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1032</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1033</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1034</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1035</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1036</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1037</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1038</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1039</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10310</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1041</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">104</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1042</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1043</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1044</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1045</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1046</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1047</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1048</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1049</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10410</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1051</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">105</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1052</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1053</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1054</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1055</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1056</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1057</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1058</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1059</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10510</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1061</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">106</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1062</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1063</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1064</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1065</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1066</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1067</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1068</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1069</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10610</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1071</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">107</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1072</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1073</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1074</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1075</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1076</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1077</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1078</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1079</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10710</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1081</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">108</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1082</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1083</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1084</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1085</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1086</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1087</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1088</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1089</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10810</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, 
+</span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1091</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">109</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">A Time to Kill</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">05/01/1998</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1092</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1000</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Blood and Smoke</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2000</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1093</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Rainmaker</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1094</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">350</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Green Mile</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">11.10</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/1992</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1095</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">700</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Misery</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">7.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2003</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1096</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">-1200</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Dark Half</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/30/1999</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1097</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">1500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">The Partner</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">John Grisham</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12.99</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">01/01/2005</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1098</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">500</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">It</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Stephen King</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">9.70</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">10/15/2001</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">1099</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-code">, </span><span class="hl-brackets">{</span><span class="hl-code">
+        </span><span class="hl-identifier">id</span><span class="hl-code">: </span><span class="hl-number">10910</span><span class="hl-code">,
+        </span><span class="hl-identifier">data</span><span class="hl-code">: </span><span class="hl-brackets">[</span><span class="hl-quotes">&quot;</span><span class="hl-string">400</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Cousin Bette</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">Honore de Balzac</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">0</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">1</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">12/01/1991</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">]</span><span class="hl-code">
+        </span><span class="hl-brackets">}</span><span class="hl-brackets">]</span><span class="hl-code">
+    </span><span class="hl-brackets">}</span><span class="hl-code">
+</span><span class="hl-identifier">mygrid</span><span class="hl-code"> = </span><span class="hl-reserved">new</span><span class="hl-code"> </span><span class="hl-identifier">dhtmlXGridObject</span><span class="hl-brackets">(</span><span class="hl-quotes">'</span><span class="hl-string">gridbox</span><span class="hl-quotes">'</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">setImagePath</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">../../codebase/imgs/</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">setHeader</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">Sales, Book Title, Author</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">setInitWidths</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">70,250,*</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">setColAlign</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">right,left,left</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">setColTypes</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">dyn,ed,ed</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">setColSorting</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">int,str,str</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">init</span><span class="hl-brackets">(</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">setSkin</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">dhx_skyblue</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;
+</span><span class="hl-identifier">mygrid</span><span class="hl-code">.</span><span class="hl-identifier">load</span><span class="hl-brackets">(</span><span class="hl-quotes">&quot;</span><span class="hl-string">../common/data.json</span><span class="hl-quotes">&quot;</span><span class="hl-code">, </span><span class="hl-quotes">&quot;</span><span class="hl-string">json</span><span class="hl-quotes">&quot;</span><span class="hl-brackets">)</span><span class="hl-code">;</span></pre></div></span><span class="hl-brackets">&lt;/</span><span class="hl-reserved">script</span><span class="hl-brackets">&gt;</span></pre></div>
+        </div>
+    <div class="footer">
+        <div class="footer-logo"></div>
+        <div class="copyright">Copyright &copy; 1998-2009 DHTMLX LTD.<br />All rights reserved.</div>
+    </div>
+	</body>
+</html>

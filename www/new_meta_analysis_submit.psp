@@ -1,0 +1,111 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+'''
+This script adds the users new study to the database, then asks them how they
+want to proceed.
+'''
+
+import os
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+
+db_location='/tmp_qiime/'
+
+sess = Session.Session(req)
+sess['meta_analysis_name'] = form['meta_analysis_name']
+
+meta_analysis_name = sess['meta_analysis_name']
+
+# Add the new Investigation to the database
+meta_analysis_id = data_access_factory(ServerConfig.data_access_type).createMetaAnalysis(\
+                            sess['web_app_user_id'],sess['meta_analysis_name'])
+
+
+# Add the Investigation id to the session.
+sess['meta_analysis_id'] = meta_analysis_id
+
+# Define meta_analysis folder
+meta_analysis_dir = os.path.join(sess['user_dir'],'meta_analysis_'+str(sess['meta_analysis_id']))
+sess['meta_analysis_dir'] = str(meta_analysis_dir)
+meta_analysis_dir_db= os.path.join(sess['db_root'],'meta_analysis_'+str(sess['meta_analysis_id']))
+sess['meta_analysis_dir_db'] = str(meta_analysis_dir_db)
+# Define mapping file folder
+mapping_file_dir = os.path.join(meta_analysis_dir, 'mapping_files/') 
+sess['mapping_file_dir'] = mapping_file_dir
+mapping_file_dir_db = os.path.join(meta_analysis_dir_db, 'mapping_files/') 
+sess['mapping_file_dir_db'] = mapping_file_dir_db
+# Define otu table folder
+otu_table_file_dir = os.path.join(meta_analysis_dir, 'otu_table_files/')
+sess['otu_table_file_dir'] = otu_table_file_dir
+otu_table_file_dir_db = os.path.join(meta_analysis_dir_db, 'otu_table_files/')
+sess['otu_table_file_dir_db'] = otu_table_file_dir_db
+# Define zipped meta_analysis folder
+zip_file_dir = os.path.join(meta_analysis_dir, 'zip_files/')
+sess['zip_file_dir'] = zip_file_dir
+zip_file_dir_db = os.path.join(meta_analysis_dir_db, 'zip_files/')
+sess['zip_file_dir_db'] = zip_file_dir_db
+# Define zipped meta_analysis folder
+pcoa_file_dir = os.path.join(meta_analysis_dir, 'pcoa_files/')
+sess['pcoa_file_dir'] = pcoa_file_dir
+pcoa_file_dir_db = os.path.join(meta_analysis_dir_db, 'pcoa_files/')
+sess['pcoa_file_dir_db'] = pcoa_file_dir_db
+# Define zipped topiary explorer folder
+topiaryexplorer_file_dir = os.path.join(meta_analysis_dir, 'topiaryexplorer_files/')
+sess['topiary_explorer_dir'] = topiaryexplorer_file_dir
+topiaryexplorer_file_dir_db = os.path.join(meta_analysis_dir_db, 'topiaryexplorer_files/')
+sess['topiary_explorer_db'] = topiaryexplorer_file_dir_db
+
+sess['study_id'] = None
+sess.save()
+
+
+if not os.path.exists(meta_analysis_dir):
+    os.mkdir(meta_analysis_dir)
+if not os.path.exists(mapping_file_dir):
+    os.mkdir(mapping_file_dir)
+if not os.path.exists(otu_table_file_dir):
+    os.mkdir(otu_table_file_dir)
+if not os.path.exists(zip_file_dir):
+    os.mkdir(zip_file_dir)
+
+#See if the folders exists and if not, creates it.
+try:
+    if not os.path.exists(meta_analysis_dir):
+        os.mkdir(meta_analysis_dir)
+    if not os.path.exists(mapping_file_dir):
+        os.mkdir(mapping_file_dir)
+    if not os.path.exists(otu_table_file_dir):
+        os.mkdir(otu_table_file_dir)
+    if not os.path.exists(zip_file_dir):
+        os.mkdir(zip_file_dir)
+    if not os.path.exists(pcoa_file_dir):
+        os.mkdir(pcoa_file_dir)
+    if not os.path.exists(topiaryexplorer_file_dir):
+        os.mkdir(topiaryexplorer_file_dir)
+except Exception, e:
+    req.write('<h1>Error: The Investigation directory could not be created.</h1>')
+    req.write(str(e))
+    sys.exit()
+
+psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
+
+%>
+
+<!-- An oddball redirect to force the menu to redraw -->
+<form id="redirect_to_new_analysis" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="select_meta_analysis_task.psp">
+</form>
+
+<script language="text/javascript">
+    alert('yo!');
+    document.forms['redirect_to_new_analysis'].submit();
+</script>
+

@@ -1,0 +1,43 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+import os
+sess = Session.Session(req)
+parts = form['study_names'].split(':')
+sess['study_id'] = parts[0]
+sess['study_name'] = parts[1]
+sess['study_dir'] = os.path.join(sess['user_dir'],'study_'+str(sess['study_id']))
+sess['meta_analysis_id']=0
+sess.save()
+
+#See if the study folder exists and if not, creates it.
+try:
+    study_dir = sess['study_dir']
+    if not os.path.exists(study_dir):
+            os.mkdir(study_dir)
+            
+    # Create new mapping file in filesystem
+    mapping_file_dir = os.path.join(study_dir, 'mapping_files/')
+    if not os.path.exists(mapping_file_dir):
+        os.mkdir(mapping_file_dir)    
+    sess['mapping_file_dir'] = mapping_file_dir
+    sess.save()
+    
+except Exception, e:
+    req.write('<h1>Error: The study directory could not be created.</h1>')
+    req.write(str(e))
+    sys.exit()
+
+# end except
+
+psp.redirect('fusebox.psp?page=select_study_task.psp')
+%>

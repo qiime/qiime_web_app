@@ -1,0 +1,31 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2011, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+# Grab a reference to the session
+#sess = Session.Session(req)
+
+
+%>
+{
+"id": "1234",
+"about": "The about string",
+"version": 0,
+"created": "1/1/2012",
+"url": "",
+"type": "study",
+"name": "The test fake project",
+"public": 1,
+"analyzed":	[],
+"pi": "John Smith",
+"description":	"Project description here. Yada yada yada, this project is fake.",
+"funding_source": "Gimme da money",
+"metadata":	{"entry1":"value1", "entry2":"value2"},
+"samples": [1,2,3,4,5,6,7,8]
+}

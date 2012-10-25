@@ -1,0 +1,28 @@
+<%
+__author__ = "Jesse Stombaugh"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "jesse.stombaugh@colorado.edu"
+__status__ = "Production"
+
+'''
+This script adds the users new study to the database, then asks them how they
+want to proceed.
+'''
+
+%>
+
+<!--Create to form options for the user to select-->
+<br>
+<form id="sff_file" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="upload_sff.psp">
+<input type="submit" value="Upload SFF(s)">
+</form>
+
+<form id="sff_file" action="fusebox.psp" method="post">
+<input type="hidden" name="page" id="page" value="upload_metadata.psp">
+<input type="submit" value="Upload MetaData">
+</form>

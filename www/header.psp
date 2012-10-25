@@ -1,0 +1,193 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+if not (sess.has_key('username')):
+	sess.invalidate()
+	psp.redirect('index.psp')
+
+# Imports
+from data_access_connections import data_access_factory
+from enums import *
+from mod_python import *
+from run_process_sff_through_split_lib import get_qiime_svn_version
+from qiime.util import __version__ as qiime_version
+# Set the image link based on whether or not a study has been selected:
+'''
+if sess['study_name']:
+	link_page = 'select_study_task.psp'
+else:
+	link_page = 'select_study.psp'
+'''
+#setting link_page to select_study, so we can go between meta-analysis and study
+link_page = 'select_study.psp'
+# end
+
+portal_type = sess['portal_type']
+
+#data_access = data_access_factory(ServerConfig.data_access_type)
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title><%=sess['title']%></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+<link rel="stylesheet" href="style/style.css?ver=2" type="text/css">
+<link rel="stylesheet" href="<%=sess['stylesheet']%>?ver=2" type="text/css">
+<script type="text/javascript" src="./js/qiime.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="./js/jquery_validate/jquery.validate.js"></script>
+
+<script type="text/javascript"> 
+
+function toggleSection(section_name)
+{
+    toggle_div = document.getElementById(section_name);
+    if (toggle_div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+    }
+}
+
+$(document).ready(function(){
+	$("ul.subnav").parent().append("<span>.</span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("ul.topnav li span").click(function() { //When trigger is clicked...
+		
+		//Following events are applied to the subnav itself (moving subnav up and down)
+		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+		$(this).parent().hover(function() {
+		}, function(){	
+			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+		});
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+
+});
+
+// Handles proper selections for dropdown navigation
+function select_change_submit(form_name, sender)
+{
+    // Must be a valid selection to continue
+    if (sender.selectedIndex == 0)
+    {
+        return false;
+    }
+    
+    document.forms[form_name].submit();
+    return false;
+}
+</script>
+
+</head>
+<body>
+
+<div class="container">
+<div id="header">
+<% 
+# puts in development text
+if str(ServerConfig.config_options['data_access_type'])=='DataAccessType.qiime_test':
+    req.write('<div class="development"><h1>Development</h1></div>')
+    req.write('<div class="qiime_version">QIIME %s: Revision:%s</div>' % (qiime_version,str(get_qiime_svn_version())))
+
+study_id = ''
+if sess.has_key('study_id'):
+    study_id = sess['study_id']
+req.write('<div id="study_info">')
+#req.write(sess['portal_type'])
+if study_id:
+    req.write('<br/>Selected study_id: {0}'.format(study_id))
+req.write('<br/>Logged in as {0}'.format(sess['username']))
+req.write('</div>')
+# End indent
+%>
+
+<table class="header_table">
+    <tr>
+        <td class="header_table_cell">        
+            <ul class="topnav">
+                <li><a href="fusebox.psp?page=select_study.psp">Home</a></li>
+                
+<%
+if sess.get('study_id'):
+    # Indent
+%>
+                <li>
+                    <a href="fusebox.psp" target="<%=sess['frame_target']%>">Manage Study Data</a>
+                    <ul class="subnav">
+                        <li><a href="fusebox.psp?page=new_study.psp" target="<%=sess['frame_target']%>">Create New Study</a></li>
+                        <li><a href="fusebox.psp?page=load_template_fields.psp" target="<%=sess['frame_target']%>">Generate MIMARKS Templates</a></li>
+
+<%
+    if portal_type in ['qiime', 'emp']:
+        req.write('<li><a href="fusebox.psp?page=upload_sff.psp" target="%s">Add/Remove SFF Files</a></li>' % (sess['frame_target']))
+    
+    # End if
+%>
+                    
+                        <li><a href="fusebox.psp?page=upload_metadata.psp" target="<%=sess['frame_target']%>">Upload Metadata</a></li>
+                    </ul>
+                </li>
+<%
+# End if
+
+if portal_type == 'qiime':
+    # Indent
+%>
+                <li>
+                    <a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Meta Analysis</a>
+                    <ul class="subnav">
+                        <li><a href="fusebox.psp?page=new_meta_analysis.psp" target="<%=sess['frame_target']%>">Create New Meta-Analysis</a></li>
+                    </ul>
+                </li>
+<%
+
+# End if
+%>
+                <li>
+                    <a href="fusebox.psp?page=tools_ontology_and_geo.psp" target="<%=sess['frame_target']%>">Tools</a>
+                    <ul class="subnav">
+                        <li><a href="fusebox.psp?page=tools_ontology.psp" target="<%=sess['frame_target']%>">Ontology Lookup Service</a></li>
+                        <li><a href="fusebox.psp?page=tools_geo.psp" target="<%=sess['frame_target']%>">Georeference Utility</a></li>
+                    </ul>
+                </li>
+                <li><a href="docs/index.html" target="_blank">Help</a></li>
+                <li>
+                <form id="logout" action="index.psp" method="post">
+                    <input type="hidden" name="portal_type" id="portal_type" value="<%=portal_type%>">
+                    <a href="" onclick="document.forms['logout'].submit(); return false;">
+                    Log Out</a>
+                </form>
+                </li>
+            </ul>
+            </td>
+        </tr>
+    </table>
+</div>
+    
+</div>
+
+<div class="content">
+
+<h3>&nbsp;&nbsp;NOTE: Please read the <a href="fusebox.psp?page=db_processing_protocol.psp" target="<%=sess['frame_target']%>">QIIME-DB Processing Protocol</a> to understand how all uploaded data is handled.</h3>
