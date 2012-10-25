@@ -252,10 +252,11 @@ for item in sorted(list):
                 </div>
             </td>
             <td>* 
-                <select class="input required" name="environmental_package" name="environmental_package" multiple>
+                <select class="input required" name="environmental_package" name="environmental_package" multiple size="19">
 <%
 list = qda.getListValues('Package Type')
-for item in sorted(list):
+list.sort(key=lambda x: x[1])
+for item in list:
     if item[0] > 0:
         if item[0] in environmental_packages:
             req.write('<option value=\"%s\" selected>%s</option>\n' % (item[0], item[1]))

@@ -51,6 +51,8 @@ for study_id in study_ids:
     for sequence_prep_id, seq_count in results:
         seq_prep_counts.append((sequence_prep_id, seq_count))
         
+        print '{0}: {1}'.format(sequence_prep_id, seq_count)
+        
         query_string_2 = """
         update  sequence_prep 
         set     num_sequences = {0} 

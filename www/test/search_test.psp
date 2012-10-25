@@ -1,0 +1,75 @@
+
+
+<%
+is_admin = int(sess['is_admin'])
+web_app_user_id = sess['web_app_user_id']
+portal_type = sess['portal_type']
+frame_target = sess['frame_target']
+study_name = sess['study_name']
+%>
+
+<script type="text/javascript">
+
+function toggleSection(section_name)
+{
+    sample_div = document.getElementById(section_name);
+    if (sample_div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+    }
+}
+
+</script>
+
+<script>
+
+(function ($) {
+  // custom css expression for a case-insensitive contains()
+  jQuery.expr[':'].Contains = function(a,i,m){
+      return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
+  };
+
+  function listFilter(header, list) { // header is any element, list is an unordered list
+    $("#search_text")
+      .change( function () {
+        var filter = $(this).val();
+        if(filter) {
+          // this finds all links in a list that contain the input,
+          // and hide the ones not containing the input while showing the ones that do
+          $(list).find("a:not(:Contains(" + filter + "))").parent().slideUp();
+          $(list).find("a:Contains(" + filter + ")").parent().slideDown();
+        } else {
+          $(list).find("li").slideDown();
+        }
+        return false;
+      })
+    .keyup( function () {
+        // fire the above change event after every letter
+        $(this).change();
+    });
+  }
+
+  //ondomready
+  $(function () {
+    listFilter($("#header"), $("#list"));
+  });
+}(jQuery));
+
+</script>
+
+<a href="" onclick="toggleSection(\'search_div\'); return false;">Search for a study...</a>
+<div id="search_div" name="search_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">    
+<input type="text" id="search_text" name="search_text"><br/>
+    <ul id="list">    
+<%
+study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, portal_type)
+for item in study_names:
+    req.write('<li><a href="select_user_study_submit.psp?study_names={0}:{1}">{1}</a></li>\n'.format(str(item[0]), item[1]))
+# end
+%>
+    <ul>
+</div>

@@ -297,7 +297,7 @@ def load_split_lib_sequences(data_access,input_dir,analysis_id, seq_run_id,
 
     end = time.time()
     print 'Total processor time elapsed: %s' % str(end - start)
-    
+
     print 'Finished loading split_library FNA file.'
     
     try:

@@ -1,0 +1,139 @@
+<html>
+<head>
+
+<script type="text/javascript" src="./js/quick_jump.js"></script>
+</head>
+
+<body>
+
+<h1>BioPortal Widgets</h1>
+
+
+<form>
+
+<h3>Input Widget</h3>
+GAZ<br/>
+<input type="text" name="a" class="bp_form_complete-1397-ontprefix_name" size="100"/><br/>
+ENVO Biome with ID_Name<br/>
+<input type="text" name="a" class="bp_form_complete-1069-shortid_name" data-bp_search_branch="ENVO:00000428" size="100"/><br/>
+ENVO Search - Replace with ID<br/>
+<input type="text" name="a" class="bp_form_complete-1069-shortid" size="100"/><br/>
+ENVO Search - Replace with name<br/>
+<input type="text" name="a" class="bp_form_complete-1069-name" size="100"/><br/>
+ENVO Search - Replace with URI<br/>
+<input type="text" name="a" class="bp_form_complete-1069-uri" size="100"/><br/>
+<br/>
+
+<h3>Ontology Search Widget</h3>
+<div id="bp_quick_jump"></div>
+<script type="text/javascript">
+    var BP_ontology_id = "1069";
+</script>
+
+<br/>
+
+<h3>Feed Widget</h3>
+<script type="text/javascript">
+	var BP_ontology_id = "1032"
+</script>
+<script src="http://bioportal.bioontology.org/javascripts/widgets/feed_widget.js" type="text/javascript" charset="utf-8"></script>
+
+<br/>
+
+
+<h3>Ontology Visualization Widget</h3>
+<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
+	id="FlexoViz" width="100%" height="100%"
+	codebase="http://fpdownload.macromedia.com/get/flashplayer/current/swflash.cab">
+	<param name="movie" value="http://keg.cs.uvic.ca/ncbo/flexviz/FlexoViz.swf" />
+	<param name="quality" value="high" />
+	<param name="bgcolor" value="#ffffff" />
+	<param name="allowScriptAccess" value="always" />
+	<embed src="http://keg.cs.uvic.ca/ncbo/flexviz/FlexoViz.swf" bgcolor="#ffffff"
+		width="100%" height="100%" name="FlexoViz" align="middle"
+		play="true"
+		loop="false"
+		quality="high"
+		allowScriptAccess="always"
+		type="application/x-shockwave-flash"
+		flashVars="widget=true&ontology=1069&server=http://rest.bioontology.org/bioportal/"
+		pluginspage="http://www.adobe.com/go/getflashplayer">
+	</embed>
+</object>
+<br/>
+
+
+
+<h3>Ontology Tree Widget</h3>
+<script src="http://keg.cs.uvic.ca/ncbo/ontologytree/AC_OETags.js" language="javascript"></script>
+<script>
+// -----------------------------------------------------------------------------
+// Globals
+// Major version of Flash required
+var requiredMajorVersion = 9;
+// Minor version of Flash required
+var requiredMinorVersion = 0;
+// Minor version of Flash required
+var requiredRevision = 124;
+// -----------------------------------------------------------------------------
+
+// Version check for the Flash Player that has the ability to start Player Product Install (6.0r65)
+var hasProductInstall = DetectFlashVer(6, 0, 65);
+
+// Version check based upon the values defined in globals
+var hasRequestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+if (hasProductInstall && !hasRequestedVersion) {
+    // DO NOT MODIFY THE FOLLOWING FOUR LINES
+    // Location visited after installation is complete if installation is required
+    var MMPlayerType = (isIE == true) ? "ActiveX": "PlugIn";
+    var MMredirectURL = window.location;
+    document.title = document.title.slice(0, 47) + " - Flash Player Installation";
+    var MMdoctitle = document.title;
+
+    AC_FL_RunContent(
+    "src", "playerProductInstall",
+    "FlashVars", "MMredirectURL=" + MMredirectURL + '&MMplayerType=' + MMPlayerType + '&MMdoctitle=' + MMdoctitle + "",
+    "width", "300",
+    "height", "100%",
+    "align", "middle",
+    "id", "OntologyTree",
+    "quality", "high",
+    "bgcolor", "#ffffff",
+    "name", "OntologyTree",
+    "allowScriptAccess", "always",
+    "type", "application/x-shockwave-flash",
+    "pluginspage", "http://www.adobe.com/go/getflashplayer"
+    );
+} else if (hasRequestedVersion) {
+    // if we've detected an acceptable version
+    // embed the Flash Content SWF when all tests are passed
+    AC_FL_RunContent(
+    "src", "http://keg.cs.uvic.ca/ncbo/ontologytree/OntologyTree.swf",
+    "width", "300",
+    "height", "500",
+    "align", "middle",
+    "id", "OntologyTree",
+    "quality", "high",
+    "bgcolor", "#ffffff",
+    "name", "OntologyTree",
+    "allowScriptAccess", "always",
+    "flashVars", "ontology=1069&virtual=false&alerterrors=true&canchangeontology=false&rootconceptid=ENVO:00000428",
+    "type", "application/x-shockwave-flash",
+    "pluginspage", "http://www.adobe.com/go/getflashplayer"
+    );
+} else {
+    // flash is too old or we can't detect the plugin
+    var alternateContent = 'Alternate HTML content should be placed here. '
+    + 'This content requires the Adobe Flash Player. '
+    + '<a href=http://www.adobe.com/go/getflash/>Get Flash</a>';
+    document.write(alternateContent);
+    // insert non-flash content
+}
+</script>
+
+
+</form>
+
+</body>
+</html>
