@@ -105,12 +105,12 @@ class Poller(Daemon):
             self.updateMyJobs(err_jobs)
 
             # every once and a while dump status
-            if iter_count % STATUS_INTERVAL == 0:
-                # do we want to "save" state to a file incase of crash?
-                sys.stdout.write("Status update: \n")
-                job_status = map(str, self.Jobs.values())
-                sys.stdout.write('\n'.join(job_status))
-                sys.stdout.write('\n')
+            #if iter_count % STATUS_INTERVAL == 0:
+            #    # do we want to "save" state to a file incase of crash?
+            #    sys.stdout.write("Status update: \n")
+            #    job_status = map(str, self.Jobs.values())
+            #    sys.stdout.write('\n'.join(job_status))
+            #    sys.stdout.write('\n')
 
             # flush each cycle
             sys.stderr.flush()
@@ -128,7 +128,13 @@ class Poller(Daemon):
         """Parse qstat lines, return job_id -> state"""
         poll_result = {}
         for line in input.splitlines():
-            job_id, job_name, user, cput, state, queue = line.strip().split()
+            try:
+                job_id, job_name, user, cput, state, queue = line.strip().split()
+            except:
+                sys.stderr.write("parseQstat error, unable to split line: %s\n" \
+                                 % line.strip())
+                return {}
+
             pbs_job_id = job_id.split('.',1)[0]
             poll_result[pbs_job_id] = TORQUE_STATE_LOOKUP[state]
         return poll_result
@@ -151,7 +157,7 @@ class Poller(Daemon):
 
         # check if the file actually exists
         if not os.path.isfile(filename):
-            raise FileDoesNotExistError, "File %s does not exist"
+            raise FileDoesNotExistError, "File %s does not exist" % filename
 
         # if it exists, attempt to open
         try:
@@ -204,7 +210,7 @@ class Poller(Daemon):
         poll_result = self.parseQstat(output)
         completed_job_ids = []
         
-        state_feedback = [(ej, 'ERROR_STARTING') for ej in err_jobs]
+        state_feedback = [(ej, 'ERROR_STARTING', "") for ej in err_jobs]
         for pbs_id, job in self.Jobs.items():
             if pbs_id not in poll_result:
                 # job is no longer visible by resource manager
