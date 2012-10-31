@@ -211,19 +211,33 @@ where   s.study_id = {0}
         self.logger.log_entry('sample_and_prep is "{0}"'.format(sample_and_prep))
         self.logger.log_entry('run_prefix is "{0}"'.format(run_prefix))
 
+        # Various possible paths...
         gz_fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/{2}.gz'.format(str(self.study_id), sample_name, sample_and_prep))
         fna_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/seqs.fna'.format(str(self.study_id), sample_name))
+        
+        gz_run_prefix_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/{2}.gz'.format(str(self.study_id), run_prefix, sample_and_prep))
+        run_prefix_path = join(self.root_dir, 'study_{0}/processed_data_{1}_/split_libraries/seqs.fna'.format(str(self.study_id), run_prefix))
 
+        # Check for the gzipped possibilities first
         found = None
         if exists(gz_fna_path):
-            self.logger.log_entry('gzipped file exists. Returning name only.')
+            self.logger.log_entry('gzipped sample-based file exists. Returning name only.')
             self.logger.log_entry('gzip file name is "{0}"'.format(gz_fna_path))
             found = gz_fna_path
+        elif exists(gz_run_prefix_path):
+            self.logger.log_entry('gzipped run_prefix-based file exists. Returning name only.')
+            self.logger.log_entry('gzip file name is "{0}"'.format(gz_run_prefix_path))
+            found = gz_run_prefix_path
         elif exists(fna_path):
             # Attempt to compress file
             self.compress_file(fna_path, gz_fna_path)
             if exists(gz_fna_path):
                 found = gz_fna_path
+        elif exists(run_prefix_path):
+            # Attempt to compress file
+            self.compress_file(run_prefix_path, gz_run_prefix_path)
+            if exists(gz_run_prefix_path):
+                found = gz_run_prefix_path
 
         # If none of the possibilities exist in the filesystem we must abort
         if not found:

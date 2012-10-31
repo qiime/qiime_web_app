@@ -539,10 +539,16 @@ class LiveEBISRARestServices(BaseRestServices):
         submission_file.write('    <ACTION>\n')
         submission_file.write('        <{0} source="{1}" schema="run"/>\n'.format(action_type, basename(self.run_file_path)))
         submission_file.write('    </ACTION>\n')
-        submission_file.write('    <ACTION>\n')
-        one_year = str(date.today() + timedelta(365))
-        submission_file.write('         <HOLD HoldUntilDate="{0}"/>\n'.format(one_year))
-        submission_file.write('    </ACTION>\n')
+
+        # Only add the hold attribute if we are actually adding data to EBI. I don't know this for
+        # certain but it seems that having it in there during validation causes certain entities to
+        # be created on their end, causing the actual ADD operaiton to fail even if data validates.
+        if action_type == 'ADD':
+            submission_file.write('    <ACTION>\n')
+            one_year = str(date.today() + timedelta(365))
+            submission_file.write('         <HOLD HoldUntilDate="{0}"/>\n'.format(one_year))
+            submission_file.write('    </ACTION>\n')
+
         submission_file.write('</ACTIONS>\n')
 
         # Sequence files here?
@@ -552,7 +558,7 @@ class LiveEBISRARestServices(BaseRestServices):
         #submission_file.write('</FILES>\n')
         
         submission_file.write('</SUBMISSION>\n')
-        submission_file.write('</SUBMISSION_SET>\n')    
+        submission_file.write('</SUBMISSION_SET>\n')
 
         self.logger.log_entry('File List:')
         for f in self.file_list:

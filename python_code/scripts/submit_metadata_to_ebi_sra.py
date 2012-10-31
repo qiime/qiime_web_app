@@ -50,6 +50,11 @@ def main():
     # Make one pass through metadata to generate files to validate. Also
     # necessary to populate the list of sequence files to send.
     live.generate_metadata_files(debug = True, action_type = 'VALIDATE')
+    if len(live.errors):
+        print 'Errors found while generating metadata files. Aborting. Errors are:'
+        for error in live.errors:
+            print 'Error: {0}'.format(error)
+        return
     
     # Send the sequence files first - required for metadata to validate. If files have already been
     # sent then skip this step.
@@ -57,7 +62,12 @@ def main():
     statement = 'select case when ebi_files_sent is null then 0 else ebi_files_sent end as ebi_files_sent from study where study_id = {0}'.format(study_id)
     ebi_files_sent = data_access.dynamicMetadataSelect(statement).fetchone()[0]
     if ebi_files_sent != 1:
-        live.submit_files(debug = True)
+        try:
+            live.submit_files(debug = True)
+        except Exception, e:
+            print 'Error encountered while submitting files. Aborting. Error was:'
+            print str(e)
+            return
     
     # Submit the metadata with the VALIDATE attribute first. Performs no other actions
     # on EBI server other than ensuring that XML validates. 

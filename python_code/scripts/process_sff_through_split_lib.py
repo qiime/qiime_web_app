@@ -13,7 +13,7 @@ __status__ = "Development"
  
 from qiime.util import parse_command_line_parameters, get_options_lookup
 from optparse import make_option
-from os import makedirs,environ
+from os import makedirs, environ, listdir, remove
 from os.path import exists,splitext,split,join
 from qiime.util import load_qiime_config, raise_error_on_parallel_unavailable
 from qiime.parse import parse_qiime_parameters
@@ -32,6 +32,7 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
 from submit_job_to_qiime import submitQiimeJob
 from qiime.validate_demultiplexed_fasta import run_fasta_checks
+from shutil import rmtree
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -98,6 +99,7 @@ def main():
     run_prefix='_'.join(splitext(split(opts.map_fname)[-1])[0].split('_')[:-4])
     print run_prefix
     output_dir = '%s/user_data/studies/study_%s/processed_data_%s/' % (environ['HOME'],study_id, run_prefix)
+    base_dir = '%s/user_data/studies/study_%s/' % (environ['HOME'], study_id)
     
     sff_fname=opts.sff_fname
     map_fname = opts.map_fname
@@ -109,6 +111,29 @@ def main():
     sequencing_platform=opts.sequencing_platform
     process_only=opts.process_only
     user_id=opts.user_id
+
+    # Get our copy of data_access
+    if submit_to_test_db == 'False':
+        # Load the data into the database
+        data_access = data_access_factory(ServerConfig.data_access_type)
+    else:
+        # Load the data into the database 
+        data_access = data_access_factory(DataAccessType.qiime_test)
+
+    # Perform a delete operation of the old data
+    result = data_access.deleteAllAnalysis(study_id)
+    if result:
+        error = 'Failed to delete analysis results. Error was "{0}"'.format(result)
+        raise Exception(error)
+
+    # Remove the old processed folders
+    try:
+        for name in listdir(base_dir):
+            if 'processed_data_' in name:
+                rmtree(name)
+    except Exception, e:
+        error = 'Failed to delete processed folders. Error was "{0}"'.format(str(e))
+        raise Exception(error)
     
     # determine if platform is Titanium. If so, then convert_to_flx
     if sequencing_platform=='TITANIUM':
@@ -213,12 +238,7 @@ def main():
         
     print 'Demultiplexed sequences appear to be valid'
     """
-    if submit_to_test_db == 'False':
-        # Load the data into the database
-        data_access = data_access_factory(ServerConfig.data_access_type)
-    else:
-        # Load the data into the database 
-        data_access = data_access_factory(DataAccessType.qiime_test)
+    
     
     study_info=data_access.getStudyInfo(study_id,user_id)
     if study_info['investigation_type'].lower() == 'metagenome':
