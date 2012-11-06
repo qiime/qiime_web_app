@@ -154,7 +154,7 @@ for item in validated_values:
 			key_field_errors.append(item)
  
 		sample_fields.append(item)
-		req.write('adding ')
+		#req.write('adding ')
 		sample_key_fields[row_num] = field_value
 		
 	# Host rows 
