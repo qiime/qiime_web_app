@@ -53,39 +53,47 @@ var invalid = 0;
 var complete = false
 
 function uploaderFileStatusChanged(uploader, file)
-{
+{  
+    //alert(file.getStatus());
+    //alert('failed status is: ' + file.STATUS_FAILED);
     if (file.getStatus() == file.STATUS_FAILED)
     {
-        alert('failed');
+        alert('Upload has failed.');
         document.getElementById("complete").innerHTML = file.getResponseContent();
         return;
     }
     
     var filecount = uploader.getFileCount();
+    //alert('file count is: ' + filecount);
     var index = file.getIndex();
     if (file.getResponseContent() != null && file.getResponseContent() != '')
     {
         var response_text = file.getResponseContent();
+        //alert(response_text);
         var ask_user_to_reload = false;
         var message = '';
-        
+
         if (response_text == "locked - missing samples")
         {
+            //alert('LMS');
             message = "Samples currently in the database are not represented in the supplied files. The study is locked and key fields cannot be modified at this time.";
             ask_user_to_reload = false;
         }
-        elif (response_text == "locked - immutable fields changed")
+        else if (response_text == "locked - immutable fields changed")
         {
+            //alert('One more more...');
             message = "One or more key fields has been changed: sample_name, linker, primer, barcode, run_prefix, or platform). The study is locked and key fields cannot be modified at this time.";
             ask_user_to_reload = false;
         }
-        elif (response_text == "missing samples")
+        else if (response_text == "missing samples")
         {
+            //alert('MS');
             message = "Samples currently in the database are not represented in the supplied files.";
             ask_user_to_reload = true;
         }
-        elif (response_text == "immutable fields changed")
+        else if (response_text == "immutable fields changed")
         {
+            //alert('IFC');
             message = "One or more key fields has been changed: sample_name, linker, primer, barcode, run_prefix, or platform).";
             ask_user_to_reload = true;
         }
