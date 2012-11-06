@@ -17,7 +17,7 @@ import os
 from enums import ServerConfig
 
 PYTHON_BIN="%s/software/bin/python2.7" % ServerConfig.home
-QIIME_WEBAPP_BASE = "%s/projects/Qiime/qiime_web_app/python_code/scripts" % ServerConfig.home
+QIIME_WEBAPP_BASE = "%s/git/qiime_web_app/python_code/scripts" % ServerConfig.home
 QIIME_PROCESS_SFF = QIIME_WEBAPP_BASE + "/process_sff_through_split_lib.py"
 QIIME_LOAD_ANALYSIS_OTU_TABLE = QIIME_WEBAPP_BASE + "/submit_analysis_and_otu_table_to_db.py"
 QIIME_LOAD_SPLIT_LIB_SEQS = QIIME_WEBAPP_BASE + "/submit_split_lib_seqs_to_db.py"
