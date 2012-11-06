@@ -130,7 +130,7 @@ def main():
     try:
         for name in listdir(base_dir):
             if 'processed_data_' in name:
-                rmtree(name)
+                rmtree(join(base_dir, name))
     except Exception, e:
         error = 'Failed to delete processed folders. Error was "{0}"'.format(str(e))
         raise Exception(error)
