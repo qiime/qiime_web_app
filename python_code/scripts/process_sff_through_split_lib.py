@@ -4,11 +4,11 @@ from __future__ import division
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2010, The QIIME WebApp project"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
 __license__ = "GPL"
 __version__ = "dev"
-__maintainer__ = "Jesse Stombaugh"
-__email__ = "jesse.stombaugh@colorado.edu"
+__maintainer__ = "Doug Wendel"
+__email__ = "jesse.stombaugh@colorado.edu, wendel@colorado.edu"
 __status__ = "Development"
  
 from qiime.util import parse_command_line_parameters, get_options_lookup
@@ -33,6 +33,7 @@ from enums import ServerConfig,DataAccessType
 from submit_job_to_qiime import submitQiimeJob
 from qiime.validate_demultiplexed_fasta import run_fasta_checks
 from shutil import rmtree
+from time import sleep
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -120,20 +121,40 @@ def main():
         # Load the data into the database 
         data_access = data_access_factory(DataAccessType.qiime_test)
 
-    # Perform a delete operation of the old data
-    result = data_access.deleteAllAnalysis(study_id)
-    if result:
-        error = 'Failed to delete analysis results. Error was "{0}"'.format(result)
-        raise Exception(error)
+    
+    # Check for existence of synchronization file. If this file doesn't exist, create it. If it does exist,
+    # it means another job is already handling the removal of data. Wait until the file has been deleted
+    # and then proceed to next section of code.
+    synchronization_file = join(base_dir, 'synchronization_file')
 
-    # Remove the old processed folders
-    try:
-        for name in listdir(base_dir):
-            if 'processed_data_' in name:
-                rmtree(join(base_dir, name))
-    except Exception, e:
-        error = 'Failed to delete processed folders. Error was "{0}"'.format(str(e))
-        raise Exception(error)
+    if os.path.exists(synchronization_file):
+        # Block until file is gone
+        while True:
+            sleep(5)
+            if os.path.exists(synchronization_file):
+                break
+    else:
+        # Create the synchronization file
+        f = open(synchronization_file, 'w')
+
+        # Perform a delete operation of the old data
+        result = data_access.deleteAllAnalysis(study_id)
+        if result:
+            error = 'Failed to delete analysis results. Error was "{0}"'.format(result)
+            raise Exception(error)
+
+        # Remove the old processed folders
+        try:
+            for name in listdir(base_dir):
+                if 'processed_data_' in name:
+                    rmtree(join(base_dir, name))
+        except Exception, e:
+            error = 'Failed to delete processed folders. Error was "{0}"'.format(str(e))
+            raise Exception(error)
+
+        # Close and remove the file, allowing other blocked nodes to proceed
+        f.close()
+        remove(synchronization_file)
     
     # determine if platform is Titanium. If so, then convert_to_flx
     if sequencing_platform=='TITANIUM':
