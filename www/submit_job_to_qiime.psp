@@ -19,6 +19,7 @@ sess = Session.Session(req)
 study_id = int(sess['study_id'])
 user_id = int(sess['web_app_user_id'])
 mapping_file_dir = sess['mapping_file_dir']
+study_dir = sess['study_dir']
 
 process_only = str(form['process_only'])
 submit_to_test_db = str(form['submit_to_test_db'])
