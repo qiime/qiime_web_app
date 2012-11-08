@@ -24,14 +24,14 @@ process_only = str(form['process_only'])
 submit_to_test_db = str(form['submit_to_test_db'])
 # Submit the jobs
 try:
-	# First, remove the synchronization_file if it exists. This file prevents multiple nodes
-	# from attempting to remove database and filesystem data at the same time. However if something
-	# goes wrong the file could still exist. This code ensures that we start from a clean slate.
-	synchronization_file = join(study_dir, 'synchronization_file')
-	if exists(synchronization_file):
-		remove(synchronization_file)
+    # First, remove the synchronization_file if it exists. This file prevents multiple nodes
+    # from attempting to remove database and filesystem data at the same time. However if something
+    # goes wrong the file could still exist. This code ensures that we start from a clean slate.
+    synchronization_file = join(study_dir, 'synchronization_file')
+    if exists(synchronization_file):
+        remove(synchronization_file)
 
-	# Submit the jobs
+    # Submit the jobs
     submitJobsToQiime(study_id, user_id, mapping_file_dir, process_only, submit_to_test_db)
     # Redirect to the home page for this study
     psp.redirect('fusebox.psp?page=select_study_task.psp')
