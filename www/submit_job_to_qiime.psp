@@ -11,7 +11,7 @@ __status__ = "Development"
 
 <%
 from submit_job_to_qiime import submitJobsToQiime
-from os.path import exists
+from os.path import exists, join
 from os import remove
 
 # Gather necessary values to create a new queue job
