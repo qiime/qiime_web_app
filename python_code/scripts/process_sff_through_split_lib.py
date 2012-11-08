@@ -127,11 +127,11 @@ def main():
     # and then proceed to next section of code.
     synchronization_file = join(base_dir, 'synchronization_file')
 
-    if os.path.exists(synchronization_file):
+    if exists(synchronization_file):
         # Block until file is gone
         while True:
             sleep(5)
-            if os.path.exists(synchronization_file):
+            if exists(synchronization_file):
                 break
     else:
         # Create the synchronization file
