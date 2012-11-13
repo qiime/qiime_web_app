@@ -122,20 +122,24 @@ def main():
         data_access = data_access_factory(DataAccessType.qiime_test)
 
     
-    # Check for existence of synchronization file. If this file doesn't exist, create it. If it does exist,
-    # it means another job is already handling the removal of data. Wait until the file has been deleted
-    # and then proceed to next section of code.
-    synchronization_file = join(base_dir, 'synchronization_file')
+    # Check to see if cleanup_in_progress file exists. If so, wait until that process has
+    # written the cleanup_complete file. This should guarantee that only one process ever
+    # runs this section of code no matter how many jobs are created. The rest will block
+    # until the one job completes its delete process.
+    cleanup_in_progress = join(base_dir, '_cleanup_in_progress')
+    cleanup_complete = join(base_dir, '_cleanup_complete')
 
-    if exists(synchronization_file):
+    if exists(cleanup_in_progress):
         # Block until file is gone
         while True:
-            sleep(5)
-            if exists(synchronization_file):
+            if exists(cleanup_complete):
                 break
+            sleep(5)
+                
     else:
-        # Create the synchronization file
-        f = open(synchronization_file, 'w')
+        # Create the cleanup in progress file
+        f = open(cleanup_in_progress, 'w')
+        f.close()
 
         # Perform a delete operation of the old data
         result = data_access.deleteAllAnalysis(study_id)
@@ -152,9 +156,9 @@ def main():
             error = 'Failed to delete processed folders. Error was "{0}"'.format(str(e))
             raise Exception(error)
 
-        # Close and remove the file, allowing other blocked nodes to proceed
+        # Create the cleanup complete
+        f = open(cleanup_complete, 'w')
         f.close()
-        remove(synchronization_file)
     
     # determine if platform is Titanium. If so, then convert_to_flx
     if sequencing_platform=='TITANIUM':
