@@ -22,8 +22,8 @@ mapping_file_dir = sess['mapping_file_dir']
 study_dir = sess['study_dir']
 process_only = str(form['process_only'])
 submit_to_test_db = str(form['submit_to_test_db'])
-cleanup_in_progress = join(base_dir, '_cleanup_in_progress')
-cleanup_complete = join(base_dir, '_cleanup_complete')
+cleanup_in_progress = join(study_dir, '_cleanup_in_progress')
+cleanup_complete = join(study_dir, '_cleanup_complete')
 
 try:
     # Clean up the synchronization files before submitting 
