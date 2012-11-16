@@ -18,7 +18,7 @@ for column_name, table_name in results:
     upper_column_name = '"{0}"'.format(column_name)
     t = (table_name, upper_column_name)
     if t not in actual_tabs_cols:
-        query = "select table_name from all_tab_columns where upper(column_name) = '{0}'".format(column_name.upper())
+        query = "select table_name from all_tab_columns where upper(column_name) = '{0}' and owner = 'QIIME_METADATA'".format(column_name.upper())
         results = data_access.dynamicMetadataSelect(query).fetchall()
         # More than one is a problemo.. handle manually
         if len(results) > 1:
@@ -28,13 +28,11 @@ for column_name, table_name in results:
             correct_table_name = results[0][0]
             print correct_table_name 
             # Since there's only one possible correct table, fix it here.
-            query = """update study_actual_columns set table_name = '"{0}"' where upper(column_name) = '{1}' and table_name = '"{2}"'""".format(correct_table_name, column_name, table_name)
+            query = """update study_actual_columns set table_name = '"{0}"' where upper(column_name) = '{1}' and table_name = '{2}'""".format(correct_table_name, column_name, table_name)
             print query
             con = data_access.getMetadataDatabaseConnection()
             con.cursor().execute(query)
             con.cursor().execute('commit')
+            print 'Updated'
 
 # Done
-        
-
-
