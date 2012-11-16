@@ -33,7 +33,7 @@ for column_name, table_name in results:
             con = data_access.getMetadataDatabaseConnection()
             con.cursor().execute(query)
             con.cursor().execute('commit')
-            print 'Updated'
+            print 'Updated' 
 
 # Done
         
