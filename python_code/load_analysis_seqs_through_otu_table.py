@@ -219,7 +219,6 @@ def load_split_lib_sequences(data_access,input_dir,analysis_id, seq_run_id,
     # read in the workflow log file and determine timestamp and svn version of
     # Qiime used for the analysis
     svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
-    qiime_revision=get_qiime_svn_version()
     run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")
     print run_date
     
@@ -365,7 +364,6 @@ def load_otu_mapping(data_access, input_dir, analysis_id):
     # define values for otu_picking_run table
     otu_run_set_id = 0
     svn_version = '1418' # This is temporarily defined, however will use script to dtermine this value
-    qiime_revision=get_qiime_svn_version()
     run_date=datetime.now().strftime("%d/%m/%Y/%H/%M/%S")    
     pick_otus_map = join(input_dir, 'gg_97_otus', 'exact_uclust_ref_otus.txt')
     
@@ -462,17 +460,6 @@ def zip_files(filepath1,filepath2,directory,location):
     print 'zip command is: %s' % cmd_call
     system(cmd_call)
     return cmd_call
-
-def get_qiime_svn_version():
-    """Get qiime svn version"""
-    
-    qiime_dir=get_qiime_scripts_dir()
-    cmd_call='svn info %s | egrep "Revision: "' % (qiime_dir)
-    #print 'svn command is: %s' % cmd_call
-    output = popen('svn info %s | egrep "Revision: "' % (qiime_dir)).read()
-    revision=output.replace("Revision: ","")
-
-    return revision
 
 def check_cat():
     """Raise error if cat is not in $PATH """
