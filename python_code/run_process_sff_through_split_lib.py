@@ -469,17 +469,6 @@ def zip_files(filepath1,filepath2,directory,location):
     system(cmd_call)
     return cmd_call
 
-def get_qiime_svn_version():
-    """Get qiime svn version"""
-    
-    qiime_dir=get_qiime_scripts_dir()
-    cmd_call='svn info %s | egrep "Revision: "' % (qiime_dir)
-    #print 'svn command is: %s' % cmd_call
-    output = popen('svn info %s | egrep "Revision: "' % (qiime_dir)).read()
-    revision=output.replace("Revision: ","")
-
-    return revision
-
 def check_cat():
     """Raise error if cat is not in $PATH """
     
