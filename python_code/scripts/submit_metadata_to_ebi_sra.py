@@ -83,7 +83,7 @@ def main():
     else:
         print 'INVALID'
         print curl_result
-        PRINT 'FAILED'
+        print 'FAILED'
 
 
 if __name__ == "__main__":
