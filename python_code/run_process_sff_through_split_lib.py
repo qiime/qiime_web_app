@@ -297,8 +297,8 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     
     # build the per-sample fastq command
     input_qual_fp=join(split_library_output,'seqs.qual')
-    create_fastq_cmd = '%s %s/projects/Qiime/qiime_web_app/python_code/scripts/make_per_sample_fastq.py -i %s -q %s -o %s' % \
-    (python_exe_fp, environ['HOME'], input_fp, input_qual_fp, fastq_output)
+    create_fastq_cmd = '%s %s/make_per_sample_fastq.py -i %s -q %s -o %s' % \
+    (python_exe_fp, script_dir, input_fp, input_qual_fp, fastq_output)
     
     """
     # TURN ON when convert_fastaqual_fastq can handle Illumina qual file
