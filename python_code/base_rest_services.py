@@ -117,6 +117,7 @@ class RestDataHelper(object):
         self.study_id = study_id
         self.web_app_user_id = web_app_user_id
         self.invalid_values = set(['', ' ', None, 'None'])
+        self.required_columns = set(['library_construction_protocol', 'experiment_design_description', 'taxon_id', 'description'])
         self.study_info = None
         self.logger = logger
         
@@ -218,8 +219,17 @@ class RestDataHelper(object):
                 for idx, column_value in enumerate(results):
                     column_name = column_list[idx]
                     if column_value in self.invalid_values:
-                        self.logger.log_entry('Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value)))
-                        continue
+                        # If the column name is required, give it a default value. Required
+                        # columns are those that are explicitly referenced in the XML
+                        # generation code.
+                        if column_name in self.required_columns:
+                            if column_name == 'taxon_id':
+                                column_value = '0'
+                            else:
+                                column_value = ''
+                        else:
+                            self.logger.log_entry('Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value)))
+                            continue
                     
                     sample_dict[column_name] = column_value
                 
@@ -255,9 +265,11 @@ class RestDataHelper(object):
                         column_name = column_list[idx]
                         self.logger.log_entry('idx: {0}, column: {1}, value: {2}'.format(idx, column_name, column_value))
                         if column_value in self.invalid_values:
-                            self.logger.log_entry('Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value)))
-                            continue
-                            self.logger.log_entry('valid column is {0}: {1}'.format(column_name, column_value))
+                            if column_name in self.required_columns:
+                                column_value = ''
+                            else:
+                                self.logger.log_entry('Skipping non-value for column %s in table %s for sample %s (value is: "%s")' % (column_name, table_name, sample_id, str(column_value)))
+                                continue
                         prep_dict[column_name] = column_value
                     
                 # Add this prep dict to the sample's collection
