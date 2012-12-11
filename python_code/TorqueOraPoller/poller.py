@@ -209,6 +209,7 @@ class Poller(Daemon):
         output = getoutput(QSTAT_NORMAL % self.username)
         poll_result = self.parseQstat(output)
         completed_job_ids = []
+        job_notes = ''
         
         state_feedback = [(ej, 'ERROR_STARTING', "") for ej in err_jobs]
         for pbs_id, job in self.Jobs.items():
