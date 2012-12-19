@@ -15,6 +15,7 @@ __status__ = "Development"
 import cx_Oracle
 from qiime_data_access import QiimeDataAccess
 from enums import ServerConfig,DataAccessType
+from credentials import Credentials
 
 def data_access_factory(data_access_type):
     """
@@ -117,13 +118,13 @@ class QiimeDataAccessConnections(AbstractDataAccessConnections):
         super(QiimeDataAccessConnections, self).__init__()
         
         # Now define the actual connection strings
-        self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@thebeast.colorado.edu/thebeast'
-        self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@thebeast.colorado.edu/thebeast'
-        self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@thebeast.colorado.edu/thebeast'
+        self._metadataDatabaseConnectionString = Credentials.liveMetadataDatabaseConnectionString
+        self._ontologyDatabaseConnectionString = Credentials.liveOntologyDatabaseConnectionString
+        self._SFFDatabaseConnectionString = Credentials.liveSFFDatabaseConnectionString
 
 class TestDataAccessConnections(AbstractDataAccessConnections):
     """
-    The live implementation of the data access connections
+    The test implementation of the data access connections
 
     This class implements the abstract methods of the partent class for the live environment
     """
@@ -137,6 +138,6 @@ class TestDataAccessConnections(AbstractDataAccessConnections):
         super(TestDataAccessConnections, self).__init__()
         
         # Now define the actual connection strings
-        self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@webdev.microbio.me:1521/dbdev'
-        self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@webdev.microbio.me:1521/dbdev'
-        self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@webdev.microbio.me:1521/dbdev'
+        self._metadataDatabaseConnectionString = Credentials.testMetadataDatabaseConnectionString
+        self._ontologyDatabaseConnectionString = Credentials.testOntologyDatabaseConnectionString
+        self._SFFDatabaseConnectionString = Credentials.testSFFDatabaseConnectionString
