@@ -137,6 +137,6 @@ class TestDataAccessConnections(AbstractDataAccessConnections):
         super(TestDataAccessConnections, self).__init__()
         
         # Now define the actual connection strings
-        self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@webdev.microbio.me:1521/dbdev'
-        self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@webdev.microbio.me:1521/dbdev'
-        self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@webdev.microbio.me:1521/dbdev'
+        self._metadataDatabaseConnectionString = 'qiime_metadata/m_t_d_t_@quarterbarrel.microbio.me:1521/qiimedb'
+        self._ontologyDatabaseConnectionString = 'ontologies/odyssey$@thebeast.colorado.edu/thebeast'
+        self._SFFDatabaseConnectionString = 'SFF/SFF454SFF@quarterbarrel.microbio.me:1521/qiimedb'
