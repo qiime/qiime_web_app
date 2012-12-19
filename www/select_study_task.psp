@@ -34,7 +34,13 @@ mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
 ebi_study_accession = study_info['ebi_study_accession']
 
-approved_qiime_submitters = [12428,12169,12171,12768,12782]
+approved_qiime_submitters = [12428,12169,12171,12768,12782,12979]
+
+if sess["form"].has_key("message"):
+    validate_message = sess["form"]["message"]
+else:
+    validate_message = ""
+# de-indent
 %>
 
     <h3>Selected Study: <%=study_name%></h3>
@@ -195,6 +201,11 @@ if portal_type in ['qiime', 'emp']:
             Submitted Qiime Jobs:
             <br/>
             <ul>
+                <div id="validate_status_div">
+                    <%=validate_message%>
+                </div>
+            </ul>
+            <ul>
                 <div id="qiime_status_div">
                     Checking status...
                 </div>
@@ -226,6 +237,9 @@ if portal_type in ['qiime', 'emp']:
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
             </li>
+            <div id="validate_status_div">
+                <%=validate_message%>
+            </div>
 <%
         # De-indent
 
