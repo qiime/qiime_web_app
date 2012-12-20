@@ -14,6 +14,21 @@ import os
 from enums import ServerConfig
 from data_access_connections import data_access_factory
 
+
+def validateFileExistence(study_id, study_dir):
+    '''
+    check the existence of sequence files in the filesystem 
+    for each sequence filename in the database.
+    '''
+    data_access = data_access_factory(ServerConfig.data_access_type)
+    absence_list = []
+    for filename in data_access.getSFFFiles(study_id):
+        filename  = os.path.basename(filename)
+        file_list = os.listdir(study_dir)
+        if not filename in file_list:
+            absence_list.append(filename)
+    return absence_list
+
 def validateRunPrefix(study_id):
     '''
     Check every run prefix has a sequence file. It is case insensitive.
