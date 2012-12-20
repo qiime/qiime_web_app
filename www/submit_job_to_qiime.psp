@@ -10,11 +10,11 @@ __status__ = "Development"
 %>
 
 <%
-from validate_submission import validateRunPrefix
+from validate_submission import validateRunPrefix, validateFileExistence
 from submit_job_to_qiime import submitJobsToQiime
 from os.path import exists, join
 from os import remove
-
+import sys
 # Gather necessary values to create a new queue job
 sess = Session.Session(req)
 study_id = int(sess['study_id'])
@@ -26,56 +26,73 @@ submit_to_test_db = str(form['submit_to_test_db'])
 cleanup_in_progress = join(study_dir, '_cleanup_in_progress')
 cleanup_complete = join(study_dir, '_cleanup_complete')
 
-valid = validateRunPrefix(study_id)
 
-if valid is False:
-    message = "None of the run prefix values are valid."
-%>
-    <form id="redirect" action="fusebox.psp" method="post">
-        <input type="hidden" name="page" id="page" value="select_study_task.psp">
-        <input type="hidden" name="message" id="message" value="<%=message%>">
+def redirectPage(page_name, form_var_dict):
+    req.write("""
+    <form id="redirect" action="%s" method="post">
+    """ % page_name)
+    for form_var in form_var_dict:
+        req.write("""
+        <input type="hidden" name="%s" id="%s" value="%s">
+        """ % (form_var, form_var, form_var_dict[form_var]))
+    req.write("""
     </form>
-    
     <script>
         document.forms['redirect'].submit()
     </script>
-<%
-elif len(valid):
-    message = "The following run prefixes are invalid: "
-    message += ", ".join(valid)
-%>
-    <form id="redirect" action="fusebox.psp" method="post">
-        <input type="hidden" name="page" id="page" value="select_study_task.psp">
-        <input type="hidden" name="message" id="message" value="<%=message%>">
-    </form>
-    
-    <script>
-        document.forms['redirect'].submit()
-    </script>
-<%
-else:
-    message = "All run prefixes are valid."
-    try:
-        # Clean up the synchronization files before submitting 
-        if exists(cleanup_in_progress):
-            remove(cleanup_in_progress)
-        if exists(cleanup_complete):
-            remove(cleanup_complete)
-    
-        # Submit the jobs
-        submitJobsToQiime(study_id, user_id, mapping_file_dir, process_only, submit_to_test_db)
-        # Redirect to the home page for this study
-%>
-        <form id="redirect" action="fusebox.psp" method="post">
-            <input type="hidden" name="page" id="page" value="select_study_task.psp">
-            <input type="hidden" name="message" id="message" value="<%=message%>">
-        </form>
+    """)
+
+def validate():
+    message = ""
+
+    # check the sequence file existence
+    absence = validateFileExistence(study_id, study_dir)
+    if len(absence):
+        message += "The following files do not exist: "
+        message += ", ".join(absence) + '.<br/>'
+        redirectPage("fusebox.psp", \
+                         {"page":"select_study_task.psp",
+                          "message":message})
+        return 1
+    else:
+        message += "All sequence files exist.<br/>"
+
+
+    # check run prefixes
+    valid = validateRunPrefix(study_id)
+    if valid is False:
+        message += "None of the run prefix values are valid.<br/>"
+        redirectPage("fusebox.psp", \
+                         {"page":"select_study_task.psp",
+                          "message":message})
+        return 1
+    elif len(valid):
+        message += "The following run prefixes are invalid: "
+        message += ", ".join(valid) + '.<br/>'
+        redirectPage("fusebox.psp", \
+                         {"page":"select_study_task.psp",
+                          "message":message})
+        return 1
+    else:
+        message += "All run prefixes are valid.<br/>"
+        try:
+            # Clean up the synchronization files before submitting 
+            if exists(cleanup_in_progress):
+                remove(cleanup_in_progress)
+            if exists(cleanup_complete):
+                remove(cleanup_complete)
         
-        <script>
-            document.forms['redirect'].submit()
-        </script>
-<%
-    except Exception, e:
-        req.write(str(e))
+            # Submit the jobs
+            submitJobsToQiime(study_id, user_id, mapping_file_dir, process_only, submit_to_test_db)
+    
+            redirectPage("fusebox.psp", \
+                             {"page":"select_study_task.psp",
+                              "message":message})
+        except Exception, e:
+            req.write(str(e))
+            return 1
+    return 0
+
+validate()
 # de-indent
 %>
