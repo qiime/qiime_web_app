@@ -2797,6 +2797,24 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
 
+    def getRunPrefixes(self, study_id):
+        """ get the run prefixes for the study
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            run_prefixes = []
+            results = con.cursor()
+            con.cursor().callproc('GET_RUN_PREFIXES', \
+                                      [study_id, results])
+            for row in results:
+                if row[0] == None:
+                    continue
+                run_prefixes.append(row[0])
+            return run_prefixes
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
+            return []
+
     def getMetaAnalysisNames(self,web_app_user_id):
         """ Returns a list of meta-analysis names
         """
