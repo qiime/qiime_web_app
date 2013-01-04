@@ -12,6 +12,15 @@ __status__ = "Production"
 <!--<script src="http://code.jquery.com/jquery-latest.js"></script>-->
 <script type="text/javascript" src="js/jobs.js"></script>
 <script type="text/javascript" src="js/study_search.js"></script>
+<script>
+function reprocessStudy() {
+    var to_delete=confirm('Reprocessing will clear the jobs first. Are you sure to continue?');
+    if(to_delete) {
+        document.getElementById('qiime_status_div').innerHTML='';
+        document.forms['reprocess_study'].submit();
+    }
+}
+</script>
 
 <%
 
@@ -39,7 +48,7 @@ approved_qiime_submitters = [12428,12169,12171,12768,12782,12979]
 if sess["form"].has_key("message"):
     validate_message = sess["form"]["message"]
 else:
-    validate_message = ""
+    validate_message = "All sequence files exist. <br> All run prefixes are valid."
 # de-indent
 %>
 
@@ -198,7 +207,15 @@ if portal_type in ['qiime', 'emp']:
         # indent
 %>
             <li>
-            Submitted Qiime Jobs:
+            <form id="reprocess_study" action="reprocess_study.psp" method="post">
+                <a href="" onclick="reprocessStudy(); return false;">
+                Reprocess Study
+                </a>
+            </form>
+            </li>
+
+            <li>
+            Submitted Qiime Jobs
             <br/>
             <ul>
                 <div id="validate_status_div">
@@ -261,7 +278,15 @@ if portal_type in ['qiime', 'emp']:
             # indent
 %>
             <li>
-            Queued Data to Load:
+            Queued Data to Load
+<%
+            if 'QIIME_HOLD' in [job['job_state_name'] for job in jobs2]:
+                # indent
+%>
+                <a href="update_job_status.psp?job_type_id=12">(submit all jobs)</a> :
+<%
+            # end if: de-indent
+%>
             <ul>
                 <div id="qiime_load_status_div">
                     Checking status...
