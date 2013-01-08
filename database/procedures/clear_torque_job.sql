@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure CLEAR_TORQUE_JOB
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."CLEAR_TORQUE_JOB" 
+create or replace 
+PROCEDURE "CLEAR_TORQUE_JOB" 
 (
   job_id_ in int
 )

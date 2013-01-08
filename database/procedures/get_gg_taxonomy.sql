@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_GG_TAXONOMY
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_GG_TAXONOMY" 
+create or replace 
+PROCEDURE "GET_GG_TAXONOMY" 
 (
   prok IN VARCHAR2,
   tax_name IN VARCHAR2,
@@ -13,8 +8,8 @@ set define off;
 as 
 begin
 open results for
-    SELECT taxonomy_str FROM gg_plus_denovo_taxonomy
-    where (reference_id=prok and taxonomy_name=tax_name);
+    SELECT taxonomy_str FROM greengenes_taxonomy
+    where (prokmsa_id=prok and taxonomy_name=tax_name);
 
 END GET_GG_TAXONOMY;
 

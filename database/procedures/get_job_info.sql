@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_JOB_INFO
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_JOB_INFO" 
+create or replace 
+PROCEDURE "GET_JOB_INFO" 
 (
   study_id_ in integer,
   job_type_id_ in integer,

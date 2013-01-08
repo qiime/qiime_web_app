@@ -1,9 +1,5 @@
---------------------------------------------------------
---  DDL for Procedure CHECK_IF_STUDY_ID_EXISTS
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."CHECK_IF_STUDY_ID_EXISTS" 
+create or replace 
+PROCEDURE "CHECK_IF_STUDY_ID_EXISTS" 
 (
   metadata_study_id IN NUMBER,
   study_id_cnt OUT NUMBER

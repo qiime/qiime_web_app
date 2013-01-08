@@ -1,9 +1,5 @@
---------------------------------------------------------
---  DDL for Procedure CREATE_ANALYSIS
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."CREATE_ANALYSIS" 
+create or replace 
+PROCEDURE "CREATE_ANALYSIS" 
 /* This procedure creates a row in the ANALYSIS table, which is the table
 that links all the information for a given study analyzed. */
 (

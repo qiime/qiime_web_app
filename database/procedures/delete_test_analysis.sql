@@ -1,4 +1,4 @@
-create or replace
+create or replace 
 PROCEDURE "DELETE_TEST_ANALYSIS" 
 /* This procedure deletes the test data from the DB. */
 (
@@ -22,17 +22,17 @@ begin
     where j.analysis_id = test_analysis_id;
 
     -- delete the appropriate rows from the DB
-    delete from split_library_read_map where split_library_run_id = split_lib_run_id;
     delete from otu_picking_failures where otu_picking_run_id = otu_run_id;
     delete from otu_picking_run where otu_picking_run_id = otu_run_id;
     delete from otu_run_set where otu_run_set_id = otu_set_id;
     delete from otu_table where otu_run_set_id = otu_set_id;
     delete from split_library_read_map where split_library_run_id = split_lib_run_id;
-    delete from split_library_run where split_library_run_id = split_lib_run_id;
     delete from analysis where analysis_id = test_analysis_id;
+    delete from split_library_run where split_library_run_id = split_lib_run_id;
 
     error_flag:=0;
   END;
+  
   commit;
 end delete_test_analysis;
 

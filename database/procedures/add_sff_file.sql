@@ -1,12 +1,5 @@
---------------------------------------------------------
---  File created - Monday-April-18-2011   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Procedure ADD_SFF_FILE
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."ADD_SFF_FILE" 
+create or replace 
+PROCEDURE "ADD_SFF_FILE" 
 /* This procedure adds the SFF file information into the SFF_FILE table */
 (
   -- define the input fields for this procedure
@@ -50,6 +43,3 @@ variable sff_file_id NUMBER;
 execute add_sff_file('test.sff',4,10,4,10,'GS FLX','TEST','TCAG','314f4000857668d45a413d2e94a755fc',:sff_file_id);
 print sff_file_id;
 */
-
-/
-

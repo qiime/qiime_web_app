@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_SEQ_RUN_ID_USING_MD5
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_SEQ_RUN_ID_USING_MD5" 
+create or replace 
+PROCEDURE "GET_SEQ_RUN_ID_USING_MD5" 
 /* 
 This procedure returns a sequence run id given the md5_checksum of the SFF.
 */
