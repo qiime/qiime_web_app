@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_QIIME_SFF_SAMPLES_COUNT
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_QIIME_SFF_SAMPLES_COUNT" 
+create or replace 
+PROCEDURE "GET_QIIME_SFF_SAMPLES_COUNT" 
 (
   sample_name_ in VARCHAR2,
   results in out number

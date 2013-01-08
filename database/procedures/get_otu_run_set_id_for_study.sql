@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_OTU_RUN_SET_ID_FOR_STUDY
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_OTU_RUN_SET_ID_FOR_STUDY" 
+create or replace 
+PROCEDURE "GET_OTU_RUN_SET_ID_FOR_STUDY" 
 (
   metadata_study_id IN NUMBER,
   otu_pm_name IN VARCHAR2,

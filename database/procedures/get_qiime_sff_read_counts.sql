@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_QIIME_SFF_READ_COUNTS
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_QIIME_SFF_READ_COUNTS" 
+create or replace 
+PROCEDURE "GET_QIIME_SFF_READ_COUNTS" 
 (
   seq_run_id_id_ in integer,
   results in out types.ref_cursor

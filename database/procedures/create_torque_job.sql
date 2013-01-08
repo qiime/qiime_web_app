@@ -1,9 +1,5 @@
---------------------------------------------------------
---  DDL for Procedure CREATE_TORQUE_JOB
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."CREATE_TORQUE_JOB" 
+create or replace 
+PROCEDURE "CREATE_TORQUE_JOB" 
 (
   job_type_ IN varchar2,
   job_input_ IN varchar2,
