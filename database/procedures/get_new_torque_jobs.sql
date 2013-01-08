@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_NEW_TORQUE_JOBS
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_NEW_TORQUE_JOBS" (
+create or replace 
+PROCEDURE "GET_NEW_TORQUE_JOBS" (
   jobs_cursor OUT types.ref_cursor)AS 
 BEGIN
   open jobs_cursor for

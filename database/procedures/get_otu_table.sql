@@ -1,4 +1,4 @@
-create or replace
+create or replace 
 PROCEDURE       "GET_OTU_TABLE" 
 (
   sample_ids IN VARCHAR2,
