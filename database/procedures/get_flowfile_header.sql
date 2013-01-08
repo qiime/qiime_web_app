@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_FLOWFILE_HEADER
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_FLOWFILE_HEADER" 
+create or replace 
+PROCEDURE "GET_FLOWFILE_HEADER" 
 (
   seq_runid IN NUMBER,
   header_cur OUT types.ref_cursor

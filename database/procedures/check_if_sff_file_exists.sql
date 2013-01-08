@@ -1,12 +1,5 @@
---------------------------------------------------------
---  File created - Monday-April-18-2011   
---------------------------------------------------------
---------------------------------------------------------
---  DDL for Procedure CHECK_IF_SFF_FILE_EXISTS
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."CHECK_IF_SFF_FILE_EXISTS" 
+create or replace 
+PROCEDURE "CHECK_IF_SFF_FILE_EXISTS" 
 /* This procedure checks if the sff file is already in the db */
 (
   -- define the variables passed into this procedure

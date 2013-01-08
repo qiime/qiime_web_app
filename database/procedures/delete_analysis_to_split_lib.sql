@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure DELETE_ANALYSIS_TO_SPLIT_LIB
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."DELETE_ANALYSIS_TO_SPLIT_LIB" 
+create or replace 
+PROCEDURE "DELETE_ANALYSIS_TO_SPLIT_LIB" 
 /* This procedure deletes the test data from the DB. */
 (
   -- define input/output fields for this procedure

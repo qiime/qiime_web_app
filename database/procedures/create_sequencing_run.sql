@@ -1,9 +1,5 @@
---------------------------------------------------------
---  DDL for Procedure CREATE_SEQUENCING_RUN
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."CREATE_SEQUENCING_RUN" 
+create or replace 
+PROCEDURE "CREATE_SEQUENCING_RUN" 
 /* This procedure creates a sequencing run in the SEQUENCING_RUN table. */
 (
   -- define the input/output fields to this procedure.

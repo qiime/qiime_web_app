@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_BETA_DIV_DISTANCE
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_BETA_DIV_DISTANCE" 
+create or replace 
+PROCEDURE "GET_BETA_DIV_DISTANCE" 
 (
   beta_samp1 IN VARCHAR2,
   beta_samp2 IN VARCHAR2,

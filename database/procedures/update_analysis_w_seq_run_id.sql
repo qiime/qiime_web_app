@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure UPDATE_ANALYSIS_W_SEQ_RUN_ID
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."UPDATE_ANALYSIS_W_SEQ_RUN_ID" 
+create or replace 
+PROCEDURE "UPDATE_ANALYSIS_W_SEQ_RUN_ID" 
 /* This procedure appends the ANALYSIS table with the new sequence run id. */
 (
   -- define the input to this procedure

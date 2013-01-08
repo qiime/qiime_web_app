@@ -1,9 +1,5 @@
---------------------------------------------------------
---  DDL for Procedure GET_FLOWFILE
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_FLOWFILE" 
+create or replace 
+PROCEDURE "GET_FLOWFILE" 
 (
   seq_runid IN NUMBER,
   read454_data OUT types.ref_cursor

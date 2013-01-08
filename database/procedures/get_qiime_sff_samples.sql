@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure GET_QIIME_SFF_SAMPLES
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."GET_QIIME_SFF_SAMPLES" 
+create or replace 
+PROCEDURE "GET_QIIME_SFF_SAMPLES" 
 (
   study_id_ in integer,
   seq_run_id_ in integer,

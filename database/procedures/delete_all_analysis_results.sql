@@ -1,10 +1,10 @@
-
-create or replace procedure delete_all_analysis_results
+create or replace 
+procedure delete_all_analysis_results
 (
   study_id_ IN NUMBER,
   error_flag OUT NUMBER
 ) 
-as
+as 
 begin
 
   -- delete the appropriate rows from the DB
@@ -53,32 +53,33 @@ begin
             where   study_id = study_id_
           );
 
-  delete from tmp_id_table;
-  
-  insert  into tmp_id_table (ident)
-  select  split_library_run_id
-  from    analysis
-  where   study_id = study_id_;
-
   delete 
   from    analysis 
-  where   study_id = study_id_;
-
+  where   analysis_id in 
+          (
+            select  analysis_id
+            from    analysis
+            where   study_id = study_id_
+          );
+  
   delete 
   from    split_library_run 
   where   split_library_run_id in 
           (
-            select  ident
-            from    tmp_id_table
+            select  split_library_run_id
+            from    analysis
+            where   study_id = study_id_
           );
+  
   
   error_flag := 0;
   commit;
+
   
 end;
 
 /*
 variable error_flag NUMBER;
-execute delete_test_analysis(22,:error_flag);
+execute delete_all_analysis_results(22,:error_flag);
 print error_flag;
 */

@@ -1,3 +1,5 @@
+from string import strip
+
 def MinimalConvertedFastqFastaParser(infile):
     """ Internal function for yielding 2 lines of file at a time 
 
@@ -12,9 +14,9 @@ def MinimalConvertedFastqFastaParser(infile):
         strip(line)
         # First row of pair is always the label
         if count == 0:
-            label = line[1:]
+            label = line[1:].strip()
             count += 1
         elif count == 1:
-            seq = line
+            seq = line.strip()
             count = 0
             yield label, seq

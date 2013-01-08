@@ -1,10 +1,5 @@
-
---------------------------------------------------------
---  DDL for Procedure REGISTER_SPLIT_LIBRARY_RUN
---------------------------------------------------------
-set define off;
-
-  CREATE OR REPLACE PROCEDURE "SFF"."REGISTER_SPLIT_LIBRARY_RUN" 
+create or replace 
+PROCEDURE "REGISTER_SPLIT_LIBRARY_RUN" 
 /* 
 This procedure loads the information related to the QIIME split-library run 
 and will most likely be replaced in future releases.
