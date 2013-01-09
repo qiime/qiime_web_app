@@ -35,6 +35,38 @@ function GetXmlHttpObject()
     return null;
 }
 
+function submitAllJobs()
+{
+    // check if browser can perform xmlhttp
+    xmlhttp = GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+
+    var span_name ="submit_all_span";
+    var url = "load_study.psp";
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            try
+            {
+                document.getElementById(span_name).innerHTML = xmlhttp.responseText;
+            }
+            catch(e)
+            {
+                // Do nothing
+            }
+        }
+    }
+    // perform a GET
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send(null);
+}
+
 function checkQiimeJobLoadStatus()
 {
     // check if browser can perform xmlhttp
@@ -254,5 +286,5 @@ function checkAllStudyJobs()
     setTimeout(checkQiimeJobStatus, 0);
     setTimeout(checkQiimeJobLoadStatus, 1000);
     setTimeout(checkEBISRAJobStatus, 2000);
+    setTimeout(submitAllJobs, 3000);
 }
-

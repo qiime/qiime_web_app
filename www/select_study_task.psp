@@ -45,11 +45,6 @@ ebi_study_accession = study_info['ebi_study_accession']
 
 approved_qiime_submitters = [12428,12169,12171,12768,12782,12979]
 
-if sess["form"].has_key("message"):
-    validate_message = sess["form"]["message"]
-else:
-    validate_message = "All sequence files exist. <br> All run prefixes are valid."
-# de-indent
 %>
 
     <h3>Selected Study: <%=study_name%></h3>
@@ -204,6 +199,10 @@ else:
 if portal_type in ['qiime', 'emp']:
     jobs = data_access.getJobInfo(study_id, 3)
     if len(jobs) > 0:
+        if sess["form"].has_key("message"):
+            validate_message = sess["form"]["message"]
+        else:
+            validate_message = "All sequence files exist. <br/> All run prefixes are valid."
         # indent
 %>
             <li>
@@ -231,7 +230,11 @@ if portal_type in ['qiime', 'emp']:
             <br/>
 <%
     elif metadata_complete == 'y' and sff_complete == 'y' and web_app_user_id in approved_qiime_submitters:
-        # Indent
+        if sess["form"].has_key("message"):
+            validate_message = sess["form"]["message"]
+        else:
+            validate_message = ""
+        # indent
 %>
             <!--
             <li>
@@ -253,10 +256,13 @@ if portal_type in ['qiime', 'emp']:
                 <!--Submit job to Qiime (currently disabled)-->
             <!-- <img src="img/cross-icon.png" style="width:20px; height:20px; vertical-align:middle;"/> -->
             </form>
+            <ul>
+                <div id="validate_status_div">
+                    <%=validate_message%>
+                </div>
+            </ul>
             </li>
-            <div id="validate_status_div">
-                <%=validate_message%>
-            </div>
+
 <%
         # De-indent
 
@@ -279,14 +285,7 @@ if portal_type in ['qiime', 'emp']:
 %>
             <li>
             Queued Data to Load
-<%
-            if 'QIIME_HOLD' in [job['job_state_name'] for job in jobs2]:
-                # indent
-%>
-                <a href="update_job_status.psp?job_type_id=12">(submit all jobs)</a> :
-<%
-            # end if: de-indent
-%>
+            <span id="submit_all_span"> </span>
             <ul>
                 <div id="qiime_load_status_div">
                     Checking status...

@@ -53,7 +53,7 @@ for jobid in job_type_ids:
         completed_status = 'COMPLETED_OKAY'
         display_text = 'not set'
 
-        display_text = 'Job %s: %s <br>' % (job['job_id'], job['job_state_name'])
+        display_text = 'Job %s: %s <br/>' % (job['job_id'], job['job_state_name'])
 
         req.write(display_text)
         if job['job_notes'] != None:

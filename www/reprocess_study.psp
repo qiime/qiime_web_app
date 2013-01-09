@@ -14,7 +14,7 @@ from clear_jobs import clearJobs
 sess = Session.Session(req)
 study_id = sess['study_id']
 
-clearJobs(study_id, ('3','12'))
+clearJobs(study_id, ('3','12','15'))
 
 %>
 <form id="submit_job_to_qiime3" action="submit_job_to_qiime.psp" method="post">
