@@ -13,7 +13,7 @@ __status__ = "Pre-release"
 
 from optparse import OptionParser
 from os.path import exists
-from os import remove, rename, rmdir, makedirs
+from os import remove, rename, rmdir, makedirs, environ
 from subprocess import Popen, PIPE, STDOUT
 
 from cogent.util.misc import app_path
@@ -128,11 +128,9 @@ def submit_jobs(filenames, verbose=False):
     if(not app_path("qsub")):
         raise ApplicationNotFoundError,"qsub not found. Can't submit jobs."
     
-    job_output_dir='/home/wwwuser/qiime_jobs'
+    job_output_dir='/home/%s/qiime_jobs' % environ['USER']
     for file in filenames:        
-        command = 'qsub -u wwwuser -e %s -o %s %s' % (job_output_dir,
-                                                      job_output_dir,
-                                                      file)
+        command = 'qsub -u %s -e %s -o %s %s' % (environ['USER'], job_output_dir, job_output_dir, file)
                                                       
         result = Popen(command, shell=True, universal_newlines=True,\
                            stdout=PIPE, stderr=STDOUT).stdout.read()
