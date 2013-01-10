@@ -13,6 +13,15 @@ html, body
 	font: 15px normal Arial, Helvetica, sans-serif;
 }
 
+.development
+{
+    margin: 0 auto;
+    color: #FFF;
+    background: #844;
+    padding: 0px 15px 0px 15px;
+    font: 15px normal Arial, Helvetica, sans-serif;
+}
+
 #header .login_disclaimer 
 {
 	color: #000;
