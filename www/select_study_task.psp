@@ -16,7 +16,6 @@ __status__ = "Production"
 function reprocessStudy() {
     var to_delete=confirm('Reprocessing will clear the jobs first. Are you sure to continue?');
     if(to_delete) {
-        document.getElementById('qiime_status_div').innerHTML='';
         document.forms['reprocess_study'].submit();
     }
 }
@@ -207,6 +206,7 @@ if portal_type in ['qiime', 'emp']:
 %>
             <li>
             <form id="reprocess_study" action="reprocess_study.psp" method="post">
+                <input type="hidden" name="study_type" id="study_type" value="STUDY">
                 <a href="" onclick="reprocessStudy(); return false;">
                 Reprocess Study
                 </a>

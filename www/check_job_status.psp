@@ -43,18 +43,14 @@ job_type_ids = form['job_type_id'].split(',')
 
 for jobid in job_type_ids:
     #req.write('<p/>looking up jobs<p/>')
-    jobs = data_access.getJobInfo(job_locator_id, jobid)
+    jobs = data_access.getJobInfo(job_locator_id, int(jobid))
     #req.write('<p/>jobs: %s<p/>' % str(jobs))
 
     if not jobs:
         continue
     for job in jobs:
         #req.write('<p>Job info: %s<p/>' % job)
-        completed_status = 'COMPLETED_OKAY'
-        display_text = 'not set'
-
         display_text = 'Job %s: %s <br/>' % (job['job_id'], job['job_state_name'])
-
         req.write(display_text)
         if job['job_notes'] != None:
             req.write('<br/>Output: ' + job['job_notes'])

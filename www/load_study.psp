@@ -24,7 +24,7 @@ jobs = data_access.getJobInfo(study_id, 12)
 
 for job in jobs:
     #req.write('<p>Job info: %s<p/>' % job)
-    if not job['job_state_name'] in ['COMPLETED_OKAY', 'QUEUED', 'NEW', 'RUNNING']:
+    if not job['job_state_name'] in ['COMPLETED_OKAY', 'COMPLETING', 'QUEUED', 'NEW', 'RUNNING']:
         all_completed_ok = False
         break
 
