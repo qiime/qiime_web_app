@@ -288,3 +288,10 @@ function checkAllStudyJobs()
     setTimeout(checkEBISRAJobStatus, 2000);
     setTimeout(submitAllJobs, 3000);
 }
+
+function confirmFormSubmission(confirm_message, form_name)
+{
+    var agree = confirm(confirm_message);
+    if (agree)
+        document.forms[form_name].submit();
+}

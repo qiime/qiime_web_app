@@ -30,13 +30,6 @@ data_access = data_access_factory(ServerConfig.data_access_type)
         var ele = document.getElementById(div_name);
         ele.style.display = "none";
     }
-
-    function performMetaAnalysis() {
-        var to_delete=confirm('This will clear the jobs first. Are you sure to continue?');
-        if(to_delete) {
-            document.forms['reprocess_meta_analysis'].submit();
-            }
-    }
 </script>
 
 <%
@@ -54,7 +47,7 @@ sess.save()
 
     <form id="reprocess_meta_analysis" action="reprocess_study.psp" method="post">
         <input type="hidden" name="study_type" id="study_type" value="META">
-        <a href="" onclick="performMetaAnalysis(); return false;">
+        <a href="" onclick="document.forms['reprocess_meta_analysis'].submit(); return false;">
         Perform Meta-Analysis</a>
     </form>
 </p>

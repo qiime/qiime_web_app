@@ -12,14 +12,6 @@ __status__ = "Production"
 <!--<script src="http://code.jquery.com/jquery-latest.js"></script>-->
 <script type="text/javascript" src="js/jobs.js"></script>
 <script type="text/javascript" src="js/study_search.js"></script>
-<script>
-function reprocessStudy() {
-    var to_delete=confirm('Reprocessing will clear the jobs first. Are you sure to continue?');
-    if(to_delete) {
-        document.forms['reprocess_study'].submit();
-    }
-}
-</script>
 
 <%
 
@@ -207,7 +199,7 @@ if portal_type in ['qiime', 'emp']:
             <li>
             <form id="reprocess_study" action="reprocess_study.psp" method="post">
                 <input type="hidden" name="study_type" id="study_type" value="STUDY">
-                <a href="" onclick="reprocessStudy(); return false;">
+                <a href="" onclick="confirmFormSubmission('Reprocessing will clear the jobs first. Are you sure to continue?', 'reprocess_study'); return false;">
                 Reprocess Study
                 </a>
             </form>
