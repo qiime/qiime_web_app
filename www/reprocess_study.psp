@@ -1,0 +1,37 @@
+<%
+__author__ = "Zhenjiang Xu"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Zhenjiang Xu"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Zhenjiang Xu"]
+__email__ = "zhenjiang.xu@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from clear_jobs import clearJobs
+sess = Session.Session(req)
+if form['study_type'] == "STUDY":
+    clearJobs(sess['study_id'], (3,12,15))
+    # indent
+%>
+    <form id="submit_job_to_qiime3" action="submit_job_to_qiime.psp" method="post">
+        <input type="hidden" name="process_only" id="process_only" value="True">
+        <input type="hidden" name="submit_to_test_db" id="submit_to_test_db" value="False">
+    </form>
+    <script>
+        document.forms['submit_job_to_qiime3'].submit();
+    </script>
+<%
+elif form['study_type'] == "META":
+    clearJobs(sess['meta_analysis_id'], (7,8,9,10,11,13))
+    # indent
+%>
+    <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
+        <input type="hidden" name="page" id="page" value="select_metadata/index.psp">
+    </form>
+    <script>
+        document.forms['create_inv_mapping_file'].submit();
+    </script>
+<%
