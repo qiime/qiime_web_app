@@ -45,9 +45,9 @@ sess.save()
 <p>
 <h3>Selected Meta-Analysis: <%=sess['meta_analysis_name']%></h3>
 
-    <form id="create_inv_mapping_file" action="fusebox.psp" method="post">
-        <input type="hidden" name="page" id="page" value="select_metadata/index.psp">
-        <a href="" onclick="document.forms['create_inv_mapping_file'].submit(); return false;">
+    <form id="reprocess_meta_analysis" action="reprocess_study.psp" method="post">
+        <input type="hidden" name="study_type" id="study_type" value="META">
+        <a href="" onclick="document.forms['reprocess_meta_analysis'].submit(); return false;">
         Perform Meta-Analysis</a>
     </form>
 </p>

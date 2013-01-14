@@ -17,18 +17,20 @@ from enums import ServerConfig
 from commands import getoutput
 import re
 
-def updateJob(job_id,state='NEW',notes=''):
-    # Get a copy of data_acess
-    data_access = data_access_factory(ServerConfig.data_access_type)
+# Get a copy of data_acess
+data_access = data_access_factory(ServerConfig.data_access_type)
 
-    # Clear the job from the database
-    data_access.updateTorqueJob(job_id,state,notes)
-    
-
+sess = Session.Session(req)
+study_id = sess['study_id']
 # Update the job
-job_id = int(form['job_id'])
-updateJob(job_id)
+
 job_type_id = str(form['job_type_id'])
+jobs = data_access.getJobInfo(study_id, job_type_id)
+for job in jobs:
+    # Clear the job from the database
+    data_access.updateTorqueJob(job['job_id'], 'NEW', '')
+
+
 if int(job_type_id) in [5,7,8,9,10,11]:
     psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
 else:
