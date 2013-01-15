@@ -1,0 +1,35 @@
+<%
+__author__ = "Zhenjiang Xu"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Zhenjiang Xu"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Zhenjiang Xu"]
+__email__ = "zhenjiang.xu@colorado.edu"
+__status__ = "Development"
+%>
+
+<%
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+# Grab some required values for this page
+sess = Session.Session(req)
+
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+study_id = sess['study_id']
+
+all_completed_ok = True
+jobs = data_access.getJobInfo(study_id, 12)
+
+for job in jobs:
+    #req.write('<p>Job info: %s<p/>' % job)
+    if not job['job_state_name'] in ['COMPLETED_OKAY', 'COMPLETING', 'QUEUED', 'NEW', 'RUNNING']:
+        all_completed_ok = False
+        break
+
+if not all_completed_ok:
+    req.write('<a href="update_job_status.psp?job_type_id=12">(submit all jobs)</a>')
+
+req.write('<br/>')
+%>

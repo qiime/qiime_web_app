@@ -1,7 +1,6 @@
-<%
-__author__ = "Doug Wendel"
+__author__ = "Zhenjiang Xu"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
+__credits__ = ["Jesse Stombaugh", "Doug Wendel", "Zhenjiang Xu"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
@@ -17,13 +16,13 @@ from enums import ServerConfig
 from commands import getoutput
 import re
 
-def clearJob(job_id):
-    # Get a copy of data_acess
-    data_access = data_access_factory(ServerConfig.data_access_type)
+# Get a copy of data_acess
+data_access = data_access_factory(ServerConfig.data_access_type)
 
+def clearJob(job_id):
     # Clear the job from the database
     data_access.clearTorqueJob(job_id)
-    
+
     # Clear the job from the torque queue
     prev_item = ''
     torque_job_id = ''
@@ -39,19 +38,23 @@ def clearJob(job_id):
             cleaned_item = re.sub('\n', '', item)
             cleaned_item = re.sub('-*', '', cleaned_item)
             prev_item = cleaned_item
-    
+
     if torque_job_id != '':
         clear_cmd = 'qdel %s' % torque_job_id
         result = getoutput(clear_cmd)
 
-# Clear the job
-job_id = int(form['job_id'])
-clearJob(job_id)
-job_type_id = str(form['job_type_id'])
-if int(job_type_id) in [5,7,8,9,10,11,13]:
-    psp.redirect('fusebox.psp?page=select_meta_analysis_task.psp')
-else:
-    # Redirect to the home page for this study
-    psp.redirect('fusebox.psp?page=select_study_task.psp')
-#
-%>
+
+def clearJobs(job_locator_id,  job_type_ids):
+    """
+    Clear all the jobs for the types of jobs listed in tuple job_type_ids.
+    job_locator_id is either a study_id or meta_analysis_id.
+    """
+    for jobid in job_type_ids:
+        #req.write('<p/>looking up jobs<p/>')
+        jobs = data_access.getJobInfo(job_locator_id, jobid)
+        #req.write('<p/>jobs: %s<p/>' % str(jobs))
+        if not jobs:
+            continue
+        for job in jobs:
+            # Clear the job
+            clearJob(job['job_id'])
