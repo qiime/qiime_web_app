@@ -1,0 +1,98 @@
+body,html {
+    font-family: helvetica;
+    background-color: #eee;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+table.keypersonnel {
+    width: 580px;
+    font-size: 10pt;
+}
+
+table.keypersonnel th {
+    background-color: #eee;
+}
+
+table.keypersonnel tr {
+}
+
+div.bodywrapper {
+    width: 100%;
+    height: 100%;
+}
+
+div.wrapper {
+    width: 700px;
+    background-color: #fff;
+}
+
+div.content {
+    text-align: center;
+}
+
+div.scroll {
+/*    border: 1px solid black;*/
+    border-style: inset;
+    width: 600px;
+    height: 450px;
+    overflow: scroll;
+    font-size: 10pt;
+}
+
+div.lefta {
+    text-align: left;
+}
+
+div.left {
+    float: left;
+}
+
+div.right {
+    float: right;
+}
+
+div.red {
+    color: #ff0000;
+}
+
+div.consent {
+    width: 500px;
+    font-size: 10pt;
+}
+
+h1 {
+    color: #181f23;
+    padding-left: .5em;
+    text-align: left;
+}
+
+img#logo {
+/*    border: 1px solid lime;*/
+    height: 100px;
+}
+
+/* Clearfix */
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+* html .clearfix {
+    height: 1%;
+}
