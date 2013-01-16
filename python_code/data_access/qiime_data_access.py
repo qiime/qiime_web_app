@@ -2941,5 +2941,14 @@ class QiimeDataAccess(object):
         
         return filled_fields
     
+    def insertAmericanGutConsent(self, input_values):
+        """ Inserts a record into the american gut consent table
+        """
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('american_gut_consent_submit', input_values)
+
+
+
+    
     
     

@@ -8,6 +8,10 @@ body,html {
     text-align: center;
 }
 
+.highlight {
+    background-color: #fcc;
+}
+
 table.keypersonnel {
     width: 580px;
     font-size: 10pt;

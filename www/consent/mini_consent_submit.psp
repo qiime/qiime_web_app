@@ -1,0 +1,87 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+"""
+Handles submission of American Gut consent form
+"""
+
+from data_access_connections import data_access_factory
+from enums import *
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+def error_and_exit(error_messages):
+    req.write('<h2>Data Not Submitted</h2><p/>')
+    for error in error_messages:
+        req.write(error)
+        req.write('<br>')
+
+def write_data(form):
+    error_messages = []
+    input_values = []
+
+    # Collect variables from the form. Make sure that at least one of the form variables exists
+    # before attempting to read the rest
+    if form.has_key('participant_name'):
+        # Form field is a checkbox - may or may not exist
+        if form.has_key('consent'):
+            consent = 'y'
+        else:
+            consent = 'n'
+            error_messages.append('Consent was not granted.')
+        input_values.append(form['participant_name'])
+        input_values.append(form['contact_code'])
+        # Form field is a checkbox - may or may not exist
+        if form.has_key('is_7_to_13'):
+            input_values.append('y')
+            input_values.append(form['parent_1_name'])
+            input_values.append(form['parent_2_name'])
+            input_values.append(form['parent_1_code'])
+            input_values.append(form['parent_2_code'])
+        else:
+            input_values.append('n')
+            input_values.append('')
+            input_values.append('')
+            input_values.append('')
+            input_values.append('')
+
+        if form.has_key('deceased_parent'):
+            input_values.append('y')
+        else:
+            input_values.append('n')
+    else:
+        error_messages.append('Error: Form was not properly submitted.')
+
+    if len(error_messages) > 0:
+        error_and_exit(error_messages)
+        return
+
+    # Submit the form
+    try:
+        #req.write(str(input_values))
+        data_access.insertAmericanGutConsent(input_values)
+        # Include confirmation page
+%>
+    <%@ include file="confirmation.html" %>
+<%
+        # End
+    except Exception, e:
+        error_messages.append('An error was encountered. Your data was not submitted. <br/>{0}'.format(str(e)))
+        error_and_exit(error_messages)
+        return
+
+# End
+
+try:
+    write_data(form)
+except Exception, e:
+    req.write('<h2>An error has occurred:</h2> <br/>{0}'.format(str(e)))
+    req.write('<br/>')
+    req.write(str(form))
+%>
