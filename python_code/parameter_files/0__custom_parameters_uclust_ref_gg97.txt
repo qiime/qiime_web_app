@@ -9,7 +9,7 @@ split_libraries:min-qual-score	25
 split_libraries:max-ambig	0
 split_libraries:max-homopolymer	6
 split_libraries:max-primer	0
-split_libraries:barcode-type	4	
+split_libraries:barcode-type	0	
 split_libraries:max-barcode-errors	1.5
 split_libraries:start-numbering	1
 split_libraries:remove_unassigned	True
