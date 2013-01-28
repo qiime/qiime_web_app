@@ -2130,8 +2130,11 @@ class QiimeDataAccess(object):
             else:
                 # Figure out if the length is one of the expected barcde lengths:
                 barcode_length = rows[0][0]
+                # If barcode is null, set length to 0
+                if not barcode_length:
+                    barcode_length = 0
                 
-            acceptable_barcode_lengths = ['4', '5', '6', '7', '8', '9', '10', '11', '12','13','14','15','variable_length']
+            acceptable_barcode_lengths = ['0', '4', '5', '6', '7', '8', '9', '10', '11', '12','13','14','15','variable_length']
             if str(barcode_length) not in acceptable_barcode_lengths:
                 raise ValueError('Barcode lengths must be one of the following: ' + ', '.join(acceptable_barcode_lengths))
             
