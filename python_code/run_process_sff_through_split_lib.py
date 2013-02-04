@@ -109,7 +109,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 ### linkerprimer are all lowercase (i.e. HMP data or SRA data)
                 
                 # write process_sff command
-                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
+                process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
                 
