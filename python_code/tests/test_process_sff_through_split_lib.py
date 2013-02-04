@@ -48,6 +48,8 @@ class WorkflowTests(TestCase):
         test_dir = abspath(dirname(__file__))
         sff_original_fp = os.path.join(test_dir, 'support_files', \
                                         'Fasting_subset.sff')
+        sff_gz_original_fp = os.path.join(test_dir, 'support_files', \
+                                        'Fasting_subset.sff.gz')
         
         self.illumina_fps = [os.path.join(test_dir, 'support_files', \
                                         's_8_1_sequence_100_records.txt.gz'),
@@ -62,8 +64,11 @@ class WorkflowTests(TestCase):
                                         
         # move SFF into place but also make sure to remove it
         self.sff_fp = os.path.join(environ['HOME'], 'Fasting_subset.sff')
+        self.sff_gz_fp = os.path.join(environ['HOME'], 'Fasting_subset.sff.gz')
         copy(sff_original_fp, self.sff_fp)
+        copy(sff_gz_original_fp, self.sff_gz_fp)
         self.files_to_remove.append(self.sff_fp)
+        self.files_to_remove.append(self.sff_gz_fp)
         
         # create the gg_97_otus folder
         self.gg_out=os.path.join(self.wf_out,'gg_97_otus')
@@ -160,6 +165,56 @@ class WorkflowTests(TestCase):
         log_fp = glob(join(self.wf_out,'log*.txt'))[0]
         self.assertTrue(getsize(log_fp) > 0)
 
+    def test_run_process_sff_gz_through_split_lib(self):
+        """ run_process_sff_through_pick_otus: runs without error """
+        
+        # remove generated mapping file
+        moved_mapping_file=join(self.wf_out,split(self.fasting_mapping_fp)[-1])
+        self.files_to_remove.append(moved_mapping_file)
+        
+        # process the SFF files
+        run_process_sff_through_split_lib(0,'Fasting_subset',\
+         sff_input_fp=self.sff_gz_fp,\
+         mapping_fp=self.fasting_mapping_fp,\
+         output_dir=self.wf_out, \
+         command_handler=call_commands_serially,\
+         params=self.params,\
+         qiime_config=self.qiime_config,\
+         convert_to_flx=False,\
+         write_to_all_fasta=False,\
+         status_update_callback=no_status_updates)
+         
+        # get the file basename
+        input_file_basename = splitext(splitext(split(self.sff_fp)[1])[0])[0]
+        
+        # get the split-library sequence fpath
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries','seqs.fna')
+                                    
+        sff_seqs_fp = join(self.wf_out,'Fasting_subset.fna')
+        sff_qual_fp = join(self.wf_out,'Fasting_subset.qual')
+        sff_flow_fp = join(self.wf_out,'Fasting_subset.txt')
+        new_map_fp = join(self.wf_out,'Fasting_subset_mapping.txt')
+        
+        # define files to remove
+        self.files_to_remove.append(sff_seqs_fp)
+        self.files_to_remove.append(sff_qual_fp)
+        self.files_to_remove.append(sff_flow_fp)
+        
+        # get the head of files
+        split_lib_head=get_top_fastq_two_lines(open(split_lib_seqs_fp,'U'))
+        raw_seq_head=get_top_fastq_two_lines(open(sff_seqs_fp,'U'))
+        raw_qual_head=get_top_fastq_two_lines(open(sff_qual_fp,'U'))
+        raw_flow_head=get_top_fastq_two_lines(open(sff_flow_fp,'U'))
+        
+        # check results
+        self.assertEqual(''.join(split_lib_head),exp_FLX_split_lib_head)
+        self.assertEqual(''.join(raw_seq_head),exp_FLX_raw_seq_head)
+        self.assertEqual(''.join(raw_qual_head),exp_FLX_raw_qual_head)
+        self.assertEqual(''.join(raw_flow_head),exp_FLX_raw_flow_head)
+
+        # Check that the log file is created and has size > 0
+        log_fp = glob(join(self.wf_out,'log*.txt'))[0]
+        self.assertTrue(getsize(log_fp) > 0)
 
     def test_run_process_sff_through_split_lib_FLX(self):
         """run_process_sff_through_pick_otus runs without error: Convert to \
@@ -215,6 +270,59 @@ FLX"""
         self.assertTrue(getsize(log_fp) > 0)
 
     
+    def test_run_process_sff_gz_through_split_lib_FLX(self):
+        """run_process_sff_through_pick_otus runs without error: Convert to \
+FLX"""
+        
+        # remove generated mapping file
+        moved_mapping_file=join(self.wf_out,split(self.fasting_mapping_fp)[-1])
+        self.files_to_remove.append(moved_mapping_file)
+        
+        run_process_sff_through_split_lib(0,'Fasting_subset',\
+         sff_input_fp=self.sff_gz_fp,\
+         mapping_fp=self.fasting_mapping_fp,\
+         output_dir=self.wf_out, \
+         command_handler=call_commands_serially,\
+         params=self.params,\
+         qiime_config=self.qiime_config,\
+         convert_to_flx=True,\
+         write_to_all_fasta=False,\
+         status_update_callback=no_status_updates)
+        
+        # get the file basename
+        input_file_basename = splitext(splitext(split(self.sff_fp)[1])[0])[0]
+        
+        # get the split-library sequence fpath
+        split_lib_seqs_fp = join(self.wf_out,'split_libraries','seqs.fna')
+                                    
+        sff_fp = join(self.wf_out,'Fasting_subset_FLX.sff')
+        sff_seqs_fp = join(self.wf_out,'Fasting_subset_FLX.fna')
+        sff_qual_fp = join(self.wf_out,'Fasting_subset_FLX.qual')
+        sff_flow_fp = join(self.wf_out,'Fasting_subset_FLX.txt')
+        new_map_fp = join(self.wf_out,'Fasting_subset_mapping.txt')
+        
+        # define files to remove
+        self.files_to_remove.append(sff_fp)
+        self.files_to_remove.append(sff_seqs_fp)
+        self.files_to_remove.append(sff_qual_fp)
+        self.files_to_remove.append(sff_flow_fp)
+        
+        # get the head of files
+        split_lib_head=get_top_fastq_two_lines(open(split_lib_seqs_fp,'U'))
+        raw_seq_head=get_top_fastq_two_lines(open(sff_seqs_fp,'U'))
+        raw_qual_head=get_top_fastq_two_lines(open(sff_qual_fp,'U'))
+        raw_flow_head=get_top_fastq_two_lines(open(sff_flow_fp,'U'))
+        
+        # check results
+        self.assertEqual(''.join(split_lib_head),exp_FLX_split_lib_head)
+        self.assertEqual(''.join(raw_seq_head),exp_FLX_raw_seq_head)
+        self.assertEqual(''.join(raw_qual_head),exp_FLX_raw_qual_head)
+        self.assertEqual(''.join(raw_flow_head),exp_Ti_raw_flow_head)
+        
+        # Check that the log file is created and has size > 0
+        log_fp = glob(join(self.wf_out,'log*.txt'))[0]
+        self.assertTrue(getsize(log_fp) > 0)
+
     def test_run_process_illumina_through_split_lib(self):
         """run_process_illumina_through_pick_otus: runs without error"""
         

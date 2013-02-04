@@ -34,7 +34,8 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import (compute_seqs_per_library_stats, 
                         get_qiime_scripts_dir,
                         create_dir,
-                        get_split_libraries_fastq_params_and_file_types)
+                        get_split_libraries_fastq_params_and_file_types,
+                        is_gzip)
 from wrap_files_for_md5 import MD5Wrap
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
@@ -101,7 +102,12 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
 
         #Generate filenames for split_libraries
         input_dir, input_filename = split(sff_input_fp)
-        input_basename, input_ext = splitext(input_filename)
+
+        if is_gzip(sff_input_fp) and sff_input_fp.endswith('.gz'):
+            input_basename, input_ext = splitext(splitext(input_filename)[0])
+        else:
+            input_basename, input_ext = splitext(input_filename)
+
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
             if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536']:
