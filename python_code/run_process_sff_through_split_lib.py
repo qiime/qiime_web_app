@@ -103,7 +103,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
         #Generate filenames for split_libraries
         input_dir, input_filename = split(sff_input_fp)
 
-        if is_gzip(sff_input_fp):
+        if is_gzip(sff_input_fp) and sff_input_fp.endswith('.gz'):
             input_basename, input_ext = splitext(splitext(input_filename)[0])
         else:
             input_basename, input_ext = splitext(input_filename)
