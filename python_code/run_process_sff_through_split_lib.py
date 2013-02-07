@@ -43,7 +43,8 @@ from qiime.validate_demultiplexed_fasta import run_fasta_checks
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
 
-
+# NOTE: this function should be removed and instead imported from qiime.util
+# if and when QIIME is updated on this system to a version that has!
 def is_gzip(fp):
     """Checks the first two bytes of the file for the gzip magic number
 
