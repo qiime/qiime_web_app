@@ -141,7 +141,8 @@ if form.has_key('file') and form['file'].filename:
                         except Exception, e:
                             req.write("Error: there was a problem parsing the FNA file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
                         
-        elif zip_file_name.endswith(".fastq.gz") and \
+        elif (zip_file_name.endswith(".fastq.gz") \
+             or zip_file_name.endswith(".sff.gz")) and \
                                         not zip_file_name.startswith('.'):
             # Unzip the file using the system's unzip command. Python has a 
             # bug which prevents
@@ -154,12 +155,18 @@ if form.has_key('file') and form['file'].filename:
             sequence_read_f = gzip_open(zip_file_name)
     
             contains_valid_file = True
+
+            if zip_file_name.endswith(".fastq.gz"):
+                file_type = 'FASTQ'
+            elif zip_file_name.endswith(".sff.gz"):
+                file_type = 'SFF'
+
             try: 
                 MinimalFastqParser(sequence_read_f)
                 data_access.addSeqFile(form['study_id'], zip_file_name, 
-                                                                'FASTQ')
+                                                                file_type)
             except Exception, e:
-                req.write("Error: there was a problem parsing the FASTQ file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
+                req.write("Error: there was a problem parsing the sequence file. Requested path: %s. The error was: %s" % (dir_path, str(e)))
         
         #if the zip does not have any sff,fastq, or fasta files, raise an error
         if contains_valid_file==False:
