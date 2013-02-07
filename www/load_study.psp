@@ -19,16 +19,19 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 
 study_id = sess['study_id']
 
-all_completed_ok = True
-jobs = data_access.getJobInfo(study_id, 12)
-
-for job in jobs:
-    #req.write('<p>Job info: %s<p/>' % job)
-    if not job['job_state_name'] in ['COMPLETED_OKAY', 'COMPLETING', 'QUEUED', 'NEW', 'RUNNING']:
-        all_completed_ok = False
+ready = True
+for job in data_access.getJobInfo(study_id, 3):
+    if not job['job_state_name'] == 'COMPLETED_OKAY':
+        ready = False
         break
+if ready:
+    ready = False
+    for job in data_access.getJobInfo(study_id, 12):
+        if not job['job_state_name'] in ['COMPLETED_OKAY', 'COMPLETING', 'QUEUED', 'NEW', 'RUNNING']:
+            ready = True
+            break
 
-if not all_completed_ok:
+if ready:
     req.write('<a href="update_job_status.psp?job_type_id=12">(submit all jobs)</a>')
 
 req.write('<br/>')
