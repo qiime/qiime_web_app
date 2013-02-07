@@ -34,8 +34,7 @@ from qiime.workflow import print_commands,call_commands_serially,\
 from qiime.util import (compute_seqs_per_library_stats, 
                         get_qiime_scripts_dir,
                         create_dir,
-                        get_split_libraries_fastq_params_and_file_types,
-                        is_gzip)
+                        get_split_libraries_fastq_params_and_file_types)
 from wrap_files_for_md5 import MD5Wrap
 from cogent.parse.flowgram_parser import get_header_info
 from hashlib import md5
@@ -43,6 +42,15 @@ from cogent.util.misc import safe_md5
 from qiime.validate_demultiplexed_fasta import run_fasta_checks
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
+
+
+def is_gzip(fp):
+    """Checks the first two bytes of the file for the gzip magic number
+
+    If the first two bytes of the file are 1f 8b (the "magic number" of a 
+    gzip file), return True; otherwise, return false.
+    """
+    return open(fp, 'rb').read(2) == '\x1f\x8b'
 
 def generate_log_fp(output_dir,
                     basefile_name='log',
