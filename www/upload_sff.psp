@@ -22,7 +22,7 @@ data_access = data_access_factory(ServerConfig.data_access_type)
         <li><b>SFF:</b> You should zip using "zip" for each SFF file individually prior to uploading.</li>
         <li><b>FASTQ:</b> For each Illumina lane, there should be a single barcode file that associates to a single amplicon read file. Each of these files should be gzipped using "gzip" prior to uploading. We do not currently support assembly, so only one amplicon read file is permitted for each barcode file.</li>
         <li><b>FASTA:</b> We are expecting a FASTA-formatted file that is formatted similar to the file produced from split-libraries.py. For more information on the format, please refer to <a href="http://qiime.org/documentation/file_formats.html#demultiplexed-sequences">here</a>. Make sure the extension for each FASTA file is either ".fna", ".fasta" or "fa", then zip using "zip" for each file individually prior to uploading.</li>
-        <li><i>Allowable file extensions:</i> .sff.zip, .fastq.gz, .fastq.gz.zip, .fa.zip, .fna.zip, or .fasta.zip</li>
+        <li><i>Allowable file extensions:</i> .sff.zip, .sff.gz, .fastq.gz, .fastq.gz.zip, .fa.zip, .fna.zip, or .fasta.zip</li>
     </ul>
 </p>
 <script type="text/javascript">
@@ -170,7 +170,7 @@ function setCompleteBox()
     <param name="vc_uploadViewStopUploadButtonText" value="Stop upload"/>
     <param name="vc_uploadViewStopUploadButtonImageUrl" value="/img/media_stop_red.png"/>
     <param name="ac_fireAppletInitialized" value="true"/> 
-    <param name="uc_fileNamePattern" value='^.+\.((zip|fastq.gz))' />
+    <param name="uc_fileNamePattern" value='^.+\.((zip|fastq.gz|sff.gz))' />
     <param name="ac_fireUploaderFileStatusChanged" value="true"/>
     <param name="uc_uploadUrl" value="upload_sff_submit.psp">
     <param name="gc_loggingLevel" value="DEBUG"/>
