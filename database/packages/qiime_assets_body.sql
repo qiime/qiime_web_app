@@ -1304,28 +1304,13 @@ begin
 
   open results for
     select  sa.sample_name || '.' || sp.sequence_prep_id as sample_plus_row_num, 
-            sa.sample_id, sa."PUBLIC", sa.collection_date, sp.run_prefix,
-            --(
-            --  select  run_prefix
-            --  from    sequence_prep sp
-            --  where   sa.sample_id = sp.sample_id
-            --          and rownum = 1
-            --) as run_prefix,
-            'Coming soon...' as sequence_count
-            --(
-            --  select  count(*)
-            --  from    sff.split_library_read_map slrm
-            --          inner join sample_sequence_counts ssc
-            --          on slrm.sample_name = ssc.sample_name_plus_sp_id
-            --  where   ssc.sample_name = sa.sample_name
-            --) as sequence_count
+            sa.sample_id, sa."PUBLIC", sa.collection_date, sp.run_prefix, 
+            sp.num_sequences, sp.num_otus
     from    sample sa
             left join sequence_prep sp
             on sa.sample_id = sp.sample_id
     where   sa.study_id = study_id_
     order by  sa.sample_name;
-    
-    commit;
 
 end;
 

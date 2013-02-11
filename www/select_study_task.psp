@@ -171,10 +171,14 @@ else:
 <%
     # List all samples names here
     req.write('<table width="100%">')
-    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th><th align="left">Sequence Count</th>')
+    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th><th align="left">Sequence Count</th><th align="left">OTU Count</th>')
     sample_details = data_access.getSampleDetailList(study_id)
-    for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in sample_details:
-        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix, sequence_count))
+    for sample_name, sample_id, public, collection_date, run_prefix, sequence_count, otu_count in sample_details:
+        if sequence_count == None:
+            sequence_count = ''
+        if otu_count == None:
+            otu_count = ''
+        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix, sequence_count, otu_count))
     req.write('</table>')
     
 %>
