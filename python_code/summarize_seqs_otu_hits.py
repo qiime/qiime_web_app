@@ -16,42 +16,51 @@ def get_processed_data_dirs(study_dir):
 
     return processed_data_dirs
 
-def parse_log_file(log_path, read_start_line, target_token_count):
+def parse_log_file(log_path, start_lines):
+    """ Parses one of several log files produced in the qiime pipeline. Returns 
+        aggregated counts of either seqs per sample or otus per sampe. A factory
+        method derivitave.
     """
-    """
+
     summary_dict = {}
     header_lines = []
     start_read = False
+    debug = True
     
-    log = open(log_path, 'r')
+    if debug:
+    	print log_path
+
+    log = open(log_path, 'U')
     
     for l in log:
         l = l.strip()
-        if not start_read:
-            # Ignore all lines until sample listing but store and return them to client
-            if l != read_start_line:
-                header_lines.append(l)
-                continue
-            else:
-                start_read = True
-                continue
+        header_lines.append(l)
 
-        # Exit read loop when we reach end of sample list
-        if l == '':
-            break
+        #if debug:
+        #    print l
 
-        # Start reading samples. Non-zero length items are, in order, sample_name, sequence_count, barcode
-        items = l.split()
-        if len(items) != target_token_count:
+        if not start_read:            
+            for start_line in start_lines:
+                if l.startswith(start_line):
+                    if debug:
+                        print 'Start line found: {0}'.format(start_line)
+                    start_read = True
             continue
 
-        if target_token_count == 3:
-            sample_name, sequence_count, barcode = l.split()
-            summary_dict[sample_name] = sequence_count
-        elif target_token_count == 2:
-            sample_name, otu_count = l.split()
+        # Exit read loop when we reach end of sample list
+        if l == '' or l == None:
+            break
+
+        # Start reading samples
+        items = l.split()
+        if len(items) < 2:
+            continue
+
+        sample_name = items[0]
+        if sample_name.endswith(':'):
             sample_name = sample_name[:-1]
-            summary_dict[sample_name] = otu_count
+        count = items[1]
+        summary_dict[sample_name] = count
 
     log.close()
 
@@ -61,8 +70,10 @@ def summarize_seqs(processed_dir):
     """ 
     """
     log_path = join(processed_dir, 'split_libraries/split_library_log.txt')
-    read_start_line = 'Sample\tSequence Count\tBarcode'
-    header_lines, seq_summary_dict = parse_log_file(log_path, read_start_line, 3)
+    start_lines = []
+    start_lines.append('Median sequence length:')
+    start_lines.append('Sample\tSequence Count\tBarcode')
+    header_lines, seq_summary_dict = parse_log_file(log_path, start_lines)
     return header_lines, seq_summary_dict
 
 def summarize_otus(processed_dir):
@@ -87,9 +98,9 @@ def summarize_otus(processed_dir):
         f.close()
 
     # File exists, parse out details
-    read_start_line = 'Seqs/sample detail:'
-    header_lines, seq_summary_dict = parse_log_file(per_library_stats_file, read_start_line, 2)
-    return header_lines, seq_summary_dict
+    start_lines = ['Seqs/sample detail:']
+    header_lines, otu_summary_dict = parse_log_file(per_library_stats_file, start_lines)
+    return header_lines, otu_summary_dict
 
 def summarize_all_stats(study_id):
     """
