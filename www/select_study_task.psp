@@ -167,18 +167,34 @@ else:
                 <img src="img/ok-icon.png" style="width:20px; height:20px; vertical-align:middle;"/>
                 <br/>
                 <%=sample_count%> samples uploaded. (<a href="" onclick="toggleSection(\'sample_div\'); return false;">show/hide samples</a>)
-                <div id="sample_div" name="sample_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">
+                <div id="sample_div" name="sample_div" style="display:none; border:10px solid; border-color:#ffffff; \
+                    border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">
 <%
+    sample_details = data_access.getSampleDetailList(study_id)
+    # Determine if we should write the seq and otu counts
+    write_seq_otu_cols = True
+    # This is the first sequence count field in the record. If None assume data does not yet 
+    # exist for samples in general
+    if sample_details[0][5] == None:
+        write_seq_otu_cols = False
+
     # List all samples names here
     req.write('<table width="100%">')
-    req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th><th align="left">Run Prefix</th><th align="left">Sequence Count</th><th align="left">OTU Count</th>')
-    sample_details = data_access.getSampleDetailList(study_id)
-    for sample_name, sample_id, public, collection_date, run_prefix, sequence_count, otu_count in sample_details:
-        if sequence_count == None:
-            sequence_count = ''
-        if otu_count == None:
-            otu_count = ''
-        req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (sample_name, public, collection_date, run_prefix, sequence_count, otu_count))
+    if write_seq_otu_cols:
+        req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>\
+            <th align="left">Run Prefix</th><th align="left">Sequence Count</th><th align="left">OTU Count</th><th align="left">% OTU Hit</th>')
+    else:
+        req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>\
+            <th align="left">Run Prefix</th>')
+
+    for sample_name, sample_id, public, collection_date, run_prefix, sequence_count, otu_count, otu_percent_hit in sample_details:
+        if write_seq_otu_cols:
+            req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s%</td></tr>' % \
+                (sample_name, public, collection_date, run_prefix, sequence_count, otu_count, otu_percent_hit))
+        else:
+            req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % \
+                (sample_name, public, collection_date, run_prefix))
+
     req.write('</table>')
     
 %>
