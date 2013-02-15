@@ -102,7 +102,6 @@ def main():
     print run_prefix
     output_dir = '%s/user_data/studies/study_%s/processed_data_%s/' % (environ['HOME'],study_id, run_prefix)
     base_dir = '%s/user_data/studies/study_%s/' % (environ['HOME'], study_id)
-    web_script_dir = "%s/git/qiime_web_app/python_code/scripts" % ServerConfig.home
     
     sff_fname=opts.sff_fname
     map_fname = opts.map_fname
