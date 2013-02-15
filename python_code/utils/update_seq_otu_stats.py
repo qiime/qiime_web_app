@@ -37,6 +37,6 @@ for result in results:
                         str(sequence_prep_id), str(sequence_count), str(otu_count))
 
     except Exception, e:
-        print 'Could not process study_id: {0}. The error was: "{1}"\n{2}'.format(study_id, str(e), traceback.print_exc())
+        print 'Could not process study_id: {0}. The error was: "{1}"'.format(study_id, str(e))
 
 
