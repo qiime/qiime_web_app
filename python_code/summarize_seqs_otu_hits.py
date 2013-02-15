@@ -2,6 +2,7 @@ from os import listdir, getcwd
 from os.path import isdir, join, exists
 from qiime.util import get_qiime_scripts_dir, load_qiime_config
 from subprocess import Popen, PIPE, STDOUT
+from enums import ServerConfig
 
 def get_processed_data_dirs(study_dir):
     """ Returns a list of processed_data_ directories for a study_dir
@@ -107,8 +108,8 @@ def summarize_all_stats(study_id):
     """
 
     # Get the processed data directories
-    study_dir = 'study_{0}'.format(study_id)
-    study_dir = join('/home/wwwuser/user_data/studies/', study_dir)
+    user_dir = ServerConfig().home
+    study_dir = join(user_dir, 'user_data/studies', 'study_{0}'.format(study_id))
     processed_data_dirs = get_processed_data_dirs(study_dir)
 
     #print str(processed_data_dirs)
