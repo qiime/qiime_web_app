@@ -3,6 +3,8 @@ from os.path import isdir, join, exists
 from qiime.util import get_qiime_scripts_dir, load_qiime_config
 from subprocess import Popen, PIPE, STDOUT
 from enums import ServerConfig
+from data_access_connections import data_access_factory
+from enums import ServerConfig
 
 def get_processed_data_dirs(study_dir):
     """ Returns a list of processed_data_ directories for a study_dir
@@ -143,6 +145,8 @@ def summarize_all_stats(study_id):
     return processed_results
 
 def submit_mapping_to_database(processed_results, debug=True):
+    data_access = data_access_factory(ServerConfig.data_access_type)
+    
     # Iterate over each folder's data - can be many processed_data_ folders for a single study
     for directory in processed_results:
         # Unpack the values for each processed_data_ directory

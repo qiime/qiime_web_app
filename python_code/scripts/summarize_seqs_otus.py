@@ -13,7 +13,6 @@ __status__ = "Development"
 
 from optparse import make_option
 from qiime.util import parse_command_line_parameters
-from data_access_connections import data_access_factory
 from enums import ServerConfig
 from summarize_seqs_otu_hits import summarize_all_stats
 
@@ -35,26 +34,10 @@ def main():
     # Some needed variables
     study_id = opts.study_id
     debug = opts.debug
-    data_access = data_access_factory(ServerConfig.data_access_type)
 
     # Get results for all processed_data_ folders in this study's directory
     processed_results = summarize_all_stats(study_id)
-    
-    # Iterate over each folder's data - can be many processed_data_ folders for a single study
-    for directory in processed_results:
-        # Unpack the values for each processed_data_ directory
-        mapping, seq_header_lines, otu_header_lines = processed_results[directory]
-
-        # Unpack and iterate over each mapping
-        for sample_name, sequence_count, otu_count, percent_assignment in mapping:
-            sequence_prep_id = sample_name.split('.')[-1]
-    	
-            # Write values to database for this sequence_prep_id        
-            data_access.updateSeqOtuCounts(sequence_prep_id, sequence_count, otu_count, percent_assignment)
-    	
-            if debug:
-        		print 'added to database: prep: {0}, seq_count: {1}, otu_count: {2}'.format(\
-        			str(sequence_prep_id), str(sequence_count), str(otu_count))
+    submit_mapping_to_database(processed_results, debug)
 
 if __name__ == "__main__":
     main()
