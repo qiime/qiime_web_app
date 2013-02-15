@@ -34,7 +34,7 @@ from submit_job_to_qiime import submitQiimeJob
 from qiime.validate_demultiplexed_fasta import run_fasta_checks
 from shutil import rmtree
 from time import sleep
-from summarize_seqs_otu_hits import summarize_all_stats
+from summarize_seqs_otu_hits import summarize_all_stats, submit_mapping_to_database
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -305,7 +305,8 @@ def main():
                        job_state=-2)
 
     # generate and store seqs and otu stats for database
-    summarize_all_stats(study_id)
+    processed_results = summarize_all_stats(study_id)
+    submit_mapping_to_database(processed_results)
             
 
 if __name__ == "__main__":
