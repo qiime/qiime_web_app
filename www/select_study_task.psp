@@ -194,7 +194,7 @@ else:
             otu_percent_hit = 0
         if write_seq_otu_cols:
             req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s%%</td></tr>' % \
-                (sample_name, public, collection_date, run_prefix, sequence_count, otu_count, otu_percent_hit))
+                (sample_name, public, collection_date, run_prefix, sequence_count, otu_count, round(otu_percent_hit, 1)))
         else:
             req.write('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % \
                 (sample_name, public, collection_date, run_prefix))
