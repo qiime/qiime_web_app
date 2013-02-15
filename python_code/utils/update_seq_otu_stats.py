@@ -5,9 +5,11 @@ from summarize_seqs_otu_hits import summarize_all_stats
 data_access = data_access_factory(ServerConfig.data_access_type)
 query = 'select distinct sa.study_id from sample sa inner join sff.analysis a on sa.study_id = a.study_id order by study_id desc'
 results = data_access.dynamicMetadataSelect(query)
+debug = True
 
 for result in results:
     study_id = result[0]
+
     try:
         print 'Updating study {0}'.format(study_id)
         mapping, seq_header_lines, otu_header_lines = summarize_all_stats(study_id)
