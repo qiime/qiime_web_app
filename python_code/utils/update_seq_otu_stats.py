@@ -13,7 +13,7 @@ for result in results:
         mapping, seq_header_lines, otu_header_lines = summarize_all_stats(study_id)
 
         for sample_name, sequence_count, otu_count, percent_assignment in mapping:
-        sequence_prep_id = sample_name.split('.')[-1]
+            sequence_prep_id = sample_name.split('.')[-1]
 
         print '    sequence_prep_id: {0}, seq_count: {1}, otu_count: {2}, percent_assignment: {3}'.format(sequence_prep_id, sequence_count, otu_count, percent_assignment)
         data_access.updateSeqOtuCounts(sequence_prep_id, sequence_count, otu_count, percent_assignment)
