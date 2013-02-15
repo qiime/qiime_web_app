@@ -16,25 +16,7 @@ for result in results:
 
         # Get results for all processed_data_ folders in this study's directory
         processed_results = summarize_all_stats(study_id)
-        
-        # Iterate over each folder's data - can be many processed_data_ folders for a single study
-        for directory in processed_results:
-            print 'processed_data_ folder: "{0}"'.format(directory)
-
-            # Unpack the values for each processed_data_ directory
-            mapping, seq_header_lines, otu_header_lines = processed_results[directory]
-
-            # Unpack and iterate over each mapping
-            for sample_name, sequence_count, otu_count, percent_assignment in mapping:
-                sequence_prep_id = sample_name.split('.')[-1]
-            
-                # Write values to database for this sequence_prep_id        
-                print '    sequence_prep_id: {0}, seq_count: {1}, otu_count: {2}, percent_assignment: {3}'.format(sequence_prep_id, sequence_count, otu_count, percent_assignment)
-                data_access.updateSeqOtuCounts(sequence_prep_id, sequence_count, otu_count, percent_assignment)
-            
-                if debug:
-                    print 'added to database: prep: {0}, seq_count: {1}, otu_count: {2}'.format(\
-                        str(sequence_prep_id), str(sequence_count), str(otu_count))
+        submit_mapping_to_database(processed_results)
 
     except OSError, os:
         # Study dir doesn't exist on server - fine to just ignore

@@ -137,9 +137,28 @@ def summarize_all_stats(study_id):
             processed_results[processed_dir] = (mapping, seq_header_lines, otu_header_lines)
         except Exception, e:
             print str(e)
-            
+
 
     # Return all of the results
     return processed_results
+
+def submit_mapping_to_database(processed_results, debug=True):
+    # Iterate over each folder's data - can be many processed_data_ folders for a single study
+    for directory in processed_results:
+        # Unpack the values for each processed_data_ directory
+        mapping, seq_header_lines, otu_header_lines = processed_results[directory]
+
+        # Unpack and iterate over each mapping
+        for sample_name, sequence_count, otu_count, percent_assignment in mapping:
+            sequence_prep_id = sample_name.split('.')[-1]
+        
+            # Write values to database for this sequence_prep_id        
+            data_access.updateSeqOtuCounts(sequence_prep_id, sequence_count, otu_count, percent_assignment)
+        
+            if debug:
+                print 'added to database: prep: {0}, seq_count: {1}, otu_count: {2}'.format(\
+                    str(sequence_prep_id), str(sequence_count), str(otu_count))
+
+
 
 
