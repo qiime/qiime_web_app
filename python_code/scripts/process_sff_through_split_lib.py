@@ -34,6 +34,7 @@ from submit_job_to_qiime import submitQiimeJob
 from qiime.validate_demultiplexed_fasta import run_fasta_checks
 from shutil import rmtree
 from time import sleep
+from summarize_seqs_otu_hits import summarize_all_stats
 
 qiime_config = load_qiime_config()
 options_lookup = get_options_lookup()
@@ -101,6 +102,7 @@ def main():
     print run_prefix
     output_dir = '%s/user_data/studies/study_%s/processed_data_%s/' % (environ['HOME'],study_id, run_prefix)
     base_dir = '%s/user_data/studies/study_%s/' % (environ['HOME'], study_id)
+    web_script_dir = "%s/git/qiime_web_app/python_code/scripts" % ServerConfig.home
     
     sff_fname=opts.sff_fname
     map_fname = opts.map_fname
@@ -302,6 +304,9 @@ def main():
     else:
         submitQiimeJob(study_id, user_id, job_type, job_input, data_access,\
                        job_state=-2)
+
+    # generate and store seqs and otu stats for database
+    summarize_all_stats(study_id)
             
 
 if __name__ == "__main__":
