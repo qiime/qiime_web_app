@@ -36,6 +36,10 @@ for result in results:
                     print 'added to database: prep: {0}, seq_count: {1}, otu_count: {2}'.format(\
                         str(sequence_prep_id), str(sequence_count), str(otu_count))
 
+    except OSError, os:
+        # Study dir doesn't exist on server - fine to just ignore
+        pass
+        
     except Exception, e:
         print 'Could not process study_id: {0}. The error was: "{1}"'.format(study_id, str(e))
 
