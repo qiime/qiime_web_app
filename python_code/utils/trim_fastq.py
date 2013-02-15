@@ -41,7 +41,7 @@ def main():
         header = fastq_data[0][0]
 
         # Write the new output file
-        out_fp.write(header + '\n')
+        out_fp.write('@' + header + '\n')
         out_fp.write(sequence + '\n')
         out_fp.write('+\n')
         out_fp.write(qual + '\n')

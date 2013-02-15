@@ -847,10 +847,10 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        con.cursor().callproc('qiime_assets.get_sample_detail_list', [study_id, results])
+        con.cursor().callproc('get_sample_detail_list', [study_id, results])
         sample_details = []
-        for sample_name, sample_id, public, collection_date, run_prefix, sequence_count in results:
-            sample_details.append((sample_name, sample_id, public, collection_date, run_prefix, sequence_count))
+        for sample_name, sample_id, public, collection_date, run_prefix, sequence_count, otu_count, otu_percent_hit in results:
+            sample_details.append((sample_name, sample_id, public, collection_date, run_prefix, sequence_count, otu_count, otu_percent_hit))
         return sample_details
             
     def getPrepList(self, sample_id):
@@ -2949,6 +2949,17 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('american_gut_consent_submit', input_values)
+
+    def updateSeqOtuCounts(self, sequence_prep_id, num_sequences, num_otus, otu_percent_hit):
+        """ Updates sequence and otu counts for a prep entry
+        """
+        try:
+            con = self.getMetadataDatabaseConnection()
+            results = con.cursor()
+            con.cursor().callproc('update_seq_otu_counts', [sequence_prep_id, num_sequences, num_otus, otu_percent_hit])
+        except Exception, e:
+            print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
+            return False  
 
 
 

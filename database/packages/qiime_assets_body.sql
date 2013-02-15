@@ -1284,56 +1284,6 @@ end;
 
 */
 
-procedure get_sample_detail_list
-(
-  study_id_ in int,
-  results in out types.ref_cursor
-)
-as
-begin
-
-  --delete from sample_name_plus_prep;
-
-  --insert  into sample_name_plus_prep
-  --        (sample_name, sample_name_plus_prep_id)
-  --select  sa.sample_name, sa.sample_name || '.' || sp.sequence_prep_id
-  --from    sample sa
-  --        inner join sequence_prep sp
-  --        on sa.sample_id = sp.sample_id
-  --where   sa.study_id = sp.sample_id;
-
-  open results for
-    select  sa.sample_name || '.' || sp.sequence_prep_id as sample_plus_row_num, 
-            sa.sample_id, sa."PUBLIC", sa.collection_date, sp.run_prefix,
-            --(
-            --  select  run_prefix
-            --  from    sequence_prep sp
-            --  where   sa.sample_id = sp.sample_id
-            --          and rownum = 1
-            --) as run_prefix,
-            'Coming soon...' as sequence_count
-            --(
-            --  select  count(*)
-            --  from    sff.split_library_read_map slrm
-            --          inner join sample_sequence_counts ssc
-            --          on slrm.sample_name = ssc.sample_name_plus_sp_id
-            --  where   ssc.sample_name = sa.sample_name
-            --) as sequence_count
-    from    sample sa
-            left join sequence_prep sp
-            on sa.sample_id = sp.sample_id
-    where   sa.study_id = study_id_
-    order by  sa.sample_name;
-    
-    commit;
-
-end;
-
-/*
-
-*/
-
-
 procedure get_prep_list
 (
   sample_id_ in int,
