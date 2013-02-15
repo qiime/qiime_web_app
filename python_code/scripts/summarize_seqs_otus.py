@@ -37,34 +37,24 @@ def main():
     debug = opts.debug
     data_access = data_access_factory(ServerConfig.data_access_type)
 
-    #if debug:
-	#   print 'study_id: {0}'.format(str(study_id))
-
-    # Update the database
-    mapping, seq_header_lines, otu_header_lines = summarize_all_stats(study_id)
+    # Get results for all processed_data_ folders in this study's directory
+    processed_results = summarize_all_stats(study_id)
     
-    #if debug:
-    #	print 'mapping is: {0}\n\n'.format(str(mapping))
-    #	print 'seq_header_lines:\n'
+    # Iterate over each folder's data - can be many processed_data_ folders for a single study
+    for directory in processed_results:
+        # Unpack the values for each processed_data_ directory
+        mapping, seq_header_lines, otu_header_lines = processed_results[directory]
 
-	#for item in seq_header_lines:
-	#    print item
-
-	#print 'otu_header_lines:\n'
-	#for item in otu_header_lines:
-	#    print item
-
-    for sample_name, sequence_count, otu_count, percent_assignment in mapping:
-        sequence_prep_id = sample_name.split('.')[-1]
-	
-    #if debug:
-	#	print 'sequence_prep_id: {0}'.format(str(sequence_prep_id))
-    
-        data_access.updateSeqOtuCounts(sequence_prep_id, sequence_count, otu_count, percent_assignment)
-	
-        if debug:
-    		print 'added to database: prep: {0}, seq_count: {1}, otu_count: {2}'.format(\
-    			str(sequence_prep_id), str(sequence_count), str(otu_count))
+        # Unpack and iterate over each mapping
+        for sample_name, sequence_count, otu_count, percent_assignment in mapping:
+            sequence_prep_id = sample_name.split('.')[-1]
+    	
+            # Write values to database for this sequence_prep_id        
+            data_access.updateSeqOtuCounts(sequence_prep_id, sequence_count, otu_count, percent_assignment)
+    	
+            if debug:
+        		print 'added to database: prep: {0}, seq_count: {1}, otu_count: {2}'.format(\
+        			str(sequence_prep_id), str(sequence_count), str(otu_count))
 
 if __name__ == "__main__":
     main()

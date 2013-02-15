@@ -111,6 +111,7 @@ def summarize_all_stats(study_id):
     user_dir = ServerConfig().home
     study_dir = join(user_dir, 'user_data/studies', 'study_{0}'.format(study_id))
     processed_data_dirs = get_processed_data_dirs(study_dir)
+    processed_results = {}
 
     #print str(processed_data_dirs)
 
@@ -132,6 +133,9 @@ def summarize_all_stats(study_id):
 
             mapping.append((sample_name, sequence_count, otu_count, percent_assignment))
 
-        return mapping, seq_header_lines, otu_header_lines
+        processed_results[processed_dir] = (mapping, seq_header_lines, otu_header_lines)
+
+    # Return all of the results
+    return processed_results
 
 
