@@ -1,0 +1,35 @@
+<%
+
+from data_export import export_grid
+from data_access_connections import data_access_factory
+from enums import *
+from os.path import join
+from datetime import datetime
+import gzip
+
+sess = Session.Session(req)
+data_access = data_access_factory(ServerConfig.data_access_type)
+
+study_id = sess['study_id']
+study_dir = sess['study_dir']
+
+sample_details = data_access.getSampleDetailList(study_id)
+
+headers = ('sample_name', 'sample_id', 'public', 'collection_date', 
+	'run_prefix', 'sequence_count', 'otu_count', 'otu_percent_hit')
+grid_data = export_grid(sample_details, headers)
+
+unique_identifier = str(datetime.now())
+file_name = 'sample_data_{0}.tsv.gz'.format(unique_identifier)
+file_path = join(sess['document_root'], 'tmp/', file_name)
+
+f = gzip.open(file_path, 'wb')
+f.write(grid_data)
+f.close()
+
+
+# Redirect the user to the new page
+req.content_type = 'text/plain'
+psp.redirect(join('tmp/', file_name))
+
+%>
