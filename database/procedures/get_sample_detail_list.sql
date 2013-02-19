@@ -19,7 +19,18 @@ begin
   open results for
     select  sa.sample_name || '.' || sp.sequence_prep_id as sample_plus_row_num, 
             sa.sample_id, sa."PUBLIC", sa.collection_date, sp.run_prefix, 
-            sp.num_sequences, sp.num_otus, sp.otu_percent_hit
+            case
+                when sp.num_sequences is null then 0
+                else sp.num_sequences
+            end as num_sequences, 
+            case
+                when sp.num_otus is null then 0
+                else sp.num_otus
+            end as num_otus, 
+            case 
+                when sp.otu_percent_hit is null then 0
+                else sp.otu_percent_hit
+            end as otu_percent_hit
     from    sample sa
             left join sequence_prep sp
             on sa.sample_id = sp.sample_id

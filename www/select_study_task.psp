@@ -14,7 +14,6 @@ __status__ = "Production"
 <script type="text/javascript" src="js/study_search.js"></script>
 
 <%
-
 # Grab some required values for this page
 study_id = int(sess['study_id'])
 is_admin = int(sess['is_admin'])
@@ -181,8 +180,34 @@ else:
     # List all samples names here
     req.write('<table width="100%">')
     if write_seq_otu_cols:
-        req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>\
-            <th align="left">Run Prefix</th><th align="left">Sequence Count</th><th align="left">OTU Count</th><th align="left">% OTU Hit</th>')
+        # Figure out averages 
+        total_seqs = sum(map(lambda x: x[5], sample_details))
+        otu_pct_assign = sum(map(lambda x: x[6], sample_details))
+        # 2 steps to average
+        avg_otu_pct_assign = map(lambda x: x[7], sample_details)
+        avg_otu_pct_assign = round(float(sum(avg_otu_pct_assign)) / float(len(avg_otu_pct_assign)), 1)
+
+        req.write('<tr>\
+            <th colspan="4">Downloads</th>\
+            <th align="left">Total Sequence Count</th>\
+            <th align="left">Total OTU Count</th>\
+            <th align="left">Avg % OTU Hit</th>\
+            </tr>')
+        req.write('<tr>\
+            <td colspan="4"><a href="export_sample_grid.psp" target="_blank">Sample Grid</a></td>\
+            <td align="left">{0}</td>\
+            <td align="left">{1}</td>\
+            <td align="left">{2}%</td>\
+            </tr>'.format(total_seqs, otu_pct_assign, avg_otu_pct_assign))
+        req.write('<tr><td colspan="7"/></tr>')
+
+        req.write('<th align="left">Sample Name</th>\
+            <th align="left">Public</th>\
+            <th align="left">Collection Date</th>\
+            <th align="left">Run Prefix</th>\
+            <th align="left">Sequence Count</th>\
+            <th align="left">OTU Count</th>\
+            <th align="left">% OTU Hit</th>')
     else:
         req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>\
             <th align="left">Run Prefix</th>')
