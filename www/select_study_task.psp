@@ -309,7 +309,9 @@ if portal_type in ['qiime', 'emp']:
 
     elif metadata_complete == 'y' and sff_complete == 'y' and  web_app_user_id not in approved_qiime_submitters:
     
-        req.write("<br><font color='red'>Thank you for uploading your files, please email Gail Ackermann (<a href='mailto:gail.ackermann@colorado.edu?cc=jesse.stombaugh@colorado.edu,wendel@colorado.edu&subject=%s study uploaded'>email</a>) to verify and process your uploaded data, so it can be submitted to the database.</font><br>" % (study_name))
+        req.write("<br><font color='red'>Thank you for uploading your files, please email Gail Ackermann \
+            (<a href='mailto:gail.ackermann@colorado.edu?cc=wendel@colorado.edu&subject=%s study uploaded'>email</a>) \
+            to verify and process your uploaded data, so it can be submitted to the database.</font><br>" % (study_name))
         
     elif web_app_user_id in approved_qiime_submitters:
         # Indent
