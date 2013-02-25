@@ -44,6 +44,9 @@ def setPortalType():
     elif sess['portal_type'] == 'sloanmbe':
         sess['stylesheet'] = 'style/sloanmbe.css'
         sess['title'] = 'SloanMBE'
+    elif sess['portal_type'] == 'americangut':
+        sess['stylesheet'] = 'style/americangut.css'
+        sess['title'] = 'American Gut Project'
     else:
         sess['stylesheet'] = 'style/qiime.css'
         sess['title'] = 'Qiime'
