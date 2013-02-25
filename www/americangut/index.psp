@@ -1,0 +1,90 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+'''This script is the EMP user login page'''
+
+from data_access_connections import data_access_factory
+from enums import DataAccessType,ServerConfig
+import operator
+import locale
+locale.setlocale(locale.LC_ALL, 'en_US')
+
+data_access = data_access_factory(ServerConfig.data_access_type)
+sess = Session.Session(req)
+sess['portal_type'] = 'mobedac'
+sess.save()
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>American Gut Project</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<link rel="stylesheet" href="/qiime/style/americangut.css" type="text/css">
+<link rel="stylesheet" href="/qiime/style/style.css" type="text/css">
+
+</head>
+
+<body>
+
+<div class="container">
+	<div id="header">
+		<div class="login_disclaimer">American Gut Project</div>
+	</div>
+</div>
+
+<table class="header_table">
+    <tr><td class="login_header_table_cell">Please Log In</td></tr>
+</table>
+
+<div class="content">
+
+<%
+# This is the location where the user directories are written
+environment_vars=req.get_options()
+output_dir='%s/user_data' % environment_vars['HOME']
+link_path_dir = 'studies'
+if form.has_key('username'):
+	user_data = data_access.authenticateWebAppUser( form["username"], form["password"] )
+	if ( user_data and user_data['verified']=='y'):
+		url = 'http://%s/qiime/index.psp?portal_type=americangut&username=%s&password=%s&is_admin=%s' %\
+			(req.hostname, form["username"], form["password"], user_data['is_admin'])
+		req.write('<script language=\"javascript\">window.location = "%s";</script>' % url)
+	else:
+		req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+
+# end
+%>
+<p/>
+<table width="100%">
+<tr>
+<td>
+<form method="post" action="index.psp">
+<table width="30%">
+	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
+	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
+	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
+</table>
+</form>
+</td>
+
+<td>
+</td>
+</tr>
+</table>
+
+<br/>
+
+
+</div>
+
+</body>
+</html>
