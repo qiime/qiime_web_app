@@ -43,6 +43,16 @@ from qiime.validate_demultiplexed_fasta import run_fasta_checks
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
 
+# NOTE: this function should be removed and instead imported from qiime.util
+# if and when QIIME is updated on this system to a version that has!
+def is_gzip(fp):
+    """Checks the first two bytes of the file for the gzip magic number
+
+    If the first two bytes of the file are 1f 8b (the "magic number" of a 
+    gzip file), return True; otherwise, return false.
+    """
+    return open(fp, 'rb').read(2) == '\x1f\x8b'
+
 def generate_log_fp(output_dir,
                     basefile_name='log',
                     suffix='txt',
@@ -101,7 +111,12 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
 
         #Generate filenames for split_libraries
         input_dir, input_filename = split(sff_input_fp)
-        input_basename, input_ext = splitext(input_filename)
+
+        if is_gzip(sff_input_fp) and sff_input_fp.endswith('.gz'):
+            input_basename, input_ext = splitext(splitext(input_filename)[0])
+        else:
+            input_basename, input_ext = splitext(input_filename)
+
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
             if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536']:

@@ -338,12 +338,6 @@ procedure get_sample_list
   results in out types.ref_cursor
 );
 
-procedure get_sample_detail_list
-(
-  study_id_ in int,
-  results in out types.ref_cursor
-);
-
 procedure get_prep_list
 (
   sample_id_ in int,
