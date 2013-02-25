@@ -105,6 +105,7 @@ function check_meta_analysis_name()
                 <option value=""></option>
 <%
     meta_analysis_names = data_access.getMetaAnalysisNames(sess['web_app_user_id'])
+    req.write(str(meta_analysis_names))
     for meta_analysis_name in meta_analysis_names:
         req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
     # end
