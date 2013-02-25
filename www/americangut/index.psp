@@ -18,7 +18,7 @@ locale.setlocale(locale.LC_ALL, 'en_US')
 
 data_access = data_access_factory(ServerConfig.data_access_type)
 sess = Session.Session(req)
-sess['portal_type'] = 'mobedac'
+sess['portal_type'] = 'americangut'
 sess.save()
 %>
 
