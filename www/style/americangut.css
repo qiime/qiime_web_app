@@ -1,0 +1,24 @@
+#header 
+{
+	background: url(/qiime/img/ag_logo.jpg) no-repeat left top;
+        height: 105px;
+	padding-top: 130px;
+}
+
+.container 
+{
+	margin: 0 auto;
+	position: relative;
+	background: #FFF;
+}
+
+#study_info
+{
+        position: absolute;
+        text-align: right;
+        top: 110px;
+        right: 10px;
+        width: 100%;
+        color: #777;
+        font: 15px normal Arial, Helvetica, sans-serif;
+}
