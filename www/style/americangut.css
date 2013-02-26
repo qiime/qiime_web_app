@@ -1,24 +1,151 @@
-#header 
-{
-	background: url(/qiime/img/ag_logo.jpg) no-repeat left top;
-        height: 105px;
-	padding-top: 130px;
+ body,html {
+    font-family: helvetica;
+	font-size: 10pt;
+    background-color: #eee;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
 }
 
-.container 
-{
-	margin: 0 auto;
-	position: relative;
-	background: #FFF;
+.highlight {
+    background-color: #fcc;
 }
 
-#study_info
-{
-        position: absolute;
-        text-align: right;
-        top: 110px;
-        right: 10px;
-        width: 100%;
-        color: #777;
-        font: 15px normal Arial, Helvetica, sans-serif;
+div.wrapper {
+    width: 90%;
+}
+
+div.lefta {
+    text-align: left;
+}
+
+div.header {
+	text-align: left;
+	width: 100%;
+	background-color: #fff;
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	margin-bottom: .2em;
+}
+
+div.menuwrapper {
+	border-radius: 10px;
+	width: 20%;
+	height: 100%;
+	background-color: #fff;
+	text-align: left;
+}
+
+div.footer {
+	text-align: center;
+	width: 100%;
+}
+
+.menu {
+	list-style-type: none;
+	padding-left: 1em;
+	font-size: 10pt;
+}
+
+.menu li {
+	margin-left: 0px;
+	margin-top: 1em;
+}
+
+.menu li a {
+	color: #1c1c1c;
+	text-decoration: none;
+}
+
+.menu li a:hover {
+	color: #2f7a8c;
+	text-decoration: none;
+}
+
+div.menu_separator {
+	height: 10px;
+	border-bottom: 1px dotted #ccc;
+	width: 90%;
+}
+
+div.content {
+	text-align: center;
+	width: 79%;
+	background-color: #f5f5f5;
+}
+
+div.left {
+    float: left;
+}
+
+div.right {
+    float: right;
+}
+
+div.center {
+	text-align: center;
+	width: 100%;
+}
+
+div.red {
+    color: #ff0000;
+}
+
+div#verification {
+/*	margin-left: 2em;*/
+	width: 60%;
+}
+
+div#verification h4 {
+	color: #1c1c1c;
+}
+
+div#verification a {
+	color: #2f7a8c;
+	text-decoration: none;
+}
+
+h1 {
+    color: #181f23;
+    padding-left: .5em;
+    text-align: left;
+}
+
+p.construction_text {
+	font-size: 18pt;
+}
+
+img#logo {
+    height: 100px;
+	margin-left: .5em;
+	margin-bottom: .25em;
+	border-bottom: .5em;
+}
+
+img.icon  {
+	margin-right: 1em;
+}
+
+/* Clearfix */
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+
+.clearfix {
+    display: inline-block;
+}
+
+html[xmlns] .clearfix {
+    display: block;
+}
+
+* html .clearfix {
+    height: 1%;
 }
