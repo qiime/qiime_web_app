@@ -3,7 +3,7 @@
 <br>
 <div class="left menuwrapper">
 	<ul class="menu">
-		<li><a href=""><img class="icon" src="/qiime/img/mail_icon.png">Notify me when the site is live!</a></li>
+		<!-- <li><a href=""><img class="icon" src="/qiime/img/mail_icon.png">Notify me when the site is live!</a></li>-->
         <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Purchase a Kit</a></li>
         <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
 	</ul>
@@ -11,6 +11,6 @@
 <div id="content" class="right content">
 <img src="/qiime/img/ag_construction.png">
 <br>
-<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p>
+<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text"> We will notify all participants when the site is live.</p>
 </div>
 <%@ include file="ag_footer.psp" %>
