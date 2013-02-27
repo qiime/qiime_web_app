@@ -1,14 +1,14 @@
 <%
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Doug Wendel"]
+__credits__ = ["Doug Wendel","Meg Pirrung"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
-__maintainer__ = ["Doug Wendel"]
+__maintainer__ = ["Doug Wendel","Meg Pirrung"]
 __email__ = "wendel@colorado.edu"
-__status__ = "Production"
+__status__ = "Dev"
 
-'''This script is the EMP user login page'''
+'''This script is the American Gut user login page'''
 
 from data_access_connections import data_access_factory
 from enums import DataAccessType,ServerConfig
@@ -21,32 +21,28 @@ sess = Session.Session(req)
 sess['portal_type'] = 'americangut'
 sess.save()
 %>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>American Gut Project</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-
-<link rel="stylesheet" href="/qiime/style/americangut.css" type="text/css">
-<link rel="stylesheet" href="/qiime/style/style.css" type="text/css">
-
-</head>
-
-<body>
-
-<div class="container">
-	<div id="header">
-		<div class="login_disclaimer">American Gut Project</div>
-	</div>
-</div>
-
-<table class="header_table">
-    <tr><td class="login_header_table_cell">Please Log In</td></tr>
-</table>
-
-<div class="content">
-
+<!DOCTYPE html>
+<html lang="en"> 
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut</title>
+        <script src="js/jquery-1.7.1.min.js"></script>
+        <script src="js/american_gut.js"></script>
+        <link rel="stylesheet" type="text/css" href="/qiime/style/americangut.css">
+    </head>
+    <body>
+		<div class="wrapper clearfix">
+	        <div class="header clearfix">
+	            <img id="logo" src="/qiime/img/ag_logo.jpg">
+			</div>
+			<br>
+			<div class="left menuwrapper">
+				<ul class="menu">
+					<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Purchase a kit</a></li>
+					<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
+				</ul>
+			</div>
+			<div id="content" class="right content">
 <%
 # This is the location where the user directories are written
 environment_vars=req.get_options()
@@ -63,28 +59,25 @@ if form.has_key('username'):
 
 # end
 %>
-<p/>
-<table width="100%">
-<tr>
-<td>
-<form method="post" action="index.psp">
-<table width="30%">
-	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
-	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
-	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
-</table>
-</form>
-</td>
-
-<td>
-</td>
-</tr>
-</table>
-
-<br/>
-
-
-</div>
-
-</body>
+                            <h2>Participant Log In</h2>
+                            <div class="center">
+                            <table width="100%">
+                                <tr width="100%">
+                                    <td width="30%"></td>
+                                    <td width="30%">
+                                        <form method="post" action="index.psp">
+                                            <table width="100%">
+                                            	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
+                                            	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
+                                            	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
+                                            </table>
+                                        </form>
+                                    </td>
+                                    <td width="30%"></td>
+                                </tr>
+                            </table>
+                            </div>
+			</div>
+		</div>
+	</body>
 </html>

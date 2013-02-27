@@ -1,0 +1,22 @@
+<%@ include file="ag_header.psp" %>
+
+<br>
+<div class="left menuwrapper">
+	<ul class="menu">
+		<li><a href=""><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
+        <div class="menu_separator"></div>
+        <li><a href=""><img class="icon" src="/qiime/img/participants_icon.png">Participants</a>
+            <ul class="menu">
+                <li><a href=""><img class="icon" src="/qiime/img/participant_icon.png">[Participant 1 Name]</a></li>
+                <li><a href=""><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
+            </ul>
+        </li>
+        <div class="menu_separator"></div>
+        <li><a href=""><img class="icon" src="/qiime/img/purchase_icon.png">Purchase a Kit</a></li>
+        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
+	</ul>
+</div>
+<div id="content" class="right content">
+
+</div>
+<%@ include file="ag_footer.psp" %>

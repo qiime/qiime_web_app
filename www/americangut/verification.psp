@@ -1,0 +1,35 @@
+<%@ include file="ag_header.psp" %>
+
+<br>
+<div class="left menuwrapper">
+	<ul class="menu">
+        <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Purchase a Kit</a></li>
+        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">About American Gut</a></li>
+	</ul>
+</div>
+<div id="content" class="right content">
+    <h2>Verify your identity and kit barcode(s)</h2>
+    <div class="lefta clearfix" id="verification">
+        <form method="post" action="verification.psp">
+            <h4>Please enter the verification code sent to your email address <a href="">(?)</a></h4>
+            <input type="text"></input>
+            <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a href="">(?)</a></h4>
+            <table width="30%">
+                <tr>
+                <td><input type="checkbox" id=""></input></td>
+                <td>000001000</td>
+                </tr>
+                <tr>
+                <td><input type="checkbox" id=""></input></td>
+                <td>000001001</td>
+                </tr>
+            </table>
+            <br>
+            <div class="center">
+            <input type="submit" value="Verify"></input>
+            </div>
+        </form>
+        <br>
+    </div>
+</div>
+<%@ include file="ag_footer.psp" %>

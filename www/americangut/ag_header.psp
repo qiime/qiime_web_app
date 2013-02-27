@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut</title>
+        <script src="js/jquery-1.7.1.min.js"></script>
+        <script src="js/american_gut.js"></script>
+        <link rel="stylesheet" type="text/css" href="/qiime/style/americangut.css">
+    </head>
+    <body>
+		<div class="wrapper clearfix">
+	        <div class="header clearfix">
+	            <img id="logo" src="/qiime/img/ag_logo.jpg">
+			</div>
