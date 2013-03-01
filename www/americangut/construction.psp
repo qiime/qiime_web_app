@@ -1,4 +1,4 @@
-<%@ include file="ag_header.psp" %>
+<%@ include file="header.psp" %>
 
 <br>
 <div class="left menuwrapper">
@@ -9,8 +9,8 @@
 	</ul>
 </div>
 <div id="content" class="right content">
-<img src="/qiime/img/ag_construction.png">
+<img src="img/ag_construction.png">
 <br>
 <p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text"> We will notify all participants when the site is live.</p>
 </div>
-<%@ include file="ag_footer.psp" %>
+<%@ include file="footer.psp" %>

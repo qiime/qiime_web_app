@@ -1,4 +1,3 @@
-<%@ include file="ag_header.psp" %>
 
 <br>
 <div class="left menuwrapper">
@@ -19,4 +18,3 @@
 <div id="content" class="right content">
 
 </div>
-<%@ include file="ag_footer.psp" %>

@@ -36,6 +36,7 @@ create table ag_kit
 (
     ag_kit_id raw(16) default sys_guid() primary key,
     ag_login_id raw(16) not null,
+    supplied_kit_id varchar2(50) not null,
     kit_password varchar2(50) not null,
     swabs_per_kit int not null,
     kit_verification_code varchar2(50),
@@ -46,8 +47,8 @@ create table ag_kit
 );
 
 insert  into ag_kit
-        (ag_login_id, kit_password, swabs_per_kit, kit_verification_code)
-select  ag_login_id, kit_password, swabs_per_kit, kit_verification_code
+        (ag_login_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code)
+select  ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code
 from    ag_login;
 
 create table ag_kit_barcodes
