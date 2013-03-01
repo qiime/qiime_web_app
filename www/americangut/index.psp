@@ -39,12 +39,14 @@ environment_vars=req.get_options()
 output_dir='%s/user_data' % environment_vars['HOME']
 link_path_dir = 'studies'
 if form.has_key('username'):
-	user_data = ag_data_access.authenticateWebAppUser(form["username"], form["password"])
-	if (user_data):        
-		url = 'fusebox.psp?page=portal.psp'
-		req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
-	else:
-		req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+    user_data = ag_data_access.authenticateWebAppUser(form["username"], form["password"])
+    if (user_data):
+        sess['user_data'] = user_data
+        sess.save()
+        url = 'fusebox.psp?page=portal.psp'
+        req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
+    else:
+        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
 
 # end
 %>
