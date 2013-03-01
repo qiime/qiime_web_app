@@ -14,18 +14,21 @@ __status__ = "Development"
 
 import cx_Oracle
 from qiime_data_access import QiimeDataAccess
-from enums import ServerConfig,DataAccessType
+from ag_data_access import AGDataAccess
+from enums import ServerConfig, DataAccessType
 from credentials import Credentials
 
-def data_access_factory(data_access_type):
+def data_access_factory(data_access_type, class_type='qiime'):
     """
-    Factory method for returning the appropriate data access type
+    Factory method for returning the appropriate data access type. By defalt returns
+    the 'qiime' data_access_type, but you can request other data access types for
+    specific purposes.
     """
 
     connections = None
     
     if data_access_type == DataAccessType.qiime_production:
-        connections = QiimeDataAccessConnections() 
+        connections = QiimeDataAccessConnections()
     elif data_access_type == DataAccessType.qiime_test:
         connections = TestDataAccessConnections()
     
@@ -33,7 +36,10 @@ def data_access_factory(data_access_type):
     if not connections:
         raise TypeError('Could not determine data access type.')
     
-    return QiimeDataAccess(connections)
+    if class_type == 'qiime':
+        return QiimeDataAccess(connections)
+    elif class_type == 'american_gut':
+        return AGDataAccess(connections)
     
 class AbstractDataAccessConnections(object):
     """

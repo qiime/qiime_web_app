@@ -1,39 +1,28 @@
 <%
-__author__ = "Doug Wendel"
-__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Doug Wendel","Meg Pirrung"]
-__license__ = "GPL"
-__version__ = "1.0.0.dev"
-__maintainer__ = ["Doug Wendel","Meg Pirrung"]
-__email__ = "wendel@colorado.edu"
-__status__ = "Dev"
-
-'''This script is the American Gut user login page'''
-
 from data_access_connections import data_access_factory
 from enums import DataAccessType,ServerConfig
-import operator
-import locale
-locale.setlocale(locale.LC_ALL, 'en_US')
 
-data_access = data_access_factory(ServerConfig.data_access_type)
+#data_access = data_access_factory(ServerConfig.data_access_type)
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+
 sess = Session.Session(req)
 sess['portal_type'] = 'americangut'
+sess['document_root'] = req.document_root() + '/qiime/AmericanGut/'
+sess.set_timeout(604800)
 sess.save()
 %>
+
 <!DOCTYPE html>
 <html lang="en"> 
     <head>
         <meta charset="utf-8">
         <title>American Gut</title>
-        <script src="js/jquery-1.7.1.min.js"></script>
-        <script src="js/american_gut.js"></script>
-        <link rel="stylesheet" type="text/css" href="/qiime/style/americangut.css">
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
     </head>
     <body>
 		<div class="wrapper clearfix">
 	        <div class="header clearfix">
-	            <img id="logo" src="/qiime/img/ag_logo.jpg">
+	            <img id="logo" src="img/ag_logo.jpg">
 			</div>
 			<br>
 			<div class="left menuwrapper">
@@ -43,17 +32,17 @@ sess.save()
 				</ul>
 			</div>
 			<div id="content" class="right content">
+
 <%
 # This is the location where the user directories are written
 environment_vars=req.get_options()
 output_dir='%s/user_data' % environment_vars['HOME']
 link_path_dir = 'studies'
 if form.has_key('username'):
-	user_data = data_access.authenticateWebAppUser( form["username"], form["password"] )
-	if ( user_data and user_data['verified']=='y'):
-		url = 'http://%s/qiime/index.psp?portal_type=americangut&username=%s&password=%s&is_admin=%s' %\
-			(req.hostname, form["username"], form["password"], user_data['is_admin'])
-		req.write('<script language=\"javascript\">window.location = "%s";</script>' % url)
+	user_data = ag_data_access.authenticateWebAppUser(form["username"], form["password"])
+	if (user_data):        
+		url = 'fusebox.psp?page=portal.psp'
+		req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
 	else:
 		req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
 

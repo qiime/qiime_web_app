@@ -1,0 +1,29 @@
+<%
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+if not (sess.has_key('username')):
+    sess.invalidate()
+    psp.redirect('index.psp')
+
+# Imports
+from data_access_connections import data_access_factory
+from enums import *
+from mod_python import *
+
+portal_type = sess['portal_type']
+#ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut Project</title>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+    </head>
+    <body>
+		<div class="wrapper clearfix">
+	        <div class="header clearfix">
+	            <img id="logo" src="img/ag_logo.jpg">
+			</div>
+

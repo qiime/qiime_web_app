@@ -1,4 +1,3 @@
-<%@ include file="ag_header.psp" %>
 
 <br>
 <div class="left menuwrapper">
@@ -32,4 +31,3 @@
         <br>
     </div>
 </div>
-<%@ include file="ag_footer.psp" %>
