@@ -24,6 +24,8 @@ create table ag_login
     city varchar2(100),
     state varchar2(100),
     zip varchar2(10),
+    latitude float,
+    longitude float,
     country varchar2(100),
     sample_barcode_file varchar2(500),
     sample_barcode_file_md5 varchar2(50),

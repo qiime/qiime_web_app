@@ -18,6 +18,59 @@ sess.save()
         <meta charset="utf-8">
         <title>American Gut</title>
         <link rel="stylesheet" type="text/css" href="style/americangut.css">
+
+
+
+<script type="text/javascript" src="/qiime/js/qiime.js"></script>
+<script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="/qiime/js/jquery_validate/jquery.validate.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
+<script type="text/javascript"> 
+$(document).ready(function(){
+
+    $("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    
+    $("ul.topnav li span").click(function() { //When trigger is clicked...
+        
+        //Following events are applied to the subnav itself (moving subnav up and down)
+        $(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+        $(this).parent().hover(function() {
+        }, function(){  
+            $(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+        });
+
+        //Following events are applied to the trigger (Hover events for the trigger)
+        }).hover(function() { 
+            $(this).addClass("subhover"); //On hover over, add class "subhover"
+        }, function(){  //On Hover Out
+            $(this).removeClass("subhover"); //On hover out, remove class "subhover"
+    });
+
+});
+
+function toggleSection(section_name)
+{
+    div = document.getElementById(section_name);
+    header_name = section_name + '_header';
+    if (div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('+', '-');
+        window.scrollBy(0, 200);
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('-', '+');
+    }
+}
+</script>
+
+
     </head>
     <body>
 		<div class="wrapper clearfix">
@@ -70,5 +123,22 @@ if form.has_key('username'):
                             </div>
 			</div>
 		</div>
+
+
+
+
+
+
+
+
+
+
+<!-- SAMPLE LOCATIONS -->
+
+<div>
+    <%@ include file="../visualize_all_sample_locations.psp"%>
+</div>
+
+
 	</body>
 </html>
