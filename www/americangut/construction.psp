@@ -11,6 +11,6 @@
 <div id="content" class="right content">
 <img src="img/ag_construction.png">
 <br>
-<p class="construction_text">You have landed on this page because you have received your kit!</p><p class="construction_text">Thanks again for joining the study. The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text">Sorry for the delay, but check back in a few days. You'll want to bookmark this page since this is where you'll see your results once they are sequenced and analyzed!</p><p class="construction_text">If you have any questions, please email <a href="mailto:info@americangut.org">us</a>.</p>
+<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text"> We will notify all participants when the site is live.</p>
 </div>
 <%@ include file="footer.psp" %>

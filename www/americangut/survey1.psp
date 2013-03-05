@@ -1,7 +1,3 @@
-<%@ include file="header.psp" %>
-<br>
-<%@ include file="menu.psp" %>
-
 <div id="content" class="right content">
     <h2>Survey</h2>
     <h4>Personal Information</h4>
@@ -10,7 +6,12 @@
             <tr>
             <td width="30%"></td>
             <td>
-                <form id="survey_1">
+                <form id="survey_1" action="fusebox.psp">
+<%
+for f in form:
+    req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, f, form[f])
+# End for
+%>
                     <table width="100%">
                         <tr>
                             <td>Country of birth</td>
@@ -46,14 +47,16 @@
                             <td><input type="text" /></td>
                         </tr>
                     </table>
-                </form>
+                
             </td>
             <td width="30%"></td>
             </tr>
         </table>
     </div>
     <br />
-    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <input type="submit" value="Continue">
+    <input type="hidden" id="page" name="page" value="survey2.psp">
+    </form>
     <br />
     <br />
     <div id="progressbar"></div>

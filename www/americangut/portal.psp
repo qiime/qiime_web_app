@@ -3,6 +3,6 @@
 <%@ include file="menu.psp" %>
 
 <div id="content" class="right content">
-    Welcome [User name]<!--<%=user_data['name']%>-->
+    Welcome <%=user_data['name']%>
 </div>
 <%@ include file="footer.psp" %>

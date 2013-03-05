@@ -1,7 +1,3 @@
-<%@ include file="header.psp" %>
-<br>
-<%@ include file="menu.psp" %>
-
 <div id="content" class="right content">
     <h2>Survey</h2>
     <table>
@@ -20,7 +16,10 @@
                 <td width="10%"></td>
             </tr>
     </table>
-    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <form id="survey_main" action="fusebox.psp">
+        <input type="hidden" id="page" name="page" value="survey1.psp">
+        <input type="sumbit" value="Continue">
+    </form>
     <br />
     <br />
     <div id="progressbar"></div>
@@ -33,5 +32,3 @@
     </script>
     <br />
 </div>
-
-<%@ include file="footer.psp" %>

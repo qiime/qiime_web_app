@@ -80,7 +80,7 @@ function toggleSection(section_name)
 			<br>
 			<div class="left menuwrapper">
 				<ul class="menu">
-					<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Purchase a kit</a></li>
+					<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
 					<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
 				</ul>
 			</div>

@@ -1,7 +1,10 @@
 <%@ include file="header.psp" %>
 <br>
 <%@ include file="menu.psp" %>
-
+<%
+for f in form:
+    req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, f, form[f])
+%>
 <div id="content" class="right content">
     <h2>Survey</h2>
     <table>
@@ -19,7 +22,7 @@
             <td width="20%"></td>
         </tr>
     </table>
-    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <input type="submit" value="Continue">
     <br />
     <br />
     <div id="progressbar"></div>
