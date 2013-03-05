@@ -86,6 +86,11 @@ div.menu_separator {
 	width: 90%;
 }
 
+div.login_content {
+	text-align: right;
+	wideth: 79%;
+}
+
 div.content {
 	text-align: center;
 	width: 79%;
