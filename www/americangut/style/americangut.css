@@ -13,12 +13,20 @@
     background-color: #fcc;
 }
 
+table#survey{
+	border-spacing: 20px;
+}
+
 div.wrapper {
     width: 90%;
 }
 
 div.lefta {
     text-align: left;
+}
+
+div.invisible {
+	display: none;
 }
 
 div.header {
@@ -41,6 +49,14 @@ div.menuwrapper {
 div.footer {
 	text-align: center;
 	width: 100%;
+}
+
+input.small_text {
+	width: 75px;
+}
+
+input.smaller_text {
+	width: 50px;
 }
 
 .menu {
@@ -76,6 +92,15 @@ div.content {
 	background-color: #f5f5f5;
 }
 
+div.scroll {
+/*    border: 1px solid black;*/
+    border-style: inset;
+    width: 600px;
+    height: 450px;
+    overflow: scroll;
+    font-size: 10pt;
+}
+
 div.left {
     float: left;
 }
@@ -93,8 +118,13 @@ div.red {
     color: #ff0000;
 }
 
-div#verification {
+div.formdiv {
 /*	margin-left: 2em;*/
+	width: 60%;
+}
+
+div#progressbar {
+	margin: 0 auto;
 	width: 60%;
 }
 
@@ -111,6 +141,14 @@ h1 {
     color: #181f23;
     padding-left: .5em;
     text-align: left;
+}
+
+a.add_field {
+	text-decoration: none;
+}
+
+a.help {
+	text-decoration: none;
 }
 
 p.construction_text {

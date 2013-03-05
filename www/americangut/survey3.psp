@@ -1,0 +1,202 @@
+<%@ include file="header.psp" %>
+<br>
+<%@ include file="menu.psp" %>
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <h4>General Information</h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="20%"></td>
+            <td>
+                <form id="survey_3">
+                    <table id="survey" width="100%">
+                        <tr>
+                            <td>What is your race/ethnicity?</td>
+                            <td>
+                                <select id="race" onchange="otherSelect('race','race_option',5)">
+                                    <option>Select an option</option>
+                                    <option>Caucasian</option>
+                                    <option>Asian or Pacific Islander</option>
+                                    <option>African American</option>
+                                    <option>Hispanic</option>
+                                    <option>Other</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </table>
+                        <div id="race_option" class="invisible">
+                            <table id="survey" width="100%">
+                                <tr>
+                                    <td>Other</td>
+                                    <td><input type="text" id="race_other" /></td>                        
+                                </tr>
+                            </table>
+                        </div>
+                        <table id="survey" width="100%">
+                        <tr>
+                            <td>When did you move to your current state of residence?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Within the past month</option>
+                                    <option>Within the past 3 months</option>
+                                    <option>Within the past 6 months</option>
+                                    <option>Within the past year</option>
+                                    <option>More than a year</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>When did you last travel outside of your current country of residence?</td>
+                            <td>
+                                <select id="travel" onchange="anySelect('travel','travel_option',[0,6])">
+                                    <option>Select an option</option>
+                                    <option>Within the past month</option>
+                                    <option>Within the past 3 months</option>
+                                    <option>Within the past 6 months</option>
+                                    <option>Within the past year</option>
+                                    <option>Earlier than the past year</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        </table>
+                        <div id="travel_option" class="invisible">
+                            <table id="survey" width="100%">
+                                <tr>
+                                    <td>Where did you travel to?</td>
+                                    <td><input type="text" id="travellocation" /></td>                        
+                                </tr>
+                                <tr>
+                                    <td>How long were you there?</td>
+                                    <td><input type="text" id="travelduration" /> days</td>                        
+                                </tr>
+                            </table>
+                        </div>
+                        <table id="survey" width="100%">
+                        <tr>
+                            <td>Are you related to or live with any of the other participants in this study?</td>
+                            <td>
+                                <div id="livingwith_radio">
+                                    <input type="radio" id="livingwith_yes" name="livingwith_radio" onclick="javascript:setVisible('livingwith_option')"/><label for="livingwith_yes">Yes</label>
+                                    <input type="radio" id="livingwith_no" name="livingwith_radio" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_no">No</label>
+                                    <input type="radio" id="livingwith_notsure" name="livingwith_radio" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_notsure">Not sure</label>
+                                </div>
+                            </td>
+                        </tr>
+                        </table>
+                        <div id="livingwith_option" class="invisible">
+                            <table id="survey" width="100%">
+                                <tr>
+                                    <td>Add any other participants you are related to or live with</td>
+                                    <td>
+                                        <div id="participant">
+                                            <div id="participant_1">
+                                                <input type="text" value="Name" name="participant_1" class="small_text"/><input type="text" value="Relationship" name="relation_1" class="small_text"/>
+                                            </div>
+                                        </div>
+                                        <a class="add_field" href="javascript:addTwoFields(\'participant\',\'relation\')" title="Add another diet restriction">+</a>
+                                    </td>                      
+                                </tr>
+                            </table>
+                        </div>
+                        <table id="survey" width="100%">
+                        <tr>
+                            <td>Do you have a dog(s)?</td>
+                            <td>
+                                <div id="dog_radio">
+                                    <input type="radio" id="dog_yes" name="dog_radio" /><label for="dog_yes">Yes</label>
+                                    <input type="radio" id="dog_no" name="dog_radio" /><label for="dog_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have a cat(s)?</td>
+                            <td>
+                                <div id="cat_radio">
+                                    <input type="radio" id="cat_yes" name="cat_radio" /><label for="cat_yes">Yes</label>
+                                    <input type="radio" id="cat_no" name="cat_radio" /><label for="cat_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Add any pets you have <a href="#" class="help" title="Indicate whether they are generally indoor, outdoor, or confined (e.g. in a tank or cage) animals, and rate the amount of direct contact you have with your pets as none, little (i.e. occasional petting), moderate (i.e. regular petting), or extensive (i.e. sleep with you).">(?)</a></td>
+                            <td>
+                                <div id="pet">
+                                    <div id="pet_1">
+                                        <input type="text" value="Type" name="pet_1" class="smaller_text"/>
+                                        <select id="pet_1_location">
+                                            <option>Indoor</option>
+                                            <option>Outdoor</option>
+                                            <option>Confined</option>
+                                        </select>
+                                        <select id="pet_1_contact">
+                                            <option>None</option>
+                                            <option>Little</option>
+                                            <option>Moderate</option>
+                                            <option>Extensive</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <a class="add_field" href="javascript:addThreeFields(\'pet\')" title="Add another pet">+</a>
+                            </td>                      
+                        </tr>
+                        <tr>
+                            <td>Which is your dominant hand?</td>
+                            <td>
+                                <div id="hand_radio">
+                                    <input type="radio" id="hand_right" name="hand_radio" /><label for="hand_right">Right</label>
+                                    <input type="radio" id="hand_left" name="hand_radio" /><label for="hand_left">Left</label>
+                                    <input type="radio" id="hand_ambi" name="hand_radio" /><label for="hand_ambi">Ambidextrous</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you currently live in shared housing with non-family members, e.g. senior living, on-campus housing, kibbutz etc.?</td>
+                            <td>
+                                <div id="living_radio">
+                                    <input type="radio" id="living_yes" name="living_radio" /><label for="living_yes">Yes</label>
+                                    <input type="radio" id="living_no" name="living_radio" /><label for="living_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </td>
+            <td width="20%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+    
+      $(function() {
+          $('input[type="text"], textarea').focus(function () {
+              defaultText = $(this).val();
+              $(this).val('');
+          });
+          $('input[type="text"], textarea').blur(function () {
+              if ($(this).val() == "") {
+                  $(this).val(defaultText);
+              }
+              });
+          $( "#living_radio" ).buttonset();
+          $( "#dog_radio" ).buttonset();
+          $( "#cat_radio" ).buttonset();
+          $( "#hand_radio" ).buttonset();
+          $( "#livingwith_radio" ).buttonset();
+          $( "#progressbar" ).progressbar({
+            value: 35
+          });
+      });
+    </script>
+    <br />
+</div>
+
+<%@ include file="footer.psp" %>

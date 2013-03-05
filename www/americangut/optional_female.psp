@@ -1,0 +1,41 @@
+<tr><td><h4>Female Questions</h4></td></tr>
+<tr>
+    <td>Do you currently use some form of hormonal birth control?</td>
+    <td>
+        <select>
+            <option>Select an option</option>
+            <option>I take the "pill"</option>
+            <option>I use an injected contraceptive (DMPA)</option>
+            <option>I use a contraceptive patch (Ortho-Evra)</option>
+            <option>I use the NuvaRing</option>
+            <option>I use some other type of birth control</option>
+            <option>No</option>
+        </select>
+    </td>
+</tr>
+<tr>
+    <td>Are you currently pregnant?</td>
+    <td>
+        <div id="pregnant_radio">
+            <input type="radio" id="pregnant_yes" name="pregnant_radio" onclick="javascript:setVisible('pregnant_option')"/><label for="pregnant_yes">Yes</label>
+            <input type="radio" id="pregnant_no" name="pregnant_radio" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_no">No</label>
+            <input type="radio" id="pregnant_notsure" name="pregnant_radio" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_notsure">Not sure</label>
+        </div>
+    </td>
+</tr>
+</table>
+<div id="pregnant_option" class="invisible">
+    <table id="survey" width="100%">
+        <tr>
+            <td>When is your due date?</td>
+            <td><input type="text" id="datepicker_duedate" /></td>
+            <script>
+              $(function() {
+                $( "#datepicker_duedate" ).datepicker();
+              });
+            </script>                  
+        </tr>
+    </table>
+</div>
+
+<table id="survey" width="100%">

@@ -1,0 +1,36 @@
+<%@ include file="header.psp" %>
+<br>
+<%@ include file="menu.psp" %>
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <table>
+        <tr>
+            <td width="20%"></td>
+            <td>
+                <div class="lefta">
+                    <p>
+                    Please write anything else about yourself that you think might affect your personal microorganisms.
+                    </p>
+                </div>
+                <textarea rows="5" cols="50">
+                </textarea>
+            </td>
+            <td width="20%"></td>
+        </tr>
+    </table>
+    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+        $( "#progressbar" ).progressbar({
+          value: 99
+        });
+      });
+    </script>
+    <br />
+</div>
+
+<%@ include file="footer.psp" %>

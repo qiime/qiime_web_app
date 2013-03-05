@@ -1,0 +1,47 @@
+<%@ include file="header.psp" %>
+<br>
+<%@ include file="menu.psp" %>
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <h4>General Health Information</h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="10%"></td>
+            <td>
+                <form id="dietary_questions">
+                    <table id="survey" width="100%">
+                        <%@ include file="optional_living.psp" %>
+                        <%@ include file="optional_female.psp" %>
+                        <%@ include file="optional_diabetes.psp" %>
+                        <%@ include file="optional_migraine.psp" %>
+                    </table>
+                </form>
+            </td>
+            <td width="10%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+          $( "#frat_radio" ).buttonset();
+          $( "#dining_radio" ).buttonset();
+          $( "#pregnant_radio" ).buttonset();
+          $( "#diabetesmed_radio" ).buttonset();
+          $( "#migrainemeds_radio" ).buttonset();
+          $( "#migrainerelatives_radio" ).buttonset();
+        $( "#progressbar" ).progressbar({
+          value: 70
+        });
+      });
+    </script>
+    <br />
+</div>
+
+<%@ include file="footer.psp" %>

@@ -1,0 +1,131 @@
+<%@ include file="header.psp" %>
+<br>
+<%@ include file="menu.psp" %>
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <h4>Detailed Dietary Information</h4>
+    <h4>For a 7 day period, please provide the following</h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="10%"></td>
+            <td>
+                <form id="dietary_questions">
+                    <table width="100%">
+                        <tr><td><h4>Overall macronutrient intake as a percentage of calories</h4></td></tr>
+                        <tr>
+                            <td>Protein</td>
+                            <td>
+                                <input type="text" id="protein_per" value="0"  onchange="javascript:updateTotalIntake()"/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Fat</td>
+                            <td>
+                                <input type="text" id="fat_per" value="0" onchange="javascript:updateTotalIntake()"/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Carbohydrates</td>
+                            <td>
+                                <input type="text" id="carbohydrate_per" value="0" onchange="javascript:updateTotalIntake()"/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td>
+                                <label id="dietaryIntakeTotal" for="dietary_total">0</label>%
+                            </td>
+                        </tr>
+                        <tr><td><h4>What percentage of protein in your diet comes from animal vs plant sources?</h4></td></tr>
+                        <tr>
+                            <td>Plant</td>
+                            <td>
+                                <input type="text" id="plant_per" value="0" onchange="javascript:updateAnimalPlant()"/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Animal</td>
+                            <td>
+                                <input type="text" id="animal_per" value="0" onchange="javascript:updateAnimalPlant()"/>%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Total</td>
+                            <td>
+                                <label id="plantAnimalTotal" for="protanimal_total">0</label>%
+                            </td>
+                        </tr>
+                        <tr><td><h4>Fiber</h4></td></tr>
+                        <tr>
+                            <td>Grams of fiber consumed for the 7 day period</td>
+                            <td>
+                                <input type="text" id="fiber_grams"/>(g)
+                            </td>
+                        </tr>
+                        
+                        <tr><td><h4>How many different species of plants did you consume during the 7-day period?</h4></td></tr>
+                        <tr>
+                            <td>Number of types of plants <a href="#" class="help" title="If you consumed a can of vegetable soup and it contained carrots, potatoes, and onion – then that counts as three species. If you consumed multi-grain bread, then each grain counts. Please do not count ‘spices’ as contributing to your species count.">(?)</a></td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Less than 5</option>
+                                    <option>6 to 10</option>
+                                    <option>11 to 20</option>
+                                    <option>21 to 30</option>
+                                    <option>More than 30</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr><td><h4>What percentage of your carbohydrates come from processed sources?</h4></td></tr>
+                        <tr>
+                            <td>Processed sources <a href="#" class="help" title="Bread, pasta, sugary drinks, etc">(?)</a></td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Less than 25%</option>
+                                    <option>25 to 50%</option>
+                                    <option>51 to 75%</option>
+                                    <option>More than 76%</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr><td><h4>What would you consider to be the primary whole vegetable in your diet?</h4></td></tr>
+                        <tr>
+                            <td>Primary whole vegetable <a href="#" class="help" title="Broccoli, carrots, onions, leafy greens, potatoes">(?)</a></td>
+                            <td>
+                                <input type="text" id="primary_vegetable"/>
+                            </td>
+                        </tr>
+                        <tr><td><h4>What would you consider the primary carbohydrate in your diet?</h4></td></tr>
+                        <tr>
+                            <td>Primary carbohydrate <a href="#" class="help" title="Bread, pasta, sugary drinks, etc">(?)</a></td>
+                            <td>
+                                <input type="text" id="primary_carb"/>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </td>
+            <td width="10%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+        $( "#progressbar" ).progressbar({
+          value: 80
+        });
+      });
+    </script>
+    <br />
+</div>
+
+<%@ include file="footer.psp" %>

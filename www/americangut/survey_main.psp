@@ -1,0 +1,37 @@
+<%@ include file="header.psp" %>
+<br>
+<%@ include file="menu.psp" %>
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <table>
+        <tr>
+            <td width="10%"></td>
+            <td>
+                <div class="lefta">
+                    <p>
+                    You will be asked questions about your general personal information (name, age, sex, height, weight, ethnicity, place of birth current ZIP code. We will ask if you recently moved and where you moved from. We will ask questions about general diet information (including whether you follow a special diet, if you have food allergies, whether you have cultural or religious food restrictions). Other questions address whether you have pets and the type of contact you have with these pets and your relationship to other people in this study.  There is a section on health information including a history of allergies/asthma, if you suffer from migraines and if you have a history of irritable bowel disease.  The questionnaire also asks you to complete a food log to assess the amount of protein, fat, carbohydrate, grains and vegetables in your diet. For this we suggest that you contact a free website that will allow you to estimate these amounts.</p><p>
+                    Some participants may be asked to keep a detailed food diary for up to 6 months listing all the foods they eat and drink in a day.
+                    </p>
+                    <p>We anticipate that participant time commitment for completing the questionnaire online will take no more than <strong>45 minutes</strong>; and completing the food diary should take no more than 10 minutes/day.
+                    </p>
+                    </div>
+                </td>
+                <td width="10%"></td>
+            </tr>
+    </table>
+    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+        $( "#progressbar" ).progressbar({
+          value: 1
+        });
+      });
+    </script>
+    <br />
+</div>
+
+<%@ include file="footer.psp" %>

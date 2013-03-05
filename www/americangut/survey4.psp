@@ -1,0 +1,194 @@
+<%@ include file="header.psp" %>
+<br>
+<%@ include file="menu.psp" %>
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <h4>General Lifestyle and Hygiene Information</h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="10%"></td>
+            <td>
+                <form id="survey_4">
+                    <table id="survey" width="100%">
+                        <tr>
+                        <td>Do you use any artificial tanning methods?</td>
+                        <td>
+                                <input type="checkbox" id="tanning_yesbeds" name="tanning" /><label for="tanning_yesbeds">Beds</label>
+                                <input type="checkbox" id="tanning_yessprays" name="tanning" /><label for="tanning_yessprays">Sprays</label>
+                                <input type="checkbox" id="tanning_no" name="tanning" /><label for="tanning_no">No</label>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td>How often do you exercise?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Daily</option>
+                                    <option>Regularly (3-5 times/week)</option>
+                                    <option>Occasionally (1-2 times/week)</option>
+                                    <option>Rarely (few times/month)</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you generally exercise indoors or outdoors?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Indoors</option>
+                                    <option>Outdoors</option>
+                                    <option>Both</option>
+                                    <option>Depends on the season</option>
+                                    <option>None of the above</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you bite your fingernails?</td>
+                            <td>
+                                <div id="nails_radio">
+                                    <input type="radio" id="nails_yes" name="nails_radio" /><label for="nails_yes">Yes</label>
+                                    <input type="radio" id="nails_no" name="nails_radio" /><label for="nails_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>How often do you use a swimming pool/hot tub?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Daily</option>
+                                    <option>Regularly (3-5 times/week)</option>
+                                    <option>Occasionally (1-2 times/week)</option>
+                                    <option>Rarely (few times/month)</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>How often do you smoke cigarettes?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Daily</option>
+                                    <option>Regularly (3-5 times/week)</option>
+                                    <option>Occasionally (1-2 times/week)</option>
+                                    <option>Rarely (few times/month)</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>How often do you drink alcohol?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Daily</option>
+                                    <option>Regularly (3-5 times/week)</option>
+                                    <option>Occasionally (1-2 times/week)</option>
+                                    <option>Rarely (few times/month)</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>How often do you brush your teeth?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Daily</option>
+                                    <option>Regularly (3-5 times/week)</option>
+                                    <option>Occasionally (1-2 times/week)</option>
+                                    <option>Rarely (few times/month)</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>How often do you floss your teeth?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Daily</option>
+                                    <option>Regularly (3-5 times/week)</option>
+                                    <option>Occasionally (1-2 times/week)</option>
+                                    <option>Rarely (few times/month)</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>How often do you wear facial cosmetics?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Daily</option>
+                                    <option>Regularly (3-5 times/week)</option>
+                                    <option>Occasionally (1-2 times/week)</option>
+                                    <option>Rarely (few times/month)</option>
+                                    <option>Never</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you use deodorant or antiperspirant (antiperspirants generally contain aluminum)?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>I use deoderant</option>
+                                    <option>I use an antiperspirant</option>
+                                    <option>Not sure, but I use some form of deoderant/antiperspirant</option>
+                                    <option>I do not use deoderant or antiperspirant</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Approximately how many hours of sleep to you get in an average night?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>Less than 5 hours</option>
+                                    <option>5-6 hours</option>
+                                    <option>6-7 hours</option>
+                                    <option>7-8 hours</option>
+                                    <option>8 or more hours</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you use fabric softener when drying your clothes?</td>
+                            <td>
+                                <div id="softener_radio">
+                                    <input type="radio" id="softener_yes" name="softener_radio" /><label for="softener_yes">Yes</label>
+                                    <input type="radio" id="softener_no" name="softener_radio" /><label for="softener_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </form>
+            </td>
+            <td width="10%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+          $( "#nails_radio" ).buttonset();
+          $( "#softener_radio" ).buttonset();
+        $( "#progressbar" ).progressbar({
+          value: 40
+        });
+      });
+    </script>
+    <br />
+</div>
+
+<%@ include file="footer.psp" %>
