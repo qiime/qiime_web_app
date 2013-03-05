@@ -95,6 +95,7 @@ if form.has_key('username'):
     user_data = ag_data_access.authenticateWebAppUser(form["username"], form["password"])
     if (user_data):
         sess['user_data'] = user_data
+        sess['username'] = user_data['name']
         sess.save()
         url = 'fusebox.psp?page=portal.psp'
         req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
@@ -135,7 +136,7 @@ if form.has_key('username'):
 
 <!-- SAMPLE LOCATIONS -->
 
-<div>
+<div class="wrapper clearfix">
     <%@ include file="../visualize_all_sample_locations.psp"%>
 </div>
 

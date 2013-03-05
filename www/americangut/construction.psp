@@ -1,4 +1,21 @@
-<%@ include file="header.psp" %>
+<%
+# Check to make sure session is valid. If not, redirect to login
+sess = Session.Session(req)
+%>
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut Project</title>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+    </head>
+    <body>
+		<div class="wrapper clearfix">
+	        <div class="header clearfix">
+	            <img id="logo" src="img/ag_logo.jpg">
+			</div>
+
 
 <br>
 <div class="left menuwrapper">
@@ -13,4 +30,5 @@
 <br>
 <p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text"> We will notify all participants when the site is live.</p>
 </div>
+
 <%@ include file="footer.psp" %>
