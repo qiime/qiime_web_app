@@ -210,7 +210,7 @@ function toggleSection(section_name)
         $('#' + section_name).fadeIn('fast')
         header_content = $('#' + header_name)[0].innerHTML
         $('#' + header_name)[0].innerHTML = header_content.replace('+', '-');
-        window.scrollBy(0, 200);
+        //window.scrollBy(0, 200);
     }
     else
     {
@@ -363,26 +363,21 @@ for plot_name, plot_title in sorted_plots:
 <a href="" onclick="toggleSection(\'map_div\'); return false;">[+] Qiime Sample Breakdown</a>
 </h3>
 
-<div id="map_div" name="map_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:98%; height=100%; padding:5px;">
+<div id="map_div" name="map_div" style="display:none; height:410px; width:100%; margin-bottom:20px;">
+<%
+# Centered at the JSCBB building
+form['zoom_level'] = 2
+form['center_lat'] = 40.01027
+form['center_long'] = -105.24826999999999
+%>
     <%@ include file="visualize_all_sample_locations.psp"%>
 </div>
 
+
 <script>
-//toggleSection(\'download_div\');
 toggleSection(\'map_div\');
-toggleSection(\'map_div\');
+//toggleSection(\'map_div\');
 </script>
-
-
-
-
-
-
-
-
-
-
-
 
 
 </body>
