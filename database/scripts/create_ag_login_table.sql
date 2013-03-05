@@ -24,13 +24,13 @@ create table ag_login
     city varchar2(100),
     state varchar2(100),
     zip varchar2(10),
-    latitude float,
-    longitude float,
+    --latitude float,
+    --longitude float,
     country varchar2(100),
     sample_barcode_file varchar2(500),
     sample_barcode_file_md5 varchar2(50),
-    kit_id varchar2(50) not null,
-    kit_password varchar2(50) not null,
+    kit_id varchar2(50),
+    kit_password varchar2(50),
     kit_verification_code varchar2(50)
 );
 
@@ -39,7 +39,7 @@ create table ag_kit
     ag_kit_id raw(16) default sys_guid() primary key,
     ag_login_id raw(16) not null,
     supplied_kit_id varchar2(50) not null,
-    kit_password varchar2(50) not null,
+    kit_password varchar2(50),
     swabs_per_kit int not null,
     kit_verification_code varchar2(50),
     
