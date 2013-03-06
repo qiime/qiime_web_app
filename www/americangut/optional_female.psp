@@ -28,7 +28,7 @@
     <table id="survey" width="100%">
         <tr>
             <td>When is your due date?</td>
-            <td><input type="text" id="datepicker_duedate" /></td>
+            <td><input type="text" id="datepicker_duedate" readonly="readonly" /></td>
             <script>
               $(function() {
                 $( "#datepicker_duedate" ).datepicker();

@@ -9,13 +9,16 @@
                 <form id="survey_3" action="fusebox.psp">
 <%
 for f in form:
-    req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, f, form[f])
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
 %>
+
                     <table id="survey" width="100%">
                         <tr>
                             <td>What is your race/ethnicity?</td>
                             <td>
-                                <select id="race" onchange="otherSelect('race','race_option',5)">
+                                <select id="race" name="race" onchange="otherSelect('race','race_option',5)">
                                     <option>Select an option</option>
                                     <option>Caucasian</option>
                                     <option>Asian or Pacific Islander</option>
@@ -30,7 +33,7 @@ for f in form:
                             <table id="survey" width="100%">
                                 <tr>
                                     <td>Other</td>
-                                    <td><input type="text" id="race_other" /></td>                        
+                                    <td><input type="text" name="race_other" id="race_other" /></td>                        
                                 </tr>
                             </table>
                         </div>
@@ -38,7 +41,7 @@ for f in form:
                         <tr>
                             <td>When did you move to your current state of residence?</td>
                             <td>
-                                <select>
+                                <select name="current_residence_duration">
                                     <option>Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
@@ -51,7 +54,7 @@ for f in form:
                         <tr>
                             <td>When did you last travel outside of your current country of residence?</td>
                             <td>
-                                <select id="travel" onchange="anySelect('travel','travel_option',[0,6])">
+                                <select name="last_travel" id="travel" onchange="anySelect('travel','travel_option',[0,6])">
                                     <option>Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
@@ -67,11 +70,11 @@ for f in form:
                             <table id="survey" width="100%">
                                 <tr>
                                     <td>Where did you travel to?</td>
-                                    <td><input type="text" id="travellocation" /></td>                        
+                                    <td><input type="text" name="travel_location" id="travel_location" /></td>                        
                                 </tr>
                                 <tr>
                                     <td>How long were you there?</td>
-                                    <td><input type="text" id="travelduration" /> days</td>                        
+                                    <td><input type="text" name="travel_duration" id="travel_duration" /> days</td>                        
                                 </tr>
                             </table>
                         </div>
@@ -200,5 +203,3 @@ for f in form:
     </script>
     <br />
 </div>
-
-<%@ include file="footer.psp" %>

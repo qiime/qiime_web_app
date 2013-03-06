@@ -17,8 +17,14 @@
             </tr>
     </table>
     <form id="survey_main" action="fusebox.psp">
+<%
+for f in form:
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
+%>
         <input type="hidden" id="page" name="page" value="survey1.psp">
-        <input type="sumbit" value="Continue">
+        <input type="submit" value="Continue">
     </form>
     <br />
     <br />

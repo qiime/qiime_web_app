@@ -9,13 +9,17 @@
                 <form id="survey_5" action="fusebox.psp">
 <%
 for f in form:
-    req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, f, form[f])
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
 %>
+
+
                     <table id="survey" width="100%">
                         <tr>
                             <td>When did you last take antibiotics?</td>
                             <td>
-                                <select id="antibiotic_select" onchange="anySelect('antibiotic_select','antibiotic_option',[0,5])">
+                                <select name="antibiotic_select" id="antibiotic_select" onchange="anySelect('antibiotic_select','antibiotic_option',[0,5])">
                                     <option>Select an option</option>
                                     <option>In the past week</option>
                                     <option>In the past month</option>
@@ -41,7 +45,7 @@ for f in form:
                                 </tr>
                                 <tr>
                                     <td>What was/is being treated?</td>
-                                    <td><input type="text" id="antibiotic_condition" /></td>                        
+                                    <td><input type="text" name="antibiotic_condition" id="antibiotic_condition" /></td>                        
                                 </tr>
                             </table>
                         </div>
@@ -49,7 +53,7 @@ for f in form:
                         <tr>
                             <td>When did you last get the flu vaccine?</td>
                             <td>
-                                <select>
+                                <select name="flu_vaccine_date">
                                     <option>Select an option</option>
                                     <option>In the past week</option>
                                     <option>In the past month</option>
@@ -73,7 +77,7 @@ for f in form:
                         <tr>
                             <td>Has your weight changed in the past 6 months?</td>
                             <td>
-                                <select>
+                                <select name="weight_change">
                                     <option>Select an option</option>
                                     <option>Increased more than 10 pounds</option>
                                     <option>Decreased more than 10 pounds</option>
@@ -191,7 +195,7 @@ for f in form:
                         <tr>
                             <td>Do you have Inflammatory Bowel Disease (IBD)?</td>
                             <td>
-                                <select>
+                                <select name="ibd">
                                     <option>Select an option</option>
                                     <option>Yes; Chrohn's disease</option>
                                     <option>Yes; colitis</option>
@@ -202,7 +206,7 @@ for f in form:
                         <tr>
                             <td>Do you have a skin condition?</td>
                             <td>
-                                <select>
+                                <select name="skin_condition">
                                     <option>Select an option</option>
                                     <option>Yes; eczema</option>
                                     <option>Yes; rosacea</option>
@@ -214,7 +218,7 @@ for f in form:
                         <tr>
                             <td>Do you have diabetes?</td>
                             <td>
-                                <select>
+                                <select name="diabetes">
                                     <option>Select an option</option>
                                     <option>Yes; type I</option>
                                     <option>Yes; type II</option>
@@ -240,7 +244,7 @@ for f in form:
     </div>
     <br />
     <input type="submit" value="Continue">
-    <input type="hidden" id="page" name="page" value="optional_questions.psp">
+    <input type="hidden" id="page" name="page" value="dietary_questions.psp">
     </form>
     <br />
     <br />
@@ -266,5 +270,3 @@ for f in form:
     </script>
     <br />
 </div>
-
-<%@ include file="footer.psp" %>

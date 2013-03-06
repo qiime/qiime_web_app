@@ -1,21 +1,67 @@
 <div id="content" class="right content">
     <h2>Survey</h2>
-    <h4>General Health Information</h4>
+    <h4>Specific Questions</h4>
     <div class="lefta">
         <table width="100%">
             <tr>
             <td width="10%"></td>
             <td>
+            <h4> If there is nothing here, you have no additional questions to answer. Please click continue.</h4>
                 <form id="optional_questions"  action="fusebox.psp">
 <%
 for f in form:
-    req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, f, form[f])
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
 %>
+
+
                     <table id="survey" width="100%">
-                        <%@ include file="optional_living.psp" %>
-                        <%@ include file="optional_female.psp" %>
-                        <%@ include file="optional_diabetes.psp" %>
-                        <%@ include file="optional_migraine.psp" %>
+<%
+if(form['gender'] == 'Female'):
+%>
+<%@ include file="optional_female.psp" %>
+<%
+#endif
+%>
+<%
+v = 0
+try:
+    v = form['living_radio']
+except(KeyError):
+    req.write('')
+    #do nothing
+
+if(v != 0):
+    if(v == 'on'):
+%>
+<%@ include file="optional_living.psp" %>
+<%
+#endif
+%>
+<%
+if(form['diabetes'] == 'Yes; type I' or form['diabetes'] == 'Yes; type II'):
+%>
+<%@ include file="optional_diabetes.psp" %>
+<%
+#endif
+%>
+<%
+v = 0
+try:
+    v = form['migraine_radio']
+except(KeyError):
+    req.write('')
+    #do nothing
+
+if(v != 0):
+    if(v == 'on'):
+%>
+<%@ include file="optional_migraine.psp" %>
+<%
+#endif
+%>               
+                       
                     </table>
                 
             </td>

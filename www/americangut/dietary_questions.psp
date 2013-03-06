@@ -1,7 +1,3 @@
-<%@ include file="header.psp" %>
-<br>
-<%@ include file="menu.psp" %>
-
 <div id="content" class="right content">
     <h2>Survey</h2>
     <h4>Detailed Dietary Information</h4>
@@ -11,25 +7,31 @@
             <tr>
             <td width="10%"></td>
             <td>
-                <form id="dietary_questions">
+                <form id="dietary_questions" action="fusebox.psp">
+<%
+for f in form:
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
+%>
                     <table width="100%">
                         <tr><td><h4>Overall macronutrient intake as a percentage of calories</h4></td></tr>
                         <tr>
                             <td>Protein</td>
                             <td>
-                                <input type="text" id="protein_per" value="0"  onchange="javascript:updateTotalIntake()"/>%
+                                <input type="number" max="100" min="0" name="protein_per" id="protein_per" value="0"  onchange="javascript:updateTotalIntake()" onblur="validatePercentage('protein_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Fat</td>
                             <td>
-                                <input type="text" id="fat_per" value="0" onchange="javascript:updateTotalIntake()"/>%
+                                <input type="number" max="100" min="0" name="fat_per" id="fat_per" value="0" onchange="javascript:updateTotalIntake()" onblur="validatePercentage('fat_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Carbohydrates</td>
                             <td>
-                                <input type="text" id="carbohydrate_per" value="0" onchange="javascript:updateTotalIntake()"/>%
+                                <input type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value="0" onchange="javascript:updateTotalIntake()" onblur="validatePercentage('carbohydrate_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -42,13 +44,13 @@
                         <tr>
                             <td>Plant</td>
                             <td>
-                                <input type="text" id="plant_per" value="0" onchange="javascript:updateAnimalPlant()"/>%
+                                <input type="number" max="100" min="0" name="plant_per" id="plant_per" value="0" onchange="javascript:updateAnimalPlant()" onblur="validatePercentage('plant_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Animal</td>
                             <td>
-                                <input type="text" id="animal_per" value="0" onchange="javascript:updateAnimalPlant()"/>%
+                                <input type="number" max="100" min="0" name="animal_per" id="animal_per" value="0" onchange="javascript:updateAnimalPlant()" onblur="validatePercentage('animal_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -61,7 +63,7 @@
                         <tr>
                             <td>Grams of fiber consumed for the 7 day period</td>
                             <td>
-                                <input type="text" id="fiber_grams"/>(g)
+                                <input type="text" name="fiber_grams" id="fiber_grams"/>(g)
                             </td>
                         </tr>
                         
@@ -69,7 +71,7 @@
                         <tr>
                             <td>Number of types of plants <a href="#" class="help" title="If you consumed a can of vegetable soup and it contained carrots, potatoes, and onion – then that counts as three species. If you consumed multi-grain bread, then each grain counts. Please do not count ‘spices’ as contributing to your species count.">(?)</a></td>
                             <td>
-                                <select>
+                                <select name="types_of_plants">
                                     <option>Select an option</option>
                                     <option>Less than 5</option>
                                     <option>6 to 10</option>
@@ -83,7 +85,7 @@
                         <tr>
                             <td>Processed sources <a href="#" class="help" title="Bread, pasta, sugary drinks, etc">(?)</a></td>
                             <td>
-                                <select>
+                                <select name="percentage_from_carbs">
                                     <option>Select an option</option>
                                     <option>Less than 25%</option>
                                     <option>25 to 50%</option>
@@ -96,25 +98,27 @@
                         <tr>
                             <td>Primary whole vegetable <a href="#" class="help" title="Broccoli, carrots, onions, leafy greens, potatoes">(?)</a></td>
                             <td>
-                                <input type="text" id="primary_vegetable"/>
+                                <input type="text" name="primary_vegetable" id="primary_vegetable"/>
                             </td>
                         </tr>
                         <tr><td><h4>What would you consider the primary carbohydrate in your diet?</h4></td></tr>
                         <tr>
                             <td>Primary carbohydrate <a href="#" class="help" title="Bread, pasta, sugary drinks, etc">(?)</a></td>
                             <td>
-                                <input type="text" id="primary_carb"/>
+                                <input type="text" name="primary_carb" id="primary_carb"/>
                             </td>
                         </tr>
                     </table>
-                </form>
+                
             </td>
             <td width="10%"></td>
             </tr>
         </table>
     </div>
     <br />
-    <input type="button" value="Continue" id="submit_form" name="submit_form">
+    <input type="submit" value="Continue" id="continue">
+    <input type="hidden" id="page" name="page" value="optional_questions.psp">
+    </form>
     <br />
     <br />
     <div id="progressbar"></div>

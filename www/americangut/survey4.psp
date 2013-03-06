@@ -9,8 +9,12 @@
                 <form id="survey_4"  action="fusebox.psp">
 <%
 for f in form:
-    req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, f, form[f])
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
 %>
+
+
                     <table id="survey" width="100%">
                         <tr>
                         <td>Do you use any artificial tanning methods?</td>
@@ -23,7 +27,7 @@ for f in form:
                         <tr>
                             <td>How often do you exercise?</td>
                             <td>
-                                <select>
+                                <select name="exercise_frequency">
                                     <option>Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
@@ -36,7 +40,7 @@ for f in form:
                         <tr>
                             <td>Do you generally exercise indoors or outdoors?</td>
                             <td>
-                                <select>
+                                <select name="exercise_location">
                                     <option>Select an option</option>
                                     <option>Indoors</option>
                                     <option>Outdoors</option>
@@ -58,7 +62,7 @@ for f in form:
                         <tr>
                             <td>How often do you use a swimming pool/hot tub?</td>
                             <td>
-                                <select>
+                                <select name="pool_frequency">
                                     <option>Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
@@ -71,7 +75,7 @@ for f in form:
                         <tr>
                             <td>How often do you smoke cigarettes?</td>
                             <td>
-                                <select>
+                                <select name="smoking_frequency">
                                     <option>Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
@@ -84,7 +88,7 @@ for f in form:
                         <tr>
                             <td>How often do you drink alcohol?</td>
                             <td>
-                                <select>
+                                <select name="alcohol_frequency">
                                     <option>Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
@@ -97,7 +101,7 @@ for f in form:
                         <tr>
                             <td>How often do you brush your teeth?</td>
                             <td>
-                                <select>
+                                <select name="teethbrushing_frequency">
                                     <option>Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
@@ -110,7 +114,7 @@ for f in form:
                         <tr>
                             <td>How often do you floss your teeth?</td>
                             <td>
-                                <select>
+                                <select name="flossing_frequency">
                                     <option>Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
@@ -123,7 +127,7 @@ for f in form:
                         <tr>
                             <td>How often do you wear facial cosmetics?</td>
                             <td>
-                                <select>
+                                <select name="cosmetics_frequency">
                                     <option>Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
@@ -136,7 +140,7 @@ for f in form:
                         <tr>
                             <td>Do you use deodorant or antiperspirant (antiperspirants generally contain aluminum)?</td>
                             <td>
-                                <select>
+                                <select name="deoderant_use">
                                     <option>Select an option</option>
                                     <option>I use deoderant</option>
                                     <option>I use an antiperspirant</option>
@@ -148,7 +152,7 @@ for f in form:
                         <tr>
                             <td>Approximately how many hours of sleep to you get in an average night?</td>
                             <td>
-                                <select>
+                                <select name="sleep_duration">
                                     <option>Select an option</option>
                                     <option>Less than 5 hours</option>
                                     <option>5-6 hours</option>
@@ -192,5 +196,3 @@ for f in form:
     </script>
     <br />
 </div>
-
-<%@ include file="footer.psp" %>

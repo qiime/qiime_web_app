@@ -1,20 +1,4 @@
-<%@ include file="header.psp" %>
-<br>
-<div class="left menuwrapper">
-	<ul class="menu">
-		<li><a href=""><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
-        <div class="menu_separator"></div>
-        <li><a href=""><img class="icon" src="/qiime/img/participants_icon.png">Participants</a>
-            <ul class="menu">
-                <li><a href=""><img class="icon" src="/qiime/img/participant_icon.png">[Participant 1 Name]</a></li>
-                <li><a href=""><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
-            </ul>
-        </li>
-        <div class="menu_separator"></div>
-        <li><a href=""><img class="icon" src="/qiime/img/purchase_icon.png">Purchase a Kit</a></li>
-        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
-	</ul>
-</div>
+
 <div id="content" class="right content">
 <h2>Add a New Participant</h2>
 <table width="100%">
@@ -136,7 +120,7 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
 <br />
 <div class="lefta">
         <div class="" id="consent">
-        <form action="fusebox.psp">
+        <form id="consent_info" name="consent_info" action="fusebox.psp">
             <input type="checkbox" name="consent" id="consent"> I have read (or someone has read to me) this form. I am aware that I am being 
             asked to provide personally identifying information so that I can be considered for inclusion into the study. I voluntarily agree 
             to provide this information. I am not giving up any legal rights by signing this form. I will be sent a copy of this form by e-mail.
@@ -150,20 +134,17 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
             <tr><td>Name of parent/guardian 2</td><td><input type="text" name="parent_2_name" id="parent_2_name"></td></tr>
             <tr><td>One or both parents are deceased or unable to consent.</td><td><input type="checkbox" name="deceased_parent" id="deceased_parent"></td></tr>
         </table>
-        </div>
-    </div>
+</div>
 
 </td>
 <td width="20%"></td>
 </tr>
 <tr>
 <td></td>
-<td><input type="button" value="Submit" id="submit_form" name="submit_form"></td>
-
+<td><input type="button" value="Continue" id="submit_form" onclick="validateConsent()"></td>
 <td></td>
 </tr>
 </table>
 <input type="hidden" id="page" name="page" value="survey_main.psp">
 </form>
 </div>
-<%@ include file="footer.psp" %>

@@ -10,14 +10,16 @@
                 <form id="survey_2" action="fusebox.psp">
 <%
 for f in form:
-    req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, f, form[f])
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
 # End for
 %>
+
                     <table id="survey" width="100%">
                         <tr>
                             <td>How would you classify your diet?</td>
                             <td>
-                                <select>
+                                <select name="diet_type">
                                     <option>Select an option</option>
                                     <option>Omnivore</option>
                                     <option>Omnivore but no red meat</option>
@@ -163,5 +165,3 @@ for f in form:
     </script>
     <br />
 </div>
-
-<%@ include file="footer.psp" %>

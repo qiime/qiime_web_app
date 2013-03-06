@@ -1,5 +1,4 @@
 // console.log('derp')
-
 var old_field_number = 1
 
 function addThreeFields(field_name) {
@@ -79,6 +78,17 @@ function updateTotalIntake() {
 	var fat = parseInt(document.getElementById('fat_per').value)
 	var carb = parseInt(document.getElementById('carbohydrate_per').value)
 	total = prot+fat+carb
+	if(total > 100)
+	{
+		document.getElementById('dietaryIntakeTotal').className += " highlight"
+		document.getElementById('continue').disabled = true
+	}
+	else
+	{
+		document.getElementById('dietaryIntakeTotal').className = document.getElementById('dietaryIntakeTotal').className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+		document.getElementById('continue').disabled = false
+	}
+		
 	document.getElementById('dietaryIntakeTotal').innerHTML = total
 	// console.log(total)
 }
@@ -88,6 +98,74 @@ function updateAnimalPlant() {
 	var plant = parseInt(document.getElementById('plant_per').value)
 	var animal = parseInt(document.getElementById('animal_per').value)
 	total = plant+animal
+	if(total > 100)
+	{
+		document.getElementById('plantAnimalTotal').className += " highlight"
+		document.getElementById('continue').disabled = true
+	}
+	else
+	{
+		document.getElementById('plantAnimalTotal').className = document.getElementById('plantAnimalTotal').className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+		document.getElementById('continue').disabled = false
+	}
 	document.getElementById('plantAnimalTotal').innerHTML = total
 }
 /* end stuff for dietary questions */
+
+/* number validation for percentage fields */
+function validatePercentage(item_id) {
+	if(document.getElementById(item_id).value < 0)
+		document.getElementById(item_id).value = 0
+	else if(document.getElementById(item_id).value > 100)
+		document.getElementById(item_id).value = 100
+	updateTotalIntake()
+	updateAnimalPlant()
+}
+
+/*validation for new participant*/
+function validateConsent()
+{
+    for(var i = 0; i < document.consent_info.length; i++) 
+    {
+        document.consent_info[i].className = document.consent_info[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+  	document.getElementById("consent").className = document.getElementById("consent").className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    var valid = true;
+        
+    if(!document.consent_info.consent.checked)
+    {
+        document.getElementById("consent").className += " highlight";
+        valid = false;
+    }
+
+    if(document.consent_info.participant_name.value == "")
+    {
+        document.consent_info.participant_name.className += " highlight";
+        valid = false;
+    }
+        
+    if(document.consent_info.is_7_to_13.checked)
+    {
+        if(document.consent_info.parent_1_name.value == "")
+        {
+            document.consent_info.parent_1_name.className += " highlight";
+            valid = false;
+        }
+        if(document.consent_info.parent_2_name.value == "")
+        {
+            document.consent_info.parent_2_name.className += " highlight";
+            valid = false;
+        }
+    }
+        
+    if(!valid) 
+	{
+	    //alert($('#consent_info').submit());
+        return;
+	}
+    else 
+	{
+        //alert($('#consent_info').submit());
+        $('#consent_info').submit();
+	}
+}

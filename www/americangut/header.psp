@@ -32,3 +32,5 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gu
 	        <div class="header clearfix">
 	            <img id="logo" src="img/ag_logo.jpg">
 			</div>
+<br>
+<%@ include file="menu.psp" %>

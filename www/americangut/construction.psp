@@ -28,7 +28,7 @@ sess = Session.Session(req)
 <div id="content" class="right content">
 <img src="img/ag_construction.png">
 <br>
-<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text"> We will notify all participants when the site is live.</p>
+<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text">Please check back in a few days.</p><p class="construction_text">Contact <a href="mailto:info@americangut.org">us</a> if you have any questions!</p>
 </div>
 
 <%@ include file="footer.psp" %>
