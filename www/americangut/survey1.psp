@@ -1,0 +1,80 @@
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <h4>Personal Information</h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="20%"></td>
+            <td>
+                <form id="survey_1" action="fusebox.psp">
+<%
+for f in form:
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
+%>
+                    <table width="100%">
+                        <tr>
+                            <td>Country of birth</td>
+                            <td><select name="country_of_birth">
+                            <option>Select an option</option>
+<%
+d = data_access.getControlledVocabValueList(28)
+for c in d:
+    req.write('<option value="'+str(c)+'">'+d[c]+'</option>')
+# End for
+%>
+                            </select></td>
+                        </tr>
+                        <tr>
+                            <td>Birth date</td>
+                            <td><input type="text" name="birth_date" id="datepicker_birth" readonly="readonly"/></td>
+                            <script>
+                              $(function() {
+                                $( "#datepicker_birth" ).datepicker();
+                              });
+                            </script>
+                        </tr>
+                        <tr>
+                            <td>Gender</td>
+                            <td><select name="gender"><option>Select an option</option><option>Male</option><option>Female</option><option>Other</option></select></td>
+                        </tr>
+                        <tr>
+                            <td>Height</td>
+                            <td><input type="text" name="height"/> in</td>
+                        </tr>
+                        <tr>
+                            <td>Weight</td>
+                            <td><input type="text" name="weight"/> lbs</td>
+                        </tr>
+                        <tr>
+                            <td>Phone number</td>
+                            <td><input type="text" name="phone_num"/></td>
+                        </tr>
+                        <tr>
+                            <td>Current ZIP code</td>
+                            <td><input type="text" name="zipcode"/></td>
+                        </tr>
+                    </table>
+                
+            </td>
+            <td width="20%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="submit" value="Continue">
+    <input type="hidden" id="page" name="page" value="survey2.psp">
+    </form>
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+        $( "#progressbar" ).progressbar({
+          value: 5
+        });
+      });
+    </script>
+    <br />
+</div>

@@ -184,10 +184,6 @@ req.write('window.onload=initialize;</script>')
 
 </head>
 
-
-
-
-
 <body>
     <div id="map_canvas" style="width:100%; height:100%; opacity:0.6;"></div>
 
@@ -200,7 +196,7 @@ req.write('window.onload=initialize;</script>')
 		<br>
 		<div class="left menuwrapper" style="width:100%;">
 			<ul class="menu">
-				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Sign Up</a></li>
+				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
 			</ul>
 

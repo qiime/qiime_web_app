@@ -16,7 +16,6 @@ make sure that the user is logged in and then performs page redirects.
 -->
 
 <%@ include file="header.psp" %>
-
 <%
 import os
 import gc

@@ -1,0 +1,15 @@
+<div class="left menuwrapper">
+	<ul class="menu">
+		<li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
+        <div class="menu_separator"></div>
+        <li><img class="icon" src="/qiime/img/participants_icon.png">Participants
+            <ul class="menu">
+                <li><img class="icon" src="/qiime/img/participant_icon.png">[Participant 1 Name]</li>
+                <li><a href="fusebox.psp?page=new_participant.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
+            </ul>
+        </li>
+        <div class="menu_separator"></div>
+        <li><a href=""><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
+        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
+	</ul>
+</div>
