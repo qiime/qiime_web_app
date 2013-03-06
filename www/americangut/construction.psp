@@ -1,6 +1,8 @@
 <%
 # Check to make sure session is valid. If not, redirect to login
 sess = Session.Session(req)
+sess['portal_type'] = 'americangut'
+sess.save()
 %>
 
 <!DOCTYPE html>
@@ -16,19 +18,35 @@ sess = Session.Session(req)
 	            <img id="logo" src="img/ag_logo.jpg">
 			</div>
 
+			<br>
+			<div class="left menuwrapper">
+				<ul class="menu">
+					<!-- <li><a href=""><img class="icon" src="/qiime/img/mail_icon.png">Notify me when the site is live!</a></li>-->
+			        <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Sign Up</a></li>
+			        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
+				</ul>
+				<!-- SAMPLE LOCATIONS -->
+				<div style="height:150px; width:90%; margin:10px;">
+<%
+form['zoom_level'] = 1
+form['center_lat'] = 48.14697
+form['center_long'] = -103.61797
+form['tiny_markers'] = True
+%>
+					<%@ include file="../visualize_all_sample_locations.psp"%>
+				</div>
 
-<br>
-<div class="left menuwrapper">
-	<ul class="menu">
-		<!-- <li><a href=""><img class="icon" src="/qiime/img/mail_icon.png">Notify me when the site is live!</a></li>-->
-        <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
-        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
-	</ul>
-</div>
-<div id="content" class="right content">
-<img src="img/ag_construction.png">
-<br>
+			</div>			
+
+			<div id="content" class="content">
+				<img src="img/ag_construction.png">
+				<br>
 <p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text">Please check back in a few days.</p><p class="construction_text">Contact <a href="mailto:info@americangut.org">us</a> if you have any questions!</p>
-</div>
+			</div>
 
-<%@ include file="footer.psp" %>
+			
+
+		</div>
+
+	</body>
+</html>

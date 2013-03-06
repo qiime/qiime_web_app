@@ -1,12 +1,37 @@
 <%
-from data_access_connections import data_access_factory
-from enums import DataAccessType,ServerConfig
+#!/usr/bin/env python
 
-#data_access = data_access_factory(ServerConfig.data_access_type)
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
+import os
+from enums import FieldGrouping
+from qiime.parse import parse_mapping_file
+
+
+# Set variables
+zoom_level = 3
+center_lat = 49.26123
+center_long = -123.1139299
+tiny_markers = False
+portal_type = 'americangut'
+
+# Data Access
+data_access = data_access_factory(ServerConfig.data_access_type)
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
 
+# Session variables
 sess = Session.Session(req)
-sess['portal_type'] = 'americangut'
+sess['portal_type'] = portal_type
 sess['document_root'] = req.document_root() + '/qiime/AmericanGut/'
 sess.set_timeout(604800)
 sess.save()
@@ -14,13 +39,13 @@ sess.save()
 
 <!DOCTYPE html>
 <html lang="en"> 
-    <head>
-        <meta charset="utf-8">
-        <title>American Gut</title>
-        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+<head>
+<meta charset="utf-8">
+<title>American Gut</title>
+<link rel="stylesheet" type="text/css" href="style/americangut.css">
 
-
-
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="/qiime/js/StyledMarker.js"></script>
 <script type="text/javascript" src="/qiime/js/qiime.js"></script>
 <script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.metadata.js"></script>
@@ -68,23 +93,112 @@ function toggleSection(section_name)
         $('#' + header_name)[0].innerHTML = header_content.replace('-', '+');
     }
 }
+
+function initialize() 
+{
+    var mapOptions = 
+    {
+<%
+req.write('zoom: {0},'.format(zoom_level))
+req.write('center: new google.maps.LatLng({0},{1}),'.format(center_lat, center_long))
+# End if
+%>        
+        scrollwheel: false,
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
+        mapTypeControl: false,
+        streetViewControl: false,
+        panControl: false
+    };
+
+    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    setMarkers(map, latlongs_db);
+}
+
+function setMarkers(map, locations) 
+{
+    for (var i = 0; i < locations.length; i++) 
+    {
+        var loc = locations[i];
+        var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
+        
+<%
+if tiny_markers:
+    # Indent
+%>        
+        var marker = new google.maps.Marker({
+          position:myLatLng,
+          map: map,
+          clickable: false,
+          size:(10, 10),
+          color:"00ff00",
+          icon:'/qiime/img/blue_tiny.png'
+        });
+<%
+else:
+    # Indent
+%>
+        var styleMaker1 = new StyledMarker({
+            styleIcon:new StyledIcon(StyledIconTypes.MARKER,{
+                size:(100,100),
+                color:loc[4]}),
+            position:myLatLng,
+            map:map,
+            title:loc[0]});
+<%
+# End if
+%>
+
+        
+    }
+}
 </script>
 
+<%
+# Write out the database of points
+req.write('<script type="text/javascript">')
+req.write('var latlongs_db = [')
 
-    </head>
-    <body>
-		<div class="wrapper clearfix">
-	        <div class="header clearfix">
-	            <img id="logo" src="img/ag_logo.jpg">
-			</div>
-			<br>
-			<div class="left menuwrapper">
-				<ul class="menu">
-					<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
-					<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
-				</ul>
-			</div>
-			<div id="content" class="right content">
+result_list=[]
+public_studies = data_access.getUserAndPublicStudyNames(12169, 1, portal_type)
+
+statement = """
+select  distinct 'American Gut Participant', z.latitude, z.longitude
+from    ag_login agl
+        inner join zipcodes z
+        on agl.zip = z.zipcode
+where   agl.zip is not null
+"""
+
+con = data_access.getMetadataDatabaseConnection()
+cur = con.cursor()
+results = cur.execute(statement)
+
+for i, val in enumerate(results):
+    if val[0] and val[1] and val[2]:
+        study_alias = str(val[0]).replace("'", "\\'")
+        result_list.append("\n['{0}',{1},{2},{3},'00B2EE']".format(study_alias, val[1], val[2], str(i+1)))
+
+req.write('%s];' % ','.join(result_list))
+req.write('window.onload=initialize;</script>')
+%>
+
+</head>
+
+<body>
+    <div id="map_canvas" style="width:100%; height:100%; opacity:0.6;"></div>
+
+	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; opacity:0.9;">
+        <div class="header clearfix">
+            <img id="logo" src="img/ag_logo.jpg">
+		</div>
+    </div>
+    <div class="wrapper clearfix" style="position:absolute; top:120px; left:50px; opacity:0.9; width:260px;">
+		<br>
+		<div class="left menuwrapper" style="width:100%;">
+			<ul class="menu">
+				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
+				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
+			</ul>
 
 <%
 # This is the location where the user directories are written
@@ -104,42 +218,28 @@ if form.has_key('username'):
 
 # end
 %>
-                            <h2>Participant Log In</h2>
-                            <div class="center">
+
+        <!-- Login form div -->
+        <div>
+            <h3 style="margin-left:5px;">Participant Log In</h3>
+            <table width="100%">
+                <tr width="100%">
+                    <td width="30%"></td>
+                    <td width="30%">
+                        <form method="post" action="index.psp">
                             <table width="100%">
-                                <tr width="100%">
-                                    <td width="30%"></td>
-                                    <td width="30%">
-                                        <form method="post" action="index.psp">
-                                            <table width="100%">
-                                            	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
-                                            	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
-                                            	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
-                                            </table>
-                                        </form>
-                                    </td>
-                                    <td width="30%"></td>
-                                </tr>
+                            	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
+                            	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
+                            	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
                             </table>
-                            </div>
-			</div>
-		</div>
+                        </form>
+                    </td>
+                    <td width="30%"></td>
+                </tr>
+            </table>
+        </div>
+        <!-- End login form div -->
 
+    </div>
 
-
-
-
-
-
-
-
-
-<!-- SAMPLE LOCATIONS -->
-
-<div class="wrapper clearfix">
-    <%@ include file="../visualize_all_sample_locations.psp"%>
-</div>
-
-
-	</body>
-</html>
+<%@ include file="footer.psp"%>
