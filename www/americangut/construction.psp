@@ -22,7 +22,7 @@ sess.save()
 			<div class="left menuwrapper">
 				<ul class="menu">
 					<!-- <li><a href=""><img class="icon" src="/qiime/img/mail_icon.png">Notify me when the site is live!</a></li>-->
-			        <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Sign Up</a></li>
+			        <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 			        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
 				</ul>
 				<!-- SAMPLE LOCATIONS -->
