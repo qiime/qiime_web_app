@@ -1,0 +1,272 @@
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <h4>General Health Information</h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="10%"></td>
+            <td>
+                <form id="survey_5" action="fusebox.psp">
+<%
+for f in form:
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
+%>
+
+
+                    <table id="survey" width="100%">
+                        <tr>
+                            <td>When did you last take antibiotics?</td>
+                            <td>
+                                <select name="antibiotic_select" id="antibiotic_select" onchange="anySelect('antibiotic_select','antibiotic_option',[0,5])">
+                                    <option>Select an option</option>
+                                    <option>In the past week</option>
+                                    <option>In the past month</option>
+                                    <option>In the past 6 months</option>
+                                    <option>In the past year</option>
+                                    <option>Not in the last year</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                        <div id="antibiotic_option" class="invisible">
+                            <table id="survey" width="100%">
+                                <tr>
+                                    <td>Which antibiotic(s) have you taken?</td>
+                                    <td>
+                                        <div id="antibiotic">
+                                            <div id="antibiotic_1">
+                                                <input type="text" name="antibiotic_1" />
+                                            </div>
+                                        </div>
+                                        <a class="add_field" href="javascript:addField(\'antibiotic\')" title="Add another antibiotic">+</a>
+                                    </td>                  
+                                </tr>
+                                <tr>
+                                    <td>What was/is being treated?</td>
+                                    <td><input type="text" name="antibiotic_condition" id="antibiotic_condition" /></td>                        
+                                </tr>
+                            </table>
+                        </div>
+                        <table id="survey" width="100%">
+                        <tr>
+                            <td>When did you last get the flu vaccine?</td>
+                            <td>
+                                <select name="flu_vaccine_date">
+                                    <option>Select an option</option>
+                                    <option>In the past week</option>
+                                    <option>In the past month</option>
+                                    <option>In the past 6 months</option>
+                                    <option>In the past year</option>
+                                    <option>Not in the last year</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>List any over-the-counter or prescription drugs you are taking.</td>
+                            <td>
+                                <div id="generalmeds">
+                                    <div id="generalmeds_1">
+                                        <input type="text" name="generalmeds_1" />
+                                    </div>
+                                </div>
+                                <a class="add_field" href="javascript:addField(\'generalmeds\')" title="Add another medication">+</a>
+                            </td>                        
+                        </tr>
+                        <tr>
+                            <td>Has your weight changed in the past 6 months?</td>
+                            <td>
+                                <select name="weight_change">
+                                    <option>Select an option</option>
+                                    <option>Increased more than 10 pounds</option>
+                                    <option>Decreased more than 10 pounds</option>
+                                    <option>Remained stable</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Have you had your tonsils removed?</td>
+                            <td>
+                                <div id="tonsils_radio">
+                                    <input type="radio" id="tonsils_yes" name="tonsils_radio" /><label for="tonsils_yes">Yes</label>
+                                    <input type="radio" id="tonsils_no" name="tonsils_radio" /><label for="tonsils_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Have you had your appendix removed?</td>
+                            <td>
+                                <div id="appendix_radio">
+                                    <input type="radio" id="appendix_yes" name="appendix_radio" /><label for="appendix_yes">Yes</label>
+                                    <input type="radio" id="appendix_no" name="appendix_radio" /><label for="appendix_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Have you had chickenpox?</td>
+                            <td>
+                                <div id="chickenpox_radio">
+                                    <input type="radio" id="chickenpox_yes" name="chickenpox_radio" /><label for="chickenpox_yes">Yes</label>
+                                    <input type="radio" id="chickenpox_no" name="chickenpox_radio" /><label for="chickenpox_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you currently take prescription medication for facial acne?</td>
+                            <td>
+                                <div id="acnemed_radio">
+                                    <input type="radio" id="acnemed_yes" name="acnemed_radio" /><label for="acnemed_yes">Yes</label>
+                                    <input type="radio" id="acnemed_no" name="acnemed_radio" /><label for="acnemed_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you use over the counter products to control facial acne?</td>
+                            <td>
+                                <div id="acnecounter_radio">
+                                    <input type="radio" id="acnecounter_yes" name="acnecounter_radio" /><label for="acnecounter_yes">Yes</label>
+                                    <input type="radio" id="acnecounter_no" name="acnecounter_radio" /><label for="acnecounter_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you currently take over the counter or prescription medication for other conditions?</td>
+                            <td>
+                                <div id="conditions_radio">
+                                    <input type="radio" id="conditions_yes" name="conditions_radio" /><label for="conditions_yes">Yes</label>
+                                    <input type="radio" id="conditions_no" name="conditions_radio" /><label for="conditions_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Were you born via cesarean section (C-section)?</td>
+                            <td>
+                                <div id="csection_radio">
+                                    <input type="radio" id="csection_yes" name="csection_radio" /><label for="csection_yes">Yes</label>
+                                    <input type="radio" id="csection_no" name="csection_radio" /><label for="csection_no">No</label>
+                                    <input type="radio" id="csection_notsure" name="csection_radio" /><label for="csection_notsure">Not sure</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have phenylketonuria (PKU)?</td>
+                            <td>
+                                <div id="pku_radio">
+                                    <input type="radio" id="pku_yes" name="pku_radio" /><label for="pku_yes">Yes</label>
+                                    <input type="radio" id="pku_no" name="pku_radio" /><label for="pku_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have asthma?</td>
+                            <td>
+                                <div id="asthma_radio">
+                                    <input type="radio" id="asthma_yes" name="asthma_radio" /><label for="asthma_yes">Yes</label>
+                                    <input type="radio" id="asthma_no" name="asthma_radio" /><label for="asthma_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have seasonal allergies?</td>
+                            <td>
+                                <div id="allergies_radio">
+                                    <input type="radio" id="allergies_yes" name="allergies_radio" /><label for="allergies_yes">Yes</label>
+                                    <input type="radio" id="allergies_no" name="allergies_radio" /><label for="allergies_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have any of the following non-food allergies?</td>
+                            <td>
+                                    <input type="checkbox" id="nonfoodallergies_drug" name="nonfoodallergies" /><label for="nonfoodallergies_drug">Drug (e.g. Penicillin)</label>
+                                    <br />
+                                    <input type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies" /><label for="nonfoodallergies_dander">Pet dander</label>
+                                    <br />
+                                    <input type="checkbox" id="nonfoodallergies_Beestings" name="nonfoodallergies" /><label for="nonfoodallergies_Beestings">Bee stings</label>
+                                    <br />
+                                    <input type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies" /><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
+                                    <br />
+                                    <input type="checkbox" id="nonfoodallergies_sun" name="nonfoodallergies" /><label for="nonfoodallergies_sun">Sun</label>
+                                    <br />
+                                    <input type="checkbox" id="nonfoodallergies_no" name="nonfoodallergies" /><label for="nonfoodallergies_no">No non-food allergies</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have Inflammatory Bowel Disease (IBD)?</td>
+                            <td>
+                                <select name="ibd">
+                                    <option>Select an option</option>
+                                    <option>Yes; Chrohn's disease</option>
+                                    <option>Yes; colitis</option>
+                                    <option>I do not have IBD</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have a skin condition?</td>
+                            <td>
+                                <select name="skin_condition">
+                                    <option>Select an option</option>
+                                    <option>Yes; eczema</option>
+                                    <option>Yes; rosacea</option>
+                                    <option>Yes; psoriasis</option>
+                                    <option>I do not have a skin condition</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you have diabetes?</td>
+                            <td>
+                                <select name="diabetes">
+                                    <option>Select an option</option>
+                                    <option>Yes; type I</option>
+                                    <option>Yes; type II</option>
+                                    <option>I do not have diabetes</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Do you suffer from migraines?</td>
+                            <td>
+                                <div id="migraine_radio">
+                                    <input type="radio" id="migraine_yes" name="migraine_radio" /><label for="migraine_yes">Yes</label>
+                                    <input type="radio" id="migraine_no" name="migraine_radio" /><label for="migraine_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                
+            </td>
+            <td width="10%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="submit" value="Continue">
+    <input type="hidden" id="page" name="page" value="dietary_questions.psp">
+    </form>
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+          $( "#nails_radio" ).buttonset();
+          $( "#tonsils_radio" ).buttonset();
+          $( "#appendix_radio" ).buttonset();
+          $( "#chickenpox_radio" ).buttonset();
+          $( "#acnemed_radio" ).buttonset();
+          $( "#acnecounter_radio" ).buttonset();
+          $( "#conditions_radio" ).buttonset();
+          $( "#csection_radio" ).buttonset();
+          $( "#pku_radio" ).buttonset();
+          $( "#asthma_radio" ).buttonset();
+          $( "#allergies_radio" ).buttonset();
+          $( "#migraine_radio" ).buttonset();
+        $( "#progressbar" ).progressbar({
+          value: 55
+        });
+      });
+    </script>
+    <br />
+</div>

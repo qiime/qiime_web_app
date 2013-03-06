@@ -12,8 +12,8 @@ from mod_python import *
 
 portal_type = sess['portal_type']
 user_data = sess['user_data']
-#req.write(str(user_data))
-#ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+req.write(str(user_data))
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
 %>
 
 <!DOCTYPE html>
@@ -21,10 +21,16 @@ user_data = sess['user_data']
     <head>
         <meta charset="utf-8">
         <title>American Gut Project</title>
+        <script src="js/jquery-1.9.1.js"></script>
+        <script src="js/jquery-ui-1.10.1.custom.min.js"></script>
+        <script src="js/american_gut.js"></script>
         <link rel="stylesheet" type="text/css" href="style/americangut.css">
+        <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">  
     </head>
     <body>
 		<div class="wrapper clearfix">
 	        <div class="header clearfix">
 	            <img id="logo" src="img/ag_logo.jpg">
 			</div>
+<br>
+<%@ include file="menu.psp" %>

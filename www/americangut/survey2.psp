@@ -1,0 +1,167 @@
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <h4>Personal Information</h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="20%"></td>
+            <td>
+                <form id="survey_2" action="fusebox.psp">
+<%
+for f in form:
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
+%>
+
+                    <table id="survey" width="100%">
+                        <tr>
+                            <td>How would you classify your diet?</td>
+                            <td>
+                                <select name="diet_type">
+                                    <option>Select an option</option>
+                                    <option>Omnivore</option>
+                                    <option>Omnivore but no red meat</option>
+                                    <option>Vegetarian</option>
+                                    <option>Vegetarian but eat seafood</option>
+                                    <option>Vegan</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td>Are you taking a daily multivitamin?</td>
+                        <td>
+                            <div id="multivitamin_radio">
+                                <input type="radio" id="multivitamin_yes" name="multivitamin_radio" /><label for="multivitamin_yes">Yes</label>
+                                <input type="radio" id="multivitamin_no" name="multivitamin_radio" /><label for="multivitamin_no">No</label>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>Are you taking any other nutritional/herbal supplements?</td>
+                        <td>
+                            <div id="supplements_radio">
+                                <input type="radio" id="supplements_yes" name="supplements_radio" onclick="javascript:setVisible('supplements_option')"/><label for="supplements_yes">Yes</label>
+                                <input type="radio" id="supplements_no" name="supplements_radio" /><label for="supplements_no" onclick="javascript:setInvisible('supplements_option')">No</label>
+                            </div>
+                        </td>
+                        </tr>
+                        </table>
+                        <div id="supplements_option" class="invisible">
+                        <table id="survey" width="100%">
+                            <tr>
+                                <td>What nutritional/herbal supplements are you taking?</td>
+                                <td>
+                                    <div id="supplements">
+                                        <div id="supplements_1">
+                                            <input type="text" name="supplements_1" />
+                                        </div>
+                                    </div>
+                                    <a class="add_field" href="javascript:addField(\'supplements\',\'supplements\')" title="Add another supplement">+</a>
+                                </td>
+                                </tr>
+                        </table>
+                        </div>
+                        <table id="survey" width="100%">
+                        <tr>
+                        <td>Are you lactose intolerant?</td>
+                        <td>
+                            <div id="lactose_radio">
+                                <input type="radio" id="lactose_yes" name="lactose_radio" /><label for="lactose_yes">Yes</label>
+                                <input type="radio" id="lactose_no" name="lactose_radio" /><label for="lactose_no">No</label>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>Are you gluten intolerant?</td>
+                        <td>
+                            <div id="gluten_radio">
+                                <input type="radio" id="gluten_yes" name="gluten_radio" /><label for="gluten_yes">Yes</label>
+                                <input type="radio" id="gluten_no" name="gluten_radio" /><label for="gluten_no">No</label>
+                            </div>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td>Are you allergic to any of the following?</td>
+                            <td>
+                                    <input type="checkbox" id="foodallergies_peanuts" name="foodallergies" /><label for="foodallergies_peanuts">Peanuts</label>
+                                    <br />
+                                    <input type="checkbox" id="foodallergies_treenuts" name="foodallergies" /><label for="foodallergies_treenuts">Tree nuts</label>
+                                    <br />
+                                    <input type="checkbox" id="foodallergies_shellfish" name="foodallergies" /><label for="foodallergies_shellfish">Shellfish</label>
+                                    <br />
+                                    <input type="checkbox" id="foodallergies_other" name="foodallergies" /><label for="foodallergies_other">Other</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Other</td>
+                            <td><input type="text" id="foodallergies_other" /></td>                        
+                        </tr>
+                        <tr>
+                            <td>Do you follow any other special diet restrictions other than those indicated above?</td>
+                            <td>
+                                <div id="special_radio">
+                                    <input type="radio" id="special_yes" name="special_radio" onclick="javascript:setVisible('restrictions_option')"/><label for="special_yes">Yes</label>
+                                    <input type="radio" id="special_no" name="special_radio" onclick="javascript:setInvisible('restrictions_option')"/><label for="special_no">No</label>
+                                </div>
+                            </td>
+                        </tr>
+                        </table>
+                        <div id="restrictions_option" class="invisible">
+                            <table id="survey" width="100%">
+                                <tr>
+                                    <td>What special dietary restrictions do you follow?</td>
+                                    <td>
+                                        <div id="dietrestrictions">
+                                            <div id="dietrestrictions_1">
+                                                <input type="text" name="dietrestrictions_1" />
+                                            </div>
+                                        </div>
+                                        <a class="add_field" href="javascript:addField(\'dietrestrictions\')" title="Add another diet restriction">+</a>
+                                    </td>                      
+                                </tr>
+                            </table>
+                        </div>
+                        <table id="survey" width="100%">
+                        <tr>
+                            <td>What is your drinking water source at home?</td>
+                            <td>
+                                <select>
+                                    <option>Select an option</option>
+                                    <option>City</option>
+                                    <option>Well</option>
+                                    <option>Bottled</option>
+                                    <option>Filtered</option>
+                                    <option>Not sure</option>
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
+                
+            </td>
+            <td width="20%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="submit" value="Continue">
+    <input type="hidden" id="page" name="page" value="survey3.psp">
+    </form>
+    <br />
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+          $( "#multivitamin_radio" ).buttonset();
+          $( "#supplements_radio" ).buttonset();
+          $( "#lactose_radio" ).buttonset();
+          $( "#gluten_radio" ).buttonset();
+          $( "#special_radio" ).buttonset();
+        $( "#progressbar" ).progressbar({
+          value: 15
+        });
+      });
+    </script>
+    <br />
+</div>

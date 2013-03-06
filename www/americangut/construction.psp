@@ -25,7 +25,6 @@ sess.save()
 			        <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Sign Up</a></li>
 			        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
 				</ul>
-
 				<!-- SAMPLE LOCATIONS -->
 				<div style="height:150px; width:90%; margin:10px;">
 <%
@@ -42,9 +41,7 @@ form['tiny_markers'] = True
 			<div id="content" class="content">
 				<img src="img/ag_construction.png">
 				<br>
-				<p class="construction_text">The participant login page for the American Gut Project is currently under construction 
-				while we test to ensure your anonymity and privacy.</p> <p class="construction_text"> We will notify all participants 
-				when the site is live.</p>
+<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text">Please check back in a few days.</p><p class="construction_text">Contact <a href="mailto:info@americangut.org">us</a> if you have any questions!</p>
 			</div>
 
 			

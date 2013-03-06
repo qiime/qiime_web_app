@@ -1,0 +1,38 @@
+<%
+for f in form:
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
+# End for
+%>
+
+<div id="content" class="right content">
+    <h2>Survey</h2>
+    <table  id="survey" width="100%">
+        <tr>
+            <td width="20%"></td>
+            <td>
+                <div class="lefta">
+                    <p>
+                    Please write anything else about yourself that you think might affect your personal microorganisms.
+                    </p>
+                </div>
+                <textarea rows="5" cols="70"></textarea>
+            </td>
+            <td width="20%"></td>
+        </tr>
+    </table>
+    <form action="fusebox.psp">
+        <input type="submit" value="Continue">
+        <input type="hidden" name="page" value="portal.psp">
+    </form>
+    <br />
+    <div id="progressbar"></div>
+    <script>
+      $(function() {
+        $( "#progressbar" ).progressbar({
+          value: 99
+        });
+      });
+    </script>
+    <br />
+</div>
