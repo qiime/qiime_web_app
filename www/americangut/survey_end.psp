@@ -5,7 +5,7 @@ for f in form:
 # End for
 %>
 
-<div id="content" class="right content">
+<div id="content" class="content">
     <h2>Survey</h2>
     <table  id="survey" width="100%">
         <tr>
