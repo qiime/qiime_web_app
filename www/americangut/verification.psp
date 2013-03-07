@@ -13,7 +13,7 @@
 <div id="content" class="right content">
     <h2>Verify your identity and kit barcode(s)</h2>
     <div class="lefta clearfix formdiv" id="verification">
-        <form method="post" action="verification.psp">
+        <form method="post" action="verification.psp" method="post">
             <h4>Please enter the verification code sent to your email address <a href="">(?)</a></h4>
             <input type="text"></input>
             <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a href="">(?)</a></h4>

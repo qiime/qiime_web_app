@@ -6,7 +6,7 @@
             <tr>
             <td width="10%"></td>
             <td>
-                <form id="survey_5" action="fusebox.psp">
+                <form id="survey_5" method="post" action="fusebox.psp">
 <%
 for f in form:
     if(f != 'page'):
