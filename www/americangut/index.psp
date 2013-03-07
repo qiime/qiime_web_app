@@ -32,9 +32,6 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gu
 # Session variables
 sess = Session.Session(req)
 sess['portal_type'] = portal_type
-
-req.write('<h2>{0}</h2>'.format(req))
-
 sess['document_root'] = req.document_root() + '/americangut/'
 sess.set_timeout(604800)
 sess.save()
