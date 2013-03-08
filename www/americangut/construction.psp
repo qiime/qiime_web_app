@@ -41,7 +41,7 @@ form['tiny_markers'] = True
 			<div id="content" class="content">
 				<img src="img/ag_construction.png">
 				<br>
-<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text">Please check back in a few days.</p><p class="construction_text">Contact <a href="mailto:info@americangut.org">us</a> if you have any questions!</p>
+<p class="construction_text">The participant login page for the American Gut Project is currently under construction while we test to ensure your anonymity and privacy.</p> <p class="construction_text">Since you have received your kit, it would be a good time to start keeping track of your food intake. On the questionnaire (on this site), you will be asked to provide food intake data for 7 days. That is, using an online food diary input all the food and drink throughout the day for a week. We are aware that your food intake will vary, but this will give a rough feel for your dietary habits. You will provide on the questionnaire a summary of your fat, protein, carb intake - and the sources. Online food diary tools like <a href="http://caloriecount.about.com">this</a> will allow you to summarize your 7 day intake.</p><p class="construction_text">Please check back in a few days for the login page.</p><p class="construction_text">Contact <a href="mailto:info@americangut.org">us</a> if you have any questions!</p>
 			</div>
 
 			
