@@ -19,9 +19,15 @@ from qiime.parse import parse_mapping_file
 
 
 # Set variables
-zoom_level = 3
-center_lat = 49.26123
-center_long = -123.1139299
+zoom_level = 5
+
+# center of US
+center_lat = 39.83389
+center_long = -99.89150999999998
+
+# our lab
+#center_lat = 49.26123
+#center_long = -123.1139299
 tiny_markers = False
 portal_type = 'americangut'
 
@@ -32,7 +38,7 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gu
 # Session variables
 sess = Session.Session(req)
 sess['portal_type'] = portal_type
-sess['document_root'] = req.document_root() + '/qiime/AmericanGut/'
+sess['document_root'] = req.document_root() + '/americangut/'
 sess.set_timeout(604800)
 sess.save()
 %>
@@ -110,7 +116,23 @@ req.write('center: new google.maps.LatLng({0},{1}),'.format(center_lat, center_l
         panControl: false
     };
 
+
+    var stylez = [
+        {
+          featureType: "all",
+          elementType: "all",
+          stylers: [
+            { saturation: -100 } // <-- THIS
+          ]
+        }
+    ];
+
     var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+    var mapType = new google.maps.StyledMapType(stylez, { name:"Grayscale" });    
+    map.mapTypes.set('tehgrayz', mapType);
+    map.setMapTypeId('tehgrayz');
+
     setMarkers(map, latlongs_db);
 }
 
@@ -185,7 +207,9 @@ req.write('window.onload=initialize;</script>')
 </head>
 
 <body>
-    <div id="map_canvas" style="width:100%; height:100%; opacity:0.6;"></div>
+    <div style="width:100%; height:100%; background-color:#000;">
+    <div id="map_canvas" style="width:100%; height:100%; opacity:0.7;"></div>
+    </div>
 
 	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; opacity:0.9;">
         <div class="header clearfix">
