@@ -16,12 +16,15 @@ for f in form:
 
 
                     <table id="survey" width="100%">
+                    <colgroup>
+                           <col span="1" style="width: 50%;">
+                           <col span="1" style="width: 50%;">
+                    </colgroup>
                         <tr>
                         <td>Do you use any artificial tanning methods?</td>
                         <td>
-                                <input type="checkbox" id="tanning_yesbeds" name="tanning" /><label for="tanning_yesbeds">Beds</label>
-                                <input type="checkbox" id="tanning_yessprays" name="tanning" /><label for="tanning_yessprays">Sprays</label>
-                                <input type="checkbox" id="tanning_no" name="tanning" /><label for="tanning_no">No</label>
+                                <input type="checkbox" id="tanning_yesbeds" name="tanning_yesbeds" /><label for="tanning_yesbeds">Beds</label>
+                                <input type="checkbox" id="tanning_yessprays" name="tanning_yessprays" /><label for="tanning_yessprays">Sprays</label>
                         </td>
                         </tr>
                         <tr>

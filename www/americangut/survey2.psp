@@ -16,6 +16,10 @@ for f in form:
 %>
 
                     <table id="survey" width="100%">
+                    <colgroup>
+                           <col span="1" style="width: 50%;">
+                           <col span="1" style="width: 50%;">
+                    </colgroup>
                         <tr>
                             <td>How would you classify your diet?</td>
                             <td>
@@ -50,6 +54,10 @@ for f in form:
                         </table>
                         <div id="supplements_option" class="invisible">
                         <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 50%;">
+                               <col span="1" style="width: 50%;">
+                        </colgroup>
                             <tr>
                                 <td>What nutritional/herbal supplements are you taking?</td>
                                 <td>
@@ -64,6 +72,10 @@ for f in form:
                         </table>
                         </div>
                         <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 50%;">
+                               <col span="1" style="width: 50%;">
+                        </colgroup>
                         <tr>
                         <td>Are you lactose intolerant?</td>
                         <td>
@@ -85,13 +97,13 @@ for f in form:
                         <tr>
                             <td>Are you allergic to any of the following?</td>
                             <td>
-                                    <input type="checkbox" id="foodallergies_peanuts" name="foodallergies" /><label for="foodallergies_peanuts">Peanuts</label>
+                                    <input type="checkbox" id="foodallergies_peanuts" name="foodallergies_peanuts" /><label for="foodallergies_peanuts">Peanuts</label>
                                     <br />
-                                    <input type="checkbox" id="foodallergies_treenuts" name="foodallergies" /><label for="foodallergies_treenuts">Tree nuts</label>
+                                    <input type="checkbox" id="foodallergies_treenuts" name="foodallergies_treenuts" /><label for="foodallergies_treenuts">Tree nuts</label>
                                     <br />
-                                    <input type="checkbox" id="foodallergies_shellfish" name="foodallergies" /><label for="foodallergies_shellfish">Shellfish</label>
+                                    <input type="checkbox" id="foodallergies_shellfish" name="foodallergies_shellfish" /><label for="foodallergies_shellfish">Shellfish</label>
                                     <br />
-                                    <input type="checkbox" id="foodallergies_other" name="foodallergies" /><label for="foodallergies_other">Other</label>
+                                    <input type="checkbox" id="foodallergies_other" name="foodallergies_other" /><label for="foodallergies_other">Other</label>
                             </td>
                         </tr>
                         <tr>
@@ -110,6 +122,10 @@ for f in form:
                         </table>
                         <div id="restrictions_option" class="invisible">
                             <table id="survey" width="100%">
+                            <colgroup>
+                                   <col span="1" style="width: 50%;">
+                                   <col span="1" style="width: 50%;">
+                            </colgroup>
                                 <tr>
                                     <td>What special dietary restrictions do you follow?</td>
                                     <td>
@@ -124,6 +140,10 @@ for f in form:
                             </table>
                         </div>
                         <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 50%;">
+                               <col span="1" style="width: 50%;">
+                        </colgroup>
                         <tr>
                             <td>What is your drinking water source at home?</td>
                             <td>

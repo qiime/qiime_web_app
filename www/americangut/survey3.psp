@@ -15,6 +15,10 @@ for f in form:
 %>
 
                     <table id="survey" width="100%">
+                    <colgroup>
+                           <col span="1" style="width: 50%;">
+                           <col span="1" style="width: 50%;">
+                    </colgroup>
                         <tr>
                             <td>What is your race/ethnicity?</td>
                             <td>
@@ -31,6 +35,10 @@ for f in form:
                         </table>
                         <div id="race_option" class="invisible">
                             <table id="survey" width="100%">
+                            <colgroup>
+                                   <col span="1" style="width: 50%;">
+                                   <col span="1" style="width: 50%;">
+                            </colgroup>
                                 <tr>
                                     <td>Other</td>
                                     <td><input type="text" name="race_other" id="race_other" /></td>                        
@@ -38,6 +46,10 @@ for f in form:
                             </table>
                         </div>
                         <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 50%;">
+                               <col span="1" style="width: 50%;">
+                        </colgroup>
                         <tr>
                             <td>When did you move to your current state of residence?</td>
                             <td>
@@ -60,25 +72,38 @@ for f in form:
                                     <option>Within the past 3 months</option>
                                     <option>Within the past 6 months</option>
                                     <option>Within the past year</option>
-                                    <option>Earlier than the past year</option>
+                                    <option>More than one year ago</option>
                                     <option>Never</option>
                                 </select>
                             </td>
                         </tr>
                         </table>
                         <div id="travel_option" class="invisible">
+                        
                             <table id="survey" width="100%">
+                            <colgroup>
+                                   <col span="1" style="width: 50%;">
+                                   <col span="1" style="width: 50%;">
+                            </colgroup>
                                 <tr>
                                     <td>Where did you travel to?</td>
-                                    <td><input type="text" name="travel_location" id="travel_location" /></td>                        
-                                </tr>
-                                <tr>
-                                    <td>How long were you there?</td>
-                                    <td><input type="text" name="travel_duration" id="travel_duration" /> days</td>                        
+                                    <td>
+                                        <div id="travel_options">
+                                            <div id="travel_options_1">
+                                                <input type="text" name="travel_location" id="travel_location" value="Location" class="small_text"/>
+                                                <input type="text" name="travel_duration" id="travel_duration" value="Duration" class="smaller_text"/> days
+                                            </div>
+                                        </div>
+                                        <a class="add_field" href="javascript:addDestinationFields(\'travel_options\',\'travel_location\',\'travel_duration\')" title="Add another destination">+</a>
+                                    </td>
                                 </tr>
                             </table>
                         </div>
                         <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 50%;">
+                               <col span="1" style="width: 50%;">
+                        </colgroup>
                         <tr>
                             <td>Are you related to or live with any of the other participants in this study?</td>
                             <td>
@@ -92,6 +117,10 @@ for f in form:
                         </table>
                         <div id="livingwith_option" class="invisible">
                             <table id="survey" width="100%">
+                            <colgroup>
+                                   <col span="1" style="width: 50%;">
+                                   <col span="1" style="width: 50%;">
+                            </colgroup>
                                 <tr>
                                     <td>Add any other participants you are related to or live with</td>
                                     <td>
@@ -106,6 +135,10 @@ for f in form:
                             </table>
                         </div>
                         <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 50%;">
+                               <col span="1" style="width: 50%;">
+                        </colgroup>
                         <tr>
                             <td>Do you have a dog(s)?</td>
                             <td>
@@ -131,11 +164,13 @@ for f in form:
                                     <div id="pet_1">
                                         <input type="text" value="Type" name="pet_1" class="smaller_text"/>
                                         <select id="pet_1_location">
+                                            <option>Housing...</option>
                                             <option>Indoor</option>
                                             <option>Outdoor</option>
                                             <option>Confined</option>
                                         </select>
                                         <select id="pet_1_contact">
+                                            <option>Contact...</option>
                                             <option>None</option>
                                             <option>Little</option>
                                             <option>Moderate</option>

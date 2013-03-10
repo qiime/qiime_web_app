@@ -26,12 +26,20 @@
 </table>
 <div id="pregnant_option" class="invisible">
     <table id="survey" width="100%">
+    <colgroup>
+           <col span="1" style="width: 50%;">
+           <col span="1" style="width: 50%;">
+    </colgroup>
         <tr>
             <td>When is your due date?</td>
             <td><input type="text" id="datepicker_duedate" readonly="readonly" /></td>
             <script>
               $(function() {
-                $( "#datepicker_duedate" ).datepicker();
+                $( "#datepicker_duedate" ).datepicker({
+                    maxDate: '+9m',
+                    changeMonth: true,
+                    changeYear: true
+                });
               });
             </script>                  
         </tr>
@@ -39,3 +47,7 @@
 </div>
 
 <table id="survey" width="100%">
+<colgroup>
+       <col span="1" style="width: 50%;">
+       <col span="1" style="width: 50%;">
+</colgroup>

@@ -16,6 +16,10 @@ for f in form:
 
 
                     <table id="survey" width="100%">
+                    <colgroup>
+                           <col span="1" style="width: 50%;">
+                           <col span="1" style="width: 50%;">
+                    </colgroup>
                         <tr>
                             <td>When did you last take antibiotics?</td>
                             <td>
@@ -32,6 +36,10 @@ for f in form:
                     </table>
                         <div id="antibiotic_option" class="invisible">
                             <table id="survey" width="100%">
+                            <colgroup>
+                                   <col span="1" style="width: 50%;">
+                                   <col span="1" style="width: 50%;">
+                            </colgroup>
                                 <tr>
                                     <td>Which antibiotic(s) have you taken?</td>
                                     <td>
@@ -50,6 +58,10 @@ for f in form:
                             </table>
                         </div>
                         <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 50%;">
+                               <col span="1" style="width: 50%;">
+                        </colgroup>
                         <tr>
                             <td>When did you last get the flu vaccine?</td>
                             <td>
@@ -179,17 +191,17 @@ for f in form:
                         <tr>
                             <td>Do you have any of the following non-food allergies?</td>
                             <td>
-                                    <input type="checkbox" id="nonfoodallergies_drug" name="nonfoodallergies" /><label for="nonfoodallergies_drug">Drug (e.g. Penicillin)</label>
+                                    <input type="checkbox" id="nonfoodallergies_drug" name="nonfoodallergies_drug" /><label for="nonfoodallergies_drug">Drug (e.g. Penicillin)</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies" /><label for="nonfoodallergies_dander">Pet dander</label>
+                                    <input type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies_dander" /><label for="nonfoodallergies_dander">Pet dander</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_Beestings" name="nonfoodallergies" /><label for="nonfoodallergies_Beestings">Bee stings</label>
+                                    <input type="checkbox" id="nonfoodallergies_Beestings" name="nonfoodallergies_Beestings" /><label for="nonfoodallergies_Beestings">Bee stings</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies" /><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
+                                    <input type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies_poisonivy" /><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_sun" name="nonfoodallergies" /><label for="nonfoodallergies_sun">Sun</label>
+                                    <input type="checkbox" id="nonfoodallergies_sun" name="nonfoodallergies_sun" /><label for="nonfoodallergies_sun">Sun</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_no" name="nonfoodallergies" /><label for="nonfoodallergies_no">No non-food allergies</label>
+                                    <input type="checkbox" id="nonfoodallergies_no" name="nonfoodallergies_no" /><label for="nonfoodallergies_no">No non-food allergies</label>
                             </td>
                         </tr>
                         <tr>
@@ -198,7 +210,7 @@ for f in form:
                                 <select name="ibd">
                                     <option>Select an option</option>
                                     <option>Yes; Chrohn's disease</option>
-                                    <option>Yes; colitis</option>
+                                    <option>Yes; Ulcerative colitis</option>
                                     <option>I do not have IBD</option>
                                 </select>
                             </td>

@@ -13,6 +13,11 @@ body,html {
     background-color: #fcc;
 }
 
+.remove_field{
+	text-decoration: none;
+	color: #f00;
+}
+
 table#survey{
 	border-spacing: 20px;
 }

@@ -34,6 +34,10 @@
 </table>
 <div id="migraine_option1" class="invisible">
     <table id="survey" width="100%">
+    <colgroup>
+           <col span="1" style="width: 50%;">
+           <col span="1" style="width: 50%;">
+    </colgroup>
         <tr>
             <td>Other</td>
             <td><input type="text" id="mainfactor_other" /></td>                        
@@ -41,6 +45,10 @@
     </table>
 </div>
 <table id="survey" width="100%">
+<colgroup>
+       <col span="1" style="width: 50%;">
+       <col span="1" style="width: 50%;">
+</colgroup>
 <tr>
     <td>What is the second main factor that causes your migraines?</td>
     <td>
@@ -64,6 +72,10 @@
 </table>
 <div id="migraine_option2" class="invisible">
     <table id="survey" width="100%">
+    <colgroup>
+           <col span="1" style="width: 50%;">
+           <col span="1" style="width: 50%;">
+    </colgroup>
         <tr>
             <td>Other</td>
             <td><input type="text" id="mainfactor_other" /></td>                        
@@ -71,6 +83,10 @@
     </table>
 </div>
 <table id="survey" width="100%">
+<colgroup>
+       <col span="1" style="width: 50%;">
+       <col span="1" style="width: 50%;">
+</colgroup>
 <tr>
     <td>What is the third main factor that causes your migraines?</td>
     <td>
@@ -94,6 +110,10 @@
 </table>
 <div id="migraine_option3" class="invisible">
     <table id="survey" width="100%">
+    <colgroup>
+           <col span="1" style="width: 50%;">
+           <col span="1" style="width: 50%;">
+    </colgroup>
         <tr>
             <td>Other</td>
             <td><input type="text" id="mainfactor_other" /></td>                        
@@ -101,20 +121,24 @@
     </table>
 </div>
 <table id="survey" width="100%">
+<colgroup>
+       <col span="1" style="width: 50%;">
+       <col span="1" style="width: 50%;">
+</colgroup>
 <tr>
     <td>Do you have any of the following migraine symptoms?</td>
     <td>
-            <input type="checkbox" id="migraine_pain" name="migraine" /><label for="migraine_pain">Body pain where it shouldn't exist</label>
+            <input type="checkbox" id="migraine_pain" name="migraine_pain" /><label for="migraine_pain">Body pain where it shouldn't exist</label>
             <br />
-            <input type="checkbox" id="migraine_photophobia" name="migraine" /><label for="migraine_photophobia">Photophobia (sensitivity to light)</label>
+            <input type="checkbox" id="migraine_photophobia" name="migraine_photophobia" /><label for="migraine_photophobia">Photophobia (sensitivity to light)</label>
             <br />
-            <input type="checkbox" id="migraine_phonophobia" name="migraine" /><label for="migraine_phonophobia">Phonophobia (sensitivity to sounds)</label>
+            <input type="checkbox" id="migraine_phonophobia" name="migraine_phonophobia" /><label for="migraine_phonophobia">Phonophobia (sensitivity to sounds)</label>
             <br />
-            <input type="checkbox" id="migraine_nausea" name="migraine" /><label for="migraine_nausea">Nausea and/or vomiting</label>
+            <input type="checkbox" id="migraine_nausea" name="migraine_nausea" /><label for="migraine_nausea">Nausea and/or vomiting</label>
             <br />
-            <input type="checkbox" id="migraine_aggravation" name="migraine" /><label for="migraine_aggravation">Aggravation or avoidance of routine</label>
+            <input type="checkbox" id="migraine_aggravation" name="migraine_aggravation" /><label for="migraine_aggravation">Aggravation or avoidance of routine</label>
             <br />
-            <input type="checkbox" id="migraine_aura" name="migraine" /><label for="migraine_aura">Aura <a href="http://en.wikipedia.org/wiki/Aura_(symptom)" target="_blank">(?)</a></label>
+            <input type="checkbox" id="migraine_aura" name="migraine_aura" /><label for="migraine_aura">Aura <a href="http://en.wikipedia.org/wiki/Aura_(symptom)" target="_blank">(?)</a></label>
     </td>
 </tr>
 <tr>
@@ -139,6 +163,10 @@
 </table>
 <div id="migraine_option" class="invisible">
     <table id="survey" width="100%">
+    <colgroup>
+           <col span="1" style="width: 50%;">
+           <col span="1" style="width: 50%;">
+    </colgroup>
         <tr>
             <td>Which medication(s) do you take for your migraines?</td>
             <td>
@@ -153,3 +181,7 @@
     </table>
 </div>
 <table id="survey" width="100%">
+<colgroup>
+       <col span="1" style="width: 50%;">
+       <col span="1" style="width: 50%;">
+</colgroup>
