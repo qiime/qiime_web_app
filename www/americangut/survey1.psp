@@ -14,6 +14,10 @@ for f in form:
 # End for
 %>
                     <table width="100%">
+                    <colgroup>
+                           <col span="1" style="width: 50%;">
+                           <col span="1" style="width: 50%;">
+                    </colgroup>
                         <tr>
                             <td>Country of birth</td>
                             <td><select name="country_of_birth">
@@ -31,7 +35,11 @@ for c in d:
                             <td><input type="text" name="birth_date" id="datepicker_birth" readonly="readonly"/></td>
                             <script>
                               $(function() {
-                                $( "#datepicker_birth" ).datepicker();
+                                $( "#datepicker_birth" ).datepicker({
+                                        yearRange: "-120:+0",
+                                        changeMonth: true,
+                                        changeYear: true
+                                });
                               });
                             </script>
                         </tr>
@@ -41,19 +49,19 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Height</td>
-                            <td><input type="text" name="height"/> in</td>
+                            <td><input type="number" name="height" onkeypress='validateNumber(event)'/> in</td>
                         </tr>
                         <tr>
                             <td>Weight</td>
-                            <td><input type="text" name="weight"/> lbs</td>
+                            <td><input type="number" name="weight" onkeypress='validateNumber(event)'/> lbs</td>
                         </tr>
                         <tr>
                             <td>Phone number</td>
-                            <td><input type="text" name="phone_num"/></td>
+                            <td><input type="number" name="phone_num" onkeypress='validateNumber(event)'/></td>
                         </tr>
                         <tr>
                             <td>Current ZIP code</td>
-                            <td><input type="text" name="zipcode"/></td>
+                            <td><input type="number" name="zipcode" onkeypress='validateNumber(event)'/></td>
                         </tr>
                     </table>
                 
