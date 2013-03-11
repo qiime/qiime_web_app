@@ -5,6 +5,18 @@
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants
             <ul class="menu">
                 <li><img class="icon" src="/qiime/img/participant_icon.png">[Participant 1 Name]</li>
+<%
+LIST_ITEM = '<li><img class="icon" src="/qiime/img/participant_icon.png">%s</li>'
+# Call data access function here (will come from Doug)
+# to get list of participants, place results in variable
+# "participants"
+participants = ['Adam', 'Yoshiki', 'Meg', 'Doug']
+for p in participants:
+    # might need to change type of p depending on db
+    # return type
+    req.write(LIST_ITEM % p)
+# end for
+%>
                 <li><a href="fusebox.psp?page=new_participant.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
         </li>
