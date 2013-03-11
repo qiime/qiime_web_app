@@ -2,7 +2,7 @@
 <tr>
     <td>How often do you suffer from migraines?</td>
     <td>
-        <select>
+        <select id="migraine_frequency" name="migraine_frequency">
             <option>Select an option</option>
             <option>Daily</option>
             <option>Weekly</option>
@@ -14,7 +14,7 @@
 <tr>
     <td>What is the main factor that causes your migraines?</td>
     <td>
-        <select id="migraine1" onchange="otherSelect('migraine1','migraine_option1',12)">
+        <select id="migraine_factor_1" name="migraine_factor_1" onchange="otherSelect('migraine1','migraine_option_1',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -32,7 +32,7 @@
     </td>
 </tr>
 </table>
-<div id="migraine_option1" class="invisible">
+<div id="migraine_option_1" class="invisible">
     <table id="survey" width="100%">
     <colgroup>
            <col span="1" style="width: 50%;">
@@ -40,7 +40,7 @@
     </colgroup>
         <tr>
             <td>Other</td>
-            <td><input type="text" id="mainfactor_other" /></td>                        
+            <td><input type="text" id="mainfactor_other_1" name="mainfactor_other_1" /></td>                        
         </tr>
     </table>
 </div>
@@ -52,7 +52,7 @@
 <tr>
     <td>What is the second main factor that causes your migraines?</td>
     <td>
-        <select id="migraine2" onchange="otherSelect('migraine2','migraine_option2',12)">
+        <select id="migraine_factor_2" name="migraine_factor_2" onchange="otherSelect('migraine2','migraine_option_2',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -70,7 +70,7 @@
     </td>
 </tr>
 </table>
-<div id="migraine_option2" class="invisible">
+<div id="migraine_option_2" class="invisible">
     <table id="survey" width="100%">
     <colgroup>
            <col span="1" style="width: 50%;">
@@ -78,7 +78,7 @@
     </colgroup>
         <tr>
             <td>Other</td>
-            <td><input type="text" id="mainfactor_other" /></td>                        
+            <td><input type="text" id="mainfactor_other_2" name="mainfactor_other_2" /></td>                        
         </tr>
     </table>
 </div>
@@ -90,7 +90,7 @@
 <tr>
     <td>What is the third main factor that causes your migraines?</td>
     <td>
-        <select id="migraine3" onchange="otherSelect('migraine3','migraine_option3',12)">
+        <select id="migraine_factor_3" name="migraine_factor_3" onchange="otherSelect('migraine3','migraine_option_3',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -108,7 +108,7 @@
     </td>
 </tr>
 </table>
-<div id="migraine_option3" class="invisible">
+<div id="migraine_option_3" class="invisible">
     <table id="survey" width="100%">
     <colgroup>
            <col span="1" style="width: 50%;">
@@ -116,7 +116,7 @@
     </colgroup>
         <tr>
             <td>Other</td>
-            <td><input type="text" id="mainfactor_other" /></td>                        
+            <td><input type="text" id="mainfactor_other_3" name="mainfactor_other_3"/></td>                        
         </tr>
     </table>
 </div>
@@ -144,19 +144,19 @@
 <tr>
     <td>Does anyone in your immediate family suffer from migraines?</td>
     <td>
-        <div id="migrainerelatives_radio">
-            <input type="radio" id="migrainerelatives_yes" name="migrainerelatives_radio" /><label for="migrainerelatives_yes">Yes</label>
-            <input type="radio" id="migrainerelatives_no" name="migrainerelatives_radio" /><label for="migrainerelatives_no">No</label>
-            <input type="radio" id="migrainerelatives_notsure" name="migrainerelatives_radio" /><label for="migrainerelatives_notsure">Not sure</label>
+        <div id="migraine_relatives">
+            <input type="radio" id="migraine_relatives_yes" name="migraine_relatives" /><label for="migraine_relatives_yes">Yes</label>
+            <input type="radio" id="migraine_relatives_no" name="migraine_relatives" /><label for="migraine_relatives_no">No</label>
+            <input type="radio" id="migraine_relatives_notsure" name="migraine_relatives" /><label for="migraine_relatives_notsure">Not sure</label>
         </div>
     </td>
 </tr>
 <tr>
     <td>Do you take any migraine medication?</td>
     <td>
-        <div id="migrainemeds_radio">
-            <input type="radio" id="migrainemeds_yes" name="migrainemeds_radio" onclick="javascript:setVisible('migraine_option')"/><label for="migrainemeds_yes">Yes</label>
-            <input type="radio" id="migrainemeds_no" name="migrainemeds_radio" onclick="javascript:setInvisible('migraine_option')"/><label for="migrainemeds_no">No</label>
+        <div id="migrainemeds">
+            <input type="radio" id="migrainemeds_yes" name="migrainemeds" onclick="javascript:setVisible('migraine_option')"/><label for="migrainemeds_yes">Yes</label>
+            <input type="radio" id="migrainemeds_no" name="migrainemeds" onclick="javascript:setInvisible('migraine_option')"/><label for="migrainemeds_no">No</label>
         </div>
     </td>
 </tr>
@@ -170,12 +170,12 @@
         <tr>
             <td>Which medication(s) do you take for your migraines?</td>
             <td>
-                <div id="migrainemeds">
-                    <div id="migrainemeds_1">
-                        <input type="text" name="migrainemeds_1" />
+                <div id="migraine_medication">
+                    <div id="migraine_medication_1">
+                        <input type="text" name="migraine_medication_1" id="migraine_medication_1"/>
                     </div>
                 </div>
-                <a class="add_field" href="javascript:addField(\'migrainemeds\')" title="Add another medication">+</a>
+                <a class="add_field" href="javascript:addField(\'migraine_medication\')" title="Add another medication">+</a>
             </td>                      
         </tr>
     </table>

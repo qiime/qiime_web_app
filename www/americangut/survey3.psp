@@ -53,7 +53,7 @@ for f in form:
                         <tr>
                             <td>When did you move to your current state of residence?</td>
                             <td>
-                                <select name="current_residence_duration">
+                                <select name="current_residence_duration" id="current_residence_duration">
                                     <option>Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
@@ -66,7 +66,7 @@ for f in form:
                         <tr>
                             <td>When did you last travel outside of your current country of residence?</td>
                             <td>
-                                <select name="last_travel" id="travel" onchange="anySelect('travel','travel_option',[0,6])">
+                                <select name="last_travel" id="last_travel" onchange="anySelect('last_travel','travel_option',[0,6])">
                                     <option>Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
@@ -90,8 +90,8 @@ for f in form:
                                     <td>
                                         <div id="travel_options">
                                             <div id="travel_options_1">
-                                                <input type="text" name="travel_location_1" value="Location" class="small_text"/>
-                                                <input type="text" name="travel_duration_1" value="Duration" class="smaller_text"/> days
+                                                <input type="text" name="travel_location_1" id="travel_location_1" value="Location" class="small_text"/>
+                                                <input type="text" name="travel_duration_1" id="travel_duration_1" value="Duration" class="smaller_text"/> days
                                             </div>
                                         </div>
                                         <a class="add_field" href="javascript:addDestinationFields(\'travel_options\',\'travel_location\',\'travel_duration\')" title="Add another destination">+</a>
@@ -126,7 +126,7 @@ for f in form:
                                     <td>
                                         <div id="related_participant">
                                             <div id="related_participant_1">
-                                                <input type="text" value="Name" name="related_participant" class="small_text"/><input type="text" value="Relationship" name="relation_1" class="small_text"/>
+                                                <input type="text" value="Name" name="related_participant_1" id="related_participant_1" class="small_text"/><input type="text" value="Relationship" name="relation_1" id="relation_1" class="small_text"/>
                                             </div>
                                         </div>
                                         <a class="add_field" href="javascript:addTwoFields(\'related_participant\',\'relation\')" title="Add another diet restriction">+</a>
@@ -163,13 +163,13 @@ for f in form:
                                 <div id="pet">
                                     <div id="pet_1">
                                         <input type="text" value="Type" name="pet_1" class="smaller_text"/>
-                                        <select id="pet_1_location">
+                                        <select id="pet_location_1">
                                             <option>Housing...</option>
                                             <option>Indoor</option>
                                             <option>Outdoor</option>
                                             <option>Confined</option>
                                         </select>
-                                        <select id="pet_1_contact">
+                                        <select id="pet_contact_1">
                                             <option>Contact...</option>
                                             <option>None</option>
                                             <option>Little</option>
@@ -194,9 +194,9 @@ for f in form:
                         <tr>
                             <td>Do you currently live in shared housing with non-family members, e.g. senior living, on-campus housing, kibbutz etc.?</td>
                             <td>
-                                <div id="living">
-                                    <input type="radio" id="living_yes" name="living" value="yes"/><label for="living_yes">Yes</label>
-                                    <input type="radio" id="living_no" name="living" value="no"/><label for="living_no">No</label>
+                                <div id="shared_housing">
+                                    <input type="radio" id="shared_housing_yes" name="shared_housing" value="yes"/><label for="shared_housing_yes">Yes</label>
+                                    <input type="radio" id="shared_housing_no" name="shared_housing" value="no"/><label for="shared_housing_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -226,7 +226,7 @@ for f in form:
                   $(this).val(defaultText);
               }
               });
-          $( "#living" ).buttonset();
+          $( "#shared_housing" ).buttonset();
           $( "#dog" ).buttonset();
           $( "#cat" ).buttonset();
           $( "#hand" ).buttonset();

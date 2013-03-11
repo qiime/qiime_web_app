@@ -4,9 +4,25 @@ var old_field_number = 1
 function addThreeFields(field_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<input type="text" value="Type" name="'+field_name+"_"+new_field_number+'" class="smaller_text"/><select id="'+field_name+"_"+new_field_number+'_location"><option>Housing...</option><option>Indoor</option><option>Outdoor</option><option>Confined</option></select><select id="'+field_name+"_"+new_field_number+'_contact"><option>Contact...</option><option>None</option><option>Little</option><option>Moderate</option><option>Extensive</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+"_"+new_field_number+'\')" title="Remove this field">x</a>'
+	var newinput = '<input type="text" value="Type" name="'
+	newinput +=field_name
+	newinput +='_'
+	newinput +=new_field_number
+	newinput +='" id="'+field_name+'_'+new_field_number
+	newinput +='" class="smaller_text"/><select id="'
+	newinput += field_name
+	newinput +='_location_'
+	newinput +=new_field_number
+	newinput +='" name="'+field_name+'_location_'+new_field_number
+	newinput +='"><option>Housing...</option><option>Indoor</option><option>Outdoor</option><option>Confined</option></select><select id="'
+	newinput +=field_name
+	newinput +='_contact_'
+	newinput +=new_field_number
+	newinput +='" name="'+field_name+'_contact_'+new_field_number
+	newinput +='"><option>Contact...</option><option>None</option><option>Little</option><option>Moderate</option><option>Extensive</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a>'
+	
 	var newTextBoxDiv = $(document.createElement('div'))
-	     .attr("id", field_name+"_"+new_field_number);
+	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field_name);
 }
@@ -14,9 +30,9 @@ function addThreeFields(field_name) {
 function addTwoFields(field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<input type="text" value="Name" name="'+field1_name+"_"+new_field_number+'" class="small_text"/><input type="text" value="Relationship" name="'+field2_name+"_"+new_field_number+'" class="small_text"/><a class="remove_field" href="javascript:removeField(\''+field1_name+"_"+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<input type="text" value="Name" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/><input type="text" value="Relationship" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="small_text"/><a class="remove_field" href="javascript:removeField(\''+field1_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
-	     .attr("id", field1_name+"_"+new_field_number);
+	     .attr("id", field1_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field1_name);
 }
@@ -24,9 +40,9 @@ function addTwoFields(field1_name,field2_name) {
 function addDestinationFields(div_name,field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<input type="text" value="Location" name="'+field1_name+"_"+new_field_number+'" class="small_text"/> <input type="text" value="Duration" name="'+field2_name+"_"+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+"_"+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<input type="text" value="Location" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/> <input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
-	     .attr("id", div_name+"_"+new_field_number);
+	     .attr("id", div_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+div_name);
 }
@@ -34,9 +50,9 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 function addField(field_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+"_"+new_field_number+'"><input type="text" name="'+field_name+"_"+new_field_number+'"><a class="remove_field" href="javascript:removeField(\''+field_name+"_"+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
-	     .attr("id", field_name+"_"+new_field_number);
+	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field_name);
 }

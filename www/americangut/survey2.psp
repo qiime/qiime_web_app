@@ -23,7 +23,7 @@ for f in form:
                         <tr>
                             <td>How would you classify your diet?</td>
                             <td>
-                                <select name="diet_type">
+                                <select name="diet_type" id="diet_type">
                                     <option>Select an option</option>
                                     <option>Omnivore</option>
                                     <option>Omnivore but no red meat</option>
@@ -63,7 +63,7 @@ for f in form:
                                 <td>
                                     <div id="supplements">
                                         <div id="supplements_1">
-                                            <input type="text" name="supplements_1" />
+                                            <input type="text" name="supplements_1" id="supplements_1"/>
                                         </div>
                                     </div>
                                     <a class="add_field" href="javascript:addField(\'supplements\',\'supplements\')" title="Add another supplement">+</a>
@@ -131,7 +131,7 @@ for f in form:
                                     <td>
                                         <div id="dietrestrictions">
                                             <div id="dietrestrictions_1">
-                                                <input type="text" name="dietrestrictions_1" />
+                                                <input type="text" name="dietrestrictions_1" id="dietrestrictions_1"/>
                                             </div>
                                         </div>
                                         <a class="add_field" href="javascript:addField(\'dietrestrictions\')" title="Add another diet restriction">+</a>
@@ -147,7 +147,7 @@ for f in form:
                         <tr>
                             <td>What is your drinking water source at home?</td>
                             <td>
-                                <select>
+                                <select name="drinking_water_source" id="drinking_water_source">
                                     <option>Select an option</option>
                                     <option>City</option>
                                     <option>Well</option>
