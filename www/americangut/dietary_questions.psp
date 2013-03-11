@@ -19,19 +19,19 @@ for f in form:
                         <tr>
                             <td>Protein</td>
                             <td>
-                                <input type="number" max="100" min="0" name="protein_per" id="protein_per" value="0"  onchange="javascript:updateTotalIntake()" onblur="validatePercentage('protein_per')"/>%
+                                <input type="number" max="100" min="0" name="protein_per" id="protein_per" value="0"  onchange="javascript:updateTotals()" onblur="validatePercentage('protein_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Fat</td>
                             <td>
-                                <input type="number" max="100" min="0" name="fat_per" id="fat_per" value="0" onchange="javascript:updateTotalIntake()" onblur="validatePercentage('fat_per')"/>%
+                                <input type="number" max="100" min="0" name="fat_per" id="fat_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('fat_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Carbohydrates</td>
                             <td>
-                                <input type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value="0" onchange="javascript:updateTotalIntake()" onblur="validatePercentage('carbohydrate_per')"/>%
+                                <input type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('carbohydrate_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -44,13 +44,13 @@ for f in form:
                         <tr>
                             <td>Plant</td>
                             <td>
-                                <input type="number" max="100" min="0" name="plant_per" id="plant_per" value="0" onchange="javascript:updateAnimalPlant()" onblur="validatePercentage('plant_per')"/>%
+                                <input type="number" max="100" min="0" name="plant_per" id="plant_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('plant_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Animal</td>
                             <td>
-                                <input type="number" max="100" min="0" name="animal_per" id="animal_per" value="0" onchange="javascript:updateAnimalPlant()" onblur="validatePercentage('animal_per')"/>%
+                                <input type="number" max="100" min="0" name="animal_per" id="animal_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('animal_per')"/>%
                             </td>
                         </tr>
                         <tr>
