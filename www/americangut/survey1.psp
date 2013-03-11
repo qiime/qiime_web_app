@@ -49,19 +49,41 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Height</td>
-                            <td><input type="number" name="height" onkeypress='validateNumber(event)'/> in</td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                        <input class="small_text" type="text" name="height_in" id="height_in" onkeypress='validateNumber(event)' onblur="inToCm()"/> in
+                                        </td>
+                                        <td>
+                                        <input class="small_text" type="text" name="height_cm" id="height_cm" onkeypress='validateNumber(event)' onblur="cmToIn()"/> cm
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                         <tr>
                             <td>Weight</td>
-                            <td><input type="number" name="weight" onkeypress='validateNumber(event)'/> lbs</td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                        <input class="small_text" type="text" name="weight_lbs" id="weight_lbs" onkeypress='validateNumber(event)' onblur="lbsToKg()"/> lbs
+                                        </td>
+                                        <td>
+                                        <input class="small_text" type="text" name="weight_kg" id="weight_kg" onkeypress='validateNumber(event)' onblur="kgToLbs()"/> kg
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                         <tr>
                             <td>Phone number</td>
-                            <td><input type="number" name="phone_num" onkeypress='validateNumber(event)'/></td>
+                            <td><input type="text" name="phone_num" onkeypress='validateNumber(event)'/></td>
                         </tr>
                         <tr>
                             <td>Current ZIP code</td>
-                            <td><input type="number" name="zipcode" onkeypress='validateNumber(event)'/></td>
+                            <td><input type="text" name="zipcode" onkeypress='validateNumber(event)'/></td>
                         </tr>
                     </table>
                 

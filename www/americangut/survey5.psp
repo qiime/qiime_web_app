@@ -100,91 +100,91 @@ for f in form:
                         <tr>
                             <td>Have you had your tonsils removed?</td>
                             <td>
-                                <div id="tonsils_radio">
-                                    <input type="radio" id="tonsils_yes" name="tonsils_radio" /><label for="tonsils_yes">Yes</label>
-                                    <input type="radio" id="tonsils_no" name="tonsils_radio" /><label for="tonsils_no">No</label>
+                                <div id="tonsils">
+                                    <input type="radio" id="tonsils_yes" name="tonsils" value="yes"/><label for="tonsils_yes">Yes</label>
+                                    <input type="radio" id="tonsils_no" name="tonsils" value="no"/><label for="tonsils_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Have you had your appendix removed?</td>
                             <td>
-                                <div id="appendix_radio">
-                                    <input type="radio" id="appendix_yes" name="appendix_radio" /><label for="appendix_yes">Yes</label>
-                                    <input type="radio" id="appendix_no" name="appendix_radio" /><label for="appendix_no">No</label>
+                                <div id="appendix">
+                                    <input type="radio" id="appendix_yes" name="appendix" value="yes"/><label for="appendix_yes">Yes</label>
+                                    <input type="radio" id="appendix_no" name="appendix" value="no"/><label for="appendix_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Have you had chickenpox?</td>
                             <td>
-                                <div id="chickenpox_radio">
-                                    <input type="radio" id="chickenpox_yes" name="chickenpox_radio" /><label for="chickenpox_yes">Yes</label>
-                                    <input type="radio" id="chickenpox_no" name="chickenpox_radio" /><label for="chickenpox_no">No</label>
+                                <div id="chickenpox">
+                                    <input type="radio" id="chickenpox_yes" name="chickenpox" value="yes"/><label for="chickenpox_yes">Yes</label>
+                                    <input type="radio" id="chickenpox_no" name="chickenpox" value="no"/><label for="chickenpox_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you currently take prescription medication for facial acne?</td>
                             <td>
-                                <div id="acnemed_radio">
-                                    <input type="radio" id="acnemed_yes" name="acnemed_radio" /><label for="acnemed_yes">Yes</label>
-                                    <input type="radio" id="acnemed_no" name="acnemed_radio" /><label for="acnemed_no">No</label>
+                                <div id="acnemed">
+                                    <input type="radio" id="acnemed_yes" name="acnemed" value="yes"/><label for="acnemed_yes">Yes</label>
+                                    <input type="radio" id="acnemed_no" name="acnemed" value="no"/><label for="acnemed_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you use over the counter products to control facial acne?</td>
                             <td>
-                                <div id="acnecounter_radio">
-                                    <input type="radio" id="acnecounter_yes" name="acnecounter_radio" /><label for="acnecounter_yes">Yes</label>
-                                    <input type="radio" id="acnecounter_no" name="acnecounter_radio" /><label for="acnecounter_no">No</label>
+                                <div id="acnecounter">
+                                    <input type="radio" id="acnecounter_yes" name="acnecounter" value="yes"/><label for="acnecounter_yes">Yes</label>
+                                    <input type="radio" id="acnecounter_no" name="acnecounter" value="no"/><label for="acnecounter_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you currently take over the counter or prescription medication for other conditions?</td>
                             <td>
-                                <div id="conditions_radio">
-                                    <input type="radio" id="conditions_yes" name="conditions_radio" /><label for="conditions_yes">Yes</label>
-                                    <input type="radio" id="conditions_no" name="conditions_radio" /><label for="conditions_no">No</label>
+                                <div id="conditions">
+                                    <input type="radio" id="conditions_yes" name="conditions" value="yes"/><label for="conditions_yes">Yes</label>
+                                    <input type="radio" id="conditions_no" name="conditions" value="no"/><label for="conditions_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Were you born via cesarean section (C-section)?</td>
                             <td>
-                                <div id="csection_radio">
-                                    <input type="radio" id="csection_yes" name="csection_radio" /><label for="csection_yes">Yes</label>
-                                    <input type="radio" id="csection_no" name="csection_radio" /><label for="csection_no">No</label>
-                                    <input type="radio" id="csection_notsure" name="csection_radio" /><label for="csection_notsure">Not sure</label>
+                                <div id="csection">
+                                    <input type="radio" id="csection_yes" name="csection" value="yes"/><label for="csection_yes">Yes</label>
+                                    <input type="radio" id="csection_no" name="csection" value="no"/><label for="csection_no">No</label>
+                                    <input type="radio" id="csection_notsure" name="csection" value="not_sure"/><label for="csection_notsure">Not sure</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you have phenylketonuria (PKU)?</td>
                             <td>
-                                <div id="pku_radio">
-                                    <input type="radio" id="pku_yes" name="pku_radio" /><label for="pku_yes">Yes</label>
-                                    <input type="radio" id="pku_no" name="pku_radio" /><label for="pku_no">No</label>
+                                <div id="pku">
+                                    <input type="radio" id="pku_yes" name="pku" value="yes"/><label for="pku_yes">Yes</label>
+                                    <input type="radio" id="pku_no" name="pku" value="no"/><label for="pku_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you have asthma?</td>
                             <td>
-                                <div id="asthma_radio">
-                                    <input type="radio" id="asthma_yes" name="asthma_radio" /><label for="asthma_yes">Yes</label>
-                                    <input type="radio" id="asthma_no" name="asthma_radio" /><label for="asthma_no">No</label>
+                                <div id="asthma">
+                                    <input type="radio" id="asthma_yes" name="asthma" value="yes"/><label for="asthma_yes">Yes</label>
+                                    <input type="radio" id="asthma_no" name="asthma" value="no"/><label for="asthma_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you have seasonal allergies?</td>
                             <td>
-                                <div id="allergies_radio">
-                                    <input type="radio" id="allergies_yes" name="allergies_radio" /><label for="allergies_yes">Yes</label>
-                                    <input type="radio" id="allergies_no" name="allergies_radio" /><label for="allergies_no">No</label>
+                                <div id="allergies">
+                                    <input type="radio" id="allergies_yes" name="allergies" value="yes"/><label for="allergies_yes">Yes</label>
+                                    <input type="radio" id="allergies_no" name="allergies" value="no"/><label for="allergies_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -241,9 +241,9 @@ for f in form:
                         <tr>
                             <td>Do you suffer from migraines?</td>
                             <td>
-                                <div id="migraine_radio">
-                                    <input type="radio" id="migraine_yes" name="migraine_radio" /><label for="migraine_yes">Yes</label>
-                                    <input type="radio" id="migraine_no" name="migraine_radio" /><label for="migraine_no">No</label>
+                                <div id="migraine">
+                                    <input type="radio" id="migraine_yes" name="migraine" value="yes"/><label for="migraine_yes">Yes</label>
+                                    <input type="radio" id="migraine_no" name="migraine" value="no"/><label for="migraine_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -263,18 +263,18 @@ for f in form:
     <div id="progressbar"></div>
     <script>
       $(function() {
-          $( "#nails_radio" ).buttonset();
-          $( "#tonsils_radio" ).buttonset();
-          $( "#appendix_radio" ).buttonset();
-          $( "#chickenpox_radio" ).buttonset();
-          $( "#acnemed_radio" ).buttonset();
-          $( "#acnecounter_radio" ).buttonset();
-          $( "#conditions_radio" ).buttonset();
-          $( "#csection_radio" ).buttonset();
-          $( "#pku_radio" ).buttonset();
-          $( "#asthma_radio" ).buttonset();
-          $( "#allergies_radio" ).buttonset();
-          $( "#migraine_radio" ).buttonset();
+          $( "#nails" ).buttonset();
+          $( "#tonsils" ).buttonset();
+          $( "#appendix" ).buttonset();
+          $( "#chickenpox" ).buttonset();
+          $( "#acnemed" ).buttonset();
+          $( "#acnecounter" ).buttonset();
+          $( "#conditions" ).buttonset();
+          $( "#csection" ).buttonset();
+          $( "#pku" ).buttonset();
+          $( "#asthma" ).buttonset();
+          $( "#allergies" ).buttonset();
+          $( "#migraine" ).buttonset();
         $( "#progressbar" ).progressbar({
           value: 55
         });

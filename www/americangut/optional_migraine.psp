@@ -142,7 +142,7 @@
     </td>
 </tr>
 <tr>
-    <td>Do any of your first degree relatives suffer from migraines?</td>
+    <td>Does anyone in your immediate family suffer from migraines?</td>
     <td>
         <div id="migrainerelatives_radio">
             <input type="radio" id="migrainerelatives_yes" name="migrainerelatives_radio" /><label for="migrainerelatives_yes">Yes</label>

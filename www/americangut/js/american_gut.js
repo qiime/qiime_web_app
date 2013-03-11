@@ -83,7 +83,11 @@ $(function()
 
 function updateTotals() {
 	if(updateTotalIntake() && updateAnimalPlant())
+	{
 		document.getElementById('continue').disabled = false
+		document.getElementById('dietaryIntakeTotal').className = "";
+		document.getElementById('plantAnimalTotal').className = "";
+	}
 	else
 		document.getElementById('continue').disabled = true
 }
@@ -201,4 +205,28 @@ function validateNumber(evt) {
     theEvent.returnValue = false;
     if(theEvent.preventDefault) theEvent.preventDefault();
   }
+}
+
+function inToCm() {
+	var inches = document.getElementById('height_in').value
+	var centimeters = inches * 2.54
+	document.getElementById('height_cm').value = centimeters
+}
+
+function cmToIn() {
+	var centimeters = document.getElementById('height_cm').value
+	var inches = centimeters * 0.393701
+	document.getElementById('height_in').value = inches
+}
+
+function lbsToKg() {
+	var pounds = document.getElementById('weight_lbs').value
+	var kg = pounds * 0.453592
+	document.getElementById('weight_kg').value = kg
+}
+
+function kgToLbs() {
+	var kg = document.getElementById('weight_kg').value
+	var pounds = kg * 2.20462
+	document.getElementById('weight_lbs').value = pounds
 }

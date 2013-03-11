@@ -59,7 +59,7 @@ for f in form:
                                     <option>Within the past 3 months</option>
                                     <option>Within the past 6 months</option>
                                     <option>Within the past year</option>
-                                    <option>More than a year</option>
+                                    <option>More than one year ago</option>
                                 </select>
                             </td>
                         </tr>
@@ -90,8 +90,8 @@ for f in form:
                                     <td>
                                         <div id="travel_options">
                                             <div id="travel_options_1">
-                                                <input type="text" name="travel_location" id="travel_location" value="Location" class="small_text"/>
-                                                <input type="text" name="travel_duration" id="travel_duration" value="Duration" class="smaller_text"/> days
+                                                <input type="text" name="travel_location_1" value="Location" class="small_text"/>
+                                                <input type="text" name="travel_duration_1" value="Duration" class="smaller_text"/> days
                                             </div>
                                         </div>
                                         <a class="add_field" href="javascript:addDestinationFields(\'travel_options\',\'travel_location\',\'travel_duration\')" title="Add another destination">+</a>
@@ -107,10 +107,10 @@ for f in form:
                         <tr>
                             <td>Are you related to or live with any of the other participants in this study?</td>
                             <td>
-                                <div id="livingwith_radio">
-                                    <input type="radio" id="livingwith_yes" name="livingwith_radio" onclick="javascript:setVisible('livingwith_option')"/><label for="livingwith_yes">Yes</label>
-                                    <input type="radio" id="livingwith_no" name="livingwith_radio" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_no">No</label>
-                                    <input type="radio" id="livingwith_notsure" name="livingwith_radio" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_notsure">Not sure</label>
+                                <div id="livingwith">
+                                    <input type="radio" id="livingwith_yes" name="livingwith" value="yes" onclick="javascript:setVisible('livingwith_option')"/><label for="livingwith_yes">Yes</label>
+                                    <input type="radio" id="livingwith_no" name="livingwith" value="no" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_no">No</label>
+                                    <input type="radio" id="livingwith_notsure" name="livingwith" value="not_sure" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_notsure">Not sure</label>
                                 </div>
                             </td>
                         </tr>
@@ -124,12 +124,12 @@ for f in form:
                                 <tr>
                                     <td>Add any other participants you are related to or live with</td>
                                     <td>
-                                        <div id="participant">
-                                            <div id="participant_1">
-                                                <input type="text" value="Name" name="participant_1" class="small_text"/><input type="text" value="Relationship" name="relation_1" class="small_text"/>
+                                        <div id="related_participant">
+                                            <div id="related_participant_1">
+                                                <input type="text" value="Name" name="related_participant" class="small_text"/><input type="text" value="Relationship" name="relation_1" class="small_text"/>
                                             </div>
                                         </div>
-                                        <a class="add_field" href="javascript:addTwoFields(\'participant\',\'relation\')" title="Add another diet restriction">+</a>
+                                        <a class="add_field" href="javascript:addTwoFields(\'related_participant\',\'relation\')" title="Add another diet restriction">+</a>
                                     </td>                      
                                 </tr>
                             </table>
@@ -142,18 +142,18 @@ for f in form:
                         <tr>
                             <td>Do you have a dog(s)?</td>
                             <td>
-                                <div id="dog_radio">
-                                    <input type="radio" id="dog_yes" name="dog_radio" /><label for="dog_yes">Yes</label>
-                                    <input type="radio" id="dog_no" name="dog_radio" /><label for="dog_no">No</label>
+                                <div id="dog">
+                                    <input type="radio" id="dog_yes" name="dog" value="yes"/><label for="dog_yes">Yes</label>
+                                    <input type="radio" id="dog_no" name="dog" value="no"/><label for="dog_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you have a cat(s)?</td>
                             <td>
-                                <div id="cat_radio">
-                                    <input type="radio" id="cat_yes" name="cat_radio" /><label for="cat_yes">Yes</label>
-                                    <input type="radio" id="cat_no" name="cat_radio" /><label for="cat_no">No</label>
+                                <div id="cat">
+                                    <input type="radio" id="cat_yes" name="cat" value="yes"/><label for="cat_yes">Yes</label>
+                                    <input type="radio" id="cat_no" name="cat" value="no"/><label for="cat_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -184,19 +184,19 @@ for f in form:
                         <tr>
                             <td>Which is your dominant hand?</td>
                             <td>
-                                <div id="hand_radio">
-                                    <input type="radio" id="hand_right" name="hand_radio" /><label for="hand_right">Right</label>
-                                    <input type="radio" id="hand_left" name="hand_radio" /><label for="hand_left">Left</label>
-                                    <input type="radio" id="hand_ambi" name="hand_radio" /><label for="hand_ambi">Ambidextrous</label>
+                                <div id="hand">
+                                    <input type="radio" id="hand_right" name="hand" value="right"/><label for="hand_right">Right</label>
+                                    <input type="radio" id="hand_left" name="hand" value="left"/><label for="hand_left">Left</label>
+                                    <input type="radio" id="hand_ambi" name="hand" value="ambidextrous"/><label for="hand_ambi">Ambidextrous</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you currently live in shared housing with non-family members, e.g. senior living, on-campus housing, kibbutz etc.?</td>
                             <td>
-                                <div id="living_radio">
-                                    <input type="radio" id="living_yes" name="living_radio" /><label for="living_yes">Yes</label>
-                                    <input type="radio" id="living_no" name="living_radio" /><label for="living_no">No</label>
+                                <div id="living">
+                                    <input type="radio" id="living_yes" name="living" value="yes"/><label for="living_yes">Yes</label>
+                                    <input type="radio" id="living_no" name="living" value="no"/><label for="living_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -226,11 +226,11 @@ for f in form:
                   $(this).val(defaultText);
               }
               });
-          $( "#living_radio" ).buttonset();
-          $( "#dog_radio" ).buttonset();
-          $( "#cat_radio" ).buttonset();
-          $( "#hand_radio" ).buttonset();
-          $( "#livingwith_radio" ).buttonset();
+          $( "#living" ).buttonset();
+          $( "#dog" ).buttonset();
+          $( "#cat" ).buttonset();
+          $( "#hand" ).buttonset();
+          $( "#livingwith" ).buttonset();
           $( "#progressbar" ).progressbar({
             value: 35
           });

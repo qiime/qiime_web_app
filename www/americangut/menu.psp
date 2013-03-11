@@ -4,7 +4,9 @@
         <div class="menu_separator"></div>
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants
             <ul class="menu">
+            
                 <li><img class="icon" src="/qiime/img/participant_icon.png">[Participant 1 Name]</li>
+                
                 <li><a href="fusebox.psp?page=new_participant.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
         </li>

@@ -31,13 +31,13 @@ if(form['gender'] == 'Female'):
 <%
 v = 0
 try:
-    v = form['living_radio']
+    v = form['living']
 except(KeyError):
     req.write('')
     #do nothing
 
 if(v != 0):
-    if(v == 'on'):
+    if(v == 'yes'):
 %>
 <%@ include file="optional_living.psp" %>
 <%
@@ -53,13 +53,13 @@ if(form['diabetes'] == 'Yes; type I' or form['diabetes'] == 'Yes; type II'):
 <%
 v = 0
 try:
-    v = form['migraine_radio']
+    v = form['migraine']
 except(KeyError):
     req.write('')
     #do nothing
 
 if(v != 0):
-    if(v == 'on'):
+    if(v == 'yes'):
 %>
 <%@ include file="optional_migraine.psp" %>
 <%
