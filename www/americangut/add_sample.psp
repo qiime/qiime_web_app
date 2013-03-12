@@ -1,7 +1,7 @@
 <div id="content" class="content">
 <h2>Add a New Sample</h2>
 
-<form id="add_sample" method="post" action="fusebox.psp">
+<form id="add_sample" method="post" action="sample_submit.psp">
     <table width="100%">
         <tr>
         <td width="20%"></td>
@@ -15,7 +15,7 @@
                 <tr>
                     <td>Choose the barcode from your kit that corresponds to the sample you are logging.</p><p>It is very important that the sample barcode matches <strong>exactly</strong> for downstream analysis steps.</td>
                     <td>
-                        <select>
+                        <select name="barcode" id="barcode">
                             <option>000001000</option>
                         </select>
                     </td>
@@ -23,7 +23,7 @@
                 <tr>
                     <td>Site sampled</td>
                     <td>
-                        <select>
+                        <select name="sample_site" id="sample_site">
                             <option>Stool</option>
                         </select>
                     </td>
@@ -55,8 +55,7 @@
             <table id="survey" width="100%">
                 <tr>
                     <td>
-                    <input type="submit" value="Continue">
-                    <input type="hidden" id="page" name="page" value="portal.psp">
+                    <input type="submit" value="Add Sample">
                     </td>
                 </tr>
             </table>

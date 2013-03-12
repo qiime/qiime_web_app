@@ -1,0 +1,16 @@
+<%
+<%
+from data_access_connections import data_access_factory
+from enums import *
+
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut') 
+sess = Session.Session(req)
+
+participant_name = form['participant_name']
+ag_login_id = sess['user_data']['web_app_user_id']
+
+ag_data_access.logParticipantSample(ag_login_id, barcode, site_sampled, sample_date, hour, minute, meridian)
+
+# Assuming nothing exploded... back to the portal
+#psp.redirect('fusebox.psp?page=portal.psp')
+%>

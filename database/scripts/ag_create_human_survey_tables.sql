@@ -121,51 +121,48 @@ create table ag_human_survey
     
     about_yourself_text varchar2(2000),
     
+    constraint pk_ag_human_survey
+        primary key (ag_login_id, participant_name),
+    
     constraint fk_ag_hum_surv_to_ag_login
         foreign key (ag_login_id)
         references ag_login(ag_login_id)
 );
 
-
--- For items of type
--- supplement_1
--- dietrestrictions_1
--- travel_location_1
--- travel_duration_1
--- related_participant_1
--- pet_location_1
--- pet_contact_1
--- antibiotic_1
--- generalmeds_1
--- diabetes_medications_1
--- migraine_medication_1
-create table ag_human_survey_multiples
+create table ag_survey_multiples
 (
     ag_login_id raw(16) not null,
     participant_name varchar2(200),
-    item_type varchar2(50) not null,
+    item_name varchar2(50) not null,
     item_value varchar2(1000),
     
-    constraint fk_ag_hum_sup_mul_to_ag_login
+    constraint pk_ag_survey_multiples
+        primary key (ag_login_id, participant_name, item_name),
+    
+    constraint fk_ag_mul_to_ag_login
         foreign key (ag_login_id)
         references ag_login (ag_login_id)
 );
 
-create table ag_survey_answers
+create table ag_survey_answer
 (
-    ag_login_id raw(16) not null primary key,
+    ag_survery_answer_id raw(16) default sys_guid(),
+    ag_login_id raw(16) not null,
     participant_name varchar2(200),
     question varchar2(100) not null,
-    answer varchar2(2000),
+    answer varchar2(4000),
+    
+    constraint pk_ag_survey_answer
+        primary key (ag_login_id, participant_name, question),
 
-    constraint fk_sur_ans_to_ag_login
+    constraint fk_sur_an_to_ag_login
         foreign key (ag_login_id)
         references ag_login(ag_login_id)
 );
 
 
 /*
-drop table ag_survey_answers;
-drop table ag_human_survey_multiples;
+drop table ag_survey_answer;
+drop table ag_survey_multiples;
 drop table ag_human_survey;
 */

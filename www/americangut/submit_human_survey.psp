@@ -12,30 +12,44 @@ participant_name = form['participant_name']
 ag_login_id = sess['user_data']['web_app_user_id']
 
 # Clear any old data for this participant
-ag_data_access.removeAGParticipant(ag_login_id, participant_name)
+ag_data_access.removeAGHumanParticipant(ag_login_id, participant_name)
 
 # Create the new participant if it doesn't exist (merges)
-ag_data_access.addAGParticipant(ag_login_id, form['participant_name'])
+ag_data_access.addAGHumanParticipant(ag_login_id, form['participant_name'])
 
 # Define the multiples
 multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'travel_duration_', 'related_participant_', 'relation_', 'pet_', 'pet_location_', 'pet_contact_', 'antibiotic_med_', 'generalmeds_', 'diabetes_medications_', 'migraine_medication_'])
 
+#req.write(str(form) + '<br/><br/>')
+
 # Add/update all of the data
 for f in form:
-	#req.write('{0}: "{1}"<br/>\n'.format(f, form[f]))
+	form_value = form[f].replace("'", "''")
+	#req.write('{0}: "{1}"<br/>\n'.format(f, form_value)
+	try:
+		# Log the entry in the general table
+		ag_data_access.addAGGeneralValue(ag_login_id, participant_name, f, form_value)
+	except Exception, e:
+		req.write('Failed to add to general table.<br/>\n')
+		req.write('Failed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
+		req.write(str(e) + '<br/>\n')
 
-	# Already inserted
-	if f == 'participant_name':
-		continue
+	try:
+		# Already inserted
+		if f == 'participant_name':
+			continue
 
-	for m in multiples:
-		if f.startswith(m):
-			#req.write('write multiple for {0}<br/>\n'.format(f))
-			ag_data_access.insertAGMultiple(ag_login_id, participant_name, f, form[f])
-			break
-	else:
-			#req.write('write single for {0}<br/>\n'.format(f))
-			ag_data_access.addAGSingle(ag_login_id, participant_name, f, form[f])
+		for m in multiples:
+			if f.startswith(m):
+				#req.write('write multiple for {0}<br/>\n'.format(f))
+				ag_data_access.insertAGMultiple(ag_login_id, participant_name, f, form_value)
+				break
+		else:
+				#req.write('write single for {0}<br/>\n'.format(f))
+				ag_data_access.addAGSingle(ag_login_id, participant_name, f, form_value, 'ag_human_survey')
+	except Exception, e:
+		req.write('\n\nFailed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
+		req.write(str(e) + '<br/>\n')
 
 # End for	
 
