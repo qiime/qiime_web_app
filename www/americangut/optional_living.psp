@@ -2,25 +2,25 @@
 <tr>
     <td>Do you live in a fraternity/sorority house?</td>
     <td>
-        <div id="frat_radio">
-            <input type="radio" id="frat_yes" name="frat_radio" /><label for="frat_yes">Yes</label>
-            <input type="radio" id="frat_no" name="frat_radio" /><label for="frat_no">No</label>
+        <div id="frat">
+            <input type="radio" id="frat_yes" name="frat" /><label for="frat_yes">Yes</label>
+            <input type="radio" id="frat_no" name="frat" /><label for="frat_no">No</label>
         </div>
     </td>
 </tr>
 <tr>
     <td>Do you eat the majority of your meals in communal dining areas?</td>
     <td>
-        <div id="dining_radio">
-            <input type="radio" id="dining_yes" name="dining_radio" /><label for="dining_yes">Yes</label>
-            <input type="radio" id="dining_no" name="dining_radio" /><label for="dining_no">No</label>
+        <div id="communal_dining">
+            <input type="radio" id="communal_dining_yes" name="communal_dining" /><label for="communal_dining_yes">Yes</label>
+            <input type="radio" id="communal_dining_no" name="communal_dining" /><label for="communal_dining_no">No</label>
         </div>
     </td>
 </tr>
 <tr>
     <td>How many non-family roommates do you have?</td>
     <td>
-        <select>
+        <select id="roommates" name="roommates">
             <option>Select an option</option>
             <option>None</option>
             <option>One</option>
