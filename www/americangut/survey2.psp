@@ -108,7 +108,7 @@ for f in form:
                         </tr>
                         <tr>
                             <td>Other</td>
-                            <td><input type="text" id="foodallergies_other" /></td>                        
+                            <td><input type="text" id="foodallergies_other_text" name="foodallergies_other_text" /></td>                        
                         </tr>
                         <tr>
                             <td>Do you follow any other special diet restrictions other than those indicated above?</td>

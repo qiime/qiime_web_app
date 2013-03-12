@@ -43,12 +43,12 @@ for f in form:
                                 <tr>
                                     <td>Which antibiotic(s) have you taken?</td>
                                     <td>
-                                        <div id="antibiotic">
-                                            <div id="antibiotic_1">
-                                                <input type="text" name="antibiotic_1" id="antibiotic_1" />
+                                        <div id="antibiotic_med">
+                                            <div id="antibiotic_med_1">
+                                                <input type="text" name="antibiotic_med_1" id="antibiotic_med_1" />
                                             </div>
                                         </div>
-                                        <a class="add_field" href="javascript:addField(\'antibiotic\')" title="Add another antibiotic">+</a>
+                                        <a class="add_field" href="javascript:addField(\'antibiotic_med\')" title="Add another antibiotic">+</a>
                                     </td>                  
                                 </tr>
                                 <tr>
@@ -195,7 +195,7 @@ for f in form:
                                     <br />
                                     <input type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies_dander" /><label for="nonfoodallergies_dander">Pet dander</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_Beestings" name="nonfoodallergies_Beestings" /><label for="nonfoodallergies_Beestings">Bee stings</label>
+                                    <input type="checkbox" id="nonfoodallergies_beestings" name="nonfoodallergies_beestings" /><label for="nonfoodallergies_beestings">Bee stings</label>
                                     <br />
                                     <input type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies_poisonivy" /><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
                                     <br />

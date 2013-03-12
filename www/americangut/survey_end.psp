@@ -1,13 +1,6 @@
-<%
-for f in form:
-    if(f != 'page'):
-        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>\n'.format(f, form[f]))
-# End for
-%>
-
 <div id="content" class="content">
     <h2>Survey</h2>
-    <form action="fusebox.psp" method="post">
+    <form action="submit_human_survey.psp" method="post">
     <table  id="survey" width="100%">
         <tr>
             <td width="20%"></td>
@@ -22,8 +15,15 @@ for f in form:
             <td width="20%"></td>
         </tr>
     </table>
+
+<%
+for f in form:
+    if(f != 'page'):
+        req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>\n'.format(f, form[f]))
+# End for
+%>
+
         <input type="submit" value="Continue">
-        <input type="hidden" name="page" value="submit_human_survey.psp">
     </form>
     <br />
     <div id="progressbar"></div>

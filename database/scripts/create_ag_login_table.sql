@@ -58,7 +58,7 @@ insert  into ag_kit
         (ag_login_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code)
 select  distinct ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code
 from    ag_login
-where   ag_login_id = 'D74A77826104C7E4E0408A800C5D2A0C';
+where   ag_login_id = 'D74F7B48C60A494CE0408A80115D11FD';
 
 create table ag_kit_barcodes
 (
@@ -85,7 +85,7 @@ where   al.swabs_per_kit = 1;
 select ag_kit_id from ag_kit where supplied_kit_id = 'MqaNM';
 insert  into ag_kit_barcodes
         (ag_kit_id, barcode, sample_barcode_file, sample_barcode_file_md5)
-select  'D74A778264DDC7E4E0408A800C5D2A0C', barcode, sample_barcode_file, sample_barcode_file_md5
+select  'D74F7B48CA2F494CE0408A80115D11FD', barcode, sample_barcode_file, sample_barcode_file_md5
 from    ag_login
 where   kit_id = 'MqaNM';
 
@@ -93,7 +93,7 @@ commit;
 
 
 delete from ag_login
-where ag_login_id != 'D74A77826104C7E4E0408A800C5D2A0C'
+where ag_login_id != 'D74F7B48C60A494CE0408A80115D11FD'
 and kit_id = 'MqaNM';
 
 commit;
