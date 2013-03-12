@@ -7,6 +7,7 @@ for f in form:
 
 <div id="content" class="content">
     <h2>Survey</h2>
+    <form action="fusebox.psp" method="post">
     <table  id="survey" width="100%">
         <tr>
             <td width="20%"></td>
@@ -16,14 +17,13 @@ for f in form:
                     Please write anything else about yourself that you think might affect your personal microorganisms.
                     </p>
                 </div>
-                <textarea rows="5" cols="70"></textarea>
+                <textarea id="about_yourself_text" name="about_yourself_text" rows="5" cols="70"></textarea>
             </td>
             <td width="20%"></td>
         </tr>
     </table>
-    <form action="fusebox.psp" method="post">
         <input type="submit" value="Continue">
-        <input type="hidden" name="page" value="portal.psp">
+        <input type="hidden" name="page" value="submit_human_survey.psp">
     </form>
     <br />
     <div id="progressbar"></div>
