@@ -1,0 +1,44 @@
+<%
+from data_access_connections import data_access_factory
+from enums import *
+
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut') 
+sess = Session.Session(req)
+
+#req.write(str(sess))
+
+# Insert the new row
+participant_name = form['participant_name']
+ag_login_id = sess['user_data']['web_app_user_id']
+
+# Clear any old data for this participant
+ag_data_access.removeAGParticipant(ag_login_id, participant_name)
+
+# Create the new participant if it doesn't exist (merges)
+ag_data_access.addAGParticipant(ag_login_id, form['participant_name'])
+
+# Define the multiples
+multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'travel_duration_', 'related_participant_', 'relation_', 'pet_', 'pet_location_', 'pet_contact_', 'antibiotic_med_', 'generalmeds_', 'diabetes_medications_', 'migraine_medication_'])
+
+# Add/update all of the data
+for f in form:
+	#req.write('{0}: "{1}"<br/>\n'.format(f, form[f]))
+
+	# Already inserted
+	if f == 'participant_name':
+		continue
+
+	for m in multiples:
+		if f.startswith(m):
+			#req.write('write multiple for {0}<br/>\n'.format(f))
+			ag_data_access.insertAGMultiple(ag_login_id, participant_name, f, form[f])
+			break
+	else:
+			#req.write('write single for {0}<br/>\n'.format(f))
+			ag_data_access.addAGSingle(ag_login_id, participant_name, f, form[f])
+
+# End for	
+
+# Assuming nothing exploded... back to the portal
+psp.redirect('fusebox.psp?page=portal.psp')
+%>
