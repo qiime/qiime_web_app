@@ -2,7 +2,7 @@
 <tr>
     <td>Do you currently use some form of hormonal birth control?</td>
     <td>
-        <select>
+        <select id="contraceptive" name="contraceptive">
             <option>Select an option</option>
             <option>I take the "pill"</option>
             <option>I use an injected contraceptive (DMPA)</option>
@@ -16,10 +16,10 @@
 <tr>
     <td>Are you currently pregnant?</td>
     <td>
-        <div id="pregnant_radio">
-            <input type="radio" id="pregnant_yes" name="pregnant_radio" onclick="javascript:setVisible('pregnant_option')"/><label for="pregnant_yes">Yes</label>
-            <input type="radio" id="pregnant_no" name="pregnant_radio" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_no">No</label>
-            <input type="radio" id="pregnant_notsure" name="pregnant_radio" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_notsure">Not sure</label>
+        <div id="pregnant">
+            <input type="radio" id="pregnant_yes" name="pregnant" onclick="javascript:setVisible('pregnant_option')"/><label for="pregnant_yes">Yes</label>
+            <input type="radio" id="pregnant_no" name="pregnant" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_no">No</label>
+            <input type="radio" id="pregnant_notsure" name="pregnant" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_notsure">Not sure</label>
         </div>
     </td>
 </tr>
@@ -32,10 +32,10 @@
     </colgroup>
         <tr>
             <td>When is your due date?</td>
-            <td><input type="text" id="datepicker_duedate" readonly="readonly" /></td>
+            <td><input type="text" id="pregnant_due_date" name="pregnant_due_date" readonly="readonly" /></td>
             <script>
               $(function() {
-                $( "#datepicker_duedate" ).datepicker({
+                $( "#pregnant_due_date" ).datepicker({
                     maxDate: '+9m',
                     changeMonth: true,
                     changeYear: true

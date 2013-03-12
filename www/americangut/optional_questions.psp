@@ -31,20 +31,20 @@ if(form['gender'] == 'Female'):
 <%
 v = 0
 try:
-    v = form['living_radio']
+    v = form['shared_housing']
 except(KeyError):
     req.write('')
     #do nothing
 
 if(v != 0):
-    if(v == 'on'):
+    if(v == 'yes'):
 %>
 <%@ include file="optional_living.psp" %>
 <%
 #endif
 %>
 <%
-if(form['diabetes'] == 'Yes; type I' or form['diabetes'] == 'Yes; type II'):
+if(form['diabetes'] == 'Type I' or form['diabetes'] == 'Type II'):
 %>
 <%@ include file="optional_diabetes.psp" %>
 <%
@@ -53,13 +53,13 @@ if(form['diabetes'] == 'Yes; type I' or form['diabetes'] == 'Yes; type II'):
 <%
 v = 0
 try:
-    v = form['migraine_radio']
+    v = form['migraine']
 except(KeyError):
     req.write('')
     #do nothing
 
 if(v != 0):
-    if(v == 'on'):
+    if(v == 'yes'):
 %>
 <%@ include file="optional_migraine.psp" %>
 <%
@@ -82,12 +82,12 @@ if(v != 0):
     <div id="progressbar"></div>
     <script>
       $(function() {
-          $( "#frat_radio" ).buttonset();
-          $( "#dining_radio" ).buttonset();
-          $( "#pregnant_radio" ).buttonset();
-          $( "#diabetesmed_radio" ).buttonset();
-          $( "#migrainemeds_radio" ).buttonset();
-          $( "#migrainerelatives_radio" ).buttonset();
+          $( "#frat" ).buttonset();
+          $( "#communal_dining" ).buttonset();
+          $( "#pregnant" ).buttonset();
+          $( "#diabetes_medication" ).buttonset();
+          $( "#migrainemeds" ).buttonset();
+          $( "#migraine_relatives" ).buttonset();
         $( "#progressbar" ).progressbar({
           value: 70
         });

@@ -20,7 +20,7 @@ for f in form:
                     </colgroup>
                         <tr>
                             <td>Country of birth</td>
-                            <td><select name="country_of_birth">
+                            <td><select name="country_of_birth" id="country_of_birth">
                             <option>Select an option</option>
 <%
 d = data_access.getControlledVocabValueList(28)
@@ -32,10 +32,10 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Birth date</td>
-                            <td><input type="text" name="birth_date" id="datepicker_birth" readonly="readonly"/></td>
+                            <td><input type="text" name="birth_date" id="birth_date" readonly="readonly"/></td>
                             <script>
                               $(function() {
-                                $( "#datepicker_birth" ).datepicker({
+                                $( "#birth_date" ).datepicker({
                                         yearRange: "-120:+0",
                                         changeMonth: true,
                                         changeYear: true
@@ -45,23 +45,45 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Gender</td>
-                            <td><select name="gender"><option>Select an option</option><option>Male</option><option>Female</option><option>Other</option></select></td>
+                            <td><select name="gender" id="gender"><option>Select an option</option><option>Male</option><option>Female</option><option>Other</option></select></td>
                         </tr>
                         <tr>
                             <td>Height</td>
-                            <td><input type="number" name="height" onkeypress='validateNumber(event)'/> in</td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                        <input class="small_text" type="text" name="height_in" id="height_in" onkeypress='validateNumber(event)' onblur="inToCm()"/> in
+                                        </td>
+                                        <td>
+                                        <input class="small_text" type="text" name="height_cm" id="height_cm" onkeypress='validateNumber(event)' onblur="cmToIn()"/> cm
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                         <tr>
                             <td>Weight</td>
-                            <td><input type="number" name="weight" onkeypress='validateNumber(event)'/> lbs</td>
+                            <td>
+                                <table>
+                                    <tr>
+                                        <td>
+                                        <input class="small_text" type="text" name="weight_lbs" id="weight_lbs" onkeypress='validateNumber(event)' onblur="lbsToKg()"/> lbs
+                                        </td>
+                                        <td>
+                                        <input class="small_text" type="text" name="weight_kg" id="weight_kg" onkeypress='validateNumber(event)' onblur="kgToLbs()"/> kg
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
                         </tr>
                         <tr>
                             <td>Phone number</td>
-                            <td><input type="number" name="phone_num" onkeypress='validateNumber(event)'/></td>
+                            <td><input type="text" name="phone_num" id="phone_num" onkeypress='validateNumber(event)'/></td>
                         </tr>
                         <tr>
                             <td>Current ZIP code</td>
-                            <td><input type="number" name="zipcode" onkeypress='validateNumber(event)'/></td>
+                            <td><input type="text" name="zip_code" id="zip_code" onkeypress='validateNumber(event)'/></td>
                         </tr>
                     </table>
                 

@@ -71,7 +71,7 @@ for f in form:
                         <tr>
                             <td>Number of types of plants <a href="#" class="help" title="If you consumed a can of vegetable soup and it contained carrots, potatoes, and onion – then that counts as three species. If you consumed multi-grain bread, then each grain counts. Please do not count ‘spices’ as contributing to your species count.">(?)</a></td>
                             <td>
-                                <select name="types_of_plants">
+                                <select name="types_of_plants" id="types_of_plants">
                                     <option>Select an option</option>
                                     <option>Less than 5</option>
                                     <option>6 to 10</option>
@@ -85,7 +85,7 @@ for f in form:
                         <tr>
                             <td>Processed sources <a href="#" class="help" title="Bread, pasta, sugary drinks, etc">(?)</a></td>
                             <td>
-                                <select name="percentage_from_carbs">
+                                <select name="percentage_from_carbs" id="percentage_from_carbs">
                                     <option>Select an option</option>
                                     <option>Less than 25%</option>
                                     <option>25 to 50%</option>

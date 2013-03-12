@@ -11,7 +11,7 @@ for f in form:
         <tr>
             <td width="20%"></td>
             <td>
-                <div class="lefta">
+                <div class="">
                     <p>
                     Please write anything else about yourself that you think might affect your personal microorganisms.
                     </p>

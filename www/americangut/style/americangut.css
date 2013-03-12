@@ -169,6 +169,15 @@ p.construction_text {
 	font-size: 18pt;
 }
 
+ol.construction {
+	text-align: left;
+	font-size: 14pt;
+}
+
+ol.construction li {
+	margin: 1em;
+}
+
 img#logo {
     height: 100px;
 	margin-left: .5em;
