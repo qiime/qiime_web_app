@@ -14,7 +14,7 @@
 <tr>
     <td>What is the main factor that causes your migraines?</td>
     <td>
-        <select id="migraine_factor_1" name="migraine_factor_1" onchange="otherSelect('migraine1','migraine_option_1',12)">
+        <select id="migraine_factor_1" name="migraine_factor_1" onchange="otherSelect('migraine_factor_1','migraine_option_1',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -52,7 +52,7 @@
 <tr>
     <td>What is the second main factor that causes your migraines?</td>
     <td>
-        <select id="migraine_factor_2" name="migraine_factor_2" onchange="otherSelect('migraine2','migraine_option_2',12)">
+        <select id="migraine_factor_2" name="migraine_factor_2" onchange="otherSelect('migraine_factor_2','migraine_option_2',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -90,7 +90,7 @@
 <tr>
     <td>What is the third main factor that causes your migraines?</td>
     <td>
-        <select id="migraine_factor_3" name="migraine_factor_3" onchange="otherSelect('migraine3','migraine_option_3',12)">
+        <select id="migraine_factor_3" name="migraine_factor_3" onchange="otherSelect('migraine_factor_3','migraine_option_3',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
