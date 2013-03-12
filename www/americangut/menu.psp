@@ -1,12 +1,45 @@
+<%
+_author_ = "Meg Pirrung"
+_copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
+_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+_license_ = "GPL"
+_version_ = "1.0.0.dev"
+_maintainer_ = ["Meg Pirrung"]
+_email_ = "meganap@gmail.com <mailto:meganap@gmail.com>"
+_status_ = "Development"
+
+from enums import ServerConfig
+from data_access_connections import data_access_factory
+
+%>
+
 <div class="left menuwrapper">
 	<ul class="menu">
 		<li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
         <div class="menu_separator"></div>
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants
             <ul class="menu">
-            
-                <li><img class="icon" src="/qiime/img/participant_icon.png">[Participant 1 Name]</li>
-                
+
+<%
+LIST_ITEM = '<li><img class="icon" src="/qiime/img/participant_icon.png">%s</li>'
+ag_data_access = data_access_factory(ServerConfig.data_access_type,
+                                     class_type = 'american_gut')
+
+ag_login_id = sess['user_data']['web_app_user_id']
+
+query = ("select participant_name from ag_human_survey "
+         "where ag_login_id = '%s'" % ag_login_id)
+
+participants = ag_data_access.dynamicMetadataSelect(query)
+
+for p in participants:
+    # database results come back as a list of tuples, even if it is a 1-member
+    # tuple (like this one). So we need to take the first element of this
+    # 1-member tuple
+    p = p[0]
+    req.write(LIST_ITEM % p)
+# END FOR
+%>
                 <li><a href="fusebox.psp?page=new_participant.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
         </li>
