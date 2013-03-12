@@ -19,8 +19,6 @@ from data_access_connections import data_access_factory
         <div class="menu_separator"></div>
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants
             <ul class="menu">
-            
-                <li><img class="icon" src="/qiime/img/participant_icon.png">[Participant 1 Name]</li>
 
 <%
 LIST_ITEM = '<li><img class="icon" src="/qiime/img/participant_icon.png">%s</li>'
