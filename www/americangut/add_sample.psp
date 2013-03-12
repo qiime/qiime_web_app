@@ -1,0 +1,67 @@
+<div id="content" class="content">
+<h2>Add a New Sample</h2>
+
+<form id="add_sample" method="post" action="fusebox.psp">
+    <table width="100%">
+        <tr>
+        <td width="20%"></td>
+        <td>
+        <div class="lefta">
+            <table id="survey" width="100%">
+                <colgroup>
+                       <col span="1" style="width: 50%;">
+                       <col span="1" style="width: 50%;">
+                </colgroup>
+                <tr>
+                    <td>Choose the barcode from your kit that corresponds to the sample you are logging.</p><p>It is very important that the sample barcode matches <strong>exactly</strong> for downstream analysis steps.</td>
+                    <td>
+                        <select>
+                            <option>000001000</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Site sampled</td>
+                    <td>
+                        <select>
+                            <option>Stool</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td><input type="text" name="sample_date" id="sample_date" readonly="readonly"/></td>
+                    <script>
+                      $(function() {
+                        $( "#sample_date" ).datepicker({
+                                changeMonth: true
+                        });
+                      });
+                    </script>
+                </tr>
+                <tr>
+                    <td>Time</td>
+                    <td>
+                        <input type="text" id="hours" name="hours" class="smaller_text" />:
+                        <input type="text" id="minutes" name="minutes" class="smaller_text" />
+                        <select id="meridian" name="meridian">
+                            <option>am</option>
+                            <option>pm</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            </div>
+            <table id="survey" width="100%">
+                <tr>
+                    <td>
+                    <input type="submit" value="Continue">
+                    <input type="hidden" id="page" name="page" value="portal.psp">
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td width="20%"></td>
+        </tr>
+    </table>
+</form>
