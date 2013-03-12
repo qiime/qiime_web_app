@@ -23,8 +23,8 @@ for f in form:
                         <tr>
                         <td>Do you use any artificial tanning methods?</td>
                         <td>
-                                <input type="checkbox" id="tanning_beds" name="tanning_yesbeds" value="bed"/><label for="tanning_yesbeds">Beds</label>
-                                <input type="checkbox" id="tanning_sprays" name="tanning_yessprays" value="spray"/><label for="tanning_yessprays">Sprays</label>
+                                <input type="checkbox" id="tanning_beds" name="tanning_beds" value="bed"/><label for="tanning_yesbeds">Beds</label>
+                                <input type="checkbox" id="tanning_sprays" name="tanning_sprays" value="spray"/><label for="tanning_yessprays">Sprays</label>
                         </td>
                         </tr>
                         <tr>

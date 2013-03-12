@@ -8,7 +8,8 @@ as
 begin
 
   open user_data for
-    select  agl.ag_login_id, agl.email, agl.name, agl.address, agl.city,
+    select  cast(agl.ag_login_id as varchar2(100)) as ag_login_id, 
+            agl.email, agl.name, agl.address, agl.city,
             agl.state, agl.zip, agl.country
     from    ag_login agl
             inner join ag_kit agk
