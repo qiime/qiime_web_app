@@ -1,7 +1,13 @@
+<%
+ag_login_id = sess['user_data']['web_app_user_id']
+participant_name = form['participant_name']
+%>
+
 <div id="content" class="content">
-<h2>Add a New Sample</h2>
+<h2>Add a New Sample for <%=participant_name%></h2>
 
 <form id="add_sample" method="post" action="sample_submit.psp">
+    <input type="hidden" name="participant_name" value="<%=participant_name%>"/>
     <table width="100%">
         <tr>
         <td width="20%"></td>
@@ -16,7 +22,12 @@
                     <td>Choose the barcode from your kit that corresponds to the sample you are logging.</p><p>It is very important that the sample barcode matches <strong>exactly</strong> for downstream analysis steps.</td>
                     <td>
                         <select name="barcode" id="barcode">
-                            <option>000001000</option>
+<%
+barcodes = ag_data_access.dynamicMetadataSelect("select akb.barcode from ag_kit_barcodes akb inner join ag_kit ak on akb.ag_kit_id = ak.ag_kit_id where ak.ag_login_id = '{0}'".format(ag_login_id))
+for barcode in barcodes:
+    req.write('<option>{0}</option>'.format(barcode[0]))
+# end for
+%>                        
                         </select>
                     </td>
                 </tr>

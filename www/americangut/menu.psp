@@ -21,15 +21,10 @@ from data_access_connections import data_access_factory
             <ul class="menu">
 
 <%
-LIST_ITEM = '<li><img class="icon" src="/qiime/img/participant_icon.png">%s</li>'
-ag_data_access = data_access_factory(ServerConfig.data_access_type,
-                                     class_type = 'american_gut')
-
+ag_data_access = data_access_factory(ServerConfig.data_access_type, class_type = 'american_gut')
+list_item = '<li><img class="icon" src="/qiime/img/participant_icon.png">%s'
 ag_login_id = sess['user_data']['web_app_user_id']
-
-query = ("select participant_name from ag_human_survey "
-         "where ag_login_id = '%s'" % ag_login_id)
-
+query = ("select participant_name from ag_human_survey where ag_login_id = '%s'" % ag_login_id)
 participants = ag_data_access.dynamicMetadataSelect(query)
 
 for p in participants:
@@ -37,9 +32,23 @@ for p in participants:
     # tuple (like this one). So we need to take the first element of this
     # 1-member tuple
     p = p[0]
-    req.write(LIST_ITEM % p)
+    req.write(list_item % p)
+    req.write('<ul class="menu">')
+%>
+<form action="fusebox.psp" method="post" id="add_sample_<%=p%>">
+    <li>
+        <input type="hidden" name="page" value="add_sample.psp"/>
+        <input type="hidden" name="participant_name" value="<%=p%>"/>
+        <img class="icon" src="/qiime/img/add_sample_icon.png"/>
+        <a href="" onclick="document.forms['add_sample_<%=p%>'].submit(); return false;">Add Sample
+    </li>
+</form>
+<%
+    
+    req.write('</ul>')
 # END FOR
 %>
+                </li>
                 <li><a href="fusebox.psp?page=new_participant.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
         </li>
