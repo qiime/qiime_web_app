@@ -1,3 +1,33 @@
+<%
+_author_ = "Meg Pirrung"
+_copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
+_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+_license_ = "GPL"
+_version_ = "1.0.0.dev"
+_maintainer_ = ["Meg Pirrung"]
+_email_ = "meganap@gmail.com <mailto:meganap@gmail.com>"
+_status_ = "Development"
+
+from enums import ServerConfig
+from data_access_connections import data_access_factory
+
+#TODO: remove this line
+req.write('sess\n' + str(sess) + '\nend sess')
+ag_login_id = sess['user_data']['web_app_user_id']
+barcodes_fp = sess['resources']['barcode_images_fp']
+
+# requires barcode as string 3 times and then the filepath to the image
+BARCODE_ROW = '''
+                <tr>
+                
+                <td><input type="checkbox" id="barcode_%s" name="barcode_%s"></input></td>
+                <td>%s</td>
+                <td>%s</td>
+                
+                </tr>
+'''
+%>
+
 <div id="content" class="content">
     <h2>Verify your identity and kit barcode(s)</h2>
     <div class="lefta clearfix formdiv" id="verification">
@@ -6,12 +36,28 @@
             <input type="text"></input>
             <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a href="barcode_popup.psp" target="_blank" class="help" title="">(?)</a></h4>
             <table width="30%">
-                <tr>
-                
-                <td><input type="checkbox" id="barcode_000001000" name="barcode_000001000"></input></td>
-                <td>000001000</td>
-                
-                </tr>
+<%
+ag_data_access = data_access_factory(ServerConfig.data_access_type,
+    class_type='american_gut')
+
+query = ("select B.barcode, B.sample_barcode_file "
+         "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
+         "where A.AG_LOGIN_ID = '%s'" % ag_login_id)
+
+#test_data = [('230492309', '230492309.jpg'),
+#             ('723654113', '723654113.jpg'),
+#             ('123456789', '123456789.jpg'),
+#             ('983475981', '983475981.jpg'),
+#             ('174050500', '174050500.jpg'),
+#             ('575885848', '575885848.jpg'),
+#             ('090998092', '090998092.jpg')]
+
+for barcode,sample_barcode_file in ag_data_access.dynamicMetadataSelect(query):
+#for barcode, sample_barcode_file in test_data:
+    barcode_image_fp = os.path.join(barcodes_fp, sample_barcode_file)
+    req.write(BARCODE_ROW % (barcode, barcode, barcode, barcode_image_fp))
+#END FOR
+%>
             </table>
             <br>
             <div class="center">
