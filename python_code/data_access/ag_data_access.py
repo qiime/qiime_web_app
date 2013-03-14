@@ -69,7 +69,8 @@ class AGDataAccess(object):
         if len(intersection) > 0:
             raise Exception('Only select statements are allowed. Your query: %s' % query_string)
         con = self.getMetadataDatabaseConnection()
-        return con.cursor().execute(query_string)
+        con.cursor().execute(query_string)
+        con.cursor().execute('commit')
 
     #####################################
     # Users
