@@ -12,71 +12,53 @@ _status_ = "Development"
 ag_login_id = sess['user_data']['web_app_user_id']
 barcodes_fp = sess['resources']['barcode_images_fp']
 
-# requires barcode as string 3 times and then the filepath to the image, then
+# requires barcode as string 5 times and then the filepath to the image, then
 # the barcode as a string 1 more time
 BARCODE_ROW = '''
-                <tr>
-                
-                <td><input type="checkbox" id="barcode_%s" name="barcode_%s"></input></td>
-                <td>%s</td>
-                <td><img src='%s' height="70px" width="141px" title="please verify this barcode: %s"></td>
-                
-                </tr>
+    <table width="30%%" id="barcode_%s" name="barcode_%s">
+        <tr>
+        <td><input type="checkbox" id="barcode_%s" name="barcode_%s"></input></td>
+        <td>%s</td>
+        <td><img src="%s" height="70px" width="141px" title="please verify this barcode: %s"></td>
+        </tr>
+    </table>
 '''
 
 # selects from database unverified kits for the current user
 query = ("select supplied_kit_id from ag_kit where ag_login_id ='%s' "
-         "and kit_verified = 'n'") % ag_login_id
+         "and kit_verified = 'n' and rownum = 1" % ag_login_id)
 
-for supplied_kit_id in ag_data_access.dynamicMetadataSelect(query):
-    #indent
+supplied_kit_id = ag_data_access.dynamicMetadataSelect(query).next()
+if supplied_kit_id:
+    supplied_kit_id = supplied_kit_id[0]
+    #INDENT
 %>
 
 <div id="content" class="content">
     <h2>Verify your identity and kit barcode(s)</h2>
     <div class="lefta clearfix formdiv" id="verification">
-        <form method="post" action="fusebox.psp">
-            
-<%
-    req.write('<h3>Kit ID: %s</h3>\n' % supplied_kit_id)
-    req.write('<h4>Please enter the verification code sent to your email '
-              'address <a href="#" class="help" title="If you did not '
-              'recieve a verification code in your email from American '
-              'Gut, please check your spam folder. If you still can not '
-              'find it, contact info@americangut.org">(?)</a></h4>'
-              '<input type="text" id="verification_code_%s" '
-              'name="verification_code_%s"></input>' % (supplied_kit_id,
-                                                        supplied_kit_id))
-    # ENDIF
-%>
-            <h4>Please verify that the barcode(s) on the sample tube(s) you received in the mail match the barcode(s) here <a href="barcode_popup.psp" target="_blank" class="help" title="">(?)</a></h4>
+        <form name="verification_submit" id="verification_submit" method="post" action="fusebox.psp">
+            <h3>Kit ID: <%= supplied_kit_id %></h3>
+            <h4>Please enter the verification code sent to your email address <a href="#" class="help" title="If you did not recieve a verification code in your email from American Gut, please check your spam folder. If you still can not find it, contact info@americangut.org">(?)</a></h4>
+            <input type="text" name="email_verification_code" id="email_verification_code"></input>
+            <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a href="barcode_popup.psp" target="_blank" class="help" title="">(?)</a></h4>
             <table width="30%">
 <%
-#TODO: delete test data, use query instead
     query = ("select B.barcode, B.sample_barcode_file "
          "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
          "where A.AG_LOGIN_ID = '%s'" % ag_login_id)
 
-#    test_data = [('000001000', '000001000.jpg'),
-#                 ('723654113', '723654113.jpg'),
-#                 ('123456789', '123456789.jpg'),
-#                 ('983475981', '983475981.jpg'),
-#                 ('174050500', '174050500.jpg'),
-#                 ('575885848', '575885848.jpg'),
-#                 ('090998092', '090998092.jpg')]
 
     for barcode,sample_barcode_file in ag_data_access.dynamicMetadataSelect(query):
-#    for barcode, sample_barcode_file in test_data:
         barcode_image_fp = os.path.join(barcodes_fp, sample_barcode_file)
-        req.write(BARCODE_ROW % (barcode, barcode, barcode, barcode_image_fp,
-                                 barcode))
+        req.write(BARCODE_ROW % (barcode, barcode, barcode, barcode, barcode,
+            barcode_image_fp, barcode))
     #END FOR
 %>
-            </table>
             <br>
             <div class="center">
-            <input type="submit" value="Verify" />
-            <input type="hidden" id="page" name="page" value="process_verification.psp">
+            <input type="button" value="Verify" id="submit_form" onclick="validateVerification()"/>
+            <input type="hidden" id="page" name="page" value="portal.psp">
             </div>
         </form>
         <br>
