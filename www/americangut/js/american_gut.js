@@ -273,17 +273,16 @@ function validateVerification() {
 		if(document.verification_submit[i].type == 'checkbox' && !document.verification_submit[i].checked)
 		{
 			document.getElementById(document.verification_submit[i].id).className += " highlight";
+			valid = false;
 		}
 	}
 	
     if(!valid) 
 	{
-	    //alert($('#consent_info').submit());
         return;
 	}
     else 
 	{
-        //alert($('#consent_info').submit());
         $('#verification_submit').submit();
 	}
 }
