@@ -288,6 +288,19 @@ function validateVerification() {
 	}
 }
 
+/*clear empty boxes for survey3*/
+function validateSurvey3() {
+    for(var i = 0; i < document.survey_3.length; i++) 
+    {	
+		if(document.survey_3[i].type == 'text')
+		{
+			if(document.survey_3[i].value == 'Location' || document.survey_3[i].value == 'Duration'|| document.survey_3[i].value == 'Type')
+				document.survey_3[i].value = ''
+		}
+    }
+    $('#survey_3').submit();
+}
+
 /* input field number validation*/
 function validateNumber(evt) {
   var theEvent = evt || window.event;
