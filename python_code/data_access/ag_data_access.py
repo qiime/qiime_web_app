@@ -149,6 +149,7 @@ class AGDataAccess(object):
         con.cursor().execute(sql)
         con.cursor().execute('commit')
 
-
-
-    
+    def verifyKit(self, supplied_kid_id):
+        """Set the KIT_VERIFIED for the supplied_kit_id to 'y'"""
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_verify_kit_status', [supplied_kit_id])
