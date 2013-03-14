@@ -211,6 +211,43 @@ function validateConsent()
 	}
 }
 
+/*validation for add new sample*/
+function verifyAddSample() {
+    for(var i = 0; i < document.add_sample.length; i++) 
+    {
+        document.add_sample[i].className = document.add_sample[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+	
+    var valid = true;
+	
+    if(document.add_sample.sample_date.value == "")
+    {
+        document.add_sample.sample_date.className += " highlight";
+        valid = false;
+    }
+    if(document.add_sample.hours.value == "")
+    {
+        document.add_sample.hours.className += " highlight";
+        valid = false;
+    }
+    if(document.add_sample.minutes.value == "")
+    {
+        document.add_sample.minutes.className += " highlight";
+        valid = false;
+    }
+	
+    if(!valid) 
+	{
+	    //alert($('#consent_info').submit());
+        return;
+	}
+    else 
+	{
+        //alert($('#consent_info').submit());
+        $('#add_sample').submit();
+	}
+}
+
 /* input field number validation*/
 function validateNumber(evt) {
   var theEvent = evt || window.event;

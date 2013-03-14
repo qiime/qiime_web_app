@@ -6,7 +6,7 @@ participant_name = form['participant_name']
 <div id="content" class="content">
 <h2>Add a New Sample for <%=participant_name%></h2>
 
-<form id="add_sample" method="post" action="sample_submit.psp">
+<form id="add_sample" name="add_sample" method="post" action="sample_submit.psp">
     <input type="hidden" name="participant_name" value="<%=participant_name%>"/>
     <table width="100%">
         <tr>
@@ -53,8 +53,8 @@ for barcode in barcodes:
                 <tr>
                     <td>Time</td>
                     <td>
-                        <input type="text" id="hours" name="hours" class="smaller_text" />:
-                        <input type="text" id="minutes" name="minutes" class="smaller_text" />
+                        <input type="text" id="hours" name="hours" onkeypress='validateNumber(event)' class="smaller_text" />:
+                        <input type="text" id="minutes" name="minutes" onkeypress='validateNumber(event)' class="smaller_text" />
                         <select id="meridian" name="meridian">
                             <option>am</option>
                             <option>pm</option>
@@ -66,7 +66,7 @@ for barcode in barcodes:
             <table id="survey" width="100%">
                 <tr>
                     <td>
-                    <input type="submit" value="Add Sample">
+                    <input type="button" value="Add Sample" onclick="verifyAddSample()">
                     </td>
                 </tr>
             </table>
