@@ -1,3 +1,22 @@
+<%
+_author_ = "Meg Pirrung"
+_copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
+_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+_license_ = "GPL"
+_version_ = "1.0.0.dev"
+_maintainer_ = ["Meg Pirrung"]
+_email_ = "meganap@gmail.com <mailto:meganap@gmail.com>"
+_status_ = "Development"
+
+# convenience variables
+ag_login_id = sess['user_data']['web_app_user_id']
+barcodes_fp = sess['resources']['barcode_images_fp']
+
+%>
+
 <div id="content" class="content">
-    Welcome <!--<%=user_data['name']%>-->
+    Welcome <%=user_data['name']%>
+
 </div>
+
+<%@ include file="verification.psp"%>

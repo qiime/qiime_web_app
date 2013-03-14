@@ -33,18 +33,20 @@ portal_type = 'americangut'
 
 # Data Access
 data_access = data_access_factory(ServerConfig.data_access_type)
-ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+ag_data_access = data_access_factory(ServerConfig.data_access_type,
+    'american_gut')
 
 # Session variables
 sess = Session.Session(req)
 sess['portal_type'] = portal_type
 sess['document_root'] = req.document_root() + '/americangut/'
 sess['resources'] = {}
-sess['resources']['barcode_images_fp'] = os.path.join(sess['document_root'],
-    'barcodes_images')
+sess['resources']['barcode_images_fp'] = os.path.join('img', 'barcodes')
 
 sess.set_timeout(604800)
 sess.save()
+
+
 %>
 
 <!DOCTYPE html>
@@ -245,6 +247,7 @@ if form.has_key('username'):
         req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
 
 # end
+
 %>
 
         <!-- Login form div -->
