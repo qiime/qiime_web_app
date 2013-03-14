@@ -254,10 +254,10 @@ function validateVerification() {
     {
         document.verification_submit[i].className = document.verification_submit[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
 		
-		// if(document.verification_submit[i].type == 'checkbox')
-		// {
-		// 	document.getElementById(document.verification_submit[i].id).className = document.verification_submit[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
-		// }
+		if(document.verification_submit[i].type == 'checkbox')
+		{
+			document.getElementById(document.verification_submit[i].id).className = document.verification_submit[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+		}
     }
 	
     var valid = true;
@@ -268,13 +268,13 @@ function validateVerification() {
         valid = false;
     }
 	
-	// for(var i = 0; i < document.verification_submit.length; i++)
-	// {
-	// 	if(document.verification_submit[i].type == 'checkbox' && !document.verification_submit[i].checked)
-	// 	{
-	// 		document.getElementById(document.verification_submit[i].id).className += " highlight";
-	// 	}
-	// }
+	for(var i = 0; i < document.verification_submit.length; i++)
+	{
+		if(document.verification_submit[i].type == 'checkbox' && !document.verification_submit[i].checked)
+		{
+			document.getElementById(document.verification_submit[i].id).className += " highlight";
+		}
+	}
 	
     if(!valid) 
 	{
