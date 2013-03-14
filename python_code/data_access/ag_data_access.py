@@ -154,15 +154,13 @@ class AGDataAccess(object):
 
         return barcodes
 
-    def checkAvailableBarcodes(self, ag_login_id)
+    def getAvailableBarcodes(self, ag_login_id):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        available_barcodes = False
-        con.cursor().callproc('ag_get_available_barcodes', [ag_login_id, results])
+        available_barcodes = []
+        con.cursor().callproc('ag_available_barcodes', [ag_login_id, results])
         for row in results:
-            data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], \
-                'hour':row[3], 'minute':row[4], 'meridian':row[5]}
-            barcodes.append(data)
+            available_barcodes.append(row[0])
 
-        return barcodes
+        return available_barcodes
 

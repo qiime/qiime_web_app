@@ -38,8 +38,8 @@ for p in participants:
     # End for
     
     # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
-    available_barcodes = ag_data_access.checkAvailableBarcodes(ag_login_id)
-    if available_barcodes:
+    available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
+    if len(available_barcodes) > 0:
         # Indent
 %>  
 
