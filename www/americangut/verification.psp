@@ -24,18 +24,11 @@ BARCODE_ROW = '''
                 </tr>
 '''
 
-#TODO: uncomment the line in the query B.barcode_verified = 'n'
-#      once the field is in ag_kit_barcodes
-#selects AG_KIT_IDs for the current login that at least one unverified barcode
-query = ('''select A.AG_KIT_ID, A.SUPPLIED_KIT_ID, A.KIT_VERIFIED
-from ag_kit A join ag_kit_barcodes B on A.AG_KIT_ID = B.AG_KIT_ID
-where A.ag_login_id = '%s'
---and B.barcode_verified = 'n'
-group by A.AG_KIT_ID, A.SUPPLIED_KIT_ID, A.KIT_VERIFIED having count(*) > 0'''
-    % ag_login_id)
+# selects from database unverified kits for the current user
+query = ("select supplied_kit_id from ag_kit where ag_login_id ='%s' "
+         "and kit_verified = 'n'") % ag_login_id
 
-for kit_id, supplied_kit_id, kit_verified in \
-    ag_data_access.dynamicMetadataSelect(query):
+for supplied_kit_id in ag_data_access.dynamicMetadataSelect(query):
     #indent
 %>
 
@@ -46,15 +39,14 @@ for kit_id, supplied_kit_id, kit_verified in \
             
 <%
     req.write('<h3>Kit ID: %s</h3>\n' % supplied_kit_id)
-    if kit_verified == 'n':
-        req.write('<h4>Please enter the verification code sent to your email '
-                  'address <a href="#" class="help" title="If you did not '
-                  'recieve a verification code in your email from American '
-                  'Gut, please check your spam folder. If you still can not '
-                  'find it, contact info@americangut.org">(?)</a></h4>'
-                  '<input type="text" id="verification_code_%s" '
-                  'name="verification_code_%s"></input>' % (supplied_kit_id,
-                                                            supplied_kit_id))
+    req.write('<h4>Please enter the verification code sent to your email '
+              'address <a href="#" class="help" title="If you did not '
+              'recieve a verification code in your email from American '
+              'Gut, please check your spam folder. If you still can not '
+              'find it, contact info@americangut.org">(?)</a></h4>'
+              '<input type="text" id="verification_code_%s" '
+              'name="verification_code_%s"></input>' % (supplied_kit_id,
+                                                        supplied_kit_id))
     # ENDIF
 %>
             <h4>Please verify that the barcode(s) on the sample tube(s) you received in the mail match the barcode(s) here <a href="barcode_popup.psp" target="_blank" class="help" title="">(?)</a></h4>
@@ -62,8 +54,8 @@ for kit_id, supplied_kit_id, kit_verified in \
 <%
 #TODO: delete test data, use query instead
     query = ("select B.barcode, B.sample_barcode_file "
-             "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
-             "where A.AG_LOGIN_ID = '%s'" % ag_login_id)
+         "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
+         "where A.AG_LOGIN_ID = '%s'" % ag_login_id)
 
 #    test_data = [('000001000', '000001000.jpg'),
 #                 ('723654113', '723654113.jpg'),
