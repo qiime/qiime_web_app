@@ -248,6 +248,46 @@ function verifyAddSample() {
 	}
 }
 
+/*validation for verification*/
+function validateVerification() {
+    for(var i = 0; i < document.verification_submit.length; i++) 
+    {
+        document.verification_submit[i].className = document.verification_submit[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+		
+		if(document.verification_submit[i].type == 'checkbox')
+		{
+			document.getElementById(document.verification_submit[i].id).className = document.verification_submit[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+		}
+    }
+	
+    var valid = true;
+	
+    if(document.verification_submit.email_verification_code.value == "")
+    {
+        document.verification_submit.email_verification_code.className += " highlight";
+        valid = false;
+    }
+	
+	for(var i = 0; i < document.verification_submit.length; i++)
+	{
+		if(document.verification_submit[i].type == 'checkbox' && !document.verification_submit[i].checked)
+		{
+			document.getElementById(document.verification_submit[i].id).className += " highlight";
+		}
+	}
+	
+    if(!valid) 
+	{
+	    //alert($('#consent_info').submit());
+        return;
+	}
+    else 
+	{
+        //alert($('#consent_info').submit());
+        $('#verification_submit').submit();
+	}
+}
+
 /* input field number validation*/
 function validateNumber(evt) {
   var theEvent = evt || window.event;
