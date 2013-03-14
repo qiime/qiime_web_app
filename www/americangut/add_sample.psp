@@ -19,13 +19,14 @@ participant_name = form['participant_name']
                        <col span="1" style="width: 50%;">
                 </colgroup>
                 <tr>
-                    <td>Choose the barcode from your kit that corresponds to the sample you are logging.</p><p>It is very important that the sample barcode matches <strong>exactly</strong> for downstream analysis steps.</td>
+                    <td>Choose the barcode from your kit that corresponds to the sample you are logging.</p>
+                    <p>It is very important that the sample barcode matches <strong>exactly</strong> for downstream analysis steps.</td>
                     <td>
                         <select name="barcode" id="barcode">
 <%
-barcodes = ag_data_access.dynamicMetadataSelect("select akb.barcode from ag_kit_barcodes akb inner join ag_kit ak on akb.ag_kit_id = ak.ag_kit_id where ak.ag_login_id = '{0}'".format(ag_login_id))
+barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
 for barcode in barcodes:
-    req.write('<option>{0}</option>'.format(barcode[0]))
+    req.write('<option>{0}</option>'.format(barcode))
 # end for
 %>                        
                         </select>
@@ -75,3 +76,4 @@ for barcode in barcodes:
         </tr>
     </table>
 </form>
+

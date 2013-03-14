@@ -5,3 +5,6 @@ alter table ag_kit_barcodes add minute integer;
 alter table ag_kit_barcodes add meridian varchar(5);
 
 alter table ag_kit add kit_verified char(1) default 'n';
+
+alter table ag_kit_barcodes add participant_name varchar2(200);
+
