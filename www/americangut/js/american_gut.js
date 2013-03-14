@@ -273,19 +273,31 @@ function validateVerification() {
 		if(document.verification_submit[i].type == 'checkbox' && !document.verification_submit[i].checked)
 		{
 			document.getElementById(document.verification_submit[i].id).className += " highlight";
+			valid = false;
 		}
 	}
 	
     if(!valid) 
 	{
-	    //alert($('#consent_info').submit());
         return;
 	}
     else 
 	{
-        //alert($('#consent_info').submit());
         $('#verification_submit').submit();
 	}
+}
+
+/*clear empty boxes for survey3*/
+function validateSurvey3() {
+    for(var i = 0; i < document.survey_3.length; i++) 
+    {	
+		if(document.survey_3[i].type == 'text')
+		{
+			if(document.survey_3[i].value == 'Location' || document.survey_3[i].value == 'Duration'|| document.survey_3[i].value == 'Type')
+				document.survey_3[i].value = ''
+		}
+    }
+    $('#survey_3').submit();
 }
 
 /* input field number validation*/
