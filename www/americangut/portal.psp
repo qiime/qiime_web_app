@@ -1,22 +1,26 @@
 <%
-_author_ = "Meg Pirrung"
-_copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
-_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
-_license_ = "GPL"
-_version_ = "1.0.0.dev"
-_maintainer_ = ["Meg Pirrung"]
-_email_ = "meganap@gmail.com <mailto:meganap@gmail.com>"
-_status_ = "Development"
-
-# convenience variables
-ag_login_id = sess['user_data']['web_app_user_id']
-barcodes_fp = sess['resources']['barcode_images_fp']
+__author__ = "Meg Pirrung"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Meg Pirrung"]
+__email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
+__status__ = "Development"
 
 %>
 
 <div id="content" class="content">
     Welcome <%=user_data['name']%>
 
+<%
+
+message = form.get('message', '')
+if message:
+    req.write('<h2>%s</h2>' % message)
+#ENDIF
+%>
+
 </div>
 
-<%@ include file="verification.psp"%>
+<%@ include file="verification.psp" %>

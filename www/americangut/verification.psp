@@ -7,6 +7,10 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Meg Pirrung"]
 __email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
 __status__ = "Development"
+%>
+
+<%
+from utils.psp_utils import format_submit_form_to_fusebox_string
 
 # convenience variables
 ag_login_id = sess['user_data']['web_app_user_id']
@@ -30,21 +34,56 @@ query = ("select supplied_kit_id from ag_kit where ag_login_id ='%s' "
 
 try:
     supplied_kit_id = ag_data_access.dynamicMetadataSelect(query).next()
+    supplied_kit_id = supplied_kit_id[0]
 except StopIteration:
     supplied_kit_id = None
 
+#need this if so that NOTHING is rendered if there are no unverified kits
 if supplied_kit_id:
-    supplied_kit_id = supplied_kit_id[0]
-    #INDENT
+    verification_textbox_class = ""
+
+    form_dict = dict(form)
+    verification_code = form_dict.get('email_verification_code', None)
+    if verification_code:
+        # The user submitted the form on this page already
+        query = ("select kit_verification_code from ag_kit "
+                 "where supplied_kit_id = '%s'" % supplied_kit_id)
+
+        try:
+            db_code = ag_data_access.dynamicMetadataSelect(query).next()
+            db_code = db_code[0]
+        except StopIteration:
+            db_code = False
+
+        if db_code == verification_code:
+            ag_data_access.verifyKit(supplied_kit_id)
+            # redirects the user back to portal.psp cannot use psp.redirect
+            # because fusebox is already using req.write
+            req.write(format_submit_form_to_fusebox_string(page="portal.psp"))
+#            req.write("""<form action="fusebox.psp" name="redirect" id="redirect">
+#            <input type="hidden" name="page" id="page" value="portal.psp">
+#            </form>
+#            <script>document.forms['redirect'].submit()</script>""")
+        else:
+            # error message when the verification code was wrong
+            req.write('<h2>The kit verification code you entered does '
+                'not match our records. Please double-check the code you '
+                'entered. If you continue to experience difficulties, please '
+                '<a href="fusebox.psp?page=help_request.psp">'
+                'click here</a></h2>')
+            # sets the verification_code text box to highlight red
+            verification_textbox_class = " highlight"
+        #ENDIF
+    #ENDIF
 %>
 
 <div id="content" class="content">
     <h2>Verify your identity and kit barcode(s)</h2>
     <div class="lefta clearfix formdiv" id="verification">
-        <form name="verification_submit" id="verification_submit" method="post" action="process_verification.psp">
+        <form name="verification_submit" id="verification_submit" method="post" action="fusebox.psp?page=portal.psp">
             <h3>Kit ID: <%= supplied_kit_id %></h3>
             <h4>Please enter the verification code sent to your email address <a href="#" class="help" title="If you did not recieve a verification code in your email from American Gut, please check your spam folder. If you still can not find it, contact info@americangut.org">(?)</a></h4>
-            <input type="text" name="email_verification_code" id="email_verification_code"></input>
+            <input class = <%= '"'+verification_textbox_class+'"' %> type="text" name="email_verification_code" id="email_verification_code"></input>
             <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a href="barcode_popup.psp" target="_blank" class="help" title="">(?)</a></h4>
             <table width="30%">
 <%
@@ -52,15 +91,11 @@ if supplied_kit_id:
          "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
          "where A.AG_LOGIN_ID = '%s'" % ag_login_id)
 
-    # troubleshooting gets initialized in index.psp 
-    sess['troubleshooting']['supplied_kit_id'] = supplied_kit_id
-    sess['troubleshooting']['user_barcodes'] = []
     for barcode,sample_barcode_file in ag_data_access.dynamicMetadataSelect(query):
         barcode_image_fp = os.path.join(barcodes_fp, sample_barcode_file)
         req.write(BARCODE_ROW % (barcode, barcode, barcode, barcode, barcode,
             barcode_image_fp, barcode))
-        sess['troubleshooting']['user_barcodes'].append(str(barcode))
-    sess.save()
+    #ENDFOR
 %>
             <br>
             <div class="center">

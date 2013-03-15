@@ -9,10 +9,50 @@ __maintainer__ = ["Meg Pirrung"]
 __email__ = "meganap@gmail.com"
 __status__ = "Development"
 
+from utils.mail import send_email
+from smtplib import SMTPException
+
+from utils.psp_utils import format_submit_form_to_fusebox_string
 # form where users can request for help
+
+form_dict = dict(form)
+email_address = form_dict.get('email_address', None)
+
+if email_address:
+    SUBJECT = """AGHELP: %s %s""" % (form_dict['first_name'],
+        form_dict['last_name'])
+
+    MESSAGE = """Contact: %s %s
+    Reply to: %s
+    --------------------------------------------------------------------------------
+    Message:
+    %s
+    --------------------------------------------------------------------------------
+    """ % (form_dict['first_name'], form_dict['last_name'],
+        form_dict['email_address'], form_dict['message_body'])
+
+    try:
+        send_email(MESSAGE, SUBJECT)
+    except:
+        req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+            message="There was a problem sending your email "
+            'Please contact us directly at '
+            '<a href=&quot;mailto:info@americangut.org&quot;>info@americangut.org</a>'))
+
+    req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+        message='Your message has been sent. We will reply to you as '
+        'soon as we can.'))
+#end indent
 %>
 
-<form action="send_email.psp" method="post">
+<h1>
+Contact the American Gut
+</h1>
+<h3 align="left">
+We will send a response to the email address you supply within 24 hours.
+</h3>
+
+<form action="fusebox.psp?page=help_request.psp" method="post">
     <div id="content" class="content"> 
     <br/> <br/>
     First Name<input type="text" id="first_name" name="first_name"/> <br/> 
