@@ -1,0 +1,44 @@
+<%
+__author__ = "Meg Pirrung"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza",
+    "Daniel McDonald"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Meg Pirrung"]
+__email__ = "meganap@gmail.com"
+__status__ = "Development"
+
+from utils.mail import send_email
+from smtplib import SMTPException
+
+sess = Session.Session(req)
+
+# form is not a dict, we want it as a dict
+form_dict = dict(form)
+
+SUBJECT = """AGHELP: %s (%d)""" % (form_dict['first_name'], sess['error_code'])
+
+MESSAGE = """Contact: %s %s
+Reply to: %s
+--------------------------------------------------------------------------------
+Message:
+%s
+--------------------------------------------------------------------------------
+Session variables:
+%s""" % (form_dict['first_name'], form_dict['last_name'],
+    form_dict['email_address'], form_dict['message_body'], str(sess))
+
+try:
+    send_email(MESSAGE, SUBJECT)
+except SMTPException:
+    # let the error module there was a problem sending the e-mail
+    sess['error_code'] = 3
+    sess.save()
+    psp.redirect('fusebox.psp?page=error.psp')
+
+# ERROR_CODE = 2 will send you to an 'email has been sent' page
+sess['error_code'] = 2
+sess.save()
+psp.redirect('fusebox.psp?page=error.psp')
+%>
