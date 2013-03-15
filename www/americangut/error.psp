@@ -1,0 +1,17 @@
+<div id="content" class="content">
+<h2>
+<%
+errors = {}
+errors[1] = ("The kit verification code you entered does not match our "
+             "records. Please use your browser's back button to return to "
+             "the previous page and double-check the code you entered.")
+
+req.write(errors[sess['error_code']])
+%>
+</h2>
+
+<h4>
+If you conintue to have issues, please <a href="fusebox.psp?page=help_request.psp">click here</a>.
+</h4>
+
+</div>

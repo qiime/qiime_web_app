@@ -1,21 +1,15 @@
 create or replace 
-PROCEDURE "AG_VERIFY_KIT_STATUS"
-/* This procedure appends the ANALYSIS table with the new sequence run id. */
+PROCEDURE AG_VERIFY_KIT_STATUS
 (
   -- define the input to this procedure
-  supplied_kit_id IN NUMBER
+  supplied_kit_id_ IN VARCHAR2
 )
 as 
 begin
-  -- update ANALYSIS table with sequence run id
   UPDATE AG_KIT
   SET KIT_VERIFIED='y'
-  WHERE SUPPLIED_KIT_ID=supplied_kit_id;
+  WHERE SUPPLIED_KIT_ID=supplied_kit_id_;
   
   commit;
   
 end ag_verify_kit_status;
-
-/*
-execute ag_verify_kit_status(1);
-*/

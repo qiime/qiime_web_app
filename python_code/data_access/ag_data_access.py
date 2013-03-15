@@ -175,7 +175,7 @@ class AGDataAccess(object):
 
         return available_barcodes
 
-    def verifyKit(self, supplied_kid_id):
+    def verifyKit(self, supplied_kit_id):
         """Set the KIT_VERIFIED for the supplied_kit_id to 'y'"""
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_verify_kit_status', [supplied_kit_id])

@@ -1,65 +1,49 @@
 <%
-_author_ = "Meg Pirrung"
-_copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
-_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
-_license_ = "GPL"
-_version_ = "1.0.0.dev"
-_maintainer_ = ["Meg Pirrung"]
-_email_ = "meganap@gmail.com <mailto:meganap@gmail.com>"
-_status_ = "Development"
+__author__ = "Meg Pirrung"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Meg Pirrung"]
+__email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
+__status__ = "Development"
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
+
+sess = Session.Session(req)
+
+# Data Access
+data_access = data_access_factory(ServerConfig.data_access_type)
+ag_data_access = data_access_factory(ServerConfig.data_access_type,
+    'american_gut')
 
 # convenience variables
 ag_login_id = sess['user_data']['web_app_user_id']
 barcodes_fp = sess['resources']['barcode_images_fp']
 
-req.write('form\n' + str(form) + '\nend_form')
-
 # form is not a dict, we want it as a dict
 form_dict = dict(form)
 
-verified_barcodes = []
-verified_kits = []
+verification_code = form_dict['email_verification_code']
+supplied_kit_id = form_dict['supplied_kit_id']
 
-# pull out the barcodes and the verification codes
-for key, value in form_dict.iteritems():
-    # do not care about the value, checkboxes will be returned only when on 
-    if key.startswith('barcode_'):
-        verified_barcodes.append(key.replace('barcode_', ''))
-    # the value should be what the user inputed
-    if key.startswith('verification_code_'):
-        verified_kits.append((key.replace('verification_code_', ''), value))
+query = ("select kit_verification_code from ag_kit "
+         "where supplied_kit_id = '%s'" % supplied_kit_id)
 
-# if the user confirmed barcodes, update those values into the db
-if verified_barcodes:
-    # since multiple barcodes can be verified at the same time, join them
-    update_query = 'update ag_kit_barcodes set hour=null where barcode in (%s)' %\
-        ','.join(["'%s'"%element for element in verified_barcodes])
-    ag_data_access.dynamicMetadataUpdate(update_query)
+# store accurate matches to update them into the db and inaccurate ones
+# to notify the user that there might be something wrong goin on 
+try:
+    db_code = ag_data_access.dynamicMetadataSelect(query).next()
+    db_code = db_code[0]
+except StopIteration:
+    db_code = False
 
-if verified_kits:
-    query = ("select supplied_kit_id, kit_verification_code from ag_kit "
-             "where supplied_kit_id in (%s)" % \
-                ', '.join(["'%s'"%x[0] for x in verified_kits]))
-    accurate_codes = []
-    inaccurate_codes = []
-    # store accurate matches to update them into the db and inaccurate ones
-    # to notify the user that there might be something wrong goin on 
-    for db_kit_id, db_code in ag_data_access.dynamicMetadataSelect(query):
-        if (db_kit_id, db_code) in verified_kits:
-            accurate_codes.append(db_kit_id)
-        else:
-            inaccurate_codes.append(db_kit_id)
-
-    # redirect the user to portal.psp where he can start having fun
-    if accurate_codes:
-        query = ("update ag_kit set kit_verified = 'y' where supplied_kit_id "
-                 "in (%s)" % ', '.join(["'%s'"%x for x in accurate_codes]))
-
-        ag_data_access.dynamicMetadataUpdate(query)
-    
-    # notify the user he didn't enter the correct code
-    if inaccurate_codes:
-        req.write('INCORRECT BARCODES:' + str(inaccurate_codes) + '\n')
-        #TODO:email them and present alert using javascript
-#ENDIF
+if db_code == verification_code:
+    ag_data_access.verifyKit(supplied_kit_id)
+    psp.redirect('fusebox.psp?page=portal.psp')
+else:
+    sess['error_code'] = 1
+    sess.save()
+    psp.redirect('fusebox.psp?page=error.psp')
 %>
