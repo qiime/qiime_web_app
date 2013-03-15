@@ -60,10 +60,6 @@ if supplied_kit_id:
             # redirects the user back to portal.psp cannot use psp.redirect
             # because fusebox is already using req.write
             req.write(format_submit_form_to_fusebox_string(page="portal.psp"))
-#            req.write("""<form action="fusebox.psp" name="redirect" id="redirect">
-#            <input type="hidden" name="page" id="page" value="portal.psp">
-#            </form>
-#            <script>document.forms['redirect'].submit()</script>""")
         else:
             # error message when the verification code was wrong
             req.write('<h2>The kit verification code you entered does '
