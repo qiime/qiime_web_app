@@ -39,6 +39,10 @@ try:
 except StopIteration:
     db_code = False
 
+# useful information for e-mail help incase needed
+sess['troubleshooting']['email_verification_code'] = verification_code
+sess.save()
+
 if db_code == verification_code:
     ag_data_access.verifyKit(supplied_kit_id)
     psp.redirect('fusebox.psp?page=portal.psp')

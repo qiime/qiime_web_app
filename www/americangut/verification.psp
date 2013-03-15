@@ -1,12 +1,12 @@
 <%
-_author_ = "Meg Pirrung"
-_copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
-_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
-_license_ = "GPL"
-_version_ = "1.0.0.dev"
-_maintainer_ = ["Meg Pirrung"]
-_email_ = "meganap@gmail.com <mailto:meganap@gmail.com>"
-_status_ = "Development"
+__author__ = "Meg Pirrung"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Meg Pirrung"]
+__email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
+__status__ = "Development"
 
 # convenience variables
 ag_login_id = sess['user_data']['web_app_user_id']
@@ -52,12 +52,15 @@ if supplied_kit_id:
          "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
          "where A.AG_LOGIN_ID = '%s'" % ag_login_id)
 
-
+    # troubleshooting gets initialized in index.psp 
+    sess['troubleshooting']['supplied_kit_id'] = supplied_kit_id
+    sess['troubleshooting']['user_barcodes'] = []
     for barcode,sample_barcode_file in ag_data_access.dynamicMetadataSelect(query):
         barcode_image_fp = os.path.join(barcodes_fp, sample_barcode_file)
         req.write(BARCODE_ROW % (barcode, barcode, barcode, barcode, barcode,
             barcode_image_fp, barcode))
-    #END FOR
+        sess['troubleshooting']['user_barcodes'].append(str(barcode))
+    sess.save()
 %>
             <br>
             <div class="center">

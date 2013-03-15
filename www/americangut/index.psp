@@ -42,6 +42,8 @@ sess['portal_type'] = portal_type
 sess['document_root'] = req.document_root() + '/americangut/'
 sess['resources'] = {}
 sess['resources']['barcode_images_fp'] = os.path.join('img', 'barcodes')
+sess['troubleshooting'] = {}
+sess['error_code'] = 0
 
 sess.set_timeout(604800)
 sess.save()

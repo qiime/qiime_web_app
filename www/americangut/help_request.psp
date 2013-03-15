@@ -1,0 +1,28 @@
+<%
+__author__ = "Meg Pirrung"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza",
+    "Daniel McDonald"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Meg Pirrung"]
+__email__ = "meganap@gmail.com"
+__status__ = "Development"
+
+# form where users can request for help
+%>
+
+<form action="send_email.psp" method="post">
+    <div id="content" class="content"> 
+    <br/> <br/>
+    First Name<input type="text" id="first_name" name="first_name"/> <br/> 
+    Last Name<input type="text" id="last_name" name="last_name"/> <br/>
+    Email address<input type="text" id="email_address" name="email_address"/> <br/>
+    <br/> <br/>
+    Enter information related to your problem<br/>
+    <textarea rows="4" cols="50" style="resize:none" id="message_body" name="message_body">
+    </textarea>
+    </div>
+
+    <input type="submit" name="submit_button" id="submit_button" value="submit">
+</form>
