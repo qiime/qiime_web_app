@@ -1,3 +1,26 @@
+<%
+__author__ = "Meg Pirrung"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Meg Pirrung"]
+__email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
+__status__ = "Development"
+
+%>
+
 <div id="content" class="content">
-    Welcome <!--<%=user_data['name']%>-->
+    Welcome <%=user_data['name']%>
+
+<%
+
+message = form.get('message', '')
+if message:
+    req.write('<h2>%s</h2>' % message)
+#ENDIF
+%>
+
 </div>
+
+<%@ include file="verification.psp" %>
