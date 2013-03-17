@@ -60,24 +60,23 @@ for f in form:
 
 v = form.get('deceased_parent', None)
 message = ""
-if v:
-    if(v == 'yes'):
-        SUBJECT = """AGDECEASED: %s has deceased parent""" % (form['participant_name'])
+if(v == 'yes'):
+    SUBJECT = """AGDECEASED: %s has deceased parent""" % (form['participant_name'])
 
-        MESSAGE = """Contact: %s
-        --------------------------------------------------------------------------------
-        Message:
-        This child has a deceased parent, the person filling out the survey for them
-        needs to provide proof. Email them for proof.
-        --------------------------------------------------------------------------------
-        """ % (form['participant_name'])
+    MESSAGE = """Contact: %s
+    --------------------------------------------------------------------------------
+    Message:
+    This child has a deceased parent, the person filling out the survey for them
+    needs to provide proof. Email them for proof.
+    --------------------------------------------------------------------------------
+    """ % (form['participant_name'])
 
-        try:
-            send_email(MESSAGE, SUBJECT)
-        except:
-            message="There was a problem, "
-                'Please contact us directly at '
-                '<a href=&quot;mailto:info@americangut.org&quot;>info@americangut.org</a>'
+    try:
+        send_email(MESSAGE, SUBJECT)
+    except:
+        message="There was a problem, "
+            'Please contact us directly at '
+            '<a href=&quot;mailto:info@americangut.org&quot;>info@americangut.org</a>'
 
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox(page='portal.psp', message=message))
