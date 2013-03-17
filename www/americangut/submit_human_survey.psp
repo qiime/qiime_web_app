@@ -27,14 +27,9 @@ multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'trave
 
 #req.write(str(form) + '<br/><br/>')
 
-v = 0
-try:
-    v = form['deceased_parent']
-except(KeyError):
-    req.write('')
-    #do nothing
+v = form.get('deceased_parent', None)
 
-if(v != 0):
+if v:
     if(v == 'yes'):
         SUBJECT = """AGDECEASED: %s has deceased parent""" % (form['participant_name'])
 
