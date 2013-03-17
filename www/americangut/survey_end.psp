@@ -15,7 +15,6 @@
             <td width="20%"></td>
         </tr>
     </table>
-
 <%
 for f in form:
     if(f != 'page'):
