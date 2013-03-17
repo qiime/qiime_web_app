@@ -1,6 +1,11 @@
 <%
 from data_access_connections import data_access_factory
 from enums import *
+from utils.mail import send_email
+from smtplib import SMTPException
+
+from utils.psp_utils import format_submit_form_to_fusebox_string
+# form where users can request for help
 
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut') 
 sess = Session.Session(req)
@@ -21,6 +26,33 @@ ag_data_access.addAGHumanParticipant(ag_login_id, form['participant_name'])
 multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'travel_duration_', 'related_participant_', 'relation_', 'pet_', 'pet_location_', 'pet_contact_', 'antibiotic_med_', 'generalmeds_', 'diabetes_medications_', 'migraine_medication_'])
 
 #req.write(str(form) + '<br/><br/>')
+
+v = 0
+try:
+    v = form['deceased_parent']
+except(KeyError):
+    req.write('')
+    #do nothing
+
+if(v != 0):
+    if(v == 'yes'):
+        SUBJECT = """AGDECEASED: %s has deceased parent""" % (form['participant_name'])
+
+        MESSAGE = """Contact: %s
+        --------------------------------------------------------------------------------
+        Message:
+        This child has a deceased parent, the person filling out the survey for them
+        needs to provide proof. Email them for proof.
+        --------------------------------------------------------------------------------
+        """ % (form['participant_name'])
+
+        try:
+            send_email(MESSAGE, SUBJECT)
+        except:
+            req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+                message="There was a problem submitting your form "
+                'Please contact us directly at '
+                '<a href=&quot;mailto:info@americangut.org&quot;>info@americangut.org</a>'))
 
 # Add/update all of the data
 for f in form:
@@ -54,5 +86,5 @@ for f in form:
 # End for	
 
 # Assuming nothing exploded... back to the portal
-psp.redirect('fusebox.psp?page=portal.psp')
+req.write(format_submit_form_to_fusebox(page='portal.psp', message=message))
 %>
