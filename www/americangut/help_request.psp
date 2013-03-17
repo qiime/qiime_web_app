@@ -44,25 +44,40 @@ if email_address:
         'soon as we can.'))
 #end indent
 %>
+<div id="content" class="content">
+    <h2>Contact the American Gut</h2>
+    <h4>We will send a response to the email address you supply within 24 hours.</h4>
 
-<h1>
-Contact the American Gut
-</h1>
-<h3 align="left">
-We will send a response to the email address you supply within 24 hours.
-</h3>
-
-<form action="fusebox.psp?page=help_request.psp" method="post">
-    <div id="content" class="content"> 
-    <br/> <br/>
-    First Name<input type="text" id="first_name" name="first_name"/> <br/> 
-    Last Name<input type="text" id="last_name" name="last_name"/> <br/>
-    Email address<input type="text" id="email_address" name="email_address"/> <br/>
-    <br/> <br/>
-    Enter information related to your problem<br/>
-    <textarea rows="4" cols="50" style="resize:none" id="message_body" name="message_body">
-    </textarea>
-    </div>
-
-    <input type="submit" name="submit_button" id="submit_button" value="submit">
-</form>
+    <form name="help_request" id="help_request" action="fusebox.psp?page=help_request.psp" method="post">
+        <table width="100%">
+            <tr>
+            <td width="35%"></td>
+            <td>
+                <div class="lefta">
+                    <table>
+                        <tr>
+                            <td>First Name</td><td><input type="text" id="first_name" name="first_name"/></td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td><td><input type="text" id="last_name" name="last_name"/></td>
+                        </tr>
+                        <tr>
+                            <td>Email address</td><td><input type="text" id="email_address" name="email_address"/></td>
+                        </tr>
+                    </table>
+                </div>
+            </td>
+            <td width="35%"></td>
+            </tr>
+        </table>
+        <br/> <br/>
+        Enter information related to your problem<br/>
+        <textarea rows="4" cols="50" style="resize:none" id="message_body" name="message_body">
+        </textarea>
+        <br />
+        <br />
+        <input type="button" name="submit_button" id="submit_button" value="submit" onclick="verifyHelpRequest()">
+        <br />
+        <br />
+    </form>
+</div>

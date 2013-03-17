@@ -185,7 +185,7 @@ function validateConsent()
         valid = false;
     }
         
-    if(document.consent_info.is_7_to_13.checked)
+    if(!document.consent_info.deceased_parent.checked && document.consent_info.is_7_to_13.checked)
     {
         if(document.consent_info.parent_1_name.value == "")
         {
@@ -198,6 +198,8 @@ function validateConsent()
             valid = false;
         }
     }
+	
+    
         
     if(!valid) 
 	{
@@ -284,6 +286,43 @@ function validateVerification() {
     else 
 	{
         $('#verification_submit').submit();
+	}
+}
+
+/*field verification for help email send*/
+function verifyHelpRequest() {
+    for(var i = 0; i < document.help_request.length; i++) 
+    {
+        document.help_request[i].className = document.help_request[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+	
+    var valid = true;
+	
+	if(document.help_request.first_name.value == "")
+	{
+        document.help_request.first_name.className += " highlight";
+        valid = false;
+	}
+	
+	if(document.help_request.last_name.value == "")
+	{
+        document.help_request.last_name.className += " highlight";
+        valid = false;
+	}
+	
+	if(document.help_request.email_address.value == "")
+	{
+        document.help_request.email_address.className += " highlight";
+        valid = false;
+	}
+	
+    if(!valid) 
+	{
+        return;
+	}
+    else 
+	{
+        $('#help_request').submit();
 	}
 }
 
