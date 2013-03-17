@@ -2,7 +2,6 @@
 from data_access_connections import data_access_factory
 from enums import *
 from utils.mail import send_email
-from smtplib import SMTPException
 
 from utils.psp_utils import format_submit_form_to_fusebox_string
 # form where users can request for help
@@ -56,12 +55,11 @@ for f in form:
 		req.write('\n\nFailed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
 		req.write(str(e) + '<br/>\n')
 
-# End for	
-
 v = form.get('deceased_parent', None)
 message = ""
 if(v == 'yes'):
-    SUBJECT = """AGDECEASED: %s has deceased parent""" % (form['participant_name'])
+    SUBJECT = """AGDECEASED: %s (ag_login_id: %s) has deceased parent""" % \
+        (form['participant_name'], ag_login_id)
 
     MESSAGE = """Contact: %s
     --------------------------------------------------------------------------------
@@ -74,9 +72,10 @@ if(v == 'yes'):
     try:
         send_email(MESSAGE, SUBJECT)
     except:
-        message="There was a problem, "
+        message=("There was a problem, "
             'Please contact us directly at '
-            '<a href=&quot;mailto:info@americangut.org&quot;>info@americangut.org</a>'
+            '<a href=&quot;mailto:info@americangut.org&quot;>'
+            'info@americangut.org</a>')
 
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox(page='portal.psp', message=message))
