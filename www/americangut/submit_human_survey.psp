@@ -80,4 +80,5 @@ if(v == 'yes'):
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox_string(page='portal.psp',
     message=message))
+#UNINDENT
 %>
