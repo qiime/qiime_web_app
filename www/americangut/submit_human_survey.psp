@@ -59,7 +59,7 @@ v = form.get('deceased_parent', None)
 message = ""
 if(v == 'yes'):
     SUBJECT = """AGDECEASED: %s (ag_login_id: %s) has deceased parent""" % \
-        (form['participant_name'], ag_login_id)
+        (participant_name, ag_login_id)
 
     MESSAGE = """Contact: %s
     --------------------------------------------------------------------------------
@@ -67,13 +67,13 @@ if(v == 'yes'):
     This child has a deceased parent, the person filling out the survey for them
     needs to provide proof. Email them for proof.
     --------------------------------------------------------------------------------
-    """ % (form['participant_name'])
+    """ % participant_name
 
     try:
         send_email(MESSAGE, SUBJECT)
         message=("%s successfully added as a participant! If you have not "
             "already done so, please confirm your kits. Then, you may add "
-            "assign samples to participants.")
+            "assign samples to participants." % participant_name)
     except:
         message=("There was a problem, "
             'Please contact us directly at '
