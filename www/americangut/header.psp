@@ -25,7 +25,8 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gu
         <script src="js/jquery-ui-1.10.1.custom.min.js"></script>
         <script src="js/american_gut.js"></script>
         <link rel="stylesheet" type="text/css" href="style/americangut.css">
-        <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">  
+        <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
+        <link rel="icon" type="image/ico" href="img/favicon.ico">
     </head>
     <body>
 		<div class="wrapper clearfix">
