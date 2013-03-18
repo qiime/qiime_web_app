@@ -86,6 +86,10 @@ input.smaller_text {
 	text-decoration: none;
 }
 
+.hidden {
+	display: none;
+}
+
 div.menu_separator {
 	height: 10px;
 	border-bottom: 1px dotted #ccc;
@@ -135,6 +139,13 @@ div.red {
 div.formdiv {
 /*	margin-left: 2em;*/
 	width: 60%;
+}
+
+div.help_popup {
+	position: absolute;
+	z-index: 3;
+	background-color: #fafafa;
+	padding: 1em;
 }
 
 div#progressbar {
@@ -204,6 +215,10 @@ ol.construction {
 
 ol.construction li {
 	margin: 1em;
+}
+
+img {
+	border: 0px;
 }
 
 img#logo {
