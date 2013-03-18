@@ -215,6 +215,7 @@ img#logo {
 
 img.icon  {
 	margin-right: 1em;
+	border: 0px;
 }
 
 /* Clearfix */
