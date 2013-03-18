@@ -234,9 +234,9 @@ function verifyAddSample() {
         document.add_sample.sample_date.className += " highlight";
         valid = false;
     }
-    if(document.add_sample.time.value == "")
+    if(document.add_sample.sample_time.value == "")
     {
-        document.add_sample.time.className += " highlight";
+        document.add_sample.sample_time.className += " highlight";
         valid = false;
     }
 	
