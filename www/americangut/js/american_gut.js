@@ -234,14 +234,9 @@ function verifyAddSample() {
         document.add_sample.sample_date.className += " highlight";
         valid = false;
     }
-    if(document.add_sample.hours.value == "")
+    if(document.add_sample.time.value == "")
     {
-        document.add_sample.hours.className += " highlight";
-        valid = false;
-    }
-    if(document.add_sample.minutes.value == "")
-    {
-        document.add_sample.minutes.className += " highlight";
+        document.add_sample.time.className += " highlight";
         valid = false;
     }
 	
