@@ -60,11 +60,11 @@ for barcode in barcodes:
                 <tr>
                     <td>Time</td>
                     <td>
-                        <input type="text" id="time" name="time" readonly="readonly" class="small_text" />
+                        <input type="text" id="sample_time" name="sample_time" readonly="readonly" class="small_text" />
                     </td>
                     <script>
                       $(function() {
-                        $( "#time" ).timepicker({
+                        $( "#sample_time" ).timepicker({
                             showPeriod: true,
                             showLeadingZero: true
                         });
