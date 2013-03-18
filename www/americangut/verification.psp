@@ -67,7 +67,7 @@ elif kit_verified == 'n':
             <h3>Kit ID: <%= supplied_kit_id %></h3>
             <h4>Please enter the verification code sent to your email address <a href="#" class="help" title="If you did not recieve a verification code in your email from American Gut, please check your spam folder. If you still can not find it, contact info@americangut.org">(?)</a></h4>
             <input class = <%= '"'+verification_textbox_class+'"' %> type="text" name="email_verification_code" id="email_verification_code"></input>
-            <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a href="barcode_popup.psp" target="_blank" class="help" title="">(?)</a></h4>
+            <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a id="barcode_popup_trigger" class="help" title="" onmouseover="setVisible('barcode_popup')" onmouseout="setInvisible('barcode_popup')">(?)</a><div id="barcode_popup" class="help_popup invisible">The barcode you need to verify is located on the outside of your sample tube.<br /><img src="img/sample_barcode.jpg"/></div></h4>
             <table width="30%">
 <%
     query = ("select B.barcode, B.sample_barcode_file "
