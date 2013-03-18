@@ -1,0 +1,25 @@
+<%
+__author__ = "Yoshiki Vazquez-Baeza"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza",
+    "Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Yoshiki Vazquez-Baeza"]
+__email__ = "yoshiki89@gmail.com"
+__status__ = "Development"
+
+
+sess = Session.Session(req)
+
+# header.psp ensures these exist, else it's going to send you to index.psp
+for key in ['user_data', 'username', 'supplied_kit_id']:
+    try:
+        del sess[key]
+    except:
+        continue
+
+sess.save()
+
+psp.redirect('index.psp')
+%>
