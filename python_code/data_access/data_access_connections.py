@@ -71,11 +71,7 @@ class AbstractDataAccessConnections(object):
         """
         
         if self._metadataDatabaseConnection == None:
-            try:
-                self._metadataDatabaseConnection = cx_Oracle.Connection(self._metadataDatabaseConnectionString, cclass='qiime')
-            except Exception, e:
-                print 'Exception caught: %s. \nThe error is: %s' % (type(e), e)
-                return False;
+            self._metadataDatabaseConnection = cx_Oracle.Connection(self._metadataDatabaseConnectionString, cclass='qiime')
                 
         return self._metadataDatabaseConnection
 
