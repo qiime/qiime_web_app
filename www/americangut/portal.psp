@@ -35,13 +35,5 @@ if message:
             <img src="img/big_participant.png"/>
         </div>
     </a>
-    <a href="" class="big_button" onclick="document.forms['add_sample_<%=p%>'].submit(); return false;">
-        <div class="big_button_div right wforty">
-            <p class="big_button_text">
-                Add new samples to participants
-            </p>
-            <img src="img/big_samples.png"/>
-        </div>
-    </a>
 </div>
 </div>
