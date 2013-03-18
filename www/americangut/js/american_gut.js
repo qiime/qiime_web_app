@@ -1,4 +1,7 @@
-// console.log('derp')
+function getCountries(id) {
+       document.getElementById(id).source = countries; 
+ }
+
 var old_field_number = 1
 
 function addThreeFields(field_name) {
@@ -40,11 +43,17 @@ function addTwoFields(field1_name,field2_name) {
 function addDestinationFields(div_name,field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<input type="text" value="Location" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/> <input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<select name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'">'
+	newinput += '<option>Select an option...</option>'
+	for(var i =0; i < countries.length; i++)
+		newinput+= '<option>'+countries[i]+'</option>'
+	newinput+= '</select>'
+	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", div_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+div_name);
+	// getCountries(field1_name+'_'+new_field_number)
 }
 
 function addField(field_name) {
