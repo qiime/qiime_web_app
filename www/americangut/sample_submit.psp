@@ -9,7 +9,7 @@ participant_name = form['participant_name']
 ag_login_id = sess['user_data']['web_app_user_id']
 
 ag_data_access.logParticipantSample(form['barcode'], form['sample_site'], \
-	form['sample_date'], form['hours'], form['minutes'], form['meridian'], participant_name)
+	form['sample_date'], form['time'], participant_name)
 
 # Assuming nothing exploded... back to the portal
 psp.redirect('fusebox.psp?page=portal.psp')
