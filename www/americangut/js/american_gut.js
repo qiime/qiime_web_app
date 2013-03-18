@@ -92,7 +92,6 @@ function setInvisible(item_id) {
 $(function()
 {
     $( document ).tooltip();
-	$('#barcode_popup_trigger').hover(setVisible('barcode_popup'),setInvisible('barcode_popup'));
 });
 
 
