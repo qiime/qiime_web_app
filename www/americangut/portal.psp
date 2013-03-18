@@ -11,7 +11,7 @@ __status__ = "Development"
 %>
 
 <div id="content" class="content">
-    Welcome <%=user_data['name']%>
+<h1>Hi <%=user_data['name']%>! Welcome to the American Gut participant site.</h1>
 
 <%
 
@@ -20,7 +20,28 @@ if message:
     req.write('<h2>%s</h2>' % message)
 #ENDIF
 %>
-
 </div>
-
 <%@ include file="verification.psp" %>
+
+<div id="content" class="content">
+    <p class="note">
+    If you haven't started keeping a food diary, that's a great place to start!<br /> You'll need dietary information for at least 7 days before you can add a participant and fill out the survey.
+    </p>
+    <a href="fusebox.psp?page=new_participant.psp" class="big_button">
+        <div class="big_button_div left wforty">
+            <p class="big_button_text">
+                Add new participants
+            </p>
+            <img src="img/big_participant.png"/>
+        </div>
+    </a>
+    <a href="" class="big_button" onclick="document.forms['add_sample_<%=p%>'].submit(); return false;">
+        <div class="big_button_div right wforty">
+            <p class="big_button_text">
+                Add new samples to participants
+            </p>
+            <img src="img/big_samples.png"/>
+        </div>
+    </a>
+</div>
+</div>

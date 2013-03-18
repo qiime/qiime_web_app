@@ -240,6 +240,7 @@ if form.has_key('username'):
     if (user_data):
         sess['user_data'] = user_data
         sess['username'] = user_data['name']
+        sess['supplied_kit_id'] = form["username"]
         sess.save()
         url = 'fusebox.psp?page=portal.psp'
         req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
