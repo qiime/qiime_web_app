@@ -17,7 +17,7 @@ _status_ = "Development"
             <ul class="menu">
 
 <%
-list_item = '<li><img class="icon" src="/qiime/img/participant_icon.png">%s<a href="delete_participant.psp"><img class="icon" src="/qiime/img/trash_icon.png"/></a></li>\n'
+list_item = '<li><img class="icon" src="/qiime/img/participant_icon.png">%s</a></li>\n'
 ag_login_id = sess['user_data']['web_app_user_id']
 query = ("select participant_name from ag_human_survey where ag_login_id = '%s'" % ag_login_id)
 participants = ag_data_access.dynamicMetadataSelect(query)
