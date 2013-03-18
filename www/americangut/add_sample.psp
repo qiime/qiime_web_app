@@ -36,11 +36,11 @@ for barcode in barcodes:
                     <td>Site sampled</td>
                     <td>
                         <select name="sample_site" id="sample_site">
-                            <option value="Stool">Stool</option>
-                            <option value="Mouth">Mouth</option>
-                            <option value="Right hand">Right hand</option>
-                            <option value="Left hand">Left hand</option>
-                            <option value="Forehead">Forehead</option>
+                            <option>Stool</option>
+                            <option>Mouth</option>
+                            <option>Right hand</option>
+                            <option>Left hand</option>
+                            <option>Forehead</option>
                         </select>
                     </td>
                 </tr>
