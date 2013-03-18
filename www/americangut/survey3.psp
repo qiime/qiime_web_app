@@ -12,6 +12,16 @@ for f in form:
     if(f != 'page'):
         req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
 # End for
+
+d = data_access.getControlledVocabValueList(28)
+js = ''
+js += '<script>var countries=['
+for c in d:
+    js += '"'+d[c]+'",'
+# End for
+js = js[:-1]
+js +=']</script>'
+req.write(js)
 %>
 
                     <table id="survey" width="100%">
@@ -90,7 +100,15 @@ for f in form:
                                     <td>
                                         <div id="travel_options">
                                             <div id="travel_options_1">
-                                                <input type="text" name="travel_location_1" id="travel_location_1" value="Location" class="small_text"/>
+                                                <select name="travel_location_1" id="travel_location_1">
+                                                    <option>Select an option...</option>
+<%
+d = data_access.getControlledVocabValueList(28)
+for c in d:
+    req.write('<option value="'+str(c)+'">'+d[c]+'</option>')
+# End for
+%>
+                                                </select>
                                                 <input type="text" name="travel_duration_1" id="travel_duration_1" value="Duration" class="smaller_text"/> days
                                             </div>
                                         </div>
@@ -234,6 +252,8 @@ for f in form:
           $( "#progressbar" ).progressbar({
             value: 35
           });
+          
+          document.getElementById('travel_duration_1').source = countries
       });
     </script>
     <br />
