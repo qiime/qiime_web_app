@@ -352,23 +352,23 @@ function validateNumber(evt) {
 function inToCm() {
 	var inches = document.getElementById('height_in').value
 	var centimeters = inches * 2.54
-	document.getElementById('height_cm').value = centimeters
+	document.getElementById('height_cm').value = centimeters.toFixed(2)
 }
 
 function cmToIn() {
 	var centimeters = document.getElementById('height_cm').value
-	var inches = centimeters * 0.393701
-	document.getElementById('height_in').value = inches
+	var inches = centimeters * 0.39
+	document.getElementById('height_in').value = inches.toFixed(2)
 }
 
 function lbsToKg() {
 	var pounds = document.getElementById('weight_lbs').value
-	var kg = pounds * 0.453592
-	document.getElementById('weight_kg').value = kg
+	var kg = pounds * 0.45
+	document.getElementById('weight_kg').value = kg.toFixed(2)
 }
 
 function kgToLbs() {
 	var kg = document.getElementById('weight_kg').value
-	var pounds = kg * 2.20462
-	document.getElementById('weight_lbs').value = pounds
+	var pounds = kg * 2.20
+	document.getElementById('weight_lbs').value = pounds.toFixed(2)
 }
