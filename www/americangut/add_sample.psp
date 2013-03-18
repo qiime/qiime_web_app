@@ -46,11 +46,13 @@ for barcode in barcodes:
                 </tr>
                 <tr>
                     <td>Date</td>
-                    <td><input type="text" name="sample_date" id="sample_date" readonly="readonly"/></td>
+                    <td><input type="text" name="sample_date" id="sample_date" class="small_text" readonly="readonly"/></td>
                     <script>
                       $(function() {
                         $( "#sample_date" ).datepicker({
-                                changeMonth: true
+                                changeMonth: true,
+                                minDate:'-1m',
+                                maxDate: '+0m'
                         });
                       });
                     </script>
@@ -58,13 +60,16 @@ for barcode in barcodes:
                 <tr>
                     <td>Time</td>
                     <td>
-                        <input type="text" id="hours" name="hours" onkeypress='validateNumber(event)' class="smaller_text" />:
-                        <input type="text" id="minutes" name="minutes" onkeypress='validateNumber(event)' class="smaller_text" />
-                        <select id="meridian" name="meridian">
-                            <option>am</option>
-                            <option>pm</option>
-                        </select>
+                        <input type="text" id="time" name="time" readonly="readonly" class="small_text" />
                     </td>
+                    <script>
+                      $(function() {
+                        $( "#time" ).timepicker({
+                            showPeriod: true,
+                            showLeadingZero: true
+                        });
+                      });
+                    </script>
                 </tr>
             </table>
             </div>

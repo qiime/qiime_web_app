@@ -1,4 +1,7 @@
-// console.log('derp')
+function getCountries(id) {
+       document.getElementById(id).source = countries; 
+ }
+
 var old_field_number = 1
 
 function addThreeFields(field_name) {
@@ -40,11 +43,17 @@ function addTwoFields(field1_name,field2_name) {
 function addDestinationFields(div_name,field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<input type="text" value="Location" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/> <input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<select name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'">'
+	newinput += '<option>Select an option...</option>'
+	for(var i =0; i < countries.length; i++)
+		newinput+= '<option>'+countries[i]+'</option>'
+	newinput+= '</select>'
+	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", div_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+div_name);
+	// getCountries(field1_name+'_'+new_field_number)
 }
 
 function addField(field_name) {
@@ -352,23 +361,23 @@ function validateNumber(evt) {
 function inToCm() {
 	var inches = document.getElementById('height_in').value
 	var centimeters = inches * 2.54
-	document.getElementById('height_cm').value = centimeters
+	document.getElementById('height_cm').value = centimeters.toFixed(2)
 }
 
 function cmToIn() {
 	var centimeters = document.getElementById('height_cm').value
-	var inches = centimeters * 0.393701
-	document.getElementById('height_in').value = inches
+	var inches = centimeters * 0.39
+	document.getElementById('height_in').value = inches.toFixed(2)
 }
 
 function lbsToKg() {
 	var pounds = document.getElementById('weight_lbs').value
-	var kg = pounds * 0.453592
-	document.getElementById('weight_kg').value = kg
+	var kg = pounds * 0.45
+	document.getElementById('weight_kg').value = kg.toFixed(2)
 }
 
 function kgToLbs() {
 	var kg = document.getElementById('weight_kg').value
-	var pounds = kg * 2.20462
-	document.getElementById('weight_lbs').value = pounds
+	var pounds = kg * 2.20
+	document.getElementById('weight_lbs').value = pounds.toFixed(2)
 }
