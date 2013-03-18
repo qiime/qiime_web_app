@@ -151,10 +151,23 @@ div#verification a {
 	text-decoration: none;
 }
 
+div.big_button_div {
+	margin: 2em;
+	border-radius: 10px;
+	background-color: #fafafa;
+}
+
+div.wforty {
+	width: 40%;
+}
+
+div.wfifty {
+	width: 50%;
+}
+
 h1 {
     color: #181f23;
     padding-left: .5em;
-    text-align: left;
 }
 
 a.add_field {
@@ -165,8 +178,23 @@ a.help {
 	text-decoration: none;
 }
 
+a.big_button {
+	text-decoration: none;
+	color: #000;
+}
+
+p.note {
+	padding: 1em;
+	background-color: #fafafa;
+	font-size: 12pt;
+}
+
 p.construction_text {
 	font-size: 18pt;
+}
+
+p.big_button_text {
+	font-size: 12pt;
 }
 
 ol.construction {
@@ -187,6 +215,7 @@ img#logo {
 
 img.icon  {
 	margin-right: 1em;
+	border: 0px;
 }
 
 /* Clearfix */
