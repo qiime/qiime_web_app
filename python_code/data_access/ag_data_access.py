@@ -138,9 +138,9 @@ class AGDataAccess(object):
         con.cursor().execute(sql)
         con.cursor().execute('commit')
 
-    def logParticipantSample(self, barcode, sample_site, sample_date, hours, minutes, meridian, participant_name):
+    def logParticipantSample(self, barcode, sample_site, sample_date, sample_time, participant_name):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_log_participant_sample', [barcode, sample_site, sample_date, hours, minutes, meridian, participant_name])
+        con.cursor().callproc('ag_log_participant_sample', [barcode, sample_site, sample_date, sample_time, participant_name])
 
     def getParticipantSamples(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
@@ -149,7 +149,7 @@ class AGDataAccess(object):
         con.cursor().callproc('ag_get_participant_samples', [ag_login_id, participant_name, results])
         for row in results:
             data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], \
-                'hour':row[3], 'minute':row[4], 'meridian':row[5]}
+                'sample_time':row[3]}
             barcodes.append(data)
 
         return barcodes
