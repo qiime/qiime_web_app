@@ -85,7 +85,7 @@ if supplied_kit_id:
 <%
     query = ("select B.barcode, B.sample_barcode_file "
          "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
-         "where A.AG_LOGIN_ID = '%s'" % ag_login_id)
+         "where A.supplied_kit_id = '%s'" % supplied_kit_id)
 
     for barcode,sample_barcode_file in ag_data_access.dynamicMetadataSelect(query):
         barcode_image_fp = os.path.join(barcodes_fp, sample_barcode_file)
