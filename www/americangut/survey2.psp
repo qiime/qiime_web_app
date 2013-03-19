@@ -23,7 +23,7 @@ for f in form:
                         <tr>
                             <td>How would you classify your diet?</td>
                             <td>
-                                <select name="diet_type" id="diet_type">
+                                <select tabindex="1" name="diet_type" id="diet_type">
                                     <option>Select an option</option>
                                     <option>Omnivore</option>
                                     <option>Omnivore but no red meat</option>
@@ -37,8 +37,8 @@ for f in form:
                         <td>Are you taking a daily multivitamin?</td>
                         <td>
                             <div id="multivitamin">
-                                <input type="radio" id="multivitamin_yes" name="multivitamin" value="yes"/><label for="multivitamin_yes">Yes</label>
-                                <input type="radio" id="multivitamin_no" name="multivitamin" value="no"/><label for="multivitamin_no">No</label>
+                                <input tabindex="1" type="radio" id="multivitamin_yes" name="multivitamin" value="yes"/><label for="multivitamin_yes">Yes</label>
+                                <input  tabindex="2" type="radio" id="multivitamin_no" name="multivitamin" value="no"/><label for="multivitamin_no">No</label>
                             </div>
                         </td>
                         </tr>
@@ -46,8 +46,8 @@ for f in form:
                         <td>Are you taking any other nutritional/herbal supplements?</td>
                         <td>
                             <div id="supplements">
-                                <input type="radio" id="supplements_yes" name="supplements" value="yes" onclick="javascript:setVisible('supplements_option')"/><label for="supplements_yes">Yes</label>
-                                <input type="radio" id="supplements_no" name="supplements" value="no"/><label for="supplements_no" onclick="javascript:setInvisible('supplements_option')">No</label>
+                                <input tabindex="3" type="radio" id="supplements_yes" name="supplements" value="yes" onclick="javascript:setVisible('supplements_option')"/><label for="supplements_yes">Yes</label>
+                                <input tabindex="4" type="radio" id="supplements_no" name="supplements" value="no"/><label for="supplements_no" onclick="javascript:setInvisible('supplements_option')">No</label>
                             </div>
                         </td>
                         </tr>
@@ -80,8 +80,8 @@ for f in form:
                         <td>Are you lactose intolerant?</td>
                         <td>
                             <div id="lactose">
-                                <input type="radio" id="lactose_yes" name="lactose" value="yes"/><label for="lactose_yes">Yes</label>
-                                <input type="radio" id="lactose_no" name="lactose" value="no"/><label for="lactose_no">No</label>
+                                <input tabindex="5" type="radio" id="lactose_yes" name="lactose" value="yes"/><label for="lactose_yes">Yes</label>
+                                <input tabindex="6" type="radio" id="lactose_no" name="lactose" value="no"/><label for="lactose_no">No</label>
                             </div>
                         </td>
                         </tr>
@@ -89,33 +89,33 @@ for f in form:
                         <td>Are you gluten intolerant?</td>
                         <td>
                             <div id="gluten">
-                                <input type="radio" id="gluten_yes" name="gluten" value="yes"/><label for="gluten_yes">Yes</label>
-                                <input type="radio" id="gluten_no" name="gluten" value="no"/><label for="gluten_no">No</label>
+                                <input tabindex="7" type="radio" id="gluten_yes" name="gluten" value="yes"/><label for="gluten_yes">Yes</label>
+                                <input tabindex="8" type="radio" id="gluten_no" name="gluten" value="no"/><label for="gluten_no">No</label>
                             </div>
                         </td>
                         </tr>
                         <tr>
                             <td>Are you allergic to any of the following?</td>
                             <td>
-                                    <input type="checkbox" id="foodallergies_peanuts" name="foodallergies_peanuts" /><label for="foodallergies_peanuts">Peanuts</label>
+                                    <input tabindex="9" type="checkbox" id="foodallergies_peanuts" name="foodallergies_peanuts" /><label for="foodallergies_peanuts">Peanuts</label>
                                     <br />
-                                    <input type="checkbox" id="foodallergies_treenuts" name="foodallergies_treenuts" /><label for="foodallergies_treenuts">Tree nuts</label>
+                                    <input tabindex="10" type="checkbox" id="foodallergies_treenuts" name="foodallergies_treenuts" /><label for="foodallergies_treenuts">Tree nuts</label>
                                     <br />
-                                    <input type="checkbox" id="foodallergies_shellfish" name="foodallergies_shellfish" /><label for="foodallergies_shellfish">Shellfish</label>
+                                    <input tabindex="11" type="checkbox" id="foodallergies_shellfish" name="foodallergies_shellfish" /><label for="foodallergies_shellfish">Shellfish</label>
                                     <br />
-                                    <input type="checkbox" id="foodallergies_other" name="foodallergies_other" /><label for="foodallergies_other">Other</label>
+                                    <input tabindex="12" type="checkbox" id="foodallergies_other" name="foodallergies_other" /><label for="foodallergies_other">Other</label>
                             </td>
                         </tr>
                         <tr>
                             <td>Other</td>
-                            <td><input type="text" id="foodallergies_other_text" name="foodallergies_other_text" /></td>                        
+                            <td><input tabindex="13" type="text" id="foodallergies_other_text" name="foodallergies_other_text" /></td>                        
                         </tr>
                         <tr>
                             <td>Do you follow any other special diet restrictions other than those indicated above?</td>
                             <td>
                                 <div id="special_restrictions">
-                                    <input type="radio" id="special_yes" name="special_restrictions" value="yes" onclick="javascript:setVisible('restrictions_option')"/><label for="special_yes">Yes</label>
-                                    <input type="radio" id="special_no" name="special_restrictions" value="no" onclick="javascript:setInvisible('restrictions_option')"/><label for="special_no">No</label>
+                                    <input tabindex="14" type="radio" id="special_yes" name="special_restrictions" value="yes" onclick="javascript:setVisible('restrictions_option')"/><label for="special_yes">Yes</label>
+                                    <input tabindex="15" type="radio" id="special_no" name="special_restrictions" value="no" onclick="javascript:setInvisible('restrictions_option')"/><label for="special_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -147,7 +147,7 @@ for f in form:
                         <tr>
                             <td>What is your drinking water source at home?</td>
                             <td>
-                                <select name="drinking_water_source" id="drinking_water_source">
+                                <select tabindex="16" name="drinking_water_source" id="drinking_water_source">
                                     <option>Select an option</option>
                                     <option>City</option>
                                     <option>Well</option>
@@ -165,7 +165,7 @@ for f in form:
         </table>
     </div>
     <br />
-    <input type="submit" value="Continue">
+    <input tabindex="17" type="submit" value="Continue">
     <input type="hidden" id="page" name="page" value="survey3.psp">
     </form>
     <br />

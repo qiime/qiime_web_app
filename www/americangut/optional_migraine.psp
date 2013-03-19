@@ -2,7 +2,7 @@
 <tr>
     <td>How often do you suffer from migraines?</td>
     <td>
-        <select id="migraine_frequency" name="migraine_frequency">
+        <select tabindex="14" id="migraine_frequency" name="migraine_frequency">
             <option>Select an option</option>
             <option>Daily</option>
             <option>Weekly</option>
@@ -14,7 +14,7 @@
 <tr>
     <td>What is the main factor that causes your migraines?</td>
     <td>
-        <select id="migraine_factor_1" name="migraine_factor_1" onchange="otherSelect('migraine_factor_1','migraine_option_1',12)">
+        <select tabindex="15" id="migraine_factor_1" name="migraine_factor_1" onchange="otherSelect('migraine_factor_1','migraine_option_1',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -52,7 +52,7 @@
 <tr>
     <td>What is the second main factor that causes your migraines?</td>
     <td>
-        <select id="migraine_factor_2" name="migraine_factor_2" onchange="otherSelect('migraine_factor_2','migraine_option_2',12)">
+        <select tabindex="16" id="migraine_factor_2" name="migraine_factor_2" onchange="otherSelect('migraine_factor_2','migraine_option_2',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -90,7 +90,7 @@
 <tr>
     <td>What is the third main factor that causes your migraines?</td>
     <td>
-        <select id="migraine_factor_3" name="migraine_factor_3" onchange="otherSelect('migraine_factor_3','migraine_option_3',12)">
+        <select tabindex="17" id="migraine_factor_3" name="migraine_factor_3" onchange="otherSelect('migraine_factor_3','migraine_option_3',12)">
             <option>Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
@@ -128,26 +128,26 @@
 <tr>
     <td>Do you have any of the following migraine symptoms?</td>
     <td>
-            <input type="checkbox" id="migraine_pain" name="migraine_pain" /><label for="migraine_pain">Body pain where it shouldn't exist</label>
+            <input tabindex="18" type="checkbox" id="migraine_pain" name="migraine_pain" /><label for="migraine_pain">Body pain where it shouldn't exist</label>
             <br />
-            <input type="checkbox" id="migraine_photophobia" name="migraine_photophobia" /><label for="migraine_photophobia">Photophobia (sensitivity to light)</label>
+            <input tabindex="19" type="checkbox" id="migraine_photophobia" name="migraine_photophobia" /><label for="migraine_photophobia">Photophobia (sensitivity to light)</label>
             <br />
-            <input type="checkbox" id="migraine_phonophobia" name="migraine_phonophobia" /><label for="migraine_phonophobia">Phonophobia (sensitivity to sounds)</label>
+            <input tabindex="20" type="checkbox" id="migraine_phonophobia" name="migraine_phonophobia" /><label for="migraine_phonophobia">Phonophobia (sensitivity to sounds)</label>
             <br />
-            <input type="checkbox" id="migraine_nausea" name="migraine_nausea" /><label for="migraine_nausea">Nausea and/or vomiting</label>
+            <input tabindex="21" type="checkbox" id="migraine_nausea" name="migraine_nausea" /><label for="migraine_nausea">Nausea and/or vomiting</label>
             <br />
-            <input type="checkbox" id="migraine_aggravation" name="migraine_aggravation" /><label for="migraine_aggravation">Aggravation or avoidance of routine</label>
+            <input tabindex="22" type="checkbox" id="migraine_aggravation" name="migraine_aggravation" /><label for="migraine_aggravation">Aggravation or avoidance of routine</label>
             <br />
-            <input type="checkbox" id="migraine_aura" name="migraine_aura" /><label for="migraine_aura">Aura <a href="http://en.wikipedia.org/wiki/Aura_(symptom)" target="_blank">(?)</a></label>
+            <input tabindex="23" type="checkbox" id="migraine_aura" name="migraine_aura" /><label for="migraine_aura">Aura <a href="http://en.wikipedia.org/wiki/Aura_(symptom)" target="_blank">(?)</a></label>
     </td>
 </tr>
 <tr>
     <td>Does anyone in your immediate family suffer from migraines?</td>
     <td>
         <div id="migraine_relatives">
-            <input type="radio" id="migraine_relatives_yes" name="migraine_relatives" /><label for="migraine_relatives_yes">Yes</label>
-            <input type="radio" id="migraine_relatives_no" name="migraine_relatives" /><label for="migraine_relatives_no">No</label>
-            <input type="radio" id="migraine_relatives_notsure" name="migraine_relatives" /><label for="migraine_relatives_notsure">Not sure</label>
+            <input tabindex="24" type="radio" id="migraine_relatives_yes" name="migraine_relatives" /><label for="migraine_relatives_yes">Yes</label>
+            <input tabindex="25" type="radio" id="migraine_relatives_no" name="migraine_relatives" /><label for="migraine_relatives_no">No</label>
+            <input tabindex="26" type="radio" id="migraine_relatives_notsure" name="migraine_relatives" /><label for="migraine_relatives_notsure">Not sure</label>
         </div>
     </td>
 </tr>
@@ -155,8 +155,8 @@
     <td>Do you take any migraine medication?</td>
     <td>
         <div id="migrainemeds">
-            <input type="radio" id="migrainemeds_yes" name="migrainemeds" onclick="javascript:setVisible('migraine_option')"/><label for="migrainemeds_yes">Yes</label>
-            <input type="radio" id="migrainemeds_no" name="migrainemeds" onclick="javascript:setInvisible('migraine_option')"/><label for="migrainemeds_no">No</label>
+            <input tabindex="27" type="radio" id="migrainemeds_yes" name="migrainemeds" onclick="javascript:setVisible('migraine_option')"/><label for="migrainemeds_yes">Yes</label>
+            <input tabindex="28" type="radio" id="migrainemeds_no" name="migrainemeds" onclick="javascript:setInvisible('migraine_option')"/><label for="migrainemeds_no">No</label>
         </div>
     </td>
 </tr>
