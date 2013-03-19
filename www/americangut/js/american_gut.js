@@ -58,7 +58,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
 	var newinput = '<select name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'">'
-	newinput += '<option>Select an option</option>'
+	newinput += '<option value="">Select an option</option>'
 	for(var i =0; i < countries.length; i++)
 		newinput+= '<option>'+countries[i]+'</option>'
 	newinput+= '</select>'

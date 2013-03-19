@@ -3,7 +3,7 @@
     <td>Do you currently use some form of hormonal birth control?</td>
     <td>
         <select tabindex="1" id="contraceptive" name="contraceptive">
-            <option>Select an option</option>
+            <option value="">Select an option</option>
             <option>I take the "pill"</option>
             <option>I use an injected contraceptive (DMPA)</option>
             <option>I use a contraceptive patch (Ortho-Evra)</option>

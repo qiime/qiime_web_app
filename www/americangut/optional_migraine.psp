@@ -3,7 +3,7 @@
     <td>How often do you suffer from migraines?</td>
     <td>
         <select tabindex="14" id="migraine_frequency" name="migraine_frequency">
-            <option>Select an option</option>
+            <option value="">Select an option</option>
             <option>Daily</option>
             <option>Weekly</option>
             <option>Monthly</option>
@@ -15,7 +15,7 @@
     <td>What is the main factor that causes your migraines?</td>
     <td>
         <select tabindex="15" id="migraine_factor_1" name="migraine_factor_1" onchange="otherSelect('migraine_factor_1','migraine_option_1',12)">
-            <option>Select an option</option>
+            <option value="">Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
             <option>Depression</option>
@@ -53,7 +53,7 @@
     <td>What is the second main factor that causes your migraines?</td>
     <td>
         <select tabindex="16" id="migraine_factor_2" name="migraine_factor_2" onchange="otherSelect('migraine_factor_2','migraine_option_2',12)">
-            <option>Select an option</option>
+            <option value="">Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
             <option>Depression</option>
@@ -91,7 +91,7 @@
     <td>What is the third main factor that causes your migraines?</td>
     <td>
         <select tabindex="17" id="migraine_factor_3" name="migraine_factor_3" onchange="otherSelect('migraine_factor_3','migraine_option_3',12)">
-            <option>Select an option</option>
+            <option value="">Select an option</option>
             <option>Caffeine</option>
             <option>Stress</option>
             <option>Depression</option>
