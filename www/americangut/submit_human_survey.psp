@@ -4,12 +4,9 @@ from enums import *
 from utils.mail import send_email
 
 from utils.psp_utils import format_submit_form_to_fusebox_string
-# form where users can request for help
 
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut') 
 sess = Session.Session(req)
-
-#req.write(str(sess))
 
 # Insert the new row
 participant_name = form['participant_name']
@@ -23,8 +20,6 @@ ag_data_access.addAGHumanParticipant(ag_login_id, form['participant_name'])
 
 # Define the multiples
 multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'travel_duration_', 'related_participant_', 'relation_', 'pet_', 'pet_location_', 'pet_contact_', 'antibiotic_med_', 'generalmeds_', 'diabetes_medications_', 'migraine_medication_'])
-
-#req.write(str(form) + '<br/><br/>')
 
 # Add/update all of the data
 for f in form:
@@ -55,8 +50,12 @@ for f in form:
 		req.write('\n\nFailed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
 		req.write(str(e) + '<br/>\n')
 
+# default message to display upon redirect to portal
+message=("%s successfully added as a participant! If you have not "
+    "already done so, please confirm your identity and kit barcodes. "
+    "Then, you may assign samples to participants." % participant_name)
+
 v = form.get('deceased_parent', None)
-message = ""
 if(v == 'yes'):
     SUBJECT = """AGDECEASED: %s (ag_login_id: %s) has deceased parent""" % \
         (participant_name, ag_login_id)
@@ -71,9 +70,6 @@ if(v == 'yes'):
 
     try:
         send_email(MESSAGE, SUBJECT)
-        message=("%s successfully added as a participant! If you have not "
-            "already done so, please confirm your identity and kit barcodes. "
-            "Then, you may assign samples to participants." % participant_name)
     except:
         message=("There was a problem with your submission, "
             'Please contact us directly at '
