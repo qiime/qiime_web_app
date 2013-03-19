@@ -1,3 +1,18 @@
+<%
+from utils.psp_utils import format_submit_form_to_fusebox_string
+
+query = ("select participant_name from ag_human_survey where ag_login_id = "
+    "'%s' and participant_name = '%s'" % (sess['user_data']['web_app_user_id'],
+    form['participant_name']))
+
+participant_collision = ag_data_access.dynamicMetadataSelect(query).fetchone()
+
+if participant_collision:
+    req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+        message='Participant %s already exists!' % form['participant_name']))
+#ENDIF
+%>
+
 <div id="content" class="content">
     <h2>Survey</h2>
     <table>
