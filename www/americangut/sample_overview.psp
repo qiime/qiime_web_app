@@ -1,0 +1,30 @@
+<div id="content" class="content">
+<h2>Overview for sample [sampleID]</h2>
+<table>
+    <tr>
+        <td width="35%"></td>
+        <td>
+            <table class="list" id="survey" width="100%">
+                <tr>
+                    <td>Sample site</td>
+                    <td>[sample_site]</td>
+                </tr>
+                <tr>
+                    <td>Sample date</td>
+                    <td>[sample_date]</td>
+                </tr>
+                <tr>
+                    <td>Sample time</td>
+                    <td>[sample_time]</td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input type="button" value="Delete"/>
+                </tr>
+            </table>
+        </td>
+        <td width="35%"></td>
+    </tr>
+</table>
+<br />
+<br />
+</div>
