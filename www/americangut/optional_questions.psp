@@ -74,7 +74,7 @@ if(v != 0):
         </table>
     </div>
     <br />
-    <input tabindex="29" type="submit" value="Continue">
+    <input tabindex="29" type="submit" value="Continue" id="submit7" name="submit7">
     <input type="hidden" id="page" name="page" value="survey_end.psp">
     </form>
     <br />
@@ -90,6 +90,15 @@ if(v != 0):
           $( "#migraine_relatives" ).buttonset();
         $( "#progressbar" ).progressbar({
           value: 70
+        });
+        var button_clicked = false;
+        $("#submit7").click(function() {
+            button_clicked = true;
+        });
+        
+        $(window).bind('beforeunload', function(){
+            if(!button_clicked)
+                return "Are you sure you want to lose your survey progress?"
         });
       });
     </script>

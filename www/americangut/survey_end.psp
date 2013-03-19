@@ -22,7 +22,7 @@ for f in form:
 # End for
 %>
 
-        <input tabindex="2" type="submit" value="Continue">
+        <input tabindex="2" type="submit" value="Continue" id="submit8" name="submit8">
     </form>
     <br />
     <div id="progressbar"></div>
@@ -30,6 +30,15 @@ for f in form:
       $(function() {
         $( "#progressbar" ).progressbar({
           value: 99
+        });
+        var button_clicked = false;
+        $("#submit8").click(function() {
+            button_clicked = true;
+        });
+        
+        $(window).bind('beforeunload', function(){
+            if(!button_clicked)
+                return "Are you sure you want to lose your survey progress?"
         });
       });
     </script>
