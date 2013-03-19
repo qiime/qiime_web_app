@@ -21,7 +21,7 @@
     <td>How many non-family roommates do you have?</td>
     <td>
         <select tabindex="10" id="roommates" name="roommates">
-            <option>Select an option</option>
+            <option value="">Select an option</option>
             <option>None</option>
             <option>One</option>
             <option>Two</option>

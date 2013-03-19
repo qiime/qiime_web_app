@@ -31,7 +31,7 @@ for f in form:
                             <td>How often do you exercise?</td>
                             <td>
                                 <select tabindex="3" name="exercise_frequency" id="exercise_frequency">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
                                     <option>Occasionally (1-2 times/week)</option>
@@ -44,7 +44,7 @@ for f in form:
                             <td>Do you generally exercise indoors or outdoors?</td>
                             <td>
                                 <select tabindex="4" name="exercise_location" id="exercise_location">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Indoors</option>
                                     <option>Outdoors</option>
                                     <option>Both</option>
@@ -66,7 +66,7 @@ for f in form:
                             <td>How often do you use a swimming pool/hot tub?</td>
                             <td>
                                 <select tabindex="7" name="pool_frequency" id="pool_frequency">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
                                     <option>Occasionally (1-2 times/week)</option>
@@ -79,7 +79,7 @@ for f in form:
                             <td>How often do you smoke cigarettes?</td>
                             <td>
                                 <select tabindex="8" name="smoking_frequency" id="smoking_frequency">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
                                     <option>Occasionally (1-2 times/week)</option>
@@ -92,7 +92,7 @@ for f in form:
                             <td>How often do you drink alcohol?</td>
                             <td>
                                 <select tabindex="9" name="alcohol_frequency" id="alcohol_frequency">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
                                     <option>Occasionally (1-2 times/week)</option>
@@ -105,7 +105,7 @@ for f in form:
                             <td>How often do you brush your teeth?</td>
                             <td>
                                 <select tabindex="10" name="teethbrushing_frequency" id="teethbrushing_frequency">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
                                     <option>Occasionally (1-2 times/week)</option>
@@ -118,7 +118,7 @@ for f in form:
                             <td>How often do you floss your teeth?</td>
                             <td>
                                 <select tabindex="11" name="flossing_frequency" id="flossing_frequency">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
                                     <option>Occasionally (1-2 times/week)</option>
@@ -131,7 +131,7 @@ for f in form:
                             <td>How often do you wear facial cosmetics?</td>
                             <td>
                                 <select tabindex="12" name="cosmetics_frequency" id="cosmetics_frequency">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Daily</option>
                                     <option>Regularly (3-5 times/week)</option>
                                     <option>Occasionally (1-2 times/week)</option>
@@ -144,7 +144,7 @@ for f in form:
                             <td>Do you use deodorant or antiperspirant (antiperspirants generally contain aluminum)?</td>
                             <td>
                                 <select tabindex="13" name="deoderant_use" id="deoderant_use">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>I use deoderant</option>
                                     <option>I use an antiperspirant</option>
                                     <option>Not sure, but I use some form of deoderant/antiperspirant</option>
@@ -156,7 +156,7 @@ for f in form:
                             <td>Approximately how many hours of sleep to you get in an average night?</td>
                             <td>
                                 <select tabindex="14" name="sleep_duration" id="sleep_duration">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Less than 5 hours</option>
                                     <option>5-6 hours</option>
                                     <option>6-7 hours</option>
