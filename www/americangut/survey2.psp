@@ -145,7 +145,7 @@ for f in form:
                                <col span="1" style="width: 50%;">
                         </colgroup>
                         <tr>
-                            <td>What is your drinking water source at home?</td>
+                            <td>What is your main drinking water source at home?</td>
                             <td>
                                 <select name="drinking_water_source" id="drinking_water_source">
                                     <option>Select an option</option>
