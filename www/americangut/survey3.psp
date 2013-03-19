@@ -101,7 +101,7 @@ req.write(js)
                                         <div id="travel_options">
                                             <div id="travel_options_1">
                                                 <select name="travel_location_1" id="travel_location_1">
-                                                    <option>Select an option...</option>
+                                                    <option>Select an option</option>
 <%
 d = data_access.getControlledVocabValueList(28)
 for c in d:

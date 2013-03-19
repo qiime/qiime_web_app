@@ -1,6 +1,18 @@
 function getCountries(id) {
        document.getElementById(id).source = countries; 
  }
+ 
+ function setDefaultText() {
+     $('input[type="text"], textarea').focus(function () {
+         defaultText = $(this).val();
+         $(this).val('');
+     });
+     $('input[type="text"], textarea').blur(function () {
+         if ($(this).val() == "") {
+             $(this).val(defaultText);
+         }
+         });
+ }
 
 var old_field_number = 1
 
@@ -28,6 +40,7 @@ function addThreeFields(field_name) {
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field_name);
+	setDefaultText()
 }
 
 function addTwoFields(field1_name,field2_name) {
@@ -38,13 +51,14 @@ function addTwoFields(field1_name,field2_name) {
 	     .attr("id", field1_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field1_name);
+	setDefaultText()
 }
 
 function addDestinationFields(div_name,field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
 	var newinput = '<select name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'">'
-	newinput += '<option>Select an option...</option>'
+	newinput += '<option>Select an option</option>'
 	for(var i =0; i < countries.length; i++)
 		newinput+= '<option>'+countries[i]+'</option>'
 	newinput+= '</select>'
@@ -54,6 +68,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+div_name);
 	// getCountries(field1_name+'_'+new_field_number)
+	setDefaultText()
 }
 
 function addField(field_name) {
@@ -64,6 +79,7 @@ function addField(field_name) {
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field_name);
+	setDefaultText()
 }
 
 function removeField(item_id) {
@@ -334,7 +350,7 @@ function validateSurvey3() {
     {	
 		if(document.survey_3[i].type == 'text')
 		{
-			if(document.survey_3[i].value == 'Location' || document.survey_3[i].value == 'Duration'|| document.survey_3[i].value == 'Type')
+			if(document.survey_3[i].value == 'Duration'|| document.survey_3[i].value == 'Type' || document.survey_3[i].value == 'Name' || document.survey_3[i].value == 'Relationship')
 				document.survey_3[i].value = ''
 		}
     }
