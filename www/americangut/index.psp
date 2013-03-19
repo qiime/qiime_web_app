@@ -267,7 +267,7 @@ if form.has_key('username'):
                             	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
                             	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
                             	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
-                                <tr><td colspan="2"><a href="fusebox.psp?page=help_request.psp" class="small_link">I'm having trouble logging in...</a></td></tr>
+                                <tr><td colspan="2"><a href="mailto:americangut@gmail.com" class="small_link">I'm having trouble logging in...</a></td></tr>
                             </table>
                         </form>
                     </td>
