@@ -17,7 +17,7 @@ __status__ = "Development"
 
 message = form.get('message', '')
 if message:
-    req.write('<h2>%s</h2>' % message)
+    req.write('<h2 class="msg">%s</h2>' % message)
 #ENDIF
 %>
 </div>
