@@ -105,40 +105,31 @@ def summarize_otus(processed_dir):
     header_lines, otu_summary_dict = parse_log_file(per_library_stats_file, start_lines)
     return header_lines, otu_summary_dict
 
-def summarize_all_stats(study_id):
+def summarize_all_stats(processed_dir):
     """
     """
-
-    # Get the processed data directories
-    user_dir = ServerConfig().home
-    study_dir = join(user_dir, 'user_data/studies', 'study_{0}'.format(study_id))
-    processed_data_dirs = get_processed_data_dirs(study_dir)
     processed_results = {}
 
-    #print str(processed_data_dirs)
+    try:
+        seq_header_lines, seq_summary_dict = summarize_seqs(join(study_dir, processed_dir))
+        otu_header_lines, otu_summary_dict = summarize_otus(join(study_dir, processed_dir))
 
-    # For each processed data folder, get the seq and otu sumamries
-    for processed_dir in processed_data_dirs:
-        try:
-            seq_header_lines, seq_summary_dict = summarize_seqs(join(study_dir, processed_dir))
-            otu_header_lines, otu_summary_dict = summarize_otus(join(study_dir, processed_dir))
+        # Create the tuples
+        mapping = []
+        for sample_name in seq_summary_dict:
+            sequence_count = seq_summary_dict[sample_name]
+            otu_count = None
+            percent_assignment = None
 
-            # Create the tuples
-            mapping = []
-            for sample_name in seq_summary_dict:
-                sequence_count = seq_summary_dict[sample_name]
-                otu_count = None
-                percent_assignment = None
+            if sample_name in otu_summary_dict:
+                otu_count = otu_summary_dict[sample_name]
+                percent_assignment = (float(otu_count) / float(sequence_count)) * 100.0
 
-                if sample_name in otu_summary_dict:
-                    otu_count = otu_summary_dict[sample_name]
-                    percent_assignment = (float(otu_count) / float(sequence_count)) * 100.0
+            mapping.append((sample_name, sequence_count, otu_count, percent_assignment))
 
-                mapping.append((sample_name, sequence_count, otu_count, percent_assignment))
-
-            processed_results[processed_dir] = (mapping, seq_header_lines, otu_header_lines)
-        except Exception, e:
-            print str(e)
+        processed_results[processed_dir] = (mapping, seq_header_lines, otu_header_lines)
+    except Exception, e:
+        print str(e)
 
 
     # Return all of the results
