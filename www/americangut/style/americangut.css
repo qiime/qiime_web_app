@@ -22,6 +22,14 @@ table#survey{
 	border-spacing: 20px;
 }
 
+table.list {
+	border-radius: 10px;
+	padding: 1em;
+	background-color: #fafafa;
+	font-size: 12pt;
+	border-spacing: 20px;
+}
+
 div.wrapper {
     width: 90%;
 }
@@ -63,6 +71,26 @@ input.small_text {
 
 input.smaller_text {
 	width: 50px;
+}
+
+ul.sample_list {
+	list-style-type: none;
+	padding-left: 1em;
+}
+
+.sample_list li {
+	margin-left: 0px;
+	margin-top: 1em;
+}
+
+.sample_list li a {
+	color: #1c1c1c;
+	text-decoration: none;
+}
+
+.sample_list li a:hover {
+	color: #2f7a8c;
+	text-decoration: none;
 }
 
 .menu {
@@ -187,6 +215,11 @@ a.add_field {
 
 a.help {
 	text-decoration: none;
+}
+
+a.small_link {
+	text-decoration: none;
+	font-size: 8pt;
 }
 
 a.big_button {
