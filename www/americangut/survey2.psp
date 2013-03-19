@@ -24,7 +24,7 @@ for f in form:
                             <td>How would you classify your diet?</td>
                             <td>
                                 <select tabindex="1" name="diet_type" id="diet_type">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Omnivore</option>
                                     <option>Omnivore but no red meat</option>
                                     <option>Vegetarian</option>
@@ -148,7 +148,7 @@ for f in form:
                             <td>What is your main drinking water source at home?</td>
                             <td>
                                 <select tabindex="16" name="drinking_water_source" id="drinking_water_source">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>City</option>
                                     <option>Well</option>
                                     <option>Bottled</option>

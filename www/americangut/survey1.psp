@@ -21,7 +21,7 @@ for f in form:
                         <tr>
                             <td>Country of birth</td>
                             <td><select tabindex="1" name="country_of_birth" id="country_of_birth">
-                            <option>Select an option</option>
+                            <option value="">Select an option</option>
 <%
 d = data_access.getControlledVocabValueList(28)
 for c in d:
@@ -48,7 +48,7 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Gender</td>
-                            <td><select tabindex="3" name="gender" id="gender"><option>Select an option</option><option>Male</option><option>Female</option><option>Other</option></select></td>
+                            <td><select tabindex="3" name="gender" id="gender"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select></td>
                         </tr>
                         <tr>
                             <td>Height</td>

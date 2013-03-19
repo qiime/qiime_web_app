@@ -24,7 +24,7 @@ for f in form:
                             <td>When did you last take antibiotics?</td>
                             <td>
                                 <select tabindex="1" name="antibiotic_select" id="antibiotic_select" onchange="anySelect('antibiotic_select','antibiotic_option',[0,5])">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>In the past week</option>
                                     <option>In the past month</option>
                                     <option>In the past 6 months</option>
@@ -66,7 +66,7 @@ for f in form:
                             <td>When did you last get the flu vaccine?</td>
                             <td>
                                 <select tabindex="2" name="flu_vaccine_date" id="flu_vaccine_date">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>In the past week</option>
                                     <option>In the past month</option>
                                     <option>In the past 6 months</option>
@@ -90,7 +90,7 @@ for f in form:
                             <td>Has your weight changed in the past 6 months?</td>
                             <td>
                                 <select tabindex="4" name="weight_change" id="weight_change">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Increased more than 10 pounds</option>
                                     <option>Decreased more than 10 pounds</option>
                                     <option>Remained stable</option>
@@ -208,7 +208,7 @@ for f in form:
                             <td>Do you have Inflammatory Bowel Disease (IBD)?</td>
                             <td>
                                 <select tabindex="32" name="ibd" id="ibd">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Chrohn's disease</option>
                                     <option>Ulcerative colitis</option>
                                     <option>I do not have IBD</option>
@@ -219,7 +219,7 @@ for f in form:
                             <td>Do you have a skin condition?</td>
                             <td>
                                 <select tabindex="33" name="skin_condition" id="skin_condition">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Eczema</option>
                                     <option>Rosacea</option>
                                     <option>Psoriasis</option>
@@ -231,7 +231,7 @@ for f in form:
                             <td>Do you have diabetes?</td>
                             <td>
                                 <select tabindex="34" name="diabetes" id="diabetes">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Type I</option>
                                     <option>Type II</option>
                                     <option>I do not have diabetes</option>

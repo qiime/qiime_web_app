@@ -33,7 +33,7 @@ req.write(js)
                             <td>What is your race/ethnicity?</td>
                             <td>
                                 <select tabindex="1" id="race" name="race" onchange="otherSelect('race','race_option',5)">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Caucasian</option>
                                     <option>Asian or Pacific Islander</option>
                                     <option>African American</option>
@@ -64,7 +64,7 @@ req.write(js)
                             <td>When did you move to your current state of residence?</td>
                             <td>
                                 <select tabindex="2" name="current_residence_duration" id="current_residence_duration">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
                                     <option>Within the past 6 months</option>
@@ -77,7 +77,7 @@ req.write(js)
                             <td>When did you last travel outside of your current country of residence?</td>
                             <td>
                                 <select tabindex="3" name="last_travel" id="last_travel" onchange="anySelect('last_travel','travel_option',[0,6])">
-                                    <option>Select an option</option>
+                                    <option value="">Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
                                     <option>Within the past 6 months</option>
@@ -101,7 +101,7 @@ req.write(js)
                                         <div id="travel_options">
                                             <div id="travel_options_1">
                                                 <select name="travel_location_1" id="travel_location_1">
-                                                    <option>Select an option...</option>
+                                                    <option value="">Select an option</option>
 <%
 d = data_access.getControlledVocabValueList(28)
 for c in d:
