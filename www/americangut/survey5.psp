@@ -285,7 +285,7 @@ for f in form:
         
         $(window).bind('beforeunload', function(){
             if(!button_clicked)
-                return "Are you sure you want to lose your survey progress?"
+                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
         });
       });
     </script>
