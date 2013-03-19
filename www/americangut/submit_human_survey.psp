@@ -13,7 +13,7 @@ participant_name = form['participant_name']
 ag_login_id = sess['user_data']['web_app_user_id']
 
 # Clear any old data for this participant
-ag_data_access.removeAGHumanParticipant(ag_login_id, participant_name)
+ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
 
 # Create the new participant if it doesn't exist (merges)
 ag_data_access.addAGHumanParticipant(ag_login_id, form['participant_name'])
