@@ -39,8 +39,8 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type,
 # Session variables
 sess = Session.Session(req)
 
-#if 'username' in sess:
-    #psp.redirect('logout.psp')
+if 'username' in sess:
+    psp.redirect('logout.psp')
 
 sess['portal_type'] = portal_type
 sess['document_root'] = req.document_root() + '/americangut/'
