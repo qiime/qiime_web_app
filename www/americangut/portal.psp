@@ -25,7 +25,7 @@ if message:
 
 <div id="content" class="content">
     <p class="note">
-    If you haven't started keeping a food diary, that's a great place to start!<br /> You'll need dietary information for at least 7 days before you can add a participant and fill out the survey. <br /><br />There are a number of FREE online dietary tools out there – we recommend <a href="http://caloriecount.about.com/" class="help">Calorie Count</a>. Note we will be asking questions about your carb, protein, fat, alcohol, and fiber intake, as well as some info on types of food. So, use a tool that allows you to enter as much detail as possible.
+    If you haven't started keeping a food diary, that's a great place to start!<br /> You'll need dietary information for at least 7 days before you can add a participant and fill out the survey. <br /><br />There are a number of FREE online dietary tools out there – we recommend <a href="http://caloriecount.about.com/" class="help">Calorie Count</a>. Note we will be asking questions about your carb, protein, fat, alcohol, and fiber intake, (as a percentage of your total intake) as well as some info on types of food. So, use a tool that allows you to enter as much detail as possible.
     </p>
     <a href="fusebox.psp?page=new_participant.psp" class="big_button">
         <div class="big_button_div left wforty">
