@@ -32,7 +32,7 @@ req.write(js)
                         <tr>
                             <td>What is your race/ethnicity?</td>
                             <td>
-                                <select id="race" name="race" onchange="otherSelect('race','race_option',5)">
+                                <select tabindex="1" id="race" name="race" onchange="otherSelect('race','race_option',5)">
                                     <option>Select an option</option>
                                     <option>Caucasian</option>
                                     <option>Asian or Pacific Islander</option>
@@ -63,7 +63,7 @@ req.write(js)
                         <tr>
                             <td>When did you move to your current state of residence?</td>
                             <td>
-                                <select name="current_residence_duration" id="current_residence_duration">
+                                <select tabindex="2" name="current_residence_duration" id="current_residence_duration">
                                     <option>Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
@@ -76,7 +76,7 @@ req.write(js)
                         <tr>
                             <td>When did you last travel outside of your current country of residence?</td>
                             <td>
-                                <select name="last_travel" id="last_travel" onchange="anySelect('last_travel','travel_option',[0,6])">
+                                <select tabindex="3" name="last_travel" id="last_travel" onchange="anySelect('last_travel','travel_option',[0,6])">
                                     <option>Select an option</option>
                                     <option>Within the past month</option>
                                     <option>Within the past 3 months</option>
@@ -126,9 +126,9 @@ for c in d:
                             <td>Are you related to or live with any of the other participants in this study?</td>
                             <td>
                                 <div id="livingwith">
-                                    <input type="radio" id="livingwith_yes" name="livingwith" value="yes" onclick="javascript:setVisible('livingwith_option')"/><label for="livingwith_yes">Yes</label>
-                                    <input type="radio" id="livingwith_no" name="livingwith" value="no" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_no">No</label>
-                                    <input type="radio" id="livingwith_notsure" name="livingwith" value="not_sure" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_notsure">Not sure</label>
+                                    <input tabindex="4" type="radio" id="livingwith_yes" name="livingwith" value="yes" onclick="javascript:setVisible('livingwith_option')"/><label for="livingwith_yes">Yes</label>
+                                    <input tabindex="5" type="radio" id="livingwith_no" name="livingwith" value="no" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_no">No</label>
+                                    <input tabindex="6" type="radio" id="livingwith_notsure" name="livingwith" value="not_sure" onclick="javascript:setInvisible('livingwith_option')"/><label for="livingwith_notsure">Not sure</label>
                                 </div>
                             </td>
                         </tr>
@@ -161,8 +161,8 @@ for c in d:
                             <td>Do you have a dog(s)?</td>
                             <td>
                                 <div id="dog">
-                                    <input type="radio" id="dog_yes" name="dog" value="yes"/><label for="dog_yes">Yes</label>
-                                    <input type="radio" id="dog_no" name="dog" value="no"/><label for="dog_no">No</label>
+                                    <input tabindex="7" type="radio" id="dog_yes" name="dog" value="yes"/><label for="dog_yes">Yes</label>
+                                    <input tabindex="8" type="radio" id="dog_no" name="dog" value="no"/><label for="dog_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -170,8 +170,8 @@ for c in d:
                             <td>Do you have a cat(s)?</td>
                             <td>
                                 <div id="cat">
-                                    <input type="radio" id="cat_yes" name="cat" value="yes"/><label for="cat_yes">Yes</label>
-                                    <input type="radio" id="cat_no" name="cat" value="no"/><label for="cat_no">No</label>
+                                    <input tabindex="9" type="radio" id="cat_yes" name="cat" value="yes"/><label for="cat_yes">Yes</label>
+                                    <input tabindex="10" type="radio" id="cat_no" name="cat" value="no"/><label for="cat_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -203,9 +203,9 @@ for c in d:
                             <td>Which is your dominant hand?</td>
                             <td>
                                 <div id="hand">
-                                    <input type="radio" id="hand_right" name="hand" value="right"/><label for="hand_right">Right</label>
-                                    <input type="radio" id="hand_left" name="hand" value="left"/><label for="hand_left">Left</label>
-                                    <input type="radio" id="hand_ambi" name="hand" value="ambidextrous"/><label for="hand_ambi">Ambidextrous</label>
+                                    <input tabindex="11" type="radio" id="hand_right" name="hand" value="right"/><label for="hand_right">Right</label>
+                                    <input tabindex="12" type="radio" id="hand_left" name="hand" value="left"/><label for="hand_left">Left</label>
+                                    <input tabindex="13" type="radio" id="hand_ambi" name="hand" value="ambidextrous"/><label for="hand_ambi">Ambidextrous</label>
                                 </div>
                             </td>
                         </tr>
@@ -213,8 +213,8 @@ for c in d:
                             <td>Do you currently live in shared housing with non-family members, e.g. senior living, on-campus housing, kibbutz etc.?</td>
                             <td>
                                 <div id="shared_housing">
-                                    <input type="radio" id="shared_housing_yes" name="shared_housing" value="yes"/><label for="shared_housing_yes">Yes</label>
-                                    <input type="radio" id="shared_housing_no" name="shared_housing" value="no"/><label for="shared_housing_no">No</label>
+                                    <input tabindex="14" type="radio" id="shared_housing_yes" name="shared_housing" value="yes"/><label for="shared_housing_yes">Yes</label>
+                                    <input tabindex="15" type="radio" id="shared_housing_no" name="shared_housing" value="no"/><label for="shared_housing_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -226,7 +226,7 @@ for c in d:
         </table>
     </div>
     <br />
-    <input type="button" value="Continue" onclick="validateSurvey3()">
+    <input tabindex="16" type="button" value="Continue" onclick="validateSurvey3()">
     <input type="hidden" id="page" name="page" value="survey4.psp">
     </form>
     <br />

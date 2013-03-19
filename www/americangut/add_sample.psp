@@ -22,7 +22,7 @@ participant_name = form['participant_name']
                     <td>Choose the barcode from your kit that corresponds to the sample you are logging.</p>
                     <p>It is very important that the sample barcode matches <strong>exactly</strong> for downstream analysis steps.</td>
                     <td>
-                        <select name="barcode" id="barcode">
+                        <select tabindex="1" name="barcode" id="barcode">
 <%
 barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
 for barcode in barcodes:
@@ -35,7 +35,7 @@ for barcode in barcodes:
                 <tr>
                     <td>Site sampled</td>
                     <td>
-                        <select name="sample_site" id="sample_site">
+                        <select tabindex="2" name="sample_site" id="sample_site">
                             <option>Stool</option>
                             <option>Mouth</option>
                             <option>Right hand</option>
@@ -46,13 +46,16 @@ for barcode in barcodes:
                 </tr>
                 <tr>
                     <td>Date</td>
-                    <td><input type="text" name="sample_date" id="sample_date" class="small_text" readonly="readonly"/></td>
+                    <td><input tabindex="3" type="text" name="sample_date" id="sample_date" class="small_text" readonly="readonly"/></td>
                     <script>
                       $(function() {
                         $( "#sample_date" ).datepicker({
                                 changeMonth: true,
                                 minDate:'-1m',
-                                maxDate: '+0m'
+                                maxDate: '+0m',
+                                onSelect: function(dateText, inst) {
+                                    $(this).focus();
+                                }
                         });
                       });
                     </script>
@@ -60,13 +63,16 @@ for barcode in barcodes:
                 <tr>
                     <td>Time</td>
                     <td>
-                        <input type="text" id="sample_time" name="sample_time" readonly="readonly" class="small_text" />
+                        <input tabindex="4" type="text" id="sample_time" name="sample_time" readonly="readonly" class="small_text" />
                     </td>
                     <script>
                       $(function() {
                         $( "#sample_time" ).timepicker({
                             showPeriod: true,
-                            showLeadingZero: true
+                            showLeadingZero: true,
+                            onSelect: function(dateText, inst) {
+                                $(this).focus();
+                            }
                         });
                       });
                     </script>

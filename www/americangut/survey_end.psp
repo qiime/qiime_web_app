@@ -10,7 +10,7 @@
                     Please write anything else about yourself that you think might affect your personal microorganisms.
                     </p>
                 </div>
-                <textarea id="about_yourself_text" name="about_yourself_text" rows="5" cols="70"></textarea>
+                <textarea tabindex="1" id="about_yourself_text" name="about_yourself_text" rows="5" cols="70"></textarea>
             </td>
             <td width="20%"></td>
         </tr>
@@ -22,7 +22,7 @@ for f in form:
 # End for
 %>
 
-        <input type="submit" value="Continue">
+        <input tabindex="2" type="submit" value="Continue">
     </form>
     <br />
     <div id="progressbar"></div>

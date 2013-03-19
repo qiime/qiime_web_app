@@ -74,7 +74,7 @@ if(v != 0):
         </table>
     </div>
     <br />
-    <input type="submit" value="Continue">
+    <input tabindex="29" type="submit" value="Continue">
     <input type="hidden" id="page" name="page" value="survey_end.psp">
     </form>
     <br />
