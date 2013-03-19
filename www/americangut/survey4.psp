@@ -182,7 +182,7 @@ for f in form:
         </table>
     </div>
     <br />
-    <input tabindex="17" type="submit" value="Continue">
+    <input tabindex="17" type="submit" id="submit4" name="submit4" value="Continue">
     <input type="hidden" id="page" name="page" value="survey5.psp">
     </form>
     <br />
@@ -194,6 +194,15 @@ for f in form:
           $( "#softener" ).buttonset();
         $( "#progressbar" ).progressbar({
           value: 40
+        });
+        var button_clicked = false;
+        $("#submit4").click(function() {
+            button_clicked = true;
+        });
+        
+        $(window).bind('beforeunload', function(){
+            if(!button_clicked)
+                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
         });
       });
     </script>
