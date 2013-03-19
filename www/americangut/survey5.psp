@@ -23,7 +23,7 @@ for f in form:
                         <tr>
                             <td>When did you last take antibiotics?</td>
                             <td>
-                                <select name="antibiotic_select" id="antibiotic_select" onchange="anySelect('antibiotic_select','antibiotic_option',[0,5])">
+                                <select tabindex="1" name="antibiotic_select" id="antibiotic_select" onchange="anySelect('antibiotic_select','antibiotic_option',[0,5])">
                                     <option>Select an option</option>
                                     <option>In the past week</option>
                                     <option>In the past month</option>
@@ -65,7 +65,7 @@ for f in form:
                         <tr>
                             <td>When did you last get the flu vaccine?</td>
                             <td>
-                                <select name="flu_vaccine_date" id="flu_vaccine_date">
+                                <select tabindex="2" name="flu_vaccine_date" id="flu_vaccine_date">
                                     <option>Select an option</option>
                                     <option>In the past week</option>
                                     <option>In the past month</option>
@@ -80,7 +80,7 @@ for f in form:
                             <td>
                                 <div id="generalmeds">
                                     <div id="generalmeds_1">
-                                        <input type="text" name="generalmeds_1" id="generalmeds_1" />
+                                        <input tabindex="3" type="text" name="generalmeds_1" id="generalmeds_1" />
                                     </div>
                                 </div>
                                 <a class="add_field" href="javascript:addField(\'generalmeds\')" title="Add another medication">+</a>
@@ -89,7 +89,7 @@ for f in form:
                         <tr>
                             <td>Has your weight changed in the past 6 months?</td>
                             <td>
-                                <select name="weight_change" id="weight_change">
+                                <select tabindex="4" name="weight_change" id="weight_change">
                                     <option>Select an option</option>
                                     <option>Increased more than 10 pounds</option>
                                     <option>Decreased more than 10 pounds</option>
@@ -101,8 +101,8 @@ for f in form:
                             <td>Have you had your tonsils removed?</td>
                             <td>
                                 <div id="tonsils_removed" name="tonsils_removed">
-                                    <input type="radio" id="tonsils_removed_yes" name="tonsils_removed" value="yes"/><label for="tonsils_removed_yes">Yes</label>
-                                    <input type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no"/><label for="tonsils_removed_no">No</label>
+                                    <input tabindex="5" type="radio" id="tonsils_removed_yes" name="tonsils_removed" value="yes"/><label for="tonsils_removed_yes">Yes</label>
+                                    <input tabindex="6" type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no"/><label for="tonsils_removed_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -110,8 +110,8 @@ for f in form:
                             <td>Have you had your appendix removed?</td>
                             <td>
                                 <div id="appendix_removed" name="appendix_removed">
-                                    <input type="radio" id="appendix_removed_yes" name="appendix_removed" value="yes"/><label for="appendix_removed_yes">Yes</label>
-                                    <input type="radio" id="appendix_removed_no" name="appendix_removed" value="no"/><label for="appendix_removed_no">No</label>
+                                    <input tabindex="7" type="radio" id="appendix_removed_yes" name="appendix_removed" value="yes"/><label for="appendix_removed_yes">Yes</label>
+                                    <input tabindex="8" type="radio" id="appendix_removed_no" name="appendix_removed" value="no"/><label for="appendix_removed_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -119,8 +119,8 @@ for f in form:
                             <td>Have you had chickenpox?</td>
                             <td>
                                 <div id="chickenpox" name="chickenpox">
-                                    <input type="radio" id="chickenpox_yes" name="chickenpox" value="yes"/><label for="chickenpox_yes">Yes</label>
-                                    <input type="radio" id="chickenpox_no" name="chickenpox" value="no"/><label for="chickenpox_no">No</label>
+                                    <input tabindex="9" type="radio" id="chickenpox_yes" name="chickenpox" value="yes"/><label for="chickenpox_yes">Yes</label>
+                                    <input tabindex="10" type="radio" id="chickenpox_no" name="chickenpox" value="no"/><label for="chickenpox_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -128,8 +128,8 @@ for f in form:
                             <td>Do you currently take prescription medication for facial acne?</td>
                             <td>
                                 <div id="acne_medication" name="acne_medication">
-                                    <input type="radio" id="acne_medication_yes" name="acne_medication" value="yes"/><label for="acne_medication_yes">Yes</label>
-                                    <input type="radio" id="acne_medication_no" name="acne_medication" value="no"/><label for="acne_medication_no">No</label>
+                                    <input tabindex="11" type="radio" id="acne_medication_yes" name="acne_medication" value="yes"/><label for="acne_medication_yes">Yes</label>
+                                    <input tabindex="12" type="radio" id="acne_medication_no" name="acne_medication" value="no"/><label for="acne_medication_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -137,8 +137,8 @@ for f in form:
                             <td>Do you use over the counter products to control facial acne?</td>
                             <td>
                                 <div id="acne_medication_otc" name="acne_medication_otc">
-                                    <input type="radio" id="acne_medication_otc_yes" name="acne_medication_otc" value="yes"/><label for="acne_medication_otc_yes">Yes</label>
-                                    <input type="radio" id="acne_medication_otc_no" name="acne_medication_otc" value="no"/><label for="acne_medication_otc_no">No</label>
+                                    <input tabindex="13" type="radio" id="acne_medication_otc_yes" name="acne_medication_otc" value="yes"/><label for="acne_medication_otc_yes">Yes</label>
+                                    <input tabindex="14" type="radio" id="acne_medication_otc_no" name="acne_medication_otc" value="no"/><label for="acne_medication_otc_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -146,8 +146,8 @@ for f in form:
                             <td>Do you currently take over the counter or prescription medication for other conditions?</td>
                             <td>
                                 <div id="conditions_medication" name="conditions_medication">
-                                    <input type="radio" id="conditions_medication_yes" name="conditions_medication" value="yes"/><label for="conditions_medication_yes">Yes</label>
-                                    <input type="radio" id="conditions_medication_no" name="conditions_medication" value="no"/><label for="conditions_medication_no">No</label>
+                                    <input tabindex="15" type="radio" id="conditions_medication_yes" name="conditions_medication" value="yes"/><label for="conditions_medication_yes">Yes</label>
+                                    <input tabindex="16" type="radio" id="conditions_medication_no" name="conditions_medication" value="no"/><label for="conditions_medication_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -155,9 +155,9 @@ for f in form:
                             <td>Were you born via cesarean section (C-section)?</td>
                             <td>
                                 <div id="csection" name="csection">
-                                    <input type="radio" id="csection_yes" name="csection" value="yes"/><label for="csection_yes">Yes</label>
-                                    <input type="radio" id="csection_no" name="csection" value="no"/><label for="csection_no">No</label>
-                                    <input type="radio" id="csection_notsure" name="csection" value="not_sure"/><label for="csection_notsure">Not sure</label>
+                                    <input tabindex="17" type="radio" id="csection_yes" name="csection" value="yes"/><label for="csection_yes">Yes</label>
+                                    <input tabindex="18" type="radio" id="csection_no" name="csection" value="no"/><label for="csection_no">No</label>
+                                    <input tabindex="19" type="radio" id="csection_notsure" name="csection" value="not_sure"/><label for="csection_notsure">Not sure</label>
                                 </div>
                             </td>
                         </tr>
@@ -165,8 +165,8 @@ for f in form:
                             <td>Do you have phenylketonuria (PKU)?</td>
                             <td>
                                 <div id="pku" name="pku">
-                                    <input type="radio" id="pku_yes" name="pku" value="yes"/><label for="pku_yes">Yes</label>
-                                    <input type="radio" id="pku_no" name="pku" value="no"/><label for="pku_no">No</label>
+                                    <input tabindex="20" type="radio" id="pku_yes" name="pku" value="yes"/><label for="pku_yes">Yes</label>
+                                    <input tabindex="21" type="radio" id="pku_no" name="pku" value="no"/><label for="pku_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -174,8 +174,8 @@ for f in form:
                             <td>Do you have asthma?</td>
                             <td>
                                 <div id="asthma" name="asthma">
-                                    <input type="radio" id="asthma_yes" name="asthma" value="yes"/><label for="asthma_yes">Yes</label>
-                                    <input type="radio" id="asthma_no" name="asthma" value="no"/><label for="asthma_no">No</label>
+                                    <input tabindex="22" type="radio" id="asthma_yes" name="asthma" value="yes"/><label for="asthma_yes">Yes</label>
+                                    <input tabindex="23" type="radio" id="asthma_no" name="asthma" value="no"/><label for="asthma_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -183,31 +183,31 @@ for f in form:
                             <td>Do you have seasonal allergies?</td>
                             <td>
                                 <div id="seasonal_allergies" name="seasonal_allergies">
-                                    <input type="radio" id="seasonal_allergies_yes" name="seasonal_allergies" value="yes"/><label for="seasonal_allergies_yes">Yes</label>
-                                    <input type="radio" id="seasonal_allergies_no" name="seasonal_allergies" value="no"/><label for="seasonal_allergies_no">No</label>
+                                    <input tabindex="24" type="radio" id="seasonal_allergies_yes" name="seasonal_allergies" value="yes"/><label for="seasonal_allergies_yes">Yes</label>
+                                    <input tabindex="25" type="radio" id="seasonal_allergies_no" name="seasonal_allergies" value="no"/><label for="seasonal_allergies_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you have any of the following non-food allergies?</td>
                             <td>
-                                    <input type="checkbox" id="nonfoodallergies_drug" name="nonfoodallergies_drug" /><label for="nonfoodallergies_drug">Drug (e.g. Penicillin)</label>
+                                    <input tabindex="26" type="checkbox" id="nonfoodallergies_drug" name="nonfoodallergies_drug" /><label for="nonfoodallergies_drug">Drug (e.g. Penicillin)</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies_dander" /><label for="nonfoodallergies_dander">Pet dander</label>
+                                    <input tabindex="27" type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies_dander" /><label for="nonfoodallergies_dander">Pet dander</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_beestings" name="nonfoodallergies_beestings" /><label for="nonfoodallergies_beestings">Bee stings</label>
+                                    <input tabindex="28" type="checkbox" id="nonfoodallergies_beestings" name="nonfoodallergies_beestings" /><label for="nonfoodallergies_beestings">Bee stings</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies_poisonivy" /><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
+                                    <input tabindex="29" type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies_poisonivy" /><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_sun" name="nonfoodallergies_sun" /><label for="nonfoodallergies_sun">Sun</label>
+                                    <input tabindex="30" type="checkbox" id="nonfoodallergies_sun" name="nonfoodallergies_sun" /><label for="nonfoodallergies_sun">Sun</label>
                                     <br />
-                                    <input type="checkbox" id="nonfoodallergies_no" name="nonfoodallergies_no" /><label for="nonfoodallergies_no">No non-food allergies</label>
+                                    <input tabindex="31" type="checkbox" id="nonfoodallergies_no" name="nonfoodallergies_no" /><label for="nonfoodallergies_no">No non-food allergies</label>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you have Inflammatory Bowel Disease (IBD)?</td>
                             <td>
-                                <select name="ibd" id="ibd">
+                                <select tabindex="32" name="ibd" id="ibd">
                                     <option>Select an option</option>
                                     <option>Chrohn's disease</option>
                                     <option>Ulcerative colitis</option>
@@ -218,7 +218,7 @@ for f in form:
                         <tr>
                             <td>Do you have a skin condition?</td>
                             <td>
-                                <select name="skin_condition" id="skin_condition">
+                                <select tabindex="33" name="skin_condition" id="skin_condition">
                                     <option>Select an option</option>
                                     <option>Eczema</option>
                                     <option>Rosacea</option>
@@ -230,7 +230,7 @@ for f in form:
                         <tr>
                             <td>Do you have diabetes?</td>
                             <td>
-                                <select name="diabetes" id="diabetes">
+                                <select tabindex="34" name="diabetes" id="diabetes">
                                     <option>Select an option</option>
                                     <option>Type I</option>
                                     <option>Type II</option>
@@ -242,8 +242,8 @@ for f in form:
                             <td>Do you suffer from migraines?</td>
                             <td>
                                 <div id="migraine" name="migraine">
-                                    <input type="radio" id="migraine_yes" name="migraine" value="yes"/><label for="migraine_yes">Yes</label>
-                                    <input type="radio" id="migraine_no" name="migraine" value="no"/><label for="migraine_no">No</label>
+                                    <input tabindex="35" type="radio" id="migraine_yes" name="migraine" value="yes"/><label for="migraine_yes">Yes</label>
+                                    <input tabindex="36" type="radio" id="migraine_no" name="migraine" value="no"/><label for="migraine_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -255,7 +255,7 @@ for f in form:
         </table>
     </div>
     <br />
-    <input type="submit" value="Continue">
+    <input tabindex="37" type="submit" value="Continue">
     <input type="hidden" id="page" name="page" value="dietary_questions.psp">
     </form>
     <br />

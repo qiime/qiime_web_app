@@ -3,8 +3,8 @@
     <td>Do you live in a fraternity/sorority house?</td>
     <td>
         <div id="frat">
-            <input type="radio" id="frat_yes" name="frat" /><label for="frat_yes">Yes</label>
-            <input type="radio" id="frat_no" name="frat" /><label for="frat_no">No</label>
+            <input tabindex="6" type="radio" id="frat_yes" name="frat" /><label for="frat_yes">Yes</label>
+            <input tabindex="7" type="radio" id="frat_no" name="frat" /><label for="frat_no">No</label>
         </div>
     </td>
 </tr>
@@ -12,15 +12,15 @@
     <td>Do you eat the majority of your meals in communal dining areas?</td>
     <td>
         <div id="communal_dining">
-            <input type="radio" id="communal_dining_yes" name="communal_dining" /><label for="communal_dining_yes">Yes</label>
-            <input type="radio" id="communal_dining_no" name="communal_dining" /><label for="communal_dining_no">No</label>
+            <input tabindex="8" type="radio" id="communal_dining_yes" name="communal_dining" /><label for="communal_dining_yes">Yes</label>
+            <input tabindex="9" type="radio" id="communal_dining_no" name="communal_dining" /><label for="communal_dining_no">No</label>
         </div>
     </td>
 </tr>
 <tr>
     <td>How many non-family roommates do you have?</td>
     <td>
-        <select id="roommates" name="roommates">
+        <select tabindex="10" id="roommates" name="roommates">
             <option>Select an option</option>
             <option>None</option>
             <option>One</option>
