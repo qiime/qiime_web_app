@@ -24,10 +24,8 @@ remove_sample_item = \
 
 <div id="content" class="content">
 <h2>Overview for <%=barcode%></h2>
-<table>
-    <tr>
-        <td width="35%"></td>
-        <td>
+<div class="overview_wrapper">
+    <div class="overview">
             <table class="list" id="survey" width="100%">
                 <tr>
                     <td>Sample site</td>
@@ -46,9 +44,8 @@ remove_sample_item = \
                 </tr>
             </table>
         </td>
-        <td width="35%"></td>
-    </tr>
-</table>
+    </div>
+</div>
 <br />
 <br />
 </div>

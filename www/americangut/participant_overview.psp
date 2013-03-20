@@ -16,10 +16,8 @@ remove_participant_item = \
 
 <div id="content" class="content">
 <h2>Overview for participant <%=participant_name%></h2>
-<table>
-    <tr>
-        <td width="32%"></td>
-        <td>
+<div class="overview_wrapper">
+    <div class="overview">
             <table class="list" id="survey" width="100%">
                 <tr>
                     <td>Completed consent</td>
@@ -31,7 +29,8 @@ remove_participant_item = \
                 </tr>
                 <tr>
                     <td>Samples assigned</td>
-
+                    <td>
+                    <ul class="sample_list">
 <%
 # Get the list of samples for this participant
 samples = ag_data_access.getParticipantSamples(ag_login_id, participant_name)
@@ -39,34 +38,28 @@ for sample in samples:
     # Define the form to view the samples
     view_sample_item = \
     """
-    <form action="fusebox.psp" method="post" id="view_sample_{0}">
-        <li>
+    <li>
+        <form action="fusebox.psp" method="post" id="view_sample_{0}">
             <input type="hidden" name="page" value="sample_overview.psp"/>
             <input type="hidden" name="barcode" value="{0}"/>
             <img class="icon" src="/qiime/img/sample_icon.png"/>
             <a href="" onclick="document.forms['view_sample_{0}'].submit(); return false;">{0}</a>
-        </li>
-    </form>
+        </form>
+    </li>
     """.format(sample['barcode'])
-
-    req.write('<td>\n')
-    req.write('<ul class="sample_list">')
     req.write(view_sample_item)
-    req.write('</ul>')
-    req.write('</td>')
 # End indent 
 
 %>
-
+                        </ul>
+                    </td>
                 </tr>
                 <tr>
-                    <td><%=remove_participant_item%></td>
+                    <td colspan="2"><%=remove_participant_item%></td>
                 </tr>
             </table>
-        </td>
-        <td width="32%"></td>
-    </tr>
-</table>
+        </div>
+</div>
 <br />
 <br />
 </div>
