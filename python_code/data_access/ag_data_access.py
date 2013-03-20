@@ -125,16 +125,12 @@ class AGDataAccess(object):
 
     def addAGGeneralValue(self, ag_login_id, participant_name, field_name, field_value):
         con = self.getMetadataDatabaseConnection()
-        sql = "insert into ag_survey_answer (ag_login_id, participant_name, question, answer) values ('{0}', '{1}', \
-            '{2}', '{3}')".format(ag_login_id, participant_name, field_name, field_value)
-        con.cursor().execute(sql)
-        con.cursor().execute('commit')
+        con.cursor().callproc('ag_insert_survey_answer', [ag_login_id,
+            participant_name, field_name, field_value])
 
-    #def deleteAGGeneralValues(self, ag_login_id, participant_name):
-    #    con = self.getMetadataDatabaseConnection()
-    #    sql = "delete ag_survey_answer where ag_login_id = '{0}' and participant_name = '{1}'".format(ag_login_id, participant_name)
-    #    con.cursor().execute(sql)
-    #    con.cursor().execute('commit')
+    def deleteAGGeneralValues(self, ag_login_id, participant_name):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_delete_survey_answer', [ag_login_id, participant_name])
 
     def logParticipantSample(self, barcode, sample_site, sample_date, sample_time, participant_name):
         con = self.getMetadataDatabaseConnection()
