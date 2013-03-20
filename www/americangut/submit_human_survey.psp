@@ -175,6 +175,7 @@ Consent Form:
 
 try:
     send_email(MESSAGE, SUBJECT, participant_email)
+    message+="Consent form successfully sent to: %s.<br/>" % participant_email
 except:
     message+=("There was a problem sending you the consent form. Please contact"
         " us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
