@@ -1,5 +1,6 @@
 <%
 from utils.psp_utils import format_submit_form_to_fusebox_string
+from utils.mail import send_email
 
 deceased_parent_checkbox_checked = form.get('deceased_parent', None)
 
@@ -54,7 +55,7 @@ if form.get('is_7_to_13', 'off') == 'on':
 
         try:
             send_email(MESSAGE, SUBJECT)
-        except:
+        except Exception, e:
             alert_message=("There was a problem with your submission, "
                 'Please contact us directly at '
                 '<a href=&quot;mailto:info@americangut.org&quot;>'
