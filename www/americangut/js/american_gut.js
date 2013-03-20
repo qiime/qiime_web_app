@@ -214,7 +214,13 @@ function validateConsent()
         document.consent_info.participant_name.className += " highlight";
         valid = false;
     }
-        
+
+    if(document.consent_info.participant_email.value == "")
+    {
+        document.consent_info.participant_email.className += " highlight";
+        valid = false;
+    }
+
     if(!document.consent_info.deceased_parent.checked && document.consent_info.is_7_to_13.checked)
     {
         if(document.consent_info.parent_1_name.value == "")
