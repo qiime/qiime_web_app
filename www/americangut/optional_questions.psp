@@ -98,9 +98,13 @@ if(v != 0):
                 }
             });
             
-          $( "#diabetes_diagnose_date" ).datepicker(
+          $( "#diabetes_diagnose_date" ).datepicker({
+              yearRange: "-120:+0",
+              changeMonth: true,
+              changeYear: true,
               onSelect: function(dateText, inst) {
                   $(this).focus();
+                  }
               });
         $( "#progressbar" ).progressbar({
           value: 70
