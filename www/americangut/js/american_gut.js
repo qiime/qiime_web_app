@@ -135,8 +135,14 @@ function updateTotals() {
 function updateTotalIntake() {
 	var total = 0;
 	var prot = parseInt(document.getElementById('protein_per').value)
+	if(isNaN(prot))
+		document.getElementById('protein_per').value = 0
 	var fat = parseInt(document.getElementById('fat_per').value)
+	if(isNaN(fat))
+		document.getElementById('fat_per').value = 0
 	var carb = parseInt(document.getElementById('carbohydrate_per').value)
+	if(isNaN(carb))
+		document.getElementById('carbohydrate_per').value = 0
 	total = prot+fat+carb
 	if(isNaN(total))
 		return
@@ -160,7 +166,11 @@ function updateTotalIntake() {
 function updateAnimalPlant() {
 	var total = 0;
 	var plant = parseInt(document.getElementById('plant_per').value)
+	if(isNaN(plant))
+		document.getElementById('plant_per').value = 0
 	var animal = parseInt(document.getElementById('animal_per').value)
+	if(isNaN(animal))
+		document.getElementById('animal_per').value = 0
 	total = plant+animal
 	if(isNaN(total))
 		return
@@ -182,7 +192,9 @@ function updateAnimalPlant() {
 
 /* number validation for percentage fields */
 function validatePercentage(item_id) {
-	if(document.getElementById(item_id).value < 0)
+	if(isNaN(document.getElementById(item_id).value))
+		document.getElementById(item_id).value = 0
+	else if(document.getElementById(item_id).value < 0)
 		document.getElementById(item_id).value = 0
 	else if(document.getElementById(item_id).value > 100)
 		document.getElementById(item_id).value = 100
