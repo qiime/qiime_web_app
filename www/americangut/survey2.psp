@@ -61,12 +61,12 @@ for f in form:
                             <tr>
                                 <td>What nutritional/herbal supplements are you taking?</td>
                                 <td>
-                                    <div id="supplements">
-                                        <div id="supplements_1">
-                                            <input type="text" name="supplements_1" id="supplements_1"/>
+                                    <div id="supplements_fields">
+                                        <div id="supplements_fields_1">
+                                            <input type="text" name="supplements_fields_1" id="supplements_fields_1"/>
                                         </div>
                                     </div>
-                                    <a class="add_field" href="javascript:addField(\'supplements\',\'supplements\')" title="Add another supplement">+</a>
+                                    <a class="add_field" href="javascript:addField(\'supplements_fields\',\'supplements_fields\')" title="Add another supplement">+</a>
                                 </td>
                                 </tr>
                         </table>

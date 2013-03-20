@@ -147,7 +147,7 @@ for c in d:
                                                 <input type="text" value="Name" name="related_participant_1" id="related_participant_1" class="small_text"/><input type="text" value="Relationship" name="relation_1" id="relation_1" class="small_text"/>
                                             </div>
                                         </div>
-                                        <a class="add_field" href="javascript:addTwoFields(\'related_participant\',\'relation\')" title="Add another diet restriction">+</a>
+                                        <a class="add_field" href="javascript:addTwoFields(\'related_participant\',\'relation\')" title="Add another related participant">+</a>
                                     </td>                      
                                 </tr>
                             </table>
