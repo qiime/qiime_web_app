@@ -20,17 +20,21 @@ from utils.mail import send_email
 
 import logging
 
-# if level is set to DEBUG log messages will be written
-logging.basicConfig(filename='email_ag_participants.log', level=logging.DEBUG, \
-                    format='[%(asctime)s].%(levelname)s: %(message)s')
-
 
 script_info = {}
-script_info['brief_description'] = ""
-script_info['script_description'] = ""
-script_info['script_usage'] = [("","","")]
+script_info['brief_description'] = "Send emails to participants"
+script_info['script_description'] = "Email a list of participants that have "+\
+    "not recieved an e-mail yet."
+script_info['script_usage'] = [("Test what the script would do","See the "
+    "output of all the information in a log file but don't actually send any"
+    "e-mail.","email_ag_participants.py -o email_log.log"),
+    ("Send e-mails to the participants","Send e-mails to all of the particpants"
+    ,"email_ag_participants.py -o email_log.log --really")]
 script_info['output_description']= ""
-script_info['required_options'] = []
+script_info['required_options'] = [
+    make_option('-o','--output_log_fp',type="new_filepath",
+    help='filepath for the log file [default: %default]',
+    default='email_ag_participants.log')]
 script_info['optional_options'] = [\
     # Example optional option
     make_option('--really', action='store_true', help='Make the script actually'
@@ -45,14 +49,22 @@ def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
     really = opts.really
 
+    # if level is set to DEBUG log messages will be written
+    logging.basicConfig(filename=opts.output_log_fp, level=logging.DEBUG, \
+        format='[%(asctime)s].%(levelname)s: %(message)s')
+
     ag_data_access = data_access_factory(ServerConfig.data_access_type,
     'american_gut')
+
+    # cursor to update the sent e-mails
+    con = ag_data_access.getMetadataDatabaseConnection()
 
     cursor = ag_data_access.dynamicMetadataSelect("""
         select  al.name, al.email, ak.kit_verification_code, ak.supplied_kit_id, ak.kit_password, ak.swabs_per_kit
         from ag_login al
             inner join ag_kit ak
             on al.ag_login_id = ak.ag_login_id
+            where ak.verification_email_sent = 'n'
         order by al.email""")
 
     for entry in cursor:
@@ -69,15 +81,19 @@ def main():
         buffer_message = BODY_MESSAGE.format(recipient_name, supplied_kit_id, verification_code)
 
         try:
-            logging.debug('Message is:\n%s\n' % buffer_message)
-            logging.debug('Sent to: %s\n' % target_email)
+            logging.debug('Message is %s\n' % buffer_message)
+            logging.debug('Sent to %s\n' % target_email)
             
             if really == True:
                 send_email(buffer_message, SUBJECT, target_email)
+                query_string = "update ag_kit set verification_email_sent = 'y' where supplied_kit_id = '{0}'".format(supplied_kit_id)
+                con.cursor().execute(query_string)
+                con.cursor().execute('commit')
             else:
                 logging.debug('DRY RUNNING, NOT SENDING A MESSAGE\n')
         except Exception, e:
             logging.debug('Exception value is %s\n' % str(e))
+            logging.debug('ERROR SENDING TO: %s' % target_email)
 
         logging.debug('+++++++++++++++++++++++++++++++++++++++++++++++++++\n\n')
 
