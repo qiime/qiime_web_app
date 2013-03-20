@@ -55,7 +55,7 @@ if form.get('is_7_to_13', 'off') == 'on':
 
         try:
             send_email(MESSAGE, SUBJECT)
-        except Exception, e:
+        except:
             alert_message=("There was a problem with your submission, "
                 'Please contact us directly at '
                 '<a href=&quot;mailto:info@americangut.org&quot;>'
