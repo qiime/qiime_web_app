@@ -100,7 +100,7 @@ for f in form:
                             <td>
                                 <div id="tonsils_removed">
                                     <input tabindex="5" type="radio" id="tonsils_removed_yes" name="tonsils_removed" value="yes"/><label for="tonsils_removed_yes">Yes</label>
-                                    <input tabindex="5" type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no"/><label for="tonsils_removed_no">No</label>
+                                    <input tabindex="6" type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no"/><label for="tonsils_removed_no">No</label>
                                 </div>
                             </td>
                         </tr>
