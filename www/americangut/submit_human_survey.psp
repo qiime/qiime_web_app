@@ -182,7 +182,7 @@ Deceased Parent: %s
 %s
 --------------------------------------------------------------------------------
 """ % (participant_name, participant_email, participant_guardian_1,
-	participant_guardian_2, deceased_parent, consent_text, AG_CONSENT_TEXT)
+	participant_guardian_2, parent_deceased, consent_text, AG_CONSENT_TEXT)
 
 try:
 	send_email(MESSAGE, SUBJECT, participant_email)
