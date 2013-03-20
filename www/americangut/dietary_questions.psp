@@ -7,7 +7,7 @@
             <tr>
             <td width="10%"></td>
             <td>
-                <form id="dietary_questions" action="fusebox.psp">
+                <form id="dietary_questions" action="fusebox.psp" method="post">
 <%
 for f in form:
     if(f != 'page'):
@@ -127,15 +127,15 @@ for f in form:
         $( "#progressbar" ).progressbar({
           value: 80
         });
-        var button_clicked = false;
-        $("#submit6").click(function() {
-            button_clicked = true;
-        });
-        
-        $(window).bind('beforeunload', function(){
-            if(!button_clicked)
-                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
-        });
+//        var button_clicked = false;
+//        $("#submit6").click(function() {
+//            button_clicked = true;
+//        });
+//        
+//        $(window).bind('beforeunload', function(){
+//            if(!button_clicked)
+//                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
+//        });
       });
     </script>
     <br />
