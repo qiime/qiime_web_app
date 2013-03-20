@@ -121,7 +121,7 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
 <div class="lefta">
         <div class="" id="consent">
         <form method="post" id="consent_info" name="consent_info" action="fusebox.psp">
-            <input tabindex="1" type="checkbox" name="consent" id="consent"> I have read (or someone has read to me) this form. I am aware that I am being 
+            <input tabindex="1" value="Yes" type="checkbox" name="consent" id="consent"> I have read (or someone has read to me) this form. I am aware that I am being 
             asked to provide personally identifying information so that I can be considered for inclusion into the study. I voluntarily agree 
             to provide this information. I am not giving up any legal rights by signing this form. I will be sent a copy of this form by e-mail.
         </div>

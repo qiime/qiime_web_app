@@ -19,7 +19,7 @@ from qiime.parse import parse_mapping_file
 
 
 # Set variables
-zoom_level = 5
+zoom_level = 4
 
 # center of US
 center_lat = 39.83389
