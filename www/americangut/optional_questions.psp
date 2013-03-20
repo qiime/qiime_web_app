@@ -88,6 +88,20 @@ if(v != 0):
           $( "#diabetes_medication" ).buttonset();
           $( "#migrainemeds" ).buttonset();
           $( "#migraine_relatives" ).buttonset();
+
+            $( "#pregnant_due_date" ).datepicker({
+                maxDate: '+9m',
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function(dateText, inst) {
+                    $(this).focus();
+                }
+            });
+            
+          $( "#diabetes_diagnose_date" ).datepicker(
+              onSelect: function(dateText, inst) {
+                  $(this).focus();
+              });
         $( "#progressbar" ).progressbar({
           value: 70
         });
