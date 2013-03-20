@@ -31,7 +31,7 @@ def send_email(message, subject, recipient=TO_EMAIL):
     # you == the recipient's email address
     msg['Subject'] = subject
     msg['From'] = FROM_EMAIL
-    msg['To'] = TO_EMAIL
+    msg['To'] = recipient
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
