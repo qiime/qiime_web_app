@@ -7,7 +7,7 @@
             <tr>
             <td width="10%"></td>
             <td>
-                <form id="dietary_questions" action="fusebox.psp">
+                <form id="dietary_questions" action="fusebox.psp" method="post">
 <%
 for f in form:
     if(f != 'page'):

@@ -1,16 +1,7 @@
 <tr><td><h4>Diabetes Questions</h4></td></tr>
 <tr>
     <td>Date of diabetes diagnosis</td>
-    <td><input tabindex="11" type="text" id="diabetes_diagnose_date" name="diabetes_diagnose_date" /></td>
-    <script>
-      $(function() {
-        $( "#diabetes_diagnose_date" ).datepicker(
-            onSelect: function(dateText, inst) {
-                $(this).focus();
-            });
-      });
-    </script>
-                        
+    <td><input tabindex="11" type="text" id="diabetes_diagnose_date" name="diabetes_diagnose_date" readonly="readonly" /></td>                        
 </tr>
 <tr>
     <td>Do you take medication to control your diabetes?</td>
