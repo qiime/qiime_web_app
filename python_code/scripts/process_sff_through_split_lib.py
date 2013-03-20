@@ -122,29 +122,10 @@ def main():
         # Load the data into the database 
         data_access = data_access_factory(DataAccessType.qiime_test)
 
-
-
-
-
-
-
-
     # Remove the processed data directory if it exists
     if exists(output_dir):
         rmtree(output_dir)
 
-
-
-
-
-
-
-
-
-
-
-
-    
     # determine if platform is Titanium. If so, then convert_to_flx
     if sequencing_platform=='TITANIUM':
         convert_to_flx=True
@@ -287,11 +268,14 @@ def main():
     else:
         submitQiimeJob(study_id, user_id, job_type, job_input, data_access,\
                        job_state=-2)
-
+    
     # generate and store seqs and otu stats for database
+    print 'Summarizing results...'
     processed_results = summarize_all_stats(output_dir)
+    print 'Writing seqs and otu summary to database...'
     submit_mapping_to_database(processed_results)
-            
+    print 'Seq and OTU summary results successfully added to database.'
+    
 
 if __name__ == "__main__":
     main()
