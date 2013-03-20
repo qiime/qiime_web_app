@@ -1,5 +1,6 @@
 <%
 from utils.psp_utils import format_submit_form_to_fusebox_string
+from utils.mail import send_email
 
 deceased_parent_checkbox_checked = form.get('deceased_parent', None)
 
@@ -33,8 +34,9 @@ if form.get('is_7_to_13', 'off') == 'off' and is_exception:
 if form.get('is_7_to_13', 'off') == 'on':
     # if they aren't already an exception, we need to verify them
     if not is_exception:
-        alert_message = ('Thank you for your interest in this study. We will '
-            'contact you within 24 hours to confirm your participation!')
+        alert_message = ('Thank you for your interest in this study. Because '
+            'of your status as a minor, we will contact you within 24 hours '
+            'to verify parent/guardian consent.')
 
         SUBJECT = """AGJUVENILE: %s (ag_login_id: %s) is a child""" % \
             (form['participant_name'], ag_login_id)
@@ -73,12 +75,12 @@ if form.get('is_7_to_13', 'off') == 'on':
             <td>
                 <div class="lefta">
                     <p>
-                    Once you start this survey, you must complete it. Your answers will <strong>not</strong> be saved. It is <strong>very important</strong> to start your food diary before you start the survey. There are a number of FREE online dietary tools out there – we recommend <a href="http://caloriecount.about.com/" class="help">Calorie Count</a>. Note we will be asking questions about your carb, protein, fat, alcohol, and fiber intake, (as a percentage of your total intake) as well as some info on types of food. So, use a tool that allows you to enter as much detail as possible.
+                    Once you start this survey, you must complete it. Your answers will <strong>not</strong> be saved unless you complete the entire survey. It is <strong>very important</strong> to start your food diary before you start the survey. There are a number of FREE online dietary tools out there – we recommend <a href="http://caloriecount.about.com/" class="help">Calorie Count</a>. Note we will be asking questions about your carb, protein, fat, alcohol, and fiber intake, (as a percentage of your total intake) as well as some info on types of food. So, use a tool that allows you to enter as much detail as possible.
                     </p>
                     <p>We anticipate that participant time commitment for completing the questionnaire online will take no more than <strong>45 minutes</strong>; and completing the food diary should take no more than 10 minutes/day.
                     </p>
                     <p>
-                    You will be asked questions about your general personal information (name, age, sex, height, weight, ethnicity, place of birth current ZIP code. We will ask if you recently moved and where you moved from. We will ask questions about general diet information (including whether you follow a special diet, if you have food allergies, whether you have cultural or religious food restrictions). Other questions address whether you have pets and the type of contact you have with these pets and your relationship to other people in this study.  There is a section on health information including a history of allergies/asthma, if you suffer from migraines and if you have a history of irritable bowel disease.</p>
+                    You will be asked questions about your general personal information (name, age, sex, height, weight, ethnicity, place of birth current ZIP code). We will ask if you recently moved and where you moved from. We will ask questions about general diet information (including whether you follow a special diet, if you have food allergies, whether you have cultural or religious food restrictions). Other questions address whether you have pets and the type of contact you have with these pets and your relationship to other people in this study.  There is a section on health information including a history of allergies/asthma, if you suffer from migraines and if you have a history of irritable bowel disease.</p>
                     </div>
                 </td>
                 <td width="10%"></td>

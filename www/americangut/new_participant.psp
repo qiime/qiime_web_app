@@ -121,7 +121,7 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
 <div class="lefta">
         <div class="" id="consent">
         <form method="post" id="consent_info" name="consent_info" action="fusebox.psp">
-            <input tabindex="1" type="checkbox" name="consent" id="consent"> I have read (or someone has read to me) this form. I am aware that I am being 
+            <input tabindex="1" value="Yes" type="checkbox" name="consent" id="consent"> I have read (or someone has read to me) this form. I am aware that I am being 
             asked to provide personally identifying information so that I can be considered for inclusion into the study. I voluntarily agree 
             to provide this information. I am not giving up any legal rights by signing this form. I will be sent a copy of this form by e-mail.
         </div>
@@ -129,10 +129,11 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
         <br>
         <table>
             <tr><td>Name of participant</td><td><input tabindex="2" type="text" name="participant_name" id="participant_name"><div class="red right">*</div></td></tr>
+            <tr><td>Email of participant</td><td><input tabindex="3" type="text" name="participant_email" id="participant_email"><div class="red right">*</div></td></tr>
             <tr><td>Participant is 7 to 13 years old</td><td><input type="checkbox" name="is_7_to_13" id="is_7_to_13" class="is_7_to_13" onclick="toggleConsent()"></td></tr>
-            <tr><td>Name of parent/guardian 1</td><td><input tabindex="3" type="text" name="parent_1_name" id="parent_1_name"></td></tr>
-            <tr><td>Name of parent/guardian 2</td><td><input tabindex="4" type="text" name="parent_2_name" id="parent_2_name"></td></tr>
-            <tr><td>One or both parents are deceased or unable to consent.</td><td><input  tabindex="5" type="checkbox" name="deceased_parent" id="deceased_parent" value="yes"></td></tr>
+            <tr><td>Name of parent/guardian 1</td><td><input tabindex="4" type="text" name="parent_1_name" id="parent_1_name"></td></tr>
+            <tr><td>Name of parent/guardian 2</td><td><input tabindex="5" type="text" name="parent_2_name" id="parent_2_name"></td></tr>
+            <tr><td>One or both parents are deceased or unable to consent.</td><td><input  tabindex="6" type="checkbox" name="deceased_parent" id="deceased_parent" value="yes"></td></tr>
         </table>
 </div>
 <script>
@@ -147,7 +148,7 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
 </tr>
 <tr>
 <td></td>
-<td><input tabindex="6" type="button" value="Continue" id="submit_form" onclick="validateConsent()"></td>
+<td><input tabindex="7" type="button" value="Continue" id="submit_form" onclick="validateConsent()"></td>
 <td></td>
 </tr>
 </table>

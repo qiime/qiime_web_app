@@ -1,4 +1,108 @@
 <%
+AG_CONSENT_TEXT = """
+MAIN CONSENT TO PARTICIPATE IN A RESEARCH STUDY
+Study Title: American Gut Project
+
+Principal Investigator: Rob Knight
+Key Personnel:
+
+	Name: Rob Knight
+	Role: Principal Investigator
+	Department: Biofrontiers Institute/HHMI
+	Phone Number: 303-492-1984
+	E-mail: Rob.Knight@colorado.edu
+
+	Name: Gail Ackermann
+	Role: Co-I
+	Department: Biofrontiers Institute
+	Phone Number: 303-492-7506
+	E-mail: Gail.Ackermann@colorado.edu
+
+	Name: Noah Fierer
+	Role: Co-I
+	Department: CIRES
+	Phone Number: 303-492-5615
+	E-mail: Noah.Fierer@Colorado.edu
+
+	Name: Matthew Gebert
+	Role: Research Assistant
+	Department: Biofrontiers Institute
+	Phone Number: 303-492-6725
+	E-mail: Matthew.Gebert@colorado.edu
+
+	Name: Donna Berg-Lyons
+	Role: Research Assistant
+	Department: Biofrontiers Institute
+	Phone Number: 303-492-6725
+	E-mail: Donna.Lyons@colorado.edu
+
+	Name: Antonio González Peña
+	Role: Post-Doctoral Research Assistant
+	Department: Biofrontiers Institute
+	Phone Number: 303-492-6725
+	E-mail: Antonio.Pena@colorado.edu
+
+Your participation in this research study is voluntary. Please think about the information below carefully. Feel free to ask questions before making your decision whether or not to participate. If you decide to participate, you will be asked to sign this form electronically and will receive a copy of the form by email at the address you supplied when you signed up for the study.
+	1.	Purpose and Background 
+
+	Trillions of microorganisms live on and within the human body, which is colonized at birth and continuously inhabited throughout a person’s lifetime. Our resident microbes occupy many body habitats, including the skin and mucosal surfaces, and the gastrointestinal tract. Our microbial symbionts are largely harmless or beneficial; for example, we rely on our gut microbiota to aid in nutrition, resist pathogens, and educate our immune system. We would like to survey a large number of volunteers from the US and other countries including all body types, all dietary preferences and both healthy and unhealthy people to more clearly define the range of these microbial communities. We are interested in learning whether people with similar age, diet, environment, family, pets, body weight, or other features, also have similar microorganisms. To accomplish this we will ask you to sample up to 5 sites on your body (skin – including left and right palms and forehead, saliva and stool) using polyester tipped swabs that will be sent to you at the address you provide with instructions on how to obtain the samples, instructions for safely returning the samples to us and a pre-addressed envelope for returning the samples to us through FedEx or the mail service. You will also be asked to complete the questionnaire online that includes questions about age, diet, environment, family, pets, body weight and current health status. You will be asked to use a website to determine your average intake of fat, protein, carbohydrates, vegetables and grains. The samples will have a code label attached to them so that we can identify who sent them to us but no personally identifying information. Some people will be asked to keep a food diary detailing everything they eat and drink every day for up to 6 months. We may also request additional skin, saliva and stool samples from certain participants that are of particular interest because of their health status and/or dietary preferences (a maximum of 7 times). We anticipate that the entire study will be completed in 5 years. When the results are available for your samples we will provide you with an easy to understand summary of the microbial communities of your body and a summary of the combined results of other participants for comparison. We anticipate that the results for your samples will be available within 3-6 months of receipt in the laboratory. These results will be sent to you by email. We are requesting that you contribute funding to the project at a level that is commensurate with the number of swabs and the kinds of tests you are requesting. The basic package covers a single fecal swab.
+
+	2.	Study Tasks and Procedures 
+
+	If you agree to participate in this study you will be asked to donate samples ,to complete a questionnaire and to provide updated personal information. We will send you a sample kit that includes the swabs (which are individually wrapped in plastic and include a plastic sleeve for returning the sample to us), coded labels for the sample tubes, the questionnaire and a prepaid FedEx envelope to return the samples to us for analysis. Samples will include :
+
+		1.	Stool (fecal) by collecting a smear from used bathroom tissue using a sterile polyester-tip swab
+		2.	Saliva using a sterile polyester-tip swab inserted into the mouth and sampling the surface of the tongue or inside of your cheek
+		3.	Skin using a sterile polyester-tip swab. Examples of areas of skin that may be swabbed include the forehead, and left and right palms.
+
+	 	 After you submit your first set of samples, we may ask you to donate additional samples (up to 7 times) if you belong to a group that has specific diet, disease or age considerations. You will be contacted by email if we would like to repeat the sampling. Some participants will be asked to provide a detailed food diary that includes a list of everything you eat and drink every day for up to 6 months. If this is required we will contact you by email to confirm that you are willing to contribute this information. Description of Surveys/Questionnaires/Interview Questions You will be asked questions about your general personal information (name, age, sex, height, weight, ethnicity, place of birth current ZIP code. We will ask if you recently moved and where you moved from. We will ask questions about general diet information (including whether you follow a special diet, if you have food allergies, whether you have cultural or religious food restrictions). Other questions address whether you have pets and the type of contact you have with these pets and your relationship to other people in this study. There is a section on health information including a history of allergies/asthma, if you suffer from migraines and if you have a history of irritable bowel disease. The questionnaire also asks you to complete a food log to assess the amount of protein, fat, carbohydrate, grains and vegetables in your diet. For this we suggest that you contact a free website that will allow you to estimate these amounts. Some participants may be asked to keep a detailed food diary for up to 6 months listing all the foods they eat and drink in a day.
+
+	3.	Duration 
+
+	We anticipate that participant time commitment for sampling will be less than 15 minutes; to complete the questionnaire online will take no more than 45 minutes; and completing the food diary should take no more than 10 minutes/day. The study will be conducted over a maximum period of 5 years to include all the people we are requesting permission to sample. We anticipate that results will be available within 3-6 months of sample receipt.
+
+	4.	Study Withdrawal 
+
+	Taking part in this study is completely voluntary. You do not have to participate if you don't want to. You may also leave the study at any time. If you leave the study before it is finished, there will be no penalty to you, and you will not lose any benefits to which you are otherwise entitled. To withdraw from the study send email to the American Gut Project using the email address you used to contact us about the study and include your access code so that we can delete your records.
+
+	5.	Risks and Discomforts 
+
+	There are no foreseeable risks for participating in this study. You should be aware that the samples you submit are not anonymous but we will make every effort to ensure that they remain confidential. The only staff associated with the study that will have access to confidential information (your name and address) will be those responsible for shipping the sample kit and questionnaire to you. When the samples are returned they will have an associated code but no personally identifiable information.
+
+	6.	Benefits 
+
+	You may not receive any direct benefit from taking part in this study other than you or your child’s intrinsic interest in the scientific outcome.
+
+	7.	Confidentiality
+
+	 We will make every effort to maintain the privacy of the data you provide. All data will transferred electronically to a secure database stored on a server (the beast) in a CU card access-controlled server room. There is no public accessibility to this server without VPN and a password. The information will be assigned to a code that will be used as part of your electronic signature. The code key will be kept in a locked cabinet separate from the data. Following the conclusion of the study we will destroy the hard copies via shredding and recycling. All other data including all electronic data will be de-identified (coded). These are some reasons that we may need to share the information you give us with others:
+		◦	If it is required by law.
+		◦	If we think you or someone else could be harmed.
+		◦	Sponsors, government agencies or research staff sometimes look at forms like this and other study records. They do this to make sure the research is done safely and legally. Organizations that may look at study records include:
+			▪	Office for Human Research Protections or other federal, state, or international regulatory agencies
+			▪	The University of Colorado Boulder Institutional Review Board
+			▪	The sponsor or agency supporting the study: Howard Hughes Medical Institute and American Gut Project through Indiegogo (an independent crowd-sourcing organization.
+
+	8.	Compensation
+
+	 You will not receive any compensation for participating in this research.
+
+	9.	Participant Rights
+
+	 Taking part in this study is your choice. You may choose either to take part or not take part in the study. If you decide to take part in this study, you may leave the study at any time. No matter what decision you make, there will be no penalty to you in any way. You will not lose any of your regular benefits. We will tell you if we learn any new information that could change your mind about being in this research study. For example, we will tell you about information that could affect your health or well-being.
+
+	10.	If You are Injured 
+
+	Please call Rob Knight at 303-492-1984 or email Rob Knight.
+
+	12.	Contacts and Questions
+
+	For questions, concerns, or complaints about this study, please call Rob Knight at 303-492-1984 or email Rob Knight.
+	If you are injured as a result of participating in this study or for questions about a study-related injury, please call Rob Knight at 303-492-1984 or email Rob Knight
+	If you have questions about your rights as a research study participant, you can call the Institutional Review Board (IRB). The IRB is independent from the research team. You can contact the IRB if you have concerns or complaints that you do not want to talk to the study team about. The IRB phone number is (303) 735-3702.
+"""
+
+
 from data_access_connections import data_access_factory
 from enums import *
 from utils.mail import send_email
@@ -8,8 +112,15 @@ from utils.psp_utils import format_submit_form_to_fusebox_string
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut') 
 sess = Session.Session(req)
 
+message = ""
+
 # Insert the new row
+participant_email = form['participant_email']
 participant_name = form['participant_name']
+participant_guardian_1 = form.get('parent_1_name', 'NA')
+participant_guardian_2 = form.get('parent_2_name', 'NA')
+parent_deceased = form.get('deceased_parent', 'NA')
+consent_text = form.get('consent', 'NA')
 ag_login_id = sess['user_data']['web_app_user_id']
 
 # Clear any old data for this participant
@@ -56,10 +167,33 @@ for f in form:
 		req.write('\n\nFailed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
 		req.write(str(e) + '<br/>\n')
 
+SUBJECT = "American Gut Consent Form"
+MESSAGE = """
+--------------------------------------------------------------------------------
+Consent Form:
+Participant Name: %s
+Participant Email: %s
+Participant Guardian 1: %s
+Participant Guardian 2: %s
+Deceased Parent: %s
+--------------------------------------------------------------------------------
+%s, I have read (or someone has read to me) this form. I am aware that I am being asked to provide personally identifying information so that I can be considered for inclusion into the study. I voluntarily agree to provide this information. I am not giving up any legal rights by signing this form. I will be sent a copy of this form by e-mail.
+--------------------------------------------------------------------------------
+%s
+--------------------------------------------------------------------------------
+""" % (participant_name, participant_email, participant_guardian_1,
+	participant_guardian_2, parent_deceased, consent_text, AG_CONSENT_TEXT)
+
+try:
+	send_email(MESSAGE, SUBJECT, participant_email)
+	message+="Consent form successfully sent to: %s.<br/>" % participant_email
+except:
+	message+=("There was a problem sending you the consent form. Please contact"
+		" us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
+		"info@americangut.org</a>.<br/>")
+
 # default message to display upon redirect to portal
-message=("%s successfully added as a participant! If you have not "
-    "already done so, please confirm your identity and kit barcodes. "
-    "Then, you may assign samples to participants." % participant_name)
+message+=("%s successfully added as a participant! " % participant_name)
 
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox_string(page='portal.psp', message=message))
