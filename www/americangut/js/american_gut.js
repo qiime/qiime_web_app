@@ -392,6 +392,18 @@ function validateSurvey3() {
     $('#survey_3').submit();
 }
 
+function validateText(evt) {
+    var theEvent = evt || window.event;
+    var key = theEvent.keyCode || theEvent.which;
+    key = String.fromCharCode( key );
+    var regex = /["'<>]/;
+    if( regex.test(key) ) {
+      theEvent.returnValue = false;
+      if(theEvent.preventDefault) theEvent.preventDefault();
+    }
+
+}
+
 /* input field number validation*/
 function validateNumber(evt) {
   var theEvent = evt || window.event;
