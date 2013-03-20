@@ -107,15 +107,15 @@ for c in d:
         $( "#progressbar" ).progressbar({
           value: 5
         });
-        var button_clicked = false;
-        $("#submit1").click(function() {
-            button_clicked = true;
-        });
-        
-        $(window).bind('beforeunload', function(){
-            if(!button_clicked)
-                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
-        });
+//        var button_clicked = false;
+//        $("#submit1").click(function() {
+//            button_clicked = true;
+//        });
+//        
+//        $(window).bind('beforeunload', function(){
+//            if(!button_clicked)
+//                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
+//        });
         
       });
     </script>

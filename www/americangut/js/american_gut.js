@@ -369,6 +369,7 @@ function verifyHelpRequest() {
 
 /*clear empty boxes for survey3*/
 function validateSurvey3() {
+	button_clicked = true;
     for(var i = 0; i < document.survey_3.length; i++) 
     {	
 		if(document.survey_3[i].type == 'text')
