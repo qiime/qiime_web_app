@@ -6,19 +6,6 @@ from enums import ServerConfig
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 
-def get_processed_data_dirs(study_dir):
-    """ Returns a list of processed_data_ directories for a study_dir
-    """
-    processed_data_dirs = []
-    prefix = 'processed_data_'
-    
-    for name in listdir(study_dir):
-        #print name
-        if name.startswith(prefix):
-            processed_data_dirs.append(name)
-
-    return processed_data_dirs
-
 def parse_log_file(log_path, start_lines):
     """ Parses one of several log files produced in the qiime pipeline. Returns 
         aggregated counts of either seqs per sample or otus per sampe. A factory
@@ -111,8 +98,8 @@ def summarize_all_stats(processed_dir):
     processed_results = {}
 
     try:
-        seq_header_lines, seq_summary_dict = summarize_seqs(join(study_dir, processed_dir))
-        otu_header_lines, otu_summary_dict = summarize_otus(join(study_dir, processed_dir))
+        seq_header_lines, seq_summary_dict = summarize_seqs(processed_dir)
+        otu_header_lines, otu_summary_dict = summarize_otus(processed_dir)
 
         # Create the tuples
         mapping = []
