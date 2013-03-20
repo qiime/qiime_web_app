@@ -12,9 +12,11 @@ __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
 
-from data_access import ag_data_access
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
+
 from qiime.util import parse_command_line_parameters, make_option
-from utils.mail import send_mail
+from utils.mail import send_email
 
 import logging
 
@@ -57,7 +59,7 @@ def main():
         recipient_name, target_email, verification_code, supplied_kit_id,\
             kit_password, swabs_per_kit = entry
 
-        logging.debug('\n+++++++++++++++++++++++++++++++++++++++++++++++++++'\n)
+        logging.debug('\n+++++++++++++++++++++++++++++++++++++++++++++++++++\n')
 
         logging.debug("""recipient_name {0}, target_email {1}, """
             """verification_code {2}, supplied_kit_id {3}, kit_password {4}, """
@@ -71,13 +73,13 @@ def main():
             logging.debug('Sent to %s\n' % target_email)
             
             if really == True:
-                send_mail(buffer_message, SUBJECT, target_email)
+                send_email(buffer_message, SUBJECT, target_email)
             else:
                 logging.debug('DRY RUNNING, NOT SENDING A MESSAGE\n')
         except Exception, e:
             logging.debug('Exception value is %s\n' % str(e))
 
-        logging.debug('+++++++++++++++++++++++++++++++++++++++++++++++++++'\n\n)
+        logging.debug('+++++++++++++++++++++++++++++++++++++++++++++++++++\n\n')
 
     # email, kit identifier, 
 
