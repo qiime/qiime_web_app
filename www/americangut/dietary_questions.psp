@@ -7,7 +7,7 @@
             <tr>
             <td width="10%"></td>
             <td>
-                <form id="dietary_questions" action="fusebox.psp">
+                <form id="dietary_questions" action="fusebox.psp" method="post">
 <%
 for f in form:
     if(f != 'page'):
@@ -19,19 +19,19 @@ for f in form:
                         <tr>
                             <td>Protein</td>
                             <td>
-                                <input tabindex="1" type="number" max="100" min="0" name="protein_per" id="protein_per" value="0"  onchange="javascript:updateTotals()" onblur="validatePercentage('protein_per')"/>%
+                                <input tabindex="1" type="number" max="100" min="0" name="protein_per" id="protein_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('protein_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Fat</td>
                             <td>
-                                <input tabindex="2" type="number" max="100" min="0" name="fat_per" id="fat_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('fat_per')"/>%
+                                <input tabindex="2" type="number" max="100" min="0" name="fat_per" id="fat_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('fat_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Carbohydrates</td>
                             <td>
-                                <input tabindex="3" type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('carbohydrate_per')"/>%
+                                <input tabindex="3" type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('carbohydrate_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -44,13 +44,13 @@ for f in form:
                         <tr>
                             <td>Plant</td>
                             <td>
-                                <input tabindex="4" type="number" max="100" min="0" name="plant_per" id="plant_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('plant_per')"/>%
+                                <input tabindex="4" type="number" max="100" min="0" name="plant_per" id="plant_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('plant_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Animal</td>
                             <td>
-                                <input tabindex="5" type="number" max="100" min="0" name="animal_per" id="animal_per" value="0" onchange="javascript:updateTotals()" onblur="validatePercentage('animal_per')"/>%
+                                <input tabindex="5" type="number" max="100" min="0" name="animal_per" id="animal_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('animal_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -127,15 +127,15 @@ for f in form:
         $( "#progressbar" ).progressbar({
           value: 80
         });
-        var button_clicked = false;
-        $("#submit6").click(function() {
-            button_clicked = true;
-        });
-        
-        $(window).bind('beforeunload', function(){
-            if(!button_clicked)
-                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
-        });
+//        var button_clicked = false;
+//        $("#submit6").click(function() {
+//            button_clicked = true;
+//        });
+//        
+//        $(window).bind('beforeunload', function(){
+//            if(!button_clicked)
+//                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
+//        });
       });
     </script>
     <br />

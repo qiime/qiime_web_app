@@ -123,21 +123,29 @@ $(function()
 function updateTotals() {
 	if(updateTotalIntake() && updateAnimalPlant())
 	{
-		document.getElementById('continue').disabled = false
+		document.getElementById('submit6').disabled = false
 		document.getElementById('dietaryIntakeTotal').className = "";
 		document.getElementById('plantAnimalTotal').className = "";
 	}
 	else
-		document.getElementById('continue').disabled = true
+		document.getElementById('submit6').disabled = true
 }
 
 /*stuff for only dietary questions survey */
 function updateTotalIntake() {
 	var total = 0;
 	var prot = parseInt(document.getElementById('protein_per').value)
+	if(isNaN(prot))
+		document.getElementById('protein_per').value = 0
 	var fat = parseInt(document.getElementById('fat_per').value)
+	if(isNaN(fat))
+		document.getElementById('fat_per').value = 0
 	var carb = parseInt(document.getElementById('carbohydrate_per').value)
+	if(isNaN(carb))
+		document.getElementById('carbohydrate_per').value = 0
 	total = prot+fat+carb
+	if(isNaN(total))
+		return
 	if(total > 100)
 	{
 		document.getElementById('dietaryIntakeTotal').className += " highlight"
@@ -158,8 +166,14 @@ function updateTotalIntake() {
 function updateAnimalPlant() {
 	var total = 0;
 	var plant = parseInt(document.getElementById('plant_per').value)
+	if(isNaN(plant))
+		document.getElementById('plant_per').value = 0
 	var animal = parseInt(document.getElementById('animal_per').value)
+	if(isNaN(animal))
+		document.getElementById('animal_per').value = 0
 	total = plant+animal
+	if(isNaN(total))
+		return
 	if(total > 100)
 	{
 		document.getElementById('plantAnimalTotal').className += " highlight"
@@ -178,12 +192,21 @@ function updateAnimalPlant() {
 
 /* number validation for percentage fields */
 function validatePercentage(item_id) {
-	if(document.getElementById(item_id).value < 0)
+	if(isNaN(document.getElementById(item_id).value))
+		document.getElementById(item_id).value = 0
+	else if(document.getElementById(item_id).value < 0)
 		document.getElementById(item_id).value = 0
 	else if(document.getElementById(item_id).value > 100)
 		document.getElementById(item_id).value = 100
 	updateTotalIntake()
 	updateAnimalPlant()
+}
+
+function toggleConsent() {
+	var minor = !document.getElementById('is_7_to_13').checked
+    document.getElementById("parent_1_name").disabled = minor
+    document.getElementById("parent_2_name").disabled = minor
+    document.getElementById("deceased_parent").disabled = minor
 }
 
 /*validation for new participant*/
@@ -207,7 +230,13 @@ function validateConsent()
         document.consent_info.participant_name.className += " highlight";
         valid = false;
     }
-        
+
+    if(document.consent_info.participant_email.value == "")
+    {
+        document.consent_info.participant_email.className += " highlight";
+        valid = false;
+    }
+
     if(!document.consent_info.deceased_parent.checked && document.consent_info.is_7_to_13.checked)
     {
         if(document.consent_info.parent_1_name.value == "")
@@ -367,6 +396,8 @@ function validateSurvey3() {
 function validateNumber(evt) {
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
+  if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
+  	return
   key = String.fromCharCode( key );
   var regex = /[0-9]|\./;
   if( !regex.test(key) ) {
@@ -381,9 +412,10 @@ function inToCm() {
 	var centimeters = inches * 2.54
 	
 	if(isNaN(cur_cm)) { /* update if there isn't a value */
-	    document.getElementById('height_cm').value = centimeters.toFixed(2)
+		if(!isNaN(inches))
+			document.getElementById('height_cm').value = centimeters.toFixed(0)
 	} else if(Math.abs(centimeters - cur_cm) > 1) { /* update if the value is reasonably changed */
-	    document.getElementById('height_cm').value = centimeters.toFixed(2)
+	    document.getElementById('height_cm').value = centimeters.toFixed(0)
 	} else {}
 }
 
@@ -393,9 +425,10 @@ function cmToIn() {
 	var inches = centimeters * 0.39
 	
 	if(isNaN(cur_in)) { /* update if there isn't a value */
-	    document.getElementById('height_in').value = inches.toFixed(2)
+		if(!isNaN(centimeters))
+	    	document.getElementById('height_in').value = inches.toFixed(0)
 	} else if(Math.abs(inches - cur_in) > 2) { /* update if the value is reasonably changed */
-	    document.getElementById('height_in').value = inches.toFixed(2)
+	    document.getElementById('height_in').value = inches.toFixed(0)
 	} else {}
 }
 
@@ -405,9 +438,10 @@ function lbsToKg() {
 	var kg = pounds * 0.45
 	
 	if(isNaN(cur_kg)) { /* update if there isn't a value */
-	    document.getElementById('weight_kg').value = kg.toFixed(2)
+		if(!isNaN(pounds))
+	    	document.getElementById('weight_kg').value = kg.toFixed(0)
 	} else if(Math.abs(kg - cur_kg) > 1) { /* update if the value is reasonably changed */
-	    document.getElementById('weight_kg').value = kg.toFixed(2)
+	    document.getElementById('weight_kg').value = kg.toFixed(0)
 	} else {}
 }
 
@@ -417,8 +451,9 @@ function kgToLbs() {
 	var pounds = kg * 2.20
 	
 	if(isNaN(cur_lbs)) { /* update if there isn't a value */
-	    document.getElementById('weight_lbs').value = pounds.toFixed(2)
+		if(!isNaN(kg))
+	    	document.getElementById('weight_lbs').value = pounds.toFixed(0)
 	} else if(Math.abs(pounds - cur_lbs) > .5) { /* update if the value is reasonably changed */
-	    document.getElementById('weight_lbs').value = pounds.toFixed(2)
+	    document.getElementById('weight_lbs').value = pounds.toFixed(0)
 	} else {}
 }
