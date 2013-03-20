@@ -186,6 +186,13 @@ function validatePercentage(item_id) {
 	updateAnimalPlant()
 }
 
+function toggleConsent() {
+	var minor = !document.getElementById('is_7_to_13').checked
+    document.getElementById("parent_1_name").disabled = minor
+    document.getElementById("parent_2_name").disabled = minor
+    document.getElementById("deceased_parent").disabled = minor
+}
+
 /*validation for new participant*/
 function validateConsent()
 {
