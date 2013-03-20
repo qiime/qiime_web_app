@@ -18,6 +18,10 @@ body,html {
 	color: #f00;
 }
 
+h2.msg {
+	color: #f00;
+}
+
 table#survey{
 	border-spacing: 20px;
 }

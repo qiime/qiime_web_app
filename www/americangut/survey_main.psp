@@ -1,3 +1,18 @@
+<%
+from utils.psp_utils import format_submit_form_to_fusebox_string
+
+query = ("select participant_name from ag_human_survey where ag_login_id = "
+    "'%s' and participant_name = '%s'" % (sess['user_data']['web_app_user_id'],
+    form['participant_name']))
+
+participant_collision = ag_data_access.dynamicMetadataSelect(query).fetchone()
+
+if participant_collision:
+    req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+        message='Participant %s already exists!' % form['participant_name']))
+#ENDIF
+%>
+
 <div id="content" class="content">
     <h2>Survey</h2>
     <table>
@@ -6,7 +21,7 @@
             <td>
                 <div class="lefta">
                     <p>
-                    Once you start this survey, you must complete it. Your answers will <strong>not</strong> be saved. It is <strong>very important</strong> to start your food diary before you start the survey. There are a number of FREE online dietary tools out there – we recommend <a href="http://caloriecount.about.com/" class="help">Calorie Counter</a>. Note we will be asking questions about your carb, protein, fat, alcohol, and fiber intake, as well as some info on types of food. So, use a tool that allows you to enter as much detail as possible.
+                    Once you start this survey, you must complete it. Your answers will <strong>not</strong> be saved. It is <strong>very important</strong> to start your food diary before you start the survey. There are a number of FREE online dietary tools out there – we recommend <a href="http://caloriecount.about.com/" class="help">Calorie Count</a>. Note we will be asking questions about your carb, protein, fat, alcohol, and fiber intake, (as a percentage of your total intake) as well as some info on types of food. So, use a tool that allows you to enter as much detail as possible.
                     </p>
                     <p>We anticipate that participant time commitment for completing the questionnaire online will take no more than <strong>45 minutes</strong>; and completing the food diary should take no more than 10 minutes/day.
                     </p>
