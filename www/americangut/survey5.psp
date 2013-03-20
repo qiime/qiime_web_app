@@ -260,32 +260,30 @@ for f in form:
     <br />
     <div id="progressbar"></div>
     <script>
-     $(document).ready(function() {
-          $( "#tonsils_removed" ).buttonset();
-          $( "#appendix_removed" ).buttonset();
-          $( "#chickenpox" ).buttonset();
-          $( "#acne_medication" ).buttonset();
-          $( "#acne_medication_otc" ).buttonset();
-          $( "#conditions_medication" ).buttonset();
-          $( "#csection" ).buttonset();
-          $( "#pku" ).buttonset();
-          $( "#asthma" ).buttonset();
-          $( "#seasonal_allergies" ).buttonset();
-          $( "#migraine" ).buttonset();
-      });
       $(function() {
+      $( "#tonsils_removed" ).buttonset();
+      $( "#appendix_removed" ).buttonset();
+      $( "#chickenpox" ).buttonset();
+      $( "#acne_medication" ).buttonset();
+      $( "#acne_medication_otc" ).buttonset();
+      $( "#conditions_medication" ).buttonset();
+      $( "#csection" ).buttonset();
+      $( "#pku" ).buttonset();
+      $( "#asthma" ).buttonset();
+      $( "#seasonal_allergies" ).buttonset();
+      $( "#migraine" ).buttonset();
         $( "#progressbar" ).progressbar({
           value: 55
         });
-        var button_clicked = false;
-        $("#submit5").click(function() {
-            button_clicked = true;
-        });
-        
-        $(window).bind('beforeunload', function(){
-            if(!button_clicked)
-                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
-        });
+//        var button_clicked = false;
+//        $("#submit5").click(function() {
+//            button_clicked = true;
+//        });
+//        
+//        $(window).bind('beforeunload', function(){
+//            if(!button_clicked)
+//                return "If you navigate away from this page now, you will lose your progress on the survey, and the participant will not be added."
+//        });
       });
     </script>
     <br />
