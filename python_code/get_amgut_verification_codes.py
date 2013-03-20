@@ -52,12 +52,18 @@ def collapse_names(records):
         mapping[(name, email)][0].append(kit)
         mapping[(name, email)][1].append(code)
     
-    new_recs = []
+    by_length = {}
     for ((name, email), (kits, codes)) in mapping.items():
-        ks = ', '.join(kits)
-        cs = ', '.join(codes)
-        new_recs.append((name, email, ks, cs))
-    return new_recs
+        n_kits = len(kits)
+
+        if n_kits not in by_length:
+            by_length[n_kits] = []
+
+        new_rec = [name, email]
+        new_rec.extend(kits)
+        new_rec.extend(codes)
+        by_length[n_kits].append(new_rec)
+    return by_length
 
 if __name__ == '__main__':
     option_parser, opts, args = parse_command_line_parameters(**script_info)
@@ -72,9 +78,14 @@ if __name__ == '__main__':
     results = cur.fetchall()
     collapsed = collapse_names(results)
 
-    f = open(opts.outfile_fp, 'w')
-    f.write("#name\temail\tsupplied_kits\tverification_codes\n")
-    for rec in collapsed:
-        f.write('\t'.join(rec))
+    for n_kits in sorted(collapsed.keys()):
+        f = open(opts.outfile_fp + '_%d_kits.txt' % n_kits, 'w')
+        f.write("#name\temail\t")
+        f.write('\t'.join(["kit_id"] * n_kits))
+        f.write('\t')
+        f.write('\t'.join(["verification_code"] * n_kits))
         f.write('\n')
-    f.close()
+        for rec in collapsed[n_kits]:
+            f.write('\t'.join(rec))
+            f.write('\n')
+        f.close()
