@@ -66,11 +66,11 @@ def main():
             """swabs_per_kit {5}\n""".format(recipient_name, target_email,
             verification_code, supplied_kit_id, kit_password, swabs_per_kit))
 
-        buffer_message = BODY_MESSAGE % (recipient_name, verification_code)
+        buffer_message = BODY_MESSAGE.format(recipient_name, supplied_kit_id, verification_code)
 
         try:
-            logging.debug('Message is %s\n' % buffer_message)
-            logging.debug('Sent to %s\n' % target_email)
+            logging.debug('Message is:\n%s\n' % buffer_message)
+            logging.debug('Sent to: %s\n' % target_email)
             
             if really == True:
                 send_email(buffer_message, SUBJECT, target_email)
@@ -84,7 +84,7 @@ def main():
     # email, kit identifier, 
 
 SUBJECT = "American Gut Website is Live!"
-BODY_MESSAGE = """Hi {1}! The American Gut Participant site is now Live! Please log in with the KitID and password that you got in the mail. Your kit validation code is {2}.
+BODY_MESSAGE = """Hi {0}! The American Gut Participant site is now Live! Please log in with the KitID and password that you got in the mail. Your kit validation code for KitID {1} is: {2}
 
 Go the following site to get started:
 
