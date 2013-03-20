@@ -119,6 +119,7 @@ participant_email = form['participant_email']
 participant_name = form['participant_name']
 participant_guardian_1 = form.get('parent_1_name', 'NA')
 participant_guardian_2 = form.get('parent_2_name', 'NA')
+parent_deceased = form.get('deceased_parent', 'NA')
 consent_text = form.get('consent', 'NA')
 ag_login_id = sess['user_data']['web_app_user_id']
 
@@ -174,13 +175,14 @@ Participant Name: %s
 Participant Email: %s
 Participant Guardian 1: %s
 Participant Guardian 2: %s
+Deceased Parent: %s
 --------------------------------------------------------------------------------
 %s, I have read (or someone has read to me) this form. I am aware that I am being asked to provide personally identifying information so that I can be considered for inclusion into the study. I voluntarily agree to provide this information. I am not giving up any legal rights by signing this form. I will be sent a copy of this form by e-mail.
 --------------------------------------------------------------------------------
 %s
 --------------------------------------------------------------------------------
 """ % (participant_name, participant_email, participant_guardian_1,
-	participant_guardian_2, consent_text, AG_CONSENT_TEXT)
+	participant_guardian_2, deceased_parent, consent_text, AG_CONSENT_TEXT)
 
 try:
 	send_email(MESSAGE, SUBJECT, participant_email)
