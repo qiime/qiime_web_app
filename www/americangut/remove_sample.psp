@@ -1,0 +1,14 @@
+<%
+from data_access_connections import data_access_factory
+from enums import *
+
+sess = Session.Session(req)
+ag_login_id = sess['user_data']['web_app_user_id']
+barcode = form['barcode']
+
+#req.write(str(user_data))
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+ag_data_access.deleteSample(barcode, ag_login_id)
+
+psp.redirect('fusebox.psp?page=portal.psp')
+%>

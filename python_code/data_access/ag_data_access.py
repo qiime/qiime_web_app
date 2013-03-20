@@ -96,11 +96,9 @@ class AGDataAccess(object):
         con.cursor().execute(sql)
         con.cursor().execute('commit')
 
-    def deleteAGParticipant(self, ag_login_id, participant_name, table_name):
+    def deleteAGParticipant(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
-        sql = "delete {0} where ag_login_id = '{1}' and participant_name = '{2}'".format(table_name, ag_login_id, participant_name)
-        con.cursor().execute(sql)
-        con.cursor().execute('commit')
+        con.cursor().callproc('ag_delete_participant', [ag_login_id, participant_name])
 
     def insertAGMultiple(self, ag_login_id, participant_name, field_name, field_value):
         con = self.getMetadataDatabaseConnection()
@@ -109,38 +107,43 @@ class AGDataAccess(object):
         con.cursor().execute(sql)
         con.cursor().execute('commit')
 
-    def deleteAGMultiple(self, ag_login_id, participant_name):
-        con = self.getMetadataDatabaseConnection()
-        sql = "delete ag_survey_multiples where ag_login_id = '{0}' and participant_name = '{1}'".format(ag_login_id, participant_name)
-        con.cursor().execute(sql)
-        con.cursor().execute('commit')
+    #def deleteAGMultiple(self, ag_login_id, participant_name):
+    #    con = self.getMetadataDatabaseConnection()
+    #    sql = "delete ag_survey_multiples where ag_login_id = '{0}' and participant_name = '{1}'".format(ag_login_id, participant_name)
+    #    con.cursor().execute(sql)
+    #    con.cursor().execute('commit')
 
-    def removeAGHumanParticipant(self, ag_login_id, participant_name):
+    #def removeAGHumanParticipant(self, ag_login_id, participant_name):
         # Clear the general values data
-        self.deleteAGGeneralValues(ag_login_id, participant_name)
+        #self.deleteAGGeneralValues(ag_login_id, participant_name)
 
         # Clear the multiple values table
-        self.deleteAGMultiple(ag_login_id, participant_name)
+        #self.deleteAGMultiple(ag_login_id, participant_name)
 
         # Clear the participant row
-        self.deleteAGParticipant(ag_login_id, participant_name, 'ag_human_survey')
+        #self.deleteAGParticipant(ag_login_id, participant_name, 'ag_human_survey')
 
     def addAGGeneralValue(self, ag_login_id, participant_name, field_name, field_value):
         con = self.getMetadataDatabaseConnection()
-        sql = "insert into ag_survey_answer (ag_login_id, participant_name, question, answer) values ('{0}', '{1}', \
-            '{2}', '{3}')".format(ag_login_id, participant_name, field_name, field_value)
-        con.cursor().execute(sql)
-        con.cursor().execute('commit')
+        con.cursor().callproc('ag_insert_survey_answer', [ag_login_id,
+            participant_name, field_name, field_value])
 
     def deleteAGGeneralValues(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
-        sql = "delete ag_survey_answer where ag_login_id = '{0}' and participant_name = '{1}'".format(ag_login_id, participant_name)
-        con.cursor().execute(sql)
-        con.cursor().execute('commit')
+        con.cursor().callproc('ag_delete_survey_answer', [ag_login_id, participant_name])
 
     def logParticipantSample(self, barcode, sample_site, sample_date, sample_time, participant_name):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_log_participant_sample', [barcode, sample_site, sample_date, sample_time, participant_name])
+
+    def deleteSample(self, barcode, ag_login_id):
+        """
+        Strictly speaking the ag_login_id isn't needed but it makes it really hard to hack
+        the function when you would need to know someone else's login id (a GUID) to 
+        delete something maliciously
+        """
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_delete_sample', [barcode, ag_login_id])
 
     def getParticipantSamples(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()

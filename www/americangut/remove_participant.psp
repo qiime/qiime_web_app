@@ -1,0 +1,16 @@
+<%
+from data_access_connections import data_access_factory
+from enums import *
+
+sess = Session.Session(req)
+ag_login_id = sess['user_data']['web_app_user_id']
+participant_name = form['participant_name']
+
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
+
+#req.write(ag_login_id)
+#req.write(participant_name)
+
+psp.redirect('fusebox.psp?page=portal.psp')
+%>
