@@ -129,13 +129,19 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
         <br>
         <table>
             <tr><td>Name of participant</td><td><input tabindex="2" type="text" name="participant_name" id="participant_name"><div class="red right">*</div></td></tr>
-            <tr><td>Participant is 7 to 13 years old</td><td><input type="checkbox" name="is_7_to_13" id="is_7_to_13" class="is_7_to_13"></td></tr>
+            <tr><td>Participant is 7 to 13 years old</td><td><input type="checkbox" name="is_7_to_13" id="is_7_to_13" class="is_7_to_13" onclick="toggleConsent()"></td></tr>
             <tr><td>Name of parent/guardian 1</td><td><input tabindex="3" type="text" name="parent_1_name" id="parent_1_name"></td></tr>
             <tr><td>Name of parent/guardian 2</td><td><input tabindex="4" type="text" name="parent_2_name" id="parent_2_name"></td></tr>
             <tr><td>One or both parents are deceased or unable to consent.</td><td><input  tabindex="5" type="checkbox" name="deceased_parent" id="deceased_parent" value="yes"></td></tr>
         </table>
 </div>
-
+<script>
+    $(function() {
+        document.getElementById("parent_1_name").disabled = true
+        document.getElementById("parent_2_name").disabled = true
+        document.getElementById("deceased_parent").disabled = true
+    });
+</script>
 </td>
 <td width="20%"></td>
 </tr>
