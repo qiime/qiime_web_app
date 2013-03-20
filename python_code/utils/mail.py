@@ -19,9 +19,8 @@ import smtplib
 from email.mime.text import MIMEText
 
 FROM_EMAIL = 'info@americangut.org'
-TO_EMAIL = 'americangut@gmail.com'
 
-def send_email(message, subject):
+def send_email(message, subject, recipient='americangut@gmail.com'):
     """Send an email from your local host """
 
     # Create a text/plain message
@@ -31,10 +30,10 @@ def send_email(message, subject):
     # you == the recipient's email address
     msg['Subject'] = subject
     msg['From'] = FROM_EMAIL
-    msg['To'] = TO_EMAIL
+    msg['To'] = recipient
 
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
     s = smtplib.SMTP('localhost')
-    s.sendmail(FROM_EMAIL, [TO_EMAIL], msg.as_string())
+    s.sendmail(FROM_EMAIL, [recipient], msg.as_string())
     s.quit()
