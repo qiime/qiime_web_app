@@ -98,7 +98,7 @@ def main():
        parse_command_line_parameters(**script_info)
     
     study_id = opts.study_id
-    run_prefix='_'.join(splitext(split(opts.map_fname)[-1])[0].split('_')[:-4])
+    run_prefix ='_'.join(splitext(split(opts.map_fname)[-1])[0].split('_')[:-4])
     print run_prefix
     output_dir = '%s/user_data/studies/study_%s/processed_data_%s/' % (environ['HOME'],study_id, run_prefix)
     base_dir = '%s/user_data/studies/study_%s/' % (environ['HOME'], study_id)
@@ -122,45 +122,10 @@ def main():
         # Load the data into the database 
         data_access = data_access_factory(DataAccessType.qiime_test)
 
-    
-    # Check to see if cleanup_in_progress file exists. If so, wait until that process has
-    # written the cleanup_complete file. This should guarantee that only one process ever
-    # runs this section of code no matter how many jobs are created. The rest will block
-    # until the one job completes its delete process.
-    cleanup_in_progress = join(base_dir, '_cleanup_in_progress')
-    cleanup_complete = join(base_dir, '_cleanup_complete')
+    # Remove the processed data directory if it exists
+    if exists(output_dir):
+        rmtree(output_dir)
 
-    if exists(cleanup_in_progress):
-        # Block until file is gone
-        while True:
-            if exists(cleanup_complete):
-                break
-            sleep(5)
-                
-    else:
-        # Create the cleanup in progress file
-        f = open(cleanup_in_progress, 'w')
-        f.close()
-
-        # Perform a delete operation of the old data
-        result = data_access.deleteAllAnalysis(study_id)
-        if result:
-            error = 'Failed to delete analysis results. Error was "{0}"'.format(result)
-            raise Exception(error)
-
-        # Remove the old processed folders
-        try:
-            for name in listdir(base_dir):
-                if 'processed_data_' in name:
-                    rmtree(join(base_dir, name))
-        except Exception, e:
-            error = 'Failed to delete processed folders. Error was "{0}"'.format(str(e))
-            raise Exception(error)
-
-        # Create the cleanup complete
-        f = open(cleanup_complete, 'w')
-        f.close()
-    
     # determine if platform is Titanium. If so, then convert_to_flx
     if sequencing_platform=='TITANIUM':
         convert_to_flx=True
@@ -303,11 +268,14 @@ def main():
     else:
         submitQiimeJob(study_id, user_id, job_type, job_input, data_access,\
                        job_state=-2)
-
+    
     # generate and store seqs and otu stats for database
-    processed_results = summarize_all_stats(study_id)
+    print 'Summarizing results...'
+    processed_results = summarize_all_stats(output_dir)
+    print 'Writing seqs and otu summary to database...'
     submit_mapping_to_database(processed_results)
-            
+    print 'Seq and OTU summary results successfully added to database.'
+    
 
 if __name__ == "__main__":
     main()
