@@ -21,7 +21,7 @@ from email.mime.text import MIMEText
 FROM_EMAIL = 'info@americangut.org'
 TO_EMAIL = 'americangut@gmail.com'
 
-def send_email(message, subject):
+def send_email(message, subject, recipient=TO_EMAIL):
     """Send an email from your local host """
 
     # Create a text/plain message
