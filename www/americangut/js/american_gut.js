@@ -123,12 +123,12 @@ $(function()
 function updateTotals() {
 	if(updateTotalIntake() && updateAnimalPlant())
 	{
-		document.getElementById('continue').disabled = false
+		document.getElementById('submit6').disabled = false
 		document.getElementById('dietaryIntakeTotal').className = "";
 		document.getElementById('plantAnimalTotal').className = "";
 	}
 	else
-		document.getElementById('continue').disabled = true
+		document.getElementById('submit6').disabled = true
 }
 
 /*stuff for only dietary questions survey */
@@ -138,6 +138,8 @@ function updateTotalIntake() {
 	var fat = parseInt(document.getElementById('fat_per').value)
 	var carb = parseInt(document.getElementById('carbohydrate_per').value)
 	total = prot+fat+carb
+	if(isNaN(total))
+		return
 	if(total > 100)
 	{
 		document.getElementById('dietaryIntakeTotal').className += " highlight"
@@ -160,6 +162,8 @@ function updateAnimalPlant() {
 	var plant = parseInt(document.getElementById('plant_per').value)
 	var animal = parseInt(document.getElementById('animal_per').value)
 	total = plant+animal
+	if(isNaN(total))
+		return
 	if(total > 100)
 	{
 		document.getElementById('plantAnimalTotal').className += " highlight"
