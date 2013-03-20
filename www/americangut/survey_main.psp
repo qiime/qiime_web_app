@@ -1,5 +1,6 @@
 <%
 from utils.psp_utils import format_submit_form_to_fusebox_string
+from utils.mail import send_email
 
 deceased_parent_checkbox_checked = form.get('deceased_parent', None)
 
