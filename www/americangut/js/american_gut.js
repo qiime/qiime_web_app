@@ -380,6 +380,8 @@ function validateSurvey3() {
 function validateNumber(evt) {
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
+  if(theEvent.keyCode == 8)
+  	return
   key = String.fromCharCode( key );
   var regex = /[0-9]|\./;
   if( !regex.test(key) ) {
@@ -394,9 +396,10 @@ function inToCm() {
 	var centimeters = inches * 2.54
 	
 	if(isNaN(cur_cm)) { /* update if there isn't a value */
-	    document.getElementById('height_cm').value = centimeters.toFixed(2)
+		if(!isNaN(inches))
+			document.getElementById('height_cm').value = centimeters.toFixed(0)
 	} else if(Math.abs(centimeters - cur_cm) > 1) { /* update if the value is reasonably changed */
-	    document.getElementById('height_cm').value = centimeters.toFixed(2)
+	    document.getElementById('height_cm').value = centimeters.toFixed(0)
 	} else {}
 }
 
@@ -406,9 +409,10 @@ function cmToIn() {
 	var inches = centimeters * 0.39
 	
 	if(isNaN(cur_in)) { /* update if there isn't a value */
-	    document.getElementById('height_in').value = inches.toFixed(2)
+		if(!isNaN(centimeters))
+	    	document.getElementById('height_in').value = inches.toFixed(0)
 	} else if(Math.abs(inches - cur_in) > 2) { /* update if the value is reasonably changed */
-	    document.getElementById('height_in').value = inches.toFixed(2)
+	    document.getElementById('height_in').value = inches.toFixed(0)
 	} else {}
 }
 
@@ -418,9 +422,10 @@ function lbsToKg() {
 	var kg = pounds * 0.45
 	
 	if(isNaN(cur_kg)) { /* update if there isn't a value */
-	    document.getElementById('weight_kg').value = kg.toFixed(2)
+		if(!isNaN(pounds))
+	    	document.getElementById('weight_kg').value = kg.toFixed(0)
 	} else if(Math.abs(kg - cur_kg) > 1) { /* update if the value is reasonably changed */
-	    document.getElementById('weight_kg').value = kg.toFixed(2)
+	    document.getElementById('weight_kg').value = kg.toFixed(0)
 	} else {}
 }
 
@@ -430,8 +435,9 @@ function kgToLbs() {
 	var pounds = kg * 2.20
 	
 	if(isNaN(cur_lbs)) { /* update if there isn't a value */
-	    document.getElementById('weight_lbs').value = pounds.toFixed(2)
+		if(!isNaN(kg))
+	    	document.getElementById('weight_lbs').value = pounds.toFixed(0)
 	} else if(Math.abs(pounds - cur_lbs) > .5) { /* update if the value is reasonably changed */
-	    document.getElementById('weight_lbs').value = pounds.toFixed(2)
+	    document.getElementById('weight_lbs').value = pounds.toFixed(0)
 	} else {}
 }
