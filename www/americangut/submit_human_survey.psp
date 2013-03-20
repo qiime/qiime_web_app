@@ -117,6 +117,9 @@ message = ""
 # Insert the new row
 participant_email = form['participant_email']
 participant_name = form['participant_name']
+participant_guardian_1 = form.get('parent_1_name', 'NA')
+participant_guardian_2 = form.get('parent_2_name', 'NA')
+consent_text = form.get('consent', 'NA')
 ag_login_id = sess['user_data']['web_app_user_id']
 
 # Clear any old data for this participant
@@ -167,19 +170,25 @@ SUBJECT = "American Gut Consent Form"
 MESSAGE = """
 --------------------------------------------------------------------------------
 Consent Form:
-
-%s
-
+Participant Name: %s
+Participant Email: %s
+Participant Guardian 1: %s
+Participant Guardian 2: %s
 --------------------------------------------------------------------------------
-""" % AG_CONSENT_TEXT
+%s
+--------------------------------------------------------------------------------
+%s
+--------------------------------------------------------------------------------
+""" % (participant_name, participant_email, participant_guardian_1,
+	participant_guardian_2, consent_text, AG_CONSENT_TEXT)
 
 try:
-    send_email(MESSAGE, SUBJECT, participant_email)
-    message+="Consent form successfully sent to: %s.<br/>" % participant_email
+	send_email(MESSAGE, SUBJECT, participant_email)
+	message+="Consent form successfully sent to: %s.<br/>" % participant_email
 except:
-    message+=("There was a problem sending you the consent form. Please contact"
-        " us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
-        "info@americangut.org</a>.<br/>")
+	message+=("There was a problem sending you the consent form. Please contact"
+		" us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
+		"info@americangut.org</a>.<br/>")
 
 # default message to display upon redirect to portal
 message+=("%s successfully added as a participant! " % participant_name)
