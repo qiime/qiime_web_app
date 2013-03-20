@@ -1,5 +1,23 @@
 <%
+
+# Define some variables
+ag_login_id = sess['user_data']['web_app_user_id']
 barcode = form['barcode']
+
+query = "select site_sampled, sample_date, sample_time from ag_kit_barcodes where barcode = {0}".format(barcode)
+sample_data = ag_data_access.dynamicMetadataSelect(query).fetchone()
+site_sampled = sample_data[0]
+sample_date = sample_data[1]
+sample_time = sample_data[2]
+
+remove_sample_item = \
+"""
+<form action="remove_sample.psp" method="post" id="remove_sample_{0}">
+    <input type="hidden" name="barcode" value="{0}"/>
+    <input type="button" onclick="document.forms['remove_sample_{0}'].submit(); return false;" value="Remove barcode {0}"/>
+</form>
+""".format(barcode)
+
 
 
 %>
@@ -13,18 +31,18 @@ barcode = form['barcode']
             <table class="list" id="survey" width="100%">
                 <tr>
                     <td>Sample site</td>
-                    <td>[sample_site]</td>
+                    <td><%=site_sampled%></td>
                 </tr>
                 <tr>
                     <td>Sample date</td>
-                    <td>[sample_date]</td>
+                    <td><%=sample_date%></td>
                 </tr>
                 <tr>
                     <td>Sample time</td>
-                    <td>[sample_time]</td>
+                    <td><%=sample_time%></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><input type="button" value="Delete"/>
+                    <td colspan="2"><%=remove_sample_item%></td>
                 </tr>
             </table>
         </td>

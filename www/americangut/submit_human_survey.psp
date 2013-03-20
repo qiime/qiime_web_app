@@ -19,10 +19,16 @@ ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
 ag_data_access.addAGHumanParticipant(ag_login_id, form['participant_name'])
 
 # Define the multiples
-multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'travel_duration_', 'related_participant_', 'relation_', 'pet_', 'pet_location_', 'pet_contact_', 'antibiotic_med_', 'generalmeds_', 'diabetes_medications_', 'migraine_medication_'])
+multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'travel_duration_', \
+	'related_participant_', 'relation_', 'pet_', 'pet_location_', 'pet_contact_', 'antibiotic_med_', \
+	'generalmeds_', 'diabetes_medications_', 'migraine_medication_'])
 
 # Add/update all of the data
 for f in form:
+	# Skip submit buttons
+	if f.startswith('submit'):
+		continue
+
 	form_value = form[f].replace("'", "''")
 	#req.write('{0}: "{1}"<br/>\n'.format(f, form_value)
 	try:
@@ -77,7 +83,6 @@ if(v == 'yes'):
             'info@americangut.org</a>')
 
 # Assuming nothing exploded... back to the portal
-req.write(format_submit_form_to_fusebox_string(page='portal.psp',
-    message=message))
+req.write(format_submit_form_to_fusebox_string(page='portal.psp', message=message))
 #UNINDENT
 %>
