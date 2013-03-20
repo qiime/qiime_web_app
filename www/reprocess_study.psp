@@ -11,9 +11,11 @@ __status__ = "Development"
 
 <%
 from clear_jobs import clearJobs
+from time import sleep
 sess = Session.Session(req)
 if form['study_type'] == "STUDY":
     clearJobs(sess['study_id'], (3,12,15))
+    sleep(10)
     # indent
 %>
     <form id="submit_job_to_qiime3" action="submit_job_to_qiime.psp" method="post">
