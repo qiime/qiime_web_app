@@ -19,7 +19,6 @@ import smtplib
 from email.mime.text import MIMEText
 
 FROM_EMAIL = 'info@americangut.org'
-#TO_EMAIL = 'americangut@gmail.com'
 
 def send_email(message, subject, recipient='americangut@gmail.com'):
     """Send an email from your local host """
