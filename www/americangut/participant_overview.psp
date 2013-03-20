@@ -1,9 +1,23 @@
+<%
+
+# Define some variables
+ag_login_id = sess['user_data']['web_app_user_id']
+participant_name = form['participant_name']
+
+remove_participant_item = \
+"""
+<form action="remove_participant.psp" method="post" id="remove_participant_{0}">
+    <input type="hidden" name="participant_name" value="{0}"/>
+    <input type="button" onclick="document.forms['remove_participant_{0}'].submit(); return false;" value="Remove {0}"/>
+</form>
+""".format(participant_name)
+
+%>
+
 <div id="content" class="content">
-<h2>Overview for participant [participant_name]</h2>
-<table>
-    <tr>
-        <td width="32%"></td>
-        <td>
+<h2>Overview for participant <%=participant_name%></h2>
+<div class="overview_wrapper">
+    <div class="overview">
             <table class="list" id="survey" width="100%">
                 <tr>
                     <td>Completed consent</td>
@@ -16,19 +30,36 @@
                 <tr>
                     <td>Samples assigned</td>
                     <td>
-                        <ul class="sample_list">
-                            <li><a href=""><img class="icon" src="/qiime/img/sample_icon.png"/>00000001</a></li>
+                    <ul class="sample_list">
+<%
+# Get the list of samples for this participant
+samples = ag_data_access.getParticipantSamples(ag_login_id, participant_name)
+for sample in samples:
+    # Define the form to view the samples
+    view_sample_item = \
+    """
+    <li>
+        <form action="fusebox.psp" method="post" id="view_sample_{0}">
+            <input type="hidden" name="page" value="sample_overview.psp"/>
+            <input type="hidden" name="barcode" value="{0}"/>
+            <img class="icon" src="/qiime/img/sample_icon.png"/>
+            <a href="" onclick="document.forms['view_sample_{0}'].submit(); return false;">{0}</a>
+        </form>
+    </li>
+    """.format(sample['barcode'])
+    req.write(view_sample_item)
+# End indent 
+
+%>
                         </ul>
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2"><input type="button" value="Delete"/>
+                    <td colspan="2"><%=remove_participant_item%></td>
                 </tr>
             </table>
-        </td>
-        <td width="32%"></td>
-    </tr>
-</table>
+        </div>
+</div>
 <br />
 <br />
 </div>
