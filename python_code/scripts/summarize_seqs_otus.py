@@ -22,7 +22,7 @@ script_info['script_description'] = "Reads and summarizes the split_library_log.
     file and the output from per_library_stats.py and genereates summary data for both."
 script_info['script_usage'] = [("Example","This is an example usage", "python summarize_seqs_otus.py -s 123")]
 script_info['output_description']= "There is no output from the script. It directly updates the Qiime database with the found results."
-script_info['required_options'] = [make_option('-p','--prodessed_data_dir', help='The processed data directory')]
+script_info['required_options'] = [make_option('-p','--processed_data_dir', help='The processed data directory')]
 script_info['optional_options'] = [\
     make_option('-d','--debug', action='store_true', help='Specifies that verbose debug output should be displayed.',default=True)
 ]
