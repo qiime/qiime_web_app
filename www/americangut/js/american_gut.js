@@ -182,6 +182,8 @@ function updateAnimalPlant() {
 
 /* number validation for percentage fields */
 function validatePercentage(item_id) {
+	if(isNaN(document.getElementById(item_id).value))
+		document.getElementById(item_id).value = 0
 	if(document.getElementById(item_id).value < 0)
 		document.getElementById(item_id).value = 0
 	else if(document.getElementById(item_id).value > 100)
