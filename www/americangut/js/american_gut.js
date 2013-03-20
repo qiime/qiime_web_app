@@ -365,7 +365,6 @@ function verifyHelpRequest() {
 
 /*clear empty boxes for survey3*/
 function validateSurvey3() {
-	button_clicked = true;
     for(var i = 0; i < document.survey_3.length; i++) 
     {	
 		if(document.survey_3[i].type == 'text')
@@ -381,7 +380,7 @@ function validateSurvey3() {
 function validateNumber(evt) {
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
-  if(theEvent.keyCode == 8)
+  if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
   	return
   key = String.fromCharCode( key );
   var regex = /[0-9]|\./;
