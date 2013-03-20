@@ -1,16 +1,68 @@
 <%
 from utils.psp_utils import format_submit_form_to_fusebox_string
 
-query = ("select participant_name from ag_human_survey where ag_login_id = "
-    "'%s' and participant_name = '%s'" % (sess['user_data']['web_app_user_id'],
-    form['participant_name']))
+deceased_parent_checkbox_checked = form.get('deceased_parent', None)
 
+# check if the participant already exists
+query = """select participant_name
+from ag_human_survey
+where ag_login_id = '{0}'
+and participant_name = '{1}'""".format(sess['user_data']['web_app_user_id'],
+        form['participant_name'])
 participant_collision = ag_data_access.dynamicMetadataSelect(query).fetchone()
 
+# check if the participant is on the exceptions list
+query = """select participant_name from ag_bruce_waynes
+where ag_login_id = '{0}'
+and participant_name = '{1}'""".format(sess['user_data']['web_app_user_id'],
+    form['participant_name'])
+is_exception = ag_data_access.dynamicMetadataSelect(query).fetchone()
+
+# if the user already exists, stop them outright
 if participant_collision:
     req.write(format_submit_form_to_fusebox_string(page="portal.psp",
         message='Participant %s already exists!' % form['participant_name']))
-#ENDIF
+
+# if they did not check the deceased parent checkbox, but there is an
+# exception for that participant name, then prevent them from continuing
+if form.get('is_7_to_13', 'off') == 'off' and is_exception:
+    req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+        message='We are expecting a survey from that juvenile user (%s)' %
+        form['participant_name']))
+
+if form.get('is_7_to_13', 'off') == 'on':
+    # if they aren't already an exception, we need to verify them
+    if not is_exception:
+        alert_message = ('Thank you for your interest in this study. We will '
+            'contact you within 24 hours to confirm your participation!')
+
+        SUBJECT = """AGJUVENILE: %s (ag_login_id: %s) is a child""" % \
+            (form['participant_name'], ag_login_id)
+
+        MESSAGE = """Contact: %s
+        --------------------------------------------------------------------------------
+        Message:
+        This participant is a child, the person filling out the survey for them
+        needs to provide proof of consent. Email them for proof.
+
+        Parent/Guardian 1: %s
+        Parent/Guardian 2: %s
+        Deceased: %s
+        --------------------------------------------------------------------------------
+        """ % (form['participant_name'], form['parent_1_name'],
+               form['parent_2_name'], form.get('deceased_parent', 'off'))
+
+        try:
+            send_email(MESSAGE, SUBJECT)
+        except:
+            alert_message=("There was a problem with your submission, "
+                'Please contact us directly at '
+                '<a href=&quot;mailto:info@americangut.org&quot;>'
+                'info@americangut.org</a>')
+
+        req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+            message=alert_message))
+#ENDIF/ELSE (show the page if they have not been barred from continuing)
 %>
 
 <div id="content" class="content">
