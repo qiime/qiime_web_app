@@ -57,9 +57,7 @@ for f in form:
 		req.write(str(e) + '<br/>\n')
 
 # default message to display upon redirect to portal
-message=("%s successfully added as a participant! If you have not "
-    "already done so, please confirm your identity and kit barcodes. "
-    "Then, you may assign samples to participants." % participant_name)
+message=("%s successfully added as a participant! " % participant_name)
 
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox_string(page='portal.psp', message=message))
