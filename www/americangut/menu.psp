@@ -88,8 +88,8 @@ for p in participants:
             </ul>
         </li>
         <div class="menu_separator"></div>
-        <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
-        <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
+        <li><a href="http://www.indiegogo.com/projects/american-gut" target="_blank"><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
+        <li><a href="http://americangut.org" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
         <li><a href="fusebox.psp?page=help_request.psp"><img class="icon" src="/qiime/img/mail_icon.png">Contact us</a></li>
         <li><a href="logout.psp"><img class="icon" src="/qiime/img/logout_icon.png">Log out</a></li>
 	</ul>
