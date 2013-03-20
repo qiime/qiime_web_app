@@ -34,8 +34,9 @@ if form.get('is_7_to_13', 'off') == 'off' and is_exception:
 if form.get('is_7_to_13', 'off') == 'on':
     # if they aren't already an exception, we need to verify them
     if not is_exception:
-        alert_message = ('Thank you for your interest in this study. We will '
-            'contact you within 24 hours to confirm your participation!')
+        alert_message = ('Thank you for your interest in this study. Because '
+            'of your status as a minor, we will contact you within 24 hours '
+            'to verify parent/guardian consent.')
 
         SUBJECT = """AGJUVENILE: %s (ag_login_id: %s) is a child""" % \
             (form['participant_name'], ag_login_id)
