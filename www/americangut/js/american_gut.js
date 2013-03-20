@@ -334,6 +334,12 @@ function verifyHelpRequest() {
         valid = false;
 	}
 	
+	if(document.help_request.message_body.value == "")
+	{
+        document.help_request.message_body.className += " highlight";
+        valid = false;
+	}
+	
     if(!valid) 
 	{
         return;
