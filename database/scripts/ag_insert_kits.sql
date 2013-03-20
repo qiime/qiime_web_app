@@ -66,7 +66,7 @@ begin
         on (dual.dummy is not null and barcode = r.barcode)
         when not matched then
             insert (ag_kit_id, barcode, sample_barcode_file, sample_barcode_file_md5)
-            values (ag_kit_id_, r.barcode, r.sample_barcode_file, r.sample_barcode_file_md5);
+            values (ag_kit_id_, r.barcode, r.sample_barcode_file, '');
         
         --dbms_output.put_line(ag_kit_id_);
         
