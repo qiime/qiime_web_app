@@ -13,8 +13,6 @@ for f in form:
         req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
 # End for
 %>
-
-
                     <table id="survey" width="100%">
                     <colgroup>
                            <col span="1" style="width: 50%;">
@@ -100,16 +98,16 @@ for f in form:
                         <tr>
                             <td>Have you had your tonsils removed?</td>
                             <td>
-                                <div id="tonsils_removed" name="tonsils_removed">
+                                <div id="tonsils_removed">
                                     <input tabindex="5" type="radio" id="tonsils_removed_yes" name="tonsils_removed" value="yes"/><label for="tonsils_removed_yes">Yes</label>
-                                    <input tabindex="6" type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no"/><label for="tonsils_removed_no">No</label>
+                                    <input tabindex="5" type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no"/><label for="tonsils_removed_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Have you had your appendix removed?</td>
                             <td>
-                                <div id="appendix_removed" name="appendix_removed">
+                                <div id="appendix_removed">
                                     <input tabindex="7" type="radio" id="appendix_removed_yes" name="appendix_removed" value="yes"/><label for="appendix_removed_yes">Yes</label>
                                     <input tabindex="8" type="radio" id="appendix_removed_no" name="appendix_removed" value="no"/><label for="appendix_removed_no">No</label>
                                 </div>
@@ -118,7 +116,7 @@ for f in form:
                         <tr>
                             <td>Have you had chickenpox?</td>
                             <td>
-                                <div id="chickenpox" name="chickenpox">
+                                <div id="chickenpox">
                                     <input tabindex="9" type="radio" id="chickenpox_yes" name="chickenpox" value="yes"/><label for="chickenpox_yes">Yes</label>
                                     <input tabindex="10" type="radio" id="chickenpox_no" name="chickenpox" value="no"/><label for="chickenpox_no">No</label>
                                 </div>
@@ -127,7 +125,7 @@ for f in form:
                         <tr>
                             <td>Do you currently take prescription medication for facial acne?</td>
                             <td>
-                                <div id="acne_medication" name="acne_medication">
+                                <div id="acne_medication">
                                     <input tabindex="11" type="radio" id="acne_medication_yes" name="acne_medication" value="yes"/><label for="acne_medication_yes">Yes</label>
                                     <input tabindex="12" type="radio" id="acne_medication_no" name="acne_medication" value="no"/><label for="acne_medication_no">No</label>
                                 </div>
@@ -136,7 +134,7 @@ for f in form:
                         <tr>
                             <td>Do you use over the counter products to control facial acne?</td>
                             <td>
-                                <div id="acne_medication_otc" name="acne_medication_otc">
+                                <div id="acne_medication_otc">
                                     <input tabindex="13" type="radio" id="acne_medication_otc_yes" name="acne_medication_otc" value="yes"/><label for="acne_medication_otc_yes">Yes</label>
                                     <input tabindex="14" type="radio" id="acne_medication_otc_no" name="acne_medication_otc" value="no"/><label for="acne_medication_otc_no">No</label>
                                 </div>
@@ -145,7 +143,7 @@ for f in form:
                         <tr>
                             <td>Do you currently take over the counter or prescription medication for other conditions?</td>
                             <td>
-                                <div id="conditions_medication" name="conditions_medication">
+                                <div id="conditions_medication">
                                     <input tabindex="15" type="radio" id="conditions_medication_yes" name="conditions_medication" value="yes"/><label for="conditions_medication_yes">Yes</label>
                                     <input tabindex="16" type="radio" id="conditions_medication_no" name="conditions_medication" value="no"/><label for="conditions_medication_no">No</label>
                                 </div>
@@ -154,7 +152,7 @@ for f in form:
                         <tr>
                             <td>Were you born via cesarean section (C-section)?</td>
                             <td>
-                                <div id="csection" name="csection">
+                                <div id="csection">
                                     <input tabindex="17" type="radio" id="csection_yes" name="csection" value="yes"/><label for="csection_yes">Yes</label>
                                     <input tabindex="18" type="radio" id="csection_no" name="csection" value="no"/><label for="csection_no">No</label>
                                     <input tabindex="19" type="radio" id="csection_notsure" name="csection" value="not_sure"/><label for="csection_notsure">Not sure</label>
@@ -164,7 +162,7 @@ for f in form:
                         <tr>
                             <td>Do you have phenylketonuria (PKU)?</td>
                             <td>
-                                <div id="pku" name="pku">
+                                <div id="pku">
                                     <input tabindex="20" type="radio" id="pku_yes" name="pku" value="yes"/><label for="pku_yes">Yes</label>
                                     <input tabindex="21" type="radio" id="pku_no" name="pku" value="no"/><label for="pku_no">No</label>
                                 </div>
@@ -173,7 +171,7 @@ for f in form:
                         <tr>
                             <td>Do you have asthma?</td>
                             <td>
-                                <div id="asthma" name="asthma">
+                                <div id="asthma">
                                     <input tabindex="22" type="radio" id="asthma_yes" name="asthma" value="yes"/><label for="asthma_yes">Yes</label>
                                     <input tabindex="23" type="radio" id="asthma_no" name="asthma" value="no"/><label for="asthma_no">No</label>
                                 </div>
@@ -182,7 +180,7 @@ for f in form:
                         <tr>
                             <td>Do you have seasonal allergies?</td>
                             <td>
-                                <div id="seasonal_allergies" name="seasonal_allergies">
+                                <div id="seasonal_allergies">
                                     <input tabindex="24" type="radio" id="seasonal_allergies_yes" name="seasonal_allergies" value="yes"/><label for="seasonal_allergies_yes">Yes</label>
                                     <input tabindex="25" type="radio" id="seasonal_allergies_no" name="seasonal_allergies" value="no"/><label for="seasonal_allergies_no">No</label>
                                 </div>
@@ -241,7 +239,7 @@ for f in form:
                         <tr>
                             <td>Do you suffer from migraines?</td>
                             <td>
-                                <div id="migraine" name="migraine">
+                                <div id="migraine">
                                     <input tabindex="35" type="radio" id="migraine_yes" name="migraine" value="yes"/><label for="migraine_yes">Yes</label>
                                     <input tabindex="36" type="radio" id="migraine_no" name="migraine" value="no"/><label for="migraine_no">No</label>
                                 </div>
@@ -262,8 +260,7 @@ for f in form:
     <br />
     <div id="progressbar"></div>
     <script>
-      $(function() {
-          $( "#nails" ).buttonset();
+     $(document).ready(function() {
           $( "#tonsils_removed" ).buttonset();
           $( "#appendix_removed" ).buttonset();
           $( "#chickenpox" ).buttonset();
@@ -275,6 +272,8 @@ for f in form:
           $( "#asthma" ).buttonset();
           $( "#seasonal_allergies" ).buttonset();
           $( "#migraine" ).buttonset();
+      });
+      $(function() {
         $( "#progressbar" ).progressbar({
           value: 55
         });
