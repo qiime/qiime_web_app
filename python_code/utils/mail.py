@@ -36,5 +36,5 @@ def send_email(message, subject, recipient=TO_EMAIL):
     # Send the message via our own SMTP server, but don't include the
     # envelope header.
     s = smtplib.SMTP('localhost')
-    s.sendmail(FROM_EMAIL, [TO_EMAIL], msg.as_string())
+    s.sendmail(FROM_EMAIL, [recipient], msg.as_string())
     s.quit()
