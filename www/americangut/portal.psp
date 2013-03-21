@@ -33,13 +33,32 @@ if message:
     (as a percentage of your total intake) as well as some info on types of food. So, use a tool 
     that allows you to enter as much detail as possible.
     </p>
-    <a href="fusebox.psp?page=new_participant.psp" class="big_button">
-        <div class="big_button_div left wforty">
+    
+    <div class="left wforty">
+        <div class="big_button_div">
             <p class="big_button_text">
-                Add new participants
+                You can add samples to participants using the menu on the left!
             </p>
-            <img src="img/big_participant.png"/>
+            <img src="img/samples.png"/>
         </div>
-    </a>
+        <a href="fusebox.psp?page=new_participant.psp" class="big_button">
+            <div class="big_button_div">
+                <p class="big_button_text">
+                    Add new participants
+                </p>
+                <img src="img/big_participant.png"/>
+            </div>
+        </a>
+    </div>
+    <div class="big_button_div right wfifty">
+        <p class="big_button_text">
+        <ul class="next_steps">
+            <li>Once you've successfully added all of your participants and logged all of your samples, you should send the tubes back to us in the preaddressed envelope.</li>
+            <li>We will then do sequencing which can take up to 6 months, please be patient! We will let you know as soon as your samples have been sequenced and analyzed.</li>
+            <li>You'll be able to view your results here on this website once they are available.</li>
+        </ul>
+        </p>
+        <img src="img/next_steps.png"/>
+    </div>
 </div>
 </div>
