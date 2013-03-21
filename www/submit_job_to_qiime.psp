@@ -75,7 +75,13 @@ def validate():
         return 1
     else:
         message += "All run prefixes are valid.<br/>"
-        try:        
+        try:
+            # Clean up the synchronization files before submitting 
+            if exists(cleanup_in_progress):
+                remove(cleanup_in_progress)
+            if exists(cleanup_complete):
+                remove(cleanup_complete)
+        
             # Submit the jobs
             submitJobsToQiime(study_id, user_id, mapping_file_dir, process_only, submit_to_test_db)
     
