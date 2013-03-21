@@ -92,6 +92,14 @@ input.smaller_text {
 	width: 50px;
 }
 
+ul.next_steps {
+	padding-right: 1em;
+}
+
+ul.next_steps li {
+	padding-bottom: 1em;
+}
+
 ul.sample_list {
 	list-style-type: none;
 	padding-left: 1em;
@@ -210,9 +218,18 @@ div#verification a {
 }
 
 div.big_button_div {
+	padding: 1em;
 	margin: 2em;
 	border-radius: 10px;
 	background-color: #fafafa;
+}
+
+div.wthirtyfive {
+	width: 30%;
+}
+
+div.wthirty {
+	width: 30%;
 }
 
 div.wforty {
