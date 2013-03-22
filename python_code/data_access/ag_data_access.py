@@ -171,3 +171,19 @@ class AGDataAccess(object):
         """Set the KIT_VERIFIED for the supplied_kit_id to 'y'"""
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_verify_kit_status', [supplied_kit_id])
+
+
+    def getMapMarkers(self):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        markers = []
+        con.cursor().callproc('ag_get_map_markers', [results])
+        for row in results:
+            # zipcode, latitude, longitude, marker_color
+            markers.append((row[0], row[1], row[2], row[3]))
+
+        return markers
+
+
+
+
