@@ -202,78 +202,9 @@ req.write('var latlongs_db = [')
 result_list=[]
 public_studies = data_access.getUserAndPublicStudyNames(12169, 1, portal_type)
 
-statement = """
-select  'zip: ' || z.zipcode, z.latitude, z.longitude,
-        case
-            -- First case: all samples entered for kit (complete), meaning
-            -- count of barcodes = count of barcodes filled out:
-            when
-            (
-                select  count(*)
-                from    ag_kit_barcodes akb
-                        inner join ag_kit ak
-                        on akb.ag_kit_id = ak.ag_kit_id
-                where   ak.ag_login_id = agl.ag_login_id
-            ) =
-            (
-                select  count(*)
-                from    ag_kit_barcodes akb
-                        inner join ag_kit ak
-                        on akb.ag_kit_id = ak.ag_kit_id
-                where   ak.ag_login_id = agl.ag_login_id
-                        and akb.site_sampled is not null
-            ) 
-            then '00FF00'
-            -- Second case: Kit has been verified:
-            when 
-            (
-                select  count(*)
-                from    ag_kit ak
-                where   ak.ag_login_id = agl.ag_login_id
-                        and kit_verified = 'y'
-            ) > 0 then 'FFFF00'
-            -- Otherwise, kit not verified yet:
-            else '00B2FF'
-        end as marker_color,
-        case
-            -- First case: all samples entered for kit (complete), meaning
-            -- count of barcodes = count of barcodes filled out:
-            when
-            (
-                select  count(*)
-                from    ag_kit_barcodes akb
-                        inner join ag_kit ak
-                        on akb.ag_kit_id = ak.ag_kit_id
-                where   ak.ag_login_id = agl.ag_login_id
-            ) =
-            (
-                select  count(*)
-                from    ag_kit_barcodes akb
-                        inner join ag_kit ak
-                        on akb.ag_kit_id = ak.ag_kit_id
-                where   ak.ag_login_id = agl.ag_login_id
-                        and akb.site_sampled is not null
-            ) then 0
-            -- Second case: Kit has been verified:
-            when 
-            (
-                select  count(*)
-                from    ag_kit ak
-                where   ak.ag_login_id = agl.ag_login_id
-                        and kit_verified = 'y'
-            ) > 0 
-            then 1
-            -- Otherwise, kit not verified yet:
-            else 2
-        end as order_by
-from    ag_login agl
-        inner join zipcodes z
-        on agl.zip = z.zipcode
-order by order_by
-"""
-
-con = data_access.getMetadataDatabaseConnection()
-results = con.cursor().execute(statement)
+# Get the map markers
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+results = ag_data_access.getMapMarkers()
 
 for i, val in enumerate(results):
     if val[0] and val[1] and val[2]:
