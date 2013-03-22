@@ -1,0 +1,189 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
+
+# Data Access
+data_access = data_access_factory(ServerConfig.data_access_type)
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+
+# Set variables
+zoom_level = 4
+
+# center of US
+center_lat = 39.83389
+center_long = -99.89150999999998
+
+# our lab
+#center_lat = 49.26123
+#center_long = -123.1139299
+
+# Tiny or regular markers
+tiny_markers = False
+
+# Session variables
+sess = Session.Session(req)
+sess.save()
+%>
+
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<meta charset="utf-8">
+<title>EMP Soil Map</title>
+
+<link rel="stylesheet" type="text/css" href="/qiime/americangut/style/americangut.css">
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+
+<script type="text/javascript"> 
+function initialize() 
+{
+    var mapOptions = 
+    {
+<%
+req.write('zoom: {0},'.format(zoom_level))
+req.write('center: new google.maps.LatLng({0},{1}),'.format(center_lat, center_long))
+# End if
+%>        
+        scrollwheel: false,
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
+        mapTypeControl: false,
+        streetViewControl: false,
+        panControl: false
+    };
+
+
+    var stylez = [
+        {
+          featureType: "all",
+          elementType: "all",
+          stylers: [
+            { saturation: -100 } // <-- THIS
+          ]
+        }
+    ];
+
+    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+    var mapType = new google.maps.StyledMapType(stylez, { name:"Grayscale" });    
+    map.mapTypes.set('tehgrayz', mapType);
+    map.setMapTypeId('tehgrayz');
+
+    setMarkers(map, latlongs_db);
+}
+
+function setMarkers(map, locations) 
+{
+    for (var i = 0; i < locations.length; i++) 
+    {
+        var loc = locations[i];
+        var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
+        
+<%
+if tiny_markers:
+    # Indent
+%>        
+        var marker = new google.maps.Marker({
+          position:myLatLng,
+          map: map,
+          clickable: false,
+          size:(10, 10),
+          color:"00ff00",
+          icon:'/qiime/img/blue_tiny.png'
+        });
+<%
+else:
+    # Indent
+%>
+        var pinColor = loc[4];
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=glyphish_compass|" + pinColor,
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+        var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+            new google.maps.Size(40, 37),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 35));
+
+        var marker = new google.maps.Marker({
+            position: myLatLng, 
+            map: map,
+            icon: pinImage,
+            shadow: pinShadow
+        });
+
+<%
+# End if
+%>
+
+        
+    }
+}
+</script>
+
+<%
+# Write out the database of points
+req.write('<script type="text/javascript">')
+req.write('var latlongs_db = [')
+
+result_list=[]
+
+statement = """
+select  st.project_name, sa.latitude, sa.longitude, '22FF22'
+from    study st
+        inner join sample sa
+        on st.study_id = sa.study_id
+        inner join sequence_prep sp
+        on sa.sample_id = sp.sample_id
+where   sa.latitude is not null
+        and sa.longitude is not null
+        and sa.country = 'GAZ:United States of America'
+        and st.portal_type = 'emp'
+        and exists
+        (
+            -- Make sure that we have sequences
+            select  1
+            from    sff.analysis a
+            where   st.study_id = a.study_id
+        )
+        and exists
+        (
+            -- Make sure it's a soil study
+            select  1
+            from    study_packages sp
+            where   st.study_id = sp.study_id
+                    and sp.env_package = 15
+        )
+"""
+
+con = data_access.getMetadataDatabaseConnection()
+results = con.cursor().execute(statement)
+
+for i, val in enumerate(results):
+    if val[0] and val[1] and val[2]:
+        study_alias = str(val[0]).replace("'", "\\'")
+        result_list.append("\n['{0}',{1},{2},{3},'{4}']".format(study_alias, val[1], val[2], str(i+1), val[3]))
+
+req.write('%s];' % ','.join(result_list))
+req.write('window.onload=initialize;</script>')
+%>
+
+</head>
+
+<body>
+
+    <div style="width:100%; height:100%; background-color:#000;">
+        <div id="map_canvas" style="width:100%; height:100%; opacity:0.9;"></div>
+    </div>
+
+</body>
+</html>
