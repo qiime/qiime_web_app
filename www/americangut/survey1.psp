@@ -32,19 +32,7 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Birth date</td>
-                            <td><input tabindex="2" type="text" name="birth_date" id="birth_date" readonly="readonly"/></td>
-                            <script>
-                              $(function() {
-                                $( "#birth_date" ).datepicker({
-                                        yearRange: "-120:+0",
-                                        changeMonth: true,
-                                        changeYear: true,
-                                        onSelect: function(dateText, inst) {
-                                            $(this).focus();
-                                        }
-                                });
-                              });
-                            </script>
+                            <td><input tabindex="2" type="date" name="birth_date" id="birth_date" /></td>
                         </tr>
                         <tr>
                             <td>Gender</td>

@@ -46,36 +46,14 @@ for barcode in barcodes:
                 </tr>
                 <tr>
                     <td>Date</td>
-                    <td><input tabindex="3" type="text" name="sample_date" id="sample_date" class="small_text" readonly="readonly"/></td>
-                    <script>
-                      $(function() {
-                        $( "#sample_date" ).datepicker({
-                                changeMonth: true,
-                                minDate:'-1m',
-                                maxDate: '+0m',
-                                onSelect: function(dateText, inst) {
-                                    $(this).focus();
-                                }
-                        });
-                      });
-                    </script>
+                    <td><input tabindex="3" type="date" name="sample_date" id="sample_date" /></td>
                 </tr>
                 <tr>
                     <td>Time</td>
                     <td>
-                        <input tabindex="4" type="text" id="sample_time" name="sample_time" readonly="readonly" class="small_text" />
+                        <input tabindex="4" type="time" id="sample_time" name="sample_time" />
                     </td>
-                    <script>
-                      $(function() {
-                        $( "#sample_time" ).timepicker({
-                            showPeriod: true,
-                            showLeadingZero: true,
-                            onSelect: function(dateText, inst) {
-                                $(this).focus();
-                            }
-                        });
-                      });
-                    </script>
+
                 </tr>
             </table>
             </div>
