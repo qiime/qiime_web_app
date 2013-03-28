@@ -207,7 +207,7 @@ for f in form:
                             <td>
                                 <select tabindex="32" name="ibd" id="ibd">
                                     <option value="">Select an option</option>
-                                    <option>Chrohn's disease</option>
+                                    <option>Crohn's disease</option>
                                     <option>Ulcerative colitis</option>
                                     <option>I do not have IBD</option>
                                 </select>
