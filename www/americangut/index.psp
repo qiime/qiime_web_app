@@ -17,17 +17,6 @@ import os
 from enums import FieldGrouping
 from qiime.parse import parse_mapping_file
 
-
-# Set variables
-zoom_level = 4
-
-# center of US
-center_lat = 39.83389
-center_long = -99.89150999999998
-
-# our lab
-#center_lat = 49.26123
-#center_long = -123.1139299
 tiny_markers = False
 portal_type = 'americangut'
 
@@ -49,8 +38,6 @@ sess['resources']['barcode_images_fp'] = os.path.join('img', 'barcodes')
 
 sess.set_timeout(604800)
 sess.save()
-
-
 %>
 
 <!DOCTYPE html>
@@ -109,15 +96,12 @@ function toggleSection(section_name)
     }
 }
 
-function initialize() 
+function drawMap(zoom_level, position)
 {
     var mapOptions = 
     {
-<%
-req.write('zoom: {0},'.format(zoom_level))
-req.write('center: new google.maps.LatLng({0},{1}),'.format(center_lat, center_long))
-# End if
-%>        
+        zoom: zoom_level,
+        center: position,
         scrollwheel: false,
         mapTypeId: google.maps.MapTypeId.TERRAIN,
         mapTypeControl: false,
@@ -143,6 +127,32 @@ req.write('center: new google.maps.LatLng({0},{1}),'.format(center_lat, center_l
     map.setMapTypeId('tehgrayz');
 
     setMarkers(map, latlongs_db);
+}
+
+function renderLocalizedMap(position)
+{
+    p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    zoom_level = 7;
+    drawMap(zoom_level, p);
+}
+
+function renderMap()
+{
+    p = new google.maps.LatLng(39.83, -99.89);
+    zoom_level = 4;
+    drawMap(zoom_level, p);
+}
+
+function initialize() 
+{    
+    if (navigator.geolocation)
+    {
+        navigator.geolocation.getCurrentPosition(renderLocalizedMap, renderMap);
+    }
+    else
+    {
+        renderMap()
+    }
 }
 
 function setMarkers(map, locations) 
@@ -219,7 +229,7 @@ req.write('window.onload=initialize;</script>')
 
 <body>
     <div style="width:100%; height:100%; background-color:#000;">
-    <div id="map_canvas" style="width:100%; height:100%; opacity:0.7;"></div>
+    <div id="map_canvas" style="width:100%; height:100%; opacity:0.8;"></div>
     </div>
 
 	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; opacity:0.9;">
