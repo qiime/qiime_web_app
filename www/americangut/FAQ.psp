@@ -21,7 +21,7 @@
             	<ul class="menu">
 				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
-                <li><a href="http://microbio.me/AmericanGut/"><img class="icon" src="/qiime/img/login_icon.png">Participant Login</a></li>
+                <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Participant Login</a></li>
             	</ul>
             </div>
             <div class="content">
