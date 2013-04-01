@@ -35,7 +35,7 @@ if message:
     </p>
     
     <div class="left wforty">
-        <a href="fusebox.psp?page=new_participant.psp" class="big_button">
+        <a href="fusebox.psp?page=new_participant_overview.psp" class="big_button">
             <div class="big_button_div">
                 <p class="big_button_text">
                     If you're looking to add samples, start here!<br><br> You must first register a participant that represents the person being sampled.
