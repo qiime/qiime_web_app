@@ -64,12 +64,12 @@
                             <p>You need to follow the add participant workflow. Click on this button:</p>
                             <img src="img/add_participant.png">
                             <p>During this workflow you (or whomever is being sampled) will:</p>
-                            <ul>
+                            <ol>
                                 <li>Add a participant</li>
                                 <li>Provide electronic consent</li>
                                 <li>Answer survey questions (including the diet questions covered by the food diary)</li>
                                 <li>Upon completion, become eligible to log samples</li>
-                            </ul>
+                            </ol>
                             <p>When participants are eligible,  you will then see their name on the left menu, in this example we have just added the participant "Jane Doe":</p>
                             <img src="img/add_participant_menu.png"/>
                             <p>To add a sample to a participant, click the "Add sample" link underneath the participant's name</p>
