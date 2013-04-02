@@ -49,6 +49,42 @@ div.overview {
     margin-right: auto;
 }
 
+div.faq_wrapper {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+div.faq {
+	width: 80%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+	text-align: left;
+}
+
+div.faq_content {
+	margin-left: 2em;
+	font-size: 10pt;
+}
+
+div.login_wrapper {
+    width: 20%;
+    height: 20%;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+div.login {
+	width: 100%;
+    display: block;
+    margin-left: 2em;
+    margin-right: auto;
+}
+
 div.wrapper {
     width: 90%;
 }
@@ -90,6 +126,20 @@ input.small_text {
 
 input.smaller_text {
 	width: 50px;
+}
+
+ul.faq {
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+ul.faq li {
+	margin-left: 0px;
+	margin-top: 1em;
+}
+
+ul.faq li a {
+	text-decoration: none;
 }
 
 ul.next_steps {
@@ -143,6 +193,16 @@ ul.sample_list {
 
 .hidden {
 	display: none;
+}
+
+h3.faq_header {
+/*	background-color: #2f7a8c;*/
+}
+
+div.separator {
+	height: 10px;
+	border-bottom: 1px dotted #181f23;
+	width: 90%;
 }
 
 div.menu_separator {
@@ -270,11 +330,16 @@ p.note {
 }
 
 p.construction_text {
-	font-size: 18pt;
+	font-size: 22pt;
 }
 
 p.big_button_text {
 	font-size: 12pt;
+}
+
+p.ambig {
+	font-size: 18pt;
+	font-family: courier;
 }
 
 ol.construction {
