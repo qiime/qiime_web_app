@@ -85,6 +85,59 @@ class AGDataAccess(object):
         else:
             return False
 
+    def addAGLogin(self, email, name, address, city, state, zip, country):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_insert_login', [email, name, address, city, state, zip, country])
+
+    def updateAGLogin(self, ag_login_id, email, name, address, city, state, zip, country):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_update_login', [ag_login_id, email, name, address, city, state, zip, country])
+
+    def getAGLogins(self):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_logins', [results])
+        logins = []
+        for row in results:
+            # ag_login_id, email, name
+            logins.append((row[0], row[1], row[2]))
+
+        return logins
+
+    def getAGKitsByLogin(self):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_kits_by_login', [results])
+        kits = []
+        for row in results:
+            # ag_login_id, email, name
+            kits.append((row[0], row[1], row[2]))
+
+        return kits
+
+    def getAGBarcodes(self):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_barcodes', [results])
+        barcodes = []
+        for row in results:
+            # ag_login_id, email, name
+            barcodes.append((row[0]))
+
+        return barcodes
+
+    def reassignAGBarcode(self, ag_kit_id, barcode):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_reassign_barcode', [ag_kit_id, barcode])
+
+    def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code])
+
+    def addAGBarcode(self, ag_kit_id, barcode):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_insert_barcode', [ag_kit_id, barcode])
+
     def addAGHumanParticipant(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_add_participant', [ag_login_id, participant_name])
