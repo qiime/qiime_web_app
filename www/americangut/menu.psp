@@ -84,7 +84,7 @@ for p in participants:
 # End for
 %>
                 
-                <li><a href="fusebox.psp?page=new_participant.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
+                <li><a href="fusebox.psp?page=new_participant_overview.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
         </li>
         <div class="menu_separator"></div>

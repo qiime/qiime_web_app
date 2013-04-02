@@ -261,7 +261,7 @@ if form.has_key('username'):
         url = 'fusebox.psp?page=portal.psp'
         req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
     else:
-        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+        req.write("<p style='color:#FF0000;'>Invalid Kit ID/password.</p>")
 
 # end
 
