@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut Project</title>
+        <script src="js/jquery-1.9.1.js"></script>
+        <script src="js/jquery-ui-1.10.1.custom.min.js"></script>
+        <script src="js/jquery.ui.timepicker.js"></script>
+        <script src="js/american_gut.js"></script>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+        <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
+        <link rel="icon" type="image/ico" href="img/favicon.ico">
+    </head>
+    <body>
+		<div class="wrapper clearfix">
+	        <div class="header clearfix">
+	            <img id="logo" src="img/ag_logo.jpg">
+			</div>
+            <br>
+            <div class="left menuwrapper">
+            	<ul class="menu">
+				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
+				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
+                <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Participant Login</a></li>
+            	</ul>
+            </div>
+            <div class="content">
+            <h2>American Gut FAQ</h2>
+                <div class="faq_wrapper">
+                    <div class="faq">
+                        <br>
+                        <ul class="faq">
+                        <li><a href="#faq1">Is my password the same as my verification code?</a></li>
+                        <li><a href="#faq2">My password doesn't work!</a></li>
+                        <li><a href="#faq3">I'm logged in, what do I do now?</a></li>
+                        <li><a href="#faq4">Does it really take up to 6 months to get my results?</a></li>
+                        </ul>
+                        <br>
+                        <div class="separator"></div>
+                        <br>
+                        <h3 class="faq_header" id="faq1">Is my password the same as my verification code?</h3>
+                        <div class="faq_content">
+                            <p>No. Your <strong>password</strong> is printed on the sheet that you received with your kit in the mail. That sheet looks like this:</p><img src="img/creds_example.png"/><p>Your <strong>verification code</strong> is emailed to you.</p>
+                        </div>
+                        <div class="separator"></div>
+                        <h3 class="faq_header" id="faq2">My password doesn't work!</h3>
+                        <div class="faq_content">
+                            <p>The passwords have some ambiguous characters in them, so we have this guide to help you decipher which characters are in your password.</p>
+                            <p class="ambig">
+                            abcdefghijklmnopqrstuvwxyz<br>
+                            ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+                            1234567890<br>
+                            1 = the number 1<br>
+                            l = the letter l as in Lima<br>
+                            0 = the number 0<br>
+                            O = the letter O as in Oscar<br>
+                            g = the letter g as in golf<br>
+                            q = the letter q as in quebec
+                            </p>
+                        </div>
+                        <div class="separator"></div>
+                        <h3 class="faq_header" id="faq3">I'm logged in, what do I do now?</h3>
+                        <div class="faq_content">
+                            <p>You need to follow the add participant workflow. Click on this button:</p>
+                            <img src="img/add_participant.png">
+                            <p>During this workflow you (or whomever is being sampled) will:</p>
+                            <ol>
+                                <li>Add a participant</li>
+                                <li>Provide electronic consent</li>
+                                <li>Answer survey questions (including the diet questions covered by the food diary)</li>
+                                <li>Upon completion, become eligible to log samples</li>
+                            </ol>
+                            <p>When participants are eligible,  you will then see their name on the left menu, in this example we have just added the participant "Jane Doe":</p>
+                            <img src="img/add_participant_menu.png"/>
+                            <p>To add a sample to a participant, click the "Add sample" link underneath the participant's name</p>
+                            <img src="img/add_sample_highlight.png"/>
+                            <p>When adding a sample, please be sure to select the barcodes that matches the barcode on the sampling tube of the sample that you are logging</p>
+                            <img src="img/add_sample_overview.png"/>
+                        </div>
+                        <div class="separator"></div>
+                        <h3 class="faq_header" id="faq4">Does it really take up to 6 months to get my results?</h3>
+                        <div class="faq_content">
+                            <p>Yes. It takes about 8 weeks for extractions, 8 weeks for the remainder of the processing, and 2 weeks to do the actual sequencing. This is before any analysis and if everything goes as planned, with no delays - equipment down, run failures, reagents or other consumables back ordered. Things do sometimes go wrong, so we say up to 6 months.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</body>
+</html>

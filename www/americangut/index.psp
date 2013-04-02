@@ -241,6 +241,7 @@ req.write('window.onload=initialize;</script>')
 		<br>
 		<div class="left menuwrapper" style="width:100%;">
 			<ul class="menu">
+                <li><a href="FAQ.psp"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
 				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
 			</ul>
@@ -260,7 +261,7 @@ if form.has_key('username'):
         url = 'fusebox.psp?page=portal.psp'
         req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
     else:
-        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+        req.write("<p style='color:#FF0000;'>Invalid Kit ID/password.</p>")
 
 # end
 
