@@ -392,6 +392,43 @@ function validateSurvey3() {
     $('#survey_3').submit();
 }
 
+function validateSurvey1() {
+    for(var i = 0; i < document.survey_1.length; i++) 
+    {
+        document.survey_1[i].className = document.survey_1[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+	
+    var valid = true;
+ 
+ 	if(document.survey_1.height_in.value.search(/\d+/) == -1)
+	{
+		document.survey_1.height_in.className += " highlight"
+		valid = false;
+	}
+	
+ 	if(document.survey_1.height_cm.value.search(/\d+/) == -1)
+	{
+		document.survey_1.height_cm.className += " highlight"
+		valid = false;
+	}
+	
+ 	if(document.survey_1.weight_lbs.value.search(/\d+/) == -1)
+	{
+		document.survey_1.weight_lbs.className += " highlight"
+		valid = false;
+	}
+	
+ 	if(document.survey_1.weight_kg.value.search(/\d+/) == -1)
+	{
+		document.survey_1.weight_kg.className += " highlight"
+		valid = false;
+	}
+	
+	if(valid)
+		$('#survey_1').submit();
+ 
+}
+
 function validateText(evt) {
     var theEvent = evt || window.event;
     var key = theEvent.keyCode || theEvent.which;
