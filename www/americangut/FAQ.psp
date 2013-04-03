@@ -34,6 +34,8 @@
                         <li><a href="#faq2">My password doesn't work!</a></li>
                         <li><a href="#faq3">I'm logged in, what do I do now?</a></li>
                         <li><a href="#faq4">Does it really take up to 6 months to get my results?</a></li>
+                        <li><a href="#faq5">Why are there 2 swabs inside the tube?</a></li>
+                        <li><a href="#faq6">I have a 2+ sample kit, and would like to collect and send them in at different times...</a></li>
                         </ul>
                         <br>
                         <div class="separator"></div>
@@ -81,6 +83,25 @@
                         <h3 class="faq_header" id="faq4">Does it really take up to 6 months to get my results?</h3>
                         <div class="faq_content">
                             <p>Yes. It takes about 8 weeks for extractions, 8 weeks for the remainder of the processing, and 2 weeks to do the actual sequencing. This is before any analysis and if everything goes as planned, with no delays - equipment down, run failures, reagents or other consumables back ordered. Things do sometimes go wrong, so we say up to 6 months.</p>
+                        </div>
+                        <div class="separator"></div>
+                        <h3 class="faq_header" id="faq5">Why are there 2 swabs inside the tube?</h3>
+                        <div class="faq_content">
+                        <p>Each sampling tube contains two swabs and looks like this:</p>
+                        <img src="img/sample_barcode.jpg"/>
+                        <p>Each tube is used for <strong>one sample</strong>. The tube has two swabs in it because one is a backup in case the DNA does not amplify on the first swab.</p>
+                        <p>Here's a video of Rob Knight talking about swab handling:</p>
+                        <iframe src="http://player.vimeo.com/video/62393487" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/62393487">American Gut - Handling Your SWABS</a> from <a href="http://vimeo.com/user16100300">shelley schlender</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
+                        </div>
+                        <div class="separator"></div>
+                        <h3 class="faq_header" id="faq6">I have a 2+ sample kit, and would like to collect and send them in at different times...</h3>
+                        <div class="faq_content">
+                        <p>You have two options:</p>
+                        <ol>
+                            <li>Send us the samples as you collect them. We will put them on ice and take care of them until we can process them.</li>
+                            <li>Keep them in your freezer and send us all your samples at the same time. <strong>If you choose this option, please note that you should avoid repeated freeze/thaw cycles (i.e., once they're frozen, keep them frozen). This means that when you ship them (preferably overnight), you should keep them cold (e.g., with gel packs).</strong></li>
+                        </ol>
+                        <p>We recommend option 1 since there are fewer opportunities to make a mistake and you will get the best quality data out of your samples that way, but it does involve more postage. It's up to you!</p>
                         </div>
                     </div>
                 </div>
