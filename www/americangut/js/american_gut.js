@@ -231,7 +231,7 @@ function validateConsent()
         valid = false;
     }
 
-    if(document.consent_info.participant_email.value == "")
+    if(document.consent_info.participant_email.value == "" || !validateEmail(document.consent_info.participant_email.value))
     {
         document.consent_info.participant_email.className += " highlight";
         valid = false;
@@ -428,6 +428,12 @@ function validateSurvey1() {
 		$('#survey_1').submit();
  
 }
+
+/* from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript */
+function validateEmail(email) { 
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+} 
 
 function validateText(evt) {
     var theEvent = evt || window.event;
