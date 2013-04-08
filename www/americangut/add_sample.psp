@@ -1,6 +1,94 @@
 <%
-sample_type = form['sample_type']
-page = 'add_sample_{0}.psp'.format(sample_type)
-code = parse( page, sess['document_root'] )
-exec ( code )
+ag_login_id = sess['user_data']['web_app_user_id']
+participant_name = form['participant_name']
 %>
+
+<div id="content" class="content">
+<h2>Add a New Sample for <%=participant_name%></h2>
+
+<form id="add_sample" name="add_sample" method="post" action="sample_submit.psp">
+    <input type="hidden" name="participant_name" value="<%=participant_name%>"/>
+    <table width="100%">
+        <tr>
+        <td width="20%"></td>
+        <td>
+        <div class="lefta">
+            <table id="survey" width="100%">
+                <colgroup>
+                       <col span="1" style="width: 50%;">
+                       <col span="1" style="width: 50%;">
+                </colgroup>
+                <tr>
+                    <td>Choose the barcode from your kit that corresponds to the sample you are logging.</p>
+                    <p>It is very important that the sample barcode matches <strong>exactly</strong> for downstream analysis steps.</td>
+                    <td>
+                        <select tabindex="1" name="barcode" id="barcode">
+<%
+barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
+for barcode in barcodes:
+    req.write('<option>{0}</option>'.format(barcode))
+# end for
+%>                        
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Site sampled</td>
+                    <td>
+                        <select tabindex="2" name="sample_site" id="sample_site">
+                            <option>Stool</option>
+                            <option>Mouth</option>
+                            <option>Right hand</option>
+                            <option>Left hand</option>
+                            <option>Forehead</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td><input tabindex="3" type="text" name="sample_date" id="sample_date" class="small_text" readonly="readonly"/></td>
+                    <script>
+                      $(function() {
+                        $( "#sample_date" ).datepicker({
+                                changeMonth: true,
+                                minDate:'-1m',
+                                maxDate: '+0m',
+                                onSelect: function(dateText, inst) {
+                                    $(this).focus();
+                                }
+                        });
+                      });
+                    </script>
+                </tr>
+                <tr>
+                    <td>Time</td>
+                    <td>
+                        <input tabindex="4" type="text" id="sample_time" name="sample_time" readonly="readonly" class="small_text" />
+                    </td>
+                    <script>
+                      $(function() {
+                        $( "#sample_time" ).timepicker({
+                            showPeriod: true,
+                            showLeadingZero: true,
+                            onSelect: function(dateText, inst) {
+                                $(this).focus();
+                            }
+                        });
+                      });
+                    </script>
+                </tr>
+            </table>
+            </div>
+            <table id="survey" width="100%">
+                <tr>
+                    <td>
+                    <input type="button" value="Add Sample" onclick="verifyAddSample()">
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td width="20%"></td>
+        </tr>
+    </table>
+</form>
+
