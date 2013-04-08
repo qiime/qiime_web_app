@@ -210,7 +210,6 @@ req.write('<script type="text/javascript">')
 req.write('var latlongs_db = [')
 
 result_list=[]
-public_studies = data_access.getUserAndPublicStudyNames(12169, 1, portal_type)
 
 # Get the map markers
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
