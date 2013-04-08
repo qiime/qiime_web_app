@@ -10,8 +10,8 @@ _status_ = "Development"
 %>
 
 <div class="left menuwrapper">
-	<ul class="menu">
-		<li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
+    <ul class="menu">
+        <li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
         <div class="menu_separator"></div>
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants</li>
             <ul class="menu">
@@ -71,7 +71,7 @@ for p in participants:
             <input type="hidden" name="page" value="add_sample.psp"/>
             <input type="hidden" name="sample_type" value="general"/>
             <img class="icon" src="/qiime/img/add_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add General Sample</a>
+            <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Environmental Sample</a>
         </li>
     </form>
     """.format(p)
@@ -120,5 +120,5 @@ for p in participants:
         <li><a href="http://americangut.org" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
         <li><a href="fusebox.psp?page=help_request.psp"><img class="icon" src="/qiime/img/mail_icon.png">Contact us</a></li>
         <li><a href="logout.psp"><img class="icon" src="/qiime/img/logout_icon.png">Log out</a></li>
-	</ul>
+    </ul>
 </div>
