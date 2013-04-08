@@ -50,9 +50,10 @@ script_info['optional_options'] = [
 script_info['version'] = __version__
 
 # character sets for kit id, passwords and verification codes
-ALPHA = "abcdefghijklmnopqrstuvwxyz"
-ALPHA += ALPHA.upper()
-ALPHA_PASSWD = ALPHA + '123456789!@#$%^&*()'
+KIT_ALPHA = "abcdefghijklmnopqrstuvwxyz"
+KIT_ALPHA += KIT_ALPHA.upper()
+KIT_PASSWD = '1234567890'
+KIT_VERCODE = KIT_PASSWD
 
 # US abbreviations including territories
 US_STATES_TERRITORIES = {'delaware': 'DE', 
@@ -130,9 +131,9 @@ def get_used_kit_ids(cursor):
 
 def make_kit_id(obs_kit_ids, kit_id_length=5):
     """Generate a new unique kit id"""
-    kit_id = ''.join([choice(ALPHA) for i in range(kit_id_length)])
+    kit_id = ''.join([choice(KIT_ALPHA) for i in range(kit_id_length)])
     while kit_id in obs_kit_ids:
-        kit_id = ''.join([choice(ALPHA) for i in range(kit_id_length)])
+        kit_id = ''.join([choice(KIT_ALPHA) for i in range(kit_id_length)])
 
     obs_kit_ids.add(kit_id)
 
@@ -140,11 +141,11 @@ def make_kit_id(obs_kit_ids, kit_id_length=5):
 
 def make_passwd(passwd_length=8):
     """Generate a new password"""
-    return ''.join([choice(ALPHA_PASSWD) for i in range(passwd_length)])
+    return ''.join([choice(KIT_PASSWD) for i in range(passwd_length)])
 
 def make_verification_code(vercode_length=5):
     """Generate a verification code"""
-    return ''.join([choice(ALPHA) for i in range(vercode_length)])
+    return ''.join([choice(KIT_VERCODE) for i in range(vercode_length)])
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
