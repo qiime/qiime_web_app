@@ -39,39 +39,14 @@ for p in participants:
     </form>
     """.format(p)
 
-    add_human_sample_menu_item = \
+    add_sample_menu_item = \
     """
     <form action="fusebox.psp" method="post" id="add_sample_{0}">
         <li>
             <input type="hidden" name="page" value="add_sample.psp"/>
             <input type="hidden" name="participant_name" value="{0}"/>
-            <input type="hidden" name="sample_type" value="human"/>
             <img class="icon" src="/qiime/img/add_sample_icon.png"/>
             <a href="" onclick="document.forms['add_sample_{0}'].submit(); return false;">Add Sample</a>
-        </li>
-    </form>
-    """.format(p)
-
-    add_animal_sample_menu_item = \
-    """
-    <form action="fusebox.psp" method="post" id="add_sample_animal">
-        <li>
-            <input type="hidden" name="page" value="add_sample.psp"/>
-            <input type="hidden" name="sample_type" value="animal"/>
-            <img class="icon" src="/qiime/img/add_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_animal'].submit(); return false;">Add Animal Sample</a>
-        </li>
-    </form>
-    """.format(p)
-
-    add_general_sample_menu_item = \
-    """
-    <form action="fusebox.psp" method="post" id="add_sample_general">
-        <li>
-            <input type="hidden" name="page" value="add_sample.psp"/>
-            <input type="hidden" name="sample_type" value="general"/>
-            <img class="icon" src="/qiime/img/add_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add General Sample</a>
         </li>
     </form>
     """.format(p)
@@ -104,7 +79,7 @@ for p in participants:
     # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
     available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
     if len(available_barcodes) > 0:
-        req.write(add_human_sample_menu_item)
+        req.write(add_sample_menu_item)
     req.write('</ul>\n\n')
 # End for
 %>
@@ -112,8 +87,6 @@ for p in participants:
                 <li><a href="fusebox.psp?page=new_participant_overview.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
         </li>
-        <%=add_animal_sample_menu_item%>
-        <%=add_general_sample_menu_item%>
         <div class="menu_separator"></div>
         <li><a href="FAQ.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
         <li><a href="http://www.indiegogo.com/projects/american-gut" target="_blank"><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
