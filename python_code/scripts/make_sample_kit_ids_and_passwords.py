@@ -116,6 +116,14 @@ US_STATES_TERRITORIES = {'delaware': 'DE',
 US_ABBRV = set(US_STATES_TERRITORIES.values())
 US_NAMES = set(['united states', 'usa', 'us'])
 
+BASE_PRINTOUT_TEXT = """Thank you for participating in the American Gut Project! Below you will find your sample barcodes (the numbers that anonymously link your samples to you) and your login credentials. It is very important that you login before you begin any sample collection.
+
+Please login at: http://www.microbio.me/AmericanGut
+
+Thanks,
+The American Gut Project
+"""
+
 def verify_unique_sample_id(cursor, sample_id):
     """Verify that a sample ID does not already exist"""
     cursor.execute("select barcode from ag_kit_barcodes where barcode='%s'" % \
@@ -147,17 +155,45 @@ def make_verification_code(vercode_length=5):
     """Generate a verification code"""
     return ''.join([choice(KIT_VERCODE) for i in range(vercode_length)])
 
+def get_printout_data(kit_passwd_map, kit_barcode_map):
+    """Produce kit output text"""
+    text = []
+    for kit_id,passwd in kit_passwd_map:
+        text.append(BASE_PRINTOUT_TEXT)
+        barcodes = kit_barcode_map[kit_id]
+
+        padding_lines = 5
+
+        if len(barcodes) > 5:
+            text.append("Sample Barcodes:\t%s" % ', '.join(barcodes[:5]))
+            for i in range(len(barcodes))[5::5]:
+                padding_lines -= 1
+                text.append("\t\t\t%s" % ', '.join(barcodes[i:i+5]))
+        else:
+            text.append("Sample Barcodes:\t%s" % ', '.join(barcodes))
+
+        text.append("Kit ID:\t\t%s" % kit_id)
+        text.append("Password:\t\t%s" % passwd)
+
+        # padding between sheets so they print pretty
+        for i in range(padding_lines):
+            text.append('')
+
+    return text
+
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
 
     mapping_lines = [l.strip().split('\t') for l in open(opts.input, 'U')]
 
+    # build up new header
     outlines = [mapping_lines[0][:]]
     outlines[0].insert(0, '#SampleID')
     outlines[0].append('KIT_ID')
     outlines[0].append('KIT_PASSWORD')
     outlines[0].append('KIT_VERIFICATION_CODE')
 
+    # get columns for the fields we care about
     index_lookup = map(lower, mapping_lines[0])
     EMAIL_IDX = index_lookup.index('email')
     NAME_IDX = index_lookup.index('name')
@@ -166,6 +202,7 @@ def main():
     SWABS_IDX = index_lookup.index('swabs')
     COUNTRY_IDX = index_lookup.index('country')
 
+    # verify columns exist
     if EMAIL_IDX == -1:
         print "Cannot find email column!"
         exit(1)
@@ -196,6 +233,8 @@ def main():
     cursor = con.cursor()
     existing_kit_ids = get_used_kit_ids(cursor)
 
+    kit_barcode_map = {}
+    kit_passwd_map = []
     current_sample_id = opts.starting_sample
     for l in mapping_lines[1:]:
         entry = l[:]
@@ -237,7 +276,10 @@ def main():
         entry.append(kit_id)
         entry.append(passwd)
         entry.append(vercode)
-        
+        kit_barcode_map[kit_id] = []
+        kit_passwd_map.append((kit_id, passwd))
+
+        # add on the samples per kit
         for sample in range(number_of_samples):
             sample_id = "%0.9d" % current_sample_id
 
@@ -246,13 +288,19 @@ def main():
 
             with_sample = entry[:]
             with_sample.insert(0, sample_id)
-            
             outlines.append(with_sample)
+
+            kit_barcode_map[kit_id].append(sample_id)
 
             current_sample_id += 1
 
     f = open(opts.output,'w')
     f.write('\n'.join(['\t'.join(l) for l in outlines]))
+    f.write('\n')
+    f.close()
+
+    f = open(opts.output + '.printouts', 'w')
+    f.write('\n'.join(get_printout_data(kit_passwd_map, kit_barcode_map)))
     f.write('\n')
     f.close()
 
