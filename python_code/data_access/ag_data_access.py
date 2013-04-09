@@ -17,6 +17,9 @@ from crypt import crypt
 from threading import Lock
 from time import sleep
 import csv
+import httplib
+import json
+import urllib
 
 class AGDataAccess(object):
     """
@@ -228,6 +231,32 @@ class AGDataAccess(object):
 
     def getMapMarkers(self):
         con = self.getMetadataDatabaseConnection()
+
+        # 2 part process: First, determine if there are any logins that do not have lat/long
+        # and have not been geocoded. Look those up and write data to DB. If it can't be
+        # geocoded, also write that fact to DB so we don't look it up again.
+
+        sql = 'select city, state, zip, country, cast(ag_login_id as varchar2(100)) from ag_login where latitude is null and cannot_geocode is null'
+        logins = self.dynamicMetadataSelect(sql)
+
+        for row in logins:
+            ag_login_id = row[4]
+            # Attempt to geocode
+            address = '{0} {1} {2} {3}'.format(row[0], row[1], row[2], row[3])
+            encoded_address = urllib.urlencode({'address': address})
+            url = '/maps/api/geocode/json?{0}&sensor=false'.format(encoded_address)
+
+            r = self.getGeocodeJSON(url)
+
+            if not r:
+                # Could not geocode, mark it so we don't try next time
+                self.updateGeoInfo(ag_login_id, '', '', 'y')
+                continue
+
+            # Unpack it and write to DB
+            lat, lon = r
+            self.updateGeoInfo(ag_login_id, lat, lon, '')
+
         results = con.cursor()
         markers = []
         con.cursor().callproc('ag_get_map_markers', [results])
@@ -237,6 +266,30 @@ class AGDataAccess(object):
 
         return markers
 
+    def getGeocodeJSON(self, url):
+        conn = httplib.HTTPConnection('maps.googleapis.com')
+        conn.request('GET', url)
+        result = conn.getresponse()
+
+        # Make sure we get an 'OK' status
+        if result.status != 200:
+            return False
+
+        data = json.loads(result.read())
+        conn.close()
+
+        try:
+            lat = data['results'][0]['geometry']['location']['lat']
+            lon = data['results'][0]['geometry']['location']['lng']
+        except:
+            # Unexpected format - not the data we want
+            return False
+
+        return (lat, lon)
+        
+    def updateGeoInfo(self, ag_login_id, lat, lon, cannot_geocode):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_update_geo_info', [ag_login_id, lat, lon, cannot_geocode])        
 
 
 

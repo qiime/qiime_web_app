@@ -8,10 +8,8 @@ begin
     -- Highest priority: completed
     insert  into ag_map_markers
             (zipcode, latitude, longitude, marker_color, order_by)
-    select  z.zipcode, z.latitude, z.longitude, '00FF00', 0
+    select  agl.zip, agl.latitude, agl.longitude, '00FF00', 0
     from    ag_login agl
-            inner join zipcodes z
-            on agl.zip = z.zipcode
     where   (
                 select  count(*)
                 from    ag_kit_barcodes akb
@@ -31,17 +29,15 @@ begin
     -- Second priority: verified
     insert  into ag_map_markers
             (zipcode, latitude, longitude, marker_color, order_by)
-    select  z.zipcode, z.latitude, z.longitude, 'FFFF00', 1
+    select  agl.zip, agl.latitude, agl.longitude, 'FFFF00', 1
     from    ag_login agl
-            inner join zipcodes z
-            on agl.zip = z.zipcode
     where   (
                 select  count(*)
                 from    ag_kit ak
                 where   ak.ag_login_id = agl.ag_login_id
                         and kit_verified = 'y'
             ) > 0
-            and zipcode not in
+            and agl.zip not in
             (
                 select  zipcode
                 from    ag_map_markers
@@ -50,11 +46,9 @@ begin
     -- Finally, existing participants
     insert  into ag_map_markers
             (zipcode, latitude, longitude, marker_color, order_by)
-    select  z.zipcode, z.latitude, z.longitude, '00B2FF', 2
+    select  agl.zip, agl.latitude, agl.longitude, '00B2FF', 2
     from    ag_login agl
-            inner join zipcodes z
-            on agl.zip = z.zipcode
-    where   zipcode not in
+    where   agl.zip not in
             (
                 select  zipcode
                 from    ag_map_markers
