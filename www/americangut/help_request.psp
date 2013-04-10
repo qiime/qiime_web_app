@@ -17,10 +17,11 @@ from utils.psp_utils import format_submit_form_to_fusebox_string
 
 form_dict = dict(form)
 email_address = form_dict.get('email_address', None)
+supplied_kit_id = sess['supplied_kit_id']
 
 if email_address:
-    SUBJECT = """AGHELP: %s %s""" % (form_dict['first_name'],
-        form_dict['last_name'])
+    SUBJECT = """AGHELP: %s %s %s""" % (form_dict['first_name'],
+        form_dict['last_name'], supplied_kit_id[-2:])
 
     MESSAGE = """Contact: %s %s
     Reply to: %s
