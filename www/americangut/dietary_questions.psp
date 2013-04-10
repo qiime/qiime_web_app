@@ -116,6 +116,7 @@ for f in form:
         </table>
     </div>
     <br />
+    <input type="button" id="reset6" name="reset6" value="Reset" onclick="reset('dietary_questions')">
     <input tabindex="11" type="submit" value="Continue" id="submit6" name="submit6">
     <input type="hidden" id="page" name="page" value="optional_questions.psp">
     </form>
