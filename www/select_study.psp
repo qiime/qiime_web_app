@@ -31,11 +31,15 @@ if portal_type == 'qiime' or portal_type == 'emp':
                 Get Study Summary and Raw Data</a>
             </form>
         </li>
+    </ul>
         
 <%
 # End indent
 
 %>
+    <br>
+    <b>Study Management Options (only your studies):</b>
+    <ul>
         
         <li>
             <form id="create_new_study" action="fusebox.psp" method="post">
