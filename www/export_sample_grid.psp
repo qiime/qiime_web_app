@@ -16,7 +16,7 @@ study_dir = sess['study_dir']
 sample_details = data_access.getSampleDetailList(study_id)
 
 headers = ('sample_name', 'sample_id', 'public', 'collection_date', 
-	'run_prefix', 'sequence_count', 'otu_count', 'otu_percent_hit')
+	'run_prefix', 'sequence_count', 'num_seqs_assigned_to_otu', 'percent_seqs_assigned_to_otu')
 grid_data = export_grid(sample_details, headers)
 
 unique_identifier = str(datetime.now())
