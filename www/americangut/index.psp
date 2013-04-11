@@ -241,7 +241,7 @@ req.write('window.onload=initialize;</script>')
 		<div class="left menuwrapper" style="width:100%;">
 			<ul class="menu">
                 <li><a href="FAQ.psp"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
-				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
+				<li><a href="http://humanfoodproject.com/americangut/"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
 			</ul>
 
@@ -288,6 +288,20 @@ if form.has_key('username'):
         </div>
         <!-- End login form div -->
 
+    </div>
+    <div>
+    &nbsp;
+    <br />
+    </div>
+    <div class="left menuheader">
+    <p>Map Key</p>
+    </div>
+    <div class="left keywrapper" style="width:100%;">
+    <ul class="key">
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00B2FF"/> Participant</li>
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00ff00"/> Sample(s) Logged</li>
+    </ul>
     </div>
 
 <%@ include file="footer.psp"%>
