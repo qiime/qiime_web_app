@@ -25,10 +25,15 @@
             	</ul>
             </div>
             <div class="content">
-            <h2>American Gut FAQ</h2>
+            <h2>American Gut FAQ</h2>            
                 <div class="faq_wrapper">
                     <div class="faq">
+                        <div class="separator"></div>
+                        <h3>Watch this helpful video about what to do once you've received your kit!</h3>
+                        <iframe src="http://player.vimeo.com/video/63542787" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/63542787">American Gut - Steps to Follow When Your Kit Arrives</a> from <a href="http://vimeo.com/user16100300">shelley schlender</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
+                        <div class="separator"></div>
                         <br>
+                        <h3>If you're still experiencing issues, look for your problem in the FAQ below</h3>
                         <ul class="faq">
                         <li><a href="#faq1">Is my password the same as my verification code?</a></li>
                         <li><a href="#faq2">My password doesn't work!</a></li>
