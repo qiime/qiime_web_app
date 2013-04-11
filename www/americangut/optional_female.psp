@@ -32,7 +32,7 @@
     </colgroup>
         <tr>
             <td>When is your due date?</td>
-            <td><input tabindex="5" type="text" id="pregnant_due_date" name="pregnant_due_date" readonly="readonly" /></td>             
+            <td><input tabindex="5" type="text" id="pregnant_due_date" name="pregnant_due_date" />  mm/dd/yyyy</td>             
         </tr>
     </table>
 </div>
