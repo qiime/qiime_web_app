@@ -400,25 +400,25 @@ function validateSurvey1() {
 	
     var valid = true;
  
- 	if(document.survey_1.height_in.value.search(/\d+/) == -1)
+	if(document.survey_1.height_in.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.height_in.className += " highlight"
 		valid = false;
 	}
 	
- 	if(document.survey_1.height_cm.value.search(/\d+/) == -1)
+ 	if(document.survey_1.height_cm.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.height_cm.className += " highlight"
 		valid = false;
 	}
 	
- 	if(document.survey_1.weight_lbs.value.search(/\d+/) == -1)
+ 	if(document.survey_1.weight_lbs.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.weight_lbs.className += " highlight"
 		valid = false;
 	}
 	
- 	if(document.survey_1.weight_kg.value.search(/\d+/) == -1)
+ 	if(document.survey_1.weight_kg.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.weight_kg.className += " highlight"
 		valid = false;
