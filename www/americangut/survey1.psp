@@ -86,7 +86,7 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Current ZIP code</td>
-                            <td><input tabindex="7" type="text" name="zip_code" id="zip_code" onkeypress='validateNumber(event)'/></td>
+                            <td><input tabindex="7" type="text" name="zip_code" id="zip_code" /></td>
                         </tr>
                     </table>
                 
