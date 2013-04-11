@@ -190,8 +190,8 @@ else:
         req.write('<tr>\
             <th colspan="4">Downloads</th>\
             <th align="left">Total Sequence Count</th>\
-            <th align="left">Total OTU Count</th>\
-            <th align="left">Avg % OTU Hit</th>\
+            <th align="left">Total Number of Seqs<br/> Assigned to an OTU</th>\
+            <th align="left">Avg % OTU Assignment</th>\
             </tr>')
         req.write('<tr>\
             <td colspan="4"><a href="export_sample_grid.psp" target="_blank">Sample Grid</a></td>\
@@ -206,8 +206,8 @@ else:
             <th align="left">Collection Date</th>\
             <th align="left">Run Prefix</th>\
             <th align="left">Sequence Count</th>\
-            <th align="left">OTU Count</th>\
-            <th align="left">% OTU Hit</th>')
+            <th align="left">Number of Seqs Assigned<br/> to an OTU</th>\
+            <th align="left">% OTU Assignment</th>')
     else:
         req.write('<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>\
             <th align="left">Run Prefix</th>')
