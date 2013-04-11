@@ -33,9 +33,10 @@ for barcode in barcodes:
                     </td>
                 </tr>
                 <tr>
-                    <td>Site sampled</td>
+                    <td>Site Sampled</td>
                     <td>
                         <select tabindex="2" name="sample_site" id="sample_site">
+                            <option selected>Please select...</option>
                             <option>Stool</option>
                             <option>Mouth</option>
                             <option>Right hand</option>
@@ -76,6 +77,12 @@ for barcode in barcodes:
                         });
                       });
                     </script>
+                </tr>
+                <tr>
+                    <td>Additional Notes (optional)</td>
+                    <td>
+                        <input tabindex="4" type="text" id="notes" name="notes" class="small_text"  style="width:300px;"/>
+                    </td>
                 </tr>
             </table>
             </div>

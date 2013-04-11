@@ -188,9 +188,9 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_delete_survey_answer', [ag_login_id, participant_name])
 
-    def logParticipantSample(self, barcode, sample_site, sample_date, sample_time, participant_name):
+    def logParticipantSample(self, barcode, sample_site, environment_sampled, sample_date, sample_time, participant_name, notes):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_log_participant_sample', [barcode, sample_site, sample_date, sample_time, participant_name])
+        con.cursor().callproc('ag_log_participant_sample', [barcode, sample_site, environment_sampled, sample_date, sample_time, participant_name, notes])
 
     def deleteSample(self, barcode, ag_login_id):
         """
