@@ -508,7 +508,7 @@ function kgToLbs() {
 	if(isNaN(cur_lbs)) { /* update if there isn't a value */
 		if(!isNaN(kg))
 	    	document.getElementById('weight_lbs').value = pounds.toFixed(0)
-	} else if(Math.abs(pounds - cur_lbs) > .5) { /* update if the value is reasonably changed */
+	} else if(Math.abs(pounds - cur_lbs) > 3) { /* update if the value is reasonably changed */
 	    document.getElementById('weight_lbs').value = pounds.toFixed(0)
 	} else {}
 }
