@@ -241,7 +241,7 @@ req.write('window.onload=initialize;</script>')
 		<div class="left menuwrapper" style="width:100%;">
 			<ul class="menu">
                 <li><a href="FAQ.psp"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
-				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
+				<li><a href="http://humanfoodproject.com/americangut/"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
 			</ul>
 
@@ -278,7 +278,7 @@ if form.has_key('username'):
                             	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
                             	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
                             	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
-                                <tr><td colspan="2"><a href="mailto:americangut@gmail.com?subject=AGLOGINHELP&body=Please%20add%20your%20KitID%20and%20any%20other%20relevant%20information" class="small_link">I'm having trouble logging in...</a></td></tr>
+                                <tr><td colspan="2"><a href="mailto:americangut@gmail.com?subject=AGLOGINHELP&body=Please%20include%20the%20last%20two%20digits%20of%20your%20Kit%20ID" class="small_link">I'm having trouble logging in...</a></td></tr>
                             </table>
                         </form>
                     </td>
@@ -288,6 +288,20 @@ if form.has_key('username'):
         </div>
         <!-- End login form div -->
 
+    </div>
+    <div>
+    &nbsp;
+    <br />
+    </div>
+    <div class="left menuheader">
+    <p>Map Key</p>
+    </div>
+    <div class="left keywrapper" style="width:100%;">
+    <ul class="key">
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00B2FF"/> Participant</li>
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00ff00"/> Sample(s) Logged</li>
+    </ul>
     </div>
 
 <%@ include file="footer.psp"%>

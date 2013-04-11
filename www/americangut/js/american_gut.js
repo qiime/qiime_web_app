@@ -274,12 +274,12 @@ function verifyAddSample() {
 	
     var valid = true;
 	
-    if(document.add_sample.sample_date.value == "")
+    if(document.add_sample.sample_date.value == "" || !isValidDate(document.add_sample.sample_date.value))
     {
         document.add_sample.sample_date.className += " highlight";
         valid = false;
     }
-    if(document.add_sample.sample_time.value == "")
+    if(document.add_sample.sample_time.value == "" || validateHhMm(document.add_sample.sample_time.value))
     {
         document.add_sample.sample_time.className += " highlight";
         valid = false;
@@ -400,25 +400,25 @@ function validateSurvey1() {
 	
     var valid = true;
  
- 	if(document.survey_1.height_in.value.search(/\d+/) == -1)
+	if(document.survey_1.height_in.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.height_in.className += " highlight"
 		valid = false;
 	}
 	
- 	if(document.survey_1.height_cm.value.search(/\d+/) == -1)
+ 	if(document.survey_1.height_cm.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.height_cm.className += " highlight"
 		valid = false;
 	}
 	
- 	if(document.survey_1.weight_lbs.value.search(/\d+/) == -1)
+ 	if(document.survey_1.weight_lbs.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.weight_lbs.className += " highlight"
 		valid = false;
 	}
 	
- 	if(document.survey_1.weight_kg.value.search(/\d+/) == -1)
+ 	if(document.survey_1.weight_kg.value.replace(/[0-9]/g,"").length > 0)
 	{
 		document.survey_1.weight_kg.className += " highlight"
 		valid = false;
@@ -451,6 +451,7 @@ function validateText(evt) {
 function validateNumber(evt) {
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
+  //say what these keys are
   if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
   	return
   key = String.fromCharCode( key );
@@ -460,6 +461,28 @@ function validateNumber(evt) {
     if(theEvent.preventDefault) theEvent.preventDefault();
   }
 }
+
+/* input field date validation from http://stackoverflow.com/questions/276479/javascript-how-to-validate-dates-in-format-mm-dd-yyyy
+*/
+function isValidDate(date)
+{
+    var matches = /^(\d{2})[-\/](\d{2})[-\/](\d{4})$/.exec(date);
+    if (matches == null) return false;
+    var d = matches[2];
+    var m = matches[1] - 1;
+    var y = matches[3];
+    var composedDate = new Date(y, m, d);
+    return composedDate.getDate() == d &&
+            composedDate.getMonth() == m &&
+            composedDate.getFullYear() == y;
+}
+
+/* input field time validation modified from
+http://stackoverflow.com/questions/5563028/how-to-validate-with-javascript-an-input-text-with-hours-and-minutes
+*/
+function validateHhMm(inputField) {
+        return /(?:[0-1]?[0-9]|[2][1-4]):[0-5]?[0-9]:[0-5]?[0-9]\s?(?:am|pm)?/.test(this.value);
+    }
 
 function inToCm() {
 	var cur_cm = parseFloat(document.getElementById('height_cm').value)
@@ -508,7 +531,7 @@ function kgToLbs() {
 	if(isNaN(cur_lbs)) { /* update if there isn't a value */
 		if(!isNaN(kg))
 	    	document.getElementById('weight_lbs').value = pounds.toFixed(0)
-	} else if(Math.abs(pounds - cur_lbs) > .5) { /* update if the value is reasonably changed */
+	} else if(Math.abs(pounds - cur_lbs) > 3) { /* update if the value is reasonably changed */
 	    document.getElementById('weight_lbs').value = pounds.toFixed(0)
 	} else {}
 }

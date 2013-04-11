@@ -32,7 +32,7 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Birth date</td>
-                            <td><input tabindex="2" type="text" name="birth_date" id="birth_date" readonly="readonly"/></td>
+                            <td><input tabindex="2" type="text" name="birth_date" id="birth_date" /> mm/dd/yyyy</td>
                             <script>
                               $(function() {
                                 $( "#birth_date" ).datepicker({
@@ -86,7 +86,7 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Current ZIP code</td>
-                            <td><input tabindex="7" type="text" name="zip_code" id="zip_code" onkeypress='validateNumber(event)'/></td>
+                            <td><input tabindex="7" type="text" name="zip_code" id="zip_code" /></td>
                         </tr>
                     </table>
                 
