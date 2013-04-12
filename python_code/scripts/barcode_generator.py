@@ -34,12 +34,10 @@ def get_barcode(id_, attempts=20, sleep_duration=2):
         try:
             data = urllib.urlopen(URL % id_)
         except Exception, e:
-            print e
             attempts -= 1
             continue
 
         if data.code != 200:
-            print "Received error code: %s" % str(data.code)
             attempts -= 1
             if sleep_duration is not None:
                 sleep_duration += 10
@@ -48,11 +46,13 @@ def get_barcode(id_, attempts=20, sleep_duration=2):
         barcode = Image.open(StringIO(data.read()))
 
         if barcode.size != (202, 100):
-            print "Received image sized: %s" % str(barcode.size)
             if sleep_duration is not None:
                 sleep_duration += 10
             attempts -= 1
             continue
+
+    if barcode.size != (202, 100):
+        raise ValueError, "Failed despite attempts!"
 
     if barcode is None:
         raise ValueError, "Unable to obtain barcode!"
