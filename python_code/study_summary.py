@@ -105,3 +105,69 @@ def print_study_info_and_values_table(query_results, data_access):
     
     return ''.join(info_table)
     
+def get_sample_summary_html(study_id, data_access):
+    out_string = ''
+
+    sample_details = data_access.getSampleDetailList(study_id)
+    # Determine if we should write the seq and otu counts
+    write_seq_otu_cols = True
+    # This is the first sequence count field in the record. If None assume data
+    # does not yet exist for samples in general
+    if sample_details:
+        if sample_details[0][5] == None:
+            write_seq_otu_cols = False
+    else:
+        return ''
+
+    # List all samples names here
+    out_string += '<table width="100%">\n'
+    if write_seq_otu_cols:
+        # Figure out averages 
+        total_seqs = sum(map(lambda x: x[5], sample_details))
+        otu_pct_assign = sum(map(lambda x: x[6], sample_details))
+        # 2 steps to average
+        avg_otu_pct_assign = map(lambda x: x[7], sample_details)
+        avg_otu_pct_assign = round(float(sum(avg_otu_pct_assign)) / float(len(avg_otu_pct_assign)), 1)
+
+        out_string += '''<tr>
+            <th colspan="4">Downloads</th>
+            <th align="left">Total Sequence Count</th>
+            <th align="left">Total Number of Seqs<br/> Assigned to an OTU</th>
+            <th align="left">Avg % OTU Assignment</th>
+            </tr>\n'''
+        out_string += '''<tr>
+            <td colspan="4"><a href="export_sample_grid.psp?study_id={0}" target="_blank">Sample Grid</a></td>
+            <td align="left">{1}</td>
+            <td align="left">{2}</td>
+            <td align="left">{3}%</td>
+            </tr>\n'''.format(study_id, total_seqs, otu_pct_assign, avg_otu_pct_assign)
+        out_string += '<tr><td colspan="7"/></tr>\n'
+
+        out_string += '''<th align="left">Sample Name</th>
+            <th align="left">Public</th>
+            <th align="left">Collection Date</th>
+            <th align="left">Run Prefix</th>
+            <th align="left">Sequence Count</th>
+            <th align="left">Number of Seqs Assigned<br/> to an OTU</th>
+            <th align="left">% OTU Assignment</th>\n'''
+    else:
+        out_string += '''<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>
+            <th align="left">Run Prefix</th>\n'''
+
+    for sample_name, sample_id, public, collection_date, run_prefix,\
+        sequence_count, otu_count, otu_percent_hit in sample_details:
+
+        if otu_count == None:
+            otu_count = 0
+        if otu_percent_hit == None:
+            otu_percent_hit = 0
+        if write_seq_otu_cols:
+            out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s%%</td></tr>\n' % \
+                (sample_name, public, collection_date, run_prefix, sequence_count, otu_count, round(otu_percent_hit, 1))
+        else:
+            out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n' % \
+                (sample_name, public, collection_date, run_prefix)
+
+    out_string += '</table>\n'
+
+    return out_string
