@@ -73,14 +73,14 @@ This form contains the input box for the list of studies.
         <td>
         <form onsubmit="return false;">
 
-            <select id="box1View" multiple="multiple" style="height:200px;">
+            <select id="box1View" size=2 style="height:200px;"
+            onchange="showStudySummary(this.id)">
                 <!-- Using psp, generate a list of studies -->
 <%
 #write out the list of public studies
 for i in public_studies:
-    req.write("<option id='"+str(i[0])+'_'+str(i[1])+" value='"+str(i[1])+\
-        "' onclick=\"showResult(\'metadata_left_col\',this.id,this.value)\">"+\
-        str(i[1])+"</option>\n")
+    req.write("<option id='"+str(i[0])+'_'+str(i[1])+"' value='"+str(i[1])+\
+        "'> "+ str(i[1])+"</option>\n")
 #
 %>
             </select>

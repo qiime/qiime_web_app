@@ -21,9 +21,11 @@ var xmlhttp
         3) the input box id
         4) the txt box below input id
 */
-function showResult(input_textbox,column_id,column_value)
+function showStudySummary(select_box_id)
 {
-    select_box_id=document.getElementById(column_id).parentNode.id
+    select_box=document.getElementById(select_box_id)
+    selected_item_id = select_box.options[select_box.selectedIndex].id
+    study_name=select_box.options[select_box.selectedIndex].value
 
     xmlhttp=GetXmlHttpObject()
     
@@ -36,11 +38,7 @@ function showResult(input_textbox,column_id,column_value)
     // Reset the table while loading
     document.getElementById('field_ref_table').innerHTML = "Loading...";
     
-    col_split_1=column_id.split('_');
-    study_id=col_split_1[0];
-
-    study_name=column_value
-
+    study_id=selected_item_id.split('_')[0]
 
     //generate a url string where we pass our variables
     var url="study_summary/study_reference_lookup.psp";
