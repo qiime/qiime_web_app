@@ -29,15 +29,15 @@ remove_sample_item = \
     <div class="overview">
             <table class="list" id="survey" width="100%">
                 <tr>
-                    <td>Sample site</td>
+                    <td style="width: 150px;">Sample Site</td>
                     <td><%=site_sampled%></td>
                 </tr>
                 <tr>
-                    <td>Sample date</td>
+                    <td>Sample Date</td>
                     <td><%=sample_date%></td>
                 </tr>
                 <tr>
-                    <td>Sample time</td>
+                    <td>Sample Time</td>
                     <td><%=sample_time%></td>
                 </tr>
                 <tr>

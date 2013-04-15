@@ -39,11 +39,11 @@ div.overview_wrapper {
     height: 100%;
     margin: 0;
     padding: 0;
-    text-align: center;
+    text-align: left;
 }
 
 div.overview {
-	width: 40%;
+	width: 90%;
     display: block;
     margin-left: auto;
     margin-right: auto;
