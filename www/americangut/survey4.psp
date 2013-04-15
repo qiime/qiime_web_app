@@ -182,7 +182,7 @@ for f in form:
         </table>
     </div>
     <br />
-    <input type="button" id="reset4" name="reset4" value="Reset" onclick="reset('survey_4')">
+    <input type="button" value="Reset" onclick="reset('survey_4')">
     <input tabindex="17" type="submit" id="submit4" name="submit4" value="Continue">
     <input type="hidden" id="page" name="page" value="survey5.psp">
     </form>
