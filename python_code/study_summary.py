@@ -136,7 +136,10 @@ def get_sample_summary_html(study_id, data_access):
             <th align="left">Avg % OTU Assignment</th>
             </tr>\n'''
         out_string += '''<tr>
-            <td colspan="4"><a href="export_sample_grid.psp?study_id={0}" target="_blank">Sample Grid</a></td>
+            <td colspan="4">
+            <a href="export_sample_grid.psp?study_id={0}" target="_blank">Sample Grid</a><br/>
+            <a href="export_histograms.psp?study_id={0}" target="_blank">Histograms</a>
+            </td>
             <td align="left">{1}</td>
             <td align="left">{2}</td>
             <td align="left">{3}%</td>
