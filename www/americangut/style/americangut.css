@@ -109,10 +109,11 @@ div.header {
 
 div.menuwrapper {
 	border-radius: 10px;
-	min-width: 270px;
+	min-width: 230px;
 	height: 100%;
 	background-color: #fff;
-	text-align: left;	
+	text-align: left;
+	margin-right: 5px;	
 }
 
 div.menuheader {

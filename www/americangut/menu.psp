@@ -72,7 +72,7 @@ for p in participants:
             <input type="hidden" name="page" value="add_sample.psp"/>
             <input type="hidden" name="sample_type" value="general"/>
             <img class="icon" src="/qiime/img/add_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Environmental Sample</a>
+            <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Sample</a>
         </li>
     </form>
     """.format(p)
@@ -106,27 +106,52 @@ for p in participants:
     if len(available_barcodes) > 0:
         req.write(add_sample_menu_item)
     req.write('</ul>\n\n')
+
 # End for
 %>
                 
                 <li><a href="fusebox.psp?page=new_participant_overview.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
 
+
+
+
+
+
             <li><img class="icon" src="/qiime/img/participants_icon.png">Non-Human Samples</li>
-            <ul>
+                <ul class="menu">
+                    <li><img class="icon" src="/qiime/img/add_sample_icon.png"/>Environmental</li>
+                    <ul class="menu">
+
 <%
-barcodes = ag_data_access.getParticipantSamples(ag_login_id, p)
+barcodes = ag_data_access.getEnvironmentalSamples(ag_login_id)
+for barcode in barcodes:
+    sample_menu_item = \
+    """
+    <form action="fusebox.psp" method="post" id="sample_overview_{0}">
+        <li>
+            <input type="hidden" name="page" value="sample_overview.psp"/>
+            <input type="hidden" name="barcode" value="{0}"/>
+            <img class="icon" src="/qiime/img/sample_icon.png"/>
+            <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">{0}</a>
+        </li>
+    </form>
+    """.format(barcode['barcode'])
+
+    req.write(sample_menu_item)
+
+# End for
 %>
 
 <%
 if len(available_barcodes) > 0:
     # Indent
 %>            
-                <!--<%=add_animal_sample_menu_item%>-->
                 <%=add_general_sample_menu_item%>
 <%
 # End if
 %>
+                    </ul>
             </ul>
 
         </li>

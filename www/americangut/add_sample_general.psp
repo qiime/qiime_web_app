@@ -39,6 +39,7 @@ for barcode in barcodes:
                             <option>Biofilm</option>
                             <option>Dust</option>
                             <option>Food</option>
+                            <option>Fermented Food</option>
                             <option>Indoor Surface</option>
                             <option>Outdoor Surface</option>
                             <option>Plant habitat</option>
