@@ -5,6 +5,7 @@ from subprocess import Popen, PIPE, STDOUT
 from enums import ServerConfig
 from data_access_connections import data_access_factory
 from enums import ServerConfig
+from utils.psp_utils import tab_delim_lines_to_table
 
 def parse_log_file(log_path, start_lines):
     """ Parses one of several log files produced in the qiime pipeline. Returns 
@@ -121,6 +122,12 @@ def summarize_all_stats(processed_dir):
 
     # Return all of the results
     return processed_results
+
+def histograms_as_html_table(processed_dir):
+    """
+    """
+    histograms_fp = join(processed_dir, 'split_libraries', 'histograms.txt')
+    return tab_delim_lines_to_table(open(histograms_fp).readlines())
 
 def submit_mapping_to_database(processed_results, debug=True):
     data_access = data_access_factory(ServerConfig.data_access_type)
