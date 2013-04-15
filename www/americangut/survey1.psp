@@ -96,6 +96,7 @@ for c in d:
         </table>
     </div>
     <br />
+    <input type="button" value="Reset" onclick="reset('survey_1')">
     <input tabindex="8" type="button" id="submit1" name="submit1" value="Continue" onclick="validateSurvey1()">
     <input type="hidden" id="page" name="page" value="survey2.psp">
     </form>
