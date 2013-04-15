@@ -71,7 +71,7 @@ for p in participants:
         <li>
             <input type="hidden" name="page" value="add_sample.psp"/>
             <input type="hidden" name="sample_type" value="general"/>
-            <img class="icon" src="/qiime/img/add_sample_icon.png"/>
+            <img class="icon" src="/qiime/img/environmental_icon.png"/>
             <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Sample</a>
         </li>
     </form>
@@ -118,9 +118,9 @@ for p in participants:
 
 
 
-            <li><img class="icon" src="/qiime/img/participants_icon.png">Non-Human Samples</li>
+            <li><img class="icon" src="/qiime/img/non_human_icon.png">Non-Human Samples</li>
                 <ul class="menu">
-                    <li><img class="icon" src="/qiime/img/add_sample_icon.png"/>Environmental</li>
+                    <li><img class="icon" src="/qiime/img/environmental_overview_icon.png"/>Environmental</li>
                     <ul class="menu">
 
 <%
