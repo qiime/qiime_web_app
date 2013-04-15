@@ -10,7 +10,7 @@ import gzip
 sess = Session.Session(req)
 data_access = data_access_factory(ServerConfig.data_access_type)
 
-study_id = sess.get('study_id', form['study_id'])
+study_id = sess.get('study_id', form.get('study_id', ''))
 
 sample_details = data_access.getSampleDetailList(study_id)
 
