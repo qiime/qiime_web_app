@@ -39,11 +39,11 @@ div.overview_wrapper {
     height: 100%;
     margin: 0;
     padding: 0;
-    text-align: center;
+    text-align: left;
 }
 
 div.overview {
-	width: 40%;
+	width: 90%;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -109,10 +109,36 @@ div.header {
 
 div.menuwrapper {
 	border-radius: 10px;
-	min-width: 210px;
+	min-width: 230px;
 	height: 100%;
 	background-color: #fff;
 	text-align: left;
+	margin-right: 5px;	
+}
+
+div.menuheader {
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+/*	min-width: 210px;*/
+	height: 100%;
+	background-color: #081833;
+	text-align: center;
+	color: #fff;
+}
+
+div.menuheader p {
+	margin: .5em;
+}
+
+
+div.keywrapper {
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+	border-top-right-radius: 10px;
+	min-width: 210px;
+	height: 100%;
+	background-color: #fff;
+	text-align: left;	
 }
 
 div.footer {
@@ -153,6 +179,20 @@ ul.next_steps li {
 ul.sample_list {
 	list-style-type: none;
 	padding-left: 1em;
+}
+
+ul.key {
+	list-style-type: none;
+	padding-left: 1em;
+}
+
+ul.key li {
+	padding-bottom: 1em;
+}
+
+ul.key li img {
+	height: 20px;
+	padding-right: 2em;
 }
 
 .sample_list li {
