@@ -117,7 +117,7 @@ def get_sample_summary_html(study_id, data_access):
         if sample_details[0][5] == None:
             write_seq_otu_cols = False
     else:
-        return ''
+        return 'This study has not yet been processed.'
 
     # List all samples names here
     out_string += '<table width="100%">\n'
