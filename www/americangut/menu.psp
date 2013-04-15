@@ -65,18 +65,6 @@ for p in participants:
     </form>
     """.format(p)
 
-    add_general_sample_menu_item = \
-    """
-    <form action="fusebox.psp" method="post" id="add_sample_general">
-        <li>
-            <input type="hidden" name="page" value="add_sample.psp"/>
-            <input type="hidden" name="sample_type" value="general"/>
-            <img class="icon" src="/qiime/img/environmental_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Sample</a>
-        </li>
-    </form>
-    """.format(p)
-
     # Write out the participant menu item
     req.write(participant_menu_item)
 
@@ -144,6 +132,18 @@ for barcode in barcodes:
 %>
 
 <%
+add_general_sample_menu_item = \
+"""
+<form action="fusebox.psp" method="post" id="add_sample_general">
+    <li>
+        <input type="hidden" name="page" value="add_sample.psp"/>
+        <input type="hidden" name="sample_type" value="general"/>
+        <img class="icon" src="/qiime/img/environmental_icon.png"/>
+        <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Sample</a>
+    </li>
+</form>
+"""
+
 if len(available_barcodes) > 0:
     # Indent
 %>            
