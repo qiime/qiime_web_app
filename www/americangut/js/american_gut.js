@@ -535,3 +535,7 @@ function kgToLbs() {
 	    document.getElementById('weight_lbs').value = pounds.toFixed(0)
 	} else {}
 }
+
+function reset(formID) {
+	document.getElementById(formID).reset();
+}

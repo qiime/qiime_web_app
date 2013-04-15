@@ -74,6 +74,7 @@ if(v != 0):
         </table>
     </div>
     <br />
+    <input type="button" value="Reset" onclick="reset('optional_questions')">
     <input tabindex="29" type="submit" value="Continue" id="submit7" name="submit7">
     <input type="hidden" id="page" name="page" value="survey_end.psp">
     </form>
