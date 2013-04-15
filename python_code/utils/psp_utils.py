@@ -25,3 +25,28 @@ def format_submit_form_to_fusebox_string(**kwargs):
     ''' % form_name
 
     return return_string
+
+def tab_delim_lines_to_table(lines, **kwargs):
+    """Convert tab-delimited lines into an HTML table
+
+    input: lines is a list of lines
+    **kwargs: table properties that will be inserted directly into the HTML
+    <table> tag
+
+    will skip lines beginning with a pound sign (#)
+    """
+    table_opts = ' '.join('%s=%s' % (k,v) for (k,v) in kwargs.items())
+    table_str = '<table ' + table_opts + '>\n'
+
+    for line in lines:
+        if line[0] == '#':
+            continue
+        table_str += '<tr>\n'
+        cols = line.rstrip('\r\n').split('\t')
+        for col in cols:
+            table_str += '<td>%s</td>\n' % col
+        table_str += '</tr>\n'
+
+    table_str += '</table>\n'
+
+    return table_str
