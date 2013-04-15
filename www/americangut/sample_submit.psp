@@ -5,11 +5,28 @@ from enums import *
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut') 
 sess = Session.Session(req)
 
-participant_name = form['participant_name']
+# Required vars
 ag_login_id = sess['user_data']['web_app_user_id']
+barcode = form['barcode']
+sample_date = form['sample_date']
+sample_time = form['sample_time']
+notes = form['notes']
 
-ag_data_access.logParticipantSample(form['barcode'], form['sample_site'], \
-	form['sample_date'], form['sample_time'], participant_name)
+# Optional vars
+participant_name = ''
+if 'participant_name' in form:
+	participant_name = form['participant_name']
+
+sample_site = ''
+if 'sample_site' in form:
+	sample_site = form['sample_site']
+
+environment_sampled = ''
+if 'environment_sampled' in form:
+	environment_sampled = form['environment_sampled']
+
+ag_data_access.logParticipantSample(barcode, sample_site, environment_sampled, \
+	sample_date, sample_time, participant_name, notes)
 
 # Assuming nothing exploded... back to the portal
 psp.redirect('fusebox.psp?page=portal.psp')

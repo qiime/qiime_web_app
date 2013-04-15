@@ -10,7 +10,9 @@ begin
     update  ag_kit_barcodes
     set     participant_name = '',
             site_sampled = '',
-            sample_time = ''
+            sample_time = '',
+            sample_date = '',
+            environment_sampled = ''
     where   barcode in
             (
                 select  akb.barcode

@@ -39,11 +39,11 @@ div.overview_wrapper {
     height: 100%;
     margin: 0;
     padding: 0;
-    text-align: center;
+    text-align: left;
 }
 
 div.overview {
-	width: 40%;
+	width: 90%;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -109,10 +109,11 @@ div.header {
 
 div.menuwrapper {
 	border-radius: 10px;
-	min-width: 210px;
+	min-width: 230px;
 	height: 100%;
 	background-color: #fff;
-	text-align: left;	
+	text-align: left;
+	margin-right: 5px;	
 }
 
 div.menuheader {
@@ -133,6 +134,7 @@ div.menuheader p {
 div.keywrapper {
 	border-bottom-left-radius: 10px;
 	border-bottom-right-radius: 10px;
+	border-top-right-radius: 10px;
 	min-width: 210px;
 	height: 100%;
 	background-color: #fff;

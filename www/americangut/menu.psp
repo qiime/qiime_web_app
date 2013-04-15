@@ -10,8 +10,8 @@ _status_ = "Development"
 %>
 
 <div class="left menuwrapper">
-	<ul class="menu">
-		<li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
+    <ul class="menu">
+        <li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
         <div class="menu_separator"></div>
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants</li>
             <ul class="menu">
@@ -20,6 +20,7 @@ _status_ = "Development"
 ag_login_id = sess['user_data']['web_app_user_id']
 query = ("select participant_name from ag_human_survey where ag_login_id = '%s'" % ag_login_id)
 participants = ag_data_access.dynamicMetadataSelect(query)
+available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
 
 for p in participants:
     # database results come back as a list of tuples, even if it is a 1-member
@@ -44,9 +45,34 @@ for p in participants:
     <form action="fusebox.psp" method="post" id="add_sample_{0}">
         <li>
             <input type="hidden" name="page" value="add_sample.psp"/>
+            <input type="hidden" name="sample_type" value="human"/>
             <input type="hidden" name="participant_name" value="{0}"/>
             <img class="icon" src="/qiime/img/add_sample_icon.png"/>
             <a href="" onclick="document.forms['add_sample_{0}'].submit(); return false;">Add Sample</a>
+        </li>
+    </form>
+    """.format(p)
+
+    add_animal_sample_menu_item = \
+    """
+    <form action="fusebox.psp" method="post" id="add_sample_animal">
+        <li>
+            <input type="hidden" name="page" value="add_sample.psp"/>
+            <input type="hidden" name="sample_type" value="animal"/>
+            <img class="icon" src="/qiime/img/add_sample_icon.png"/>
+            <a href="" onclick="document.forms['add_sample_animal'].submit(); return false;">Add Animal Sample</a>
+        </li>
+    </form>
+    """.format(p)
+
+    add_general_sample_menu_item = \
+    """
+    <form action="fusebox.psp" method="post" id="add_sample_general">
+        <li>
+            <input type="hidden" name="page" value="add_sample.psp"/>
+            <input type="hidden" name="sample_type" value="general"/>
+            <img class="icon" src="/qiime/img/environmental_icon.png"/>
+            <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Sample</a>
         </li>
     </form>
     """.format(p)
@@ -77,15 +103,57 @@ for p in participants:
     # End for
     
     # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
-    available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
     if len(available_barcodes) > 0:
         req.write(add_sample_menu_item)
     req.write('</ul>\n\n')
+
 # End for
 %>
                 
                 <li><a href="fusebox.psp?page=new_participant_overview.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
             </ul>
+
+
+
+
+
+
+            <li><img class="icon" src="/qiime/img/non_human_icon.png">Non-Human Samples</li>
+                <ul class="menu">
+                    <li><img class="icon" src="/qiime/img/environmental_overview_icon.png"/>Environmental</li>
+                    <ul class="menu">
+
+<%
+barcodes = ag_data_access.getEnvironmentalSamples(ag_login_id)
+for barcode in barcodes:
+    sample_menu_item = \
+    """
+    <form action="fusebox.psp" method="post" id="sample_overview_{0}">
+        <li>
+            <input type="hidden" name="page" value="sample_overview.psp"/>
+            <input type="hidden" name="barcode" value="{0}"/>
+            <img class="icon" src="/qiime/img/sample_icon.png"/>
+            <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">{0}</a>
+        </li>
+    </form>
+    """.format(barcode['barcode'])
+
+    req.write(sample_menu_item)
+
+# End for
+%>
+
+<%
+if len(available_barcodes) > 0:
+    # Indent
+%>            
+                <%=add_general_sample_menu_item%>
+<%
+# End if
+%>
+                    </ul>
+            </ul>
+
         </li>
         <div class="menu_separator"></div>
         <li><a href="FAQ.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
@@ -94,5 +162,5 @@ for p in participants:
         <li><a href="http://americangut.org" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
         <div class="menu_separator"></div>
         <li><a href="logout.psp"><img class="icon" src="/qiime/img/logout_icon.png">Log out</a></li>
-	</ul>
+    </ul>
 </div>

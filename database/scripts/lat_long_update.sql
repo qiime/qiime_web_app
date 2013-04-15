@@ -25,7 +25,6 @@ commit;
 --select * from ag_login where latitude is null;
 
 select city, state, zip, country, cast(ag_login_id as varchar2(100)) from ag_login where latitude is null and cannot_geocode is null;
-select city, state, zip, country, cast(ag_login_id as varchar2(100)) from ag_login where latitude is null and cannot_geocode is null and rownum < 10;
 
 
 update ag_login set cannot_geocode = '';

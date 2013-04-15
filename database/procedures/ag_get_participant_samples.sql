@@ -8,7 +8,7 @@ as
 begin
 
     open results_ for
-        select  akb.barcode, akb.site_sampled, akb.sample_date, akb.sample_time
+        select  akb.barcode, akb.site_sampled, akb.sample_date, akb.sample_time, akb.notes
         from    ag_kit_barcodes akb 
                 inner join ag_kit ak 
                 on akb.ag_kit_id = ak.ag_kit_id 
