@@ -13,6 +13,6 @@ begin
                 on akb.ag_kit_id = ak.ag_kit_id 
         where   ak.ag_login_id = ag_login_id_
                 and ak.kit_verified = 'y'
-                and akb.site_sampled is null;
+                and akb.sample_date is null;
 
 end;

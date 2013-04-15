@@ -4,6 +4,11 @@
 IMPORT SPREADSHEET AS 'tmp_kits"
 PAD BARCODES WITH 5 ZEROS
 
+drop table tmp_kits;
+
+select * from ag_kit where supplied_kit_id = 'Ezhod';
+select * from ag_kit_barcodes where ag_kit_id = 'D9F2A0F20C7AAF51E0408A800C5D0A21';
+
 */
 
 

@@ -1,7 +1,6 @@
-create or replace procedure ag_get_participant_samples
+create or replace procedure ag_get_environmental_samples
 (
     ag_login_id_ raw,
-    participant_name_ varchar2,
     results_ in out types.ref_cursor
 )
 as
@@ -12,8 +11,7 @@ begin
         from    ag_kit_barcodes akb 
                 inner join ag_kit ak 
                 on akb.ag_kit_id = ak.ag_kit_id 
-        where   akb.site_sampled is not null
-                and ak.ag_login_id = ag_login_id_
-                and akb.participant_name = participant_name_;
+        where   akb.environment_sampled is not null
+                and ak.ag_login_id = ag_login_id_;
                 
 end;
