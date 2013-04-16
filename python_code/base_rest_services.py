@@ -234,10 +234,11 @@ class RestDataHelper(object):
                     sample_dict[column_name] = column_value
                 
             # Fill out the 'preps' list in the sample dict
-            for sample_id, row_number in self.data_access.getPrepList(sample_id):
+            for sample_id, row_number, num_sequences in self.data_access.getPrepList(sample_id):
                 prep_dict = {}
                 tables_and_columns = {}
                 prep_dict['row_number'] = row_number
+                prep_dict['num_sequences'] = num_sequences
 
                 for column_name in study_columns:
                     table_name = self.data_access.findMetadataTable(column_name, field_type, log, self.study_id, lock)

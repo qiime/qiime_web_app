@@ -861,8 +861,8 @@ class QiimeDataAccess(object):
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_prep_list', [sample_id, results])
             sample_row_list = []
-            for sample_id, row_number in results:
-                sample_row_list.append((sample_id, row_number))
+            for sample_id, row_number, num_sequences in results:
+                sample_row_list.append((sample_id, row_number, num_sequences))
             return sample_row_list
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
