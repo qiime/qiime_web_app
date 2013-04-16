@@ -11,6 +11,11 @@ from summarize_seqs_otu_hits import histograms_as_html_table
 sess = Session.Session(req)
 data_access = data_access_factory(ServerConfig.data_access_type)
 
+# try to get the study_id from the session; if none is in that dict,
+# try to get the study_id from the form; if none is in that dict,
+# set study_id to the empty string. This page will function properly
+# ONLY if the study_id is either passed in via a form, or passed in
+# via GET request.
 study_id = sess.get('study_id', form.get('study_id', ''))
 study_dir = os.path.join(sess['user_dir'],'study_'+str(study_id)) 
 
