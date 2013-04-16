@@ -39,6 +39,20 @@ class ToplevelTests(TestCase):
             page='portal.psp'), change_page_only)
 
     def test_tab_delim_lines_to_table(self):
+        """Tests whether the correct table is produced when given known input
+
+        known input:
+            "#comment line
+            #another comment line
+            Length	Count
+            114.0	1830490
+            124.0	1981629
+            134.0	7168533
+            144.0	86386729
+            154.0	0
+            --
+            "
+        """
         self.assertEqual(tab_delim_lines_to_table(histograms_lines), defaults)
 
         self.assertEqual(tab_delim_lines_to_table(histograms_lines, border=2,
