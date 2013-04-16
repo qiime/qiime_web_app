@@ -351,6 +351,13 @@ class LiveEBISRARestServices(BaseRestServices):
                 if sample_key == 'preps':
                     prep_list = sample_dict[sample_key]
                     for prep_dict in prep_list:
+
+                        # If there are no seqeucnes, skip this prep entry. There will be no per-sample
+                        # sequence file, thus the metadata describing it is not needed
+                        if prep_dict['num_sequences'] == 0:
+                            self.logger.log_entry('PREP DICT ENTRY HAS NO SEQUENCES. SKIPPING ENTRY: {0}'.format(str(prep_dict)))
+                            continue;
+
                         self.logger.log_entry('PREP DICT IS: {0}'.format(str(prep_dict)))
                         
                         # Extract a few values because they're frequently used
@@ -446,6 +453,7 @@ class LiveEBISRARestServices(BaseRestServices):
                         file_path = ''
                         file_identifier = ''
                         block_size = 8192
+                        
                         try:
                             file_path = file_writer.write()
                             checksum_file_path = '{0}.checksum'.format(file_path)

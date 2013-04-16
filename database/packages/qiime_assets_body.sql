@@ -1293,7 +1293,7 @@ as
 begin
 
   open results for
-    select  sample_id, row_number
+    select  sample_id, row_number, num_sequences
     from    "SEQUENCE_PREP"
     where   sample_id = sample_id_;
 
