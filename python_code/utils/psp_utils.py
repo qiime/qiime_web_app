@@ -39,8 +39,9 @@ def tab_delim_lines_to_table(lines, **kwargs):
     table_str = '<table ' + table_opts + '>\n'
 
     for line in lines:
-        if line[0] == '#':
+        if line and line[0] == '#':
             continue
+
         table_str += '<tr>\n'
         cols = line.rstrip('\r\n').split('\t')
         for col in cols:
