@@ -35,19 +35,20 @@ def tab_delim_lines_to_table(lines, **kwargs):
 
     will skip lines beginning with a pound sign (#)
     """
+    table_lines = []
     table_opts = ' '.join('%s=%s' % (k,v) for (k,v) in kwargs.items())
-    table_str = '<table ' + table_opts + '>\n'
+    table_lines.append('<table %s>' % table_opts)
 
     for line in lines:
-        if line and line[0] == '#':
+        if line.startswith('#'):
             continue
 
-        table_str += '<tr>\n'
+        table_lines.append('<tr>')
         cols = line.rstrip('\r\n').split('\t')
         for col in cols:
-            table_str += '<td>%s</td>\n' % col
-        table_str += '</tr>\n'
+            table_lines.append('<td>%s</td>' % col)
+        table_lines.append('</tr>')
 
-    table_str += '</table>\n'
+    table_lines.append('</table>')
 
-    return table_str
+    return '\n'.join(table_lines)

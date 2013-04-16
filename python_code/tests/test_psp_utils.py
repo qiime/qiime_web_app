@@ -97,8 +97,7 @@ with_table_mods = '''<table width=100% border=2>
 <tr>
 <td>--</td>
 </tr>
-</table>
-'''
+</table>'''
 
 defaults = '''<table >
 <tr>
@@ -128,8 +127,7 @@ defaults = '''<table >
 <tr>
 <td>--</td>
 </tr>
-</table>
-'''
+</table>'''
 
 if __name__ == "__main__":
     main()
