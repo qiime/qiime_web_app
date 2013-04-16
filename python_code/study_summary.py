@@ -106,6 +106,17 @@ def print_study_info_and_values_table(query_results, data_access):
     return ''.join(info_table)
     
 def get_sample_summary_html(study_id, data_access):
+    """Returns an HTML table detailing per-sample information for a study
+
+    input:
+        study_id: the study_id of the study for which information should be
+                  displayed
+        data_access: instance of the data access class that can retrieve the
+                     information to be displayed.
+
+    output:
+        out_string: an HTML-formatted table containing per-sample information
+    """
     out_string = ''
 
     sample_details = data_access.getSampleDetailList(study_id)
