@@ -186,13 +186,26 @@ environment_vars=req.get_options()
 output_dir='%s/user_data' % environment_vars['HOME']
 link_path_dir = 'studies'
 if form.has_key('username'):
-	user_data = data_access.authenticateWebAppUser( form["username"], form["password"] )
-	if ( user_data and user_data['verified']=='y'):
-		url = 'http://%s/qiime/index.psp?portal_type=emp&username=%s&password=%s&is_admin=%s' %\
-			(req.hostname, form["username"], form["password"], user_data['is_admin'])
-		req.write('<script language=\"javascript\">window.location = "%s";</script>' % url)
-	else:
-		req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+    user_data = data_access.authenticateWebAppUser(
+        form["username"], form["password"])
+
+    if (user_data and user_data['verified']=='y'):
+        sess['username'] = form["username"]
+        sess['is_admin'] = user_data['is_admin']
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+        sess['study_name'] = ''
+        sess['frame_target'] = '_parent'
+
+        sess.set_timeout(604800)
+        sess.save()
+
+        req.write('''<form action="http://www.microbio.me/qiime/fusebox.psp" method="post" name="login_form" id="login_form">
+        <input type="hidden" name="page" value="./select_study.psp">
+        </form>''')
+
+        req.write('<script language=\"javascript\">document.login_form.submit();</script>')
+    else:
+        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
 
 # end
 %>
