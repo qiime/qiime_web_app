@@ -128,7 +128,8 @@ def get_sample_summary_html(study_id, data_access):
         if sample_details[0][5] == None:
             write_seq_otu_cols = False
     else:
-        return 'This study has not yet been processed.'
+        return ('Sample descriptions are not available; '
+            'There is no metadata associated with this study yet.')
 
     # List all samples names here
     out_string += '<table width="100%">\n'
