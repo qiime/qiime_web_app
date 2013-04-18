@@ -400,7 +400,7 @@ function validateSurvey1() {
 	
     var valid = true;
  	
-	if(!isValidDate(document.survey_1.birth_date.value))
+	if(!isValidDate(document.survey_1.birth_date.value) && document.survey_1.birth_date.value != "")
 	{
 		document.survey_1.birth_date.className += " highlight"
 		valid = false;
@@ -443,18 +443,18 @@ function verifyOptionalQuestions() {
 	
 	var valid = true;
 	
-	if(!isValidDate(document.optional_questions.pregnant_due_date.value))
+	if(document.optional_questions.pregnant_due_date != null && !isValidDate(document.optional_questions.pregnant_due_date.value) && document.optional_questions.pregnant_due_date.value != "")
 	{
 		document.optional_questions.pregnant_due_date.className += " highlight"
 		valid = false;
 	}
-	
-	if(!isValidDate(document.optional_questions.diabetes_diagnose_date.value))
+
+	if(document.optional_questions.diabetes_diagnose_date != null && !isValidDate(document.optional_questions.diabetes_diagnose_date.value) && document.optional_questions.diabetes_diagnose_date.value != "")
 	{
 		document.optional_questions.diabetes_diagnose_date.className += " highlight"
 		valid = false;
 	}
-
+	
 	if(valid)
 		$('#optional_questions').submit();
 }
