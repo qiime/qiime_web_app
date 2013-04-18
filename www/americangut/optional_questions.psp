@@ -7,7 +7,7 @@
             <td width="10%"></td>
             <td>
             <h4> If there is nothing here, you have no additional questions to answer. Please click continue.</h4>
-                <form id="optional_questions" method="post" action="fusebox.psp">
+                <form id="optional_questions" name="optional_questions" method="post" action="fusebox.psp">
 <%
 for f in form:
     if(f != 'page'):
@@ -75,7 +75,7 @@ if(v != 0):
     </div>
     <br />
     <input type="button" value="Reset" onclick="reset('optional_questions')">
-    <input tabindex="29" type="submit" value="Continue" id="submit7" name="submit7">
+    <input tabindex="29" type="button" value="Continue" id="submit7" name="submit7" onclick="verifyOptionalQuestions()">
     <input type="hidden" id="page" name="page" value="survey_end.psp">
     </form>
     <br />
