@@ -301,5 +301,7 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_update_geo_info', [ag_login_id, lat, lon, cannot_geocode])        
 
-
+    def addBruceWayne(self, ag_login_id, participant_name):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_insert_bruce_wayne', [ag_login_id, participant_name])
 
