@@ -16,7 +16,8 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig
 import os
 data_access = data_access_factory(ServerConfig.data_access_type)
-from study_summary import print_study_info_and_values_table
+from study_summary import (print_study_info_and_values_table,
+    get_sample_summary_html)
 
 
 script_description="""This script writes out information for a given study in 
@@ -50,4 +51,6 @@ except:
 #Write the output to the screen
 req.write(print_study_info_and_values_table(analysis_data,data_access))
 #
+
+req.write(get_sample_summary_html(study_id, data_access))
 %>
