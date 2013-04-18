@@ -18,7 +18,11 @@ for column_name, table_name in results:
     upper_column_name = '"{0}"'.format(column_name)
     t = (table_name, upper_column_name)
     if t not in actual_tabs_cols:
-        query = "select table_name from all_tab_columns where upper(column_name) = '{0}' and owner = 'QIIME_METADATA'".format(column_name.upper())
+        query = "select table_name from all_tab_columns where upper(column_name) = '{0}' and owner = 'QIIME_METADATA' and (table_name in \
+        ('AIR', 'COMMON_EXTRA_PREP', 'COMMON_EXTRA_SAMPLE', 'COMMON_FIELDS', 'HOST', 'HOST_ASSOC_VERTIBRATE', 'HOST_ASSOCIATED_PLANT', \
+            'HOST_SAMPLE', 'HUMAN_ASSOCIATED', 'MICROBIAL_MAT_BIOFILM', 'OTHER_ENVIRONMENT', 'SAMPLE', 'SAMPLE_SEQUENCE_PREP', 'SEDIMENT', \
+            'SEQUENCE_PREP', 'SOIL', 'STUDY', 'WASTEWATER_SLUDGE', 'WATER') or table_name like 'EXTRA_SAMPLE_%' or table_name like \
+            'EXTRA_PREP_%')".format(column_name.upper())
         results = data_access.dynamicMetadataSelect(query).fetchall()
         # More than one is a problemo.. handle manually
         if len(results) > 1:
