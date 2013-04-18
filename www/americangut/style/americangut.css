@@ -39,11 +39,11 @@ div.overview_wrapper {
     height: 100%;
     margin: 0;
     padding: 0;
-    text-align: left;
+/*    text-align: left;*/
 }
 
 div.overview {
-	width: 90%;
+	width: 50%;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -168,6 +168,11 @@ ul.faq li a {
 	text-decoration: none;
 }
 
+ul.shipping {
+/*	list-style-type: none;*/
+	font-size: 12pt;
+}
+
 ul.next_steps {
 	padding-right: 1em;
 }
@@ -272,6 +277,15 @@ div.scroll {
     height: 450px;
     overflow: scroll;
     font-size: 10pt;
+}
+
+div.notescroll {
+    width: 200px;
+    height: 100px;
+    overflow: scroll;
+    font-size: 10pt;
+	background-color: #fff;
+	text-align: left;
 }
 
 div.left {
