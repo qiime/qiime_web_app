@@ -1,11 +1,12 @@
 <%
 
-from data_export import export_grid
 from data_access_connections import data_access_factory
 from enums import *
 from os.path import join
+from glob import glob
 from datetime import datetime
 import gzip
+from summarize_seqs_otu_hits import histograms_as_html_table
 
 sess = Session.Session(req)
 data_access = data_access_factory(ServerConfig.data_access_type)
@@ -16,19 +17,21 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 # ONLY if the study_id is either passed in via a form, or passed in
 # via GET request.
 study_id = sess.get('study_id', form.get('study_id', ''))
-
-sample_details = data_access.getSampleDetailList(study_id)
-
-headers = ('sample_name', 'sample_id', 'public', 'collection_date', 
-	'run_prefix', 'sequence_count', 'num_seqs_assigned_to_otu', 'percent_seqs_assigned_to_otu')
-grid_data = export_grid(sample_details, headers)
+study_dir = os.path.join(sess['user_dir'],'study_'+str(study_id)) 
 
 unique_identifier = str(datetime.now())
-file_name = 'sample_data_{0}.tsv.gz'.format(unique_identifier)
+file_name = 'histograms_{0}.html.gz'.format(unique_identifier)
 file_path = join(sess['document_root'], 'tmp/', file_name)
 
 f = gzip.open(file_path, 'wb')
-f.write(grid_data)
+for processed_dir in glob(os.path.join(study_dir, 'processed_data_*')):
+    if not os.path.isdir(processed_dir):
+        continue
+    run_prefix = os.path.split(processed_dir)[-1].split('_')
+    run_prefix = '_'.join(run_prefix[2:])
+    f.write(run_prefix + '<br/>\n')
+    f.write(histograms_as_html_table(processed_dir))
+
 f.close()
 
 
