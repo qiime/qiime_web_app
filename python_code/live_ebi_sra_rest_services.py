@@ -504,7 +504,8 @@ class LiveEBISRARestServices(BaseRestServices):
                 else:
                     sample_file.write('            <SAMPLE_ATTRIBUTE>\n')
                     sample_file.write('                <TAG>{0}</TAG>\n'.format(str(sample_key)))
-                    sample_file.write('                <VALUE>{0}</VALUE>\n'.format(str(sample_dict[sample_key])))
+                    clean_value = self.clean_text_value(str(sample_dict[sample_key]))
+                    sample_file.write('                <VALUE>{0}</VALUE>\n'.format(clean_value))
                     sample_file.write('            </SAMPLE_ATTRIBUTE>\n')
             
             sample_file.write('        </SAMPLE_ATTRIBUTES>\n')
