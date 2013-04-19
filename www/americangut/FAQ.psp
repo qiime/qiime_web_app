@@ -29,8 +29,13 @@
                 <div class="faq_wrapper">
                     <div class="faq">
                         <div class="separator"></div>
-                        <h3>Watch this helpful video about what to do once you've received your kit!</h3>
-                        <iframe src="http://player.vimeo.com/video/63542787" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/63542787">American Gut - Steps to Follow When Your Kit Arrives</a> from <a href="http://vimeo.com/user16100300">shelley schlender</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
+                        <h3>Watch these helpful videos about what to do once you've received your kit!</h3>
+                        <div class="videos clearfix">
+                        <div class="video"><iframe src="http://player.vimeo.com/video/63542787" width="330" height="200" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/63542787">American Gut - Steps to Follow When Your Kit Arrives</a> from <a href="http://vimeo.com/user16100300">shelley schlender</a> on <a href="http://vimeo.com">Vimeo</a>.</p></div>
+                        <div class="video"><iframe src="http://player.vimeo.com/video/63926337" width="330" height="200" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/63926337">American Gut - How to Log Food</a> from <a href="http://vimeo.com/user16100300">shelley schlender</a> on <a href="http://vimeo.com">Vimeo</a>.</p></div>
+                        <div class="video"><iframe src="http://player.vimeo.com/video/63931218" width="330" height="200" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/63931218">American Gut - How to Add a Participant</a> from <a href="http://vimeo.com/user16100300">shelley schlender</a> on <a href="http://vimeo.com">Vimeo</a>.</p></div>
+                        </div>
+                        <br />
                         <div class="separator"></div>
                         <br>
                         <h3>If you're still experiencing issues, look for your problem in the FAQ below</h3>
@@ -47,7 +52,9 @@
                         <br>
                         <h3 class="faq_header" id="faq1">Is my password the same as my verification code?</h3>
                         <div class="faq_content">
-                            <p>No. Your <strong>password</strong> is printed on the sheet that you received with your kit in the mail. That sheet looks like this:</p><img src="img/creds_example.png"/><p>Your <strong>verification code</strong> is emailed to you.</p>
+                            <p>No. Your <strong>password</strong> is printed on the sheet that you received with your kit in the mail. That sheet looks like this:</p><img src="img/creds_example.png"/><p>Your <strong>verification code</strong> is emailed to you. Look for the email: <br /><br />
+		<strong>FROM:</strong>  American Gut Project (info@americangut.org)<br />
+		<strong>SUBJECT:</strong>  American Gut Kit ID & Verification Code</p>
                         </div>
                         <div class="separator"></div>
                         <h3 class="faq_header" id="faq2">My password doesn't work!</h3>
