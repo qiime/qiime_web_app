@@ -1,0 +1,44 @@
+<div>
+<form name="check_barcode">
+    <input id="barcode" name="barcode" tabindex="1" type="text"/>
+    <input tabindex="2" type="submit" value="Check Barcode" />
+    <script>
+        document.check_barcode.barcode.focus()
+    </script>
+</form>
+</div>
+<%
+verified = True
+if verified:
+    
+%>
+<div id="verified" class="verification_color">
+    <div class="verification_text_wrapper">
+        <br />
+        <h2 class="verification_text">Barcode Verified</h2>
+    </div>
+</div>
+<%
+#endif
+%>
+<div id="not_verified_email" class="verification_color">
+    <div class="verification_text_wrapper">
+        <br />
+        <h2 class="verification_text">Barcode Not Verified<br />
+        Email last sent:
+<%
+req.write('4-3-2013')
+%>
+        </h2>
+        <h2><a class="email_link" href="mailto:">Re-send Email</a></h2>
+    </div>
+</div>
+
+
+<div id="not_verified" class="verification_color">
+    <div class="verification_text_wrapper">
+        <br />
+        <h2 class="verification_text">Barcode Not Verified</h2>
+        <h2><a class="email_link" href="mailto:">Send Email</a></h2>
+    </div>
+</div>

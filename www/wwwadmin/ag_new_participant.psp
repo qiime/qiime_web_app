@@ -1,0 +1,33 @@
+<%@ include file="common_vars.psp" %>
+
+<form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
+    <input type="hidden" name="page" value="select_task.psp">
+</form>
+
+<%
+if 'email' in form:
+	# Submit and redirect to fusebox
+	ag_data_access.addAGLogin(form['email'], form['name'], form['address'], \
+		form['city'], form['state'], form['zip'], form['country'])
+
+	req.write('<script>document.submit_data.submit(); return false;</script>')
+else:
+	# Draw the form
+%>
+
+<form name="newParticipant" id="newParticipant" method="post" action="ag_new_participant.psp">
+	<table>
+		<tr><td>Email</td><td><input type="text" name="email" id="email"></td></tr>
+		<tr><td>Name</td><td><input type="text" name="participantname" id="participantname"></td></tr>
+		<tr><td>Address</td><td><input type="text" name="address" id="address"></td></tr>
+		<tr><td>City</td><td><input type="text" name="city" id="city"></td></tr>
+		<tr><td>State</td><td><input type="text" name="state" id="state"></td></tr>
+		<tr><td>Zip</td><td><input type="text" name="zip" id="zip"></td></tr>
+		<tr><td>Country</td><td><input type="text" name="country" id="country"></td></tr>
+		<tr><td colspan="2"><input type="button" onclick="validateNewParticipant()" value="Submit"/></td></tr>
+	</table>
+</form>
+
+<%
+# End indent
+%>

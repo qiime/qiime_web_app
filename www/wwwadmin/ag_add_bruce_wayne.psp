@@ -1,0 +1,46 @@
+<%@ include file="common_vars.psp" %>
+
+<form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
+    <input type="hidden" name="page" value="select_task.psp">
+</form>
+
+<%
+if 'wayne' in form:
+	# Submit and redirect to fusebox
+	ag_data_access.addBruceWayne(form['ag_login_id'], form['wayne'])
+
+	req.write('<script>document.submit_data.submit(); return false;</script>')
+else:
+	# Draw the form
+%>
+
+<form method="post" action="ag_add_bruce_wayne.psp">
+	<table>
+		<tr>
+			<td>Participant</td>
+			<td>
+				<select name="ag_login_id" id="ag_login_id" onChange="document.edit_participant.submit();">
+				<option value="">Please Select...</a>
+<%
+logins = ag_data_access.getAGLogins()
+for ag_login_id, email, name in logins:
+	if 'ag_login_id' in form and form['ag_login_id'] == ag_login_id:
+		req.write('<option value="{0}" selected>{1} ({2})</option>'.format(ag_login_id, email, name))
+	else:
+		req.write('<option value="{0}">{1} ({2})</option>'.format(ag_login_id, email, name))
+# End
+%>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Name of Wayne</td>
+			<td><input type="text" name="wayne" id="wayne"></td>
+		</tr>		
+		<tr><td colspan="2"><input type="submit"></td></tr>
+	</table>
+</form>
+
+<%
+# End indent
+%>

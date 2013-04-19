@@ -1,0 +1,82 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+'''This script is the user login page'''
+
+from mod_python import Session
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+import os
+
+# Get the session
+sess = Session.Session(req)
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Admin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" href="style/qiime.css" type="text/css">
+</head>
+
+<body>
+
+<div class="login">
+
+<form action="fusebox.psp" method="post" name="login_form" id="login_form">
+    <input type="hidden" name="page" value="select_task.psp">
+</form>
+<table class="header_table">
+<tr><td>Please Log In</td></tr>
+</table>
+
+<%
+environment_vars=req.get_options()
+if form.has_key('username'):
+    # begin
+    qiimeDataAccess = data_access_factory(ServerConfig.data_access_type)
+    user_data = qiimeDataAccess.authenticateWebAppUser( form["username"], form["password"] )
+    qiimeDataAccess = None
+    if ( user_data and user_data['verified']=='y' ):
+        sess['username'] = form["username"]
+        sess['is_admin'] = user_data['is_admin']
+        sess['frame_target'] = '_parent'
+        sess['web_app_user_id'] = user_data['web_app_user_id']
+        sess['document_root'] = req.document_root() + '/wwwadmin/'
+        # Set the timeout in seconds (1 week)
+        sess.set_timeout(604800)
+        sess.save()
+        if user_data['is_admin'] == 1:
+            req.write('<script language=\"javascript\">document.login_form.submit();</script>')
+        else:
+            req.write("<p style='color:#FF0000;'>You must be an administrator to access this site.</p>")
+    else:
+        req.write("<p style='color:#FF0000;'>Invalid username/password.</p>")
+else:
+    # If the form was just loaded, clear the session
+    sess.invalidate()
+
+# end
+%>
+
+
+<p/>
+<form method="post" action="index.psp">
+<table>
+    <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
+    <tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
+    <tr><td colspan="2"><input type="submit" value="Log In"></tr>
+</table>
+</form>
+
+</div>
+</body>
+</html>
