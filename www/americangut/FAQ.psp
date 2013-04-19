@@ -52,7 +52,9 @@
                         <br>
                         <h3 class="faq_header" id="faq1">Is my password the same as my verification code?</h3>
                         <div class="faq_content">
-                            <p>No. Your <strong>password</strong> is printed on the sheet that you received with your kit in the mail. That sheet looks like this:</p><img src="img/creds_example.png"/><p>Your <strong>verification code</strong> is emailed to you.</p>
+                            <p>No. Your <strong>password</strong> is printed on the sheet that you received with your kit in the mail. That sheet looks like this:</p><img src="img/creds_example.png"/><p>Your <strong>verification code</strong> is emailed to you. Look for the email: <br /><br />
+		<strong>FROM:</strong>  American Gut Project (info@americangut.org)<br />
+		<strong>SUBJECT:</strong>  American Gut Kit ID & Verification Code</p>
                         </div>
                         <div class="separator"></div>
                         <h3 class="faq_header" id="faq2">My password doesn't work!</h3>
