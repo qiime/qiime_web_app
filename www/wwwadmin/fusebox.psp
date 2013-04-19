@@ -1,0 +1,55 @@
+<!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+'''
+This is the main handler for all pages in this web app, where it checks to
+make sure that the user is logged in and then performs page redirects.
+'''
+-->
+
+<%@ include file="common_vars.psp" %>
+<%@ include file="header.psp" %>
+
+<%
+import os
+import gc
+
+def invalidateSession():
+    sess.invalidate()
+    psp.redirect('index.psp')
+
+def loadPage(page):
+    if ( os.path.isfile( sess['document_root'] + page ) ):
+        code = parse( page, sess['document_root'] )
+        exec ( code )
+    else:
+        invalidateSession()
+        #req.write('<h3>Page not found.</h3>')
+        #req.write(sess['document_root'] + page)
+
+if form.has_key('page'):
+    # We have the page form variable so let's load it up    
+    sess['form']=form
+    sess.save()
+    page = form["page"]
+    loadPage(page)
+
+else:
+    # No page found and no user in session. To be safe, require user to log in...
+    invalidateSession()
+# End if
+%>
+
+<%@ include file="footer.psp" %>
+
+<%
+data_access = None
+gc.collect()
+%>

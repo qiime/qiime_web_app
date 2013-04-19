@@ -1,0 +1,146 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+import mod_python
+%>
+
+<%
+def drawEmailForm():
+    # Function indent
+%>
+<form action="fusebox.psp" method="post" name="ass_find_user" id="ass_find_user">
+<input type="hidden" name="page" value="assign_user_to_study.psp">
+<table>
+    <tr>
+        <td>Email addresses of user</td><td><input type="text" name="email" id="email"/></td>
+    </tr>
+    <tr>
+        <td colspan="2"><input type="submit" value="Search"></td>
+    </tr>
+</table>
+</form>
+<p/>
+<%
+# End indent
+
+# Reverse detection of form elements. Check for the last stages first.
+
+###############################################
+## Selections have been made, submit to database and redirect
+###############################################
+if form.has_key('study_selection_step'):
+    web_app_user_id = form['found_user_id']
+    
+    req.write('Clearing existing associations...<br/>')
+    statement = 'delete user_study where web_app_user_id = {0}'.format(web_app_user_id)
+    con.cursor().execute(statement)
+    con.cursor().execute('commit')
+    req.write('Associations removed.<br/>')
+    
+    if form.has_key('study_names'):
+        # Check for python web for retardedness: If only one item selected it'll be
+        # a string. If more than one, it'll be a list. Convert single items to a list
+        study_names = form['study_names']
+        if type(study_names) == mod_python.util.StringField:
+            study_names = [study_names]
+        req.write('Creating new associations...<br/>')    
+        for study_id in study_names:
+            statement = "insert into user_study (web_app_user_id, study_id) values ({0}, {1})".format(web_app_user_id, study_id)
+            #req.write(statement + '<br/>')
+            con.cursor().execute(statement)
+            req.write('User is associated with study_id: {0}<br/>'.format(study_id))
+
+        con.cursor().execute('commit')
+        req.write('<br/><br/>')
+        req.write('Study associations successfully updated.')
+
+###############################################
+## Email address selected - make selections
+###############################################
+elif form.has_key('email'):
+    statement = "select * from web_app_user where lower(email) like '%%%s%%'" % form['email'].lower()
+    results = con.cursor().execute(statement)
+    rows = results.fetchall()
+
+    if len(rows) == 0:
+        req.write('Error: Email address not found in database.<br/><br/>')
+        drawEmailForm()
+    elif len(rows) > 1:
+        req.write('Error: More than one listing found in the database. Please be more specific.<br/><br/>')
+        drawEmailForm()
+        req.write('<table style="">')
+        req.write('<th style="text-align:left">User ID</th><th style="text-align:left">Email</th>')
+        for row in rows:
+            req.write('<tr>')
+            req.write('<td>{0}</td><td>{1}</td>'.format(str(row[0]), row[1]))
+            req.write('</tr>')
+        req.write('</table>')
+    else:
+        row = rows[0]
+        found_user_id = row[0]
+        found_user_email = row[1]
+%>
+
+Associate studies for <b><%=found_user_email%> (<%=found_user_id%>)</b>:
+<br/><br/>
+PLEASE know what you are doing when you edit this list. To avoid DESELECTING all studies, you must hold down 
+your <b>"Command"</b> key (Mac) or your <b>Control</b> key (Windows) when making selections in order 
+to preserve the existing associations.
+<br/><br/>
+
+<form action="fusebox.psp" method="post" name="ass_user_study" id="ass_user_study">
+<input type="hidden" name="page" value="assign_user_to_study.psp">
+<input type="hidden" id="found_user_id" name="found_user_id" value=<%=found_user_id%>>
+<input type="hidden" id="study_selection_step" name="study_selection_step" value="1">
+
+<select validate="required:true" name="study_names" id="study_names" multiple size="30">
+
+<%
+        web_app_user_id = sess['web_app_user_id']
+        is_admin = sess['is_admin']
+        portal_type = 'qiime'
+
+        user_studies = data_access.getUserStudyNames(found_user_id, 0, 'qiime')
+        user_studies.extend(data_access.getUserStudyNames(found_user_id, 0, 'emp'))
+        user_studies = sorted(user_studies)
+        
+        # Slice out the study names into a list
+        user_study_names = [x[1] for x in user_studies]
+        user_study_names = sorted(user_study_names)
+        
+        all_study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, 'qiime')
+        all_study_names.extend(data_access.getUserStudyNames(web_app_user_id, is_admin, 'emp'))
+        all_study_names = sorted(all_study_names, key = lambda study_name: study_name[1])
+        
+        #for item in all_study_names:
+            #req.write('{0} - {1}\n'.format(str(item[0]), item[1]))
+        
+        for item in all_study_names:
+            if item[1] in user_study_names:
+                option_text = '<option value="{0}" selected>({0}) {1}</option>\n'.format(str(item[0]), item[1])
+            else:
+                option_text = '<option value="{0}">({0}) {1}</option>\n'.format(str(item[0]), item[1])
+            req.write(option_text)
+        # End
+%>
+
+</select>
+<br/><br/>
+<input type="submit" value="Submit">
+</form>
+
+<%
+# End indent
+###############################################
+## Entry point - find an email address/user
+###############################################
+else:
+    drawEmailForm()
+%>

@@ -1,0 +1,75 @@
+<%@ include file="common_vars.psp" %>
+
+<form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
+    <input type="hidden" name="page" value="select_task.psp"/>
+    <input type="hidden" name="message" value="User was updated successfully."/>
+</form>
+
+<%
+if 'submit_flag' in form:
+	if form['submit_flag'] == '1':
+		# Submit and redirect to fusebox
+		ag_data_access.updateAGLogin(form['ag_login_id'], form['email'], form['name'], \
+			form['address'], form['city'], form['state'], form['zip'], form['country'])
+
+		req.write('<script>document.submit_data.submit(); return false;</script>')
+# End if
+%>
+
+<script> 
+  $(function() {
+    $( "#ag_login_id" ).combobox();
+    $( "#ag_login_id" ).change(function() {
+        document.edit_participant.submit();
+    });
+  });
+</script>
+
+<form method="post" name="edit_participant" id="edit_participant" action="fusebox.psp?page=ag_edit_participant.psp">
+	<input type="hidden" name="submit_flag" id="submit_flag" value="0"/>
+	<table>
+		<tr>
+			<td>Participant</td>
+			<td>
+				<select name="ag_login_id" id="ag_login_id" class="hidden" onChange="document.edit_participant.submit();">
+				<option value="">Please Select...</a>
+<%
+logins = ag_data_access.getAGLogins()
+for ag_login_id, email, name in logins:
+	if 'ag_login_id' in form and form['ag_login_id'] == ag_login_id:
+		req.write('<option value="{0}" selected>{1} ({2})</option>'.format(ag_login_id, email, name))
+	else:
+		req.write('<option value="{0}">{1} ({2})</option>'.format(ag_login_id, email, name))
+# End
+%>
+				</select>
+			</td>
+		</tr>
+
+<%
+if 'ag_login_id' in form:
+	ag_login_id = form['ag_login_id']
+	sql = "select email, name, address, city, state, zip, country from ag_login where ag_login_id = '{0}'".format(ag_login_id)
+	details = ag_data_access.dynamicMetadataSelect(sql).fetchone()
+	# Indent
+%>
+		
+		<tr><td>Email</td><td><input type="text" name="email" id="email" value="<%=details[0]%>"></td></tr>
+		<tr><td>Name</td><td><input type="text" name="name" id="name" value="<%=details[1]%>"></td></tr>
+		<tr><td>Address</td><td><input type="text" name="address" id="address" value="<%=details[2]%>"></td></tr>
+		<tr><td>City</td><td><input type="text" name="city" id="city" value="<%=details[3]%>"></td></tr>
+		<tr><td>State</td><td><input type="text" name="state" id="state" value="<%=details[4]%>"></td></tr>
+		<tr><td>Zip</td><td><input type="text" name="zip" id="zip" value="<%=details[5]%>"></td></tr>
+		<tr><td>Country</td><td><input type="text" name="country" id="country" value="<%=details[6]%>"></td></tr>
+		<tr><td colspan="2"><input type="submit" onClick="document.edit_participant.submit_flag.value=1;"></td></tr>
+
+<%
+# End indent
+%>
+
+	</table>
+</form>
+
+<%
+# End indent
+%>

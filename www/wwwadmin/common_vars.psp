@@ -1,0 +1,34 @@
+<%
+# Imports
+from data_access_connections import data_access_factory
+from enums import *
+from mod_python import *
+
+# Session var and check
+if 'sess' in vars() or 'sess' in globals():
+	pass
+else:
+	sess = Session.Session(req)
+
+if not (sess.has_key('username')):
+	sess.invalidate()
+	psp.redirect('index.psp')
+
+# Data access vars for ease of use
+if 'ag_data_access' in vars() or 'ag_data_access' in globals():
+	pass
+else:
+	ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+
+if 'data_access' in vars() or 'data_access' in globals():
+	pass
+else:
+	data_access = data_access_factory(ServerConfig.data_access_type)
+
+if 'con' in vars() or 'con' in globals():
+	pass
+else:
+	con = data_access.getMetadataDatabaseConnection()
+
+# Done
+%>

@@ -1,0 +1,97 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<%
+max_seqs = ''
+max_pop_size = ''
+max_envs = ''
+
+table_name = form['unifrac_table']
+
+# If max_seqs is in form, then we've collected all of our values
+if form.has_key('max_seqs'):
+    
+    
+    try:
+        statement = "update web_app_user_webapps.%s set MAX_SEQS = %s, MAX_POP_SIZE = %s, MAX_ENVS = %s where web_app_user_id = %s" % (table_name, form['max_seqs'], form['max_pop_size'], form['max_envs'], form['web_app_user_id'])
+        con.cursor().execute(statement)
+        con.cursor().execute('commit')
+        req.write('Limits updated.<br/><br/>')
+    except Exception, e:
+        req.write(str(e))
+
+# If only email is in form, then we're attempting to find the user's current data
+elif form.has_key('email'):
+    email = form['email']
+    results = None
+    
+    try:
+        statement = "select * from web_app_user_webapps.web_app_user where email = '%s'" % email
+        results = con.cursor().execute(statement)
+        results.fetchone()
+        if results == None:
+            req.write('Error: Email address not found in database.<br/><br/>')
+        else:
+            statement = "select web_app_user_id from web_app_user_webapps.web_app_user where lower(email) = '%s'" % email.lower()
+            web_app_user_id = con.cursor().execute(statement).fetchone()[0]
+            statement = "select max_seqs, max_pop_size, max_envs from web_app_user_webapps.%s where web_app_user_id = %s" % (table_name, web_app_user_id)
+            max_seqs, max_pop_size, max_envs = con.cursor().execute(statement).fetchone() 
+%>
+<form action="fusebox.psp" method="post" name="unifrac_limits" id="unifrac_limits">
+    <input type="hidden" name="page" value="unifrac_limits.psp">
+    <input type="hidden" name="email" value="<%=email%>">
+    <input type="hidden" name="web_app_user_id" value="<%=web_app_user_id%>">
+    <input type="hidden" name="unifrac_table" value="<%=form['unifrac_table']%>">
+    <table>
+        <tr>
+            <td>Email Address</td><td><%=email%></td>
+        </tr>
+        <tr>
+            <td>MAX_SEQS</td><td><input type="text" name="max_seqs" id="max_seqs" value="<%=max_seqs%>"/></td>
+        </tr>
+        <tr>
+            <td>MAX_POP_SIZE</td><td><input type="text" name="max_pop_size" id="max_pop_size" value="<%=max_pop_size%>"/></td>
+        </tr>
+        <tr>
+            <td>MAX_ENVS</td><td><input type="text" name="max_envs" id="max_envs" value="<%=max_envs%>"/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Update Account"></td>
+        </tr>
+    </table>
+</form>
+<%
+    except Exception, e:
+        req.write('Error: Email address not found in database.<br/><br/>')
+        req.write(str(e))
+
+else:
+    # Indent
+%>
+
+<form action="fusebox.psp" method="post" name="unifrac_limits" id="unifrac_limits">
+    <input type="hidden" name="page" value="unifrac_limits.psp">
+    <input type="hidden" name="unifrac_table" value="<%=form['unifrac_table']%>">
+    
+    <table>
+        <tr>
+            <td>Email Address</td><td><input type="text" name="email" id="email"/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Locate User"></td>
+        </tr>
+    </table>
+</form>
+
+<%
+
+# End Indent
+%>
