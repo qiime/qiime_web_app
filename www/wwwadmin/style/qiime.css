@@ -1,0 +1,337 @@
+html, body {
+	/*margin: 0; padding: 0;*/
+	/* width: 100%; */
+	font: 13px normal Arial, Helvetica, sans-serif;
+	background: #777;
+	background-image: url(../img/background3.jpg);
+	background-repeat:no-repeat;
+	background-size: 100%;
+}
+.container {
+	margin: 0 auto;
+	position: relative;
+	background: #000;
+}
+.content {
+	/*float: left; */
+	/*width: 800px;*/
+	position: absolute;
+	top: 0px;
+	left: 300px;
+	margin: 8px;
+	background: #fff;
+	opacity: 0.8;
+	padding: 8px;
+	border: 2px black solid;
+	border-radius: 5px;
+	font: 15px normal Arial, Helvetica, sans-serif;
+}
+
+.menu {
+	/*float:left;*/
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	/*margin: 8px;*/
+	background: #fff;
+	opacity: 0.9;
+	padding: 8px;
+	border: 2px black solid;
+	border-radius: 5px;
+	font: 15px normal Arial, Helvetica, sans-serif;
+	width: 270px;
+}
+
+.login {
+	float:left;
+	margin: 8px;
+	background: #fff;
+	opacity: 0.9;
+	padding: 8px;
+	border: 2px black solid;
+	border-radius: 5px;
+	font: 15px normal Arial, Helvetica, sans-serif;
+	width: 570px;
+}
+
+input {
+	width: 300px;
+	border: 1px solid black;
+	border-radius: 3px; 
+    	-webkit-box-shadow: 
+      	inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    -moz-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    padding: 5px;
+    background: rgba(255,255,255,0.5);
+    margin: 0 0 10px 0;
+}
+
+input[type=submit] {
+	width: 150px;
+	background: #ccc;
+}
+
+#header {
+	background: url(img/qiime_logo.jpg) no-repeat left top;
+	padding-top: 140px;
+}
+#header .disclaimer {
+	color: #999;
+	padding: 120px 5px 7px 0;
+	text-align: right;
+	display: block;
+	position: absolute;
+	top: 0; right: 0;
+}
+
+#header .disclaimer a {	color: #ccc;}
+
+ul.topnav {
+    height:30px;
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
+	float: left;
+	font-size: 1.2em;
+}
+ul.topnav li {
+	float: left;
+	margin: 0;	
+	padding: 0 15px 0 0;
+	position: relative; /*--Declare X and Y axis base--*/
+}
+ul.topnav li a{
+	padding: 10px 5px;
+	color: #fff;
+	display: block;
+	text-decoration: none;
+	float: left;
+}
+ul.topnav li a:hover{
+	background: url(img/topnav_hover.gif) no-repeat center top;
+}
+ul.topnav li span { /*--Drop down trigger styles--*/
+	width: 17px;
+	height: 35px;
+	float: left;
+	background: url(img/subnav_btn.gif) no-repeat center top;
+}
+ul.topnav li span.subhover {background-position: center bottom; cursor: pointer;} /*--Hover effect for trigger--*/
+ul.topnav li ul.subnav {
+	list-style: none;
+	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
+	left: 0; top: 35px;
+	background: #333;
+	margin: 0; padding: 0;
+	display: none;
+	float: left;
+	width: 270px;
+	-moz-border-radius-bottomleft: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	border: 1px solid #111;
+}
+ul.topnav li ul.subnav li{
+	margin: 0; padding: 0;
+	border-top: 1px solid #252525; /*--Create bevel effect--*/
+	border-bottom: 1px solid #444; /*--Create bevel effect--*/
+	clear: both;
+	width: 270px;
+}
+html ul.topnav li ul.subnav li a {
+	float: left;
+	width: 245px;
+	background: #333 url(img/dropdown_linkbg.gif) no-repeat 10px center;
+	padding-left: 20px;
+}
+html ul.topnav li ul.subnav li a:hover { /*--Hover effect for subnav links--*/
+	background: #222 url(img/dropdown_linkbg.gif) no-repeat 10px center; 
+}
+#header img {
+	margin: 20px 0 10px;
+}
+
+
+
+
+
+
+li
+{
+    margin-top: 7px;
+}
+
+
+
+
+td
+{
+    vertical-align: top;
+    text-align: left;
+    padding: 5px;
+}
+
+a
+{
+    text-decoration: none;
+    color: #3333BB;
+}
+
+.header_table
+{
+    border: 2px black solid;
+    border-radius: 5px;
+    width: 100%;
+    background-color: #AAA;
+    border-width: 0px;
+    padding: 5px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.header_light_blue
+{
+    background-color: #DDDDFF;
+    border-width: 0px;
+    padding: 5px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.meta_td
+{
+    padding: 2px;
+    border-collapse: collapse;
+    background-color: #FFFFFF;
+    border: 1px solid black;
+}
+
+.meta_th
+{
+    padding: 5px;
+    text-align: left;
+    border: 1px solid black;
+    background-color:#DDDDFF;
+}
+
+.gray_background
+{
+    padding: 2px;
+    border: 1px solid black;
+    background-color:#DDDDDD;
+}
+
+.metadata_table
+{
+    vertical-align: top;
+    text-align: left;
+    width:100%;
+    padding: 2px;
+    border-collapse:collapse;
+    background-color:#FFFFFF;
+    border: 1px solid black;
+}
+
+/* Progress bar stuff */
+div.progress-container {
+  background-color: #AAAAAA;
+  border: 1px solid #ccc; 
+  width: 99%; 
+  height: 20px;
+  margin: 2px 5px 2px 0; 
+  padding: 1px; 
+  float: left; 
+}
+
+div.progress-container > div {
+  background-color: #D0F5A9; 
+  height: 100%;
+  text-align: center;
+}
+/* End progress bar stuff */
+
+div.domo_bubble {
+	padding: 1em;
+	background-color: #fff;
+	opacity: 0.9;
+	z-index: 2;
+	position: absolute;
+	left: 80%;
+	top:50%;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+div.verification_color {
+	position: relative;
+	margin-left: 2em;
+	width: 400px;
+	height: 200px;
+	border-radius: 10px;
+	text-align: center;
+}
+
+div.verification_text_wrapper {
+}
+
+h2.verification_text{
+	width: 100%;
+}
+
+#verified {
+	background-color: #0f0;
+}
+
+#not_verified_email {
+	background-color: #ff0;
+}
+
+#not_verified {
+	background-color: #f00;
+}
+
+a.email_link {
+	text-decoration: none;
+}
+
+.white {
+	color: #fff;
+}
+
+.highlight {
+    background-color: #fcc;
+}
+
+.hidden  {
+	display: none;
+}
+
+ul.mainmenu {
+	width: 100%;
+	list-style-type: none;
+	padding-left: 1em;
+}
+
+ul.mainmenu li {
+	width: 100%;
+	padding-bottom: .5em;
+}
+
+ul.mainmenu li a {
+	width: 100%;
+	color: #1d1d1d;
+}
+
+ul.mainmenu li a:hover {
+	width: 100%;
+	color: #776557;
+/*	background: rgba(25, 25, 25, .1);*/
+}

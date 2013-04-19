@@ -1,0 +1,49 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+%>
+
+<%
+if form.has_key('email'):
+    statement = "select * from web_app_user_webapps.web_app_user where lower(email) = '%s'" % form['email'].lower()
+    results = con.cursor().execute(statement).fetchone()
+    if results == None:
+        req.write('Error: Email address not found in database.<br/><br/>')
+    else:
+        statement = 'select max(fast_unifrac_privs_id) + 1 from web_app_user_webapps.fast_unifrac_privs where fast_unifrac_privs_id < 500000'
+        fast_unifrac_privs_id = con.cursor().execute(statement).fetchone()[0]
+        statement = "select web_app_user_id from web_app_user_webapps.web_app_user where lower(email) = '%s'" % form['email'].lower()
+        web_app_user_id = con.cursor().execute(statement).fetchone()[0]
+        
+        # Figure out if the user already has access
+        statement = 'select * from web_app_user_webapps.fast_unifrac_privs where web_app_user_id = %s' % web_app_user_id
+        results = con.cursor().execute(statement).fetchone()
+        if results != None:
+            req.write('User already has access to Fast UniFrac.<br/><br/>')
+        else:
+            statement = 'insert into web_app_user_webapps.fast_unifrac_privs values (%s, 100000, 1000, 200, %s)' % (fast_unifrac_privs_id, web_app_user_id)
+            con.cursor().execute(statement)
+            con.cursor().execute('commit')
+            req.write('Account updated. Please inform user they may log into Fast UniFrac.<br/><br/>')
+
+# End indent
+%>
+
+<form action="fusebox.psp" method="post" name="add_to_fastunifrac" id="add_to_fastunifrac">
+    <input type="hidden" name="page" value="add_to_fastunifrac.psp">
+    <table>
+        <tr>
+            <td>Email Address</td><td><input type="text" name="email" id="email"/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Enable for Fast UniFrac"></td>
+        </tr>
+    </table>
+</form>

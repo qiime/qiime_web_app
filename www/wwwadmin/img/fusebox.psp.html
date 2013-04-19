@@ -1,0 +1,619 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+'''
+This is the main handler for all pages in this web app, where it checks to
+make sure that the user is logged in and then performs page redirects.
+'''
+
+-->
+
+
+
+
+
+
+<title>Qiime</title>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="shortcut icon" href="http://localhost/qiime/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="fusebox.psp_files/style/qiime.css" type="text/css">
+<script type="text/javascript" src="fusebox.psp_files/qiime.js"></script>
+<script type="text/javascript" src="fusebox.psp_files/jquery_002.js"></script>
+<script type="text/javascript" src="fusebox.psp_files/jquery.js"></script>
+<script type="text/javascript" src="fusebox.psp_files/jquery_003.js"></script>
+<script type="text/javascript" src="fusebox.psp_files/jquery-latest.js"></script> 
+<script type="text/javascript"> 
+$(document).ready(function(){
+
+	$("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+	
+	$("ul.topnav li span").click(function() { //When trigger is clicked...
+		
+		//Following events are applied to the subnav itself (moving subnav up and down)
+		$(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+		$(this).parent().hover(function() {
+		}, function(){	
+			$(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+		});
+
+		//Following events are applied to the trigger (Hover events for the trigger)
+		}).hover(function() { 
+			$(this).addClass("subhover"); //On hover over, add class "subhover"
+		}, function(){	//On Hover Out
+			$(this).removeClass("subhover"); //On hover out, remove class "subhover"
+	});
+
+});
+</script>
+
+</head><body>
+<div class="container">
+
+    <div id="header">
+    	 <div class="disclaimer">Logged in as wendel@colorado.edu</div>
+        <ul class="topnav">
+            <li>
+                <a href="http://localhost/qiime/fusebox.psp?page=select_study.psp">Home</a>
+            </li>
+
+            <li>
+                <a href="http://localhost/qiime/fusebox.psp" target="_parent">Manage Study Data</a>
+
+                <ul class="subnav">
+                    <li><a href="http://localhost/qiime/fusebox.psp?page=new_study.psp" target="_parent">Create New Study</a></li>
+                    <li><a href="http://localhost/qiime/fusebox.psp?page=load_template_fields.psp" target="_parent">Generate MIMARKS Templates</a></li>
+                    <li><a href="http://localhost/qiime/fusebox.psp?page=upload_sff.psp" target="_parent">Add/Remove SFF Files</a></li>
+                    <li><a href="http://localhost/qiime/fusebox.psp?page=upload_metadata.psp" target="_parent">Upload Metadata</a></li>
+                </ul>
+            <span></span></li>
+
+            <li>
+                <a href="http://localhost/qiime/fusebox.psp?page=new_meta_analysis.psp" target="_parent">Meta Analysis</a>
+                <ul class="subnav">
+                    <li><a href="http://localhost/qiime/fusebox.psp?page=new_meta_analysis.psp" target="_parent">Create New Meta-Analysis</a></li>
+                </ul>
+            <span></span></li>
+            <li>
+                <a href="http://localhost/qiime/fusebox.psp?page=tools_ontology_and_geo.psp" target="_parent">Tools</a>
+                <ul class="subnav">
+                    <li><a href="http://localhost/qiime/fusebox.psp?page=tools_ontology.psp" target="_parent">Ontology Lookup Service</a></li>
+                    <li><a href="http://localhost/qiime/fusebox.psp?page=tools_geo.psp" target="_parent">Georeference Utility</a></li>
+                </ul>
+            <span></span></li>
+            <li><a href="http://localhost/qiime/docs/index.html" target="_blank">Help</a></li>
+            <li><a href="http://localhost/qiime/index.psp" target="_parent">Log Out</a></li>
+        </ul>
+    </div>
+</div>
+<div class="content">
+<br><br>
+<hr>
+
+
+
+
+
+<script type="text/javascript" src="fusebox.psp_files/template.js"></script>
+
+<h3>Select Template Fields</h3>
+Fields in red are required. Select any other fields to include them in your templates.
+<br><br>
+
+<form action="new_template_submit.psp" target="_blank">
+<table id="package_fields">
+
+<tbody><tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">SRA Submission Fields</td></tr><tr></tr><tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>accession</td><td>text</td><td>text, e.g. "SRA003492"</td><td>Accession
+ number for the submission: leave blank if not assigned yet, e.g. if new
+ submission rather than replacing XML for an existing submission.</td></tr>
+<input id="submission:accession" name="submission:accession" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>contact</td><td>text</td><td>text, e.g. "Don Burleson;Don.Burleson@Colorado.edu"</td><td>Use semicolon to separate email address from name, can be multiple contacts.</td></tr>
+<input id="submission:contact" name="submission:contact" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>file</td><td>text</td><td>text, e.g. "my_study.seqs.tgz"</td><td>Leave blank if not submitting sequence data, put in filename otherwise.</td></tr>
+<input id="submission:file" name="submission:file" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>lab_name</td><td>text</td><td>text, e.g. "Knight"</td><td>Name of lab preparing submission, can differ from center (usually refers to the PI's info, not the sequencing center's)</td></tr>
+<input id="submission:lab_name" name="submission:lab_name" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>submission_center</td><td>text</td><td>text, e.g. 'CCME'</td><td>The XML namespace value for the SRA submission center.</td></tr>
+<input id="submission:submission_center" name="submission:submission_center" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>submission_comment</td><td>text</td><td>text, e.g. "Barcode submission prepared by youandme@ncbi.nlm.nih.gov, meandyou@ncbi.nlm.nih.gov"</td><td>Free-text comments regarding submission</td></tr>
+<input id="submission:submission_comment" name="submission:submission_comment" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>submission_date</td><td>date</td><td>date, e.g. "2009-10-22T01:23:00-05:00"</td><td>Date of submission</td></tr>
+<input id="submission:submission_date" name="submission:submission_date" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>submission_id</td><td>text</td><td>text, e.g. "fierer_hand_study"</td><td>Internally
+ unique id for the submission: this is used as an ALIAS elsewhere so 
+needs to be short, alphanumeric+underscores, no special characters.</td></tr>
+<input id="submission:submission_id" name="submission:submission_id" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">Study Fields</td></tr><tr></tr><tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="study:experimental_factor" name="study:experimental_factor" type="checkbox"> experimental_factor</td><td>ontology</td><td>(the experimental design of the study) [EFO and/or OBI]</td><td>A
+ factor is a variable which is deliberately varied between trials, in 
+order to study its influence on the outcome. There are two main types of
+ variables to consider: treatment factors, when you are especially 
+interested in studying how the outcome varies as a function of these 
+factors; and confounders, other factors or covariates, such as 
+temperature, pH, humidity, drift over time, etc... that may influence 
+the outcome. In the biological or health sciences, age, sex and other 
+characteristics of an individual may be confounders. This field accepts 
+ontology terms from EFO and/or OBI. For a browser of EFO terms, please 
+see http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=EFO; for a 
+browser of OBI terms please see 
+http://bioportal.bioontology.org/visualize/40832</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">SRA Study Fields</td></tr><tr></tr><tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>CENTER_NAME</td><td>text</td><td>[text], example: "CCME"</td><td>NCBI-approved
+ name of the center coordinating the overall study, e.g. WUGSC. If you 
+don't have a center name, you need to get NCBI to define one and then 
+use that - you can't do this as free text. This will often be the same 
+as other center names.</td></tr>
+<input id="study:CENTER_NAME" name="study:CENTER_NAME" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>CENTER_PROJECT_NAME</td><td>text</td><td>[text]</td><td>Name of project as used by the center responsible for the study, NULL if none.</td></tr>
+<input id="study:CENTER_PROJECT_NAME" name="study:CENTER_PROJECT_NAME" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>PMID</td><td>text</td><td>[text]</td><td>PubMed
+ ID of paper describing project, if supplied will write out STUDY_LINK 
+block, can be multiple (comma-delimited), can be absent if no linked 
+publication yet.</td></tr>
+<input id="study:PMID" name="study:PMID" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>PROJECT_ID</td><td>text</td><td>[text]</td><td>Project ID, assigned by SRA, leave blank if not yet assigned.</td></tr>
+<input id="study:PROJECT_ID" name="study:PROJECT_ID" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>STUDY_ABSTRACT</td><td>text</td><td>[text]</td><td>Abstract, e.g. of the publication. Free text.</td></tr>
+<input id="study:STUDY_ABSTRACT" name="study:STUDY_ABSTRACT" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>STUDY_ALIAS</td><td>text</td><td>[text]</td><td>One
+ study per publication (i.e. the STUDY is supposed to be about the same 
+amount of info as in a paper). This is something you define arbitrarily,
+ and is used as an id to link files (so can contain only alphanumeric 
+characters and underscores).</td></tr>
+<input id="study:STUDY_ALIAS" name="study:STUDY_ALIAS" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>STUDY_DESCRIPTION</td><td>text</td><td>[text]</td><td>Use "Targeted Gene Survey" for 16S or other target gene studies</td></tr>
+<input id="study:STUDY_DESCRIPTION" name="study:STUDY_DESCRIPTION" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>STUDY_TITLE</td><td>text</td><td>[text]</td><td>Expected (or actual) title of the paper that will be published about the study. Free text.</td></tr>
+<input id="study:STUDY_TITLE" name="study:STUDY_TITLE" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>STUDY_TYPE</td><td>list</td><td>[text]</td><td>Should be "metagenome" for 16S surveys (regrettably). Other choices relate to whole-genome studies. Controlled vocabulary.</td></tr>
+<input id="study:STUDY_TYPE" name="study:STUDY_TYPE" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">Sample Fields</td></tr><tr></tr><tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>sample_name</td><td>text</td><td>text</td><td>A unique identifier for the sample.</td></tr>
+<input id="sample:sample_name" name="sample:sample_name" value="on" type="hidden">
+
+<input id="sample:project_name" name="sample:project_name" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>altitude</td><td>numeric</td><td>[float]</td><td>The altitude of the sample is the distance between surface and the sampled position. Value should be in meters.</td></tr>
+<input id="sample:altitude" name="sample:altitude" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>assigned_from_geo</td><td>yn</td><td>y/n</td><td>Was this sample's geolocated data assigned from a standard source? If not or data is of a highly imprecise nature, choose 'n'</td></tr>
+<input id="sample:assigned_from_geo" name="sample:assigned_from_geo" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:biological_specimen" name="sample:biological_specimen" type="checkbox"> biological_specimen</td><td>text</td><td>[text]</td><td>A unique name for this biological specimen. This should be a reference to who or what the sample was taken from.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>collection_date</td><td>text</td><td>date or date/time values</td><td>The
+ time of sampling, single point in time. In case no exact time is 
+available, the time can be truncated. This is a 24-hour time format. 
+Valid examples: "11/30/2003 10:12:24", "2/29/2003 20:14:56", 
+"5/22/2003". Date ranges may also be specified. In the instance where 
+deidentified data is necessary, truncate the date to the appropriate 
+level of detail.</td></tr>
+<input id="sample:collection_date" name="sample:collection_date" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>country</td><td>ontology</td><td>[country:INSDC or GAZ;region:GAZ]</td><td>The
+ geographical origin of the sample as defined by the country. Country 
+names should be chosen from the INSDC list 
+(http://www.insdc.org/country.html), or the GAZ ontology 
+(http://bioportal.bioontology.org/visualize/40651)</td></tr>
+<input id="sample:country" name="sample:country" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>depth</td><td>range</td><td>[float] or [range], examples: 5, 3.4, 0-5</td><td>The
+ geographical origin of the sample as defined by depth. Depth is defined
+ as the distance from surface, e.g. for sediment samples depth is 
+measured from sediment surface. Depth can be reported as an interval for
+ subsurface samples. Value should be in meters.</td></tr>
+<input id="sample:depth" name="sample:depth" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>elevation</td><td>numeric</td><td>[float]</td><td>The elevation of the site is measured from the sea level. Value should be in meters.</td></tr>
+<input id="sample:elevation" name="sample:elevation" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>env_biome</td><td>ontology</td><td>(biome [EnvO])</td><td>Description
+ of the environment type where the sample was originally obtained from 
+with EnvO terms. EnvO terms can be used on three different levels. 
+Biomes are defined based on factors such as plant structures, leaf 
+types, plant spacing, and other factors like climate. Examples include: 
+desert, taiga, deciduous woodland, coral reef. For a browser of EnvO 
+terms, please see 
+http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=ENVO</td></tr>
+<input id="sample:env_biome" name="sample:env_biome" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>env_feature</td><td>ontology</td><td>(feature [EnvO])</td><td>Description
+ of the environment type where the sample was originally obtained from 
+with EnvO terms. EnvO terms can be used on three different levels. 
+Environmental feature level includes geographic environmental features. 
+Examples include: harbour, cliff, lake. For a browser of EnvO terms, 
+please see http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=ENVO</td></tr>
+<input id="sample:env_feature" name="sample:env_feature" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>env_matter</td><td>ontology</td><td>(matter [EnvO])</td><td>Description
+ of the environment type where the sample was originally obtained from 
+with EnvO terms. EnvO terms can be used on three different levels. The 
+environmental matter level refers to the matter that was displaced by 
+the sample, prior to the sampling event. Environmental matter terms are 
+generally mass nouns. Examples include: air, soil, water. For a browser 
+of EnvO terms, please see 
+http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=ENVO</td></tr>
+<input id="sample:env_matter" name="sample:env_matter" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>latitude</td><td>numeric</td><td>[float]</td><td>The
+ geographical origin of the sample as defined by latitude and longitude.
+ The values should be reported in decimal degrees and in WGS84 system</td></tr>
+<input id="sample:latitude" name="sample:latitude" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>longitude</td><td>numeric</td><td>[float]</td><td>The
+ geographical origin of the sample as defined by latitude and longitude.
+ The values should be reported in decimal degrees and in WGS84 system</td></tr>
+<input id="sample:longitude" name="sample:longitude" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>public</td><td>yn</td><td>[y/n]</td><td>Whether the sample will be public or private</td></tr>
+<input id="sample:public" name="sample:public" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">SRA Sample Fields</td></tr><tr></tr><tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>ANONYMIZED_NAME</td><td>text</td><td>[text], example: "subject 1"</td><td>Anonymized
+ name of the subject, if applicable (e.g. deidentified subject IDs from 
+dbGAP, deidentified subject ids from your study). Only applies to human 
+studies, leave blank if not applicable.</td></tr>
+<input id="sample:ANONYMIZED_NAME" name="sample:ANONYMIZED_NAME" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>COMMON_NAME</td><td>text</td><td>[text], example: "human skin metagenome"</td><td>Common name of what is being sequenced, should match taxon id's name, e.g. human skin metagenome.</td></tr>
+<input id="sample:COMMON_NAME" name="sample:COMMON_NAME" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>DESCRIPTION</td><td>text</td><td>[text], example: "female right palm"</td><td>Free-text description of this specific sample.</td></tr>
+<input id="sample:DESCRIPTION" name="sample:DESCRIPTION" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>TAXON_ID</td><td>numeric</td><td>[integer], example: 539655</td><td>Taxon
+ Id is what is getting sequenced: i.e txid 539655 = human skin 
+metagenome, species, metagenomes. NCBI'S taxon browser may be helpful: 
+http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi</td></tr>
+<input id="sample:TAXON_ID" name="sample:TAXON_ID" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>TITLE</td><td>text</td><td>[text], example: "human hand microbiome"</td><td>Arbitrary title for your sample that you make up.</td></tr>
+<input id="sample:TITLE" name="sample:TITLE" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">Library/Prep/Sequence Fields</td></tr><tr>
+<input id="prep:sample_name" name="prep:sample_name" value="on" type="hidden">
+</tr><tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:chimera_check" name="prep:chimera_check" type="checkbox"> chimera_check</td><td>text</td><td>[software]</td><td>A
+ chimeric sequence, or chimera for short, is a sequence comprised of two
+ or more phylogenetically distinct parent sequences. Chimeras are 
+usually PCR artifacts thought to occur when a prematurely terminated 
+amplicon reanneals to a foreign DNA strand and is copied to completion 
+in the following PCR cycles. The point at which the chimeric sequence 
+changes from one parent to the next is called the breakpoint or 
+conversion point. </td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:lib_reads_seqd" name="prep:lib_reads_seqd" type="checkbox"> lib_reads_seqd</td><td>numeric</td><td>(number of reads sequenced) [integer]</td><td>Total number of clones sequenced </td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:lib_size" name="prep:lib_size" type="checkbox"> lib_size</td><td>numeric</td><td>(library size) [integer]</td><td>Total number of clones in library prepared for the project</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:lib_vector" name="prep:lib_vector" type="checkbox"> lib_vector</td><td>text</td><td>(vector) [CV]</td><td>Cloning vector type(s) used in construction of libraries</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:libr_screen" name="prep:libr_screen" type="checkbox"> libr_screen</td><td>text</td><td>(e.g. enriched, screened, normalized) [CV]</td><td>Specific enrichment or screening methods applied before and/or after creating clone libraries</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:multiplex_ident" name="prep:multiplex_ident" type="checkbox"> multiplex_ident</td><td>text</td><td>[multiplex identifier sequence]</td><td>Molecular
+ barcodes, called Multiplex Identifiers (MIDs), that are used to 
+specifically tag unique samples in a sequencing run. Sequence should be 
+reported in uppercase letters</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:nucl_acid_amp" name="prep:nucl_acid_amp" type="checkbox"> nucl_acid_amp</td><td>text</td><td>(amplification method; clean-up method) [PMID, DOI or url]</td><td>Link to a literature reference, electronic resource or a standard operating procedure (SOP)</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:nucl_acid_ext" name="prep:nucl_acid_ext" type="checkbox"> nucl_acid_ext</td><td>text</td><td>(extraction method) [PMID, DOI or url]</td><td>Link to a literature reference, electronic resource or a standard operating procedure (SOP)</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:pcr_cond" name="prep:pcr_cond" type="checkbox"> pcr_cond</td><td>text</td><td>[initial
+ denaturation:degrees_minutes; annealing:degrees_minutes; elongation: 
+degrees_minutes; final elongation:degrees_minutes; total cycles]</td><td>Description of reaction conditions and components for PCR in the form of  'initial denaturation:94degC_1.5min; annealing=...'</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:pcr_primers" name="prep:pcr_primers" type="checkbox"> pcr_primers</td><td>text</td><td>[FWD: forward primer sequence; REV:reverse primer sequence]</td><td>PCR
+ primers, barcodes and adaptors that were used to amplify the sequence 
+of the targeted gene or locus. This field should contain all the primers
+ used for a single PCR reaction if multiple forward or reverse primers 
+are present in a single PCR reaction. The primer sequence should be 
+reported in uppercase letters, however in case of the presence of a 
+barcode or adaptor sequence, the relevant strectches of nucleotides 
+should be reported in lowercase letters.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:samp_collect_device" name="prep:samp_collect_device" type="checkbox"> samp_collect_device</td><td>text</td><td>(e.g. biopsy, niskin bottle, push core)</td><td>The method or deviced employed for collecting the sample</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:samp_mat_process" name="prep:samp_mat_process" type="checkbox"> samp_mat_process</td><td>ontology</td><td>(e.g. filtering of seawater, storing samples in ethanol) [OBI]</td><td>Any
+ processing applied to the sample during or after retrieving the sample 
+from environment. This field accepts OBI (Ontology for Biomedical 
+Investigations), for a browser of OBI terms please see 
+http://bioportal.bioontology.org/visualize/40832</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>samp_size</td><td>text</td><td>[integer, unit]</td><td>Amount or size of sample (volume, mass or area) that was collected</td></tr>
+<input id="prep:samp_size" name="prep:samp_size" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:seq_quality_check" name="prep:seq_quality_check" type="checkbox"> seq_quality_check</td><td>list</td><td>[none or manually edited]</td><td>Indicate
+ if the sequence has been called by automatic systems (none) or 
+undergone a manual editing procedure (e.g. by inspecting the raw data or
+ chromatograms). Applied only for sequences that are not submitted to 
+SRA,ENA or DRA</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>sequencing_meth</td><td>text</td><td>(e.g. dideoxysequencing, pyrosequencing, polony) [OBI]</td><td>Sequencing method used; e.g. Sanger, pyrosequencing, ABI-solid</td></tr>
+<input id="prep:sequencing_meth" name="prep:sequencing_meth" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:sop" name="prep:sop" type="checkbox"> sop</td><td>text</td><td>(SOPs)</td><td>A
+ standard operating procedure is a set of instructions having the force 
+of a directive, covering those features of operations that lend 
+themselves to a definite or standardized procedure without loss of 
+effectiveness</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>target_gene</td><td>text</td><td>(e.g. 16S rRNA, 18S rRNA, nif, amoA, rpo, V6, ITS)</td><td>Targeted gene or locus name for marker gene studies</td></tr>
+<input id="prep:target_gene" name="prep:target_gene" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:target_subfragment" name="prep:target_subfragment" type="checkbox"> target_subfragment</td><td>text</td><td>(e.g. V6, V9, ITS)</td><td>Name of subfragment of a gene or locus. Important to e.g. identify special regions on marker genes like V6 on 16S rRNA.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:url" name="prep:url" type="checkbox"> url</td><td>text</td><td>[url]</td><td>url</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">SRA Experiment Fields</td></tr><tr></tr><tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>BARCODE</td><td>text</td><td>[text]</td><td>Barcode sequence used for each pool member. Need only be unique for each combination of barcode, primer and plate region.</td></tr>
+<input id="prep:BARCODE" name="prep:BARCODE" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>BARCODE_READ_GROUP_TAG</td><td>text</td><td>[text]</td><td>Pool that a sample will be assigned to based on the barcode: this should usually be the POOL_MEMBER_NAME.</td></tr>
+<input id="prep:BARCODE_READ_GROUP_TAG" name="prep:BARCODE_READ_GROUP_TAG" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:EXPERIMENT_ACCESSION" name="prep:EXPERIMENT_ACCESSION" type="checkbox"> EXPERIMENT_ACCESSION</td><td>text</td><td>[text]</td><td>Accession number for the experiment. If you already created the Experiment accession in SRA, use it -- otherwise, leave blank.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>EXPERIMENT_ALIAS</td><td>text</td><td>[text]</td><td>Unique id (within the submission) for the experiment. Should be the same for everything in a given pool.</td></tr>
+<input id="prep:EXPERIMENT_ALIAS" name="prep:EXPERIMENT_ALIAS" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>EXPERIMENT_CENTER</td><td>text</td><td>[text]</td><td>Official
+ abbreviation for the sequencing center associated with the experiment, 
+i.e. who made the pool. Should be the same for every member of a given 
+pool. This is your center name as assigned by NCBI and is often the same
+ as the STUDY center.</td></tr>
+<input id="prep:EXPERIMENT_CENTER" name="prep:EXPERIMENT_CENTER" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>EXPERIMENT_DESIGN_DESCRIPTION</td><td>text</td><td>[text]</td><td>Description
+ of the overall motivation for the experiment (i.e. pool) - why those 
+samples were mixed together, what it was for, etc. Should be the same 
+for every member of a pool. Free text.</td></tr>
+<input id="prep:EXPERIMENT_DESIGN_DESCRIPTION" name="prep:EXPERIMENT_DESIGN_DESCRIPTION" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>EXPERIMENT_TITLE</td><td>text</td><td>[text]</td><td>Title  of the experiment: should be the same for every member of a given pool. Free text.</td></tr>
+<input id="prep:EXPERIMENT_TITLE" name="prep:EXPERIMENT_TITLE" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>INSTRUMENT_NAME</td><td>text</td><td>[text]</td><td>This
+ field is if the specific machine used has a name or label (i.e. a label
+ on that specific piece of equipment, not the type of instrument). Some 
+sequencing centers assign names to specific instruments.</td></tr>
+<input id="prep:INSTRUMENT_NAME" name="prep:INSTRUMENT_NAME" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>KEY_SEQ</td><td>text</td><td>[text]</td><td>This is a technical aspect of the 454 platform, is usually TCAG, can be obtained from the sff file using the sfftools.</td></tr>
+<input id="prep:KEY_SEQ" name="prep:KEY_SEQ" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>LIBRARY_CONSTRUCTION_PROTOCOL</td><td>text</td><td>[text]</td><td>Free-text
+ description of how the library was put together (e.g. from the methods 
+section of a paper). Should be the same for everything in a given pool. 
+Note that this is a required field.</td></tr>
+<input id="prep:LIBRARY_CONSTRUCTION_PROTOCOL" name="prep:LIBRARY_CONSTRUCTION_PROTOCOL" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:LIBRARY_SELECTION" name="prep:LIBRARY_SELECTION" type="checkbox"> LIBRARY_SELECTION</td><td>text</td><td>[text], example: PCR</td><td>Whether
+ any method was used to select and/or enrich the material being 
+sequenced (optional field). This is used in cases where e.g. the cells 
+were sorted, if PCR was used to make a specific amplicon, if 
+fractionation for viruses was done, etc.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:LIBRARY_SOURCE" name="prep:LIBRARY_SOURCE" type="checkbox"> LIBRARY_SOURCE</td><td>text</td><td>[text], example: GENOMIC</td><td>Type of source material that is being sequenced (optional field). This will usually be GENOMIC or METAGENOMIC.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:LIBRARY_STRATEGY" name="prep:LIBRARY_STRATEGY" type="checkbox"> LIBRARY_STRATEGY</td><td>text</td><td>[text], example: AMPLICON</td><td>Sequencing technique intended for this library (optional field). This will usually be AMPLICON or METAGENOMIC.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>LINKER</td><td>text</td><td>[text]</td><td>Linker sequence between the primer and the barcode (to reduce differences in hybridization based on the barcode), can be empty.</td></tr>
+<input id="prep:LINKER" name="prep:LINKER" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>PLATFORM</td><td>text</td><td>[text]</td><td>This is the sequencing platform, e.g. FLX or Titanium</td></tr>
+<input id="prep:PLATFORM" name="prep:PLATFORM" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>POOL_MEMBER_ACCESSION</td><td>text</td><td>[text]</td><td>Accession number for pool member. This should be blank if not already assigned.</td></tr>
+<input id="prep:POOL_MEMBER_ACCESSION" name="prep:POOL_MEMBER_ACCESSION" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>POOL_MEMBER_NAME</td><td>text</td><td>[text]</td><td>Unique
+ (within the pool) id for each pool member. In the hand example, we only
+ used V2 primers, so I am calling the pool members S1_V2 etc. If you 
+mixed primers, a reasonable thing to do would be to use sample_primer 
+codes; if you did replicates doing different barcodes you might want to 
+use sample_primer_barcode or sample_primer_replicate,if you used 
+different numbers of PCR cycles you might want to use sample_numcycle, 
+etc. Because it's difficult to predict what the most common use cases 
+are, you must fill this field in manually (or leave it blank, in which 
+case the SAMPLE_ALIAS will be used and assumed to be unique).</td></tr>
+<input id="prep:POOL_MEMBER_NAME" name="prep:POOL_MEMBER_NAME" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>POOL_PROPORTION</td><td>text</td><td>[text]</td><td>Floating-point number representing the fraction of the pool that was intended to come from that library member.</td></tr>
+<input id="prep:POOL_PROPORTION" name="prep:POOL_PROPORTION" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>PRIMER</td><td>text</td><td>[text]</td><td>Primer
+ sequence that was used for this particular library member. If you used 
+more than one primer for a given pool member (which is allowed) you need
+ to duplicate the whole row with the additional primer information. This
+ needs to be the actual sequence of the primer, not the name of the 
+primer (i.e. not V2 or whatever).</td></tr>
+<input id="prep:PRIMER" name="prep:PRIMER" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>PRIMER_READ_GROUP_TAG</td><td>text</td><td>[text]</td><td>Read
+ group that samples will be assigned to based on the primer, e.g. V2 for
+ the V2 primers. By default, multidimensional demultiplexing on the 
+barcode and primer is performed.</td></tr>
+<input id="prep:PRIMER_READ_GROUP_TAG" name="prep:PRIMER_READ_GROUP_TAG" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>REGION</td><td>text</td><td>[text]</td><td>Region
+ of the plate that was sequenced (in cases where there was a split run 
+and the same primer/barcode means different things in different parts of
+ the plate).</td></tr>
+<input id="prep:REGION" name="prep:REGION" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="prep:RUN_ACCESSION" name="prep:RUN_ACCESSION" type="checkbox"> RUN_ACCESSION</td><td>text</td><td>[text]</td><td>Accession number for the run. Leave blank if not already assigned.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>RUN_ALIAS</td><td>text</td><td>[text]</td><td>Alias
+ for the run.  Presently, this should be different for every pool 
+member, since each pool member gets a unique RUN element in the run XML.
+  In the future, we plan to change this behavior, and create only a 
+single RUN element of multiple pool members share the same RUN_ALIAS. 
+Needs to be a short identifier, alphanumeric and underscores only (no 
+special characters)</td></tr>
+<input id="prep:RUN_ALIAS" name="prep:RUN_ALIAS" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>RUN_CENTER</td><td>text</td><td>[text]</td><td>Name
+ of the institution that performed the run, assigned by NCBI. You can 
+use the center name for your lab for this even if you had the sequencing
+ done elsewhere according to SRA.</td></tr>
+<input id="prep:RUN_CENTER" name="prep:RUN_CENTER" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>RUN_DATE</td><td>text</td><td>[text]</td><td>Date the run was performed: this can be obtained from the sff file.</td></tr>
+<input id="prep:RUN_DATE" name="prep:RUN_DATE" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>RUN_PREFIX</td><td>text</td><td>[text]</td><td>The
+ 454 instrument usually produces more than one sff file. This should be 
+the prefix of the sff file name that was produced by a given run 
+(usually these will have 01, 02, etc. sufixes). This allows you to 
+designate a pool as per-library rather than per sff file (otherwise you 
+would need to duplicate all the info per run for each sff file).</td></tr>
+<input id="prep:RUN_PREFIX" name="prep:RUN_PREFIX" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:SAMPLE_ACCESSION" name="prep:SAMPLE_ACCESSION" type="checkbox"> SAMPLE_ACCESSION</td><td>text</td><td>[text]</td><td>Sample accession number, if available (leave blank if you don't have e.g. an accession assigned by dbGAP).</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>SAMPLE_CENTER</td><td>text</td><td>[text]</td><td>Name
+ of the center that provided the sample, can be separate for each 
+sample.  If sample information is stored in dbGAP, the SAMPLE_CENTER 
+should be set to "NCBI".</td></tr>
+<input id="prep:SAMPLE_CENTER" name="prep:SAMPLE_CENTER" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="prep:STUDY_ACCESSION" name="prep:STUDY_ACCESSION" type="checkbox"> STUDY_ACCESSION</td><td>text</td><td>[text]</td><td>Accession
+ number for study. You should already have created the study in SRA in 
+the first stage submission and should reuse that id here.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>STUDY_CENTER</td><td>text</td><td>[text]</td><td>Name
+ of the center associated with the overall STUDY, i.e. whoever is 
+designated as having overall responsibility for the STUDY (this is a 
+controlled vocabulary, assigned by NCBI). Should be the same for every 
+member of a pool.</td></tr>
+<input id="prep:STUDY_CENTER" name="prep:STUDY_CENTER" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>STUDY_REF</td><td>text</td><td>[text]</td><td>Official
+ STUDY alias of the study, should be the same for every member of a 
+given pool but can be different for different pools. If you put items 
+from multiple STUDY records (e.g. clinical and mock) on the same run, 
+create separate pools but have them reference the same RUN_PREFIX so 
+they can pull sffs from the same files.</td></tr>
+<input id="prep:STUDY_REF" name="prep:STUDY_REF" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(68, 68, 68); color: rgb(255, 255, 255); vertical-align: middle; font-size: 20px;"><td colspan="4">Package-Specific Sample Fields</td></tr><tr></tr><tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:age" name="sample:age" type="checkbox"> age</td><td>numeric</td><td>[numeric value]</td><td>age
+ of host at the time of sampling; relevant scale depends on species and 
+study, e.g. could be seconds for amoebae or centuries for trees</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:age_unit" name="sample:age_unit" type="checkbox"> age_unit</td><td>list</td><td>[years, months, weeks, days, hours, minutes, seconds]</td><td>units of the age field: years, months, weeks, days, hours, minutes, or seconds</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:amniotic_fluid_color" name="sample:amniotic_fluid_color" type="checkbox"> amniotic_fluid_color</td><td>text</td><td>[text]</td><td>specification of the color of the amniotic fluid sample</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:blood_disord" name="sample:blood_disord" type="checkbox"> blood_disord</td><td>text</td><td>[text], multiple</td><td>history of blood disorders; can include multiple disorders</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:blood_press_diast" name="sample:blood_press_diast" type="checkbox"> blood_press_diast</td><td>numeric</td><td>[numeric value]</td><td>resting diastolic blood pressure, measured as mm mercury</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:blood_press_syst" name="sample:blood_press_syst" type="checkbox"> blood_press_syst</td><td>numeric</td><td>[numeric value]</td><td>resting systolic blood pressure, measured as mm mercury</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:body-mass_index" name="sample:body-mass_index" type="checkbox"> body-mass_index</td><td>numeric</td><td>[numeric value]</td><td>body mass index, calculated as weight/(height)squared</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:body_habitat" name="sample:body_habitat" type="checkbox"> body_habitat</td><td>ontology</td><td>[UBERON]</td><td>Original
+ body habitat where the sample was obtained from.name of body site that 
+the sample was obtained from. For UBERON terms, see 
+http://berkeleybop.org/obo/tree/UBERON or 
+http://berkeleybop.org/obo/ontology/UBERON.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:body_product" name="sample:body_product" type="checkbox"> body_product</td><td>ontology</td><td>[UBERON]</td><td>Substance
+ produced by the body, e.g. stool, mucus, where the sample was obtained 
+from. For UBERON terms, see http://berkeleybop.org/obo/tree/UBERON or 
+http://berkeleybop.org/obo/ontology/UBERON.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:body_site" name="sample:body_site" type="checkbox"> body_site</td><td>ontology</td><td>[UBERON]</td><td>Name
+ of body site that the sample was obtained from. For UBERON terms, see 
+http://berkeleybop.org/obo/tree/UBERON or 
+http://berkeleybop.org/obo/ontology/UBERON.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:chem_administration" name="sample:chem_administration" type="checkbox"> chem_administration</td><td>text</td><td>[CHEBI; timestamp], multiple</td><td>list
+ of chemical compounds administered to the host or site where sampling 
+occurred, and when (e.g. antibiotics, N fertilizer, air filter); can 
+include multiple compounds. for CHEBI, see 
+http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=CHEBI</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:diet" name="sample:diet" type="checkbox"> diet</td><td>text</td><td>[text],multiple</td><td>type
+ of diet depending on the host, for animals omnivore, herbivore etc., 
+for humans high-fat, meditteranean etc.; can include multiple diet types</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:diet_last_six_month" name="sample:diet_last_six_month" type="checkbox"> diet_last_six_month</td><td>text</td><td>[y/n]</td><td>specification of major diet changes in the last six months, if yes the change should be specified</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:disease_stat" name="sample:disease_stat" type="checkbox"> disease_stat</td><td>text</td><td>[text or DO], multiple</td><td>list
+ of diseases with which the host has been diagnosed; can include 
+multiple diagnoses. the value of the field depends on host; for humans 
+the terms should be chosen from DO (Disease Ontology), other hosts are 
+free text. for disease ontology see; 
+http://gemina.svn.sourceforge.net/viewvc/gemina/trunk/Gemina/ontologies/gemina_symptom.obo?view=log</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:drug_usage" name="sample:drug_usage" type="checkbox"> drug_usage</td><td>text</td><td>[text=frequency], multiple</td><td>any drug used by subject and the frequency of usage; can include multiple drugs used</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:dry_mass" name="sample:dry_mass" type="checkbox"> dry_mass</td><td>numeric</td><td>[numeric value]</td><td>measurement of dry mass</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:family_relationship" name="sample:family_relationship" type="checkbox"> family_relationship</td><td>text</td><td>[arbitrary id;relationship type], multiple</td><td>relationships to other hosts in the same study, e.g. child of host # 131; can include multiple relationships</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:foetal_health_stat" name="sample:foetal_health_stat" type="checkbox"> foetal_health_stat</td><td>text</td><td>[text]</td><td>specification of foetal health status, should also include abortion</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:genotype" name="sample:genotype" type="checkbox"> genotype</td><td>text</td><td>[text]</td><td>observed genotype</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:gestation_state" name="sample:gestation_state" type="checkbox"> gestation_state</td><td>text</td><td>[text]</td><td>specification of the gestation state</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:gravidity" name="sample:gravidity" type="checkbox"> gravidity</td><td>date</td><td>[timestamp]</td><td>whether or not subject is gravid, and if yes date due or date post-conception, specifying which is used</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:height_or_length" name="sample:height_or_length" type="checkbox"> height_or_length</td><td>numeric</td><td>[numeric value]</td><td>measurement of height or length</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:hiv_stat" name="sample:hiv_stat" type="checkbox"> hiv_stat</td><td>yn</td><td>[y/n]</td><td>HIV status of subject, if yes HAART initiation status should also be indicated as [YES or NO]</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:host_body_temp" name="sample:host_body_temp" type="checkbox"> host_body_temp</td><td>numeric</td><td>[numeric value]</td><td>core body temperature of the host when sample was collected</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:host_color" name="sample:host_color" type="checkbox"> host_color</td><td>text</td><td>[text]</td><td>the color of host</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:host_common_name" name="sample:host_common_name" type="checkbox"> host_common_name</td><td>text</td><td>[text]</td><td>common name of the host, e.g. human</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:host_growth_cond" name="sample:host_growth_cond" type="checkbox"> host_growth_cond</td><td>text</td><td>[PMID,DOI,url or free text]</td><td>literature reference giving growth conditions of the host</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:host_shape" name="sample:host_shape" type="checkbox"> host_shape</td><td>text</td><td>[text]</td><td>morphological shape of host</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>host_subject_id</td><td>text</td><td>[unique identifier within each study]</td><td>a unique identifier by which each subject can be referred to, de-identified, e.g. #131</td></tr>
+<input id="sample:host_subject_id" name="sample:host_subject_id" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 221, 221);"><td>host_taxid</td><td>numeric</td><td>[NCBI taxon id], example: 9606</td><td>NCBI taxon id of the host, e.g. 9606</td></tr>
+<input id="sample:host_taxid" name="sample:host_taxid" value="on" type="hidden">
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:ihmc_ethnicity" name="sample:ihmc_ethnicity" type="checkbox"> ihmc_ethnicity</td><td>text</td><td>[IHMC code or free text]</td><td>ethnicity
+ of the subject. IHMC ethnicity codes are; 01=Hispanic or Latino or 
+Spanish, 02=Non-Hispanic or Non-Latino or Non- Spanish</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:ihmc_medication_code" name="sample:ihmc_medication_code" type="checkbox"> ihmc_medication_code</td><td>list</td><td>[IHMC code], multiple</td><td>can
+ include multiple medication codes. 01=1=Analgesics/NSAIDS, 
+02=2=Anesthetics, 03=3=Antacids/H2  antagonists, 04=4=Anti-acne, 
+05=5=Anti-asthma/bronchodilators, 
+06=6=Anti-cholesterol/Anti-hyperlipidemic, 07=7=Anti-coagulants, 
+08=8=Antibiotics/(anti)-infectives, parasitics, microbials, 
+09=9=Antidepressants/mood-altering drugs, 10=10=Antihistamines/ 
+Decongestants, 11=11=Antihypertensives, 12=12=Cardiovascular, other than
+ hyperlipidemic/HTN, 13=13=Contraceptives (oral, implant, injectable), 
+14=14=Emergency/support medications, 15=15=Endocrine/Metabolic agents, 
+16=16=GI meds (anti-diarrheal, emetic, spasmodics), 
+17=17=Herbal/homeopathic products, 18=18=Hormones/steroids, 19=19=OTC 
+cold &amp; flu, 20=20=Vaccine prophylaxis, 21=21=Vitamins, minerals, 
+food supplements, 99=99=Other</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:infra_specific_name" name="sample:infra_specific_name" type="checkbox"> infra_specific_name</td><td>text</td><td>[text]</td><td>taxonomic information about the host below subspecies level</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:infra_specific_rank" name="sample:infra_specific_rank" type="checkbox"> infra_specific_rank</td><td>text</td><td>[text]</td><td>taxonomic rank information about the host below subspecies level, such as variety, form, rank etc...</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:kidney_disord" name="sample:kidney_disord" type="checkbox"> kidney_disord</td><td>text</td><td>[text], multiple</td><td>history of kidney disorders; can include multiple disorders</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:last_meal" name="sample:last_meal" type="checkbox"> last_meal</td><td>text</td><td>[text; start_time; end_time], multiple</td><td>content of last meal and time since feeding; can include multiple values</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:life_stage" name="sample:life_stage" type="checkbox"> life_stage</td><td>text</td><td>[text]</td><td>description of life stage of host</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:maternal_health_stat" name="sample:maternal_health_stat" type="checkbox"> maternal_health_stat</td><td>text</td><td>[text]</td><td>specification of the maternal health status</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:medic_hist_perform" name="sample:medic_hist_perform" type="checkbox"> medic_hist_perform</td><td>text</td><td>[true or false]</td><td>whether full medical history was collected</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:misc_param" name="sample:misc_param" type="checkbox"> misc_param</td><td>text</td><td>[text=numeric value or text], multiple</td><td>any
+ other measurement performed or parameter collected, that is not listed 
+here.should be given in the form of measurement name/parameter 
+name=value and unit; can include multiple measurements or parameters</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:nose_throat_disord" name="sample:nose_throat_disord" type="checkbox"> nose_throat_disord</td><td>list</td><td>[text], multiple</td><td>history of nose-throat disorders; can include multiple disorders</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:occupation" name="sample:occupation" type="checkbox"> occupation</td><td>list</td><td>[IHMC code]</td><td>most
+ frequent job performed by subject. IHMC codes are; 01=01 
+Accounting/Finance, 02=02 Advertising/Public Relations, 03=03  
+Arts/Entertainment/Publishing, 04=04 Automotive, 05=05 Banking/ 
+Mortgage, 06=06 Biotech, 07=07 Broadcast/Journalism, 08=08 Business  
+Development, 09=09 Clerical/Administrative, 10=10 Construction/Trades,  
+11=11 Consultant, 12=12 Customer Services, 13=13 Design, 14=14  
+Education, 15=15 Engineering, 16=16 Entry Level, 17=17 Executive,  18=18
+ Food Service, 19=19 Government, 20=20 Grocery, 21=21 Healthcare,  22=22
+ Hospitality, 23=23 Human Resources, 24=24 Information  Technology, 
+25=25 Insurance, 26=26 Law/Legal, 27=27 Management, 28=28  
+Manufacturing, 29=29 Marketing, 30=30 Pharmaceutical, 31=31  
+Professional Services, 32=32 Purchasing, 33=33 Quality Assurance (QA),  
+34=34 Research, 35=35 Restaurant, 36=36 Retail, 37=37 Sales, 38=38  
+Science, 39=39 Security/Law Enforcement, 40=40 Shipping/Distribution,  
+41=41 Strategy, 42=42 Student, 43=43 Telecommunications, 44=44  
+Training, 45=45 Transportation, 46=46 Warehouse, 47=47 Other, 99=99  
+Unknown/Refused</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:organism_count" name="sample:organism_count" type="checkbox"> organism_count</td><td>numeric</td><td>[text=numeric value],multiple</td><td>total
+ count of any organism per gram or volume of sample,should include name 
+of organism followed by count; can include multiple organism counts</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:oxy_stat_samp" name="sample:oxy_stat_samp" type="checkbox"> oxy_stat_samp</td><td>list</td><td>[aerobe/anaerobe/facultative/microaerophilic/microanaerobe/obligate aerobe/obligate anaerobe]</td><td>oxygenation status of sample</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:perturbation" name="sample:perturbation" type="checkbox"> perturbation</td><td>text</td><td>[text; start_timestamp;end_timestamp], multiple</td><td>type
+ of perturbation, e.g. chemical administration, physical disturbance, 
+etc., coupled with time that perturbation occurred; can include multiple
+ perturbation types</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:pet_farm_animal" name="sample:pet_farm_animal" type="checkbox"> pet_farm_animal</td><td>text</td><td>[text], multiple</td><td>specification
+ of presence of pets or farm animals in the environment of subject, if 
+yes the animals should be specified; can include multiple animals 
+present</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:phenotype" name="sample:phenotype" type="checkbox"> phenotype</td><td>ontology</td><td>[PATO]</td><td>phenotype of host. for PATO, see http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=PATO</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:pulmonary_disord" name="sample:pulmonary_disord" type="checkbox"> pulmonary_disord</td><td>text</td><td>[text], multiple</td><td>history of pulmonary disorders; can include multiple disorders</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:pulse" name="sample:pulse" type="checkbox"> pulse</td><td>numeric</td><td>[numeric value]</td><td>resting pulse, measured as beats per minute</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:samp_salinity" name="sample:samp_salinity" type="checkbox"> samp_salinity</td><td>numeric</td><td>[numeric value]</td><td>salinity of sample, i.e. measure of total salt concentration</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:samp_store_dur" name="sample:samp_store_dur" type="checkbox"> samp_store_dur</td><td>text</td><td>[start_timestamp;end_timestamp]</td><td>duration for which sample was stored, e.g. 8/1/2003-7/24/2005""</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:samp_store_loc" name="sample:samp_store_loc" type="checkbox"> samp_store_loc</td><td>text</td><td>[text]</td><td>location at which sample was stored, usually name of a specific freezer/room</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:samp_store_temp" name="sample:samp_store_temp" type="checkbox"> samp_store_temp</td><td>numeric</td><td>[numeric value]</td><td>temperature at which sample was stored, e.g. -80</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:sex" name="sample:sex" type="checkbox"> sex</td><td>list</td><td>[male/female/neuter/hermaphrodite/not determined]</td><td>physical sex of the host</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:smoker" name="sample:smoker" type="checkbox"> smoker</td><td>text</td><td>[y/n]</td><td>specification of smoking status</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:study_complt_stat" name="sample:study_complt_stat" type="checkbox"> study_complt_stat</td><td>list</td><td>[(0) complete, (1) adverse event, (2) non-compliance, (3) lost to follow up, (4) other]</td><td>specification of study completion status.</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:substrate" name="sample:substrate" type="checkbox"> substrate</td><td>text</td><td>[text]</td><td>the growth substrate of the host</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:temp" name="sample:temp" type="checkbox"> temp</td><td>numeric</td><td>[numeric value]</td><td>temperature of the sample at time of sampling</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:tot_mass" name="sample:tot_mass" type="checkbox"> tot_mass</td><td>numeric</td><td>[numeric value]</td><td>total mass of the host at collection, the unit depends on host</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:travel_out_six_month" name="sample:travel_out_six_month" type="checkbox"> travel_out_six_month</td><td>text</td><td>[text], multiple</td><td>specification of the countries travelled in the last six months; can include multiple travels</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:twin_sibling" name="sample:twin_sibling" type="checkbox"> twin_sibling</td><td>yn</td><td>[y/n]</td><td>specification of twin sibling presence</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:urine_collect_meth" name="sample:urine_collect_meth" type="checkbox"> urine_collect_meth</td><td>list</td><td>[clean catch or catheter]</td><td>specification of urine collection method</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(255, 255, 255);"><td><input id="sample:urogenit_tract_disor" name="sample:urogenit_tract_disor" type="checkbox"> urogenit_tract_disor</td><td>text</td><td>[text], multiple</td><td>history of urogenitaltract disorders; can include multiple disorders</td></tr>
+<tr style="background: none repeat scroll 0% 0% rgb(238, 238, 255);"><td><input id="sample:weight_loss_3_month" name="sample:weight_loss_3_month" type="checkbox"> weight_loss_3_month</td><td>text</td><td>[y/n]</td><td>specification of weight loss in the last three months, if yes should be further specified to include amount of weight loss</td></tr>
+
+
+<tr>
+    <td colspan="5">&nbsp;</td>
+</tr>
+<tr>
+    <td colspan="5">
+        <table id="selected_additional_fields">
+        </table>
+        <p>Search for additional fields:
+        </p><p><input name="search_term" id="search_term" onkeyup="loadAdditionalFields();" onclick="loadAdditionalFields();" type="text">
+        </p><p>
+        </p><table id="additional_fields_results">
+        </table>
+    </td>
+</tr>
+<tr>
+    <td colspan="5">&nbsp;</td>
+</tr>
+<tr>
+    <td colspan="5"><input value="Generate Templates" onclick='window.location="fusebox.psp?page=select_study_task.psp";' type="submit"></td>
+</tr>
+
+</tbody></table>
+</form>
+
+
+<!--
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Jesse Stombaugh"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+-->
+
+</div>
+
+
+<!--
+<br/><br/>
+
+<table class="header_table">
+    <tr>
+    	<td style="font-size: 12px;">Logged in as wendel@colorado.edu</td>
+    	<td style="text-align:right; font-size: 12px;">
+
+        </td>
+    </tr>
+</table>
+-->
+
+</body></html>

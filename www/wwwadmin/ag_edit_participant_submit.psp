@@ -1,0 +1,9 @@
+<%
+# Submit and redirect to fusebox
+ag_data_access.updateAGLogin(form['ag_login_id'], form['email'], form['name'], \
+	form['address'], form['city'], form['state'], form['zip'], form['country'])
+
+req.write('<script>document.submit_data.submit(); return false;</script>')
+%>
+
+Participant updated.

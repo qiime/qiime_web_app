@@ -1,0 +1,47 @@
+<%@ include file="common_vars.psp" %>
+
+<form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
+    <input type="hidden" name="page" value="select_task.psp">
+</form>
+
+<%
+if 'ag_kit_id' in form:
+	# Submit and redirect to fusebox
+	ag_data_access.addAGBarcode(form['ag_kit_id'], form['barcode'])
+
+	req.write('<script>document.submit_data.submit(); return false;</script>')
+else:
+	# Draw the form
+%>
+
+<script> 
+  $(function() {
+    $( "#ag_kit_id" ).combobox();
+  });
+</script>
+
+<form method="post" action="ag_new_barcode.psp">
+	<table>
+		<tr>
+			<td>Kit ID</td>
+			<td>
+				<select name="ag_kit_id" id="ag_kit_id" class="hidden">
+				<option value="">Please Select...</a>
+<%
+logins = ag_data_access.getAGKitsByLogin()
+for email, supplied_kit_id, ag_kit_id in logins:
+	req.write('<option value="{2}">{0} ({1})</option>'.format(email, supplied_kit_id, ag_kit_id))
+# End
+%>
+				</select>
+			</td>
+		</tr>
+		
+		<tr><td>Barcode</td><td><input type="text" name="barcode" id="barcode"></td></tr>
+		<tr><td colspan="2"><input type="submit"></td></tr>
+	</table>
+</form>
+
+<%
+# End indent
+%>

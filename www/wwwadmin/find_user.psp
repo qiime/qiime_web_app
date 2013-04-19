@@ -1,0 +1,94 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+
+%>
+
+<%
+if form.has_key('email'):
+    try:            
+        # Unlock user if necessary
+        if form.has_key('unlock') and form.has_key('user_id'):
+            user_id = form['user_id']
+            # unlock the user
+            statement = "update web_app_user_webapps.web_app_user set is_locked = 0 where web_app_user_id = {0}".format(user_id)
+            con.cursor().execute(statement)
+            statement = "commit"
+            con.cursor().execute(statement)
+        
+        statement = "select * from web_app_user_webapps.web_app_user where lower(email) like '%%%s%%'" % form['email'].lower()
+        results = con.cursor().execute(statement)
+        if results == None:
+            req.write('Error: Email address not found in database.<br/><br/>')
+        else:
+            req.write('<table border="1">')
+            req.write('<th>User ID</th>')
+            req.write('<th>Full Email Address</th>')
+            req.write('<th>Admin User</th>')
+            req.write('<th>Locked</th>')
+            req.write('<th>Last Login</th>')
+            req.write('<th>Pending</th>')
+            req.write('<th>Verified</th>')
+            for result in results:
+                user_id = result[0]
+                email = result[1]
+                admin_user = result[3]
+                locked = result[4]
+                last_login = result[8]
+                pending = result[12]
+                verified = result[15]
+                # Indent
+                #req.write(str(result))
+%>
+<tr>
+    <td><%=user_id%></td>
+    <td><%=email%></td>
+    <td><%=admin_user%></td>
+    <td>
+<%
+                if locked > 0:
+                    # Indent
+%>
+        <form id="form_unlock" name="form_unlock" action="fusebox.psp" method="post">
+            <input type="hidden" name="page" value="find_user.psp">
+            <input type="hidden" name="unlock" value="1">
+            <input type="hidden" name="user_id" value="<%=user_id%>">
+            <input type="hidden" name="email" id="email" value="<%=email%>">
+            <%=locked%> <a href="" onclick="document.forms['form_unlock'].submit(); return false;">(unlock)</a>
+        </form>
+        
+<%
+                else:
+                    req.write('{0}'.format(locked))
+                # End indent
+%>
+    </td>
+    <td><%=last_login%></td>
+    <td><%=pending%></td>
+    <td><%=verified%></td>
+</tr>
+<%
+            req.write('</table><br/>')
+    except Exception, e:
+        req.write(str(e))
+
+# End indent
+%>
+
+<form action="fusebox.psp" method="post" name="find_user" id="find_user">
+    <input type="hidden" name="page" value="find_user.psp">
+    <table>
+        <tr>
+            <td>Search Term (within email addresses)</td><td><input type="text" name="email" id="email"/></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="Search"></td>
+        </tr>
+    </table>
+</form>

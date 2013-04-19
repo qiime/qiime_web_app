@@ -1,0 +1,132 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Production"
+%>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>wwwadmin</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<script src="js/jquery-1.9.1.js"></script>
+<script src="js/jquery-ui-1.10.1.custom.min.js"></script>
+<script src="js/util.js"></script>
+<link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
+<link rel="stylesheet" href="style/qiime.css" type="text/css">
+</head>
+
+<body>
+    <div class="menu">
+
+        <form action="fusebox.psp" method="post" name="assign_user_to_study" id="assign_user_to_study">
+            <input type="hidden" name="page" value="assign_user_to_study.psp">
+            <input type="hidden" name="page_title" value="Assign User to Studies">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="find_user" id="find_user">
+            <input type="hidden" name="page" value="find_user.psp">
+            <input type="hidden" name="page_title" value="Search for User">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="reset_password_header" id="reset_password_header">
+            <input type="hidden" name="page" value="reset_password.psp">
+            <input type="hidden" name="page_title" value="Reset Password">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="add_to_fastunifrac_header" id="add_to_fastunifrac_header">
+            <input type="hidden" name="page" value="add_to_fastunifrac.psp">
+            <input type="hidden" name="page_title" value="Enable Fast UniFrac Access">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="unifrac_limits_header" id="unifrac_limits_header">
+            <input type="hidden" name="page" value="unifrac_limits.psp">
+            <input type="hidden" name="unifrac_table" value="unifrac_privs">
+            <input type="hidden" name="page_title" value="Manage UniFrac Limits">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="fast_unifrac_limits_header" id="fast_unifrac_limits_header">
+            <input type="hidden" name="page" value="unifrac_limits.psp">
+            <input type="hidden" name="unifrac_table" value="fast_unifrac_privs">
+            <input type="hidden" name="page_title" value="Manage Fast UniFrac limits">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="ag_new_participant" id="ag_new_participant">
+            <input type="hidden" name="page" value="ag_new_participant.psp">
+            <input type="hidden" name="page_title" value="Add New American Gut Participant">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="ag_new_kit" id="ag_new_kit">
+            <input type="hidden" name="page" value="ag_new_kit.psp">
+            <input type="hidden" name="page_title" value="Add New American Gut Kit">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="ag_new_barcode" id="ag_new_barcode">
+            <input type="hidden" name="page" value="ag_new_barcode.psp">
+            <input type="hidden" name="page_title" value="Add New American Gut Barcode">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="ag_edit_participant" id="ag_edit_participant">
+            <input type="hidden" name="page" value="ag_edit_participant.psp">
+            <input type="hidden" name="page_title" value="Modify American Gut Participant">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="ag_reassign_barcode" id="ag_reassign_barcode">
+            <input type="hidden" name="page" value="ag_reassign_barcode.psp">
+            <input type="hidden" name="page_title" value="Reassign American Gut Barcode">
+        </form>
+        
+        <form action="fusebox.psp" method="post" name="barcode_util" id="barcode_util">
+            <input type="hidden" name="page" value="barcode_util.psp">
+            <input type="hidden" name="page_title" value="Check Barcode">
+        </form>
+        
+        <form action="fusebox.psp" method="post" name="ag_add_bruce_wayne" id="ag_add_bruce_wayne">
+            <input type="hidden" name="page" value="ag_add_bruce_wayne.psp">
+            <input type="hidden" name="page_title" value="Add Bruce Wayne">
+        </form>
+
+        <h3>Qiime Website Utilities</h3>
+
+        <ul class="mainmenu">
+            <li><a href="" onclick="document.assign_user_to_study.submit(); return false;">Assign User to Studies</a></li>
+        </ul>
+
+        <h3>American Gut Utilities</h3>
+
+        <ul class="mainmenu">
+            <li><a href="" onclick="document.ag_new_participant.submit(); return false;">Add New Participant</a></li>
+            <li><a href="" onclick="document.ag_new_kit.submit(); return false;">Add New Kit</a></li>
+            <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New Barcode</a></li>
+            <li><a href="" onclick="document.ag_edit_participant.submit(); return false;">Edit Participant</a></li>
+            <li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>
+            <!--<li><a href="" onclick="document.barcode_util.submit(); return false;">Check Barcode</a></li> -->
+            <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne</a></li>
+        </ul>
+
+        <h3>Legacy Web App Utilities</h3>
+
+        <ul class="mainmenu">
+            <li><a href="" onclick="document.find_user.submit(); return false;">Search for User</a></li>
+            <li><a href="" onclick="document.reset_password_header.submit(); return false;">Reset password for web app user</a></li>
+            <li><a href="" onclick="document.add_to_fastunifrac_header.submit(); return false;">Enable Fast UniFrac Access</a></li>
+            <li><a href="" onclick="document.unifrac_limits_header.submit(); return false;">Manage UniFrac limits</a></li>
+            <li><a href="" onclick="document.fast_unifrac_limits_header.submit(); return false;">Manage Fast UniFrac limits</a></li>
+        </ul>
+
+        <a href="logout.psp">Log Out</a>   
+    </div>
+
+    <div class="content">
+    
+<%
+if 'page_title' in form:
+    req.write('<h3>{0}</h3>'.format(form['page_title']))
+# End indent
+%>
+
