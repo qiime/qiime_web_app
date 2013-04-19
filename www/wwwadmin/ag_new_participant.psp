@@ -15,16 +15,16 @@ else:
 	# Draw the form
 %>
 
-<form name="newParticipant" id="newParticipant" method="post" action="ag_new_participant.psp">
+<form name="agForm" id="agForm" method="post" action="ag_new_participant.psp">
 	<table>
 		<tr><td>Email</td><td><input type="text" name="email" id="email"></td></tr>
-		<tr><td>Name</td><td><input type="text" name="participantname" id="participantname"></td></tr>
+		<tr><td>Name</td><td><input type="text" name="name" id="name"></td></tr>
 		<tr><td>Address</td><td><input type="text" name="address" id="address"></td></tr>
 		<tr><td>City</td><td><input type="text" name="city" id="city"></td></tr>
 		<tr><td>State</td><td><input type="text" name="state" id="state"></td></tr>
 		<tr><td>Zip</td><td><input type="text" name="zip" id="zip"></td></tr>
 		<tr><td>Country</td><td><input type="text" name="country" id="country"></td></tr>
-		<tr><td colspan="2"><input type="button" onclick="validateNewParticipant()" value="Submit"/></td></tr>
+		<tr><td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"/></td></tr>
 	</table>
 </form>
 
