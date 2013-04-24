@@ -1,0 +1,253 @@
+<div id="content" class="content">
+    <h2>Non-human host associated survey</h2>
+    <h4></h4>
+    <div class="lefta">
+        <table width="100%">
+            <tr>
+            <td width="20%"></td>
+            <td>
+                <form id="pet_survey" name="pet_survey" action="submit_animal_survey.psp" method="post">
+                    <table id="survey" width="100%">
+                        <colgroup>
+                               <col span="1" style="width: 40%;">
+                               <col span="1" style="width: 60%;">
+                        </colgroup>
+                        <tr><td><h4>General</h4></td><td></td></tr>
+                        <tr>
+                            <td>Name</td>
+                            <td><input tabindex="1" type="text" id="pet_name" name="pet_name" value="Name" class=""/></td>
+                        </tr>
+                        <tr>
+                            <td>Pet type</td>
+                            <td>
+                                <select tabindex="1" id="type" name="type" onchange="otherSelect('type','dog_option',1)">
+                                    <option value="">Select an option</option>
+                                    <option>Dog</option>
+                                    <option>Cat</option>
+                                    <option>Small mammal</option>
+                                    <option>Large mammal</option>
+                                    <option>Fish</option>
+                                    <option>Bird</option>
+                                    <option>Reptile</option>
+                                    <option>Amphibian</option>
+                                    <option>Other</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Origin</td>
+                            <td>
+                                <select tabindex="2" id="origin" name="origin">
+                                    <option value="">Select an option</option>
+                                    <option>Breeder</option>
+                                    <option>Shelter</option>
+                                    <option>Home</option>
+                                    <option>Wild</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Birth date</td>
+                            <td><input tabindex="3" type="text" name="birth_date" id="birth_date" class=""/> mm/dd/yyyy</td>
+                            <script>
+                              $(function() {
+                                $( "#birth_date" ).datepicker({
+                                        yearRange: "-120:+0",
+                                        changeMonth: true,
+                                        changeYear: true,
+                                        onSelect: function(dateText, inst) {
+                                            $(this).focus();
+                                        }
+                                });
+                              });
+                            </script>
+                        </tr>
+                        <tr>
+                            <td>Sex</td>
+                            <td>
+                                <select tabindex="4" name="gender" id="gender">
+                                    <option value="">Select an option</option>
+                                    <option>Male</option>
+                                    <option>Female</option>
+                                    <option>Unknown</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Setting</td>
+                            <td>
+                                <select tabindex="5" name="setting" id="setting">
+                                    <option value="">Select an option</option>
+                                    <option>Urban</option>
+                                    <option>Suburban</option>
+                                    <option>Rural</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Weight category</td>
+                            <td>
+                                <select tabindex="6" name="weight" id="weight">
+                                    <option value="">Select an option</option>
+                                    <option>Underweight</option>
+                                    <option>Skinny</option>
+                                    <option>Normal</option>
+                                    <option>Chubby</option>
+                                    <option>Overweight</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr><td><h4>Diet</h4></td><td></td></tr>
+                        <tr>
+                            <td>Diet classification</td>
+                            <td>
+                                <select tabindex="7" name="diet" id="diet">
+                                    <option value="">Select an option</option>
+                                    <option>Carnivore</option>
+                                    <option>Omnivore</option>
+                                    <option>Herbivore</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Food source</td>
+                            <td>
+                                <input tabindex="8" type="checkbox" id="store_food" name="store_food" /><label for="food_source_store">Pet store food</label><br />
+                                <input tabindex="9" type="checkbox" id="human_food" name="human_food" /><label for="food_source_human">Human food</label><br />
+                                <input tabindex="10" type="checkbox" id="wild_food" name="wild_food" /><label for="food_source_wild">Wild food</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Food type</td>
+                            <td>
+                                <div id="food_type">
+                                    <input tabindex="11" type="radio" id="food_type_dry" name="food_type" value="dry" /><label for="food_type_dry">Dry</label>
+                                    <input tabindex="12" type="radio" id="food_type_wet" name="food_type" value="wet"/><label for="food_type_wet">Wet</label>
+                                    <input tabindex="13" type="radio" id="food_type_both" name="food_type" value="both"/><label for="food_type_both">Both</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Food special attributes</td>
+                            <td>
+                                <input tabindex="14" type="checkbox" id="organic_food" name="organic_food" /><label for="organic_food">Organic</label><br />
+                                <input tabindex="15" type="checkbox" id="grain_free_food" name="grain_free_food" /><label for="grain_free_food">Grain free</label>
+                            </td>
+                            
+                        </tr>
+                        <tr><td><h4>Social</h4></td><td></td></tr>
+                        <tr>
+                            <td>Living status <a href="#" class="help" title="Lives alone with human(s), Lives alone no/limited humans (shelter), Lives with other animals and humans (family pet with other pets), Lives with other animals/limited humans (farm animal, fish, reptile)">(?)</a></td>
+                            <td>
+                                <select tabindex="16" name="living_status" id="living_status">
+                                    <option value="">Select an option</option>
+                                    <option>Lives alone with humans</option>
+                                    <option>Lives alone no/limited humans (shelter)</option>
+                                    <option>Lives with other animals and humans</option>
+                                    <option>Lives with other animals/limited humans</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Add any pets that the current animal lives with</td>
+                            <td>
+                                <div id="pet">
+                                    <div id="pet_1">
+                                    </div>
+                                </div>
+                                <a class="add_field" href="javascript:addPet()" title="Add another pet">+</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Add the age and gender of any humans that the current animal lives with</td>
+                            <td>
+                                <div id="human">
+                                    <div id="human_1">
+                                        <input type="text" id="human_1_age" class="small_text" name="human_1_age" value="Age" onkeypress='validateNumber(event)'/> years
+                                        <br />
+                                        <select id="human_1_sex" name="human_1_sex">
+                                            <option value="">Select an option</option>
+                                            <option>Male</option>
+                                            <option>Female</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <a class="add_field" href="javascript:addHuman()" title="Add another human">+</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Hours spent outside</td>
+                            <td>
+                                <div id="outside_time">
+                                    <input tabindex="17" type="radio" id="outside_time_none" name="outside_time" value="none" /><label for="outside_time_none">None</label>
+                                    <input tabindex="18" type="radio" id="outside_time_1" name="outside_time" value="1"/><label for="outside_time_1">Less than 2</label>
+                                    <input tabindex="19" type="radio" id="outside_time_2-4" name="outside_time" value="2-4"/><label for="outside_time_2-4">2-4</label>
+									<input tabindex="20" type="radio" id="outside_time_4-8" name="outside_time" value="2-4"/><label for="outside_time_4-8">4-8</label>
+									<input tabindex="21" type="radio" id="outside_time_8" name="outside_time" value="2-4"/><label for="outside_time_8">8+</label>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <div id="dog_option" class="invisible">
+                        <table id="survey" width="100%">
+                            <colgroup>
+                               <col span="1" style="width: 40%;">
+                               <col span="1" style="width: 60%;">
+                            </colgroup>
+                            <tr><td><h4>Dog Specific Questions</h4></td><td></td></tr>
+                            <tr>
+                                <td>Toilet water access</td>
+                                <td>
+                                    <div id="toilet">
+                                        <input tabindex="" type="radio" id="toilet_regular" name="toilet" value="regular" /><label for="toilet_regular">Regular</label>
+                                        <input tabindex="" type="radio" id="toilet_sometimes" name="toilet" value="sometimes"/><label for="toilet_sometimes">Sometimes</label>
+                                        <input tabindex="" type="radio" id="toilet_never" name="toilet" value="never"/><label for="toilet_never">Never</label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Turd burglar <a href="#" class="help" title="High (anything in sight), Moderate (curious, occasional sample), Low (once or twice), Never">(?)</a></td>
+                                <td>
+                                    <div id="turd">
+                                        <input tabindex="" type="radio" id="turd_high" name="turd" value="high" /><label for="turd_high">High</label>
+                                        <input tabindex="" type="radio" id="turd_moderate" name="turd" value="moderate"/><label for="turd_moderate">Moderate</label>
+                                        <input tabindex="" type="radio" id="turd_low" name="turd" value="low"/><label for="turd_low">Low</label>
+                                        <input tabindex="" type="radio" id="turd_never" name="turd" value="never"/><label for="turd_never">Never</label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                
+            </td>
+            <td width="20%"></td>
+            </tr>
+        </table>
+    </div>
+    <br />
+    <input type="button" value="Reset" onclick="reset('pet_survey')">
+    <input tabindex="22" type="button" id="petsubmit" name="petsubmit" value="Continue" onclick="validatePetSurvey()">
+    </form>
+    <br />
+        <script>
+          $(function() {
+              $( "#food_type" ).buttonset();
+              $( "#outside_time" ).buttonset();
+              $( "#toilet" ).buttonset();
+              $( "#turd" ).buttonset();
+              
+              $('input[type="text"], textarea').focus(function () {
+                  defaultText = $(this).val();
+                  $(this).val('');
+              });
+              $('input[type="text"], textarea').blur(function () {
+                  if ($(this).val() == "") {
+                      $(this).val(defaultText);
+                  }
+                  });
+
+          });
+        </script>
+    <br />
+</div>
