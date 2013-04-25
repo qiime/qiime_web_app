@@ -83,18 +83,24 @@ alert("Your verification code is:\n\n<%=kit_verification_code%>\n\nPlease copy t
 
 # Email the verification code
 subject = "American Gut Verification Code"
+addendum = ''
+if kit_id.startswith('PGP_'):
+	addendum = """For the PGP cohort, we are requesting that you collect one sample from each of the following sites:\n\nLeft hand\nRight hand\nForehead\nMouth\nFecal\n\nThis is important to ensure that we have the same types of samples for all PGP participants which, in turn, could be helpful in downstream analysis when looking for relationships between the microbiome and the human genome."""
+
 body = """
-Thank you for registering with the American Gut Project! Your verification code is: \n\n
-{0}\n\n
-You will need this code to verifiy your kit on the American Gut webstite. To get started, 
-please log into: \n\n
-<a href="http://microbio.me/AmericanGut">http://microbio.me/AmericanGut</a>\n\n
-Enter the kit_id and password found inside your kit, verify the contents of your kit, 
-and enter the validation code found in this email.
-\n\n
-Sincerely,\n
-The American Gut Team\n
-""".format(kit_verification_code)
+Thank you for registering with the American Gut Project! Your verification code is:
+
+{0}
+
+You will need this code to verifiy your kit on the American Gut webstite. To get started, please log into:
+
+http://microbio.me/AmericanGut
+
+Enter the kit_id and password found inside your kit, verify the contents of your kit, and enter the validation code found in this email.
+{1}
+Sincerely,
+The American Gut Team
+""".format(kit_verification_code, addendum)
 
 # Only email on systems that have email capability:
 hostname = socket.gethostname()
