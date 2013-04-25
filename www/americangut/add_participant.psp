@@ -1,3 +1,5 @@
+<html><head></head><body>
+
 <%
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2010, Qiime Web Analysis"
@@ -10,6 +12,8 @@ __status__ = "Development"
 
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
+from utils.mail import send_email
+import socket
 
 sess = Session.Session(req)
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
@@ -58,11 +62,48 @@ sess['username'] = user_data['name']
 sess['supplied_kit_id'] = kit_id
 sess.save()
 
-# Alert the user what their verification code is
-req.write('<script language="javascript">alert("Your verification code is: . Please \
-	Copy this down - you will need it to verify your kit on the next screen. It will also be emailed to you.");</script>')
+# Alert the user what their verification code is. For specialized programs a personalized
+# message can be displayed.
+if kit_id.startswith('PGP_'):
+	# Indent
+%>
+<script>
+alert("Your verification code is:\n\n<%=kit_verification_code%>\n\nPlease copy this down - you will need it to verify your kit on the next screen. It will also be emailed to the address you provided during registration.\n\nFor the PGP cohort, we are requesting that you collect one sample from each of the following sites:\n\nLeft hand\nRight hand\nForehead\nMouth\nFecal\n\nThis is important to ensure that we have the same types of samples for all PGP participants which, in turn, could be helpful in downstream analysis when looking for relationships between the microbiome and the human genome.");
+</script>
+<%	
+# End indent
+else:
+	# Indent
+%>
+<script>
+alert("Your verification code is:\n\n<%=kit_verification_code%>\n\nPlease copy this down - you will need it to verify your kit on the next screen. It will also be emailed to the address you provided during registration.");
+</script>
+<%
+# End Indent
+
+# Email the verification code
+subject = "American Gut Verification Code"
+body = """
+Thank you for registering with the American Gut Project! Your verification code is: \n\n
+{0}\n\n
+You will need this code to verifiy your kit on the American Gut webstite. To get started, 
+please log into: \n\n
+<a href="http://microbio.me/AmericanGut">http://microbio.me/AmericanGut</a>\n\n
+Enter the kit_id and password found inside your kit, verify the contents of your kit, 
+and enter the validation code found in this email.
+\n\n
+Sincerely,\n
+The American Gut Team\n
+""".format(kit_verification_code)
+
+# Only email on systems that have email capability:
+hostname = socket.gethostname()
+if 'microbio.me' in hostname:
+	send_email(body, subject, email)
 
 # Let the user in
 url = 'fusebox.psp?page=portal.psp'
 req.write('<script language="javascript">window.location="{0}";</script>'.format(url))
 %>
+
+</body></html>

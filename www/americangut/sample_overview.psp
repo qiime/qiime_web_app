@@ -4,7 +4,7 @@
 ag_login_id = sess['user_data']['web_app_user_id']
 barcode = form['barcode']
 
-query = "select site_sampled, sample_date, sample_time, notes from ag_kit_barcodes where barcode = {0}".format(barcode)
+query = "select site_sampled, sample_date, sample_time, notes from ag_kit_barcodes where barcode = '{0}'".format(barcode)
 sample_data = ag_data_access.dynamicMetadataSelect(query).fetchone()
 site_sampled = sample_data[0]
 sample_date = sample_data[1]
