@@ -96,10 +96,13 @@ You will need this code to verifiy your kit on the American Gut webstite. To get
 
 http://microbio.me/AmericanGut
 
-Enter the kit_id and password found inside your kit, verify the contents of your kit, and enter the validation code found in this email.
+Enter the kit_id and password found inside your kit, verify the contents of your kit, and enter the verification code found in this email.
+
 {1}
+
 Sincerely,
 The American Gut Team
+
 """.format(kit_verification_code, addendum)
 
 # Only email on systems that have email capability:
