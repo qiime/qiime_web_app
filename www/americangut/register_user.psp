@@ -1,0 +1,396 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
+import os
+from enums import FieldGrouping
+from qiime.parse import parse_mapping_file
+
+# Form variables
+kit_id = form['username']
+password = form['password']
+
+tiny_markers = False
+portal_type = 'americangut'
+
+# Data Access
+data_access = data_access_factory(ServerConfig.data_access_type)
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+
+# Session variables
+sess = Session.Session(req)
+
+if 'username' in sess:
+    psp.redirect('logout.psp')
+
+sess['portal_type'] = portal_type
+sess['document_root'] = req.document_root() + '/americangut/'
+sess['resources'] = {}
+sess['resources']['barcode_images_fp'] = os.path.join('img', 'barcodes')
+
+sess.set_timeout(604800)
+sess.save()
+%>
+
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<meta charset="utf-8">
+<title>American Gut</title>
+<link rel="stylesheet" type="text/css" href="style/americangut.css">
+
+<style>
+input 
+{
+    width: 300px;
+    border: 1px solid black;
+    border-radius: 3px; 
+        -webkit-box-shadow: 
+        inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    -moz-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    padding: 5px;
+    background: rgba(255,255,255,0.5);
+    margin: 0 0 10px 0;
+}
+
+input[type=submit] 
+{
+    width: 150px;
+    background: #ccc;
+}
+</style>
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="/qiime/js/qiime.js"></script>
+<script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
+<script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.metadata.js"></script>
+<script type="text/javascript" src="/qiime/js/jquery_validate/jquery.validate.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
+<script type="text/javascript"> 
+
+/* from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript */
+function validateEmail(email) { 
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+} 
+
+
+function validateNewParticipant() {
+    for(var i = 0; i < document.newParticipant.length; i++) 
+    {
+        document.newParticipant[i].className = document.newParticipant[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+	
+	var valid = true;
+	
+	if(!validateEmail(document.newParticipant.email.value))
+	{
+		document.newParticipant.email.className += " highlight"
+		valid = false;
+	}
+	
+	if(document.newParticipant.participantname.value == "")
+	{
+		document.newParticipant.participantname.className += " highlight"
+		valid = false;
+	}
+	
+	if(document.newParticipant.address.value == "")
+	{
+		document.newParticipant.address.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.city.value == "")
+	{
+		document.newParticipant.city.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.state.value == "")
+	{
+		document.newParticipant.state.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.zip.value == "")
+	{
+		document.newParticipant.zip.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.country.value == "")
+	{
+		document.newParticipant.country.className += " highlight"
+		valid = false;
+	}
+	
+	if(valid)
+		$('#newParticipant').submit();
+}
+
+
+$(document).ready(function(){
+
+    $("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+    
+    $("ul.topnav li span").click(function() { //When trigger is clicked...
+        
+        //Following events are applied to the subnav itself (moving subnav up and down)
+        $(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+        $(this).parent().hover(function() {
+        }, function(){  
+            $(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+        });
+
+        //Following events are applied to the trigger (Hover events for the trigger)
+        }).hover(function() { 
+            $(this).addClass("subhover"); //On hover over, add class "subhover"
+        }, function(){  //On Hover Out
+            $(this).removeClass("subhover"); //On hover out, remove class "subhover"
+    });
+
+});
+
+function toggleSection(section_name)
+{
+    div = document.getElementById(section_name);
+    header_name = section_name + '_header';
+    if (div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('+', '-');
+        window.scrollBy(0, 200);
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('-', '+');
+    }
+}
+
+function drawMap(zoom_level, position)
+{
+    var mapOptions = 
+    {
+        zoom: zoom_level,
+        center: position,
+        scrollwheel: false,
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
+        mapTypeControl: false,
+        streetViewControl: false,
+        panControl: false
+    };
+
+
+    var stylez = [
+        {
+          featureType: "all",
+          elementType: "all",
+          stylers: [
+            { saturation: -100 } // <-- THIS
+          ]
+        }
+    ];
+
+    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+    var mapType = new google.maps.StyledMapType(stylez, { name:"Grayscale" });    
+    map.mapTypes.set('tehgrayz', mapType);
+    map.setMapTypeId('tehgrayz');
+
+    setMarkers(map, latlongs_db);
+}
+
+function renderLocalizedMap(position)
+{
+    p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    zoom_level = 7;
+    drawMap(zoom_level, p);
+}
+
+function renderMap()
+{
+    p = new google.maps.LatLng(39.83, -99.89);
+    zoom_level = 4;
+    drawMap(zoom_level, p);
+}
+
+function initialize() 
+{    
+    if (navigator.geolocation)
+    {
+        navigator.geolocation.getCurrentPosition(renderLocalizedMap, renderMap);
+    }
+    else
+    {
+        renderMap()
+    }
+}
+
+function setMarkers(map, locations) 
+{
+    for (var i = 0; i < locations.length; i++) 
+    {
+        var loc = locations[i];
+        var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
+        
+<%
+if tiny_markers:
+    # Indent
+%>        
+        var marker = new google.maps.Marker({
+          position:myLatLng,
+          map: map,
+          clickable: false,
+          size:(10, 10),
+          color:"00ff00",
+          icon:'/qiime/img/blue_tiny.png'
+        });
+<%
+else:
+    # Indent
+%>
+        var pinColor = loc[4];
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|" + pinColor,
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+        var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+            new google.maps.Size(40, 37),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 35));
+
+        var marker = new google.maps.Marker({
+            position: myLatLng, 
+            map: map,
+            icon: pinImage,
+            shadow: pinShadow
+        });
+
+<%
+# End if
+%>
+
+        
+    }
+}
+</script>
+
+<%
+# Write out the database of points
+req.write('<script type="text/javascript">')
+req.write('var latlongs_db = [')
+
+result_list=[]
+
+# Get the map markers
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+results = ag_data_access.getMapMarkers()
+
+for i, val in enumerate(results):
+    if val[0] and val[1] and val[2]:
+        study_alias = str(val[0]).replace("'", "\\'")
+        result_list.append("\n['{0}',{1},{2},{3},'{4}']".format(study_alias, val[1], val[2], str(i+1), val[3]))
+
+req.write('%s];' % ','.join(result_list))
+req.write('window.onload=initialize;</script>')
+%>
+
+</head>
+
+<body>
+    <div style="width:100%; height:100%; background-color:#000;">
+    <div id="map_canvas" style="width:100%; height:100%; opacity:0.8;"></div>
+    </div>
+
+	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; opacity:0.9;">
+        <div class="header clearfix">
+            <img id="logo" src="img/ag_logo.jpg">
+		</div>
+    </div>
+    <div class="wrapper clearfix" style="position:absolute; top:120px; left:50px; opacity:0.9; width:260px;">
+		<br>
+		<div class="left menuwrapper" style="width:100%;">
+			<ul class="menu">
+                <li><a href="FAQ.psp"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
+				<li><a href="http://humanfoodproject.com/americangut/"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
+				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
+			</ul>
+
+
+    </div>
+    <div>
+    &nbsp;
+    <br />
+    </div>
+    <div class="left menuheader">
+    <p>Map Key</p>
+    </div>
+    <div class="left keywrapper" style="width:100%;">
+    <ul class="key">
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00B2FF"/> Participant</li>
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
+        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00ff00"/> Sample(s) Logged</li>
+    </ul>
+    </div>
+
+
+
+
+
+    <div class="registerwrapper" style="position:absolute; top:16px; left:285px; padding:15px;">
+
+		<form action="register_user_submit.psp" method="post" name="register_user_submit" id="register_user_submit">
+		</form>
+
+<%
+if 'email' in form:
+	# Submit and redirect to fusebox
+	ag_data_access.addAGLogin(form['email'], form['name'], form['address'], \
+		form['city'], form['state'], form['zip'], form['country'])
+
+	req.write('<script>document.register_user_submit.submit(); return false;</script>')
+else:
+	# Draw the form
+%>
+
+		<form name="newParticipant" id="newParticipant" method="post" action="add_participant.psp">
+			<input type="hidden" name="kit_id" id="kit_id" value="<%=kit_id%>">
+			<input type="hidden" name="password" id="password" value="<%=password%>">
+			<h3>New User Registration</h3>
+			<table>
+				<tr><td>Email</td><td><input type="text" name="email" id="email"></td></tr>
+				<tr><td>Name</td><td><input type="text" name="participantname" id="participantname"></td></tr>
+				<tr><td>Address</td><td><input type="text" name="address" id="address"></td></tr>
+				<tr><td>City</td><td><input type="text" name="city" id="city"></td></tr>
+				<tr><td>State</td><td><input type="text" name="state" id="state"></td></tr>
+				<tr><td>Zip</td><td><input type="text" name="zip" id="zip"></td></tr>
+				<tr><td>Country</td><td><input type="text" name="country" id="country"></td></tr>
+				<tr><td></td><td><input type="button" onclick="validateNewParticipant()" value="Submit My Information"/></td></tr>
+			</table>
+		</form>
+
+<%
+# End indent
+%>
+
+    </div>
+
+<%@ include file="footer.psp"%>
