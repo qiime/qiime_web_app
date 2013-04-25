@@ -21,7 +21,7 @@ else:
   });
 </script>
 
-<form method="post" action="ag_new_kit.psp">
+<form method="post" action="ag_new_kit.psp" name="agForm" id="agForm">
 	<table>
 		<tr>
 			<td>Kit Owner</td>
@@ -42,9 +42,9 @@ for ag_login_id, email, name in logins:
 		</tr>
 		<tr><td>Kit ID</td><td><input type="text" name="kit_id" id="kit_id"></td></tr>
 		<tr><td>Kit Password</td><td><input type="text" name="kit_password" id="kit_password"></td></tr>
-		<tr><td>Number of Swabs</td><td><input type="text" name="swabs_per_kit" id="swabs_per_kit"></td></tr>
+		<tr><td>Number of Swabs</td><td><input type="text" name="swabs_per_kit" id="swabs_per_kit" onkeypress='validateNumber(event)'></td></tr>
 		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="state"></td></tr>
-		<tr><td colspan="2"><input type="submit"></td></tr>
+		<tr><td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td></tr>
 	</table>
 </form>
 

@@ -106,7 +106,7 @@ __status__ = "Production"
             <li><a href="" onclick="document.ag_edit_participant.submit(); return false;">Edit Participant</a></li>
             <li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>
             <!--<li><a href="" onclick="document.barcode_util.submit(); return false;">Check Barcode</a></li> -->
-            <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne</a></li>
+            <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne<img src="img/bruce.png"/></a></li>
         </ul>
 
         <h3>Legacy Web App Utilities</h3>

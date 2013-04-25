@@ -14,12 +14,18 @@ else:
 	# Draw the form
 %>
 
-<form method="post" action="ag_add_bruce_wayne.psp">
+<script> 
+  $(function() {
+    $( "#ag_login_id" ).combobox();
+  });
+</script>
+
+<form method="post" action="ag_add_bruce_wayne.psp" name="agForm" id="agForm">
 	<table>
 		<tr>
 			<td>Participant</td>
 			<td>
-				<select name="ag_login_id" id="ag_login_id" onChange="document.edit_participant.submit();">
+				<select class="hidden" name="ag_login_id" id="ag_login_id" onChange="document.edit_participant.submit();">
 				<option value="">Please Select...</a>
 <%
 logins = ag_data_access.getAGLogins()
@@ -37,7 +43,7 @@ for ag_login_id, email, name in logins:
 			<td>Name of Wayne</td>
 			<td><input type="text" name="wayne" id="wayne"></td>
 		</tr>		
-		<tr><td colspan="2"><input type="submit"></td></tr>
+		<tr><td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td></tr>
 	</table>
 </form>
 
