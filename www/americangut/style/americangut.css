@@ -121,6 +121,13 @@ div.menuwrapper {
 	margin-right: 5px;	
 }
 
+div.registerwrapper {
+	border-radius: 10px;
+	min-width: 230px;
+	background-color: #fff;
+	text-align: left;
+}
+
 div.menuheader {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;

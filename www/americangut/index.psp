@@ -22,8 +22,7 @@ portal_type = 'americangut'
 
 # Data Access
 data_access = data_access_factory(ServerConfig.data_access_type)
-ag_data_access = data_access_factory(ServerConfig.data_access_type,
-    'american_gut')
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
 
 # Session variables
 sess = Session.Session(req)
@@ -252,7 +251,31 @@ environment_vars=req.get_options()
 output_dir='%s/user_data' % environment_vars['HOME']
 link_path_dir = 'studies'
 if form.has_key('username'):
-    user_data = ag_data_access.authenticateWebAppUser(form["username"], form["password"])
+    username = form["username"]
+    password = form["password"]
+    user_data = ag_data_access.authenticateWebAppUser(username, password)
+
+    # Special AG case: if user data is None, it may be the first login from a hand-out kit. Check
+    # if the username/password exists in the handout list. If so, this must be the first time 
+    # they've accessed the site and will need to fill out their user data.
+    if not user_data:
+        is_handout = ag_data_access.handoutCheck(username, password)
+        if is_handout == 'y':
+            # Indent
+            # Redirect to user registration screen
+%>
+
+<form action="register_user.psp" method="post" name="register_user" id="register_user">
+    <input type="hidden" name="username" id="username" value="<%=username%>">
+    <input type="hidden" name="password" id="password" value="<%=password%>">
+</form>
+
+<script>document.register_user.submit(); return false;</script>
+
+<%
+        # End is_handout indent
+    # End user_data indent
+
     if (user_data):
         sess['user_data'] = user_data
         sess['username'] = user_data['name']

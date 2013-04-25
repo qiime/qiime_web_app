@@ -19,6 +19,15 @@ __status__ = "Production"
 <script src="js/util.js"></script>
 <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
 <link rel="stylesheet" href="style/qiime.css" type="text/css">
+
+<%
+if ServerConfig.data_access_type == DataAccessType.qiime_test:
+    req.write('<style>body, html {background-image: url(img/background5.jpg); background-repeat:no-repeat; background-size: 100%;}</style>')
+else:
+    req.write('<style>body, html {background-image: url(img/background3.jpg); background-repeat:no-repeat; background-size: 100%;}</style>')
+# End if
+%>
+
 </head>
 
 <body>

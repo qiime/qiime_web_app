@@ -7,8 +7,8 @@ as
 begin
 
   insert    into ag_kit_barcodes
-            (ag_kit_id, barcode)
-  values    (ag_kit_id_, barcode_);
+            (ag_kit_id, barcode, sample_barcode_file)
+  values    (ag_kit_id_, barcode_, barcode_ || '.jpg');
   
   commit;
 

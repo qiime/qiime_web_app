@@ -305,3 +305,12 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_insert_bruce_wayne', [ag_login_id, participant_name])
 
+    def handoutCheck(self, username, password):
+        con = self.getMetadataDatabaseConnection()
+        is_handout = 'n'
+        result = con.cursor().callproc('ag_is_handout', [is_handout, username, password])
+        is_handout = result[0]
+
+        return is_handout.strip()
+
+
