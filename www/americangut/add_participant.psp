@@ -32,11 +32,11 @@ password = form['password']
 ag_login_id = None
 sql = "select cast(ag_login_id as varchar2(100)) from ag_login where email = '{0}'".format(email)
 results = ag_data_access.dynamicMetadataSelect(sql)
-if results.rowcount == 0:
+if len(results) == 0:
 	ag_data_access.addAGLogin(email, participantname, address, city, state, zip, country)
 	ag_login_id = ag_data_access.dynamicMetadataSelect(sql).fetchone()[0]
 else:
-	ag_login_id = results.fetchone()[0]
+	ag_login_id = results[0]
 
 # Create the kit
 sql = "select cast(ag_login_id as varchar2(100)) from ag_login where email = '{0}'".format(email)
