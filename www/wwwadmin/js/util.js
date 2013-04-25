@@ -72,7 +72,7 @@
       if ( valid ) {
         return;
       }
-
+	  
       // Remove invalid value
       this.input
         .val( "" )
@@ -92,58 +92,60 @@
   });
 })( jQuery );
 
-function validateNewParticipant() {
-    for(var i = 0; i < document.newParticipant.length; i++) 
+function validateAGForm() {
+	var valid = true;
+    for(var i = 0; i < document.agForm.length; i++) 
     {
-        document.newParticipant[i].className = document.newParticipant[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+		var input = document.agForm[i]
+		if(input.type == 'text' && input.value == '')
+		{
+			input.className += " highlight"
+			valid = false;
+		}
+		else
+        	input.className = input.className.replace(/(?:^|\s)highlight(?!\S)/ , '');
     }
 	
+	if(valid)
+		$('#agForm').submit();
+}
+
+function validateEditParticipant() {
 	var valid = true;
 	
-	if(!validateEmail(document.newParticipant.email.value))
-	{
-		document.newParticipant.email.className += " highlight"
-		valid = false;
-	}
-	
-	if(document.newParticipant.participantname.value == "")
-	{
-		document.newParticipant.participantname.className += " highlight"
-		valid = false;
-	}
-	
-	if(document.newParticipant.address.value == "")
-	{
-		document.newParticipant.address.className += " highlight"
-		valid = false;
-	}
-	if(document.newParticipant.city.value == "")
-	{
-		document.newParticipant.city.className += " highlight"
-		valid = false;
-	}
-	if(document.newParticipant.state.value == "")
-	{
-		document.newParticipant.state.className += " highlight"
-		valid = false;
-	}
-	if(document.newParticipant.zip.value == "")
-	{
-		document.newParticipant.zip.className += " highlight"
-		valid = false;
-	}
-	if(document.newParticipant.country.value == "")
-	{
-		document.newParticipant.country.className += " highlight"
-		valid = false;
-	}
+    for(var i = 0; i < document.edit_participant.length; i++) 
+    {
+		var input = document.edit_participant[i]
+		if(input.type == 'text' && input.value == '')
+		{
+			input.className += " highlight"
+			valid = false;
+		}
+		else
+        	input.className = input.className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
 	
 	if(valid)
-		$('#newParticipant').submit();
+		document.edit_participant.submit_flag.value=1;
 }
 
 /* from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript */
 function validateEmail(email) { 
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
+    return re.test(email); 
 } 
+
+/* input field number validation*/
+function validateNumber(evt) {
+  var theEvent = evt || window.event;
+  var key = theEvent.keyCode || theEvent.which;
+  //say what these keys are
+  if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
+  	return
+  key = String.fromCharCode( key );
+  var regex = /[0-9]|\./;
+  if( !regex.test(key) ) {
+    theEvent.returnValue = false;
+    if(theEvent.preventDefault) theEvent.preventDefault();
+  }
+}

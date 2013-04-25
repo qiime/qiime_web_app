@@ -21,7 +21,7 @@ else:
   });
 </script>
 
-<form method="post" action="ag_reassign_barcode.psp">
+<form method="post" action="ag_reassign_barcode.psp" name="agForm" id="agForm">
 	<table>
 		<tr>
 			<td>Kit ID</td>
@@ -51,7 +51,7 @@ for barcode in barcodes:
 				</select>			
 			</td>
 		</tr>
-		<tr><td colspan="2"><input type="submit"></td></tr>
+		<tr><td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td></tr>
 	</table>
 </form>
 

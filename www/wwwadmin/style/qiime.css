@@ -307,7 +307,7 @@ a.email_link {
 }
 
 .highlight {
-    background-color: #fcc;
+	border: 1px solid #f00;
 }
 
 .hidden  {
