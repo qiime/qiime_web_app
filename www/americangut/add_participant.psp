@@ -1,0 +1,68 @@
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Doug Wendel"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Doug Wendel"]
+__email__ = "wendel@colorado.edu"
+__status__ = "Development"
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
+
+sess = Session.Session(req)
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+
+email = form['email']
+participantname = form['participantname']
+address = form['address']
+city = form['city']
+state = form['state']
+zip = form['zip']
+country = form['country']
+kit_id = form['kit_id']
+password = form['password']
+
+# Create the login if it doens't already exist
+ag_login_id = None
+sql = "select cast(ag_login_id as varchar2(100)) from ag_login where email = '{0}'".format(email)
+results = ag_data_access.dynamicMetadataSelect(sql)
+if results.rowcount == 0:
+	ag_data_access.addAGLogin(email, participantname, address, city, state, zip, country)
+	ag_login_id = ag_data_access.dynamicMetadataSelect(sql).fetchone()[0]
+else:
+	ag_login_id = results.fetchone()[0]
+
+# Create the kit
+sql = "select cast(ag_login_id as varchar2(100)) from ag_login where email = '{0}'".format(email)
+ag_login_id = ag_data_access.dynamicMetadataSelect(sql).fetchone()[0]
+sql = "select swabs_per_kit, verification_code from ag_handout_kits where kit_id = '{0}'".format(kit_id)
+swabs_per_kit, kit_verification_code = ag_data_access.dynamicMetadataSelect(sql).fetchone()
+ag_data_access.addAGKit(ag_login_id, kit_id, password, swabs_per_kit, kit_verification_code)
+
+# Add the barcodes
+sql = "select cast(ag_kit_id as varchar(100)) from ag_kit where supplied_kit_id = '{0}' and rownum = 1".format(kit_id)
+ag_kit_id = ag_data_access.dynamicMetadataSelect(sql).fetchone()[0]
+sql = "select barcode from ag_handout_kits where kit_id = '{0}'".format(kit_id)
+results = ag_data_access.dynamicMetadataSelect(sql)
+for row in results:
+	barcode = row[0]
+	#req.write('barcode: {0}'.format(barcode))
+	ag_data_access.addAGBarcode(ag_kit_id, barcode)
+
+# Set up the persistant variables
+user_data = ag_data_access.authenticateWebAppUser(kit_id, password)
+sess['user_data'] = user_data
+sess['username'] = user_data['name']
+sess['supplied_kit_id'] = kit_id
+sess.save()
+
+# Alert the user what their verification code is
+req.write('<script language="javascript">alert("Your verification code is: . Please \
+	Copy this down - you will need it to verify your kit on the next screen. It will also be emailed to you.");</script>')
+
+# Let the user in
+url = 'fusebox.psp?page=portal.psp'
+req.write('<script language="javascript">window.location="{0}";</script>'.format(url))
+%>

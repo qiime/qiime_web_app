@@ -12,7 +12,7 @@ __status__ = "Production"
 
 from mod_python import Session
 from data_access_connections import data_access_factory
-from enums import ServerConfig
+from enums import ServerConfig, DataAccessType
 import os
 
 # Get the session
@@ -25,6 +25,15 @@ sess = Session.Session(req)
 <title>Admin</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="stylesheet" href="style/qiime.css" type="text/css">
+
+<%
+if ServerConfig.data_access_type == DataAccessType.qiime_test:
+    req.write('<style>body, html {background-image: url(img/background5.jpg); background-repeat:no-repeat; background-size: 100%;}</style>')
+else:
+    req.write('<style>body, html {background-image: url(img/background3.jpg); background-repeat:no-repeat; background-size: 100%;}</style>')
+# End if
+%>
+
 </head>
 
 <body>

@@ -17,6 +17,10 @@ import os
 from enums import FieldGrouping
 from qiime.parse import parse_mapping_file
 
+# Form variables
+kit_id = form['username']
+password = form['password']
+
 tiny_markers = False
 portal_type = 'americangut'
 
@@ -46,6 +50,33 @@ sess.save()
 <title>American Gut</title>
 <link rel="stylesheet" type="text/css" href="style/americangut.css">
 
+<style>
+input 
+{
+    width: 300px;
+    border: 1px solid black;
+    border-radius: 3px; 
+        -webkit-box-shadow: 
+        inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    -moz-box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    box-shadow: 
+      inset 0 0 8px  rgba(0,0,0,0.1),
+            0 0 16px rgba(0,0,0,0.1); 
+    padding: 5px;
+    background: rgba(255,255,255,0.5);
+    margin: 0 0 10px 0;
+}
+
+input[type=submit] 
+{
+    width: 150px;
+    background: #ccc;
+}
+</style>
+
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript" src="/qiime/js/qiime.js"></script>
 <script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
@@ -53,6 +84,65 @@ sess.save()
 <script type="text/javascript" src="/qiime/js/jquery_validate/jquery.validate.js"></script>
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
 <script type="text/javascript"> 
+
+/* from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript */
+function validateEmail(email) { 
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+} 
+
+
+function validateNewParticipant() {
+    for(var i = 0; i < document.newParticipant.length; i++) 
+    {
+        document.newParticipant[i].className = document.newParticipant[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+	
+	var valid = true;
+	
+	if(!validateEmail(document.newParticipant.email.value))
+	{
+		document.newParticipant.email.className += " highlight"
+		valid = false;
+	}
+	
+	if(document.newParticipant.participantname.value == "")
+	{
+		document.newParticipant.participantname.className += " highlight"
+		valid = false;
+	}
+	
+	if(document.newParticipant.address.value == "")
+	{
+		document.newParticipant.address.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.city.value == "")
+	{
+		document.newParticipant.city.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.state.value == "")
+	{
+		document.newParticipant.state.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.zip.value == "")
+	{
+		document.newParticipant.zip.className += " highlight"
+		valid = false;
+	}
+	if(document.newParticipant.country.value == "")
+	{
+		document.newParticipant.country.className += " highlight"
+		valid = false;
+	}
+	
+	if(valid)
+		$('#newParticipant').submit();
+}
+
+
 $(document).ready(function(){
 
     $("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
@@ -244,72 +334,6 @@ req.write('window.onload=initialize;</script>')
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
 			</ul>
 
-<%
-# This is the location where the user directories are written
-environment_vars=req.get_options()
-output_dir='%s/user_data' % environment_vars['HOME']
-link_path_dir = 'studies'
-if form.has_key('username'):
-    username = form["username"]
-    password = form["password"]
-    user_data = ag_data_access.authenticateWebAppUser(username, password)
-
-    # Special AG case: if user data is None, it may be the first login from a hand-out kit. Check
-    # if the username/password exists in the handout list. If so, this must be the first time 
-    # they've accessed the site and will need to fill out their user data.
-    if not user_data:
-        is_handout = ag_data_access.handoutCheck(username, password)
-        if is_handout == 'y':
-            # Indent
-            # Redirect to user registration screen
-%>
-
-<form action="register_user.psp" method="post" name="register_user" id="register_user">
-    <input type="hidden" name="username" id="username" value="<%=username%>">
-    <input type="hidden" name="password" id="password" value="<%=password%>">
-</form>
-
-<script>document.register_user.submit(); return false;</script>
-
-<%
-        # End is_handout indent
-    # End user_data indent
-
-    if (user_data):
-        sess['user_data'] = user_data
-        sess['username'] = user_data['name']
-        sess['supplied_kit_id'] = form["username"]
-        sess.save()
-        url = 'fusebox.psp?page=portal.psp'
-        req.write('<script language=\"javascript\">window.location="{0}";</script>'.format(url))
-    else:
-        req.write("<p style='color:#FF0000;'>Invalid Kit ID/password.</p>")
-
-# end
-
-%>
-
-        <!-- Login form div -->
-        <div>
-            <h3 style="margin-left:5px;">Participant Log In</h3>
-            <table width="100%">
-                <tr width="100%">
-                    <td width="30%"></td>
-                    <td width="30%">
-                        <form method="post" action="index.psp">
-                            <table width="100%">
-                            	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
-                            	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
-                            	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
-                                <tr><td colspan="2"><a href="mailto:americangut@gmail.com?subject=AGLOGINHELP&body=Please%20include%20the%20last%20two%20digits%20of%20your%20Kit%20ID" class="small_link">I'm having trouble logging in...</a></td></tr>
-                            </table>
-                        </form>
-                    </td>
-                    <td width="30%"></td>
-                </tr>
-            </table>
-        </div>
-        <!-- End login form div -->
 
     </div>
     <div>
@@ -325,6 +349,48 @@ if form.has_key('username'):
         <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
         <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00ff00"/> Sample(s) Logged</li>
     </ul>
+    </div>
+
+
+
+
+
+    <div class="registerwrapper" style="position:absolute; top:16px; left:285px; padding:15px;">
+
+		<form action="register_user_submit.psp" method="post" name="register_user_submit" id="register_user_submit">
+		</form>
+
+<%
+if 'email' in form:
+	# Submit and redirect to fusebox
+	ag_data_access.addAGLogin(form['email'], form['name'], form['address'], \
+		form['city'], form['state'], form['zip'], form['country'])
+
+	req.write('<script>document.register_user_submit.submit(); return false;</script>')
+else:
+	# Draw the form
+%>
+
+		<form name="newParticipant" id="newParticipant" method="post" action="add_participant.psp">
+			<input type="hidden" name="kit_id" id="kit_id" value="<%=kit_id%>">
+			<input type="hidden" name="password" id="password" value="<%=password%>">
+			<h3>New User Registration</h3>
+			<table>
+				<tr><td>Email</td><td><input type="text" name="email" id="email"></td></tr>
+				<tr><td>Name</td><td><input type="text" name="participantname" id="participantname"></td></tr>
+				<tr><td>Address</td><td><input type="text" name="address" id="address"></td></tr>
+				<tr><td>City</td><td><input type="text" name="city" id="city"></td></tr>
+				<tr><td>State</td><td><input type="text" name="state" id="state"></td></tr>
+				<tr><td>Zip</td><td><input type="text" name="zip" id="zip"></td></tr>
+				<tr><td>Country</td><td><input type="text" name="country" id="country"></td></tr>
+				<tr><td></td><td><input type="button" onclick="validateNewParticipant()" value="Submit My Information"/></td></tr>
+			</table>
+		</form>
+
+<%
+# End indent
+%>
+
     </div>
 
 <%@ include file="footer.psp"%>
