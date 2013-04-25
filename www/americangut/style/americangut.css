@@ -34,6 +34,11 @@ table.list {
 	border-spacing: 20px;
 }
 
+div.video {
+	width: 45%;
+	float: left;
+}
+
 div.overview_wrapper {
     width: 100%;
     height: 100%;
