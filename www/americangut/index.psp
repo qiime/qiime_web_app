@@ -270,7 +270,7 @@ if form.has_key('username'):
     <input type="hidden" name="password" id="password" value="<%=password%>">
 </form>
 
-<script>document.register_user.submit(); return false;</script>
+<script>document.register_user.submit();</script>
 
 <%
         # End is_handout indent
