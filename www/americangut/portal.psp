@@ -7,14 +7,13 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Meg Pirrung"]
 __email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
 __status__ = "Development"
-
 %>
 
 <div id="content" class="content">
-<h1>Hi <%=user_data['name']%>! Welcome to the American Gut participant site.</h1>
+
+<h2>Hi <%=user_data['name']%>! Welcome to the American Gut participant site.</h2>
 
 <%
-
 message = form.get('message', '')
 if message:
     req.write('<h2 class="msg">%s</h2>' % message)
