@@ -1,4 +1,11 @@
 <!DOCTYPE html>
+<%
+
+language = form.get('lan', 'en')
+
+if language == 'en':
+    # IF LANGUAGE IS ENGLISH
+%>
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -51,4 +58,61 @@ If you do not follow these directions the sample will be destroyed by United Sta
             </div>
 		</div>
 	</body>
+</html>
+<%
+elif language == 'es':
+    # IF LANGUAGE IS SPANISH
+%>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <title>Proyecto American Gut</title>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+        <link rel="icon" type="image/ico" href="img/favicon.ico">
+    </head>
+    <body>
+        <div class="wrapper clearfix">
+            <div class="header clearfix">
+                <img id="logo" src="img/ag_logo.jpg">
+            </div>
+            <br>
+            <div class="left menuwrapper">
+                <ul class="menu">
+                <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">&Uacute;nete al proyecto!</a></li>
+                <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">¿Qu&eacute; es American Gut?</a></li>
+                <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Iniciar sesi&oacute;n</a></li>
+                </ul>
+            </div>
+            <div class="content">
+            <h2>Env&iacute;os internacionales para American Gut</h2>
+                <div class="faq_wrapper">
+                    <div class="faq">
+                        <h3>Participantes Internacionales:</h3>
+                        <p>Con el objetivo de cumplir con la normativa federal y regulaciones de la IATA, estamos solicitando a nuestros participantes internacionales que reenv&iacute;en sus muestras por FedEx International y adem&aacute;s que sigan los requerimientos que explicamos m&aacute;s abajo para enviar muestras humanas a los Estados Unidos de Am&eacute;rica. Para ello, necesitar&aacute;s usar un impreso a&eacute;reo (airway bill) para el env&iacute;o, especificando claramente que el paquete contiene “espec&iacute;menes humanos exentos” (human exempt specimens). Adem&aacute;s, las muestras necesitar&aacute;n estar empaquetadas en un contenedor secundario, para garantizar con seguridad que puedan entra a los Estados Unidos de Am&eacute;rica.
+<br />
+<br />
+Para el env&iacute;o, necesitar&aacute;s usar una tira de cinta adhesiva en la tapa del tubo con tu muestra. Luego deber&aacute;s colocar tu muestra en el sobre manila que se te hizo llegar con tu Kit y una vez dentro, deber&aacute;s colocar este sobre en la bolsa de pl&aacute;stico tyvek para env&iacute;os. Esta bolsa puede ser adquirida de manera gratuita en la sucursal de FedEx, al momento de enviar el paquete.
+<br />
+<br />
+Si no sigues estas instrucciones tu muestra ser&aacute; destruida por los agentes de aduana en el puerto de entrada a los Estados Unidos de Am&eacute;rica.
+
+                        <h3>Tus muestras:</h3>
+                        <ul class="shipping">
+                        <li>Son consideradas espec&iacute;menes deshidratados/secos.</li>
+                        <li>Deben ser enviadas v&iacute;a FedEx.</li>
+                        <li>Deben tener una tira de cinta adhesiva en la tapa del tubo.</li>
+                        <li>Deben estar dentro del sobre manila que se te hizo llegar con tu Kit y a su vez este debe estar dentro de un sobre de pl&aacute;stico tyvek.</li>
+                        <li>Deben ser enviadas con una gu&iacute;a a&eacute;rea, esta gu&iacute;a deber&aacute; estar etiquetada con tu direcci&oacute;n completa, la direcci&oacute;n completa del destinatario y las palabras “Human exempt sample(s)”.</li>
+                        </ul>
+                    </div>
+                    <br />
+                    <br />
+                    <img src="img/shipping_es.png"/>
+                    <br />
+                    <br />
+                    <br />
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

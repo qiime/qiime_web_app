@@ -240,7 +240,7 @@ req.write('window.onload=initialize;</script>')
 		<div class="left menuwrapper" style="width:100%;">
 			<ul class="menu">
                 <li><a href="FAQ.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
-                <li><a href="international_shipping.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">International Shipping</a></li>
+                <li><a href="international_shipping.psp?lan=en" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">International Shipping</a><a href="international_shipping.psp?lan=es" target="_blank"> (espa&ntilde;ol)</a></li>
 				<li><a href="http://humanfoodproject.com/americangut/"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
 			</ul>
