@@ -28,9 +28,9 @@ sess = Session.Session(req)
 
 <%
 if ServerConfig.data_access_type == DataAccessType.qiime_test:
-    req.write('<style>body, html {width:100%; height:100%; background-image: url(img/background9.jpg); background-repeat:no-repeat; background-size:cover;}</style>')
-else:
     req.write('<style>body, html {width:100%; height:100%; background-image: url(img/background3.jpg); background-repeat:no-repeat; background-size:cover;}</style>')
+else:
+    req.write('<style>body, html {width:100%; height:100%; background-image: url(img/background9.jpg); background-repeat:no-repeat; background-size:cover;}</style>')
 # End if
 %>
 

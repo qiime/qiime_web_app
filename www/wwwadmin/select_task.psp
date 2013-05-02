@@ -16,9 +16,9 @@ if 'message' in form:
 	req.write(form['message'])
 else:
 	if ServerConfig.data_access_type == DataAccessType.qiime_test:
-		req.write('Batman is watching you. Please be careful.')
-	else:
 		req.write('Hi. Please be careful or Domokun will hunt you down and smash you.')
+	else:
+		req.write('Batman is watching you. Please be careful.')
 # End if
 %>
 
