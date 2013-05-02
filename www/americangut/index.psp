@@ -131,7 +131,7 @@ function drawMap(zoom_level, position)
 function renderLocalizedMap(position)
 {
     p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    zoom_level = 7;
+    zoom_level = 10;
     drawMap(zoom_level, p);
 }
 
@@ -226,16 +226,41 @@ req.write('window.onload=initialize;</script>')
 </head>
 
 <body>
+
     <div style="width:100%; height:100%; background-color:#000;">
     <div id="map_canvas" style="width:100%; height:100%; opacity:0.8;"></div>
     </div>
 
-	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; opacity:0.9;">
+    <!-- Map key -->
+    <div style="position:absolute; bottom: 30px; left:50px; opacity:0.9; width:260px;">
+        <div class="left menuheader" style="margin-top:10px;">
+            <p>Map Key</p>
+        </div>
+
+        <div class="left keywrapper" style="width:100%;">
+            <ul class="key">
+                <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00B2FF"/> Participant</li>
+                <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
+                <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00ff00"/> Sample(s) Logged</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Twitter
+    <div style="position:absolute; top:145px; right:50px; width:300px;">
+    <a class="twitter-timeline" href="https://twitter.com/americangut" data-widget-id="328928986170269696">Tweets by @americangut</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    </div>
+     -->
+
+    <!-- Header logo -->
+	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; right:50px; opacity:0.9;">
         <div class="header clearfix">
             <img id="logo" src="img/ag_logo.jpg">
 		</div>
     </div>
-    <div class="wrapper clearfix" style="position:absolute; top:120px; left:50px; opacity:0.9; width:260px;">
+
+    <div class="wrapper clearfix" style="position:absolute; top:130px; left:50px; opacity:0.9; width:260px;">
 		<br>
 		<div class="left menuwrapper" style="width:100%;">
 			<ul class="menu">
@@ -317,15 +342,20 @@ if form.has_key('username'):
     &nbsp;
     <br />
     </div>
-    <div class="left menuheader">
-    <p>Map Key</p>
-    </div>
-    <div class="left keywrapper" style="width:100%;">
-    <ul class="key">
-        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00B2FF"/> Participant</li>
-        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
-        <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00ff00"/> Sample(s) Logged</li>
-    </ul>
-    </div>
+    
+    
+
+
+
+
+
+
+
+
+
+
+    
+
+
 
 <%@ include file="footer.psp"%>
