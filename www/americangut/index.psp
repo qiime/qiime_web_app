@@ -131,7 +131,7 @@ function drawMap(zoom_level, position)
 function renderLocalizedMap(position)
 {
     p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    zoom_level = 9;
+    zoom_level = 10;
     drawMap(zoom_level, p);
 }
 
@@ -246,18 +246,21 @@ req.write('window.onload=initialize;</script>')
         </div>
     </div>
 
-    <!-- Twitter -->
-    <div style="position:absolute; top:135px; right:60px; width:300px;">
+    <!-- Twitter
+    <div style="position:absolute; top:145px; right:50px; width:300px;">
     <a class="twitter-timeline" href="https://twitter.com/americangut" data-widget-id="328928986170269696">Tweets by @americangut</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
     </div>
+     -->
 
-	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; opacity:0.9;">
+    <!-- Header logo -->
+	<div class="wrapper clearfix" style="position:absolute; top:10px; left:50px; right:50px; opacity:0.9;">
         <div class="header clearfix">
             <img id="logo" src="img/ag_logo.jpg">
 		</div>
     </div>
-    <div class="wrapper clearfix" style="position:absolute; top:120px; left:50px; opacity:0.9; width:260px;">
+
+    <div class="wrapper clearfix" style="position:absolute; top:130px; left:50px; opacity:0.9; width:260px;">
 		<br>
 		<div class="left menuwrapper" style="width:100%;">
 			<ul class="menu">

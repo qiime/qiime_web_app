@@ -37,8 +37,15 @@ for email, supplied_kit_id, ag_kit_id in logins:
 			</td>
 		</tr>
 		
-		<tr><td>Barcode</td><td><input type="text" name="barcode" id="barcode" onkeypress='validateNumber(event)' maxlength="9"></td></tr>
-		<tr><td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td></tr>
+		<tr>
+			<td>Barcode</td>
+			<td><input type="text" name="barcode" id="barcode" onkeypress="validateNumber(event);" maxlength="9"></td>
+			<td><input type="button" name="generate" id="generate" style="width:100px;" value="Generate"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td>
+		</tr>
 	</table>
 </form>
 
