@@ -115,18 +115,21 @@ function validateEditParticipant() {
 	
     for(var i = 0; i < document.edit_participant.length; i++) 
     {
-		var input = document.edit_participant[i]
-		if(input.type == 'text' && input.value == '')
-		{
-			input.className += " highlight"
-			valid = false;
-		}
-		else
-        	input.className = input.className.replace(/(?:^|\s)highlight(?!\S)/ , '');
-    }
-	
+  		var input = document.edit_participant[i]
+  		if(input.type == 'text' && input.value == '')
+  		{
+  			input.className += " highlight"
+  			valid = false;
+  		}
+  		else
+        input.className = input.className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+      }
+  	
 	if(valid)
+  {
 		document.edit_participant.submit_flag.value=1;
+    document.edit_participant.submit();
+  }
 }
 
 /* from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript */
