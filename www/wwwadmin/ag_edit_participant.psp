@@ -12,7 +12,7 @@ if 'submit_flag' in form:
 		ag_data_access.updateAGLogin(form['ag_login_id'], form['email'], form['name'], \
 			form['address'], form['city'], form['state'], form['zip'], form['country'])
 
-		req.write('<script>document.submit_data.submit(); return false;</script>')
+		req.write('<script>document.submit_data.submit();</script>')
 # End if
 %>
 
@@ -61,7 +61,7 @@ if 'ag_login_id' in form:
 		<tr><td>State</td><td><input type="text" name="state" id="state" value="<%=details[4]%>"></td></tr>
 		<tr><td>Zip</td><td><input type="text" name="zip" id="zip" value="<%=details[5]%>"></td></tr>
 		<tr><td>Country</td><td><input type="text" name="country" id="country" value="<%=details[6]%>"></td></tr>
-		<tr><td colspan="2"><input type="button" onClick="validateEditParticipant()" value="Submit"></td></tr>
+		<tr><td colspan="2"><input type="button" onClick="validateEditParticipant();" value="Submit"></td></tr>
 
 <%
 # End indent
