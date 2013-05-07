@@ -129,7 +129,18 @@ def verify_unique_sample_id(cursor, sample_id):
     cursor.execute("select barcode from ag_kit_barcodes where barcode='%s'" % \
                 sample_id)
     results = cursor.fetchall()
-    return len(results) == 0
+    
+    if len(results) != 0:
+        return False
+    
+    cursor.execute("select barcode from ag_handout_kits where barcode='%s'" % \
+                sample_id)
+    results = cursor.fetchall()
+
+    if len(results) != 0:
+        return False
+
+    return True
 
 def get_used_kit_ids(cursor):
     """Grab in use kit IDs, return set of them"""
