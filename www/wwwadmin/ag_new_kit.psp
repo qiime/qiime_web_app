@@ -10,14 +10,14 @@ if 'ag_login_id' in form:
 	ag_data_access.addAGKit(form['ag_login_id'], form['kit_id'], form['kit_password'], \
 		form['swabs_per_kit'], form['kit_verification_code'])
 
-	req.write('<script>document.submit_data.submit(); return false;</script>')
+	req.write('<script>document.submit_data.submit();</script>')
 else:
 	# Draw the form
 %>
 
 <script> 
   $(function() {
-    $( "#owner" ).combobox();
+    $( "#ag_login_id" ).combobox();
   });
 </script>
 
@@ -27,7 +27,7 @@ else:
 			<td>Kit Owner</td>
 			<td>
             <div class="ui-widget">
-              <select name="owner" id="owner" class="hidden">
+              <select name="ag_login_id" id="ag_login_id" class="hidden">
 				<option value="">Please Select...</a>
 <%
 logins = ag_data_access.getAGLogins()
@@ -44,7 +44,7 @@ for ag_login_id, email, name in logins:
 		<tr><td>Kit Password</td><td><input type="text" name="kit_password" id="kit_password"></td></tr>
 		<tr><td>Number of Swabs</td><td><input type="text" name="swabs_per_kit" id="swabs_per_kit" onkeypress='validateNumber(event)'></td></tr>
 		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="state"></td></tr>
-		<tr><td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td></tr>
+		<tr><td colspan="2"><input type="button" onclick="validateAGForm();" value="Submit"></td></tr>
 	</table>
 </form>
 

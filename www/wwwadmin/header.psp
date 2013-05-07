@@ -22,9 +22,9 @@ __status__ = "Production"
 
 <%
 if ServerConfig.data_access_type == DataAccessType.qiime_test:
-    req.write('<style>body, html {background-image: url(img/background5.jpg); background-repeat:no-repeat; background-size: 100%;}</style>')
+    req.write('<style>body, html {width:100%; height:100%; background-image: url(img/background3.jpg); background-repeat:no-repeat; background-size:cover;}</style>')
 else:
-    req.write('<style>body, html {background-image: url(img/background3.jpg); background-repeat:no-repeat; background-size: 100%;}</style>')
+    req.write('<style>body, html {width:100%; height:100%; background-image: url(img/background9.jpg); background-repeat:no-repeat; background-size:cover;}</style>')
 # End if
 %>
 
@@ -65,9 +65,21 @@ else:
             <input type="hidden" name="page_title" value="Manage Fast UniFrac limits">
         </form>
 
+        <!-- American Gut Utilities -->
+
+        <form action="fusebox.psp" method="post" name="ag_search" id="ag_search">
+            <input type="hidden" name="page" value="ag_search.psp">
+            <input type="hidden" name="page_title" value="Search American Gut Data">
+        </form>
+
         <form action="fusebox.psp" method="post" name="ag_new_participant" id="ag_new_participant">
             <input type="hidden" name="page" value="ag_new_participant.psp">
             <input type="hidden" name="page_title" value="Add New American Gut Participant">
+        </form>
+
+        <form action="fusebox.psp" method="post" name="ag_edit_participant" id="ag_edit_participant">
+            <input type="hidden" name="page" value="ag_edit_participant.psp">
+            <input type="hidden" name="page_title" value="Edit American Gut Participant">
         </form>
 
         <form action="fusebox.psp" method="post" name="ag_new_kit" id="ag_new_kit">
@@ -75,14 +87,14 @@ else:
             <input type="hidden" name="page_title" value="Add New American Gut Kit">
         </form>
 
+        <form action="fusebox.psp" method="post" name="ag_edit_kit" id="ag_edit_kit">
+            <input type="hidden" name="page" value="ag_edit_kit.psp">
+            <input type="hidden" name="page_title" value="Edit Existing American Gut Kit">
+        </form>
+
         <form action="fusebox.psp" method="post" name="ag_new_barcode" id="ag_new_barcode">
             <input type="hidden" name="page" value="ag_new_barcode.psp">
             <input type="hidden" name="page_title" value="Add New American Gut Barcode">
-        </form>
-
-        <form action="fusebox.psp" method="post" name="ag_edit_participant" id="ag_edit_participant">
-            <input type="hidden" name="page" value="ag_edit_participant.psp">
-            <input type="hidden" name="page_title" value="Modify American Gut Participant">
         </form>
 
         <form action="fusebox.psp" method="post" name="ag_reassign_barcode" id="ag_reassign_barcode">
@@ -109,10 +121,12 @@ else:
         <h3>American Gut Utilities</h3>
 
         <ul class="mainmenu">
+            <li><a href="" onclick="document.ag_search.submit(); return false;">Search</a></li>
             <li><a href="" onclick="document.ag_new_participant.submit(); return false;">Add New Participant</a></li>
-            <li><a href="" onclick="document.ag_new_kit.submit(); return false;">Add New Kit</a></li>
-            <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New Barcode</a></li>
             <li><a href="" onclick="document.ag_edit_participant.submit(); return false;">Edit Participant</a></li>
+            <li><a href="" onclick="document.ag_new_kit.submit(); return false;">Add New Kit</a></li>
+            <li><a href="" onclick="document.ag_edit_kit.submit(); return false;">Edit Existing Kit</a></li>
+            <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New Barcode</a></li>
             <li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>
             <!--<li><a href="" onclick="document.barcode_util.submit(); return false;">Check Barcode</a></li> -->
             <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne<img src="img/bruce.png"/></a></li>
