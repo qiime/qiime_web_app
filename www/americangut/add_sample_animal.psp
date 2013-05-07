@@ -44,7 +44,7 @@ for barcode in barcodes:
                 </tr>
                 <tr>
                     <td>Date</td>
-                    <td><input tabindex="3" type="text" name="sample_date" id="sample_date" class="small_text" /></td>
+                    <td><input tabindex="3" type="text" name="sample_date" id="sample_date" class="small_text" /> mm/dd/yyyy</td>
                     <script>
                       $(function() {
                         $( "#sample_date" ).datepicker({
@@ -61,8 +61,7 @@ for barcode in barcodes:
                 <tr>
                     <td>Time</td>
                     <td>
-                        <input tabindex="4" type="text" id="sample_time" name="sample_time" class="small_text" />
-                    </td>
+                        <input tabindex="4" type="text" id="sample_time" name="sample_time" class="small_text" /> hh:mm AM/PM</td>
                     <script>
                       $(function() {
                         $( "#sample_time" ).timepicker({
