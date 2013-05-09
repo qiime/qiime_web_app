@@ -20,6 +20,7 @@ import csv
 import httplib
 import json
 import urllib
+from random import choice
 
 class AGDataAccess(object):
     """
@@ -129,6 +130,45 @@ class AGDataAccess(object):
 
         return barcodes
 
+    def getAGCode(self, type):
+        length_of_password = 8
+        alpha = ''
+        if type == 'alpha':
+            alpha = 'abcdefghijklmnopqrstuvwxyz'
+            alpha += alpha.upper()
+        elif type == 'numeric':
+            alpha += '0123456789'
+
+        passwd = ''.join([choice(alpha) for i in range(length_of_password)])
+
+        return passwd
+
+    def getNewAGKitId(self):
+        sql = "select 1 from ag_handout_kits where kit_id = '{0}' union select 1 from ag_kit where supplied_kit_id = '{0}'"
+        code = None
+
+        while True:
+            # Get a code
+            code = self.getAGCode('alpha')
+            # Check if in DB. If clear, exit loop
+            results = self.dynamicMetadataSelect(sql.format(code)).fetchall()
+            if len(results) == 0:
+                break
+
+        return code
+
+    def getNextAGBarcode(self):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_next_barcode', [results])
+        next_barcode = results.fetchone()[0]
+        text_barcode = '{0}'.format(str(next_barcode))
+        # Pad out the barcode until it's 9 digits long
+        while len(text_barcode) < 9:
+            text_barcode = '0{0}'.format(text_barcode)
+
+        return next_barcode, text_barcode
+
     def reassignAGBarcode(self, ag_kit_id, barcode):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_reassign_barcode', [ag_kit_id, barcode])
@@ -136,6 +176,10 @@ class AGDataAccess(object):
     def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code])
+
+    def updateAGKit(self, ag_kit_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_update_kit', [ag_kit_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code])
 
     def addAGBarcode(self, ag_kit_id, barcode):
         con = self.getMetadataDatabaseConnection()

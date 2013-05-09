@@ -2,7 +2,7 @@
 
 <form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
     <input type="hidden" name="page" value="select_task.psp"/>
-    <input type="hidden" name="message" value="User was updated successfully."/>
+    <input type="hidden" name="message" value="Participant was updated successfully."/>
 </form>
 
 <%
@@ -16,6 +16,7 @@ if 'submit_flag' in form:
 # End if
 %>
 
+<!--
 <script> 
   $(function() {
     $( "#ag_login_id" ).combobox();
@@ -24,6 +25,7 @@ if 'submit_flag' in form:
     });
   });
 </script>
+-->
 
 <form method="post" name="edit_participant" id="edit_participant" action="fusebox.psp?page=ag_edit_participant.psp">
 	<input type="hidden" name="submit_flag" id="submit_flag" value="0"/>
@@ -31,7 +33,8 @@ if 'submit_flag' in form:
 		<tr>
 			<td>Participant</td>
 			<td>
-				<select name="ag_login_id" id="ag_login_id" class="hidden" onChange="document.edit_participant.submit();">
+				<!--<select name="ag_login_id" id="ag_login_id" class="hidden" onChange="document.edit_participant.submit();">-->
+				<select name="ag_login_id" id="ag_login_id" onChange="document.edit_participant.submit();">
 				<option value="">Please Select...</a>
 <%
 logins = ag_data_access.getAGLogins()
@@ -61,7 +64,7 @@ if 'ag_login_id' in form:
 		<tr><td>State</td><td><input type="text" name="state" id="state" value="<%=details[4]%>"></td></tr>
 		<tr><td>Zip</td><td><input type="text" name="zip" id="zip" value="<%=details[5]%>"></td></tr>
 		<tr><td>Country</td><td><input type="text" name="country" id="country" value="<%=details[6]%>"></td></tr>
-		<tr><td colspan="2"><input type="button" onClick="validateEditParticipant();" value="Submit"></td></tr>
+		<tr><td></td><td><input type="button" onClick="validateEditParticipant();" value="Submit"></td></tr>
 
 <%
 # End indent
