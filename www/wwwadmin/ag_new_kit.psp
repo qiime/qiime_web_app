@@ -2,6 +2,7 @@
 
 <form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
     <input type="hidden" name="page" value="select_task.psp">
+    <input type="hidden" name="message" value="Kit was added successfully."/>
 </form>
 
 <%
@@ -15,11 +16,13 @@ else:
 	# Draw the form
 %>
 
+<!--
 <script> 
   $(function() {
     $( "#ag_login_id" ).combobox();
   });
 </script>
+-->
 
 <form method="post" action="ag_new_kit.psp" name="agForm" id="agForm">
 	<table>
@@ -27,7 +30,7 @@ else:
 			<td>Kit Owner</td>
 			<td>
             <div class="ui-widget">
-              <select name="ag_login_id" id="ag_login_id" class="hidden">
+              <select name="ag_login_id" id="ag_login_id">
 				<option value="">Please Select...</a>
 <%
 logins = ag_data_access.getAGLogins()
@@ -40,11 +43,11 @@ for ag_login_id, email, name in logins:
             </div>
 			</td>
 		</tr>
-		<tr><td>Kit ID</td><td><input type="text" name="kit_id" id="kit_id"></td></tr>
-		<tr><td>Kit Password</td><td><input type="text" name="kit_password" id="kit_password"></td></tr>
+		<tr><td>Kit ID</td><td><input type="text" name="kit_id" id="kit_id" value="<%=ag_data_access.getNewAGKitId()%>"></td></tr>
+		<tr><td>Kit Password</td><td><input type="text" name="kit_password" id="kit_password" value="<%=ag_data_access.getAGCode('numeric')%>"></td></tr>
 		<tr><td>Number of Swabs</td><td><input type="text" name="swabs_per_kit" id="swabs_per_kit" onkeypress='validateNumber(event)'></td></tr>
-		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="state"></td></tr>
-		<tr><td colspan="2"><input type="button" onclick="validateAGForm();" value="Submit"></td></tr>
+		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="state" value="<%=ag_data_access.getAGCode('numeric')%>"></td></tr>
+		<tr><td></td><td><input type="button" onclick="validateAGSingleSubmitForm();" value="Submit"></td></tr>
 	</table>
 </form>
 

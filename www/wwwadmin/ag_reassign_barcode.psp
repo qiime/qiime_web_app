@@ -9,24 +9,26 @@ if 'ag_kit_id' in form:
 	# Submit and redirect to fusebox
 	ag_data_access.reassignAGBarcode(form['ag_kit_id'], form['barcode'])
 
-	req.write('<script>document.submit_data.submit(); return false;</script>')
+	req.write('<script>document.submit_data.submit();</script>')
 else:
 	# Draw the form
 %>
 
+<!--
 <script> 
   $(function() {
     $( "#ag_kit_id" ).combobox();
     $( "#barcode" ).combobox();
   });
 </script>
+-->
 
 <form method="post" action="ag_reassign_barcode.psp" name="agForm" id="agForm">
 	<table>
 		<tr>
 			<td>Kit ID</td>
 			<td>
-				<select name="ag_kit_id" id="ag_kit_id" class="hidden">
+				<select name="ag_kit_id" id="ag_kit_id">
 				<option value="">Please Select...</a>
 <%
 logins = ag_data_access.getAGKitsByLogin()
@@ -40,7 +42,7 @@ for email, supplied_kit_id, ag_kit_id in logins:
 		<tr>
 			<td>Barcode</td>
 			<td>
-				<select name="barcode" id="barcode" class="hidden">
+				<select name="barcode" id="barcode">
 				<option value="">Please Select...</a>
 <%
 barcodes = ag_data_access.getAGBarcodes()
@@ -51,7 +53,7 @@ for barcode in barcodes:
 				</select>			
 			</td>
 		</tr>
-		<tr><td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td></tr>
+		<tr><td></td><td><input type="button" onclick="validateAGSingleSubmitForm()" value="Submit"></td></tr>
 	</table>
 </form>
 

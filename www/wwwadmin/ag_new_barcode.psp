@@ -1,32 +1,46 @@
 <%@ include file="common_vars.psp" %>
 
+<%
+next_barcode, text_barcode = ag_data_access.getNextAGBarcode()
+%>
+
 <form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
     <input type="hidden" name="page" value="select_task.psp">
+    <input type="hidden" name="message" value="Barcode successfully added."/>
 </form>
+
+<script>
+var next_barcode = <%=next_barcode%>;
+var text_barcode = "<%=text_barcode%>";
+</script>
 
 <%
 if 'ag_kit_id' in form:
-	# Submit and redirect to fusebox
-	ag_data_access.addAGBarcode(form['ag_kit_id'], form['barcode'])
-
-	req.write('<script>document.submit_data.submit(); return false;</script>')
+	for field in form:
+		if 'barcode_' in field:
+			# Submit and redirect to fusebox
+			ag_data_access.addAGBarcode(form['ag_kit_id'], form[field])
+	
+	req.write('<script>document.submit_data.submit();</script>')
 else:
 	# Draw the form
 %>
 
+<!--
 <script> 
   $(function() {
     $( "#ag_kit_id" ).combobox();
   });
 </script>
+-->
 
 <form method="post" action="ag_new_barcode.psp" name="agForm" id="agForm">
 	<table>
 		<tr>
 			<td>Kit ID</td>
 			<td>
-				<select name="ag_kit_id" id="ag_kit_id" class="hidden">
-				<option value="">Please Select...</a>
+				<select name="ag_kit_id" id="ag_kit_id">
+					<option value="">Please Select...</a>
 <%
 logins = ag_data_access.getAGKitsByLogin()
 for email, supplied_kit_id, ag_kit_id in logins:
@@ -36,15 +50,22 @@ for email, supplied_kit_id, ag_kit_id in logins:
 				</select>
 			</td>
 		</tr>
-		
+
 		<tr>
 			<td>Barcode</td>
-			<td><input type="text" name="barcode" id="barcode" onkeypress="validateNumber(event);" maxlength="9"></td>
-			<td><input type="button" name="generate" id="generate" style="width:100px;" value="Generate"></td>
+			<td>
+				
+				<div id="barcode">
+                	<div id="barcode_1">
+                		<input type="text" name="barcode_1" id="barcode_1" onkeypress="validateNumber(event);" maxlength="9">
+                	</div>
+                </div>
+                <a class="add_field" href="javascript:next_barcode = parseInt(next_barcode) + 1; addBarcodeField('barcode', next_barcode);" title="Barcode">+</a>
+			</td>
 		</tr>
 		<tr>
 			<td></td>
-			<td colspan="2"><input type="button" onclick="validateAGForm()" value="Submit"></td>
+			<td colspan="2"><input type="button" onclick="validateAGSingleSubmitForm()" value="Submit"></td>
 		</tr>
 	</table>
 </form>
@@ -52,3 +73,7 @@ for email, supplied_kit_id, ag_kit_id in logins:
 <%
 # End indent
 %>
+
+<script>
+document.agForm.barcode_1.value = text_barcode;
+</script>
