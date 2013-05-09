@@ -1,1 +1,75 @@
-Coming soon...
+<%@ include file="common_vars.psp" %>
+
+<form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
+    <input type="hidden" name="page" value="select_task.psp"/>
+    <input type="hidden" name="message" value="Kit was updated successfully."/>
+</form>
+
+<%
+if 'submit_flag' in form:
+	if form['submit_flag'] == '1':
+		# Submit and redirect to fusebox
+		ag_data_access.updateAGKit(form['ag_kit_id'], form['kit_id'], form['kit_password'], \
+			form['swabs_per_kit'], form['kit_verification_code'])
+		req.write('<script>document.submit_data.submit();</script>')
+# End if
+%>
+
+<!--
+<script> 
+  $(function() {
+    $( "#ag_kit_id" ).combobox();
+    $( "#ag_kit_id" ).change(function() {
+        document.edit_participant.submit();
+    });
+  });
+</script>
+-->
+
+<form method="post" name="agForm" id="agForm" action="fusebox.psp?page=ag_edit_kit.psp">
+	<input type="hidden" name="submit_flag" id="submit_flag" value="0"/>
+	<table>
+		<tr>
+			<td>Kit</td>
+			<td>
+				<!--<select name="ag_kit_id" id="ag_kit_id" class="hidden" onChange="document.agForm.submit();">-->
+				<select name="ag_kit_id" id="ag_kit_id" onChange="document.agForm.submit();">
+				<option value="">Please Select...</a>
+<%
+kits = ag_data_access.getAGKitsByLogin()
+for email, supplied_kit_id, ag_kit_id in kits:
+	if 'ag_kit_id' in form and form['ag_kit_id'] == ag_kit_id:
+		req.write('<option value="{0}" selected>{1} ({2})</option>'.format(ag_kit_id, email, supplied_kit_id))
+	else:
+		req.write('<option value="{0}">{1} ({2})</option>'.format(ag_kit_id, email, supplied_kit_id))
+# End
+%>
+				</select>
+			</td>
+		</tr>
+
+<%
+if 'ag_kit_id' in form:
+	ag_kit_id = form['ag_kit_id']
+	sql = "select ak.ag_login_id, ak.supplied_kit_id, ak.kit_password, ak.swabs_per_kit, ak.kit_verification_code, ak.kit_verified, agl.email from ag_kit ak inner join ag_login agl on ak.ag_login_id = agl.ag_login_id where ak.ag_kit_id = '{0}'".format(ag_kit_id)
+	details = ag_data_access.dynamicMetadataSelect(sql).fetchone()
+	# Indent
+%>
+		<tr><td>Kit Owner</td><td><input type="text" name="ag_login_id" id="ag_login_id" value="<%=details[6]%>" disabled style="background-color:#ccc;"></td></tr>
+		<tr><td>Kit Verified</td><td><input type="text" name="kit_verified" id="kit_verified" value="<%=details[5]%>" disabled style="background-color:#ccc;"></td></tr>
+		<tr><td>Kit ID</td><td><input type="text" name="kit_id" id="kit_id" value="<%=details[1]%>"></td></tr>
+		<tr><td>Kit Password</td><td><input type="text" name="kit_password" id="kit_password" value="<%=details[2]%>"></td></tr>
+		<tr><td>Number of Swabs</td><td><input type="text" name="swabs_per_kit" id="swabs_per_kit" onkeypress='validateNumber(event)' value="<%=details[3]%>"></td></tr>
+		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="kit_verification_code" value="<%=details[4]%>"></td></tr>
+		<tr><td></td><td><input type="button" onclick="validateAGForm();" value="Submit"></td></tr>
+
+<%
+# End indent
+%>
+
+	</table>
+</form>
+
+<%
+# End indent
+%>

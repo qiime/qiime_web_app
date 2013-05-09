@@ -97,7 +97,7 @@ function validateAGForm() {
     for(var i = 0; i < document.agForm.length; i++) 
     {
 		var input = document.agForm[i]
-		if(input.type == 'text' && input.value == '')
+		if( (input.type == 'text' || input.type == 'select-one') && input.value == '')
 		{
 			input.className += " highlight"
 			valid = false;
@@ -107,7 +107,28 @@ function validateAGForm() {
     }
 	
 	if(valid)
+    document.agForm.submit_flag.value=1;
 		$('#agForm').submit();
+}
+
+function validateAGSingleSubmitForm() {
+  var valid = true;
+  for(var i = 0; i < document.agForm.length; i++) 
+  {
+    var input = document.agForm[i]
+    if( (input.type == 'text' || input.type == 'select-one') && input.value == '')
+    {
+      input.className += " highlight"
+      valid = false;
+    }
+    else {
+      input.className = input.className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+  }
+  
+  if(valid) {
+    $('#agForm').submit();
+  }
 }
 
 function validateEditParticipant() {
@@ -152,3 +173,46 @@ function validateNumber(evt) {
     if(theEvent.preventDefault) theEvent.preventDefault();
   }
 }
+
+var old_field_number = 1
+
+function getNextBarcode(current_barcode) {
+  bc = String(current_barcode);
+  while (bc.length < 9) {
+    bc = '0' + bc;
+  }
+  return bc;
+}
+
+function addBarcodeField(field_name, current_barcode) {
+  var new_field_number = old_field_number+1
+  old_field_number = new_field_number
+  next_barcode = getNextBarcode(current_barcode)
+  var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'" onkeypress="validateNumber(event);" value="' + next_barcode + '"><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+  var newTextBoxDiv = $(document.createElement('div')).attr("id", field_name+'_'+new_field_number);
+  newTextBoxDiv.after().html(newinput);
+  newTextBoxDiv.appendTo('#'+field_name);
+  //setDefaultText();
+}
+
+function removeField(item_id) {
+  var c = document.getElementById(item_id)
+  c.parentNode.removeChild(c);
+}
+
+function setDefaultText() 
+{
+  $('input[type="text"], textarea').focus(function () 
+  {
+    defaultText = $(this).val();
+    $(this).val('');
+  });
+  $('input[type="text"], textarea').blur(function () 
+  {
+    if ($(this).val() == "") 
+    {
+      $(this).val(defaultText);
+    }
+  });
+}
+
