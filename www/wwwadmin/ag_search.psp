@@ -17,12 +17,12 @@ th {
 }
 
 .result_container {
-	 background-color: #888; 
-	 margin-bottom: 20px;
-	 border-radius: 10px;
-	 border-width: 5px;
-	 border-style: solid;
-	 border-color: #444;
+	background-color: #888; 
+	margin-bottom: 20px;
+	border-radius: 10px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: #444;
 }
 
 .result_item {
