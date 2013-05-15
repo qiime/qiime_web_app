@@ -111,6 +111,22 @@ if 'search_term' in form:
 					req.write('<td>{0}</td>'.format(zip))
 					req.write('<td>{0}</td>'.format(country))
 					req.write('</tr>')
+
+					# If there are surveys, show them here
+					sql = sql = """
+						select  *
+						from    ag_human_survey
+						where   ag_login_id = '{0}'""".format(ag_login_id)
+					results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+					if len(results) > 0:
+						req.write('<tr>')
+						req.write('<td>Surveys:</td>')
+						req.write('<td>')
+						for row in results:
+							req.write('{0}'.format(row[1]))
+						req.write('</td>')
+						req.write('</tr>')
+
 					req.write('</table>')
 
 					###########################################
@@ -171,7 +187,7 @@ if 'search_term' in form:
 								req.write('<td>{0}</td>'.format('' if (environment_sampled is None) else environment_sampled))
 								req.write('</tr>')
 								req.write('<tr>')
-								req.write('<td>Notes: {0}</td>'.format('' if (notes is None) else notes))
+								req.write('<td colspan="6">Notes: {0}</td>'.format('' if (notes is None) else notes))
 								req.write('</tr>')
 							req.write('</table>')
 							
