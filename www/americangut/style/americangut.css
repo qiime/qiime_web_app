@@ -20,6 +20,7 @@ body,html {
 
 h2.msg {
 	color: #f00;
+	background-color: #fcc;
 }
 
 table#survey{
@@ -279,7 +280,7 @@ div.content {
 	text-align: center;
 	overflow:hidden;
 	margin-left: 215px;
-/*	width: 100%;*/
+/*	min-width: 300px;*/
 	background-color: #f5f5f5;
 	border-radius: 10px;
 }
