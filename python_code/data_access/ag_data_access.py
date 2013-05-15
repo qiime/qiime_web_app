@@ -357,4 +357,12 @@ class AGDataAccess(object):
 
         return is_handout.strip()
 
+    def checkBarcode(self, barcode):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_check_barcode_status', [barcode, results])
+        barcode_details = results.fetchall()
+        
+        return barcode_details
+
 
