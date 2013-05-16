@@ -113,21 +113,21 @@ if 'search_term' in form:
 					req.write('</tr>')
 
 					# If there are surveys, show them here
-					sql = sql = """
-						select  *
-						from    ag_human_survey
-						where   ag_login_id = '{0}'""".format(ag_login_id)
-					results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
-					if len(results) > 0:
-						req.write('<tr>')
-						req.write('<td>Surveys:</td>')
-						req.write('<td>')
-						for row in results:
-							req.write('{0}'.format(row[1]))
-						req.write('</td>')
-						req.write('</tr>')
-
-					req.write('</table>')
+					#sql = sql = """
+					#	select  *
+					#	from    ag_human_survey
+					#	where   ag_login_id = '{0}'""".format(ag_login_id)
+					#results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+					#if len(results) > 0:
+					#	req.write('<tr>')
+					#	req.write('<td>Surveys:</td>')
+					#	req.write('<td>')
+					#	for row in results:
+					#		req.write('{0}'.format(row[1]))
+					#	req.write('</td>')
+					#	req.write('</tr>')
+					#
+					#req.write('</table>')
 
 					###########################################
 					# Kit-level information
