@@ -82,6 +82,30 @@ function addField(field_name) {
 	setDefaultText()
 }
 
+function addHuman() {
+	field_name = "human"
+	var new_field_number = old_field_number+1
+	old_field_number = new_field_number
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", field_name+'_'+new_field_number);
+	newTextBoxDiv.after().html(newinput);
+	newTextBoxDiv.appendTo('#'+field_name);
+	setDefaultText()
+}
+
+function addPet() {
+	field_name = "pet"
+	var new_field_number = old_field_number+1
+	old_field_number = new_field_number
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><select name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><option value="">Select an option</option><option>Dog</option><option>Cat</option><option>Small mammal</option><option>Large mammal</option><option>Fish</option><option>Bird</option><option>Reptile</option><option>Amphibian</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newTextBoxDiv = $(document.createElement('div'))
+	     .attr("id", field_name+'_'+new_field_number);
+	newTextBoxDiv.after().html(newinput);
+	newTextBoxDiv.appendTo('#'+field_name);
+	setDefaultText()
+}
+
 function removeField(item_id) {
 	var c = document.getElementById(item_id)
 	c.parentNode.removeChild(c);
@@ -433,6 +457,36 @@ function validateSurvey1() {
 	if(valid)
 		$('#survey_1').submit();
  
+}
+
+function validatePetSurvey() {
+	var valid = true;
+    for(var i = 0; i < document.pet_survey.length; i++) 
+    {
+		if(document.pet_survey[i].type == 'text')
+		{
+			if(document.pet_survey[i].value == 'Age' || document.pet_survey[i].value == 'Name')
+				document.pet_survey[i].value = ''
+		}
+        document.pet_survey[i].className = document.pet_survey[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+	
+    if(document.pet_survey.pet_name.value == "")
+	{
+		document.pet_survey.pet_name.className += " highlight"
+		valid = false;
+	}
+	
+    if(document.pet_survey.birth_date.value != "" && !isValidDate(document.pet_survey.birth_date.value))
+	{
+		document.pet_survey.birth_date.className += " highlight"
+		valid = false;
+	}
+	
+	if(valid)
+		$('#pet_survey').submit();
+	else
+		window.scrollTo(0, 0);
 }
 
 function verifyOptionalQuestions() {
