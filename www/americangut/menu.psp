@@ -18,7 +18,8 @@ _status_ = "Development"
 
 <%
 ag_login_id = sess['user_data']['web_app_user_id']
-query = ("select participant_name from ag_human_survey where ag_login_id = '%s'" % ag_login_id)
+#query = ("select participant_name from ag_human_survey where ag_login_id = '%s'" % ag_login_id)
+query = ("select nname from chartest")
 participants = ag_data_access.dynamicMetadataSelect(query)
 available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
 
@@ -27,6 +28,9 @@ for p in participants:
     # tuple (like this one). So we need to take the first element of this
     # 1-member tuple
     p = p[0]
+    f = open('/tmp/unitest.txt', 'w')
+    f.write(p)
+    f.close()
     
     participant_menu_item = \
     """
@@ -38,7 +42,7 @@ for p in participants:
             <a href="" onclick="document.forms['participant_overview_{0}'].submit(); return false;">{0}</a>
         </li>
     </form>
-    """.format(p)
+    """.encode('utf8').format(p)
 
     add_sample_menu_item = \
     """

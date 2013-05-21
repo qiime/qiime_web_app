@@ -358,6 +358,8 @@ class AGDataAccess(object):
         return is_handout.strip()
 
     def checkBarcode(self, barcode):
+        # returned tuple consists of:
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_check_barcode_status', [barcode, results])
