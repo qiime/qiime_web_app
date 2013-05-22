@@ -153,6 +153,28 @@ function validateEditParticipant() {
   }
 }
 
+function validateEditBarcode() {
+  var valid = true;
+  
+    for(var i = 0; i < document.edit_barcode.length; i++) 
+    {
+      var input = document.edit_barcode[i]
+      if(input.type == 'text' && input.value == '')
+      {
+        input.className += " highlight"
+        valid = false;
+      }
+      else
+        input.className = input.className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+      }
+    
+  if(valid)
+  {
+    document.edit_barcode.submit_flag.value=1;
+    document.edit_barcode.submit();
+  }
+}
+
 /* from http://stackoverflow.com/questions/46155/validate-email-address-in-javascript */
 function validateEmail(email) { 
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;

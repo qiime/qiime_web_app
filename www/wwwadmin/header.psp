@@ -97,6 +97,11 @@ else:
             <input type="hidden" name="page_title" value="Add New American Gut Barcode">
         </form>
 
+        <form action="fusebox.psp" method="post" name="ag_edit_barcode" id="ag_edit_barcode">
+            <input type="hidden" name="page" value="ag_edit_barcode.psp">
+            <input type="hidden" name="page_title" value="Edit American Gut Barcode">
+        </form>
+
         <form action="fusebox.psp" method="post" name="ag_reassign_barcode" id="ag_reassign_barcode">
             <input type="hidden" name="page" value="ag_reassign_barcode.psp">
             <input type="hidden" name="page_title" value="Reassign American Gut Barcode">
@@ -127,7 +132,8 @@ else:
             <li><a href="" onclick="document.ag_new_kit.submit(); return false;">Add New Kit</a></li>
             <li><a href="" onclick="document.ag_edit_kit.submit(); return false;">Edit Existing Kit</a></li>
             <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New Barcode</a></li>
-            <li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>
+            <li><a href="" onclick="document.ag_edit_barcode.submit(); return false;">Edit Existing Barcode</a></li>
+            <!--<li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>-->
             <!--<li><a href="" onclick="document.barcode_util.submit(); return false;">Check Barcode</a></li> -->
             <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne<img src="img/bruce.png"/></a></li>
         </ul>
