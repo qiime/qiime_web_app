@@ -1,7 +1,7 @@
 <%
 _author_ = "Meg Pirrung"
 _copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
-_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza"]
+_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza", "Doug Wendel"]
 _license_ = "GPL"
 _version_ = "1.0.0.dev"
 _maintainer_ = ["Meg Pirrung"]

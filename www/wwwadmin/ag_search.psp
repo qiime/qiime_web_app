@@ -176,6 +176,7 @@ if 'search_term' in form:
 							if len(results) > 0:
 								for ag_kit_barcode_id, ag_kit_id, barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes in results:
 									req.write('<table class="widetable">')
+									req.write('<th></th>')
 									req.write('<th>barcode</th>')
 									req.write('<th>sample_date</th>')
 									req.write('<th>sample_time</th>')
@@ -183,6 +184,8 @@ if 'search_term' in form:
 									req.write('<th>participant_name</th>')
 									req.write('<th>environment_sampled</th>')
 									req.write('<tr class="gridrow">')
+									edit_url = 'fusebox.psp?page=ag_edit_barcode.psp&barcode={0}'.format(barcode)
+									req.write('<td><a href="{0}">edit</a></td>'.format(edit_url))
 									req.write('<td>{0}</td>'.format(barcode))
 									req.write('<td>{0}</td>'.format('' if (sample_date is None) else sample_date))
 									req.write('<td>{0}</td>'.format('' if (sample_time is None) else sample_time))
