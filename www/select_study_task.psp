@@ -35,7 +35,7 @@ mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
 ebi_study_accession = study_info['ebi_study_accession']
 
-approved_qiime_submitters = [12428,12169,12171,12768,12782,12979]
+approved_qiime_submitters = [12428,12169,12171,12768,12782,12979,13019,12888]
 
 %>
 

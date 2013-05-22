@@ -260,6 +260,7 @@ class Poller(Daemon):
         """Submits a single job, updates self.Jobs"""
         err_jobs = set([])
         for job_name, job_type, job_args in jobs:
+            sleep(5)
             job_handler = JOB_TYPE_LOOKUP.get(job_type, None)
             
             if job_handler is None:
