@@ -54,7 +54,7 @@ if 'search_term' in form:
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
 		if item[0] not in login_list:
-			login_list.append((item[0], 'login'))
+			login_list.append(item[0])
 
 	# Check matches in kits
 	sql = """
@@ -64,7 +64,7 @@ if 'search_term' in form:
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
 		if item[0] not in login_list:
-			login_list.append((item[0], 'kit'))
+			login_list.append(item[0])
 
 	# Check matches in barcodes
 	sql = """
@@ -76,11 +76,11 @@ if 'search_term' in form:
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
 		if item[0] not in login_list:
-			login_list.append((item[0], 'barcode'))
+			login_list.append(item[0])
 	
 	# Output the results
 	if len(login_list) > 0:
-		for ag_login_id, location_found in login_list:
+		for ag_login_id in login_list:
 
 			###########################################
 			# Login-level information
