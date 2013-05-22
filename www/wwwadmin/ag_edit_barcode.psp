@@ -1,0 +1,202 @@
+<script src="../americangut/js/jquery.ui.timepicker.js"></script>
+
+<%@ include file="common_vars.psp" %>
+
+<form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
+    <input type="hidden" name="page" value="select_task.psp"/>
+    <input type="hidden" name="message" value="Barcode was updated successfully."/>
+</form>
+
+<%
+if 'submit_flag' in form:
+	if form['submit_flag'] == '1':
+		# Submit and redirect to fusebox
+		ag_data_access.updateAGBarcode(form['barcode'], form['ag_kit_id'], form['site_sampled'], 
+			form['environment_sampled'], form['sample_date'], form['sample_time'], 
+			form['participant_name'], form['notes'])
+		req.write('<script>document.submit_data.submit();</script>')
+# End if
+%>
+
+<!--
+<script> 
+  $(function() {
+    $( "#barcode" ).combobox();
+    $( "#barcode" ).change(function() {
+        document.edit_participant.submit();
+    });
+  });
+</script>
+-->
+
+<form method="post" name="edit_barcode" id="edit_barcode" action="fusebox.psp?page=ag_edit_barcode.psp">
+	<input type="hidden" name="submit_flag" id="submit_flag" value="0"/>
+	<table>
+		<tr>
+			<td>Barcode</td>
+			<td>
+				<!--<select name="barcode" id="barcode" class="hidden" onChange="document.edit_barcode.submit();">-->
+				<select name="barcode" id="barcode" onChange="document.edit_barcode.submit();">
+				<option value="">Please Select...</a>
+<%
+barcodes = ag_data_access.getAGBarcodes()
+for barcode in barcodes:
+	if 'barcode' in form and form['barcode'] == barcode:
+		req.write('<option value="{0}" selected>{0}</option>'.format(barcode))
+	else:
+		req.write('<option value="{0}">{0}</option>'.format(barcode))
+# End
+%>
+				</select>
+			</td>
+		</tr>
+
+<%
+if 'barcode' in form:
+	sites_sampled = (['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead']) 
+	environments_sampled = (['Animal Habitat', 'Biofilm', 'Dust', 'Food', 'Fermented Food', 
+		'Indoor Surface', 'Outdoor Surface', 'Plant habitat', 'Soil'])
+
+
+
+	barcode = form['barcode']
+	details = ag_data_access.getAGBarcodeDetails(barcode)
+	"""
+	Tuple of the form:
+	al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
+	akb.site_sampled, akb.environment_sampled, akb.sample_date, 
+	akb.sample_time, akb.participant_name, akb.notes
+	"""
+
+	barcode_ag_kit_id = details[2]
+	sample_date = '' if details[6] == None else details[6]
+	sample_time = '' if details[7] == None else details[7]
+	participant_name = '' if details[8] == None else details[8]
+	notes = '' if details[9] == None else details[9]
+
+	# Indent
+%>
+
+		<tr>
+			<td>Kit ID</td>
+			<td class="warning">
+				<select name="ag_kit_id" id="ag_kit_id">
+				<option value="">Please Select...</a>
+<%
+	logins = ag_data_access.getAGKitsByLogin()
+	for email, supplied_kit_id, ag_kit_id in logins:
+		if barcode_ag_kit_id == ag_kit_id:
+			req.write('<option value="{2}" selected>{0} ({1})</option>'.format(email, supplied_kit_id, ag_kit_id))
+		else:
+			req.write('<option value="{2}">{0} ({1})</option>'.format(email, supplied_kit_id, ag_kit_id))
+	# End
+%>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td></td><td class="warning">WARNING: Changing this value will reassign this barcode to the selected kit.<br/>Leave this value alone unless you are certain you wish to reassign.</td>
+		</tr>
+		<tr>
+
+		<tr>
+			<td>Site Sampled</td>
+			<td>
+				<select name="site_sampled" id="site_sampled">
+					<option value="">None</option>
+<%
+	for site_sampled in sites_sampled:
+		if site_sampled == details[4]:
+			req.write('<option value="{0}" selected>{0}</option>'.format(site_sampled))
+		else:
+			req.write('<option value="{0}">{0}</option>'.format(site_sampled))
+%>
+
+<%
+	# End indent
+%>
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td></td><td style="font-weight:bold;">If you select this value, please ensure that "Environment Sampled" is set to "None"</td>
+		</tr>
+
+		<tr>
+			<td>Environment Sampled</td>
+			<td>
+				<select name="environment_sampled" id="environment_sampled">
+					<option value="">None</option>
+<%
+	for environment_sampled in environments_sampled:
+		if environment_sampled == details[5]:
+			req.write('<option value="{0}" selected>{0}</option>'.format(environment_sampled))
+		else:
+			req.write('<option value="{0}">{0}</option>'.format(environment_sampled))
+%>
+
+<%
+	# End indent
+%>
+				</select>
+			</td>
+		</tr>
+
+		<tr>
+			<td></td><td style="font-weight:bold;">If you select this value, please ensure "Site Sampled" is set to "None"</td>
+		</tr>
+
+		<tr>
+			<td>Sample Date</td>
+			<td><input tabindex="3" type="text" name="sample_date" id="sample_date" class="small_text" value="<%=sample_date%>" /><br/>mm/dd/yyyy (Example: 05/07/2013)</td>
+			<script>
+	          $(function() {
+	            $( "#sample_date" ).datepicker({
+	                    changeMonth: true,
+	                    minDate:'-12m',
+	                    maxDate: '+0m',
+	                    onSelect: function(dateText, inst) {
+	                        $(this).focus();
+	                    }
+	            });
+	          });
+			</script>
+		</tr>
+		<tr>
+			<td>Sample Time</td>
+			<td><input tabindex="4" type="text" id="sample_time" name="sample_time" class="small_text" value="<%=sample_time%>" /><br/>hh:mm AM/PM (Example: 04:35 PM)</td>
+			<script>
+              $(function() {
+                $( "#sample_time" ).timepicker({
+                    showPeriod: true,
+                    showLeadingZero: true,
+                    onSelect: function(dateText, inst) {
+                        $(this).focus();
+                    }
+                });
+              });
+            </script>
+		</tr>
+		<tr>
+			<td>Participant Name</td>
+			<td><input type="text" name="participant_name" id="participant_name" value="<%=participant_name%>"/></td>
+		</tr>
+		<tr>
+			<td>Notes</td>
+			<td><textarea name="notes" id="notes" style="width:350px;height:100px;"><%=notes%></textarea></td>
+		</tr>
+		<tr>
+			<td></td><td><input type="button" onClick="validateEditBarcode();" value="Submit"></td>
+		</tr>
+
+<%
+# End indent
+%>
+
+	</table>
+</form>
+
+<%
+# End indent
+%>

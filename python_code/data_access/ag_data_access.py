@@ -130,6 +130,38 @@ class AGDataAccess(object):
 
         return barcodes
 
+    def getAGBarcodesByLogin(self, ag_login_id):
+        # returned tuple consists of:
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_barcodes_by_login', [ag_login_id, results])
+        barcodes = results.fetchall()
+        """
+        Tuple format is:
+
+        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
+        akb.site_sampled, akb.environment_sampled, akb.sample_date, 
+        akb.sample_time, akb.participant_name, akb.notes
+        """
+        return barcodes
+
+    def getAGBarcodeDetails(self, barcode):
+        # returned tuple consists of:
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_barcode_details', [barcode, results])
+        barcode_details = results.fetchone()
+        """
+        Tuple format is:
+
+        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
+        akb.site_sampled, akb.environment_sampled, akb.sample_date, 
+        akb.sample_time, akb.participant_name, akb.notes
+        """
+        return barcode_details
+
     def getAGCode(self, type):
         length_of_password = 8
         alpha = ''
@@ -184,6 +216,10 @@ class AGDataAccess(object):
     def addAGBarcode(self, ag_kit_id, barcode):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_insert_barcode', [ag_kit_id, barcode])
+
+    def updateAGBarcode(self, barcode, ag_kit_id, site_sampled, environment_sampled, sample_date, sample_time, participant_name, notes):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_update_barcode', [barcode, ag_kit_id, site_sampled, environment_sampled, sample_date, sample_time, participant_name, notes])
 
     def addAGHumanParticipant(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
@@ -358,11 +394,12 @@ class AGDataAccess(object):
         return is_handout.strip()
 
     def checkBarcode(self, barcode):
+        # returned tuple consists of:
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_check_barcode_status', [barcode, results])
         barcode_details = results.fetchall()
         
         return barcode_details
-
 
