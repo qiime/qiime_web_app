@@ -53,7 +53,8 @@ if 'search_term' in form:
 		where 	lower(email) like '%{0}%' or lower(name) like '%{0}%' or lower(address) like '%{0}%'""".format(search_term)
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
-		login_list.append((item[0], 'login'))
+		if item[0] not in login_list:
+			login_list.append(item[0])
 
 	# Check matches in kits
 	sql = """
@@ -62,7 +63,8 @@ if 'search_term' in form:
 		where   lower(supplied_kit_id) like '%{0}%' or lower(kit_password) like '%{0}%' or lower(kit_verification_code) = '%{0}%'""".format(search_term)
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
-		login_list.append((item[0], 'kit'))
+		if item[0] not in login_list:
+			login_list.append(item[0])
 
 	# Check matches in barcodes
 	sql = """
@@ -73,11 +75,12 @@ if 'search_term' in form:
 		where   barcode like '%{0}%' or lower(participant_name) like '%{0}%'""".format(search_term)
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
-		login_list.append((item[0], 'barcode'))
+		if item[0] not in login_list:
+			login_list.append(item[0])
 	
 	# Output the results
 	if len(login_list) > 0:
-		for ag_login_id, location_found in login_list:
+		for ag_login_id in login_list:
 
 			###########################################
 			# Login-level information
@@ -111,6 +114,7 @@ if 'search_term' in form:
 					req.write('<td>{0}</td>'.format(zip))
 					req.write('<td>{0}</td>'.format(country))
 					req.write('</tr>')
+					req.write('</table>')
 
 					# If there are surveys, show them here
 					#sql = sql = """
@@ -140,8 +144,8 @@ if 'search_term' in form:
 						where   ag_login_id = '{0}'""".format(ag_login_id)
 					results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 					if len(results) > 0:
-						req.write('<table class="widetable">')
 						for ag_kit_id, ag_login_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code, kit_verified in results:
+							req.write('<table class="widetable">')
 							req.write('<th></th>')
 							req.write('<th>supplied_kit_id</th>')
 							req.write('<th>kit_password</th>')
@@ -157,40 +161,39 @@ if 'search_term' in form:
 							req.write('<td>{0}</td>'.format(kit_verification_code))
 							req.write('<td>{0}</td>'.format(kit_verified))
 							req.write('</tr>')
-						req.write('</table>')
-
-						###########################################
-						# Barcode-level information
-						###########################################
-						sql = """
-							select  cast(ag_kit_barcode_id as varchar2(100)) as ag_kit_barcode_id,
-							        cast(ag_kit_id as varchar2(100)) as ag_kit_id,
-							        barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes
-							from    ag_kit_barcodes
-							where   ag_kit_id = '{0}'""".format(ag_kit_id)
-						results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
-						if len(results) > 0:
-							req.write('<table class="widetable">')
-							for ag_kit_barcode_id, ag_kit_id, barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes in results:
-								req.write('<th>barcode</th>')
-								req.write('<th>sample_date</th>')
-								req.write('<th>sample_time</th>')
-								req.write('<th>site_sampled</th>')
-								req.write('<th>participant_name</th>')
-								req.write('<th>environment_sampled</th>')
-								req.write('<tr class="gridrow">')
-								req.write('<td>{0}</td>'.format(barcode))
-								req.write('<td>{0}</td>'.format('' if (sample_date is None) else sample_date))
-								req.write('<td>{0}</td>'.format('' if (sample_time is None) else sample_time))
-								req.write('<td>{0}</td>'.format('' if (site_sampled is None) else site_sampled))
-								req.write('<td>{0}</td>'.format('' if (participant_name is None) else participant_name))
-								req.write('<td>{0}</td>'.format('' if (environment_sampled is None) else environment_sampled))
-								req.write('</tr>')
-								req.write('<tr>')
-								req.write('<td colspan="6">Notes: {0}</td>'.format('' if (notes is None) else notes))
-								req.write('</tr>')
 							req.write('</table>')
-							
+						
+							###########################################
+							# Barcode-level information
+							###########################################
+							sql = """
+								select  cast(ag_kit_barcode_id as varchar2(100)) as ag_kit_barcode_id,
+								        cast(ag_kit_id as varchar2(100)) as ag_kit_id,
+								        barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes
+								from    ag_kit_barcodes
+								where   ag_kit_id = '{0}'""".format(ag_kit_id)
+							results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+							if len(results) > 0:
+								for ag_kit_barcode_id, ag_kit_id, barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes in results:
+									req.write('<table class="widetable">')
+									req.write('<th>barcode</th>')
+									req.write('<th>sample_date</th>')
+									req.write('<th>sample_time</th>')
+									req.write('<th>site_sampled</th>')
+									req.write('<th>participant_name</th>')
+									req.write('<th>environment_sampled</th>')
+									req.write('<tr class="gridrow">')
+									req.write('<td>{0}</td>'.format(barcode))
+									req.write('<td>{0}</td>'.format('' if (sample_date is None) else sample_date))
+									req.write('<td>{0}</td>'.format('' if (sample_time is None) else sample_time))
+									req.write('<td>{0}</td>'.format('' if (site_sampled is None) else site_sampled))
+									req.write('<td>{0}</td>'.format('' if (participant_name is None) else participant_name))
+									req.write('<td>{0}</td>'.format('' if (environment_sampled is None) else environment_sampled))
+									req.write('</tr>')
+									req.write('<tr>')
+									req.write('<td colspan="6">Notes: {0}</td>'.format('' if (notes is None) else notes))
+									req.write('</tr>')
+									req.write('</table>')
 
 				# Close the div for this login
 				req.write('</div>')
