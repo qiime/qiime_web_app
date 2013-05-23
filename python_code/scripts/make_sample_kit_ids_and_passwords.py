@@ -199,7 +199,7 @@ def main():
 
     # build up new header
     outlines = [mapping_lines[0][:]]
-    outlines[0].insert(0, '#SampleID')
+    outlines[0].insert(0, 'barcode')
     outlines[0].append('KIT_ID')
     outlines[0].append('KIT_PASSWORD')
     outlines[0].append('KIT_VERIFICATION_CODE')
@@ -210,7 +210,7 @@ def main():
     NAME_IDX = index_lookup.index('name')
     ZIPCODE_IDX = index_lookup.index('zipcode')
     STATE_IDX = index_lookup.index('state')
-    SWABS_IDX = index_lookup.index('swabs')
+    SWABS_IDX = index_lookup.index('swabs_per_kit')
     COUNTRY_IDX = index_lookup.index('country')
 
     # verify columns exist
