@@ -379,7 +379,7 @@ class AGDataAccess(object):
         
     def updateGeoInfo(self, ag_login_id, lat, lon, cannot_geocode):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_update_geo_info', [ag_login_id, lat, lon, cannot_geocode])        
+        con.cursor().callproc('ag_update_geo_info', [ag_login_id, lat, lon, cannot_geocode])
 
     def addBruceWayne(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
@@ -403,3 +403,9 @@ class AGDataAccess(object):
         
         return barcode_details
 
+    def updateAGSurvey(ag_login_id, participant_name, field, value):
+        con = self.getMetadataDatabaseConnection()
+        sql = """
+        update ag_human_survey set {0} = '{1}' where ag_login_id = '{2}' and participant_name = '{3}'
+        """.format(field, value, ag_login_id, participant_name)
+        con.cursor().execute(sql)
