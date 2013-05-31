@@ -195,6 +195,6 @@ for idx, column in enumerate(column_names):
 # End for
 
 %>
-<tr><td></td><td><input type="submit"></td></tr>
+<!--<tr><td></td><td><input type="submit"></td></tr>-->
 </table>
 </form>
