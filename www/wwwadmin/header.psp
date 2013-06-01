@@ -38,6 +38,11 @@ else:
             <input type="hidden" name="page_title" value="Assign User to Studies">
         </form>
 
+        <form action="fusebox.psp" method="post" name="view_queue_status" id="view_queue_status">
+            <input type="hidden" name="page" value="view_queue_status.psp">
+            <input type="hidden" name="page_title" value="View Queue Status">
+        </form>
+
         <form action="fusebox.psp" method="post" name="find_user" id="find_user">
             <input type="hidden" name="page" value="find_user.psp">
             <input type="hidden" name="page_title" value="Search for User">
@@ -121,6 +126,7 @@ else:
 
         <ul class="mainmenu">
             <li><a href="" onclick="document.assign_user_to_study.submit(); return false;">Assign User to Studies</a></li>
+            <li><a href="" onclick="document.view_queue_status.submit(); return false;">View Queue Status</a></li>
         </ul>
 
         <h3>American Gut Utilities</h3>

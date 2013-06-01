@@ -1,0 +1,200 @@
+<script src="../americangut/js/jquery.ui.timepicker.js"></script>
+
+<form action="fusebox.psp" method="post" name="submit_data" id="submit_data">
+    <input type="hidden" name="page" value="select_task.psp"/>
+    <input type="hidden" name="message" value="Survey data was updated successfully."/>
+</form>
+
+<%
+
+def buildDateControl(control_name, current_value):
+	control_text = """
+	<input type="text" name="{0}" id="{0}" value="{1}" class="small_text"/>
+	<br/>mm/dd/yyyy (Example: 05/07/2013)
+	<script>
+	  $(function() {{
+	    $( "#{0}" ).datepicker({{
+	            changeMonth: true,
+	            onSelect: function(dateText, inst) {{
+	                $(this).focus();
+	            }}
+	    }});
+	  }});
+	</script>
+	""".format(control_name, current_value)
+	return control_text
+
+def buildTimeControl(control_name, current_value):
+	control_text = """
+	<input type="text" id="{0}" name="{0}" class="small_text" value="{1}" />
+	<br/>hh:mm AM/PM (Example: 04:35 PM)</td>
+	<script>
+      $(function() {{
+        $( "#sample_time" ).timepicker({{
+            showPeriod: true,
+            showLeadingZero: true,
+            onSelect: function(dateText, inst) {{
+                $(this).focus();
+            }
+        }});
+      }});
+    </script>
+   	""".format(control_name, current_value)
+
+def buildSelect(control_name, value_list, current_value):
+	control_text = '<select name="{0}" id="{0}">\n'.format(control_name)
+	control_text += '<option value=""></option>\n'
+	for item in value_list:
+		if str(item).lower() == str(current_value).lower():
+			control_text += '<option value="{0}" selected>{0}</option>\n'.format(item)
+		else:
+			control_text += '<option value="{0}">{0}</option>\n'.format(item)
+	control_text += '</select">\n'
+	return control_text
+
+def buildCheckbox(control_name, current_value):
+	if current_value != None and current_value != '':
+		control_text = '<input type="checkbox" checked name="{0}" id="{0}">\n'.format(control_name)
+	else:
+		control_text = '<input type="checkbox" name="{0}" id="{0}">\n'.format(control_name)
+	return control_text
+
+def buildCountrySelect(control_name, current_value):
+	control_text = '<select name="{0}" id="{0}">\n'.format(control_name)
+	countries = data_access.getControlledVocabValueList(28)
+	for country_id in countries:
+		country = countries[country_id]
+		if str(country_id) == str(current_value):
+			control_text += '<option value="{0}" selected>{1}</option>\n'.format(country_id, country)
+		else:
+			control_text += '<option value="{0}">{1}</option>\n'.format(country_id, country)
+	control_text += '</select">\n'
+	return control_text
+
+# Lists to manage form bulding and controlled vocabs
+ignore_list = (['ag_login_id', 'consent'])
+country_list = (['country_of_birth'])
+yes_no_list = (['is_7_to_13', 'deceased_parent', 'multivitamin', 'supplements', 'lactose', 
+	'gluten', 'special_restrictions', 'dog', 'cat', 'shared_housing', 'nails', 'tonsils_removed',
+	'appendix_removed', 'chickenpox', 'acne_medication', 'acne_medication_otc', 'conditions_medication',
+	'pku', 'asthma', 'seasonal_allergies', 'migraine'])
+frequency_list = (['pool_frequency', 'exercise_frequency', 'smoking_frequency', 'alcohol_frequency',
+	'teethbrushing_frequency', 'flossing_frequency', 'cosmetics_frequency'])
+in_the_last_x_list = (['antibiotic_select', 'flu_vaccine_date'])
+yes_no_notsure_list = (['livingwith', 'csection'])
+migraine_factor_list = ('migraine_factor_1', 'migraine_factor_2', 'migraine_factor_3')
+date_list = (['birth_date', 'diabetes_diagnose_date', 'pregnant_due_date'])
+time_list = (['sample_time'])
+numeric_list = (['height_in', 'height_cm', 'weight_lbs', 'weight_kg'])
+checkbox_list = (['foodallergies_peanuts', 'foodallergies_treenuts', 'foodallergies_shellfish', 'foodallergies_other', 
+	'tanning_beds', 'tanning_sprays', 'softener', 'nonfoodallergies_drug', 'nonfoodallergies_dander', 
+	'nonfoodallergies_beestings', 'nonfoodallergies_poisonivy', 'nonfoodallergies_sun', 'nonfoodallergies_no', 
+	'pregnant', 'frat', 'communal_dining', 'migraine_pain', 'migraine_photophobia', 'migraine_phonophobia',
+	'migraine_nausea', 'migraine_aggravation', 'migraine_aura', 'migraine_relatives', 'migrainemeds'])
+dropdown_list = (['diet_type', 'drinking_water_source', 'race', 'current_residence_duration', 'last_travel', 
+	'livingwith', 'hand', 'gender', 'exercise_frequency', 'exercise_location', 'deoderant_use', 'sleep_duration',
+	'flu_vaccine_date', 'weight_change', 'ibd', 'skin_condition', 'diabetes', 'roommates', 'migraine_frequency'])
+
+# Lists which are repeated across different columns
+yes_no_values = (['Yes', 'No'])
+frequency_values = (['Daily', 'Regularly (3-5 times/week)', 'Occasionally (1-2 times/week)', 'Rarely (few times/month)', 'Never'])
+in_the_last_x_values = (['In the past week', 'In the past month', 'In the past 6 months', 'In the past year', 'Not in the last year'])
+yes_no_notsure_values = (['not_sure', 'no', 'yes'])
+migraine_factor_values = (['Caffeine', 'Stress', 'Depression', 'Lack of sleep', 'Foods; chocolate', 'Foods; red wine',
+	'Foods; strawberries', 'Foods; other', 'Medications; barbiturates', 'Medications; opiods', 'Medications; horomones', 'Other'])
+
+# Lists that are unique
+diet_type_values = (['Omnivore', 'Omnivore but no red meat', 'Vegetarian', 'Vegetarian but eat seafood', 'Vegan'])
+drinking_water_source_values = (['City', 'Well', 'Bottled', 'Filtered', 'Not sure'])
+race_values = (['Caucasian', 'Asian or Pacific Islander', 'African American', 'Hispanic', 'Other'])
+current_residence_duration_values = (['Within the past month', 'Within the past 3 months', 'Within the past 6 months', 
+	'Within the past year', 'More than one year ago'])
+last_travel_values = (['Within the past month', 'Within the past 3 months', 'Within the past 6 months', 
+	'Within the past year', 'More than one year ago'])
+
+hand_values = (['ambidextrous', 'right', 'left'])
+gender_values = (['Male', 'Female', 'Other'])
+exercise_location_values = (['Indoors', 'Outdoors', 'Both', 'Depends on the season', 'None of the above'])
+deoderant_use_values = (['I use deoderant', 'I use an antiperspirant', 'Not sure, but I use some form of deoderant/antiperspirant', 
+	'I do not use deoderant or antiperspirant'])
+sleep_duration_values = (['Less than 5 hours', '5-6 hours', '6-7 hours', '7-8 hours', '8 or more hours'])
+weight_change_values = (['Increased more than 10 pounds', 'Decreased more than 10 pounds', 'Remained stable'])
+ibd_values = (["Crohn's disease", 'Ulcerative colitis', 'I do not have IBD'])
+skin_condition_values = (['Eczema', 'Rosacea', 'Psoriasis', 'I do not have a skin condition'])
+diabetes_values = (['Type I', 'Type II', 'I do not have diabetes'])
+roommates_values = (['None', 'One', 'Two', 'Three', 'More than three'])
+migraine_frequency_values = (['Daily', 'Weekly', 'Monthly', 'A few times a year'])
+
+# If the form has been submitted, write values and return to home
+if 'is_7_to_13' in form:
+	if form['submit_flag'] == '1':
+		for field in form:
+			if field in ignore_list:
+				continue
+			#req.write('{0}: {1}'.format(field, form[field]))
+			ag_data_access.updateAGSurvey(form['ag_login_id'], field, form[field])
+
+		req.write('<script>document.submit_data.submit();</script>')
+# End if
+
+participant_name = form['participant_name']
+ag_login_id = form['ag_login_id']
+%>
+
+<h3>Survey details for participant <%=participant_name%></h3>
+<form action="fusebox.psp?page=ag_edit_survey.psp" method="post">
+<input type="hidden" name="participant_name" id="participant_name" value="<%=participant_name%>"/>
+<input type="hidden" name="ag_login_id" id="ag_login_id" value="<%=ag_login_id%>"/>
+
+<table>
+<%
+sql = """
+select	*
+from	ag_human_survey
+where	ag_login_id = '{0}'
+		and participant_name = '{1}'
+""".format(ag_login_id, participant_name)
+#req.write(str(sql))
+results = ag_data_access.dynamicMetadataSelect(sql)
+data = results.fetchone()
+column_names = [d[0] for d in results.description]
+
+for idx, column in enumerate(column_names):
+	column = column.lower()
+	value = '' if data[idx] is None else data[idx]
+	if column in ignore_list:
+		continue
+
+	req.write('<tr>\n')
+	req.write('<td>{0}</td>\n'.format(column))
+
+	if column in date_list:
+		req.write('<td>{0}</td>\n'.format(buildDateControl(column, value)))
+	elif column in time_list:
+		req.write('<td>{0}</td>\n'.format(buildTimeControl(column, value)))
+	elif column in yes_no_list:
+		req.write('<td>{0}</td>\n'.format(buildSelect(column, yes_no_values, value)))
+	elif column in country_list:
+		req.write('<td>{0}</td>\n'.format(buildCountrySelect(column, value)))
+	elif column in checkbox_list:
+		req.write('<td>{0}</td>\n'.format(buildCheckbox(column, value)))
+	elif column in frequency_list:
+		req.write('<td>{0}</td>\n'.format(buildSelect(column, frequency_values, value)))
+	elif column in in_the_last_x_list:
+		req.write('<td>{0}</td>\n'.format(buildSelect(column, in_the_last_x_values, value)))
+	elif column in yes_no_notsure_list:
+		req.write('<td>{0}</td>\n'.format(buildSelect(column, yes_no_notsure_values, value)))
+	elif column in migraine_factor_list:
+		req.write('<td>{0}</td>\n'.format(buildSelect(column, migraine_factor_values, value)))
+	elif column in dropdown_list:
+		req.write('<td>{0}</td>\n'.format(buildSelect(column, eval('{0}_values'.format(column)), value)))
+	else:
+		req.write('<td><input type="text" name="{0}" id="{0}" value="{1}"/></td>\n'.format(column, value))
+
+	req.write('</tr>\n')
+# End for
+
+%>
+<!--<tr><td></td><td><input type="submit"></td></tr>-->
+</table>
+</form>
