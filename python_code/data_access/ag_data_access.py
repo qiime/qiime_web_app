@@ -409,3 +409,15 @@ class AGDataAccess(object):
         update ag_human_survey set {0} = '{1}' where ag_login_id = '{2}' and participant_name = '{3}'
         """.format(field, value, ag_login_id, participant_name)
         con.cursor().execute(sql)
+
+    def getAGStats(self):
+        # returned tuple consists of:
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_stats', [results])
+        ag_stats = results.fetchall()
+        
+        return ag_stats
+
+
