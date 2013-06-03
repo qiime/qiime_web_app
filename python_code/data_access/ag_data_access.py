@@ -403,11 +403,16 @@ class AGDataAccess(object):
         
         return barcode_details
 
-    def updateAGSurvey(ag_login_id, participant_name, field, value):
+    def updateAGSurvey(self, ag_login_id, participant_name, field, value):
         con = self.getMetadataDatabaseConnection()
+        # Make sure no single quotes get passed as it will break the sql string
+        value = str(value).replace("'", "''")
+        participant_name = str(participant_name).replace("'", "''")
         sql = """
         update ag_human_survey set {0} = '{1}' where ag_login_id = '{2}' and participant_name = '{3}'
         """.format(field, value, ag_login_id, participant_name)
+        con.cursor().execute(sql)
+        sql = ('commit')
         con.cursor().execute(sql)
 
     def getAGStats(self):
