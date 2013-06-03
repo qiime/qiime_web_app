@@ -141,7 +141,7 @@ if 'is_7_to_13' in form:
 		ag_data_access.updateAGSurvey(form['ag_login_id'], form['participant_name'], field, form[field])
 
 	# Redirect to home
-	#req.write('<script>document.submit_data.submit();</script>')
+	req.write('<script>document.submit_data.submit();</script>')
 
 # End if
 
