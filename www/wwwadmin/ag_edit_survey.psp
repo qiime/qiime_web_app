@@ -72,7 +72,7 @@ def buildCountrySelect(control_name, current_value):
 	return control_text
 
 # Lists to manage form bulding and controlled vocabs
-ignore_list = (['ag_login_id', 'consent'])
+ignore_list = (['ag_login_id', 'consent', 'page'])
 country_list = (['country_of_birth'])
 yes_no_list = (['is_7_to_13', 'deceased_parent', 'multivitamin', 'supplements', 'lactose', 
 	'gluten', 'special_restrictions', 'dog', 'cat', 'shared_housing', 'nails', 'tonsils_removed',
@@ -127,14 +127,22 @@ migraine_frequency_values = (['Daily', 'Weekly', 'Monthly', 'A few times a year'
 
 # If the form has been submitted, write values and return to home
 if 'is_7_to_13' in form:
-	if form['submit_flag'] == '1':
-		for field in form:
-			if field in ignore_list:
-				continue
-			#req.write('{0}: {1}'.format(field, form[field]))
-			ag_data_access.updateAGSurvey(form['ag_login_id'], field, form[field])
+	# Reset all checkbox fields
+	for field in checkbox_list:
+		ag_data_access.updateAGSurvey(form['ag_login_id'], form['participant_name'], field, '')
 
-		req.write('<script>document.submit_data.submit();</script>')
+	for field in form:
+		if field in ignore_list:
+			continue
+		#req.write('ag_login_id: {0}<br/>'.format(form['ag_login_id']))
+		#req.write('participant_name: {0}<br/>'.format(form['participant_name']))
+		#req.write('field: {0}<br/>'.format(field))
+		#req.write('value: {0}<br/>'.format(form[field]))
+		ag_data_access.updateAGSurvey(form['ag_login_id'], form['participant_name'], field, form[field])
+
+	# Redirect to home
+	#req.write('<script>document.submit_data.submit();</script>')
+
 # End if
 
 participant_name = form['participant_name']
@@ -143,9 +151,7 @@ ag_login_id = form['ag_login_id']
 
 <h3>Survey details for participant <%=participant_name%></h3>
 <form action="fusebox.psp?page=ag_edit_survey.psp" method="post">
-<input type="hidden" name="participant_name" id="participant_name" value="<%=participant_name%>"/>
 <input type="hidden" name="ag_login_id" id="ag_login_id" value="<%=ag_login_id%>"/>
-
 <table>
 <%
 sql = """
@@ -195,6 +201,6 @@ for idx, column in enumerate(column_names):
 # End for
 
 %>
-<!--<tr><td></td><td><input type="submit"></td></tr>-->
+<tr><td></td><td><input type="submit"></td></tr>
 </table>
 </form>
