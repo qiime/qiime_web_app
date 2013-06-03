@@ -1,0 +1,9 @@
+<table>
+<%
+stats = ag_data_access.getAGStats()
+for item, stat in stats:
+	stat = '' if stat is None else stat
+	req.write('<tr><td>{0}</td><td>{1}</td></tr>'.format(item, stat))
+# End for
+%>
+</table>
