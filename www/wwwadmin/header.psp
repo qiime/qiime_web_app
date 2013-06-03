@@ -77,6 +77,11 @@ else:
             <input type="hidden" name="page_title" value="Search American Gut Data">
         </form>
 
+        <form action="fusebox.psp" method="post" name="ag_stats" id="ag_stats">
+            <input type="hidden" name="page" value="ag_stats.psp">
+            <input type="hidden" name="page_title" value="American Gut Statistics">
+        </form>
+
         <form action="fusebox.psp" method="post" name="ag_new_participant" id="ag_new_participant">
             <input type="hidden" name="page" value="ag_new_participant.psp">
             <input type="hidden" name="page_title" value="Add New American Gut Participant">
@@ -133,6 +138,7 @@ else:
 
         <ul class="mainmenu">
             <li><a href="" onclick="document.ag_search.submit(); return false;">Search</a></li>
+            <li><a href="" onclick="document.ag_stats.submit(); return false;">Statistics</a></li>
             <li><a href="" onclick="document.ag_new_participant.submit(); return false;">Add New Participant</a></li>
             <li><a href="" onclick="document.ag_edit_participant.submit(); return false;">Edit Participant</a></li>
             <li><a href="" onclick="document.ag_new_kit.submit(); return false;">Add New Kit</a></li>
