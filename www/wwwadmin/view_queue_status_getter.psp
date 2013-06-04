@@ -1,0 +1,7 @@
+<%
+from commands import getoutput
+from time import sleep
+
+queue_content = getoutput('qstat')
+req.write('<pre>{0}</pre>'.format(queue_content))
+%>
