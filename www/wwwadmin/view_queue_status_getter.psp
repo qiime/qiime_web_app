@@ -32,7 +32,7 @@ order by tj.job_id
 """
 prev_item = ''
 for item in items:
-    if 'growler' in prev_item:
+    if 'growler' in prev_item and item.isdigit():
         results = ag_data_access.dynamicMetadataSelect(sql.format(item)).fetchone()
         # Results will be None if it's a meta-analysis
         if results == None:
