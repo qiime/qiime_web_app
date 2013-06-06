@@ -8,10 +8,12 @@ begin
 
     open barcode_status_ for
         select  akb.site_sampled, akb.sample_date, akb.sample_time, akb.participant_name, 
-                akb.environment_sampled, akb.notes, ak.kit_verified
+                akb.environment_sampled, akb.notes, ak.kit_verified, al.email
         from    ag_kit_barcodes akb
                 inner join ag_kit ak
                 on akb.ag_kit_id = ak.ag_kit_id
+                inner join ag_login al
+                on ak.ag_login_id = al.ag_login_id
         where   akb.barcode = barcode_;
 
 end;
