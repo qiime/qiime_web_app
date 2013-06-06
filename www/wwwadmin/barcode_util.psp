@@ -8,9 +8,6 @@
 </form>
 </div>
 <%
-ag_data_access = data_access_factory(ServerConfig.data_access_type,
-'american_gut')
-
 try:
     barcode = form['barcode'] #'000002000'
     try:
