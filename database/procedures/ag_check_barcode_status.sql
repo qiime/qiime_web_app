@@ -7,19 +7,23 @@ as
 begin
 
     open barcode_status_ for
-        select  site_sampled, sample_date, sample_time, participant_name, 
-                environment_sampled, notes 
-        from    ag_kit_barcodes
-        where   barcode = barcode_
-                and sample_date is not null
-                and sample_time is not null;
+        select  akb.site_sampled, akb.sample_date, akb.sample_time, akb.participant_name, 
+                akb.environment_sampled, akb.notes, ak.kit_verified
+        from    ag_kit_barcodes akb
+                inner join ag_kit ak
+                on akb.ag_kit_id = ak.ag_kit_id
+        where   akb.barcode = barcode_;
 
 end;
 
 /* 
+
 variable x REFCURSOR;
-execute ag_check_barcode_status('', :user_data_);
+execute ag_check_barcode_status('000001056', :x);
 print x;
+
+
+select distinct kit_verified from ag_kit;
 */
  
  
