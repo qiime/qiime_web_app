@@ -15,8 +15,8 @@ try:
     except(IndexError):
         barcodeinfo = []
     
-    if len(barcodeinfo) == 0 or barcodeinfo[6] == 'n' and barcodeinfo[0] == None: #not verified not assigned
-        
+    if len(barcodeinfo) == 0 or (barcodeinfo[6] == 'n' and barcodeinfo[0] == None): #not verified not assigned
+        #startif
 %>
 <div id="not_verified" class="verification_color">
     <div class="verification_text_wrapper">
@@ -30,7 +30,7 @@ try:
 </div>
 <%
     elif barcodeinfo[6] == 'y' and barcodeinfo[0] != None: #verified and assigned
-        
+        #startif
 %>
 <div id="verified" class="verification_color">
     <div class="verification_text_wrapper">
@@ -44,7 +44,7 @@ try:
 </div>
 <%
     elif barcodeinfo[6] == 'y' and barcodeinfo[0] == None: #verified not assigned
-        
+        #startif
 %>
 <div id="not_assigned" class="verification_color">
     <div class="verification_text_wrapper">
