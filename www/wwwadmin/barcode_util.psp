@@ -8,8 +8,6 @@
 </form>
 </div>
 <%
-from data_access_connections import data_access_factory
-from enums import *
 ag_data_access = data_access_factory(ServerConfig.data_access_type,
 'american_gut')
 
