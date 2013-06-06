@@ -38,11 +38,6 @@ else:
             <input type="hidden" name="page_title" value="Assign User to Studies">
         </form>
 
-        <form action="fusebox.psp" method="post" name="view_queue_status" id="view_queue_status">
-            <input type="hidden" name="page" value="view_queue_status.psp">
-            <input type="hidden" name="page_title" value="View Queue Status">
-        </form>
-
         <form action="fusebox.psp" method="post" name="find_user" id="find_user">
             <input type="hidden" name="page" value="find_user.psp">
             <input type="hidden" name="page_title" value="Search for User">
@@ -75,11 +70,6 @@ else:
         <form action="fusebox.psp" method="post" name="ag_search" id="ag_search">
             <input type="hidden" name="page" value="ag_search.psp">
             <input type="hidden" name="page_title" value="Search American Gut Data">
-        </form>
-
-        <form action="fusebox.psp" method="post" name="ag_stats" id="ag_stats">
-            <input type="hidden" name="page" value="ag_stats.psp">
-            <input type="hidden" name="page_title" value="American Gut Statistics">
         </form>
 
         <form action="fusebox.psp" method="post" name="ag_new_participant" id="ag_new_participant">
@@ -131,14 +121,12 @@ else:
 
         <ul class="mainmenu">
             <li><a href="" onclick="document.assign_user_to_study.submit(); return false;">Assign User to Studies</a></li>
-            <li><a href="" onclick="document.view_queue_status.submit(); return false;">View Queue Status</a></li>
         </ul>
 
         <h3>American Gut Utilities</h3>
 
         <ul class="mainmenu">
             <li><a href="" onclick="document.ag_search.submit(); return false;">Search</a></li>
-            <li><a href="" onclick="document.ag_stats.submit(); return false;">Statistics</a></li>
             <li><a href="" onclick="document.ag_new_participant.submit(); return false;">Add New Participant</a></li>
             <li><a href="" onclick="document.ag_edit_participant.submit(); return false;">Edit Participant</a></li>
             <li><a href="" onclick="document.ag_new_kit.submit(); return false;">Add New Kit</a></li>
@@ -146,7 +134,7 @@ else:
             <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New Barcode</a></li>
             <li><a href="" onclick="document.ag_edit_barcode.submit(); return false;">Edit Existing Barcode</a></li>
             <!--<li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>-->
-            <!--<li><a href="" onclick="document.barcode_util.submit(); return false;">Check Barcode</a></li> -->
+            <li><a href="" onclick="document.barcode_util.submit(); return false;">Check Barcode</a></li>
             <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne<img src="img/bruce.png"/></a></li>
         </ul>
 
