@@ -1,5 +1,3 @@
-<%@ include file="common_vars.psp" %>
-
 <%
 dev_queue_content = """
 Job id                    Name             User            Time Use S Queue
@@ -17,26 +15,29 @@ from time import sleep
 queue_content = getoutput('qstat')
 # If command not found, must be on dev serve. Use dev content.
 if 'command not found' in queue_content:
-	queue_content = 'DEV CONTENT: {0}'.format(dev_queue_content)
+    queue_content = 'DEV CONTENT: {0}'.format(dev_queue_content)
 
 req.write('<pre>{0}</pre>'.format(queue_content))
 
 items = queue_content.split()
 sql = """
-select 	s.study_id, s.project_name
-from	study s
-		inner join sff.torque_job tj
-		on s.study_id = tj.study_id
-where	tj.job_id = {0}
+select  s.study_id, s.project_name
+from    study s
+        inner join sff.torque_job tj
+        on s.study_id = tj.study_id
+where   tj.job_id = {0}
+order by tj.job_id
 """
 prev_item = ''
 for item in items:
-	if 'growler' in prev_item:
-		results = ag_data_access.dynamicMetadataSelect(sql.format(item)).fetchone()
-		if results == None:
-			continue
-		study_id, project_name = results
-		req.write('Job ID {0} belongs to study "{1} ({2})"<br/>'.format(item, project_name, study_id))
-	prev_item = item
+    if 'growler' in prev_item:
+        results = ag_data_access.dynamicMetadataSelect(sql.format(item)).fetchone()
+        # Results will be None if it's a meta-analysis
+        if results == None:
+            req.write('Job ID {0} is a Meta-Analysis<br/>'.format(item))
+        else:
+            study_id, project_name = results
+            req.write('Job ID {0} belongs to study {1} ({2})<br/>'.format(item, project_name, study_id))
+    prev_item = item
 # End for
 %>
