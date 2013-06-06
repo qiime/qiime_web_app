@@ -49,7 +49,7 @@ try:
 <div id="not_assigned" class="verification_color">
     <div class="verification_text_wrapper">
         <br />
-        <h2 class="verification_text">Barcode<br>
+        <h2 class="verification_text">Kit Verified. Barcode<br>
 <%
         req.write(barcode)
 %>
