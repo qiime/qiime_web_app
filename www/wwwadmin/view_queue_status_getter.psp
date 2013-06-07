@@ -18,8 +18,10 @@ queue_content = getoutput('qstat')
 # If command not found, must be on dev serve. Use dev content.
 if 'command not found' in queue_content:
     queue_content = 'DEV CONTENT: {0}'.format(dev_queue_content)
-
-req.write('<pre>{0}</pre>'.format(queue_content))
+if queue_content == '' or queue_content == None:
+    req.write('<pre>Queue is empty.</pre>')
+else:
+    req.write('<pre>{0}</pre>'.format(queue_content))
 
 items = queue_content.split()
 sql = """
