@@ -98,6 +98,10 @@ set     barcode = case
             when length(kit_verification_code) = 2 then '000' || kit_verification_code
             when length(kit_verification_code) = 1 then '0000' || kit_verification_code
             else kit_verification_code
+        end,
+        state = case
+            when state = '-' then ''
+            else state
         end;
 
 commit;
@@ -175,6 +179,22 @@ begin
 end;
 
 -------------------------------------------
+-- UPDATE MASTER BARCODE TABLES
+-------------------------------------------
+
+insert  into barcode
+        (barcode)
+select  barcode
+from    tmp_kits;
+
+insert  into project_barcode
+        (project_id, barcode)
+select  1, barcode
+from    tmp_kits;
+
+commit;
+
+-------------------------------------------
 -- POST-LOADING STATS
 -------------------------------------------
 
@@ -213,9 +233,17 @@ select * from ag_login where cannot_geocode is not null;
 update ag_login set cannot_geocode = '' where cannot_geocode is not null;
 commit;
 
-
+select  barcode
+from    tmp_kits
+where   barcode in
+        (
+            select  barcode
+            from    barcode
+        );
 
 select * from tmp_kits;
+
+select * from ag_import_stats_tmp;
 
 select count(distinct email) from tmp_kits;
 select count(distinct kit_id) from tmp_kits;
