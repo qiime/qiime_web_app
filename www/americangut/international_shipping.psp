@@ -14,24 +14,24 @@ if language == 'en':
         <link rel="icon" type="image/ico" href="img/favicon.ico">
     </head>
     <body>
-		<div class="wrapper clearfix">
-	        <div class="header clearfix">
-	            <img id="logo" src="img/ag_logo.jpg">
-			</div>
+        <div class="wrapper clearfix">
+            <div class="header clearfix">
+                <img id="logo" src="img/ag_logo.jpg">
+            </div>
             <br>
             <div class="left menuwrapper">
-            	<ul class="menu">
-				<li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
-				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
+                <ul class="menu">
+                <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
+                <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
                 <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Participant Login</a></li>
-            	</ul>
+                </ul>
             </div>
             <div class="content">
             <h2>American Gut International Shipping Instructions</h2>            
                 <div class="faq_wrapper">
                     <div class="faq">
                         <h3>International Participants:</h3>
-                        <p>In order to comply with amended federal and IATA regulations, we are requesting that international participants return their sample tubes through FedEx International and that international participants follow the additional safely requirements for shipping human swab samples to the United States. You will need to use the provided airway bill for shipment, and it must clearly identify the package as containing "human exempt specimens". The samples will additionally need to be packaged within a secondary containment to ensure that they can safely enter the United States.
+                        <p>In order to comply with amended federal and IATA regulations, we are requesting that international participants return their sample tubes through FedEx International and that international participants follow the additional safely requirements for shipping human swab samples to the United States. Your airway bill must clearly identify the package as containing "human exempt specimens". The samples will additionally need to be packaged within a secondary containment to ensure that they can safely enter the United States.
 <br />
 <br />
 For shipment, you will need to use regular tape to seal the plastic tube that contains the swab, then place the swab in the provided brown mailing envelope and place the brown envelope inside a Tyvek/plastic mailer, <strong>which can be acquired free of charge from FedEx</strong>, when shipping the package, prior to FedEx shipment.
@@ -45,7 +45,7 @@ If you do not follow these directions the sample will be destroyed by United Sta
                         <li>Must be shipped via FedEx</li>
                         <li>Must have tape to sealing the plastic tube that contains the swab</li>
                         <li>Must be placed in a buff mailing envelope with the buff envelope placed inside a Tyvek/plastic mailer prior to FedEx shipment</li>
-                        <li>Must be shipped with an airway bill must be labelled with the complete address of the sender and complete address of recipient, and with the words "Human exempt sample(s)"</li>
+                        <li>Must be shipped with an airway bill and must be labeled with the complete address of the sender and complete address of recipient, and with the words "Human exempt sample(s)"</li>
                         </ul>
                     </div>
                     <br />
@@ -56,8 +56,8 @@ If you do not follow these directions the sample will be destroyed by United Sta
                     <br />
                 </div>
             </div>
-		</div>
-	</body>
+        </div>
+    </body>
 </html>
 <%
 elif language == 'es':
