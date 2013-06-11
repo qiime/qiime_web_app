@@ -17,13 +17,22 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 
 <h3>Sequence File Upload</h3>
 <p>
-    We currently support sequence files from 454 and Illumina (HiSeq/MiSeq), along with demultiplexed FASTA files produced from split-libraries.py in QIIME. The filename should not contain spaces or non-alphanumeric characters.
-    <ul>
-        <li><b>SFF:</b> You should zip using "zip" for each SFF file individually prior to uploading.</li>
-        <li><b>FASTQ:</b> For each Illumina lane, there should be a single barcode file that associates to a single amplicon read file. Each of these files should be gzipped using "gzip" prior to uploading. We do not currently support assembly, so only one amplicon read file is permitted for each barcode file.</li>
-        <li><b>FASTA:</b> We are expecting a FASTA-formatted file that is formatted similar to the file produced from split-libraries.py. For more information on the format, please refer to <a href="http://qiime.org/documentation/file_formats.html#demultiplexed-sequences">here</a>. Make sure the extension for each FASTA file is either ".fna", ".fasta" or "fa", then zip using "zip" for each file individually prior to uploading.</li>
-        <li><i>Allowable file extensions:</i> .sff.zip, .sff.gz, .fastq.gz, .fastq.gz.zip, .fa.zip, .fna.zip, or .fasta.zip</li>
-    </ul>
+
+We currently process sequence files from 454 and Illumina for 16S rRNA analysis. <br/>
+For these studies please upload the following files:
+<ul>
+    <li><b>454:</b> SFF (.sff file extension) files, zip or gzip compressed prior to uploading
+    <li><b>Illumina:</b> FASTQ (.fastq file extension) files, zip or gzip compressed prior to uploading
+        <ul>
+            <li>Please upload files with a single barcode read (index file) and the forward read (R1) file</li>
+            <li>The reverse (R2) read file is not currently used</li>
+        </ul>
+     
+    <li>For <b>shotgun metagenomics</b>, <b>ITS primers</b> and <b>18S</b> we accept:
+    <b>.fasta</b>, <b>.fa</b>, or <b>.fna</b> files, zip or gzip compressed, for upload to EBI – no processing is done in the database.</li>
+    <li>Note: There is a 2GB limit on the uploader.  Please contact us if you have larger files that need to be uploaded (<a href="mailto:qiimeweb@gmail.com?subject=QIIME Uploader Help Request">qiimeweb@gmail.com</a>).</li> 
+    <li><b>All files must have a .gz or .zip file extension.</b></li>
+</ul>
 </p>
 <script type="text/javascript">
 
