@@ -12,7 +12,8 @@ begin
             site_sampled = '',
             sample_time = '',
             sample_date = '',
-            environment_sampled = ''
+            environment_sampled = '',
+            notes = ''
     where   barcode in
             (
                 select  akb.barcode
