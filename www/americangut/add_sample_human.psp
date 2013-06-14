@@ -52,7 +52,6 @@ for barcode in barcodes:
                       $(function() {
                         $( "#sample_date" ).datepicker({
                                 changeMonth: true,
-                                minDate:'-1m',
                                 maxDate: '+0m',
                                 onSelect: function(dateText, inst) {
                                     $(this).focus();
