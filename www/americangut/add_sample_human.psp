@@ -42,6 +42,8 @@ for barcode in barcodes:
                             <option>Right hand</option>
                             <option>Left hand</option>
                             <option>Forehead</option>
+                            <option>Nares</option>
+                            <option>Hair</option>
                         </select>
                     </td>
                 </tr>
