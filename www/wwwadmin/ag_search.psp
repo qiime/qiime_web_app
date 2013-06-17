@@ -72,7 +72,7 @@ if 'search_term' in form:
 		from    ag_kit ak
 		        inner join ag_kit_barcodes akb
 		        on ak.ag_kit_id = akb.ag_kit_id
-		where   barcode like '%{0}%' or lower(participant_name) like '%{0}%'""".format(search_term)
+		where   barcode like '%{0}%' or lower(participant_name) like '%{0}%' or lower(notes) like '%{0}%'""".format(search_term)
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
 		if item[0] not in login_list:
