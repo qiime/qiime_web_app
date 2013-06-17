@@ -22,14 +22,9 @@ query = ("select participant_name from ag_human_survey where ag_login_id = '%s'"
 participants = ag_data_access.dynamicMetadataSelect(query)
 available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
 
-for p in participants:
-    # database results come back as a list of tuples, even if it is a 1-member
-    # tuple (like this one). So we need to take the first element of this
-    # 1-member tuple
-    p = p[0]
-    
-    participant_menu_item = \
-    """
+
+participant_menu_item_template = \
+"""
     <form action="fusebox.psp" method="post" id="participant_overview_{0}">
         <li>
             <input type="hidden" name="page" value="participant_overview.psp"/>
@@ -38,10 +33,10 @@ for p in participants:
             <a href="" onclick="document.forms['participant_overview_{0}'].submit(); return false;">{0}</a>
         </li>
     </form>
-    """.format(p)
+"""
 
-    add_sample_menu_item = \
-    """
+add_sample_menu_item_template = \
+"""
     <form action="fusebox.psp" method="post" id="add_sample_{0}">
         <li>
             <input type="hidden" name="page" value="add_sample.psp"/>
@@ -51,10 +46,10 @@ for p in participants:
             <a href="" onclick="document.forms['add_sample_{0}'].submit(); return false;">Add Sample</a>
         </li>
     </form>
-    """.format(p)
+"""
 
-    add_animal_sample_menu_item = \
-    """
+add_animal_sample_menu_item_template = \
+"""
     <form action="fusebox.psp" method="post" id="add_sample_animal">
         <li>
             <input type="hidden" name="page" value="add_sample.psp"/>
@@ -63,7 +58,29 @@ for p in participants:
             <a href="" onclick="document.forms['add_sample_animal'].submit(); return false;">Add Animal Sample</a>
         </li>
     </form>
-    """.format(p)
+"""
+
+sample_menu_item_template = \
+"""
+        <form action="fusebox.psp" method="post" id="sample_overview_{0}">
+            <li>
+                <input type="hidden" name="page" value="sample_overview.psp"/>
+                <input type="hidden" name="barcode" value="{0}"/>
+                <img class="icon" src="/qiime/img/sample_icon.png"/>
+                <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">{0}</a>
+            </li>
+        </form>
+"""
+
+for p in participants:
+    # database results come back as a list of tuples, even if it is a 1-member
+    # tuple (like this one). So we need to take the first element of this
+    # 1-member tuple
+    p = p[0]
+
+    participant_menu_item = participant_menu_item_template.format(p)
+    add_sample_menu_item = add_sample_menu_item_template.format(p)
+    add_animal_sample_menu_item = add_animal_sample_menu_item_template.format(p)
 
     # Write out the participant menu item
     req.write(participant_menu_item)
@@ -75,18 +92,7 @@ for p in participants:
     # returns those that have some additional data associated with them
     barcodes = ag_data_access.getParticipantSamples(ag_login_id, p)
     for barcode in barcodes:
-        sample_menu_item = \
-        """
-        <form action="fusebox.psp" method="post" id="sample_overview_{0}">
-            <li>
-                <input type="hidden" name="page" value="sample_overview.psp"/>
-                <input type="hidden" name="barcode" value="{0}"/>
-                <img class="icon" src="/qiime/img/sample_icon.png"/>
-                <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">{0}</a>
-            </li>
-        </form>
-        """.format(barcode['barcode'])
-
+        sample_menu_item = sample_menu_item_template.format(barcode['barcode'])
         req.write(sample_menu_item)
     # End for
     
@@ -114,20 +120,8 @@ for p in participants:
 <%
 barcodes = ag_data_access.getEnvironmentalSamples(ag_login_id)
 for barcode in barcodes:
-    sample_menu_item = \
-    """
-    <form action="fusebox.psp" method="post" id="sample_overview_{0}">
-        <li>
-            <input type="hidden" name="page" value="sample_overview.psp"/>
-            <input type="hidden" name="barcode" value="{0}"/>
-            <img class="icon" src="/qiime/img/sample_icon.png"/>
-            <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">{0}</a>
-        </li>
-    </form>
-    """.format(barcode['barcode'])
-
+    sample_menu_item = sample_menu_item_template.format(barcode['barcode'])
     req.write(sample_menu_item)
-
 # End for
 %>
 
@@ -146,9 +140,7 @@ add_general_sample_menu_item = \
 
 if len(available_barcodes) > 0:
     # Indent
-%>            
-                <%=add_general_sample_menu_item%>
-<%
+    req.write(add_general_sample_menu_item)
 # End if
 %>
                     </ul>
