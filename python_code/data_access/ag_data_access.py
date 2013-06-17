@@ -301,6 +301,16 @@ class AGDataAccess(object):
 
         return participants
 
+    def getParticipantExceptions(self, ag_login_id):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_participant_exceptions', [ag_login_id, results])
+        exceptions = []
+        for row in results:
+            exceptions.append(row[0])
+
+        return exceptions
+
     def getParticipantSamples(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
