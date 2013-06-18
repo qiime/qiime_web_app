@@ -36,22 +36,24 @@ script_info['brief_description'] = "Prep Indiegogo kits"
 script_info['script_description'] = ""
 script_info['script_usage'] = []
 script_info['required_options'] = [
-        make_option('--input', '-i', help="Input table"),
         make_option('--output', '-o', help="Output table"),
         make_option('--starting_sample', help='Starting sample number', 
                     type='int')
         ]
 script_info['optional_options'] = [
+        make_option('--input', '-i', help="Input table"),
         make_option('--correct_us_states', action='store_true', default=False,
                     help="Abbreviate US states"),
         make_option('--pad_us_zipcodes', action='store_true', default=False,
-                    help="Force US zip codes to be 5 digits")
+                    help="Force US zip codes to be 5 digits"),
+        make_option('--tag', help='prefix tag'),
+        make_option('--swabs_per_kit', help="swabs per kit", type="int"),
+        make_option('--number_of_kits', help="number of kits", type="int"),
         ]
 script_info['version'] = __version__
 
 # character sets for kit id, passwords and verification codes
 KIT_ALPHA = "abcdefghijklmnopqrstuvwxyz"
-KIT_ALPHA += KIT_ALPHA.upper()
 KIT_PASSWD = '1234567890'
 KIT_VERCODE = KIT_PASSWD
 
@@ -148,12 +150,20 @@ def get_used_kit_ids(cursor):
 
     return set([i[0] for i in cursor.fetchall()])
 
-def make_kit_id(obs_kit_ids, kit_id_length=5):
+def make_kit_id(obs_kit_ids, kit_id_length=5, tag=None):
     """Generate a new unique kit id"""
-    kit_id = ''.join([choice(KIT_ALPHA) for i in range(kit_id_length)])
-    while kit_id in obs_kit_ids:
+    if tag is None:
         kit_id = ''.join([choice(KIT_ALPHA) for i in range(kit_id_length)])
-
+    else:
+        kit_id = '_'.join([tag, ''.join([choice(KIT_ALPHA) 
+                                         for i in range(kit_id_length)])])
+    while kit_id in obs_kit_ids:
+        if tag is None:
+            kit_id = ''.join([choice(KIT_ALPHA) for i in range(kit_id_length)])
+        else:
+            kit_id = '_'.join([tag, ''.join([choice(KIT_ALPHA) 
+                                             for i in range(kit_id_length)])])
+            
     obs_kit_ids.add(kit_id)
 
     return (obs_kit_ids, kit_id)
@@ -196,11 +206,47 @@ def get_printout_data(kit_passwd_map, kit_barcode_map):
 
     return text
 
-def main():
-    option_parser, opts, args = parse_command_line_parameters(**script_info)
+def unassigned_kits(opts, cursor, existing_kit_ids):
 
+    header = ["barcode","swabs_per_kit","KIT_ID","KIT_PASSWORD",
+              "KIT_VERIFICATION_CODE","SAMPLE_BARCODE_FILE"]
+    
+    outlines = [header[:]]
+
+    kit_barcode_map = {}
+    kit_passwd_map = []
+    current_sample_id = opts.starting_sample
+    for kit in range(opts.number_of_kits):
+        existing_kit_ids, kit_id = make_kit_id(existing_kit_ids, tag=opts.tag)
+        passwd = make_passwd()
+        vercode = make_verification_code()
+
+        kit_barcode_map[kit_id] = []
+        kit_passwd_map.append((kit_id, passwd))
+
+        # add on the samples per kit
+        for sample in range(opts.swabs_per_kit):
+            sample_id = "%0.9d" % current_sample_id
+
+            if not verify_unique_sample_id(cursor, sample_id):
+                raise ValueError, "%s is not unique!" % sample_id
+
+            outlines.append([sample_id, opts.swabs_per_kit, kit_id, passwd, 
+                             vercode, "%s.jpg" % sample_id])
+            kit_barcode_map[kit_id].append(sample_id)
+
+            current_sample_id += 1
+
+    f = open(opts.output,'w')
+    f.write('\n'.join(['\t'.join(map(str, l)) for l in outlines]))
+    f.write('\n')
+    f.close()
+    
+    return kit_passwd_map, kit_barcode_map
+
+def preassigned_kits(opts, cursor, existing_kit_ids):
     mapping_lines = [l.strip().split('\t') for l in open(opts.input, 'U')]
-
+        
     # build up new header
     outlines = [mapping_lines[0][:]]
     outlines[0].insert(0, 'barcode')
@@ -241,12 +287,6 @@ def main():
     if COUNTRY_IDX == -1:
         print "Cannot find country column!"
         exit(1)
-
-    # setup DB connection
-    cred = Credentials()
-    con = connect(cred.liveMetadataDatabaseConnectionString)
-    cursor = con.cursor()
-    existing_kit_ids = get_used_kit_ids(cursor)
 
     kit_barcode_map = {}
     kit_passwd_map = []
@@ -314,10 +354,32 @@ def main():
     f.write('\n')
     f.close()
 
+    return kit_passwd_map, kit_barcode_map
+
+def main():
+    option_parser, opts, args = parse_command_line_parameters(**script_info)
+    
+    # setup DB connection
+    cred = Credentials()
+    con = connect(cred.liveMetadataDatabaseConnectionString)
+    cursor = con.cursor()
+    existing_kit_ids = get_used_kit_ids(cursor)
+
+    if opts.input:
+        kit_passwd_map, kit_barcode_map = preassigned_kits(opts, cursor, 
+                                                           existing_kit_ids)
+    else:
+        if not opts.tag or not opts.number_of_kits \
+                        or not opts.swabs_per_kit:
+            option_parser.error("Must specify tag, number of samples and number of swabs")
+        kit_passwd_map, kit_barcode_map = unassigned_kits(opts, cursor, 
+                                                          existing_kit_ids)
+    
     f = open(opts.output + '.printouts', 'w')
     f.write('\n'.join(get_printout_data(kit_passwd_map, kit_barcode_map)))
     f.write('\n')
     f.close()
+
 
 if __name__ == '__main__':
     main()
