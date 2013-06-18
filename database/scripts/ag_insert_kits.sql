@@ -32,6 +32,7 @@ drop table ag_import_stats_tmp;
 -- Drop the table first
 /*
 drop table tmp_kits;
+select * from tmp_kits;
 */
 
 /*
@@ -79,6 +80,8 @@ set     barcode = case
             when length(zip) = 3 and lower(country) in ('us', 'united states') then '00' || zip
             when length(zip) = 2 and lower(country) in ('us', 'united states') then '000' || zip
             when length(zip) = 1 and lower(country) in ('us', 'united states') then '0000' || zip
+            -- Non US zip codes with decimal places
+            when instr(zip, '.') > 0 then substr(zip, 0, instr(zip, '.') - 1)
             -- Everyting else
             else zip
         end,
@@ -107,6 +110,7 @@ set     barcode = case
 commit;
 
 /*
+select * from tmp_kits;
 select * from tmp_kits order by barcode;
 select barcode from ag_kit_barcodes order by barcode desc;
 */
@@ -191,8 +195,6 @@ insert  into project_barcode
         (project_id, barcode)
 select  1, barcode
 from    tmp_kits;
-
-commit;
 
 -------------------------------------------
 -- POST-LOADING STATS

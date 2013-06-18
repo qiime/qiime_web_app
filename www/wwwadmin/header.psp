@@ -119,7 +119,7 @@ else:
         
         <form action="fusebox.psp" method="post" name="barcode_util" id="barcode_util">
             <input type="hidden" name="page" value="barcode_util.psp">
-            <input type="hidden" name="page_title" value="Check Barcode">
+            <input type="hidden" name="page_title" value="Scan Barcode">
         </form>
         
         <form action="fusebox.psp" method="post" name="ag_add_bruce_wayne" id="ag_add_bruce_wayne">
@@ -146,7 +146,7 @@ else:
             <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New Barcode</a></li>
             <li><a href="" onclick="document.ag_edit_barcode.submit(); return false;">Edit Existing Barcode</a></li>
             <!--<li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>-->
-            <li><a href="" onclick="document.barcode_util.submit(); return false;">Check Barcode</a></li>
+            <li><a href="" onclick="document.barcode_util.submit(); return false;">Scan Barcode</a></li>
             <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne<img src="img/bruce.png"/></a></li>
         </ul>
 

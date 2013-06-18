@@ -14,6 +14,7 @@ portal_type = sess['portal_type']
 user_data = sess['user_data']
 #req.write(str(user_data))
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+qiime_data_access = data_access_factory(ServerConfig.data_access_type, 'qiime')
 %>
 
 <!DOCTYPE html>

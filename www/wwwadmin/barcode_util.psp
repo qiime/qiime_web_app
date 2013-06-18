@@ -12,6 +12,9 @@ try:
     barcode = form['barcode'] #'000002000'
     try:
         barcodeinfo = ag_data_access.checkBarcode(barcode)[0]
+        # Assuming we actually get barcode details back, log the fact that the barcode
+        # was scanned.
+        data_access.updateBarcodeStatus('Received', barcode)
     except(IndexError):
         barcodeinfo = []
     

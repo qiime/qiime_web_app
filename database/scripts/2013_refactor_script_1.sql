@@ -115,7 +115,7 @@ create table seq
     seq_id int,
     seq_source_id int not null,
     sequence_string varchar2(4000),
-    sequence_md5 char(32 char),
+    sequence_md5 char(32 char) not null,
     
     constraint pk_seq 
         primary key (seq_id),
@@ -125,6 +125,7 @@ create table seq
 );
 
 create index ix_seq_seq_source_id on seq (seq_source_id);
+create index ix_seq_seq_md5 on seq (sequence_md5);
 
 create table gg
 (
