@@ -158,13 +158,17 @@ def make_kit_id(obs_kit_ids, kit_id_length=5):
 
     return (obs_kit_ids, kit_id)
 
+KIT_PASSWD_NOZEROS = "123456789"
 def make_passwd(passwd_length=8):
     """Generate a new password"""
-    return ''.join([choice(KIT_PASSWD) for i in range(passwd_length)])
+    x = ''.join([choice(KIT_PASSWD) for i in range(passwd_length-1)])
+    return choice(KIT_PASSWD_NOZEROS) + x
 
+KIT_VERCODE_NOZEROS = "123456789"
 def make_verification_code(vercode_length=5):
     """Generate a verification code"""
-    return ''.join([choice(KIT_VERCODE) for i in range(vercode_length)])
+    x = ''.join([choice(KIT_VERCODE) for i in range(vercode_length-1)])
+    return choice(KIT_VERCODE_NOZEROS) + x
 
 def get_printout_data(kit_passwd_map, kit_barcode_map):
     """Produce kit output text"""
@@ -208,7 +212,7 @@ def main():
     index_lookup = map(lower, mapping_lines[0])
     EMAIL_IDX = index_lookup.index('email')
     NAME_IDX = index_lookup.index('name')
-    ZIPCODE_IDX = index_lookup.index('zipcode')
+    ZIPCODE_IDX = index_lookup.index('zip')
     STATE_IDX = index_lookup.index('state')
     SWABS_IDX = index_lookup.index('swabs_per_kit')
     COUNTRY_IDX = index_lookup.index('country')
