@@ -225,6 +225,10 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_add_participant', [ag_login_id, participant_name])
 
+    def addAGAnimalParticipant(self, ag_login_id, participant_name):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_add_animal_participant', [ag_login_id, participant_name])
+
     def addAGSingle(self, ag_login_id, participant_name, field_name, field_value, table_name):
         con = self.getMetadataDatabaseConnection()
         sql = "update {0} set {1} = '{2}' where ag_login_id = '{3}' and participant_name = '{4}'".format(table_name, \
