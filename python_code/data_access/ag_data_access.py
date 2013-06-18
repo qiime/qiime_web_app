@@ -225,6 +225,10 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_add_participant', [ag_login_id, participant_name])
 
+    def addAGAnimalParticipant(self, ag_login_id, participant_name):
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_add_animal_participant', [ag_login_id, participant_name])
+
     def addAGSingle(self, ag_login_id, participant_name, field_name, field_value, table_name):
         con = self.getMetadataDatabaseConnection()
         sql = "update {0} set {1} = '{2}' where ag_login_id = '{3}' and participant_name = '{4}'".format(table_name, \
@@ -280,6 +284,36 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_delete_sample', [barcode, ag_login_id])
+
+    def getHumanParticipants(self, ag_login_id):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        participants = []
+        con.cursor().callproc('ag_get_human_participants', [ag_login_id, results])
+        for row in results:
+            participants.append(row[0])
+
+        return participants
+
+    def getAnimalParticipants(self, ag_login_id):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        participants = []
+        con.cursor().callproc('ag_get_animal_participants', [ag_login_id, results])
+        for row in results:
+            participants.append(row[0])
+
+        return participants
+
+    def getParticipantExceptions(self, ag_login_id):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_participant_exceptions', [ag_login_id, results])
+        exceptions = []
+        for row in results:
+            exceptions.append(row[0])
+
+        return exceptions
 
     def getParticipantSamples(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()

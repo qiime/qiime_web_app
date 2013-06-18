@@ -1,3 +1,64 @@
+var xmlhttp;
+
+function GetXmlHttpObject()
+{
+    if (window.XMLHttpRequest)
+    {
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        return new XMLHttpRequest();
+    }
+
+    if (window.ActiveXObject)
+    {
+        // code for IE6, IE5
+        return new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    return null;
+}
+
+function validatePetSurvey1()
+{
+    // disable the submit button so that the user doesn't click it again
+    document.pet_survey.petsubmit.disabled = true;
+
+    // check if browser can perform xmlhttp
+    xmlhttp = GetXmlHttpObject()
+    if (xmlhttp==null)
+    {
+        alert ("Your browser does not support XML HTTP Request");
+        return;
+    }
+
+    url = 'check_participant_name.psp?participant_name=' + document.pet_survey.animal_name.value
+
+    xmlhttp.onreadystatechange=function()
+    {
+        if (xmlhttp.readyState==4)
+        {
+            try
+            {
+                // participant_name already exists
+                var responseText = xmlhttp.responseText.substring(0, xmlhttp.responseText.length - 1)
+                if (responseText != '')
+                {
+                    alert(responseText);
+                    document.pet_survey.animal_name.value = ''
+                }
+
+                validatePetSurvey2()
+            }
+            catch(e)
+            {
+                // Do nothing
+            }
+        }
+    }
+
+    // perform a GET
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send(null);
+}
+
 function getCountries(id) {
        document.getElementById(id).source = countries; 
  }
@@ -459,7 +520,7 @@ function validateSurvey1() {
  
 }
 
-function validatePetSurvey() {
+function validatePetSurvey2() {
 	var valid = true;
     for(var i = 0; i < document.pet_survey.length; i++) 
     {
@@ -471,12 +532,12 @@ function validatePetSurvey() {
         document.pet_survey[i].className = document.pet_survey[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
     }
 	
-    if(document.pet_survey.pet_name.value == "")
+    if(document.pet_survey.animal_name.value == "")
 	{
-		document.pet_survey.pet_name.className += " highlight"
+		document.pet_survey.animal_name.className += " highlight"
 		valid = false;
 	}
-	
+
     if(document.pet_survey.birth_date.value != "" && !isValidDate(document.pet_survey.birth_date.value))
 	{
 		document.pet_survey.birth_date.className += " highlight"
@@ -486,7 +547,10 @@ function validatePetSurvey() {
 	if(valid)
 		$('#pet_survey').submit();
 	else
+    {
 		window.scrollTo(0, 0);
+        document.pet_survey.petsubmit.disabled = false;
+    }
 }
 
 function verifyOptionalQuestions() {
