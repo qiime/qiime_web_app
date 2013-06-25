@@ -98,7 +98,7 @@ else:
                         </tr>
                         <tr>
                             <td>Birth date</td>
-                            <td><input tabindex="3" type="text" name="birth_date" id="birth_date" class=""/> mm/dd/yyyy</td>
+                            <td><input tabindex="3" type="text" name="birth_date" id="birth_date" class="small_text"/> mm/dd/yyyy
                             <script>
                               $(function() {
                                 $( "#birth_date" ).datepicker({
@@ -111,6 +111,7 @@ else:
                                 });
                               });
                             </script>
+                            </td>
                         </tr>
                         <tr>
                             <td>Gender</td>
