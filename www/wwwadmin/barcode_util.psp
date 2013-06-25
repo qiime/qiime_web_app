@@ -1,3 +1,10 @@
+<%
+import socket
+from utils.mail import send_email
+
+form_dict = dict(form)
+email_sent = form_dict.get('email_sent', None)
+%>
 <div>
 <form name="check_barcode" action="fusebox.psp?page=barcode_util.psp" method="post">
     <input id="barcode" name="barcode" tabindex="1" type="text"/>
@@ -17,7 +24,6 @@ try:
         data_access.updateBarcodeStatus('Received', barcode)
     except(IndexError):
         barcodeinfo = []
-    
     if len(barcodeinfo) == 0 or (barcodeinfo[6] == 'n' and barcodeinfo[0] == None): #not verified not assigned
         #startif
 %>
@@ -42,13 +48,18 @@ try:
 <%
         req.write(barcode)
 %>
-         <br>Verified and Assigned</h2>
+        <br>Verified and Assigned</h2>
     </div>
 </div>
 <%
     elif barcodeinfo[6] == 'y' and barcodeinfo[0] == None: #verified not assigned
         #startif
+        subject = "American Gut"
+        message = '''hehe
+'''
+        # indent
 %>
+
 <div id="not_assigned" class="verification_color">
     <div class="verification_text_wrapper">
         <br />
@@ -56,8 +67,26 @@ try:
 <%
         req.write(barcode)
 %>
-         <br>Not Assigned</h2>
+        <br>Not Assigned</h2>
     </div>
+</div>
+<div style="text-align: center">
+<%
+        if email_sent:
+            # indent
+%>
+Email Sent
+<%
+        else:
+            # indent
+%>
+    <form name="send_email" action="fusebox.psp?page=barcode_util.psp" method="post">
+        <input type="submit" value="Send Email to the Participant" style="height:50px; width:200px; ">
+        <input type="hidden" value="y">
+    </form>
+<%
+        # deindent
+%>
 </div>
 <%
 #endif

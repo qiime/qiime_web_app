@@ -21,44 +21,44 @@ import csv
 class QiimeDataAccess(object):
     """
     Data Access implementation for all the Qiime web appliation
-    
+
     This is the data access class for all Qiime web app applications. It can be used
     for production or testing depending on the connection class that's passed in.
     """
-    
+
     def __init__(self, connections):
         self._metadataDatabaseConnection = None
         self._ontologyDatabaseConnection = None
         self._SFFDatabaseConnection = None
-        
+
         # Set up the connections
         if not connections:
             raise ValueError('connections is None. Cannot instantiate QiimeDataAccess')
-            
+
         self.getMetadataDatabaseConnection = connections.getMetadataDatabaseConnection
         self.getOntologyDatabaseConnection = connections.getOntologyDatabaseConnection
         self.getSFFDatabaseConnection = connections.getSFFDatabaseConnection
-        
+
     #####################################
     # Helper Functions
     #####################################
-    
+
     def testDatabase(self):
         """Attempt to connect to the database
-        
+
         Attempt a database connection. Will throw an exception if it fails. Returns
         "True" if successful.
         """
         con = self.getMetadataDatabaseConnection()
         if con:
             return True
-    
+
     def convertToOracleHappyName(self, date_string):
         """ Oracle is picky about dates. This function takes a previously validated
         date format and returns a formatted string for inserting into database
         """
         formatted_date = ''
-        
+
         # First handle the date portion since it must exist for a valid submission
         if date_string.find(' ') == -1:
             # Date only
@@ -66,9 +66,9 @@ class QiimeDataAccess(object):
         else:
             # Date and time exist
             formatted_date = 'to_date(\'%s\', \'%s\')' % (date_string, 'MM/DD/YYYY HH24:MI:SS')
-        
+
         return formatted_date
-        
+
     def dynamicMetadataSelect(self, query_string):
         # Make sure no tomfoolery is afoot
         query_string_parts = set(query_string.lower().split())
@@ -76,7 +76,7 @@ class QiimeDataAccess(object):
         intersection = query_string_parts.intersection(verboten)
         if len(intersection) > 0:
             raise Exception('Only select statements are allowed. Your query: %s' % query_string)
-        
+
         con = self.getMetadataDatabaseConnection()
         return con.cursor().execute(query_string)
 
@@ -87,7 +87,7 @@ class QiimeDataAccess(object):
     def deactivateWebAppUser( self, username, activation_code ):
         """ Attempts to deactivate user's account
 
-        Attempt to deactivate the user account. If successful, returns True. 
+        Attempt to deactivate the user account. If successful, returns True.
         If not, the function returns False. Note: in the tests, this is part
         of the tearDown procedure.
         """
@@ -101,7 +101,7 @@ class QiimeDataAccess(object):
 
     def authenticateWebAppUser( self, username, password ):
         """ Attempts to validate authenticate the supplied username/password
-        
+
         Attempt to authenticate the user against the list of users in
         web_app_user table. If successful, a dict with user innformation is
         returned. If not, the function returns False.
@@ -121,7 +121,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def getUserDetails(self, user_id):
         """ Gets the user data from the web_app_user table
         """
@@ -158,7 +158,7 @@ class QiimeDataAccess(object):
     def activateWebAppUser( self, username, activation_code ):
         """ Attempts to activate user's account
 
-        Attempt to activate the user account. If successful, returns True. 
+        Attempt to activate the user account. If successful, returns True.
         If not, the function returns False.
         """
         try:
@@ -175,7 +175,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def checkWebAppUserAvailability(self, username):
         """ Checks the availability of the supplied username
         """
@@ -207,7 +207,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def updateWebAppUserPwd( self, username, password ):
         """ Attempts to update the users password.
         """
@@ -218,7 +218,7 @@ class QiimeDataAccess(object):
             con.cursor().callproc('update_web_app_user_password', [username, crypt_pass])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False  
+            return False
 
     #####################################
     # Study
@@ -238,10 +238,10 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     #
-    
-    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+
+    def createStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc,
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
         includes_timeseries):
@@ -249,15 +249,15 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         study_id = 0
-        results = con.cursor().callproc('qiime_assets.study_insert', 
-            [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+        results = con.cursor().callproc('qiime_assets.study_insert',
+            [study_id, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc,
             portal_type, study_title, study_alias, pmid, study_abstract, study_description,
             principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
             includes_timeseries])
-            
+
         return results[0]
-            
-    def updateStudy(self, study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+
+    def updateStudy(self, study_id, study_name, investigation_type, miens_compliant, submit_to_insdc,
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
         includes_timeseries):
@@ -265,18 +265,18 @@ class QiimeDataAccess(object):
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.study_update', 
-                [study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+            con.cursor().callproc('qiime_assets.study_update',
+                [study_id, study_name, investigation_type, miens_compliant, submit_to_insdc,
                 portal_type, study_title, study_alias, pmid, study_abstract, study_description,
                 principal_investigator, principal_investigator_contact, lab_person, lab_person_contact,
                 includes_timeseries])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def deleteStudy(self, study_id, full_delete):
         """ Removes a study from the database
-        
+
         study_id: the numeric identifier for the study in the database
         full_delete: an integer value:
             0 = delete all BUT the study entry
@@ -285,7 +285,7 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('qiime_assets.study_delete', [study_id, full_delete])
-        
+
     def getStudyNames(self):
         """ Returns a list of study names
         """
@@ -322,9 +322,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def getUserAndPublicStudyNames(self, user_id, is_admin, portal_type):
-        """ Returns a list of user's private studies along with all public 
+        """ Returns a list of user's private studies along with all public
             studies for the current portal type
         """
         public_studies = self.getUserStudyNames(0, is_admin, portal_type)
@@ -335,11 +335,11 @@ class QiimeDataAccess(object):
             for item in public_studies:
                 if item not in all_studies:
                     all_studies.append(item)
-                
+
         return sorted(all_studies, key=lambda item: str(item[1]).lower())
-        
+
     def getAllUserAndPublicStudyNames(self, user_id, is_admin):
-        """ Returns a list of user's private studies along with all public 
+        """ Returns a list of user's private studies along with all public
             studies for all portal types
         """
         emp_public_studies = self.getUserStudyNames(0, is_admin, 'emp')
@@ -351,13 +351,13 @@ class QiimeDataAccess(object):
         for item in emp_public_studies:
             if item not in all_studies:
                 all_studies.append(item)
-                
+
         for item in qiime_public_studies:
             if item not in all_studies:
-                all_studies.append(item)                
+                all_studies.append(item)
 
         return sorted(all_studies, key=lambda item: str(item[1]).lower())
-    
+
     def getStudyInfo(self, study_id, web_app_user_id):
         """ Returns a list of metadata values based on a study type and list
         """
@@ -389,8 +389,8 @@ class QiimeDataAccess(object):
             study_info['number_samples_promised'] = row[20]
             study_info['number_samples_collected'] = row[21]
             study_info['principal_investigator'] = row[22]
-            study_info['sample_count'] = row[23]               
-            study_info['lab_person'] = row[24] 
+            study_info['sample_count'] = row[23]
+            study_info['lab_person'] = row[24]
             study_info['lab_person_contact'] = row[25]
             study_info['emp_person'] = row[26]
             study_info['first_contact'] = row[27]
@@ -412,7 +412,7 @@ class QiimeDataAccess(object):
 
     def saveTimeseriesData(self, study_id, timeseries_file, req):
         con = self.getMetadataDatabaseConnection()
-        
+
         # Delete a table if it exists already
         try:
             statement = 'drop table study_{0}_timeseries'.format(str(study_id))
@@ -421,7 +421,7 @@ class QiimeDataAccess(object):
             # If the table doesn't exist, this may toss an exception. We don't care,
             # just want to delete the table whether or not it exists
             pass
-                
+
         # Dict for assigning data types:
         data_types = {}
         data_types['event_date_time'] = 'varchar2(50)'
@@ -430,11 +430,11 @@ class QiimeDataAccess(object):
         data_types['hours_since_experiment_start'] = 'varchar2(50)'
         data_types['sample_names'] = 'varchar2(4000)'
         data_types['host_subject_ids'] = 'varchar2(4000)'
-        
+
         # Iterate over the remaining columns and create
         columns = []
         f = open(timeseries_file, 'rU')
-        reader = csv.reader(f, delimiter='\t')        
+        reader = csv.reader(f, delimiter='\t')
         headers = reader.next()
         for column in headers:
             if column in data_types:
@@ -448,7 +448,7 @@ class QiimeDataAccess(object):
         statement = 'create table {0} ({1})'.format(table_name, ','.join(columns))
         #req.write(statement)
         con.cursor().execute(statement)
-            
+
         # Load the data rows
         for row in reader:
             values = ','.join(['\'' + item + '\'' for item in row])
@@ -456,10 +456,10 @@ class QiimeDataAccess(object):
             #req.write(statement)
             con.cursor().execute(statement)
             con.cursor().execute('commit')
-            
+
         f.close()
-        
-        
+
+
 
     def getStudyPlatform(self,study_id):
         """ Returns a Run Prefix for Sample
@@ -470,7 +470,7 @@ class QiimeDataAccess(object):
             db_output=[]
             con.cursor().callproc('qiime_assets.get_study_platform',\
                                                     [study_id,results])
-                                                                
+
             run_prefix = ''
             for row in results:
                 if row[0] is None:
@@ -486,10 +486,10 @@ class QiimeDataAccess(object):
     #####################################
     # Metadata and EMP Stuff
     #####################################
-    def createEMPStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+    def createEMPStudy(self, user_id, study_name, investigation_type, miens_compliant, submit_to_insdc,
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         number_samples_collected, number_samples_promised , lab_person,
-        lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+        lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type,
         has_physical_specimen, has_extracted_data, timeseries, spatial_series,
         principal_investigator, principal_investigator_contact, default_emp_status, funding,
         includes_timeseries):
@@ -497,38 +497,38 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         study_id = 0
-        results = con.cursor().callproc('qiime_assets.emp_study_insert', 
+        results = con.cursor().callproc('qiime_assets.emp_study_insert',
             [study_id, user_id, study_name,
-            investigation_type, miens_compliant, submit_to_insdc, portal_type, 
+            investigation_type, miens_compliant, submit_to_insdc, portal_type,
             study_title, study_alias, pmid, study_abstract, study_description,
             number_samples_collected, number_samples_promised , lab_person,
-            lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+            lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type,
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,
             principal_investigator, principal_investigator_contact, default_emp_status, funding,
             includes_timeseries])
         return results[0]
-        
-    def updateEMPStudy(self, study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, 
+
+    def updateEMPStudy(self, study_id, study_name, investigation_type, miens_compliant, submit_to_insdc,
         portal_type, study_title, study_alias, pmid, study_abstract, study_description,
         number_samples_collected, number_samples_promised , lab_person,
-        lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+        lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type,
         has_physical_specimen, has_extracted_data, timeseries, spatial_series,
         principal_investigator, principal_investigator_contact, default_emp_status, funding,
         includes_timeseries):
         """ Creates an EMP study
         """
         con = self.getMetadataDatabaseConnection()
-        results = con.cursor().callproc('qiime_assets.emp_study_update', 
-            [study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type, 
+        results = con.cursor().callproc('qiime_assets.emp_study_update',
+            [study_id, study_name, investigation_type, miens_compliant, submit_to_insdc, portal_type,
             study_title, study_alias, pmid, study_abstract, study_description,
             number_samples_collected, number_samples_promised , lab_person,
-            lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type, 
+            lab_person_contact, emp_person, first_contact, most_recent_contact, sample_type,
             has_physical_specimen, has_extracted_data, timeseries, spatial_series,
             principal_investigator, principal_investigator_contact, default_emp_status, funding,
             includes_timeseries])
 
     def createStudyPackage(self, study_id, env_package):
-        """ 
+        """
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -536,9 +536,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def clearStudyPackages(self, study_id):
-        """ 
+        """
         """
         try:
             con = self.getMetadataDatabaseConnection()
@@ -594,8 +594,8 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
-            
+
+
     def addSFFFileInfo(self, start_job, sff_filename, number_of_reads,header_length,
                     key_length, number_of_flows, flowgram_code, flow_characters,
                     key_sequence, md5_checksum, seq_run_id):
@@ -606,14 +606,14 @@ class QiimeDataAccess(object):
             if start_job:
                 db_output=con.cursor().callproc('add_sff_file',
                                                 [sff_filename, number_of_reads,
-                                                 header_length,key_length, 
-                                                 number_of_flows, flowgram_code, 
-                                                 flow_characters, key_sequence, 
+                                                 header_length,key_length,
+                                                 number_of_flows, flowgram_code,
+                                                 flow_characters, key_sequence,
                                                  md5_checksum,seq_run_id])
                 return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False            
+            return False
 
     def addMappingFile(self, study_id, mapping_file_path):
         """ adds a new mapping file to the study
@@ -647,7 +647,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def getEMPStudyList(self):
         """ Returns a list of emp studies
         """
@@ -658,7 +658,7 @@ class QiimeDataAccess(object):
             con.cursor().callproc('qiime_assets.get_emp_study_list', [results])
             for row in results:
                 # study_id, sample_id, sample_name, project_name, study_title, email, sample_count, metadata_complete,
-                # study_score, sample_score, s.number_samples_promised, s.number_samples_in_freezer, 
+                # study_score, sample_score, s.number_samples_promised, s.number_samples_in_freezer,
                 # s.principal_investigator
                 studies.append((row[0], row[1], row[2], row[3], row[4], row[5],
                     row[6], row[7], row[8], row[9], row[10], row[11], row[12]))
@@ -680,7 +680,7 @@ class QiimeDataAccess(object):
             return studies
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            
+
     def getEMPSampleList(self, study_id, web_app_user_id):
         """ Returns a list of emp studies
         """
@@ -689,29 +689,29 @@ class QiimeDataAccess(object):
         results = con.cursor()
         con.cursor().callproc('qiime_assets.get_emp_sample_list', [study_id, web_app_user_id, results])
         for row in results:
-            # sample_id, avg_emp_score, user_emp_score, sample_name, emp_status, sample_location, 
+            # sample_id, avg_emp_score, user_emp_score, sample_name, emp_status, sample_location,
             # sample_progress, description, altitude, samp_size,
-            # temp, samp_store_temp, country, depth, elevation, env_biome, env_feature, 
+            # temp, samp_store_temp, country, depth, elevation, env_biome, env_feature,
             # env_matter, ph, latitude, longitude, chem_administration, samp_store_loc
-            samples.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6], 
-            row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], 
+            samples.append((row[0], row[1], row[2], row[3], row[4], row[5], row[6],
+            row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14],
             row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22]))
-            
-            
+
+
         return samples
-            
+
     def updateEMPSampleData(self, sample_id, sample_score, emp_status, web_app_user_id):
         """ Updates the sample emp database fields
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('qiime_assets.update_emp_sample_data', [sample_id, sample_score, emp_status, web_app_user_id])
-            
+
     def updateEMPStudyData(self, study_id, study_score, web_app_user_id):
         """ Updates the emp database fields
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('qiime_assets.update_emp_study_data', [study_id, study_score, web_app_user_id])
-    
+
     def getListFieldValue(self, vocab_value_id):
         """ Returns a list env_package types associated to this study
         """
@@ -728,7 +728,7 @@ class QiimeDataAccess(object):
 
     def verifySampleNames(self, study_id, file_sample_name_list):
         all_samples_present = True
-        
+
         # Get the list of sample names for this study:
         database_sample_name_list = self.getSampleList(study_id)
         # Chop off the sample_id from the tuple - only want names for comparison
@@ -736,11 +736,11 @@ class QiimeDataAccess(object):
 
         # If all samples in file are not present in list in database, need to reload
         common_names = set(file_sample_name_list).intersection(set(database_sample_name_list))
-        
+
         # If any samples that used to exist in the database are missing...
         if len(common_names) < len(database_sample_name_list):
             return False
-        
+
         # If the entire list is not a subset of what's in the database
         #if not set(file_sample_name_list).issubset(set(database_sample_name_list)):
         #    all_samples_present = False
@@ -753,10 +753,10 @@ class QiimeDataAccess(object):
         try:
             table_name = table_name.upper()
             column_name_upper = column_name.upper()
-                
+
             value = None
             statement = ''
-            
+
             if table_name == 'HOST':
                 statement = 'select %s from host h inner join host_sample hs on h.host_id = hs.host_id inner join sample s on hs.sample_id = s.sample_id where s.sample_id = %s' %\
                     (column_name_upper, sample_id)
@@ -773,26 +773,26 @@ class QiimeDataAccess(object):
                 return None
             else:
                 value = results[0]
-            
+
             # Figure out if this is a list column. If so, do a reverse-lookup to get the text value
             field_details = self.getFieldDetails(column_name)
             database_data_type = field_details[1]
             if database_data_type == 'list':
                 value = self.getListFieldValue(value)
-            
+
             return value
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             print 'table_name: %s, column_name: %s, sample_id: %s' % (table_name, column_name, sample_id)
             return False
-            
+
     def getPrepColumnValue(self, sample_id, row_number, table_name, column_name):
         """ Returns a field value
         """
         try:
             table_name = table_name.upper()
             column_name = column_name.upper()
-                
+
             value = None
             statement = 'select "%s" from "%s" where sample_id = %s and row_number = %s' % \
                 (column_name, table_name, sample_id, row_number)
@@ -800,7 +800,7 @@ class QiimeDataAccess(object):
             con = self.getMetadataDatabaseConnection()
             results = con.cursor().execute(statement).fetchone()
             value = results[0]
-            
+
             # Figure out if this is a list column. If so, do a reverse-lookup to get the text value
             field_details = self.getFieldDetails(column_name)
             database_data_type = field_details[1]
@@ -826,7 +826,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
+
     def getSampleList(self, study_id):
         """ Returns a list of metadata fields
         """
@@ -841,7 +841,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def getSampleDetailList(self, study_id):
         """ Returns a list of metadata fields
         """
@@ -852,7 +852,7 @@ class QiimeDataAccess(object):
         for sample_name, sample_id, public, collection_date, run_prefix, sequence_count, otu_count, otu_percent_hit in results:
             sample_details.append((sample_name, sample_id, public, collection_date, run_prefix, sequence_count, otu_count, otu_percent_hit))
         return sample_details
-            
+
     def getPrepList(self, sample_id):
         """ Returns a list of metadata fields
         """
@@ -874,7 +874,7 @@ class QiimeDataAccess(object):
         try:
             con = self.getMetadataDatabaseConnection()
             con.cursor().callproc('qiime_assets.remove_study_actual_column', [study_id, column_name])
-        except Exception, e:            
+        except Exception, e:
             raise Exception('Exception caught in removeStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
 
     def addStudyActualColumn(self, study_id, column_name, table_name):
@@ -883,9 +883,9 @@ class QiimeDataAccess(object):
         try:
             con = self.getMetadataDatabaseConnection()
             con.cursor().callproc('qiime_assets.add_study_actual_column', [study_id, column_name, table_name])
-        except Exception, e:            
+        except Exception, e:
             raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
-            
+
     def getStudyActualColumns(self, study_id):
         """ inserts a selected metadata column name into the database
         """
@@ -898,11 +898,11 @@ class QiimeDataAccess(object):
             for column_name, table_name in results:
                 #extra_columns[row[0]] = row[1]
                 extra_columns[column_name] = table_name
-            
+
             return extra_columns
-        except Exception, e:            
+        except Exception, e:
             raise Exception('Exception caught in addStudyActualColumns(): %s.\nThe error is: %s' % (type(e), e))
-            
+
     def findExtraColumnMatch(self, column_name):
         """ Searches for a match in 'extra' tables
         """
@@ -914,9 +914,9 @@ class QiimeDataAccess(object):
         #for row in results:
         for row in results:
             matches.append(row[0])
-        
+
         return matches
-        
+
     def addCommonExtraColumn(self, req, study_id, found_extra_table, column_name, data_type, description):
         """ Factors an extra column into the common table
         """
@@ -924,17 +924,17 @@ class QiimeDataAccess(object):
         common_extra_table_name = None
         min_column_count = None
         quoted_column_name = '"{0}"'.format(column_name.upper())
-        
+
         if 'SAMPLE' in found_extra_table:
             common_extra_table_name = 'COMMON_EXTRA_SAMPLE'
             min_column_count = 2
         elif 'PREP' in found_extra_table:
             common_extra_table_name = 'COMMON_EXTRA_PREP'
             min_column_count = 3
-            
+
         if common_extra_table_name == None:
             raise Exception('Error: Could not determine the common extra table name. The found extra table is: %s' % found_extra_table)
-            
+
         # Set the database data type:
         database_data_type = ''
         if data_type == 'text' or database_data_type == 'range':
@@ -943,15 +943,15 @@ class QiimeDataAccess(object):
             database_data_type = 'int'
         elif data_type == 'date':
             database_data_type = 'date'
-            
+
         if database_data_type == '':
             raise Exception('Could not determine common extra column data type.')
 
         # Create the column if it doesn't already exist
         statement = """
-        select  count(*) 
-        from    all_tab_columns 
-        where   column_name = '{0}' 
+        select  count(*)
+        from    all_tab_columns
+        where   column_name = '{0}'
                 and table_name = '{1}'
         """.format(column_name.upper(), common_extra_table_name)
         if debug:
@@ -963,7 +963,7 @@ class QiimeDataAccess(object):
             if debug:
                 req.write('<pre>' + statement + '</pre><br/>')
             con.cursor().execute(statement)
-        
+
         # Copy the data found in the found extra_table
         if common_extra_table_name == 'COMMON_EXTRA_SAMPLE':
             statement = """
@@ -973,9 +973,9 @@ class QiimeDataAccess(object):
                     FROM    {1}
                   ) x
                   ON (e.sample_id = x.sample_id)
-            WHEN MATCHED THEN 
+            WHEN MATCHED THEN
               UPDATE SET e.{0} = x.{0}
-            WHEN NOT MATCHED THEN 
+            WHEN NOT MATCHED THEN
               INSERT (e.sample_id, e.{0})
               VALUES (x.sample_id, x.{0})
             """.format(quoted_column_name, found_extra_table)
@@ -987,13 +987,13 @@ class QiimeDataAccess(object):
                     FROM    {1}
                   ) x
                   ON (e.sample_id = x.sample_id and e.row_number = x.row_number)
-            WHEN MATCHED THEN 
+            WHEN MATCHED THEN
               UPDATE SET e.{0} = x.{0}
-            WHEN NOT MATCHED THEN 
+            WHEN NOT MATCHED THEN
               INSERT (e.sample_id, e.row_number, e.{0})
               VALUES (x.sample_id, x.row_number, x.{0})
             """.format(quoted_column_name, found_extra_table)
-        
+
         if debug:
             req.write('<pre>' + statement + '</pre><br/>')
         con.cursor().execute(statement)
@@ -1001,7 +1001,7 @@ class QiimeDataAccess(object):
         if debug:
             req.write('<pre>' + statement + '</pre><br/>')
         con.cursor().execute(statement)
-        
+
         # Remove the column from the found extra table. If it's the last custom column in the table, remove the table
         statement = "select count(*) from all_tab_columns where table_name = '%s'" % (found_extra_table)
         if debug:
@@ -1017,14 +1017,14 @@ class QiimeDataAccess(object):
             if debug:
                 req.write('<pre>' + statement + '</pre><br/>')
             con.cursor().execute(statement)
-        
+
         # Clean up references in study_actual_columns
         extra_table_study_id = found_extra_table.split('_')[2]
 
         statement = """
-        update  study_actual_columns 
-        set     table_name = '"{0}"' 
-        where   study_id = {1} 
+        update  study_actual_columns
+        set     table_name = '"{0}"'
+        where   study_id = {1}
                 and table_name = '"{2}"'
         """.format(common_extra_table_name, extra_table_study_id, found_extra_table)
         if debug:
@@ -1034,19 +1034,19 @@ class QiimeDataAccess(object):
         if debug:
             req.write('<pre>' + statement + '</pre><br/>')
         con.cursor().execute(statement)
-            
+
     def addExtraColumnMetadata(self, study_id, table_level, column_name, description, data_type):
         """ inserts metadata for an "extra" column
         """
         try:
             con = self.getMetadataDatabaseConnection()
-            con.cursor().callproc('qiime_assets.extra_column_metadata_insert', [study_id, table_level, 
+            con.cursor().callproc('qiime_assets.extra_column_metadata_insert', [study_id, table_level,
                 column_name, description, data_type])
-        except Exception, e:            
+        except Exception, e:
             raise Exception('Exception caught in addExtraColumnMetadata(): {0}.\nThe error is: {1}.\nstudy_id: \
                 {2}\ntable_level: {3}\ncolumn_name: {4}\ndescription: {5}\n data_type: {6}'.format(type(e), e, \
                 str(study_id), str(table_level), str(column_name), str(description), str(data_type)))
-            
+
     def getExtraColumnMetadata(self, study_id):
         """ Retrieves all metadata for extra columns
         """
@@ -1058,18 +1058,18 @@ class QiimeDataAccess(object):
             for row in results:
                 extra_columns[row[1]] = {'table_level':row[0], 'description':row[2], 'data_type':row[3]}
             return extra_columns
-        except Exception, e:            
+        except Exception, e:
             raise Exception('Exception caught in getExtraColumnMetadata(): %s.\nThe error is: %s' % (type(e), e))
-            
+
     def deleteExtraColumnMetadata(self, study_id):
         """ Deletes all metadata for extra columns
         """
         try:
             con = self.getMetadataDatabaseConnection()
             con.cursor().callproc('qiime_assets.delete_study_extra_columns', [study_id])
-        except Exception, e:            
+        except Exception, e:
             raise Exception('Exception caught in deleteExtraColumnMetadata(): %s.\nThe error is: %s' % (type(e), e))
-    
+
     def getColumnDictionary(self):
         """ Returns the full column dictionary
         """
@@ -1091,7 +1091,7 @@ class QiimeDataAccess(object):
                 max_length = row[4]
                 min_length = row[5]
                 active = row[6]
-                
+
                 if row[1] == None:
                     expected_values == ''
                 elif row[2] == None:
@@ -1104,14 +1104,14 @@ class QiimeDataAccess(object):
                     min_length = ''
                 elif row[6] == None:
                     min_length = ''
-                    
+
                 list_item = (column_name, expected_values, description, data_type, max_length, min_length, active)
                 column_dictionary.append(list_item)
             return column_dictionary
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
+
     def getCustomColumnDetails(self, column_name):
         """ Returns details about a user-defined column
         """
@@ -1119,13 +1119,13 @@ class QiimeDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         found = False
         column_name = column_name.upper()
-        
+
         # Init some variables
         description = ''
         extra_table_name = ''
         common_table_name = ''
         data_type = ''
-        
+
         # Figure out if exists in "Extra" table
         statement = """select table_name from all_tab_columns where column_name = '%s' and table_name like 'EXTRA_%%'"""\
             % column_name
@@ -1135,7 +1135,7 @@ class QiimeDataAccess(object):
             found = True
         except:
             extra_table_name = None
-            
+
         # Figure out if exists in a factored table
         statement = """select table_name from all_tab_columns where column_name = '%s' and table_name like 'COMMON_EXTRA_%%'"""\
             % column_name
@@ -1145,7 +1145,7 @@ class QiimeDataAccess(object):
             found = True
         except:
             common_table_name = None
-        
+
         if found:
             try:
                 statement = """select data_type, description from extra_column_metadata where upper(column_name) = '%s'""" % column_name
@@ -1157,14 +1157,14 @@ class QiimeDataAccess(object):
                 description = None
         else:
             data_type = None
-        
+
         column_info['description'] = description
         column_info['extra_table_name'] = extra_table_name
         column_info['common_table_name'] = common_table_name
         column_info['data_type'] = data_type
-        
+
         return column_info
-        
+
     def getPackageColumns(self, package_type_id):
         """ Returns the full package column dictionary
         """
@@ -1182,7 +1182,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def getImmutableDatabaseFields(self, study_id):
         """ Returns the immutable metadata fields for a study
         """
@@ -1193,18 +1193,18 @@ class QiimeDataAccess(object):
         for row in results:
             fields.append((row[0], row[1], row[2], row[3], row[4], row[5]))
         return fields
-    
+
     fields = {}
     def findMetadataTable(self, field_name, field_type, log, study_id, lock):
         """ Finds the target metadata table for the supplied column name
-        
+
         Determines which table a column belongs to based on field_name and type.
         """
-        
-        # log passed in from writeMetadataValue() - it's a list. At end of function, 
+
+        # log passed in from writeMetadataValue() - it's a list. At end of function,
         # exception handler will output contents of log to web for viewing if error
         # occurrs.
-        
+
         try:
             table = ''
             field_name = field_name.upper()
@@ -1223,9 +1223,9 @@ class QiimeDataAccess(object):
                         self.fields[col_name] = []
                     self.fields[col_name].append(tab_name)
                 lock.release()
-            
+
             log.append('field{} successfully filled out')
-            
+
             if field_name in self.fields:
                 # If there's only one hit we can assign it
                 tables = self.fields[field_name]
@@ -1233,7 +1233,7 @@ class QiimeDataAccess(object):
                 if len(self.fields[field_name]) == 1:
                     table = self.fields[field_name][0]
                     log.append('Field only in one table: %s' % table)
-                
+
                 # More than one table was found with this column name. Find the correct one
                 # based on the study id
                 else:
@@ -1242,24 +1242,24 @@ class QiimeDataAccess(object):
                     for table_name in self.fields[field_name]:
                         if str(study_id) in table_name:
                             table = table_name
-                            
+
             # If table is not found, assume user-defined column
             else:
                 """ Code may look bizarre... but here's why:
                 1. To streamline access and prevent blocking, we first check to see if the field
                 does exist in the field list. If it does, we do not have to lock and can simply
                 look up the table name.
-                
-                2. If field is not in list, it must be a new column. In this case we must lock the 
+
+                2. If field is not in list, it must be a new column. In this case we must lock the
                 code that handles new column creation. The catch is that if two threads both hit the lock
-                with the same field name, one will get in and the other will block. Once the initial thread 
-                exists, it will have handled the new column, gotten the appropriate table name, and returned. 
-                The 2nd thread will now enter the critical section, however if we don't again check to see 
-                if the field is now in the field list, it will attempt to create the same column again and 
-                fail. Thus we check a 2nd time to see if the field exists and if so, simply read it from the 
-                field list.                
+                with the same field name, one will get in and the other will block. Once the initial thread
+                exists, it will have handled the new column, gotten the appropriate table name, and returned.
+                The 2nd thread will now enter the critical section, however if we don't again check to see
+                if the field is now in the field list, it will attempt to create the same column again and
+                fail. Thus we check a 2nd time to see if the field exists and if so, simply read it from the
+                field list.
                 """
-                lock.acquire()                
+                lock.acquire()
                 if field_name in self.fields:
                     log.append('Field now exists. Pulling from local list.')
                     table = self.fields[field_name][0]
@@ -1273,7 +1273,7 @@ class QiimeDataAccess(object):
                     else:
                         self.fields[field_name].append(table)
                 lock.release()
-           
+
             log.append('Returning from findMetadataTable with value: %s' % str(table))
             return table
 
@@ -1295,22 +1295,22 @@ class QiimeDataAccess(object):
             for row in results:
                 # column_name, data_type, desc_or_value, definition, active
                 value_list.append((row[0], row[1], row[2], row[3], row[4]))
-                
+
             if len(value_list) == 0:
                 # If not found in the dictionary, assume this is a user-created column
                 value_list.append((field_name, 'text', '', ''))
-                
+
             return value_list[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def getTableCategory(self, table_name):
         table_category = ''
         table_name = table_name.upper()
         if '"' not in table_name:
             table_name = '"%s"' % table_name
-        
+
         if table_name == '"STUDY"' or 'EXTRA_STUDY_' in table_name:
             table_category = 'study'
         elif table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
@@ -1322,7 +1322,7 @@ class QiimeDataAccess(object):
             table_category = 'host'
         elif table_name == '"SEQUENCE_PREP"' or 'EXTRA_PREP_' in table_name:
             table_category = 'prep'
-            
+
         return table_category
 
     def createSampleKey(self, study_id, sample_name):
@@ -1351,20 +1351,20 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def handleExtraData(self, study_id, field_name, field_type, log):
-        
+
         # Get our database connection
         con = self.getMetadataDatabaseConnection()
-        
+
         # Define the names of the 'extra' tables
         extra_table = ''
         key_table = ''
-        
+
         # Other required values
         schema_owner = 'QIIME_METADATA'
         statement = ''
-        
+
         # Figure out which table we're talking about
         if field_type == 'study':
             extra_table = str('extra_study_' + str(study_id)).upper()
@@ -1377,7 +1377,7 @@ class QiimeDataAccess(object):
             key_table = 'sample'
         else:
             # Error state
-            raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))        
+            raise Exception('Could not determine "extra" table name. field_type is "%s"' % (field_type))
         try:
             # Does table exist already?
             log.append('Checking if table %s exists...' % extra_table)
@@ -1389,7 +1389,7 @@ class QiimeDataAccess(object):
             log.append('extra_table: %s' % extra_table)
             results = con.cursor().execute(statement, named_params).fetchone()
             log.append('Table search results: %s' % str(results))
-        
+
             # Create if it doesn't exist already
             if not results:
                 log.append('Creating "extra" table %s...' % extra_table)
@@ -1402,7 +1402,7 @@ class QiimeDataAccess(object):
 
                 # If it's a prep table, must create row_number column
                 if field_type == 'prep':
-                    log.append('Adding row_number to extra_prep table...')                        
+                    log.append('Adding row_number to extra_prep table...')
                     statement = 'alter table %s add row_number integer' % (extra_table)
                     statement = str(statement)
                     log.append(statement)
@@ -1417,10 +1417,10 @@ class QiimeDataAccess(object):
                 statement = str(statement)
                 log.append(statement)
                 results = con.cursor().execute(statement)
-                    
+
                 # In the study case, we must also add the first (and only) row for the subsequent updates to succeed.
                 if field_type == 'study':
-                    log.append('Inserting study extra row...')                        
+                    log.append('Inserting study extra row...')
                     statement = 'insert into %s (study_id) values (%s)' % (extra_table, study_id)
                     statement = str(statement)
                     log.append(statement)
@@ -1428,7 +1428,7 @@ class QiimeDataAccess(object):
                     con.cursor().execute('commit')
             else:
                 log.append('Extra table already exists.')
-                            
+
             # Check if the column exists
             log.append('Checking if extra column exists: %s' % field_name)
             named_params = {'schema_owner':schema_owner, 'extra_table_name':extra_table, 'column_name':field_name.upper()}
@@ -1457,42 +1457,42 @@ class QiimeDataAccess(object):
         except Exception, e:
             log.append('Exception caught creating entities. Exception was: "%s"' % str(e))
             raise Exception(str(e))
-    
+
     def writeMetadataValue(self, field_type, key_field, field_name, field_value, \
         study_id, host_key_field, row_num, lock):
         """ Writes a metadata value to the database
         """
-        
+
         # This is a mess and it's slow right now. In need of serious speed improvements and cleanup.
-        
+
         statement = ''
         log = []
         pk_name = ''
 
         try:
             #lock.acquire()
-            
+
             # Get our database connection
             con = self.getMetadataDatabaseConnection()
-            
+
             # Set the timeout
-            #con.cursor().execute('alter session set ddl_lock_timeout=100')            
-                        
+            #con.cursor().execute('alter session set ddl_lock_timeout=100')
+
             # Find the table name
             log.append('Locating table name...')
             table_name = None
             table_name = self.findMetadataTable(field_name, field_type, log, study_id, lock)
             log.append('Successfully found table name. Table name is "%s"' % str(table_name))
-            
+
             #if field_name == 'dw1':
             #    raise Exception('asdf')
 
             # Double-quote for database safety
             log.append('Adding quotes to table name...')
-            table_name = '"' + table_name + '"' 
+            table_name = '"' + table_name + '"'
             log.append('Quoted table name is %s' % table_name)
             log.append('Table name found: %s' % (table_name))
-            
+
             # Store the field name in the database. These are the field names which will
             # be used later to generate a mapping file. We collect the names here because
             # it's an expensive operation to determine post-commit which fields were
@@ -1500,7 +1500,7 @@ class QiimeDataAccess(object):
             log.append('Attempting to store values in study_actual_columns: %s, %s, %s'\
                 % (study_id, field_name, table_name))
             self.addStudyActualColumn(study_id, field_name, table_name);
-            
+
             # Get extended field info from the database
             log.append('Loading field details...')
             field_details = self.getFieldDetails(field_name)
@@ -1511,9 +1511,9 @@ class QiimeDataAccess(object):
             else:
                 database_data_type = field_details[1]
                 log.append('Read field database data type as "%s"' % database_data_type)
-            
+
             # If the field value is 'unknown', switch to 'null' (empty string is the same as null)
-            #pass_values = 
+            #pass_values =
             if str(field_value).upper() == 'UNKNOWN':
                 field_value = ''
             # Figure out if this needs to be an integer ID instead of a text value
@@ -1533,14 +1533,14 @@ class QiimeDataAccess(object):
                     log.append('Could not determine inteteger value for list term "%s" with value "%s". Skipping.'\
                         % (field_name, field_value))
                     raise Exception
-            
+
             # Set the field_name to it's quoted upper-case name to avoid key-work issues with Oracle
             field_name = '"%s"' % field_name.upper()
-            
+
             ########################################
             ### For STUDY
             ########################################
-            
+
             # Study is special - handle separately since row is guaranteed to exist and there can only be one row
             if table_name == '"STUDY"' or 'EXTRA_STUDY_' in table_name:
                 log.append('Updating study field...')
@@ -1554,11 +1554,11 @@ class QiimeDataAccess(object):
                 log.append('Study updated.')
                 #raise Exception
                 return
-            
+
             ########################################
             ### For other tables
             ########################################
-            
+
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
             '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"', \
             '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HOST_SAMPLE"', '"HUMAN_ASSOCIATED"',
@@ -1578,7 +1578,7 @@ class QiimeDataAccess(object):
             else:
                 return 'Unknown table found - no action taken. Table name was: "%s". Column name was: "%s"'\
                     % (table_name, field_name)
-            
+
             # Find the assocaited key column
             log.append('Determining if required key row exists...')
             log.append(statement + '", key_field is ' + key_field + ', study_id is ' + str(study_id))
@@ -1607,7 +1607,7 @@ class QiimeDataAccess(object):
 
             # If it ain't there, create it
             log.append('Checking if row already exists...')
-            
+
             # Must append row_num if sequence table
             if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_column_value':key_column_value, 'row_number':row_num}
@@ -1619,7 +1619,7 @@ class QiimeDataAccess(object):
             statement = str(statement)
             log.append(statement)
             results = con.cursor().execute(statement, named_params).fetchone()
-                
+
             if results == None:
                 log.append('No row found, inserting new row')
                 if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
@@ -1639,36 +1639,36 @@ class QiimeDataAccess(object):
 
 
 
-            
+
             # Attempt to write the metadata field
             log.append('Writing metadata value...')
-            
+
             # If it's a date, must not put quotes around the oracle to_date function.
             if database_data_type == 'date':
                 field_value = self.convertToOracleHappyName(field_value)
                 if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
                     statement = 'update %s set %s = %s where %s = %s and row_number = %s'\
                         % (table_name, field_name, field_value, key_column, key_column_value, row_num)
-                else:  
+                else:
                     statement = 'update %s set %s = %s where %s = %s'\
-                        % (table_name, field_name, field_value, key_column, key_column_value)            
-            else:            
+                        % (table_name, field_name, field_value, key_column, key_column_value)
+            else:
                 if table_name == '"SEQUENCE_PREP"' or table_name == '"COMMON_EXTRA_PREP"' or 'EXTRA_PREP_' in table_name:
                     statement = 'update %s set %s = \'%s\' where %s = %s and row_number = %s'\
                         % (table_name, field_name, field_value, key_column, key_column_value, row_num)
-                else:  
+                else:
                     statement = 'update %s set %s = \'%s\' where %s = %s'\
                         % (table_name, field_name, field_value, key_column, key_column_value)
             statement = str(statement)
             log.append(statement)
             results = con.cursor().execute(statement)
-            
+
             # Finally, commit the changes
             results = con.cursor().execute('commit')
 
             #if field_name == '"DW1"':
             #    raise Exception('Found DW1: Dumping log')
-            
+
         except Exception, e:
             call_string = 'writeMetadataValue("%s", "%s", "%s", "%s", "%s")'\
                 % (field_type, key_field, field_name, field_value, study_id)
@@ -1682,7 +1682,7 @@ class QiimeDataAccess(object):
             #lock.release()
             log.append('Lock released')
 
-            
+
     #####################################
     # Jobs
     #####################################
@@ -1693,7 +1693,7 @@ class QiimeDataAccess(object):
         job_id = 0
         job_id = con.cursor().callproc('create_torque_job', [job_type, job_input, user_id, study_id, job_state_id,job_id])
         return job_id[5]
-    
+
 
     def updateTorqueJob(self, job_id, new_state,job_notes):
         """ updates a torque job and returns the job_id
@@ -1704,12 +1704,12 @@ class QiimeDataAccess(object):
             return job_id[0]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            
-    
+
+
     def clearTorqueJob(self, job_id):
         """ Removes a job from the torque_jobs table
         """
-        
+
         try:
             con = self.getSFFDatabaseConnection()
             con.cursor().callproc('clear_torque_job', [job_id])
@@ -1736,19 +1736,19 @@ class QiimeDataAccess(object):
     #####################################
     # Ontologies and Lists
     #####################################
-    
+
     def getAllControlledVocabs(self):
         """ Returns all controlled vocabularies
         """
         controlled_vocabs = {}
-        
+
         try:
             con = self.getMetadataDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_controlled_vocab_list_all', [results])
             for row in results:
                 controlled_vocabs[row[0]] = row[1]
-            
+
             return controlled_vocabs
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -1758,7 +1758,7 @@ class QiimeDataAccess(object):
         """ Returns controlled vocabularies associated to the supplied column name
         """
         controlled_vocabs = []
-        
+
         try:
             con = self.getMetadataDatabaseConnection()
             results = con.cursor()
@@ -1770,7 +1770,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-        
+
     def getControlledVocabValueList(self, controlled_vocab_id):
         """ Returns the controlled vocabulary values
         """
@@ -1792,7 +1792,7 @@ class QiimeDataAccess(object):
         """ Returns a list of Ontologies
         """
         ontologies = []
-        
+
         try:
             con = self.getMetadataDatabaseConnection()
             results = con.cursor()
@@ -1813,16 +1813,16 @@ class QiimeDataAccess(object):
             con = self.getMetadataDatabaseConnection()
             results = con.cursor()
             con.cursor().callproc('qiime_assets.get_list_values', [results, list_name])
-            
+
             for row in results:
                 list_values.append((row[0], row[1]))
-                    
+
             return list_values
-            
+
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-                
+
     def validateListValue(self, list_name, list_value):
         """ validates a list value
         """
@@ -1834,7 +1834,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-                
+
     def getOntologyValues(self, ontology_name):
         """ Returns ontology values
         """
@@ -1869,7 +1869,7 @@ class QiimeDataAccess(object):
         """ Returns ontology details for a particular column
         """
         ontology_details = []
-        
+
         try:
             con = self.getMetadataDatabaseConnection()
             ontologies = con.cursor()
@@ -1884,7 +1884,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-                
+
     def getTermMatches(self, column_name, term_value):
         """ Finds close term matches for columns of type ontology or list
         """
@@ -1893,14 +1893,14 @@ class QiimeDataAccess(object):
             term_parts = term_value.split(':')
             if len(term_parts) > 1:
                 term_value = term_parts[1]
-            
+
             details = self.getFieldDetails(column_name)
             if len(details) == 0:
                 return None
-            
+
             matches = []
             column_type = details[1]
-            
+
             if column_type == 'list':
                 con = self.getMetadataDatabaseConnection()
                 results = con.cursor()
@@ -1914,16 +1914,16 @@ class QiimeDataAccess(object):
                 for row in ontologies:
                     con_tology = self.getOntologyDatabaseConnection()
                     results = con_tology.cursor()
-                    con_tology.cursor().callproc('get_ontology_terms', 
+                    con_tology.cursor().callproc('get_ontology_terms',
                         ['\'' + row[0] + '\'', term_value.upper(), results])
                     for row in results:
                         matches.append(row[1])
             else:
                 # Do nothing for all other types
                 return None
-            
+
             return matches
-        
+
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
@@ -1944,11 +1944,11 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def get_ontology_terms(self, ontology, query):
         """ Returns a list of ontology terms if the term contains query as a
             substring.
-            
+
             Note: ontology can be a list of ontologies, and as such the value, whether
             singular or multiple, must be quoted: e.g. '\'FMA\'', or '\'FMA\', \'OBI\''
         """
@@ -1965,9 +1965,9 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def validity_of_ontology_term(self, ontology, query):
-        """ Returns a list of ontology terms if the query is exactly equal to 
+        """ Returns a list of ontology terms if the query is exactly equal to
             the term.
         """
         try:
@@ -1983,11 +1983,11 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-                
+
     #####################################
     # Loading
     #####################################
-    
+
     def getSFFFiles(self, study_id):
         """ Gets a list of SFF files for this study
         """
@@ -2031,7 +2031,7 @@ class QiimeDataAccess(object):
             return items
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False        
+            return False
 
 
 
@@ -2040,7 +2040,7 @@ class QiimeDataAccess(object):
 
         This funciton generates a collection of result sets for producing the minimal
         mapping file required by split_libraries.py. There will be one result set for
-        each run_prefix found in the study. Each result set consists of only the few 
+        each run_prefix found in the study. Each result set consists of only the few
         required fields for split_libraries.py to run.
         """
 
@@ -2059,7 +2059,7 @@ class QiimeDataAccess(object):
                 primers = row[3]
                 run_prefix = row[4]
                 linker_primer_list = ''
-                    
+
                 # handles null linkers
                 if linker is None:
                     linker=''
@@ -2070,7 +2070,7 @@ class QiimeDataAccess(object):
                     primer_list = primers.split(',')
                     for primer in primer_list:
                         linker_primer_list += '{0}{1},'.format(linker, primer)
-                
+
                     # Strip the trailing comma
                     linker_primer_list = linker_primer_list[:-1]
                 else:
@@ -2079,7 +2079,7 @@ class QiimeDataAccess(object):
                 # Adjust the row contents
                 newrow = (row[0], row[1], linker_primer_list, row[4], row[5])
 
-                # If this is the first time we've seen this run_prefix, create a new list 
+                # If this is the first time we've seen this run_prefix, create a new list
                 # to hold the rows
                 if run_prefix not in result_sets:
                     result_sets[run_prefix] = []
@@ -2122,7 +2122,7 @@ class QiimeDataAccess(object):
             rows = results.fetchall()
             if len(rows) == 0:
                 raise ValueError('No barcodes were found for the given run prefix: %s' % run_prefix)
-            
+
             # we now allow for variable barcode lengths
             if len(rows) > 1:
                 #raise ValueError('All barcodes must be of the same length for a given run_prefix. Multiple barcode lengths found for run prefix: %s' % run_prefix)
@@ -2133,11 +2133,11 @@ class QiimeDataAccess(object):
                 # If barcode is null, set length to 0
                 if not barcode_length:
                     barcode_length = 0
-                
+
             acceptable_barcode_lengths = ['0', '4', '5', '6', '7', '8', '9', '10', '11', '12','13','14','15','variable_length']
             if str(barcode_length) not in acceptable_barcode_lengths:
                 raise ValueError('Barcode lengths must be one of the following: ' + ', '.join(acceptable_barcode_lengths))
-            
+
             # Looks like we're good! Return the length
             return barcode_length
 
@@ -2168,7 +2168,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             raise Exception(str(e))
-    
+
     def loadSplitLibInfo(self, start_job, analysis_id, run_date, cmd, svn_version,
                             log_str, hist_str, md5_input_file):
         """ uploads the information related to the split_libraries run to the DB
@@ -2191,10 +2191,10 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False,0
-    
+
 
     def loadAllOTUInfo(self, start_job, otu_run_set_id, run_date,
-                    pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd, 
+                    pOTUs_method, pOTUs_threshold, svn_version, pick_otus_cmd,
                     otus_log_str,split_lib_seqs_md5,ref_set_name,
                     ref_set_threshold, analysis_id):
         """ loads the information pertaining to an OTU picking runs
@@ -2220,7 +2220,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
 
     def getTestFlowData(self, start_job,analysis_id, sample_id):
         """ Returns the FLOW TEST Data from DB
@@ -2230,7 +2230,7 @@ class QiimeDataAccess(object):
             con = self.getSFFDatabaseConnection()
             results = con.cursor()
             if start_job:
-                con.cursor().callproc('get_test_flow_data', 
+                con.cursor().callproc('get_test_flow_data',
                                         [analysis_id, sample_id,results])
                 for row in results:
                     analysis_data.append(row)
@@ -2240,7 +2240,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def getTestSplitLibData(self, start_job,analysis_id, sample_id):
         """ Returns the SPLIT_LIBRARY TEST Data
         """
@@ -2249,7 +2249,7 @@ class QiimeDataAccess(object):
             con = self.getSFFDatabaseConnection()
             results = con.cursor()
             if start_job:
-                con.cursor().callproc('get_test_split_lib_data', 
+                con.cursor().callproc('get_test_split_lib_data',
                                         [analysis_id, sample_id,results])
                 for row in results:
                     analysis_data.append(row)
@@ -2259,7 +2259,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def getTestOTUData(self, start_job,analysis_id, sample_id):
         """ Returns the OTU TEST DATA
         """
@@ -2268,7 +2268,7 @@ class QiimeDataAccess(object):
             con = self.getSFFDatabaseConnection()
             results = con.cursor()
             if start_job:
-                con.cursor().callproc('get_test_otu_data', 
+                con.cursor().callproc('get_test_otu_data',
                                         [analysis_id, sample_id,results])
                 for row in results:
                     analysis_data.append(row)
@@ -2287,7 +2287,7 @@ class QiimeDataAccess(object):
             con = self.getSFFDatabaseConnection()
             results = con.cursor()
             if start_job:
-                con.cursor().callproc('get_test_otu_failure_data', 
+                con.cursor().callproc('get_test_otu_failure_data',
                                         [analysis_id, sample_id,results])
                 for row in results:
                     analysis_data.append(row)
@@ -2297,7 +2297,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-                    
+
     def deleteTestAnalysis(self, start_job,analysis_id):
         """ Removes rows from the DB given an analysis id
         """
@@ -2306,7 +2306,7 @@ class QiimeDataAccess(object):
         try:
             con = self.getSFFDatabaseConnection()
             if start_job:
-                db_output=con.cursor().callproc('delete_test_analysis', 
+                db_output=con.cursor().callproc('delete_test_analysis',
                                         [analysis_id, error_flag])
                 if db_output[1]==0:
                     return True
@@ -2317,12 +2317,12 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def deleteAllAnalysis(self, study_id):
         """ Removes rows from the DB given a study_id
         """
         error_flag = 1
-        
+
         try:
             con = self.getSFFDatabaseConnection()
             results = con.cursor().execute('select analysis_id from analysis where study_id = %s' % study_id)
@@ -2349,7 +2349,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-            
+
     def checkIfSFFExists(self, md5_checksum):
         """ determine if the SFF is already in the DB
         """
@@ -2378,7 +2378,7 @@ class QiimeDataAccess(object):
             return False
 
     def createAnalysis(self, study_id):
-        """ creates a row in the ANALYSIS table 
+        """ creates a row in the ANALYSIS table
         """
         try:
             con = self.getSFFDatabaseConnection()
@@ -2403,7 +2403,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-            
+
     def loadSFFData(self, start_job, input_set):
         """ loads the flow data into the READ_454 table
         """
@@ -2444,7 +2444,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
     def loadOTUMapAll(self, start_job, input_set):
         """ starts process of importing otus
         """
@@ -2457,8 +2457,8 @@ class QiimeDataAccess(object):
                 return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
-            return False  
-                  
+            return False
+
     def loadSeqToSourceMap(self, start_job, input_set):
         """ loads the sequence to source map...for greengenes seqs
         """
@@ -2471,7 +2471,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
     '''DEPRECATED - Maybe keep
     def getOTUMap(self,sample_name,study_id,otu_threshold,otu_method,\
                   source_name,ref_threshold):
@@ -2484,13 +2484,13 @@ class QiimeDataAccess(object):
                                                   otu_threshold,otu_method,\
                                                   source_name,ref_threshold,\
                                                   user_data])
-            
+
             return user_data
         except Exception, e:
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
     '''
-    
+
     def getOTUTable(self,start_job,sample_name,otu_method,otu_threshold,\
                   source_name,ref_threshold):
         """ Gets a list otus for a samples
@@ -2509,7 +2509,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             return 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def checkIfStudyIdExists(self, study_id):
         """ Check if the study id already exists
         """
@@ -2525,7 +2525,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-            
+
 
     def checkIfColumnControlledVocab(self, column_name):
         """ checks if column is a controlled column
@@ -2577,7 +2577,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     #
     def getFieldReferenceInfo(self,column_name):
         """ Returns a list of metadata fields
@@ -2594,7 +2594,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def loadBetaDivDistances(self, start_job, input_set):
         """ loads beta-diversity distances
         """
@@ -2622,7 +2622,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
     def getBetaDivDistances(self, start_job, sample_name1,sample_name2,metric,\
                              rarefied):
         """ gets the beta-div distance for 2 samples
@@ -2638,7 +2638,7 @@ class QiimeDataAccess(object):
                     return 'not_found'
                 else:
                     return db_output[4]
-                    
+
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
@@ -2653,18 +2653,18 @@ class QiimeDataAccess(object):
                 db_output=con.cursor().callproc('get_bdiv_distances_package.array_get',
                                                 input_set)
                 return db_output
-                
+
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-            
+
     def getFoundOTUArray(self, md5_list):
         """ Gets a list of found OTU ids based on a list of input sequence MD5s
         """
         try:
             con = self.getSFFDatabaseConnection()
             cur = con.cursor()
-            
+
             # Convert input list to proper type:
             input_array = cur.arrayvar(cx_Oracle.FIXED_CHAR, md5_list)
             otu_results = cur.arrayvar(cx_Oracle.STRING , len(md5_list))
@@ -2674,7 +2674,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
     def getQiimeSffSamples(self, study_id,seq_run_id):
         """ Gets a list of SFF samples
         """
@@ -2713,7 +2713,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
     def getQiimeSffDbSummary(self,study_id):
         """ Gets the summary info for an SFF
         """
@@ -2726,7 +2726,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
     def getGGTaxonomy(self, start_job, prokmsa,tax_name):
         """ gets the gg taxonomy for a prokmsa
         """
@@ -2738,15 +2738,15 @@ class QiimeDataAccess(object):
                                         [str(prokmsa),str(tax_name),results])
                 for row in results:
                     return row[0]
-                    
+
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), str(e))
             return False
-    
+
     #####################################
     # Meta-Analysis
     #####################################
-    
+
     def addMetaAnalysisFiles(self, start_job, meta_analysis_id, \
                                     fpath, meta_type,run_date,ftype):
         """  add meta-analysis files
@@ -2754,22 +2754,22 @@ class QiimeDataAccess(object):
         try:
             con = self.getMetadataDatabaseConnection()
             if start_job:
-                con.cursor().callproc('add_meta_analysis_files', 
+                con.cursor().callproc('add_meta_analysis_files',
                                                     [meta_analysis_id,\
                                                     fpath,meta_type,
-                                                    run_date,ftype])  
+                                                    run_date,ftype])
             return True
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     def getMetaAnalysisFilepaths(self, meta_analysis_id):
         """ gets meta-analysis files
         """
         try:
             con = self.getMetadataDatabaseConnection()
             results=con.cursor()
-            con.cursor().callproc('get_meta_analysis_filepaths', 
+            con.cursor().callproc('get_meta_analysis_filepaths',
                                                     [meta_analysis_id,\
                                                     results])
             fpaths=[]
@@ -2782,7 +2782,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-            
+
     def createMetaAnalysis(self,web_app_user_id,inv_name):
         """ creates a meta-analysis
         """
@@ -2791,10 +2791,10 @@ class QiimeDataAccess(object):
             results = con.cursor()
             db_output=[]
             inv_id=0
-            db_output=con.cursor().callproc('create_meta_analysis', 
+            db_output=con.cursor().callproc('create_meta_analysis',
                                                     [web_app_user_id, \
                                                      inv_name,inv_id])
-                                                                
+
             return db_output[2]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
@@ -2846,16 +2846,16 @@ class QiimeDataAccess(object):
             count=0
             results=con.cursor().callproc('get_sample_count', [study_id,\
                                                                 count])
-            
+
             return results[1]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-    
+
     #####################################
     # MG-RAST Stuff
     #####################################
-    
+
     def getSequencesFullDatabase(self):
         """ Returns a list of all sequences in DB
         """
@@ -2868,7 +2868,7 @@ class QiimeDataAccess(object):
                 yield [row[0], row[1], row[2]]
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            
+
     def getSequencesFromSample(self, study_id, sample_id):
         """ Returns a list of seqs for a given sample
         """
@@ -2879,12 +2879,12 @@ class QiimeDataAccess(object):
             seqs = {}
             for row in results:
                 seqs[row[0]] = row[1]
-            return seqs            
+            return seqs
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False    
-    
-    
+            return False
+
+
     def getAllSampleFields(self, sample_id, study_id):
         """ Finds all filled in sample fields for a given sample_id
         """
@@ -2903,12 +2903,12 @@ class QiimeDataAccess(object):
         sample_tables.append('human_associated')
         sample_tables.append('host_sample')
         sample_tables.append('host')
-      
+
         filled_fields = {}
-        
+
         con = self.getMetadataDatabaseConnection()
         cursor = con.cursor()
-        
+
         for table in sample_tables:
             if 'extra_sample_' in table:
                 statement = 'select * from %s%s where sample_id = %s' % (table, study_id, sample_id)
@@ -2916,7 +2916,7 @@ class QiimeDataAccess(object):
                 statement = 'select * from host h inner join host_sample hs on h.host_id = hs.host_id where sample_id = %s' % sample_id
             else:
                 statement = 'select * from %s where sample_id = %s' % (table, sample_id)
-            
+
             try:
                 cursor.execute(statement)
             except Exception, e:
@@ -2924,16 +2924,16 @@ class QiimeDataAccess(object):
                 print 'Error running query:\n'
                 print statement
                 print 'Running next query...\n'
-                
+
                 continue
-                
+
             data = cursor.fetchall()
 
             # Get the column names
             col_names = []
             for i in range(0, len(cursor.description)):
                 col_names.append(cursor.description[i][0])
-        
+
             # Find the rows with data
             for row in data:
                 i = 0
@@ -2941,9 +2941,9 @@ class QiimeDataAccess(object):
                     if field != None and field != '':
                         filled_fields[col_names[i]] = field
                     i += 1
-        
+
         return filled_fields
-    
+
     def insertAmericanGutConsent(self, input_values):
         """ Inserts a record into the american gut consent table
         """
@@ -2959,7 +2959,7 @@ class QiimeDataAccess(object):
             con.cursor().callproc('update_seq_otu_counts', [sequence_prep_id, num_sequences, num_otus, otu_percent_hit])
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
-            return False  
+            return False
 
     def updateBarcodeStatus(self, status, barcode):
         """ Updates a barcode's status
@@ -2967,3 +2967,8 @@ class QiimeDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('update_barcode_status', [status, barcode])
 
+    def updateAKB(self, barcode, moldy, overloaded, other, other_text, date_of_last_email):
+        """ Update ag_kit_barcodes table.
+        """
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('update_akb', [barcode, moldy, overloaded, other, other_text, date_of_last_email])
