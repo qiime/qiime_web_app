@@ -30,7 +30,7 @@ if status == None:
     status = 'Submitted'
 elif status == 'Received':
     bgcolor = '#AFA'
-    header_text += '<br/>This sample has been received!'
+    header_text += '<br/>This sample has been received by the sequencing center!'
 
 sample_origin = site_sampled
 if sample_origin == None:

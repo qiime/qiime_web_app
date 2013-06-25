@@ -31,8 +31,10 @@ drop table ag_import_stats_tmp;
 
 -- Drop the table first
 /*
+
 drop table tmp_kits;
 select * from tmp_kits;
+
 */
 
 /*
@@ -110,9 +112,12 @@ set     barcode = case
 commit;
 
 /*
+
 select * from tmp_kits;
 select * from tmp_kits order by barcode;
+select * from barcode where barcode in (select barcode from tmp_kits);
 select barcode from ag_kit_barcodes order by barcode desc;
+
 */
 
 -------------------------------------------
@@ -143,7 +148,11 @@ declare
     ag_kit_id_ raw(16);
 begin
     DBMS_OUTPUT.ENABLE;
-    for r in (select * from tmp_kits) loop
+    
+    for r in (select email, name, address, city, state, zip, country, kit_id, kit_password, 
+        swabs_per_kit, kit_verification_code, barcode from tmp_kits) 
+    loop
+        
         --dbms_output.put_line(r.email);
         
         merge into ag_login
@@ -153,9 +162,11 @@ begin
             insert (email, name, address, city, state, zip, country) 
             values (r.email, r.name, r.address, r.city, r.state, r.zip, r.country);
 
+        --dbms_output.put_line('email added');
+
         select  ag_login_id into ag_login_id_ 
         from    ag_login
-        where   email = r.email;
+        where   lower(email) = lower(r.email);
         
         --dbms_output.put_line(ag_login_id_);
         
@@ -182,6 +193,8 @@ begin
     end loop;
 end;
 
+rollback;
+
 -------------------------------------------
 -- UPDATE MASTER BARCODE TABLES
 -------------------------------------------
@@ -190,6 +203,12 @@ insert  into barcode
         (barcode)
 select  barcode
 from    tmp_kits;
+
+make sure to insert the right project type!!!
+/*
+select * from project
+insert into project (project_id, project) values ( , '');
+*/
 
 insert  into project_barcode
         (project_id, barcode)

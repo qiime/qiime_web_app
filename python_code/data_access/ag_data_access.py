@@ -299,7 +299,8 @@ class AGDataAccess(object):
         barcodes = []
         con.cursor().callproc('ag_get_environmental_samples', [ag_login_id, results])
         for row in results:
-            data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], 'sample_time':row[3], 'notes':row[4]}
+            data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], 'sample_time':row[3], 
+                'notes':row[4], 'status':row[5]}
             barcodes.append(data)
 
         return barcodes

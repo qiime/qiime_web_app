@@ -22,6 +22,10 @@ begin
                 where   ak.ag_login_id = ag_login_id_
                         and akb.barcode = barcode_
             );
+            
+    update  barcode
+    set     status = ''
+    where   barcode = barcode_;
                 
     commit;
 
