@@ -5,7 +5,7 @@ create table ag_animal_survey
 
     "type" varchar2(100),
     origin varchar2(100),
-    birth_date varchar2(100),
+    age varchar2(100),
     gender varchar2(100),
     setting varchar2(100),
     weight varchar2(100),
