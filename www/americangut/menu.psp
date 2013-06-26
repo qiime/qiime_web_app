@@ -178,7 +178,12 @@ for p in animal_participants:
 <%
 barcodes = ag_data_access.getEnvironmentalSamples(ag_login_id)
 for barcode in barcodes:
-    sample_menu_item = sample_menu_item_template.format(barcode['barcode'])
+    style = ''
+    barcode_text = barcode['barcode']
+    if barcode['status'] == 'Received':
+        barcode_text += ' (received)'
+        style = 'style="color:#0B0;"'
+    sample_menu_item = sample_menu_item_template.format(barcode['barcode'], barcode['status'], style, barcode_text)
     req.write(sample_menu_item)
 
 if len(available_barcodes) > 0:
