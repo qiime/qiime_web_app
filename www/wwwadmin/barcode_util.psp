@@ -1,10 +1,19 @@
 <%
+__author__ = "Zhenjiang Xu"
+__copyright__ = "Copyright 2009-2013, Qiime Web Analysis"
+__credits__ = ["Meg Pirrung", "Zhenjiang Xu"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Zhenjiang Xu"]
+__email__ = "zhenjiang.xu@colorado.edu"
+__status__ = "Production"
 import socket
 from utils.mail import send_email
 
 form_dict = dict(form)
 email_sent = form_dict.get('email_sent', None)
 %>
+
 <div>
 <form name="check_barcode" action="fusebox.psp?page=barcode_util.psp" method="post">
     <input id="barcode" name="barcode" tabindex="1" type="text"/>
@@ -14,32 +23,34 @@ email_sent = form_dict.get('email_sent', None)
     </script>
 </form>
 </div>
+
 <%
 try:
     barcode = form['barcode'] #'000002000'
     try:
-        barcodeinfo = ag_data_access.checkBarcode(barcode)[0]
+        barcodeinfo = ag_data_access.checkBarcode(barcode)
         # Assuming we actually get barcode details back, log the fact that the barcode
         # was scanned.
         data_access.updateBarcodeStatus('Received', barcode)
     except(IndexError):
         barcodeinfo = []
     if len(barcodeinfo) == 0 or (barcodeinfo[6] == 'n' and barcodeinfo[0] == None): #not verified not assigned
-        #startif
+        # indent
 %>
 <div id="not_verified" class="verification_color">
-    <div class="verification_text_wrapper">
-        <br />
-         <h2 class="verification_text">Barcode <br>
+   <div class="verification_text_wrapper">
+      <br />
+        <h2 class="verification_text">Barcode <br>
 <%
         req.write(barcode)
 %>
-    <br>Not Verified</h2>
+        <br>Not Verified</h2>
     </div>
 </div>
+
 <%
     elif barcodeinfo[6] == 'y' and barcodeinfo[0] != None: #verified and assigned
-        #startif
+        # indent
 %>
 <div id="verified" class="verification_color">
     <div class="verification_text_wrapper">
@@ -51,8 +62,11 @@ try:
         <br>Verified and Assigned</h2>
     </div>
 </div>
+<div>
+   
+</div>
 <%
-    elif barcodeinfo[6] == 'y' and barcodeinfo[0] == None: #verified not assigned
+    elif barcodeinfo[6] == 'y' and barcodeinfo[0] == None: #verified but not assigned
         #startif
         subject = "American Gut"
         message = '''hehe
