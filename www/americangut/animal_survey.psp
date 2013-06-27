@@ -49,7 +49,7 @@ else:
     #INDENT
 %>
 <div id="content" class="content">
-    <h2>Non-human host associated survey</h2>
+    <h2>Animal Participant Survey</h2>
     <h4></h4>
     <div class="lefta">
         <table width="100%">
@@ -97,21 +97,8 @@ else:
                             </td>
                         </tr>
                         <tr>
-                            <td>Birth date</td>
-                            <td><input tabindex="3" type="text" name="birth_date" id="birth_date" class="small_text"/> mm/dd/yyyy
-                            <script>
-                              $(function() {
-                                $( "#birth_date" ).datepicker({
-                                        yearRange: "-120:+0",
-                                        changeMonth: true,
-                                        changeYear: true,
-                                        onSelect: function(dateText, inst) {
-                                            $(this).focus();
-                                        }
-                                });
-                              });
-                            </script>
-                            </td>
+                            <td>Age</td>
+                            <td><input tabindex="3" type="text" name="age" id="age" onkeypress='validateNumber(event)' class=""/></td>
                         </tr>
                         <tr>
                             <td>Gender</td>
@@ -296,11 +283,11 @@ else:
               $( "#toilet" ).buttonset();
               $( "#coprophage" ).buttonset();
               
-              $('input[type="text"], textarea').focus(function () {
+              $('input[type="text"]').focus(function () {
                   defaultText = $(this).val();
                   $(this).val('');
               });
-              $('input[type="text"], textarea').blur(function () {
+              $('input[type="text"]').blur(function () {
                   if ($(this).val() == "") {
                       $(this).val(defaultText);
                   }
