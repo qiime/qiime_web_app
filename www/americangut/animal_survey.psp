@@ -236,9 +236,9 @@ else:
                             <td>Toilet water access</td>
                             <td>
                                 <div id="toilet">
-                                    <input tabindex="" type="radio" id="toilet_regular" name="toilet" value="regular" /><label for="toilet_regular">Regular</label>
-                                    <input tabindex="" type="radio" id="toilet_sometimes" name="toilet" value="sometimes"/><label for="toilet_sometimes">Sometimes</label>
-                                    <input tabindex="" type="radio" id="toilet_never" name="toilet" value="never"/><label for="toilet_never">Never</label>
+                                    <input tabindex="22" type="radio" id="toilet_regular" name="toilet" value="regular" /><label for="toilet_regular">Regular</label>
+                                    <input tabindex="23" type="radio" id="toilet_sometimes" name="toilet" value="sometimes"/><label for="toilet_sometimes">Sometimes</label>
+                                    <input tabindex="24" type="radio" id="toilet_never" name="toilet" value="never"/><label for="toilet_never">Never</label>
                                 </div>
                             </td>
                         </tr>
@@ -246,10 +246,10 @@ else:
                             <td>Coprophage <a href="#" class="help" title="Frequency that this animal eats feces.">(?)</a></td>
                             <td>
                                 <div id="coprophage">
-                                    <input tabindex="" type="radio" id="coprophage_high" name="coprophage" value="high" /><label for="coprophage_high">High</label>
-                                    <input tabindex="" type="radio" id="coprophage_moderate" name="coprophage" value="moderate"/><label for="coprophage_moderate">Moderate</label>
-                                    <input tabindex="" type="radio" id="coprophage_low" name="coprophage" value="low"/><label for="coprophage_low">Low</label>
-                                    <input tabindex="" type="radio" id="coprophage_never" name="coprophage" value="never"/><label for="coprophage_never">Never</label>
+                                    <input tabindex="25" type="radio" id="coprophage_high" name="coprophage" value="high" /><label for="coprophage_high">High</label>
+                                    <input tabindex="26" type="radio" id="coprophage_moderate" name="coprophage" value="moderate"/><label for="coprophage_moderate">Moderate</label>
+                                    <input tabindex="27" type="radio" id="coprophage_low" name="coprophage" value="low"/><label for="coprophage_low">Low</label>
+                                    <input tabindex="28" type="radio" id="coprophage_never" name="coprophage" value="never"/><label for="coprophage_never">Never</label>
                                 </div>
                             </td>
                         </tr>
@@ -261,7 +261,7 @@ else:
                                     Please write anything else about this animal that you think might affect its microorganisms.
                                     </p>
                                 </div>
-                                <textarea tabindex="1" id="comments" name="comments" rows="5" cols="70"></textarea>
+                                <textarea tabindex="29" id="comments" name="comments" rows="5" cols="70"></textarea>
                             </td>
                             <td width="20%"></td>
                         </tr>
@@ -272,8 +272,8 @@ else:
         </table>
     </div>
     <br />
-    <input type="button" value="Reset" onclick="reset('pet_survey')">
-    <input tabindex="22" type="button" id="petsubmit" name="petsubmit" value="Continue" onclick="validatePetSurvey1()">
+    <input type="button" value="Reset" tabindex="30" onclick="reset('pet_survey')">
+    <input tabindex="22" type="button" tabindex="31" id="petsubmit" name="petsubmit" value="Continue" onclick="validatePetSurvey1()">
     </form>
     <br />
         <script>
