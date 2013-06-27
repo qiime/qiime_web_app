@@ -95,9 +95,9 @@ Thank you,
         login_email = form_dict['login_email']
         if not participant_email==None:
             # if an email address is associated with the participant
-            send_email(subject, body_message_1, participant_email)
+            send_email(body_message_1, subject, participant_email)
         if not login_email==None:
-            send_email(subject, body_message_2, login_email)
+            send_email(body_message_2, subject, login_email)
 
     sample_issue = form_dict.get('sample_issue', [])
     moldy = overloaded = other = 'N'
