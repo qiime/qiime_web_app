@@ -403,8 +403,10 @@ class AGDataAccess(object):
         results = con.cursor()
         con.cursor().callproc('ag_check_barcode_status', [barcode, results])
         barcode_details = results.fetchall()
-
-        return barcode_details[0]
+        if barcode_details:
+            return barcode_details[0]
+        else: # if the barcode does not exist in database
+            return ()
 
     def updateAGSurvey(self, ag_login_id, participant_name, field, value):
         con = self.getMetadataDatabaseConnection()

@@ -7,12 +7,16 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Zhenjiang Xu"]
 __email__ = "zhenjiang.xu@colorado.edu"
 __status__ = "Production"
-import socket
+import socket, sys
 from utils.mail import send_email
 from datetime import date
 
 form_dict = dict(form)
 prev_barcode = form_dict.get('prev_barcode', None)
+# req.write(str(prev_barcode))
+# req.write(str(form_dict['sample_issue'][0]))
+# req.write(form_dict['other_text'])
+# req.write(form_dict['email_address'])
 if prev_barcode:
     # Assuming we actually get barcode details back, log the fact that the barcode
     # was scanned.
@@ -21,6 +25,8 @@ if prev_barcode:
                                     scan_date, prev_barcode)
     email_type = form_dict.get('email_type', None)
     sent_date = form_dict['sent_date']
+    participant = form_dict['participant']
+    sample_time = form_dict['sample_time']
     if email_type == '1':
         subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
         body_message='''
@@ -39,7 +45,7 @@ Please let us know if you have any problems.
 Thank you,
 
 --American Gut Team--
-'''.format(participant=part_name, barcode=prev_barcode, sample_time)
+'''.format(participant=participant, barcode=prev_barcode, sample_time=sample_time)
 
     elif email_type == '2':
         subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
@@ -51,7 +57,7 @@ We have recently received your sample with barcode {barcode} and we have begun p
 Thank you for your participation!
 
 --American Gut Team--
-'''.format(participant=part_name, barcode=prev_barcode)
+'''.format(participant=participant, barcode=prev_barcode)
 
     elif email_type == '3':
         body_message = '''
@@ -70,14 +76,17 @@ Please let us know if you have any problems.
 Thank you,
 
 --American Gut Team—
-'''.format(participant=part_name, barcode=prev_barcode, sample_time)
+'''.format(participant=participant, barcode=prev_barcode, sample_time=sample_time)
 
     if email_type:
-        send_email()
+        send_email(subject, body_message, form_dict['email_address'])
         sent_date = scan_date
-
-    data_access.updateAKB(prev_barcode, form_dict['moldy'],
-                          form_dict['overloaded'], form_dict['other'],
+    sample_issue = form_dict.get('sample_issue', None)
+    moldy = overloaded = other = 'N'
+    if 'moldy' in sample_issue: moldy = 'Y'
+    if 'overloaded' in sample_issue: overloaded = 'Y'
+    if 'other' in sample_issue: other = 'Y'
+    data_access.updateAKB(prev_barcode, moldy, overloaded, other,
                           form_dict['other_text'], sent_date)
 
 
@@ -85,11 +94,22 @@ def show_update_barcode(barcode):
     """This draws a form that will display barcode info, send reminding email to participant,
     and log necessary details for the barcode"""
     barcodeinfo = ag_data_access.checkBarcode(barcode)
-    div_id = message = email_type = ""
     req.write(str(barcodeinfo))
     req.write(str(len(barcodeinfo)))
-    if len(barcodeinfo) == 0 or \
-       (barcodeinfo[6] == 'n' and barcodeinfo[0] == None):
+    if not len(barcodeinfo):
+        req.write('''
+    <div id="invalid_barcode" class="verification_color">
+       <div class="verification_text_wrapper">
+          <br />
+            <h2 class="verification_text">Barcode <br>
+            %s
+            <br> does not exist in the database!</h2>
+        </div>
+    </div>
+        ''' % barcode)
+        return 1
+    div_id = message = email_type = ""
+    if barcodeinfo[6] == 'n' and barcodeinfo[0] == None:
         #not verified not assigned
         div_id = "not_verified"
         message = "NOT verified"
@@ -118,12 +138,14 @@ def show_update_barcode(barcode):
     <form action="fusebox.psp?page=barcode_util.psp" method="post"
      onsubmit="return confirm('Are you sure to submit and update database?')"
      onreset="return confirm('Are you sure to reset?')">
-      <input type="hidden" name="prev_barcode" value="<%=barcode%>" />
+      <input type="hidden" name="prev_barcode" value="{barcode}" />
       <input type="hidden" name="sent_date" value="{sent}" />
-      <input type="hidden" name="part_name" value="<%=barcodeinfo[3]%>" />
+      <input type="hidden" name="participant" value="{participant}" />
+      <input type="hidden" name="sample_time" value="{sample_time}" />
+      <input type="hidden" name="email_address" value="{email_address}" />
       <ul>
          <li>
-           <p> Sample issues (inside parentheses are current status - None means NA): <br />
+           <p> Sample issues (inside parentheses are current status): <br />
               <input type="checkbox" name="sample_issue" value="moldy" /> moldy ({moldy}) <br />
               <input type="checkbox" name="sample_issue" value="overloaded" /> overloaded ({overloaded}) <br />
               <input type="checkbox" name="sample_issue" value="other" /> other ({other}) <br />
@@ -158,11 +180,14 @@ def show_update_barcode(barcode):
     '''.format(div_id=div_id,
                barcode=barcode,
                message=message,
-               moldy=barcodeinfo[8],
-               overloaded=barcodeinfo[9],
-               other=barcodeinfo[10],
+               moldy='NA' if barcodeinfo[8]==None else barcodeinfo[8],
+               overloaded='NA' if barcodeinfo[9]==None else barcodeinfo[9],
+               other='NA' if barcodeinfo[10]==None else barcodeinfo[10],
                other_text=barcodeinfo[11],
                sent=barcodeinfo[12],
+               participant=barcodeinfo[3],
+               sample_time=barcodeinfo[1],
+               email_address=barcodeinfo[7],
                email_type=email_type))
 # deindent
 %>
@@ -180,7 +205,6 @@ def show_update_barcode(barcode):
 <%
 try:
     barcode = form['barcode'] #'000002000'
-
     show_update_barcode(barcode)
 
 except(KeyError):

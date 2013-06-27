@@ -288,6 +288,9 @@ div.verification_text_wrapper {
 h2.verification_text{
     width: 100%;
 }
+#invalid_barcode {
+    background-color: #f00;
+}
 
 #verified_assigned {
     background-color: #0f0;
