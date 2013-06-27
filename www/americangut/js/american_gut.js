@@ -538,19 +538,14 @@ function validatePetSurvey2() {
 		valid = false;
 	}
 
-    if(document.pet_survey.birth_date.value != "" && !isValidDate(document.pet_survey.birth_date.value))
-	{
-		document.pet_survey.birth_date.className += " highlight"
-		valid = false;
-	}
-	
 	if(valid)
 		$('#pet_survey').submit();
 	else
     {
 		window.scrollTo(0, 0);
-        document.pet_survey.petsubmit.disabled = false;
     }
+
+    document.pet_survey.petsubmit.disabled = false;
 }
 
 function verifyOptionalQuestions() {
