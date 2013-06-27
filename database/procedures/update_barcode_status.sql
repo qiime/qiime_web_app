@@ -9,8 +9,8 @@ as
 begin
 
     update  barcode
-    set     status = status_
-            sample_postmark_date = postmark_
+    set     status = status_,
+            sample_postmark_date = postmark_,
             scan_date = scan_date_
     where   barcode = barcode_;
 

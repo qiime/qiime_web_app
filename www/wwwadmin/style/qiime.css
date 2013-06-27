@@ -303,7 +303,6 @@ h2.verification_text{
 
 div#barcode_form form ul li{
     list-style-type: square;
-    text-indent: -5px;
     font-weigth: bold;
 }
 

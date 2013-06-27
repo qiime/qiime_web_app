@@ -12,7 +12,9 @@ from utils.mail import send_email
 
 form_dict = dict(form)
 email_sent = form_dict.get('email_sent', None)
-
+# Assuming we actually get barcode details back, log the fact that the barcode
+# was scanned.
+data_access.updateBarcodeStatus('Received', barcode)
 def show_update_barcode(barcode, barcodeinfo):
     """This draws a form that will display barcode info, send reminding email to participant,
     and log necessary details for the barcode"""
@@ -110,9 +112,6 @@ try:
     barcode = form['barcode'] #'000002000'
     try:
         barcodeinfo = ag_data_access.checkBarcode(barcode)
-        # Assuming we actually get barcode details back, log the fact that the barcode
-        # was scanned.
-        #data_access.updateBarcodeStatus('Received', barcode)
     except(IndexError):
         barcodeinfo = []
     show_update_barcode(barcode, barcodeinfo)
