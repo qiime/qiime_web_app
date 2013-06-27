@@ -13,10 +13,6 @@ __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
 import cx_Oracle
-from crypt import crypt
-from threading import Lock
-from time import sleep
-import csv
 import httplib
 import json
 import urllib
@@ -76,7 +72,6 @@ class AGDataAccess(object):
         web_app_user table. If successful, a dict with user innformation is
         returned. If not, the function returns False.
         """
-        #crypt_pass = crypt(password, username)
         con = self.getMetadataDatabaseConnection()
         user_data = con.cursor()
         con.cursor().callproc('ag_authenticate_user', [username, password, user_data])
@@ -101,34 +96,24 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_logins', [results])
-        logins = []
-        for row in results:
-            # ag_login_id, email, name
-            logins.append((row[0], row[1], row[2]))
 
-        return logins
+        # ag_login_id, email, name
+        return [(row[0], row[1], row[2]) for row in results]
 
     def getAGKitsByLogin(self):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_kits_by_login', [results])
-        kits = []
-        for row in results:
-            # ag_login_id, email, name
-            kits.append((row[0], row[1], row[2]))
 
-        return kits
+        # ag_login_id, email, name
+        return [(row[0], row[1], row[2]) for row in results]
 
     def getAGBarcodes(self):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcodes', [results])
-        barcodes = []
-        for row in results:
-            # ag_login_id, email, name
-            barcodes.append((row[0]))
 
-        return barcodes
+        return [row[0] for row in results]
 
     def getAGBarcodesByLogin(self, ag_login_id):
         # returned tuple consists of:
@@ -288,32 +273,23 @@ class AGDataAccess(object):
     def getHumanParticipants(self, ag_login_id):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        participants = []
         con.cursor().callproc('ag_get_human_participants', [ag_login_id, results])
-        for row in results:
-            participants.append(row[0])
 
-        return participants
+        return [row[0] for row in results]
 
     def getAnimalParticipants(self, ag_login_id):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        participants = []
         con.cursor().callproc('ag_get_animal_participants', [ag_login_id, results])
-        for row in results:
-            participants.append(row[0])
 
-        return participants
+        return [row[0] for row in results]
 
     def getParticipantExceptions(self, ag_login_id):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_participant_exceptions', [ag_login_id, results])
-        exceptions = []
-        for row in results:
-            exceptions.append(row[0])
 
-        return exceptions
+        return [row[0] for row in results]
 
     def getParticipantSamples(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
@@ -341,12 +317,9 @@ class AGDataAccess(object):
     def getAvailableBarcodes(self, ag_login_id):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        available_barcodes = []
         con.cursor().callproc('ag_available_barcodes', [ag_login_id, results])
-        for row in results:
-            available_barcodes.append(row[0])
 
-        return available_barcodes
+        return [row[0] for row in results]
 
     def verifyKit(self, supplied_kit_id):
         """Set the KIT_VERIFIED for the supplied_kit_id to 'y'"""
@@ -383,13 +356,10 @@ class AGDataAccess(object):
             self.updateGeoInfo(ag_login_id, lat, lon, '')
 
         results = con.cursor()
-        markers = []
         con.cursor().callproc('ag_get_map_markers', [results])
-        for row in results:
-            # zipcode, latitude, longitude, marker_color
-            markers.append((row[0], row[1], row[2], row[3]))
 
-        return markers
+        # zipcode, latitude, longitude, marker_color
+        return [(row[0], row[1], row[2], row[3]) for row in results]
 
     def getGeocodeJSON(self, url):
         conn = httplib.HTTPConnection('maps.googleapis.com')
