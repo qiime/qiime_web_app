@@ -1,13 +1,13 @@
 <%
 __author__ = "Zhenjiang Xu"
 __copyright__ = "Copyright 2009-2013, Qiime Web Analysis"
-__credits__ = ["Meg Pirrung", "Zhenjiang Xu"]
+__credits__ = ["Zhenjiang Xu"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Zhenjiang Xu"]
 __email__ = "zhenjiang.xu@colorado.edu"
 __status__ = "Production"
-import socket, sys
+import socket
 from utils.mail import send_email
 from datetime import date
 
@@ -25,12 +25,15 @@ if prev_barcode:
                                     scan_date, prev_barcode)
     email_type = form_dict.get('email_type', None)
     sent_date = form_dict['sent_date']
-    participant = form_dict['participant']
+    participant = form_dict.get['participant'] # participant name
+    if participant==None: participant = "User"
+    login_user = form_dict['login_user'] # user name
+    if login_user==None: login_user  = "User"
     sample_time = form_dict['sample_time']
     if email_type == '1':
         subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
         body_message='''
-Hi {participant},
+Dear {name},
 
 We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Add Sample" from the navigation bar on the left side of the welcome page. Please note that there should be two buttons that say “Add Sample.” The one that corresponds to your sample will appear directly underneath the participant name under the “Participant” header. If you do not see the participant name to which the sample corresponds you must first click “Add Participant.”
 
@@ -45,23 +48,25 @@ Please let us know if you have any problems.
 Thank you,
 
 --American Gut Team--
-'''.format(participant=participant, barcode=prev_barcode, sample_time=sample_time)
-
+'''
+        body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+        body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
     elif email_type == '2':
         subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
         body_message = '''
-Hi {participant},
+Hi {name},
 
-We have recently received your sample with barcode {barcode} and we have begun processing it.  Please see our FAQ section for when you can expect results. (http://www.microbio.me/americangut/FAQ.psp#faq4)
+We have recently received your sample with barcode {barcode} {sample_time} and we have begun processing it.  Please see our FAQ section for when you can expect results. (http://www.microbio.me/americangut/FAQ.psp#faq4)
 
 Thank you for your participation!
 
 --American Gut Team--
-'''.format(participant=participant, barcode=prev_barcode)
-
+'''
+        body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+        body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
     elif email_type == '3':
         body_message = '''
-Hi {participant},
+Hi {name},
 
 We have recently received your sample but we do not have consent, questionnaire results or sample details (type, date of collection, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
 
@@ -76,11 +81,19 @@ Please let us know if you have any problems.
 Thank you,
 
 --American Gut Team—
-'''.format(participant=participant, barcode=prev_barcode, sample_time=sample_time)
-
-    if email_type:
-        send_email(subject, body_message, form_dict['email_address'])
+'''
+        body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+        body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
+    if email_type in ('1','2','3'):
         sent_date = scan_date
+        participant_email = form_dict['participant_email']
+        login_email = form_dict['login_email']
+        if not participant_email==None:
+            # if an email address is associated with the participant
+            send_email(subject, body_message_1, participant_email)
+        if not login_email==None:
+            send_email(subject, body_message_2, login_email)
+
     sample_issue = form_dict.get('sample_issue', None)
     moldy = overloaded = other = 'N'
     if 'moldy' in sample_issue: moldy = 'Y'
@@ -141,8 +154,10 @@ def show_update_barcode(barcode):
       <input type="hidden" name="prev_barcode" value="{barcode}" />
       <input type="hidden" name="sent_date" value="{sent}" />
       <input type="hidden" name="participant" value="{participant}" />
+      <input type="hidden" name="login_user"  value="{login_user}" />
       <input type="hidden" name="sample_time" value="{sample_time}" />
-      <input type="hidden" name="email_address" value="{email_address}" />
+      <input type="hidden" name="participant_email" value="{participant_email}" />
+      <input type="hidden" name="login_email" value="{login_email}" />
       <ul>
          <li>
            <p> Sample issues (inside parentheses are current status): <br />
@@ -187,8 +202,10 @@ def show_update_barcode(barcode):
                postmark_date='Example: 2012-12-25' if barcodeinfo[15]==None else barcodeinfo[15],
                sent=barcodeinfo[12],
                participant=barcodeinfo[3],
+               login_user=barcodeinfo[17],
                sample_time=barcodeinfo[1],
-               email_address=barcodeinfo[7],
+               participant_email=barcodeinfo[7],
+               login_email=barcodeinfo[16],
                email_type=email_type))
 # deindent
 %>
