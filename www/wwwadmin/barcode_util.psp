@@ -9,18 +9,85 @@ __email__ = "zhenjiang.xu@colorado.edu"
 __status__ = "Production"
 import socket
 from utils.mail import send_email
+from datetime import date
 
 form_dict = dict(form)
-email_sent = form_dict.get('email_sent', None)
-# Assuming we actually get barcode details back, log the fact that the barcode
-# was scanned.
-data_access.updateBarcodeStatus('Received', barcode)
-def show_update_barcode(barcode, barcodeinfo):
+prev_barcode = form_dict.get('prev_barcode', None)
+if prev_barcode:
+    # Assuming we actually get barcode details back, log the fact that the barcode
+    # was scanned.
+    scan_date = date.today().isoformat()
+    data_access.updateBarcodeStatus('Received', form_dict['postmark_date'],
+                                    scan_date, prev_barcode)
+    email_type = form_dict.get('email_type', None)
+    sent_date = form_dict['sent_date']
+    if email_type == '1':
+        subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
+        body_message='''
+Hi {participant},
+
+We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Add Sample" from the navigation bar on the left side of the welcome page. Please note that there should be two buttons that say “Add Sample.” The one that corresponds to your sample will appear directly underneath the participant name under the “Participant” header. If you do not see the participant name to which the sample corresponds you must first click “Add Participant.”
+
+In order to help you in adding these details, the side of the sample tube {barcode} reads "{sample_time}"
+
+If you have further questions about how to do this please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
+
+I realize this is redundant as we ask participants to also put these details on their sample tube. We've found that, in practice, this redundancy is vital for teasing out the inevitable human errors that arise in large projects.
+
+Please let us know if you have any problems.
+
+Thank you,
+
+--American Gut Team--
+'''.format(participant=part_name, barcode=prev_barcode, sample_time)
+
+    elif email_type == '2':
+        subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
+        body_message = '''
+Hi {participant},
+
+We have recently received your sample with barcode {barcode} and we have begun processing it.  Please see our FAQ section for when you can expect results. (http://www.microbio.me/americangut/FAQ.psp#faq4)
+
+Thank you for your participation!
+
+--American Gut Team--
+'''.format(participant=part_name, barcode=prev_barcode)
+
+    elif email_type == '3':
+        body_message = '''
+Hi {participant},
+
+We have recently received your sample but we do not have consent, questionnaire results or sample details (type, date of collection, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
+
+You can do this by clicking "Add Participant" from the navigation bar on the left side of the welcome page. This will take you to the consent form and the questionnaire. After you complete the survey you will see your name appear in the sidebar underneath the header that reads, “Participants.” You can add the sample details by clicking the button that says “Add Sample.” Note that there should be two buttons that say “Add sample.” The one that corresponds to your sample will appear directly underneath the participant name. If you do not see the participant name to which the sample corresponds you must first click “Add Participant.”
+
+In order to help you in adding these details, the side of the sample tube {barcode} reads "{sample_time}".
+
+If you have further questions about how to do this, please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
+
+Please let us know if you have any problems.
+
+Thank you,
+
+--American Gut Team—
+'''.format(participant=part_name, barcode=prev_barcode, sample_time)
+
+    if email_type:
+        send_email()
+        sent_date = scan_date
+
+    data_access.updateAKB(prev_barcode, form_dict['moldy'],
+                          form_dict['overloaded'], form_dict['other'],
+                          form_dict['other_text'], sent_date)
+
+
+def show_update_barcode(barcode):
     """This draws a form that will display barcode info, send reminding email to participant,
     and log necessary details for the barcode"""
+    barcodeinfo = ag_data_access.checkBarcode(barcode)
     div_id = message = email_type = ""
-    # req.write(str(barcodeinfo))
-    # req.write(str(len(barcodeinfo)))
+    req.write(str(barcodeinfo))
+    req.write(str(len(barcodeinfo)))
     if len(barcodeinfo) == 0 or \
        (barcodeinfo[6] == 'n' and barcodeinfo[0] == None):
         #not verified not assigned
@@ -51,6 +118,9 @@ def show_update_barcode(barcode, barcodeinfo):
     <form action="fusebox.psp?page=barcode_util.psp" method="post"
      onsubmit="return confirm('Are you sure to submit and update database?')"
      onreset="return confirm('Are you sure to reset?')">
+      <input type="hidden" name="prev_barcode" value="<%=barcode%>" />
+      <input type="hidden" name="sent_date" value="{sent}" />
+      <input type="hidden" name="part_name" value="<%=barcodeinfo[3]%>" />
       <ul>
          <li>
            <p> Sample issues (inside parentheses are current status - None means NA): <br />
@@ -75,7 +145,7 @@ def show_update_barcode(barcode, barcodeinfo):
          <li>
            <p> Send a reminder: <br />
               <input type="checkbox" name="send_email" value="send_email" /> send participant an email (previously sent: {sent}) <br />
-              <input type="hidden" name="email_type" value="{email_type}">
+              <input type="hidden" name="email_type" value="{email_type}" />
            </p>
          </li>
       </ul>
@@ -110,11 +180,8 @@ def show_update_barcode(barcode, barcodeinfo):
 <%
 try:
     barcode = form['barcode'] #'000002000'
-    try:
-        barcodeinfo = ag_data_access.checkBarcode(barcode)
-    except(IndexError):
-        barcodeinfo = []
-    show_update_barcode(barcode, barcodeinfo)
+
+    show_update_barcode(barcode)
 
 except(KeyError):
     #will get here on first load of this page since there should be no barcode key in the form dict
