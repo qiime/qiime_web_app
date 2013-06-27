@@ -43,7 +43,7 @@ if 'animal_name' in form:
 
     # redirect back to portal with a success message
     req.write(format_submit_form_to_fusebox_string(page='portal.psp',
-        message='Successfully added the animal %s to your participants.' % \
+        message='Successfully added %s to animal participants.' % \
         form['animal_name']))
 else:
     #INDENT
@@ -65,7 +65,7 @@ else:
                         <tr><td><h4>General</h4></td><td></td></tr>
                         <tr>
                             <td>Name</td>
-                            <td><input tabindex="1" type="text" id="animal_name" name="animal_name" value="Name" class=""/></td>
+                            <td><input tabindex="1" type="text" id="animal_name" name="animal_name" value="Name" onkeypress='validateText(event)' class=""/></td>
                         </tr>
                         <tr>
                             <td>Animal type</td>
