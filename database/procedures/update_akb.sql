@@ -1,4 +1,4 @@
-create or replace procedure update_barcode_status
+create or replace procedure update_akb
 (
     barcode_ varchar2,
     moldy_ char,
@@ -17,5 +17,5 @@ begin
             other_text = other_text_,
             date_of_last_email = date_
     where   barcode = barcode_;
-
+    commit;
 end;

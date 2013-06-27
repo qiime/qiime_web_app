@@ -429,3 +429,9 @@ class AGDataAccess(object):
         ag_stats = results.fetchall()
 
         return ag_stats
+
+    def updateAKB(self, barcode, moldy, overloaded, other, other_text, date_of_last_email):
+        """ Update ag_kit_barcodes table.
+        """
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('update_akb', [barcode, moldy, overloaded, other, other_text, date_of_last_email])

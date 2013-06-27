@@ -13,5 +13,5 @@ begin
             sample_postmark_date = postmark_,
             scan_date = scan_date_
     where   barcode = barcode_;
-
+    commit;
 end;

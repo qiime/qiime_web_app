@@ -2966,9 +2966,3 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('update_barcode_status', [status, postmark, scan_date, barcode])
-
-    def updateAKB(self, barcode, moldy, overloaded, other, other_text, date_of_last_email):
-        """ Update ag_kit_barcodes table.
-        """
-        con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('update_akb', [barcode, moldy, overloaded, other, other_text, date_of_last_email])
