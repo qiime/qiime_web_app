@@ -27,8 +27,8 @@ def show_update_barcode(barcode, barcodeinfo):
         email_type = "1"
     elif barcodeinfo[6] == 'y' and barcodeinfo[0] != None:
         #verified and assigned
-        div_id = "verified"
-        message = "The sample is verified and assigned"
+        div_id = "verified_assigned"
+        message = "verified and assigned"
         email_type = "2"
     elif barcodeinfo[6] == 'y' and barcodeinfo[0] == None:
         #verified but not assigned
@@ -51,7 +51,7 @@ def show_update_barcode(barcode, barcodeinfo):
      onreset="return confirm('Are you sure to reset?')">
       <ul>
          <li>
-           <p> Sample issues (inside parentheses are current status): <br />
+           <p> Sample issues (inside parentheses are current status - None means NA): <br />
               <input type="checkbox" name="sample_issue" value="moldy" /> moldy ({moldy}) <br />
               <input type="checkbox" name="sample_issue" value="overloaded" /> overloaded ({overloaded}) <br />
               <input type="checkbox" name="sample_issue" value="other" /> other ({other}) <br />
