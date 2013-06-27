@@ -1,4 +1,5 @@
 <%
+from socket import gethostname
 from utils.psp_utils import format_submit_form_to_fusebox_string
 from utils.mail import send_email
 
@@ -54,8 +55,13 @@ if form.get('is_7_to_13', 'off') == 'on':
         """ % (form['participant_name'], form['parent_1_name'],
                form['parent_2_name'], form.get('deceased_parent', 'off'))
 
+        hostname = gethostname()
+
         try:
-            send_email(MESSAGE, SUBJECT)
+            if 'microbio.me' in hostname:
+                send_email(MESSAGE, SUBJECT)
+            else:
+                alert_message="Mail can be sent only from microbio.me domain."
         except:
             alert_message=("There was a problem with your submission, "
                 'Please contact us directly at '
