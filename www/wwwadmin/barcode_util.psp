@@ -1,3 +1,4 @@
+<script src="../americangut/js/jquery.ui.timepicker.js"></script>
 <%
 __author__ = "Zhenjiang Xu"
 __copyright__ = "Copyright 2009-2013, Qiime Web Analysis"
@@ -169,12 +170,37 @@ def show_update_barcode(barcode):
       <input type="hidden" name="participant_email" value="{participant_email}" />
       <input type="hidden" name="login_email" value="{login_email}" />
       <input type="hidden" name="email_type" value="{email_type}" />
-      <ul>
-         <li>
-           <p> Sample issues: <br />
+      <table>
+         <tr>
+           <td> Sample issues: </td>
+           <td>
               <input type="checkbox" name="sample_issue" value="moldy" /> moldy (current: {moldy}) <br />
               <input type="checkbox" name="sample_issue" value="overloaded" /> overloaded (current: {overloaded}) <br />
               <input type="checkbox" name="sample_issue" value="other" /> other (current: {other}) <br />
+           </td>
+         </tr>
+         <li>
+           <p> Sample postmark date: <br />
+              <input type="text" tabindex="3" name="postmark_date" id="postmark_date" value="{postmark_date}"
+               class="small_text" onclick="this.select()" />
+              (current: {postmark_date}) <br />
+              (please follow the format mm/dd/yyyy such as 12/25/2012)
+              <script>
+                  $(function() {
+                    $( "#postmark_date" ).datepicker({
+                            changeMonth: true,
+                            minDate:'-12m',
+                            maxDate: '+0m',
+                            onSelect: function(dateText, inst) {
+                                $(this).focus();
+                            }
+                    });
+                  });
+               </script>
+         </li>
+         <li>
+           <p> Send a reminder: <br />
+              <input type="checkbox" name="send_email" value="send_email" /> send participant or user an email (previously sent: {sent}) <br />
            </p>
          </li>
          <li>
@@ -182,18 +208,6 @@ def show_update_barcode(barcode):
               <input type="text" name="other_text" value="{other_text}"
                onclick="this.select()" />
               (current: {other_text})
-           </p>
-         </li>
-         <li>
-           <p> Sample postmark date: <br />
-              <input type="text" name="postmark_date" value="{postmark_date}"
-               onclick="this.select()" />
-              (current: {postmark_date}) <br />
-              (please follow the format 2012-12-25)
-         </li>
-         <li>
-           <p> Send a reminder: <br />
-              <input type="checkbox" name="send_email" value="send_email" /> send participant or user an email (previously sent: {sent}) <br />
            </p>
          </li>
       </ul>
