@@ -179,42 +179,31 @@ def show_update_barcode(barcode):
               <input type="checkbox" name="sample_issue" value="other" /> other (current: {other}) <br />
            </td>
          </tr>
-         <li>
-           <p> Sample postmark date: <br />
-              <input type="text" tabindex="3" name="postmark_date" id="postmark_date" value="{postmark_date}"
-               class="small_text" onclick="this.select()" />
-              (current: {postmark_date}) <br />
-              (please follow the format mm/dd/yyyy such as 12/25/2012)
-              <script>
-                  $(function() {
-                    $( "#postmark_date" ).datepicker({
-                            changeMonth: true,
-                            minDate:'-12m',
-                            maxDate: '+0m',
-                            onSelect: function(dateText, inst) {
-                                $(this).focus();
-                            }
-                    });
-                  });
-               </script>
-         </li>
-         <li>
-           <p> Send a reminder: <br />
-              <input type="checkbox" name="send_email" value="send_email" /> send participant or user an email (previously sent: {sent}) <br />
-           </p>
-         </li>
-         <li>
-           <p> Other notes: <br />
-              <input type="text" name="other_text" value="{other_text}"
+         <tr>
+           <td> Sample postmark date: </td>
+           <td> <input type="text" tabindex="3" name="postmark_date" id="postmark_date" value="{postmark_date}"
+                 class="small_text" onclick="this.select()" />
+                (current: {postmark_date}) <br />
+                (please follow the format mm/dd/yyyy such as 12/25/2012)
+           </td>
+         </tr>
+         <tr>
+           <td> Send a reminder: </td>
+           <td> <input type="checkbox" name="send_email" value="send_email" /> send participant or user an email (previously sent: {sent}) </td>
+           </td>
+         </tr>
+         <tr>
+           <td> Other notes: </td>
+           <td> <input type="text" name="other_text" value="{other_text}"
                onclick="this.select()" />
               (current: {other_text})
-           </p>
-         </li>
-      </ul>
-       <p>
-          <input type="submit" value="Submit">
-          <input type="reset" value="Reset!">
-       </p>
+           </td>
+         </tr>
+       <tr>
+          <td> <input type="submit" value="Submit"> </td>
+          <td> <input type="reset" value="Reset!"> </td>
+       </tr>
+     </table>
     </form>
     </div>
     '''.format(div_id=div_id,
