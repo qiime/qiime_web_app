@@ -94,13 +94,15 @@ Thank you,
                 # if an email address is associated with the participant
                 try:
                     send_email(body_message_1, subject, participant_email)
+                    req.write("Sent email successfully to the participant %s (barcode: %s)<br/>" % (participant_email, prev_barcode))
                 except:
-                    req.write("Sending email to the participant email: %s failed (barcode: %s)!!!" % (participant_email, prev_barcode))
+                    req.write("Sending email to the participant email: %s failed (barcode: %s)!!!<br/>" % (participant_email, prev_barcode))
             if login_email != "None" and login_email != participant_email:
                 try:
                     send_email(body_message_2, subject, login_email)
+                    req.write("Sent email successfully to kit owner %s (barcode: %s)<br/>" % (login_email, prev_barcode))
                 except:
-                    req.write("Sending email to the user email:%s failed (barcode: %s)!!!" % (login_email, prev_barcode))
+                    req.write("Sending email to the user email:%s failed (barcode: %s)!!!<br/>" % (login_email, prev_barcode))
     
         sample_issue = form_dict.get('sample_issue', [])
         moldy = overloaded = other = 'N'
@@ -109,9 +111,9 @@ Thank you,
         if 'other' in sample_issue: other = 'Y'
         ag_data_access.updateAKB(prev_barcode, moldy, overloaded, other,
                               form_dict['other_text'], sent_date)
-        req.write("Barcode %s is sucessfully updated" % prev_barcode)
+        req.write("Barcode %s was sucessfully updated<br/>" % prev_barcode)
     except:
-        req.write("Barcode %s update failed!!!" % prev_barcode)
+        req.write("Barcode %s update failed!!!<br/>" % prev_barcode)
 
 def show_update_barcode(barcode):
     """This draws a form that will display barcode info, send reminding email to participant,
@@ -171,33 +173,28 @@ def show_update_barcode(barcode):
       <input type="hidden" name="email_type" value="{email_type}" />
       <ul>
          <li>
-           <p> Sample issues: <br />
-              <input type="checkbox" name="sample_issue" value="moldy" /> moldy (current: {moldy}) <br />
-              <input type="checkbox" name="sample_issue" value="overloaded" /> overloaded (current: {overloaded}) <br />
-              <input type="checkbox" name="sample_issue" value="other" /> other (current: {other}) <br />
-           </p>
+           Sample issues: <br />
+              <input class="checkbox" type="checkbox" name="sample_issue" value="moldy" /> moldy (current: {moldy}) <br />
+              <input class="checkbox" type="checkbox" name="sample_issue" value="overloaded" /> overloaded (current: {overloaded}) <br />
+              <input class="checkbox" type="checkbox" name="sample_issue" value="other" /> other (current: {other}) <br />
          </li>
          <li>
-           <p> Sample postmark date (current: {postmark_date}) : <br />
-              <input type="text" name="postmark_date" value="{postmark_date}"
+           Sample postmark date (current: {postmark_date}) : <br />
+              <input tabindex="3" type="text" name="postmark_date" id="postmark_date" class="small_text" value="{postmark_date}"
                onclick="this.select()" /> <br />
-              (please follow the format 2012-12-25)
+              (please follow the format mm/dd/yyyy. Example: 12/25/2012)
          </li>
          <li>
-           <p> Send a reminder (previously sent: {sent}): <br />
-              <input type="checkbox" name="send_email" value="send_email" /> send participant or user an email <br />
-           </p>
+           Send a reminder (previously sent: {sent}): <br />
+              <input class="checkbox" type="checkbox" name="send_email" value="send_email" /> send participant or user an email <br />
          </li>
          <li>
-           <p> Other notes (current: {other_text}): <br />
+           Other notes (current: {other_text}): <br />
               <textarea name="other_text" onclick="this.select()">{other_text}</textarea>
-           </p>
          </li>
       </ul>
-       <p>
           <input type="submit" value="Submit">
           <input type="reset" value="Reset!">
-       </p>
     </form>
     </div>
     '''.format(div_id=div_id,
@@ -212,8 +209,8 @@ def show_update_barcode(barcode):
                participant=barcodeinfo[3],
                login_user=barcodeinfo[17],
                sample_time=barcodeinfo[1],
-               participant_email=barcodeinfo[7],
-               login_email=barcodeinfo[16],
+               participant_email=barcodeinfo[16],
+               login_email=barcodeinfo[7],
                email_type=email_type))
 # deindent
 %>
@@ -227,7 +224,6 @@ def show_update_barcode(barcode):
     </script>
 </form>
 </div>
-
 <%
 try:
     barcode = form['barcode'] #'000002000'
