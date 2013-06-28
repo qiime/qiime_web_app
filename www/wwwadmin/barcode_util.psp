@@ -1,5 +1,5 @@
 <%
-__author__ = "Zhenjiang Xu"
+__author__ = "Zhenjiang (Zech) Xu"
 __copyright__ = "Copyright 2009-2013, Qiime Web Analysis"
 __credits__ = ["Zhenjiang Xu"]
 __license__ = "GPL"
@@ -127,7 +127,7 @@ def show_update_barcode(barcode):
        <div class="verification_text_wrapper">
           <br />
             <h2 class="verification_text">Barcode <br>
-            %s
+            "%s"
             <br> does not exist in the database!</h2>
         </div>
     </div>
@@ -155,7 +155,7 @@ def show_update_barcode(barcode):
        <div class="verification_text_wrapper">
           <br />
             <h2 class="verification_text">Barcode <br>
-            {barcode}
+            "{barcode}"
             <br>{message}</h2>
         </div>
     </div>
@@ -174,9 +174,9 @@ def show_update_barcode(barcode):
       <ul>
          <li>
            Sample issues: <br />
-              <input class="checkbox" type="checkbox" name="sample_issue" value="moldy" /> moldy (current: {moldy}) <br />
-              <input class="checkbox" type="checkbox" name="sample_issue" value="overloaded" /> overloaded (current: {overloaded}) <br />
-              <input class="checkbox" type="checkbox" name="sample_issue" value="other" /> other (current: {other}) <br />
+              <input class="checkbox" type="checkbox" name="sample_issue" value="moldy" {moldy_checked}/> moldy (current: {moldy}) <br />
+              <input class="checkbox" type="checkbox" name="sample_issue" value="overloaded" {overloaded_checked}/> overloaded (current: {overloaded}) <br />
+              <input class="checkbox" type="checkbox" name="sample_issue" value="other" {other_checked}/> other (current: {other}) <br />
          </li>
          <li>
            Sample postmark date (current: {postmark_date}) : <br />
@@ -201,8 +201,11 @@ def show_update_barcode(barcode):
                barcode=barcode,
                message=message,
                moldy='NA' if barcodeinfo[8]==None else barcodeinfo[8],
+               moldy_checked="checked" if barcodeinfo[8] in ('Y','y') else "",
                overloaded='NA' if barcodeinfo[9]==None else barcodeinfo[9],
+               overloaded_checked="checked" if barcodeinfo[9] in ('Y','y') else "",
                other='NA' if barcodeinfo[10]==None else barcodeinfo[10],
+               other_checked="checked" if barcodeinfo[10] in ('Y','y') else "",
                other_text=barcodeinfo[11],
                postmark_date=barcodeinfo[15],
                sent=barcodeinfo[12],
