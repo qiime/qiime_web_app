@@ -15,25 +15,25 @@ form_dict = dict(form)
 prev_barcode = form_dict.get('prev_barcode', None)
 
 if prev_barcode:
-    # Assuming we actually get barcode details back, log the fact that the barcode
-    # was scanned.
-    scan_date = date.today().isoformat()
-    data_access.updateBarcodeStatus('Received', form_dict['postmark_date'],
-                                    scan_date, prev_barcode)
-
-    sent_date = form_dict['sent_date']
-    participant = form_dict['participant'] # participant name
-    if participant==None: participant = "User"
-    login_user = form_dict['login_user'] # user name
-    if login_user==None: login_user  = "User"
-
-    if "send_email" in form_dict:
-        email_type = form_dict['email_type']
-        subject = body_message_1 = body_message_2 = ""
-        sample_time = form_dict['sample_time']
-        if email_type == '1':
-            subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
-            body_message='''
+    try:
+        # try to update barcode current status.
+        scan_date = date.today().isoformat()
+        data_access.updateBarcodeStatus('Received', form_dict['postmark_date'],
+                                        scan_date, prev_barcode)
+    
+        sent_date = form_dict['sent_date']
+        participant = form_dict['participant'] # participant name
+        if participant=="None": participant = "American Gut user"
+        login_user = form_dict['login_user'] # user name
+        if login_user=="None": login_user = "American Gut user"
+    
+        if "send_email" in form_dict:
+            email_type = form_dict['email_type']
+            subject = body_message_1 = body_message_2 = ""
+            sample_time = form_dict['sample_time']
+            if email_type == '1':
+                subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
+                body_message='''
 Dear {name},
 
 We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Add Sample" from the navigation bar on the left side of the welcome page. Please note that there should be two buttons that say “Add Sample.” The one that corresponds to your sample will appear directly underneath the participant name under the “Participant” header. If you do not see the participant name to which the sample corresponds you must first click “Add Participant.”
@@ -50,12 +50,12 @@ Thank you,
 
 --American Gut Team--
 '''
-            body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
-            body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
-        elif email_type == '2':
-            subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
-            body_message = '''
-Hi {name},
+                body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+                body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
+            elif email_type == '2':
+                subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
+                body_message = '''
+Dear {name},
 
 We have recently received your sample with barcode {barcode} dated "{sample_time}" and we have begun processing it.  Please see our FAQ section for when you can expect results. (http://www.microbio.me/americangut/FAQ.psp#faq4)
 
@@ -63,12 +63,12 @@ Thank you for your participation!
 
 --American Gut Team--
 '''
-            body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
-            body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
-        elif email_type == '3':
-            subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
-            body_message = '''
-Hi {name},
+                body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+                body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
+            elif email_type == '3':
+                subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
+                body_message = '''
+Dear {name},
 
 We have recently received your sample but we do not have consent, questionnaire results or sample details (type, date of collection, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
 
@@ -84,26 +84,34 @@ Thank you,
 
 --American Gut Team—
 '''
-            body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
-            body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
-
-        sent_date = scan_date
-        participant_email = form_dict['participant_email']
-        login_email = form_dict['login_email']
-        if not participant_email==None:
-            # if an email address is associated with the participant
-            send_email(body_message_1, subject, participant_email)
-        if login_email != None and login_email != participant_email:
-            send_email(body_message_2, subject, login_email)
-
-    sample_issue = form_dict.get('sample_issue', [])
-    moldy = overloaded = other = 'N'
-    if 'moldy' in sample_issue: moldy = 'Y'
-    if 'overloaded' in sample_issue: overloaded = 'Y'
-    if 'other' in sample_issue: other = 'Y'
-    ag_data_access.updateAKB(prev_barcode, moldy, overloaded, other,
-                          form_dict['other_text'], sent_date)
-
+                body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+                body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
+    
+            sent_date = scan_date
+            participant_email = form_dict['participant_email']
+            login_email = form_dict['login_email']
+            if not participant_email == "None":
+                # if an email address is associated with the participant
+                try:
+                    send_email(body_message_1, subject, participant_email)
+                except:
+                    req.write("Sending email to the participant email: %s failed (barcode: %s)!!!" % (participant_email, prev_barcode))
+            if login_email != "None" and login_email != participant_email:
+                try:
+                    send_email(body_message_2, subject, login_email)
+                except:
+                    req.write("Sending email to the user email:%s failed (barcode: %s)!!!" % (login_email, prev_barcode))
+    
+        sample_issue = form_dict.get('sample_issue', [])
+        moldy = overloaded = other = 'N'
+        if 'moldy' in sample_issue: moldy = 'Y'
+        if 'overloaded' in sample_issue: overloaded = 'Y'
+        if 'other' in sample_issue: other = 'Y'
+        ag_data_access.updateAKB(prev_barcode, moldy, overloaded, other,
+                              form_dict['other_text'], sent_date)
+        req.write("Barcode %s is sucessfully updated" % prev_barcode)
+    except:
+        req.write("Barcode %s update failed!!!" % prev_barcode)
 
 def show_update_barcode(barcode):
     """This draws a form that will display barcode info, send reminding email to participant,
@@ -180,7 +188,8 @@ def show_update_barcode(barcode):
            <p> Sample postmark date: <br />
               <input type="text" name="postmark_date" value="{postmark_date}"
                onclick="this.select()" />
-              (current: {postmark_date})
+              (current: {postmark_date}) <br />
+              (please follow the format 2012-12-25)
          </li>
          <li>
            <p> Send a reminder: <br />
@@ -214,7 +223,7 @@ def show_update_barcode(barcode):
 
 <div>
 <form name="check_barcode" action="fusebox.psp?page=barcode_util.psp" method="post">
-    <input id="barcode" name="barcode" tabindex="1" type="text"/>
+    <input id="barcode" name="barcode" tabindex="1" type="text" onclick="this.select()" />
     <input tabindex="2" type="submit" value="Check Barcode" />
     <script>
         document.check_barcode.barcode.focus()
@@ -226,7 +235,6 @@ def show_update_barcode(barcode):
 try:
     barcode = form['barcode'] #'000002000'
     show_update_barcode(barcode)
-
 except(KeyError):
     #will get here on first load of this page since there should be no barcode key in the form dict
 %>
