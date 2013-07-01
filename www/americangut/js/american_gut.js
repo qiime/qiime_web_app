@@ -423,9 +423,9 @@ function validatePasswordReset() {
         valid = false;
 	}
 	
-	if(document.change_password.repeat_new_password.value == "")
+	if(document.change_password.confirm_password.value == "")
 	{
-        document.change_password.repeat_new_password.className += " highlight";
+        document.change_password.confirm_password.className += " highlight";
         valid = false;
 	}
 	
