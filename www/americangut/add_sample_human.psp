@@ -44,6 +44,10 @@ for barcode in barcodes:
                             <option>Forehead</option>
                             <option>Nares</option>
                             <option>Hair</option>
+                            <option>Tears</option>
+                            <option>Nasal mucus</option>
+                            <option>Ear wax</option>
+                            <option>Vaginal mucus</option>
                         </select>
                     </td>
                 </tr>
