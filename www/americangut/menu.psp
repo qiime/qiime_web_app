@@ -12,6 +12,7 @@ _status_ = "Development"
 <div class="left menuwrapper">
     <ul class="menu">
         <li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
+        <li><a href="fusebox.psp?page=change_password.psp"><img class="icon" src="/qiime/img/change_password.png">Change Password</a></li>
         <div class="menu_separator"></div>
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants</li> <!-- top-level participants header-->
             <ul class="menu"> <!-- list of participants-->

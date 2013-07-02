@@ -464,6 +464,42 @@ function verifyHelpRequest() {
 	}
 }
 
+function validatePasswordReset() {
+    for(var i = 0; i < document.change_password.length; i++) 
+    {
+        document.change_password[i].className = document.change_password[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+	
+    var valid = true;
+	
+	if(document.change_password.current_password.value == "")
+	{
+        document.change_password.current_password.className += " highlight";
+        valid = false;
+	}
+	
+	if(document.change_password.new_password.value == "")
+	{
+        document.change_password.new_password.className += " highlight";
+        valid = false;
+	}
+	
+	if(document.change_password.confirm_password.value == "")
+	{
+        document.change_password.confirm_password.className += " highlight";
+        valid = false;
+	}
+	
+    if(!valid) 
+	{
+        return;
+	}
+    else 
+	{
+        $('#change_password').submit();
+	}
+}
+
 /*clear empty boxes for survey3*/
 function validateSurvey3() {
     for(var i = 0; i < document.survey_3.length; i++) 
