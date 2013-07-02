@@ -340,8 +340,8 @@ class LiveEBISRARestServices(BaseRestServices):
                 taxon_id = 'unknown'
             sample_file.write('            <TAXON_ID>{0}</TAXON_ID>\n'.format(taxon_id))
             sample_file.write('        </SAMPLE_NAME>\n')
-            if 'taxon_id' in sample_dict:
-                description = sample_dict['description']
+            if 'description' in sample_dict:
+                description = self.clean_text_value(sample_dict['description'])
             else:
                 description = 'unknown'
             sample_file.write('        <DESCRIPTION>{0}</DESCRIPTION>\n'.format(description))
