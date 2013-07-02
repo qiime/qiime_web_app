@@ -12,6 +12,9 @@ __maintainer__ = ["Yoshiki Vazquez-Baeza"]
 __email__ = "yoshiki89@gmail.com"
 __status__ = "Development"
 
+# used in the can_send_mail function
+from socket import gethostname
+
 # Import smtplib for the actual sending function
 import smtplib
 
@@ -19,6 +22,11 @@ import smtplib
 from email.mime.text import MIMEText
 
 FROM_EMAIL = 'info@americangut.org'
+
+def can_send_mail():
+    if 'microbio.me' in gethostname():
+        return True
+    return False
 
 def send_email(message, subject, recipient='americangut@gmail.com'):
     """Send an email from your local host """
