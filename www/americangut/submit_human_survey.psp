@@ -102,11 +102,9 @@ Your participation in this research study is voluntary. Please think about the i
 	If you have questions about your rights as a research study participant, you can call the Institutional Review Board (IRB). The IRB is independent from the research team. You can contact the IRB if you have concerns or complaints that you do not want to talk to the study team about. The IRB phone number is (303) 735-3702.
 """
 
-from socket import gethostname
-
 from data_access_connections import data_access_factory
 from enums import *
-from utils.mail import send_email
+from utils.mail import send_email, can_send_mail
 
 from utils.psp_utils import format_submit_form_to_fusebox_string
 
@@ -185,10 +183,8 @@ Deceased Parent: %s
 """ % (participant_name, participant_email, participant_guardian_1,
 	participant_guardian_2, parent_deceased, consent_text, AG_CONSENT_TEXT)
 
-hostname = gethostname()
-
 try:
-    if 'microbio.me' in hostname:
+    if can_send_mail():
         send_email(MESSAGE, SUBJECT, participant_email)
         message+="Consent form successfully sent to: %s.<br/>" %\
             participant_email

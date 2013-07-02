@@ -12,8 +12,7 @@ __status__ = "Development"
 
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
-from utils.mail import send_email
-from socket import gethostname
+from utils.mail import send_email, can_send_mail
 
 sess = Session.Session(req)
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
@@ -106,8 +105,7 @@ The American Gut Team
 """.format(kit_verification_code, addendum)
 
 # Only email on systems that have email capability:
-hostname = gethostname()
-if 'microbio.me' in hostname:
+if can_send_mail():
 	send_email(body, subject, email)
 
 # Let the user in
