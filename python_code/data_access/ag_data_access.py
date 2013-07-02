@@ -162,6 +162,23 @@ class AGDataAccess(object):
         """
         return barcode_details
 
+    def getAGKitDetails(self, supplied_kit_id):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_kit_details', [supplied_kit_id, results])
+        row = results.fetchone()
+        kit_details = {
+            'ag_kit_id': row[0],
+            'supplied_kit_id': row[1],
+            'kit_password': row[2],
+            'swabs_per_kit': row[3],
+            'kit_verification_code': row[4],
+            'kit_verified': row[5],
+            'verification_email_sent': row[6]
+        }
+
+        return kit_details
+
     def getAGCode(self, type):
         length_of_password = 8
         alpha = ''
@@ -299,7 +316,8 @@ class AGDataAccess(object):
         barcodes = []
         con.cursor().callproc('ag_get_environmental_samples', [ag_login_id, results])
         for row in results:
-            data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], 'sample_time':row[3], 'notes':row[4]}
+            data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], 'sample_time':row[3], 
+                'notes':row[4], 'status':row[5]}
             barcodes.append(data)
 
         return barcodes

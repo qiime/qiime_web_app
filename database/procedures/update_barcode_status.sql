@@ -9,5 +9,11 @@ begin
     update  barcode
     set     status = status_
     where   barcode = barcode_;
+    
+    commit;
 
 end;
+
+/*
+
+*/

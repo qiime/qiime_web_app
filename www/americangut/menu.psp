@@ -12,6 +12,7 @@ _status_ = "Development"
 <div class="left menuwrapper">
     <ul class="menu">
         <li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
+        <li><a href="fusebox.psp?page=change_password.psp"><img class="icon" src="/qiime/img/change_password.png">Change Password</a></li>
         <div class="menu_separator"></div>
         <li><img class="icon" src="/qiime/img/participants_icon.png">Participants</li>
             <ul class="menu">
@@ -120,20 +121,25 @@ for p in participants:
 <%
 barcodes = ag_data_access.getEnvironmentalSamples(ag_login_id)
 for barcode in barcodes:
+    style = ''
+    barcode_text = barcode['barcode']
+    if barcode['status'] == 'Received':
+        barcode_text += ' (received)'
+        style = 'style="color:#0B0;"'
     sample_menu_item = \
     """
     <form action="fusebox.psp" method="post" id="sample_overview_{0}">
         <li>
-            <input type="hidden" name="page" value="sample_overview.psp"/>
-            <input type="hidden" name="barcode" value="{0}"/>
+            <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
+            <input type="hidden" name="status" id="status" value="{1}"/>
+            <input type="hidden" name="barcode" id="barcode" value="{0}"/>
             <img class="icon" src="/qiime/img/sample_icon.png"/>
-            <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">{0}</a>
+            <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;" {2}>{3}</a>
         </li>
     </form>
-    """.format(barcode['barcode'])
+    """.format(barcode['barcode'], barcode['status'], style, barcode_text)
 
     req.write(sample_menu_item)
-
 # End for
 %>
 
