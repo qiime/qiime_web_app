@@ -118,11 +118,11 @@ US_STATES_TERRITORIES = {'delaware': 'DE',
 US_ABBRV = set(US_STATES_TERRITORIES.values())
 US_NAMES = set(['united states', 'usa', 'us'])
 
-BASE_PRINTOUT_TEXT = """Thank you for participating in the American Gut Project! Below you will find your sample barcodes (the numbers that anonymously link your samples to you) and your login credentials. It is very important that you login before you begin any sample collection.
+BASE_PRINTOUT_TEXT = """Thank you for participating in the American Gut Project! Below you will find your sample barcodes (the numbers that anonymously link your samples to your kit) and your login credentials. You will be able to change your password after logging in but your kit ID is permenant. Please email us at info@americangut.org if you have any questions.
 
 Please login at: http://www.microbio.me/AmericanGut
 
-Thanks,
+Thank you,
 The American Gut Project
 """
 
