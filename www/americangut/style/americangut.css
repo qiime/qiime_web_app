@@ -35,6 +35,9 @@ table.list {
 	border-spacing: 20px;
 }
 
+div#workflow {
+}
+
 div.video {
 	width: 45%;
 	float: left;
@@ -93,6 +96,7 @@ div.login {
 
 div.wrapper {
     width: 90%;
+	min-width: 1200px;
 }
 
 div.lefta {
@@ -166,6 +170,95 @@ input.small_text {
 
 input.smaller_text {
 	width: 50px;
+}
+
+div.source_icon {
+	border-radius: 10px;
+	border: 1px solid #ccc;
+	margin: 1em;
+	padding: .5em;
+}
+
+div.source_icon:hover {
+	background-color: #eee;
+}
+
+div#source_icons {
+	width: 900px;
+	margin-left: auto ;
+	margin-right: auto ;
+}
+
+div#source_icons a{
+	text-decoration: none;
+}
+
+div#source_icons div{
+	display: inline;
+	color: #000;
+	font-size: 18pt;
+	height: 100px;
+}
+
+div.portal_unselected {
+	display: none;
+}
+
+div#workflow_content {
+	width: 930px;
+	margin-left: auto ;
+	margin-right: auto ;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #fff;
+	margin-bottom: 1em;
+	text-align: left;
+	padding: 2em;
+}
+
+div#workflow_content a{
+	text-decoration: none;
+}
+
+ul.workflow_menu {
+	float: center;
+	list-style-type: none;
+	white-space: nowrap;
+	width: 950px;
+	height: 140px;
+	margin-left: auto ;
+	margin-right: auto ;
+}
+
+ul.workflow_menu li {
+	display: inline;
+	float: left;
+	margin: 0 auto;
+	border-top-right-radius: 5px;
+	border-top-left-radius: 5px;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc ;
+	border-right: 1px solid #ccc ;
+	background-color: #eee;
+	padding: 1em;
+	margin: .5em;
+	text-align: center;
+}
+
+ul.workflow_menu li.selected {
+	background-color: #fff;
+}
+
+ul.workflow_menu li a{ 
+	color: #000;
+	height: 120px;
+	width: 110px;
+	display: block;
+	text-decoration: none;
+}
+
+ul.workflow_menu li:hover {
+	background-color: #E0F5FF;
 }
 
 ul.faq {
@@ -276,6 +369,7 @@ div.login_content {
 }
 
 div.content {
+/*	min-width: 900px;*/
 	margin-bottom: 5px;
 	text-align: center;
 	overflow:hidden;
@@ -409,6 +503,10 @@ p.big_button_text {
 p.ambig {
 	font-size: 18pt;
 	font-family: courier;
+}
+
+p.portal_blurb {
+	font-size: 12pt;
 }
 
 ol.construction {

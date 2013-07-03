@@ -1,3 +1,11 @@
+//functions for the portal toggle system
+function selectTab(id) {
+	document.querySelectorAll('.selected')[0].className = 'unselected';
+	document.querySelectorAll('.portal_selected')[0].className = 'portal_unselected';
+	document.getElementById(id+'_tab').className = 'selected';
+	document.getElementById(id+'_content').className = 'portal_selected';
+}
+
 function getCountries(id) {
        document.getElementById(id).source = countries; 
  }

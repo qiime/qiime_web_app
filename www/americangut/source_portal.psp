@@ -1,0 +1,15 @@
+<h2>Sample Source</h2>
+<p class="portal_blurb">
+There are three different sample sources that you can choose from for the American Gut Project. The sources are human, animal and environmental. The buttons below will allow you to add a new sample source.</p>
+<p class="portal_blurb">
+If you add a <strong>human</strong> source, you will need to have a completed 7 day food diary for that human. If you add a <strong>human</strong> or <strong>animal</strong> source, you will be asked to complete a survey. You can read more about the survey on <a href="javascript:selectTab('survey')">the survey tab</a>.
+</p>
+<div id="source_icons">
+    <a href="fusebox.psp?page=new_participant_overview.psp"><div class="source_icon"><img src="img/human.png"><div>Human</div></div></a>
+    <a href=""><div class="source_icon"><img src="img/animal.png"><div>Animal</div></div></a>
+    <a href="" onclick="document.forms['add_sample_general'].submit(); return false;"><div class="source_icon"><img src="img/environmental.png"><div>Environmental</div></div></a>
+</div>
+<p class="portal_blurb">
+</p>
+<p class="portal_blurb">
+</p>
