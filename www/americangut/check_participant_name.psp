@@ -1,0 +1,20 @@
+<%
+from data_access_connections import data_access_factory
+from enums import ServerConfig,DataAccessType
+
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+
+sess = Session.Session(req)
+ag_login_id = sess['user_data']['web_app_user_id']
+participant_to_check = form['participant_name']
+
+participants = ag_data_access.getHumanParticipants(ag_login_id)
+participants.extend(ag_data_access.getAnimalParticipants(ag_login_id))
+
+s = ''
+
+if participant_to_check in participants:
+    s = '%s is arleady a participant. Please select a different name.' % \
+        participant_to_check
+    req.write(s)
+%>
