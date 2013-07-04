@@ -4,7 +4,7 @@ participant_name = form['participant_name']
 %>
 
 <div id="content" class="content">
-<h2>Add a New Sample for <%=participant_name%></h2>
+<h2>Log a New Sample for <%=participant_name%></h2>
 
 <form id="add_sample" name="add_sample" method="post" action="sample_submit.psp">
     <input type="hidden" name="participant_name" value="<%=participant_name%>"/>

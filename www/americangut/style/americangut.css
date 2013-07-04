@@ -172,6 +172,11 @@ input.smaller_text {
 	width: 50px;
 }
 
+img.inline {
+	margin-left: .5em;
+	margin-right: .5em;
+}
+
 div.source_icon {
 	border-radius: 10px;
 	border: 1px solid #ccc;
@@ -220,6 +225,10 @@ div#workflow_content a{
 	text-decoration: none;
 }
 
+div.centered {
+	text-align: center;
+}
+
 ul.workflow_menu {
 	float: center;
 	list-style-type: none;
@@ -239,7 +248,7 @@ ul.workflow_menu li {
 	border-top: 1px solid #ccc;
 	border-left: 1px solid #ccc ;
 	border-right: 1px solid #ccc ;
-	background-color: #eee;
+	background-color: #ddd;
 	padding: 1em;
 	margin: .5em;
 	text-align: center;

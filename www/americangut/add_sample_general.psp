@@ -3,7 +3,7 @@ ag_login_id = sess['user_data']['web_app_user_id']
 %>
 
 <div id="content" class="content">
-<h2>Add a New Environmental Sample</h2>
+<h2>Log a New Environmental Sample</h2>
 
 <form id="add_sample" name="add_sample" method="post" action="sample_submit.psp">
     <table width="100%">

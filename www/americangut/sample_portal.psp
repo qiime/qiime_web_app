@@ -1,0 +1,36 @@
+<h2>Taking Samples</h2>
+<p class="portal_blurb">
+Once you have added a <a href="javascript:selectTab('source')">sample source</a> and completed the relevant <a href="javascript:selectTab('survey')">survey</a> (if applicable), you are ready to take a sample.
+</p>
+<p class="portal_blurb">
+Once you have removed the sample tube, only handle the sample swab by the red cap.
+</p>
+<div class="centered"><img src="img/sampling_wrong.png"><img src="img/sampling_correct.png"></div>
+<p class="portal_blurb">
+For a <strong>fecal sample</strong>, rub both cotton tips on a fecal specimen (a used piece of bathroom tissue). Collect a small amount of biomass. Maximum collection would be to saturate 1/2 a swab. <strong>More is not better!</strong> The ideal amount of biomass collected is shown below.
+</p>
+<div class="centered"><img src="img/biomass.png"></div>
+<br>
+<p class="portal_blurb">
+For an <strong>oral sample</strong>, firmly rub both sides of both cotton tips on the surface of the tongue for 20 seconds.
+Take great caution not to touch the cheeks, teeth, or lips.
+</p>
+<p class="portal_blurb">
+For a <strong>skin sample</strong>, firmly rub both sides of both cotton tips over the skin surface being sampled for 20 seconds.
+</p>
+<p class="portal_blurb">
+For an <strong>other/environmental sample</strong>, firmly rub both sides of both cotton tips over the surface being sampled for 20 seconds.
+</p>
+<br>
+<p class="portal_blurb">
+After you have finished taking your sample, return the swabs to their tube protective tube and screw the red handling cap on firmly.
+</p>
+<br>
+<h2>Logging Samples</h2>
+<p class="portal_blurb">
+Please write the sample site, date, and time on the sampling tube.
+<p>
+<div class="centered"><img src="img/labeled_tube.png"></div>
+<p class="portal_blurb">
+After writing the information on the sampling tube tube, click the <img class="inline" src="img/log_sample.png"> link underneath the corresponding sample source in the menu to the left. You will be asked to provide the sample site, date, time and some optional notes about the sample.
+</p>

@@ -13,8 +13,9 @@ _status_ = "Development"
     <ul class="menu">
         <li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
         <li><a href="fusebox.psp?page=change_password.psp"><img class="icon" src="/qiime/img/change_password.png">Change Password</a></li>
+        <li><a href="logout.psp"><img class="icon" src="/qiime/img/logout_icon.png">Log out</a></li>
         <div class="menu_separator"></div>
-        <li><img class="icon" src="/qiime/img/participants_icon.png">Participants</li>
+        <li><img class="icon" src="/qiime/img/participants_icon.png">Human Samples</li>
             <ul class="menu">
 
 <%
@@ -49,7 +50,7 @@ for p in participants:
             <input type="hidden" name="sample_type" value="human"/>
             <input type="hidden" name="participant_name" value="{0}"/>
             <img class="icon" src="/qiime/img/add_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_{0}'].submit(); return false;">Add Sample</a>
+            <a href="" onclick="document.forms['add_sample_{0}'].submit(); return false;">Log Sample</a>
         </li>
     </form>
     """.format(p)
@@ -61,7 +62,7 @@ for p in participants:
             <input type="hidden" name="page" value="add_sample.psp"/>
             <input type="hidden" name="sample_type" value="animal"/>
             <img class="icon" src="/qiime/img/add_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_animal'].submit(); return false;">Add Animal Sample</a>
+            <a href="" onclick="document.forms['add_sample_animal'].submit(); return false;">Log Animal Sample</a>
         </li>
     </form>
     """.format(p)
@@ -97,7 +98,7 @@ for p in participants:
         req.write(sample_menu_item)
     # End for
     
-    # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
+    # Figure out if all samples have been used. Only draw Assign Sample if there's an unused barcode.
     if len(available_barcodes) > 0:
         req.write(add_sample_menu_item)
     req.write('</ul>\n\n')
@@ -105,7 +106,7 @@ for p in participants:
 # End for
 %>
                 
-                <li><a href="fusebox.psp?page=new_participant_overview.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Participant</a></li>
+                <li><a href="fusebox.psp?page=new_participant_overview.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Human Source</a></li>
             </ul>
 
 
@@ -151,7 +152,7 @@ add_general_sample_menu_item = \
         <input type="hidden" name="page" value="add_sample.psp"/>
         <input type="hidden" name="sample_type" value="general"/>
         <img class="icon" src="/qiime/img/environmental_icon.png"/>
-        <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Sample</a>
+        <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Log Sample</a>
     </li>
 </form>
 """
@@ -169,12 +170,8 @@ if len(available_barcodes) > 0:
         </li>
         <div class="menu_separator"></div>
         <li><a href="FAQ.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
-        <li><a href="international_shipping.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">International Shipping</a></li>
         <li><a href="fusebox.psp?page=help_request.psp"><img class="icon" src="/qiime/img/mail_icon.png">Contact us</a></li>
-        <li><a href="http://humanfoodproject.com/americangut/" target="_blank"><img class="icon" src="/qiime/img/purchase_icon.png">Join the project!</a></li>
-        <li><a href="http://americangut.org" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut</a></li>
-        <div class="menu_separator"></div>
-        <li><a href="logout.psp"><img class="icon" src="/qiime/img/logout_icon.png">Log out</a></li>
+        
     </ul>
 
     <!-- Twitter -->
