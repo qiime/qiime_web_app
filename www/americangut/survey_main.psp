@@ -38,8 +38,8 @@ if form.get('is_juvenile', 'off') == 'on':
             'of your status as a minor, we will contact you within 24 hours '
             'to verify parent/guardian consent.')
 
-        SUBJECT = """AGJUVENILE: %s (ag_login_id: %s) is a child aged %s""" % \
-            (form['participant_name'], ag_login_id, form['juvenile_age'])
+        SUBJECT = """AGJUVENILE: %s (ag_login_id: %s) is a child""" % \
+            (form['participant_name'], ag_login_id)
 
         MESSAGE = """Contact: %s
         --------------------------------------------------------------------------------
