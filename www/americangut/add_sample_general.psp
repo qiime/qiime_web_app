@@ -44,6 +44,7 @@ for barcode in barcodes:
                             <option>Outdoor Surface</option>
                             <option>Plant habitat</option>
                             <option>Soil</option>
+                            <option>Sole of shoe</option>
                         </select>
                     </td>
                 </tr>
