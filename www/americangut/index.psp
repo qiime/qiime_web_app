@@ -205,14 +205,23 @@ else:
 
 <%
 # Write out the database of points
-req.write('<script type="text/javascript">')
-req.write('var latlongs_db = [')
 
 result_list=[]
 
 # Get the map markers
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
-results = ag_data_access.getMapMarkers()
+
+# if database connection was unsuccessful, this is the first place it would
+# manifest
+try:
+    results = ag_data_access.getMapMarkers()
+except:
+    req.write('<img id="logo" src="img/ag_logo.jpg"><br />\n')
+    req.write("<img height=50% width=50% src='/qiime/img/technical_difficulties.jpg'><br />\n")
+    req.write("<h1>Sorry, we could not connect to our database. We are working hard on the issue, please check back shortly!</h1>")
+
+req.write('<script type="text/javascript">')
+req.write('var latlongs_db = [')
 
 for i, val in enumerate(results):
     if val[0] and val[1] and val[2]:
