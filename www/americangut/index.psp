@@ -216,9 +216,18 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gu
 try:
     results = ag_data_access.getMapMarkers()
 except:
-    req.write('<img id="logo" src="img/ag_logo.jpg"><br />\n')
-    req.write("<img height=50% width=50% src='/qiime/img/technical_difficulties.jpg'><br />\n")
-    req.write("<h1>Sorry, we could not connect to our database. We are working hard on the issue, please check back shortly!</h1>")
+    req.write('<div class="header clearfix">\n')
+    req.write('<center><img id="logo" src="img/ag_logo.jpg">\n')
+    req.write('<br/>\n')
+    req.write('<br/>\n')
+    req.write('<br/>\n')
+    req.write('<br/>\n')
+    req.write('<br/>\n')
+    req.write('<br/>\n')
+    req.write('<br/>\n')
+    req.write('<br/>\n')
+    req.write("<h1>Sorry, we could not connect to our database. <br/> We are working hard on the issue, please check back shortly!</h1>")
+    req.write('</center></div>\n')
 
 req.write('<script type="text/javascript">')
 req.write('var latlongs_db = [')
