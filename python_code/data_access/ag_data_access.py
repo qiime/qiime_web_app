@@ -416,14 +416,18 @@ class AGDataAccess(object):
         return is_handout.strip()
 
     def checkBarcode(self, barcode):
-        # returned tuple consists of:
-        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        # return a tuple consists of:
+        # site_sampled, sample_date, sample_time, participant_name,
+        # environment_sampled, notes, etc (please refer to
+        # ag_check_barcode_status.sql).
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_check_barcode_status', [barcode, results])
         barcode_details = results.fetchall()
-        
-        return barcode_details
+        if barcode_details:
+            return barcode_details[0]
+        else: # if the barcode does not exist in database
+            return ()
 
     def updateAGSurvey(self, ag_login_id, participant_name, field, value):
         con = self.getMetadataDatabaseConnection()
@@ -448,3 +452,8 @@ class AGDataAccess(object):
         return ag_stats
 
 
+    def updateAKB(self, barcode, moldy, overloaded, other, other_text, date_of_last_email):
+        """ Update ag_kit_barcodes table.
+        """
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('update_akb', [barcode, moldy, overloaded, other, other_text, date_of_last_email])

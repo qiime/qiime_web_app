@@ -1,6 +1,126 @@
+<script src="../americangut/js/jquery.ui.timepicker.js"></script>
+<%
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2009-2013, Qiime Web Analysis"
+__credits__ = ["Doug Wendel", "Zhenjiang Xu"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__email__ = "zhenjiang.xu@colorado.edu"
+__status__ = "Production"
+import socket
+from utils.mail import send_email
+from datetime import date
+
+form_dict = dict(form)
+prev_barcode = form_dict.get('prev_barcode', None)
+
+if prev_barcode:
+    try:
+        # try to update barcode current status.
+        # scan_date = date.today().isoformat()
+        scan_date = date.today().strftime("%d/%m/%y")
+        data_access.updateBarcodeStatus('Received', form_dict['postmark_date'],
+                                        scan_date, prev_barcode)
+    
+        sent_date = form_dict['sent_date']
+        participant = form_dict['participant'] # participant name
+        if participant=="None": participant = "American Gut user"
+        login_user = form_dict['login_user'] # user name
+        if login_user=="None": login_user = "American Gut user"
+    
+        if "send_email" in form_dict:
+            email_type = form_dict['email_type']
+            subject = body_message_1 = body_message_2 = ""
+            sample_time = form_dict['sample_time']
+            if email_type == '1':
+                subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
+                body_message='''
+Dear {name},
+
+We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Add Sample" from the navigation bar on the left side of the welcome page. Please note that there should be two buttons that say “Add Sample.” The one that corresponds to your sample will appear directly underneath the participant name under the “Participant” header. If you do not see the participant name to which the sample corresponds you must first click “Add Participant.”
+
+In order to help you in adding these details, the side of the sample tube {barcode} reads "{sample_time}"
+
+If you have further questions about how to do this please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
+
+I realize this is redundant as we ask participants to also put these details on their sample tube. We've found that, in practice, this redundancy is vital for teasing out the inevitable human errors that arise in large projects.
+
+Please let us know if you have any problems.
+
+Thank you,
+
+--American Gut Team--
+'''
+                body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+                body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
+            elif email_type == '2':
+                subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
+                body_message = '''
+Dear {name},
+
+We have recently received your sample with barcode {barcode} dated "{sample_time}" and we have begun processing it.  Please see our FAQ section for when you can expect results. (http://www.microbio.me/americangut/FAQ.psp#faq4)
+
+Thank you for your participation!
+
+--American Gut Team--
+'''
+                body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+                body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
+            elif email_type == '3':
+                subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
+                body_message = '''
+Dear {name},
+
+We have recently received your sample but we do not have consent, questionnaire results or sample details (type, date of collection, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
+
+You can do this by clicking "Add Participant" from the navigation bar on the left side of the welcome page. This will take you to the consent form and the questionnaire. After you complete the survey you will see your name appear in the sidebar underneath the header that reads, “Participants.” You can add the sample details by clicking the button that says “Add Sample.” Note that there should be two buttons that say “Add sample.” The one that corresponds to your sample will appear directly underneath the participant name. If you do not see the participant name to which the sample corresponds you must first click “Add Participant.”
+
+In order to help you in adding these details, the side of the sample tube {barcode} reads "{sample_time}".
+
+If you have further questions about how to do this, please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
+
+Please let us know if you have any problems.
+
+Thank you,
+
+--American Gut Team—
+'''
+                body_message_1 = body_message.format(name=participant, barcode=prev_barcode, sample_time=sample_time)
+                body_message_2 = body_message.format(name=login_user, barcode=prev_barcode, sample_time=sample_time)
+    
+            sent_date = scan_date
+            participant_email = form_dict['participant_email']
+            login_email = form_dict['login_email']
+            if not participant_email == "None":
+                # if an email address is associated with the participant
+                try:
+                    send_email(body_message_1, subject, participant_email)
+                    req.write("Sent email successfully to the participant %s (barcode: %s)<br/>" % (participant_email, prev_barcode))
+                except:
+                    req.write("Sending email to the participant email: %s failed (barcode: %s)!!!<br/>" % (participant_email, prev_barcode))
+            if login_email != "None" and login_email != participant_email:
+                try:
+                    send_email(body_message_2, subject, login_email)
+                    req.write("Sent email successfully to kit owner %s (barcode: %s)<br/>" % (login_email, prev_barcode))
+                except:
+                    req.write("Sending email to the user email:%s failed (barcode: %s)!!!<br/>" % (login_email, prev_barcode))
+    
+        sample_issue = form_dict.get('sample_issue', [])
+        moldy = overloaded = other = 'N'
+        if 'moldy' in sample_issue: moldy = 'Y'
+        if 'overloaded' in sample_issue: overloaded = 'Y'
+        if 'other' in sample_issue: other = 'Y'
+        ag_data_access.updateAKB(prev_barcode, moldy, overloaded, other,
+                              form_dict['other_text'], sent_date)
+        req.write("Barcode %s was sucessfully updated<br/>" % prev_barcode)
+    except:
+        req.write("Barcode %s update failed!!!<br/>" % prev_barcode)
+
+%>
+
 <div>
 <form name="check_barcode" action="fusebox.psp?page=barcode_util.psp" method="post">
-    <input id="barcode" name="barcode" tabindex="1" type="text"/>
+    <input id="barcode" name="barcode" tabindex="1" type="text" onclick="this.select()" />
     <input tabindex="2" type="submit" value="Check Barcode" />
     <script>
         document.check_barcode.barcode.focus()
@@ -10,57 +130,119 @@
 <%
 try:
     barcode = form['barcode'] #'000002000'
-    try:
-        barcodeinfo = ag_data_access.checkBarcode(barcode)[0]
-        # Assuming we actually get barcode details back, log the fact that the barcode
-        # was scanned.
-        data_access.updateBarcodeStatus('Received', barcode)
-    except(IndexError):
-        barcodeinfo = []
+    barcodeinfo = ag_data_access.checkBarcode(barcode)
+    # req.write(str(barcodeinfo))
+    # req.write(str(len(barcodeinfo)))
+    if len(barcodeinfo)==0:
+        req.write('''
+         <div id="invalid_barcode" class="verification_color">
+            <div class="verification_text_wrapper">
+               <br />
+                 <h2 class="verification_text">Barcode <br>
+                 "%s"
+                 <br> does not exist in the database!</h2>
+             </div>
+         </div>
+        ''' % barcode)
+    else: 
+        div_id = message = email_type = ""
+        if barcodeinfo[6] == 'n' and barcodeinfo[0] == None:
+            #not verified not assigned
+            div_id = "not_verified"
+            message = "NOT verified"
+            email_type = "1"
+        elif barcodeinfo[6] == 'y' and barcodeinfo[0] != None:
+            #verified and assigned
+            div_id = "verified"
+            message = "verified and assigned"
+            email_type = "2"
+        elif barcodeinfo[6] == 'y' and barcodeinfo[0] == None:
+            #verified but not assigned
+            div_id = "not_assigned"
+            message = "verified but NOT assigned"
+            email_type = "3"
+        req.write('''
+        <div id="{div_id}" class="verification_color">
+           <div class="verification_text_wrapper">
+              <br />
+                <h2 class="verification_text">Barcode <br>
+                "{barcode}"
+                <br>{message}</h2>
+            </div>
+        </div>
+        <div id="barcode_form">
+        <form action="fusebox.psp?page=barcode_util.psp" method="post"
+         onsubmit="return confirm('Are you sure to submit and update database?')"
+         onreset="return confirm('Are you sure to reset?')">
+          <input type="hidden" name="prev_barcode" value="{barcode}" />
+          <input type="hidden" name="sent_date" value="{sent}" />
+          <input type="hidden" name="participant" value="{participant}" />
+          <input type="hidden" name="login_user"  value="{login_user}" />
+          <input type="hidden" name="sample_time" value="{sample_time}" />
+          <input type="hidden" name="participant_email" value="{participant_email}" />
+          <input type="hidden" name="login_email" value="{login_email}" />
+          <input type="hidden" name="email_type" value="{email_type}" />
+          <ul>
+             <li>
+               Sample issues: <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" value="moldy" {moldy_checked}/> moldy (current: {moldy}) <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" value="overloaded" {overloaded_checked}/> overloaded (current: {overloaded}) <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" value="other" {other_checked}/> other (current: {other}) <br />
+             </li>
+        '''.format(div_id=div_id,
+                   barcode=barcode,
+                   message=message,
+                   moldy='NA' if barcodeinfo[8]==None else barcodeinfo[8],
+                   moldy_checked="checked" if barcodeinfo[8] in ('Y','y') else "",
+                   overloaded='NA' if barcodeinfo[9]==None else barcodeinfo[9],
+                   overloaded_checked="checked" if barcodeinfo[9] in ('Y','y') else "",
+                   other='NA' if barcodeinfo[10]==None else barcodeinfo[10],
+                   other_checked="checked" if barcodeinfo[10] in ('Y','y') else "",
+                   sent=barcodeinfo[12],
+                   participant=barcodeinfo[3],
+                   login_user=barcodeinfo[17],
+                   sample_time=barcodeinfo[1],
+                   participant_email=barcodeinfo[16],
+                   login_email=barcodeinfo[7],
+                   email_type=email_type))
+        # indent
+%>
+             <li>
+               Sample postmark date (current: <%=barcodeinfo[15] if barcodeinfo[15] else 'NA'%>) : <br />
+                  <input type="text" name="postmark_date" id="postmark_date" value="<%=barcodeinfo[15] if barcodeinfo[15] else ''%>"
+                   onclick="this.select()" /> <br />
+                        <script>
+                          $(function() {
+                            $( "#postmark_date" ).datepicker({
+                                    changeMonth: true,
+                                    maxDate: '+0m',
+                                    onSelect: function(dateText, inst) {
+                                        $(this).focus();
+                                    }
+                            });
+                          });
+                        </script>
+                  (please follow the format mm/dd/yyyy. Example: 12/25/2012)
+             </li>
+             <li>
+               Send a reminder (previously sent: <%=barcodeinfo[12]%>): <br />
+               <div>
+                  <input class="checkbox" type="checkbox" name="send_email" value="send_email" style="float:left;" />
+                  <label style="display:block;">send participant (<%=barcodeinfo[16]%>) and <br/> user (<%=barcodeinfo[7]%>) an email </label> </div>
+             </li>
+             <li>
+               Other notes (current: <%=barcodeinfo[11]%>): <br />
+                  <textarea name="other_text" onclick="this.select()"><%="" if barcodeinfo[11]==None else barcodeinfo[11]%></textarea>
+             </li>
+          </ul>
+              <input type="submit" value="Submit">
+              <input type="reset" value="Reset!">
+        </form>
+        </div>
     
-    if len(barcodeinfo) == 0 or (barcodeinfo[6] == 'n' and barcodeinfo[0] == None): #not verified not assigned
-        #startif
-%>
-<div id="not_verified" class="verification_color">
-    <div class="verification_text_wrapper">
-        <br />
-         <h2 class="verification_text">Barcode <br>
 <%
-        req.write(barcode)
-%>
-    <br>Not Verified</h2>
-    </div>
-</div>
-<%
-    elif barcodeinfo[6] == 'y' and barcodeinfo[0] != None: #verified and assigned
-        #startif
-%>
-<div id="verified" class="verification_color">
-    <div class="verification_text_wrapper">
-        <br />
-        <h2 class="verification_text">Barcode<br>
-<%
-        req.write(barcode)
-%>
-         <br>Verified and Assigned</h2>
-    </div>
-</div>
-<%
-    elif barcodeinfo[6] == 'y' and barcodeinfo[0] == None: #verified not assigned
-        #startif
-%>
-<div id="not_assigned" class="verification_color">
-    <div class="verification_text_wrapper">
-        <br />
-        <h2 class="verification_text">Kit Verified. Barcode<br>
-<%
-        req.write(barcode)
-%>
-         <br>Not Assigned</h2>
-    </div>
-</div>
-<%
-#endif
+        # deindent
+    # deindent
 except(KeyError):
     #will get here on first load of this page since there should be no barcode key in the form dict
 %>
