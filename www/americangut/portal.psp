@@ -11,7 +11,7 @@ __status__ = "Development"
 
 <div id="content" class="content">
 
-<h2>Hi <%=user_data['name']%>! Welcome to the American Gut participant site.</h2>
+<h2>Hi <%=user_data['name']%>! Please follow the steps below.</h2>
 
 <%
 message = form.get('message', '')
@@ -34,7 +34,7 @@ verification_textbox_class = ""
 db_code, kit_verified = ag_data_access.dynamicMetadataSelect(query).fetchone()
 
 user_verification_code = form.get('email_verification_code', None)
-if user_verification_code:
+if kit_verified == 'y':
     #
 %>
             <img src="img/verify.png"/>
@@ -47,11 +47,10 @@ elif kit_verified == 'n':
 #endif
 %>
             </a></li>
-            <li id="source_tab" class="unselected" style="background-image: url('img/2.png');"><a href="javascript:selectTab('source')">Add a<br>Sample Source<br><img src="img/source.png"/></a></li>
-            <li id="survey_tab" class="unselected" style="background-image: url('img/3.png');"><a href="javascript:selectTab('survey')">Complete Survey<br><br><img src="img/survey.png"/></a></li>
-            <li id="sample_tab" class="unselected" style="background-image: url('img/4.png');"><a href="javascript:selectTab('sample')">Take &amp; Log a<br>Sample<br><img src="img/sample.png"/></a></li>
-            <li id="mail_tab" class="unselected" style="background-image: url('img/5.png');"><a href="javascript:selectTab('mail')">Mail Samples<br>to Us<br><img src="img/mail.png"/></a></li>
-            <li id="results_tab" class="unselected" style="background-image: url('img/6.png');"><a href="javascript:selectTab('results')">Sequencing &amp;<br>Results<br><img src="img/results.png"/></a></li>
+            <li id="source_tab" class="unselected" style="background-image: url('img/2.png');"><a href="javascript:selectTab('source')">Add Source &<br>Survey<br><img src="img/source.png"/></a></li>
+            <li id="sample_tab" class="unselected" style="background-image: url('img/3.png');"><a href="javascript:selectTab('sample')">Take &amp; Log a<br>Sample<br><img src="img/sample.png"/></a></li>
+            <li id="mail_tab" class="unselected" style="background-image: url('img/4.png');"><a href="javascript:selectTab('mail')">Mail Samples<br>to Us<br><img src="img/mail.png"/></a></li>
+            <li id="results_tab" class="unselected" style="background-image: url('img/5.png');"><a href="javascript:selectTab('results')">Sequencing &amp;<br>Results<br><img src="img/results.png"/></a></li>
         </ul>
         <div id="workflow_content">
             <div id="verify_content" class="portal_selected">
@@ -59,9 +58,6 @@ elif kit_verified == 'n':
             </div>
             <div id="source_content" class="portal_unselected">
                 <%@ include file="source_portal.psp" %>
-            </div>
-            <div id="survey_content" class="portal_unselected">
-                <%@ include file="survey_portal.psp" %>
             </div>
             <div id="sample_content" class="portal_unselected">
                 <%@ include file="sample_portal.psp" %>
