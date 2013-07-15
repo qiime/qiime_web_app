@@ -1,11 +1,13 @@
 <%
 ag_login_id = sess['user_data']['web_app_user_id']
+participant_name = form['participant_name']
 %>
 
 <div id="content" class="content">
 <h2>Log a New Animal Sample</h2>
 
 <form id="add_sample" name="add_sample" method="post" action="sample_submit.psp">
+    <input type="hidden" name="participant_name" value="<%=participant_name%>"/>
     <table width="100%">
         <tr>
         <td width="20%"></td>
@@ -36,9 +38,10 @@ for barcode in barcodes:
                         <select tabindex="2" name="sample_site" id="sample_site">
                             <option>Stool</option>
                             <option>Mouth</option>
-                            <option>Right hand</option>
-                            <option>Left hand</option>
-                            <option>Forehead</option>
+                            <option>Nares</option>
+                            <option>Ears</option>
+                            <option>Skin</option>
+                            <option>Fur</option>
                         </select>
                     </td>
                 </tr>

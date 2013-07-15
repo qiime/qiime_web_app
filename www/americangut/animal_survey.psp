@@ -1,12 +1,62 @@
+<%
+from utils.psp_utils import format_submit_form_to_fusebox_string
+
+if 'animal_name' in form:
+    participant_name = form['animal_name']
+
+    # Clear any old data for this participant
+    ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
+
+    # Create the new participant if it doesn't exist (merges)
+    ag_data_access.addAGAnimalParticipant(ag_login_id, participant_name)
+
+    # define multiples
+    multiples = set(['human_', 'pet_'])
+
+    # Add values to tables
+    for f in form:
+        form_value = form[f].replace("'", "''")
+        try:
+            # Log the entry in the general table
+            ag_data_access.addAGGeneralValue(ag_login_id, participant_name, f, form_value)
+        except Exception, e:
+            req.write('Failed to add to general table.<br/>\n')
+            req.write('Failed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
+            req.write(str(e) + '<br/>\n')
+
+        try:
+            # Already inserted
+            if f in ('animal_name', 'page'):
+                continue
+            if f == 'type':
+                f = '"type"'
+
+            for m in multiples:
+                if f.startswith(m):
+                    ag_data_access.insertAGMultiple(ag_login_id, participant_name, f, form_value)
+                    break
+            else:
+                ag_data_access.addAGSingle(ag_login_id, participant_name, f, form_value, 'ag_animal_survey')
+        except Exception, e:
+            req.write('\n\nFailed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
+            req.write(str(e) + '<br/>\n')
+
+    # redirect back to portal with a success message
+    req.write(format_submit_form_to_fusebox_string(page='portal.psp',
+        message='Successfully added %s to animal participants.' % \
+        form['animal_name']))
+else:
+    #INDENT
+%>
 <div id="content" class="content">
-    <h2>Non-human host associated survey</h2>
+    <h2>Animal Participant Survey</h2>
     <h4></h4>
     <div class="lefta">
         <table width="100%">
             <tr>
             <td width="20%"></td>
             <td>
-                <form id="pet_survey" name="pet_survey" action="submit_animal_survey.psp" method="post">
+                <form id="pet_survey" name="pet_survey" action="fusebox.psp?page=animal_survey.psp" method="post">
                     <table id="survey" width="100%">
                         <colgroup>
                                <col span="1" style="width: 40%;">
@@ -15,12 +65,12 @@
                         <tr><td><h4>General</h4></td><td></td></tr>
                         <tr>
                             <td>Name</td>
-                            <td><input tabindex="1" type="text" id="pet_name" name="pet_name" value="Name" class=""/></td>
+                            <td><input tabindex="1" type="text" id="animal_name" name="animal_name" value="Name" onkeypress='validateText(event)' class=""/></td>
                         </tr>
                         <tr>
-                            <td>Pet type</td>
+                            <td>Animal type</td>
                             <td>
-                                <select tabindex="1" id="type" name="type" onchange="otherSelect('type','dog_option',1)">
+                                <select tabindex="1" id="type" name="type">
                                     <option value="">Select an option</option>
                                     <option>Dog</option>
                                     <option>Cat</option>
@@ -47,23 +97,11 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>Birth date</td>
-                            <td><input tabindex="3" type="text" name="birth_date" id="birth_date" class=""/> mm/dd/yyyy</td>
-                            <script>
-                              $(function() {
-                                $( "#birth_date" ).datepicker({
-                                        yearRange: "-120:+0",
-                                        changeMonth: true,
-                                        changeYear: true,
-                                        onSelect: function(dateText, inst) {
-                                            $(this).focus();
-                                        }
-                                });
-                              });
-                            </script>
+                            <td>Age</td>
+                            <td><input tabindex="3" type="text" name="age" id="age" onkeypress='validateNumber(event)' class=""/></td>
                         </tr>
                         <tr>
-                            <td>Sex</td>
+                            <td>Gender</td>
                             <td>
                                 <select tabindex="4" name="gender" id="gender">
                                     <option value="">Select an option</option>
@@ -112,9 +150,9 @@
                         <tr>
                             <td>Food source</td>
                             <td>
-                                <input tabindex="8" type="checkbox" id="store_food" name="store_food" /><label for="food_source_store">Pet store food</label><br />
-                                <input tabindex="9" type="checkbox" id="human_food" name="human_food" /><label for="food_source_human">Human food</label><br />
-                                <input tabindex="10" type="checkbox" id="wild_food" name="wild_food" /><label for="food_source_wild">Wild food</label>
+                                <input tabindex="8" type="checkbox" id="food_source_store" name="food_source_store" /><label for="food_source_store">Pet store food</label><br />
+                                <input tabindex="9" type="checkbox" id="food_source_human" name="food_source_human" /><label for="food_source_human">Human food</label><br />
+                                <input tabindex="10" type="checkbox" id="food_source_wild" name="food_source_wild" /><label for="food_source_wild">Wild food</label>
                             </td>
                         </tr>
                         <tr>
@@ -189,45 +227,53 @@
                             </td>
                         </tr>
                     </table>
-                    <div id="dog_option" class="invisible">
-                        <table id="survey" width="100%">
-                            <colgroup>
-                               <col span="1" style="width: 40%;">
-                               <col span="1" style="width: 60%;">
-                            </colgroup>
-                            <tr><td><h4>Dog Specific Questions</h4></td><td></td></tr>
-                            <tr>
-                                <td>Toilet water access</td>
-                                <td>
-                                    <div id="toilet">
-                                        <input tabindex="" type="radio" id="toilet_regular" name="toilet" value="regular" /><label for="toilet_regular">Regular</label>
-                                        <input tabindex="" type="radio" id="toilet_sometimes" name="toilet" value="sometimes"/><label for="toilet_sometimes">Sometimes</label>
-                                        <input tabindex="" type="radio" id="toilet_never" name="toilet" value="never"/><label for="toilet_never">Never</label>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Turd burglar <a href="#" class="help" title="High (anything in sight), Moderate (curious, occasional sample), Low (once or twice), Never">(?)</a></td>
-                                <td>
-                                    <div id="turd">
-                                        <input tabindex="" type="radio" id="turd_high" name="turd" value="high" /><label for="turd_high">High</label>
-                                        <input tabindex="" type="radio" id="turd_moderate" name="turd" value="moderate"/><label for="turd_moderate">Moderate</label>
-                                        <input tabindex="" type="radio" id="turd_low" name="turd" value="low"/><label for="turd_low">Low</label>
-                                        <input tabindex="" type="radio" id="turd_never" name="turd" value="never"/><label for="turd_never">Never</label>
-                                    </div>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                
+                    <table id="survey" width="100%">
+                        <colgroup>
+                           <col span="1" style="width: 40%;">
+                           <col span="1" style="width: 60%;">
+                        </colgroup>
+                        <tr>
+                            <td>Toilet water access</td>
+                            <td>
+                                <div id="toilet">
+                                    <input tabindex="22" type="radio" id="toilet_regular" name="toilet" value="regular" /><label for="toilet_regular">Regular</label>
+                                    <input tabindex="23" type="radio" id="toilet_sometimes" name="toilet" value="sometimes"/><label for="toilet_sometimes">Sometimes</label>
+                                    <input tabindex="24" type="radio" id="toilet_never" name="toilet" value="never"/><label for="toilet_never">Never</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Coprophage <a href="#" class="help" title="Frequency that this animal eats feces.">(?)</a></td>
+                            <td>
+                                <div id="coprophage">
+                                    <input tabindex="25" type="radio" id="coprophage_high" name="coprophage" value="high" /><label for="coprophage_high">High</label>
+                                    <input tabindex="26" type="radio" id="coprophage_moderate" name="coprophage" value="moderate"/><label for="coprophage_moderate">Moderate</label>
+                                    <input tabindex="27" type="radio" id="coprophage_low" name="coprophage" value="low"/><label for="coprophage_low">Low</label>
+                                    <input tabindex="28" type="radio" id="coprophage_never" name="coprophage" value="never"/><label for="coprophage_never">Never</label>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="20%"></td>
+                            <td>
+                                <div class="">
+                                    <p>
+                                    Please write anything else about this animal that you think might affect its microorganisms.
+                                    </p>
+                                </div>
+                                <textarea tabindex="29" id="comments" name="comments" rows="5" cols="70"></textarea>
+                            </td>
+                            <td width="20%"></td>
+                        </tr>
+                    </table>
             </td>
             <td width="20%"></td>
             </tr>
         </table>
     </div>
     <br />
-    <input type="button" value="Reset" onclick="reset('pet_survey')">
-    <input tabindex="22" type="button" id="petsubmit" name="petsubmit" value="Continue" onclick="validatePetSurvey()">
+    <input type="button" value="Reset" tabindex="30" onclick="reset('pet_survey')">
+    <input tabindex="22" type="button" tabindex="31" id="petsubmit" name="petsubmit" value="Continue" onclick="validatePetSurvey1()">
     </form>
     <br />
         <script>
@@ -235,13 +281,13 @@
               $( "#food_type" ).buttonset();
               $( "#outside_time" ).buttonset();
               $( "#toilet" ).buttonset();
-              $( "#turd" ).buttonset();
+              $( "#coprophage" ).buttonset();
               
-              $('input[type="text"], textarea').focus(function () {
+              $('input[type="text"]').focus(function () {
                   defaultText = $(this).val();
                   $(this).val('');
               });
-              $('input[type="text"], textarea').blur(function () {
+              $('input[type="text"]').blur(function () {
                   if ($(this).val() == "") {
                       $(this).val(defaultText);
                   }
@@ -251,3 +297,6 @@
         </script>
     <br />
 </div>
+<%
+#END ELSE
+%>
