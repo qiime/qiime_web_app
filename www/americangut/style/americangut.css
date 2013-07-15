@@ -121,6 +121,7 @@ div.header {
 div.menuwrapper {
 	border-radius: 10px;
 	min-width: 230px;
+	width: 240px;
 	height: 100%;
 	background-color: #fff;
 	text-align: left;
@@ -383,6 +384,16 @@ div.content {
 	text-align: center;
 	overflow:hidden;
 	margin-left: 215px;
+/*	min-width: 300px;*/
+	background-color: #f5f5f5;
+	border-radius: 10px;
+}
+
+div.middle_content {
+/*	min-width: 900px;*/
+	margin-bottom: 5px;
+	text-align: center;
+	overflow:hidden;
 /*	min-width: 300px;*/
 	background-color: #f5f5f5;
 	border-radius: 10px;

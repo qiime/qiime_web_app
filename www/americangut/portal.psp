@@ -24,7 +24,29 @@ if message:
 <div id="content" class="content">
     <div id="workflow">
         <ul class="workflow_menu">
-            <li id="verify_tab" class="selected" style="background-image: url('img/1.png');"><a href="javascript:selectTab('verify')">Verify Your Kit<br><br><img src="img/verify.png"/></a></li>
+            <li id="verify_tab" class="selected" style="background-image: url('img/1.png');"><a href="javascript:selectTab('verify')">Verify Your Kit<br><br>
+<%
+supplied_kit_id = sess['supplied_kit_id']
+query = ("select kit_verification_code, kit_verified from ag_kit "
+         "where supplied_kit_id = '%s'" % supplied_kit_id)
+
+verification_textbox_class = ""
+db_code, kit_verified = ag_data_access.dynamicMetadataSelect(query).fetchone()
+
+user_verification_code = form.get('email_verification_code', None)
+if user_verification_code:
+    #
+%>
+            <img src="img/verify.png"/>
+<%
+elif kit_verified == 'n':
+    #
+%>
+            <img src="img/not_verified.png"/>
+<%
+#endif
+%>
+            </a></li>
             <li id="source_tab" class="unselected" style="background-image: url('img/2.png');"><a href="javascript:selectTab('source')">Add a<br>Sample Source<br><img src="img/source.png"/></a></li>
             <li id="survey_tab" class="unselected" style="background-image: url('img/3.png');"><a href="javascript:selectTab('survey')">Complete Survey<br><br><img src="img/survey.png"/></a></li>
             <li id="sample_tab" class="unselected" style="background-image: url('img/4.png');"><a href="javascript:selectTab('sample')">Take &amp; Log a<br>Sample<br><img src="img/sample.png"/></a></li>
