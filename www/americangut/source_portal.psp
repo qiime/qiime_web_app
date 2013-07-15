@@ -6,7 +6,7 @@ If you add a <strong>human</strong> source, you will need to have a completed 7 
 </p>
 <div id="source_icons">
     <a href="fusebox.psp?page=new_participant_overview.psp"><div class="source_icon"><img src="img/human.png"><div>Human</div></div></a>
-    <a href=""><div class="source_icon"><img src="img/animal.png"><div>Animal</div></div></a>
+    <a href="fusebox.psp?page=animal_survey.psp"><div class="source_icon"><img src="img/animal.png"><div>Animal</div></div></a>
     <a href="" onclick="document.forms['add_sample_general'].submit(); return false;"><div class="source_icon"><img src="img/environmental.png"><div>Environmental</div></div></a>
 </div>
 <br />
