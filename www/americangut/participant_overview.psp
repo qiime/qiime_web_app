@@ -3,6 +3,7 @@
 # Define some variables
 ag_login_id = sess['user_data']['web_app_user_id']
 participant_name = form['participant_name']
+participant_type = form['participant_type']
 
 remove_participant_item = \
 """
@@ -19,10 +20,17 @@ remove_participant_item = \
 <div class="overview_wrapper">
     <div class="overview">
             <table class="list" id="survey" width="100%">
+<%
+if participant_type == 'human':
+    #INDENT
+%>
                 <tr>
                     <td>Completed consent</td>
                     <td><img src="img/icon-green-checkmark.png"/></td>
                 </tr>
+<%
+#ENDIF
+%>
                 <tr>
                     <td>Completed survey</td>
                     <td><img src="img/icon-green-checkmark.png"/></td>

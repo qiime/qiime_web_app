@@ -36,6 +36,11 @@ begin
     where   ag_login_id = ag_login_id_
             and participant_name = participant_name_;
             
+    -- Remove the participant/survey/consent if they are an animal
+    delete  ag_animal_survey
+    where   ag_login_id = ag_login_id_
+            and participant_name = participant_name_;
+            
     commit;
 
 end;
