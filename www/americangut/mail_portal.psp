@@ -1,4 +1,12 @@
-<h2>Mailing Samples</h2>
+<h2 style="width:500px;margin-right:0px;float:left;">Mailing Samples</h2>
+
+<!--<div class="right">
+<button type="submit" value="I have mailed my sample"><img src="img/verify.png"><br/>I have mailed my sample</input>
+</div>-->
+
+<br>
+<br>
+<br>
 <p class="portal_blurb">
 Once you have added a <a href="javascript:selectTab('source')">sample source, completed the relevant survey</a> (if applicable), <a href="javascript:selectTab('sample')">taken and logged your samples</a>, you should then mail the samples back to us.
 </p>

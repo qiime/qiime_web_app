@@ -71,3 +71,11 @@ elif kit_verified == 'n':
         </div>
     </div>
 </div>
+<%
+if kit_verified == 'y':
+    #
+%>
+<script>selectTab('source')</script>
+<%
+#endif
+%>
