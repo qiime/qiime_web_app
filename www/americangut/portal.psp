@@ -24,7 +24,6 @@ if message:
 <div id="content" class="content">
     <div id="workflow">
         <ul class="workflow_menu">
-            <li id="verify_tab" class="selected" style="background-image: url('img/1.png');"><a href="javascript:selectTab('verify')">Verify Your Kit<br><br>
 <%
 supplied_kit_id = sess['supplied_kit_id']
 query = ("select kit_verification_code, kit_verified from ag_kit "
@@ -37,20 +36,24 @@ user_verification_code = form.get('email_verification_code', None)
 if kit_verified == 'y':
     #
 %>
+            <li id="verify_tab" class="selected" style="background-image: url('img/1.png');padding-bottom:0px;">Verify Your Kit<br><br>
             <img src="img/verify.png"/>
+            </li>
 <%
 elif kit_verified == 'n':
     #
 %>
+            <li id="verify_tab" class="selected" style="background-image: url('img/1.png');"><a href="javascript:selectTab('verify')">Verify Your Kit<br><br>
             <img src="img/not_verified.png"/>
+            </a></li>
 <%
 #endif
 %>
-            </a></li>
             <li id="source_tab" class="unselected" style="background-image: url('img/2.png');"><a href="javascript:selectTab('source')">Add Source &<br>Survey<br><img src="img/source.png"/></a></li>
-            <li id="sample_tab" class="unselected" style="background-image: url('img/3.png');"><a href="javascript:selectTab('sample')">Take &amp; Log a<br>Sample<br><img src="img/sample.png"/></a></li>
-            <li id="mail_tab" class="unselected" style="background-image: url('img/4.png');"><a href="javascript:selectTab('mail')">Mail Samples<br>to Us<br><img src="img/mail.png"/></a></li>
-            <li id="results_tab" class="unselected" style="background-image: url('img/5.png');"><a href="javascript:selectTab('results')">Sequencing &amp;<br>Results<br><img src="img/results.png"/></a></li>
+            <li id="sample_tab" class="unselected" style="background-image: url('img/3.png');"><a href="javascript:selectTab('sample')">Take a Sample<br><br><img src="img/sample.png"/></a></li>
+            <li id="log_tab" class="unselected" style="background-image: url('img/4.png');"><a href="javascript:selectTab('log')">Log a Sample<br><br><img src="img/log.png"/></a></li>
+            <li id="mail_tab" class="unselected" style="background-image: url('img/5.png');"><a href="javascript:selectTab('mail')">Mail Samples<br>to Us<br><img src="img/mail.png"/></a></li>
+            <li id="results_tab" class="unselected" style="background-image: url('img/6.png');"><a href="javascript:selectTab('results')">Sequencing &amp;<br>Results<br><img src="img/results.png"/></a></li>
         </ul>
         <div id="workflow_content">
             <div id="verify_content" class="portal_selected">
@@ -61,6 +64,9 @@ elif kit_verified == 'n':
             </div>
             <div id="sample_content" class="portal_unselected">
                 <%@ include file="sample_portal.psp" %>
+            </div>
+            <div id="log_content" class="portal_unselected">
+                <%@ include file="log_portal.psp" %>
             </div>
             <div id="mail_content" class="portal_unselected">
                 <%@ include file="mail_portal.psp" %>
