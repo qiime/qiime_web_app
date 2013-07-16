@@ -119,7 +119,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
 
         # Convert sff file into fasta, qual and flowgram file
         if convert_to_flx:
-            if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536']:
+            if study_id in ['496','968','969','1069','1002','1066','1194','1195','1457','1458','1460','1536','1918','1962']:
                 ### this function is for handling files where the barcode and
                 ### linkerprimer are all lowercase (i.e. HMP data or SRA data)
                 
@@ -127,6 +127,7 @@ def run_process_sff_through_split_lib(study_id,run_prefix,sff_input_fp,
                 process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t --no_trim --use_sfftools' %\
                                   (python_exe_fp, script_dir, sff_input_fp,
                                    output_dir)
+                #process_sff_cmd = '%s %s/process_sff.py -i %s -f -o %s -t' % (python_exe_fp, script_dir, sff_input_fp, output_dir)
                 
                 commands.append([('ProcessSFFs', process_sff_cmd)])
                 
@@ -275,8 +276,27 @@ def run_process_illumina_through_split_lib(study_id,run_prefix,input_fp,
     
     # determine which file is seq-file and which is barcode-file and associate
     # to mapping file
-    input_str=get_split_libraries_fastq_params_and_file_types(filenames,
-                                                              mapping_fp)
+    if len(filenames) == 1:
+        try:
+            # Format of sample_id needs to be seqs_<sample_name>.<sequence_prep_id>.fastq
+            data_access = data_access_factory(ServerConfig.data_access_type)
+            sql = """
+            select  s.sample_name || '.' || sp.sequence_prep_id 
+            from    sample s 
+                    inner join sequence_prep sp 
+                    on s.sample_id = sp.sample_id
+            where   s.study_id = {0}
+                    and sp.run_prefix = '{1}'
+            """.format(study_id, run_prefix[:-1])
+            sample_and_prep = data_access.dynamicMetadataSelect(sql).fetchone()[0]
+            input_str = '-i {0} --sample_id {1}'.format(filenames[0], sample_and_prep)
+        except Exception, e:
+            error = 'Failed to obtain sample and sequence prep info for study_id {0} and run_prefix {1}\n'.format(study_id, run_prefix)
+            error += 'SQL was: \n {0} \n'.format(sql)
+            error += 'Original exception was: \n {0}'.format(str(e))
+            raise Exception(error)
+    else:
+        input_str=get_split_libraries_fastq_params_and_file_types(filenames, mapping_fp)
     
     # create split_libaries folder
     split_library_output=join(output_dir,'split_libraries')
@@ -504,4 +524,5 @@ def check_zip():
     if not app_path('zip'):
         raise ApplicationNotFoundError,\
         "zip is not in $PATH. Is it installed? Have you added it to $PATH?"\
+
 

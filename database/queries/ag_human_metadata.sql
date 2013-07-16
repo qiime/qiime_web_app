@@ -1,6 +1,35 @@
+/*
+
+Forehead = UBERON:skin; UBERON:skin of head; UBERON:sebum; ENVO:human-associated habitat;ÊENVO:human-associated habitat; ENVO:sebum;
+Left hand= UBERON skin; UBERON:skin of hand: UBERON:sebum; ENVO:human-associated habitat;ÊENVO:human-associated habitat; ENVO:sebum;
+Right hand= UBERON skin; UBERON:skin of hand: UBERON:sebum; ENVO:human-associated habitat;ÊENVO:human-associated habitat; ENVO:sebum;
+UBERON:oral cavity; UBERON:mouth; UBERON:saliva; ENVO:human-associated habitat;ÊENVO:human-associated habitat; ENVO:saliva;
+Stool= UBERON:feces;UBERON:feces:UBERON:feces; ENVO:human-associated habitat;ÊENVO:human-associated habitat; ENVO:feces:
+Animal habitat=ÊUBERON:feces;UBERON:feces:UBERON:feces;ÊENVO:animalia-associated habitat, ENVO:animalia-associated habitat, ENVO:feces/sebum;
+Biofilm = ENVO:terrestrial biome; ENVO:surface; ENVO:biofilm;
+Fermented food= ENVO:terrestrial biome; ENVO:anthropogenic habitat; ENVO:fermented food;
+Food= ENVO:terrestrial biome; ENVO:anthropogenic habitat; ENVO:food;
+Indoor surface = Biome from area or ENVO:terrestrial biome; ENVO:anthropogenic feature; ENVO:surface
+
+- Is there any way that the entries in the fields that come from the download can be lower case for most of the participant entered data?
+
+(not from this query - only MIGRAINEMEDS exists)  There are 2 identical columns generated MIGRAINE_MEDS and MIGRAINEMEDS - seems like duplication.
+(done) Can you generate BMI before download from height, weight?
+(done) GENDER to sex
+
+
+
+
+*/
+
 
 select  akb.barcode as sample_name, akb.barcode as ANONYMIZED_NAME, akb.sample_date, 
-        akb.sample_time, akb.site_sampled, lower(city) as city, upper(state) as state, 
+        akb.sample_time, akb.site_sampled,
+        case akb.site_sampled
+            when 'Stool' then 'UBERON:feces'
+            else akb.site_sampled
+        end as env_matter, 
+        lower(city) as city, upper(state) as state, 
         zip, country, al.latitude, al.longitude, 'years' as age_unit,
         case
             when ahs.birth_date is not null then
@@ -65,7 +94,7 @@ select  akb.barcode as sample_name, akb.barcode as ANONYMIZED_NAME, akb.sample_d
             when FRAT = 'on' then 'yes'
             else FRAT
         end as FRAT, 
-        REPLACE(REPLACE(REPLACE(GENDER, CHR(10)), CHR(13)), CHR(9)) GENDER, 
+        REPLACE(REPLACE(REPLACE(GENDER, CHR(10)), CHR(13)), CHR(9)) SEX, 
         REPLACE(REPLACE(REPLACE(GLUTEN, CHR(10)), CHR(13)), CHR(9)) GLUTEN, 
         REPLACE(REPLACE(REPLACE(HAND, CHR(10)), CHR(13)), CHR(9)) HAND, 
         REPLACE(REPLACE(REPLACE(HEIGHT_CM, CHR(10)), CHR(13)), CHR(9)) HEIGHT_CM, 
@@ -171,6 +200,15 @@ select  akb.barcode as sample_name, akb.barcode as ANONYMIZED_NAME, akb.sample_d
         REPLACE(REPLACE(REPLACE(WEIGHT_CHANGE, CHR(10)), CHR(13)), CHR(9)) WEIGHT_CHANGE, 
         REPLACE(REPLACE(REPLACE(WEIGHT_KG, CHR(10)), CHR(13)), CHR(9)) WEIGHT_KG, 
         REPLACE(REPLACE(REPLACE(WEIGHT_LBS, CHR(10)), CHR(13)), CHR(9)) WEIGHT_LBS,
+        case
+            when weight_lbs > 0 and height_in > 0 then
+            case 
+                when (cast(weight_lbs as number) / ((cast(height_in as number) * cast(height_in as number)))) * 703 between 5 and 100 
+                    then (cast(weight_lbs as number) / ((cast(height_in as number) * cast(height_in as number)))) * 703
+                else null
+            end
+            else null
+        end as BMI,
         (
             select  listagg(item_value, ', ') within group(order by item_name)
             from    ag_survey_multiples

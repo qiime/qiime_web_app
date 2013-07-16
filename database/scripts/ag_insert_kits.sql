@@ -107,6 +107,10 @@ set     barcode = case
         state = case
             when state = '-' then ''
             else state
+        end,
+        phone_number = case
+            when phone_number = '-' then ''
+            else phone_number
         end;
 
 commit;
