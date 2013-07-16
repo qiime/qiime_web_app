@@ -23,16 +23,31 @@ __status__ = "Production"
 <!-- Clippy -->
 <link rel="stylesheet" type="text/css" href="/qiime/js/smore-inc-clippy.js-7ca9b15/build/clippy.css" media="all">
 <script src="/qiime/js/smore-inc-clippy.js-7ca9b15/build/clippy.min.js"></script>
-<!-- Init script -->
 <script type="text/javascript">
-    clippy.load('Merlin', function(agent) {
-        // Do anything with the loaded agent
-        agent.show();
-        agent.speak('Hello.');
-    });
+function clippyTalk(message, agentAction) {
+    agentName = 'Links'
+    if (typeof(agentAction) === 'undefined') agentAction = 'animate';
 
-    
+    // Load up the agent!
+    clippy.load(agentName, function(agent) {
+        //d = $(document);
+        //agent.moveTo(d.height(), d.width());
+        //alert(d.height());
+        agent.show();
+        if (message != '') {
+            agent.speak(message);
+        }
+        if (agentAction === 'animate') {
+            agent.animate();
+        }
+        else {
+            agent.play(agentAction);
+        }
+    });
+}
 </script>
+
+
 
 <%
 if ServerConfig.data_access_type == DataAccessType.qiime_test:
