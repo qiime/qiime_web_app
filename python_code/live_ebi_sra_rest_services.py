@@ -354,7 +354,7 @@ class LiveEBISRARestServices(BaseRestServices):
 
                         # If there are no seqeucnes, skip this prep entry. There will be no per-sample
                         # sequence file, thus the metadata describing it is not needed
-                        if prep_dict['num_sequences'] == 0:
+                        if prep_dict['num_sequences'] in [0, None]:
                             self.logger.log_entry('PREP DICT ENTRY HAS NO SEQUENCES. SKIPPING ENTRY: {0}'.format(str(prep_dict)))
                             continue;
 
