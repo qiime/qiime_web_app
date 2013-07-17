@@ -352,25 +352,28 @@ class LiveEBISRARestServices(BaseRestServices):
                     prep_list = sample_dict[sample_key]
                     for prep_dict in prep_list:
 
-                        # If there are no seqeucnes, skip this prep entry. There will be no per-sample
-                        # sequence file, thus the metadata describing it is not needed
-                        if prep_dict['num_sequences'] == 0:
-                            self.logger.log_entry('PREP DICT ENTRY HAS NO SEQUENCES. SKIPPING ENTRY: {0}'.format(str(prep_dict)))
-                            continue;
-
                         self.logger.log_entry('PREP DICT IS: {0}'.format(str(prep_dict)))
-                        
+
                         # Extract a few values because they're frequently used
                         study_id = str(self.study_id)
                         sample_id = str(sample_dict['sample_id'])
                         row_number = str(prep_dict['row_number'])
-
-                        # Create or reference sequence file writer
-                        # Can be fastq, sff, or fasta, depending on what files we have available
-                        file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
-                        self.logger.log_entry('Writer type is {0}'.format(file_writer.writer_type))
-
                         platform = ''
+                        file_path = ''
+                        file_writer = None
+
+                        # If there are no seqeucnes, skip this prep entry. There will be no per-sample file
+                        if prep_dict['num_sequences'] == 0:
+                            self.logger.log_entry('PREP DICT ENTRY HAS NO SEQUENCES. SKIPPING ENTRY: {0}'.format(str(prep_dict)))
+                            continue;
+
+                        # Verify that per-sample sequence file exists. In non-16S studies this check is necessary
+                        try:
+                            file_writer = writer_factory.get_sequence_writer(self.study_id, sample_id, row_number, self.root_dir)
+                            file_path = file_writer.write()
+                        except:
+                            self.logger.log_entry('PER-SAMPLE SEQUENCE FILE DOES NOT EXIST. SKIPPING ENTRY: {0}'.format(str(prep_dict)))
+                            continue
                         
                         if file_writer.writer_type == 'sff':
                             platform = 'LS454'
@@ -450,17 +453,14 @@ class LiveEBISRARestServices(BaseRestServices):
                         experiment_file.write('   </EXPERIMENT>\n')
                         
                         checksum = None
-                        file_path = ''
                         file_identifier = ''
                         block_size = 8192
                         
                         try:
-                            file_path = file_writer.write()
                             checksum_file_path = '{0}.checksum'.format(file_path)
                             checksum = None
                             
                             # Check to see if the md5 has already been calculated and skip if already done
-                            checksum_file_path = '{0}.checksum'.format(file_path)
                             if exists(checksum_file_path):
                                 with open(checksum_file_path) as f:
                                     checksum = f.read()
