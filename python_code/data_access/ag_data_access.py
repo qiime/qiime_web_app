@@ -92,6 +92,19 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_update_login', [ag_login_id, email, name, address, city, state, zip, country])
 
+    def getAGSurveyDetails(self, ag_login_id, participant_name):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_survey_details',
+            [ag_login_id, participant_name, results])
+
+        data = {}
+        for row in results:
+            if row[3]:
+                data[row[2]] = row[3]
+
+        return data
+
     def getAGLogins(self):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()

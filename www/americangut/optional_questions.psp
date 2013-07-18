@@ -107,6 +107,17 @@ if(v != 0):
                   $(this).focus();
                   }
               });
+        if (optional_questions.pregnant_yes.checked)
+            setVisible('pregnant_option');
+        if (optional_questions.diabetes_medication_yes.checked)
+            setVisible('diabetes_option');
+        if (optional_questions.migrainemeds_yes.checked)
+            setVisible('migraine_option');
+        setDiabetesMedsDefaults('optional_questions', 'diabetes_medications', 'diabetes_medications_default[]');
+        setMigraineMedsDefaults('optional_questions', 'migraine_medication', 'migraine_medication_default[]');
+        otherSelect('migraine_factor_1','migraine_option_1',12);
+        otherSelect('migraine_factor_2','migraine_option_2',12);
+        otherSelect('migraine_factor_3','migraine_option_3',12);
         $( "#progressbar" ).progressbar({
           value: 70
         });

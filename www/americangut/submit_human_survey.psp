@@ -113,6 +113,7 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gu
 sess = Session.Session(req)
 
 message = ""
+is_survey_edit = False
 
 # Insert the new row
 participant_email = form['participant_email']
@@ -138,6 +139,9 @@ multiples = set(['supplements_', 'dietrestrictions_', 'travel_location_', 'trave
 for f in form:
 	# Skip submit buttons
 	if f.startswith('submit'):
+		continue
+	if f.endswith('_default') or f.endswith('_default[]'):
+		is_survey_edit = True
 		continue
 
 	form_value = form[f].replace("'", "''")
@@ -185,15 +189,19 @@ Deceased Parent: %s
 	participant_guardian_2, parent_deceased, consent_text, AG_CONSENT_TEXT)
 
 try:
-	send_email(MESSAGE, SUBJECT, participant_email)
-	message+="Consent form successfully sent to: %s.<br/>" % participant_email
+    if not is_survey_edit:
+        send_email(MESSAGE, SUBJECT, participant_email)
+        message+="Consent form successfully sent to: %s.<br/>" % participant_email
 except:
 	message+=("There was a problem sending you the consent form. Please contact"
 		" us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
 		"info@americangut.org</a>.<br/>")
 
 # default message to display upon redirect to portal
-message+=("%s successfully added as a participant! " % participant_name)
+if is_survey_edit:
+    message+="Survey updated for %s" % participant_name
+else:
+    message+=("%s successfully added as a participant! " % participant_name)
 
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox_string(page='portal.psp', message=message))

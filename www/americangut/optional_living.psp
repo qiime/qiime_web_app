@@ -1,10 +1,30 @@
+<%
+# frat
+frat = form.get('frat_default', None)
+frat_yes = 'checked' if frat == 'yes' else ''
+frat_no = 'checked' if frat == 'no' else ''
+
+# communal dining
+communal_dining = form.get('communal_dining_default', None)
+communal_dining_yes = 'checked' if communal_dining == 'yes' else ''
+communal_dining_no = 'checked' if communal_dining == 'no' else ''
+
+# roommates
+roommates_options = ["None", "One", "Two", "Three", "More than three"]
+roommates_dict = dict(zip(roommates_options, ['']*len(roommates_options)))
+roommates = form.get('roommates_default', None)
+if roommates:
+    roommates_dict[roommates] = "selected='selected'"
+#endif
+%>
+
 <tr><td><h4>Communal Living Questions</h4></td></tr>
 <tr>
     <td>Do you live in a fraternity/sorority house?</td>
     <td>
         <div id="frat">
-            <input tabindex="6" type="radio" id="frat_yes" name="frat" /><label for="frat_yes">Yes</label>
-            <input tabindex="7" type="radio" id="frat_no" name="frat" /><label for="frat_no">No</label>
+            <input tabindex="6" type="radio" id="frat_yes" name="frat" value="yes" <%=frat_yes%>/><label for="frat_yes">Yes</label>
+            <input tabindex="7" type="radio" id="frat_no" name="frat" value="no" <%=frat_no%>/><label for="frat_no">No</label>
         </div>
     </td>
 </tr>
@@ -12,8 +32,8 @@
     <td>Do you eat the majority of your meals in communal dining areas?</td>
     <td>
         <div id="communal_dining">
-            <input tabindex="8" type="radio" id="communal_dining_yes" name="communal_dining" /><label for="communal_dining_yes">Yes</label>
-            <input tabindex="9" type="radio" id="communal_dining_no" name="communal_dining" /><label for="communal_dining_no">No</label>
+            <input tabindex="8" type="radio" id="communal_dining_yes" name="communal_dining" value="yes" <%=communal_dining_yes%>/><label for="communal_dining_yes">Yes</label>
+            <input tabindex="9" type="radio" id="communal_dining_no" name="communal_dining" value="no" <%=communal_dining_no%>/><label for="communal_dining_no">No</label>
         </div>
     </td>
 </tr>
@@ -22,11 +42,11 @@
     <td>
         <select tabindex="10" id="roommates" name="roommates">
             <option value="">Select an option</option>
-            <option>None</option>
-            <option>One</option>
-            <option>Two</option>
-            <option>Three</option>
-            <option>More than three</option>
+            <option <%=roommates_dict['None']%>>None</option>
+            <option <%=roommates_dict['One']%>>One</option>
+            <option <%=roommates_dict['Two']%>>Two</option>
+            <option <%=roommates_dict['Three']%>>Three</option>
+            <option <%=roommates_dict['More than three']%>>More than three</option>
         </select>
     </td>
 </tr>
