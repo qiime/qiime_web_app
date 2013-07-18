@@ -3,6 +3,7 @@
 # Define some variables
 ag_login_id = sess['user_data']['web_app_user_id']
 participant_name = form['participant_name']
+participant_type = form['participant_type']
 survey_details = ag_data_access.getAGSurveyDetails(ag_login_id,
     participant_name)
 
@@ -52,10 +53,17 @@ for k, v in sorted(survey_details.items()):
 <div class="overview_wrapper">
     <div class="overview">
             <table class="list" id="survey" width="100%">
+<%
+if participant_type == 'human':
+    #INDENT
+%>
                 <tr>
                     <td>Completed consent</td>
                     <td><img src="img/icon-green-checkmark.png"/></td>
                 </tr>
+<%
+#ENDIF
+%>
                 <tr>
                     <td>Completed survey (<a href="#" onclick="document.forms['edit_survey'].submit(); return false;">edit</a>)</td>
                     <td><img src="img/icon-green-checkmark.png"/></td>

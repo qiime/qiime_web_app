@@ -106,11 +106,18 @@ select * from project;
 
 insert  into project_barcode
         (project_id, barcode)
-select  4, barcode
+select  6, barcode
 from    tmp_handout_kits;
 
 commit;
 
 /*
 
+select * from barcode order by barcode desc;
+
+select * from tmp_handout_kits order by barcode desc;
+select * from ag_handout_kits order by barcode desc;
+
 */
+
+
