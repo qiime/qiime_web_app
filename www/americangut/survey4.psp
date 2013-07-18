@@ -11,7 +11,90 @@
 for f in form:
     if(f != 'page'):
         req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
-# End for
+
+# artificial tanning checkboxes
+tanning_beds = 'checked' if form.get("tanning_beds_default", None) == 'bed' else ''
+tanning_sprays = 'checked' if form.get("tanning_sprays_default", None) == 'spray' else ''
+
+# many of the questions on this page are select boxes with the same options:
+frequency_options = ['Daily', 'Regularly (3-5 times/week)',
+    'Occasionally (1-2 times/week)', 'Rarely (few times/month)', 'Never']
+
+exercise_frequency_dict = dict(zip(frequency_options, ['']*len(frequency_options)))
+pool_frequency_dict = dict(zip(frequency_options, ['']*len(frequency_options)))
+smoking_frequency_dict = dict(zip(frequency_options, ['']*len(frequency_options)))
+alcohol_frequency_dict = dict(zip(frequency_options, ['']*len(frequency_options)))
+teethbrushing_frequency_dict = dict(zip(frequency_options, ['']*len(frequency_options)))
+flossing_frequency_dict = dict(zip(frequency_options, ['']*len(frequency_options)))
+cosmetics_frequency_dict = dict(zip(frequency_options, ['']*len(frequency_options)))
+
+# exercise frequency
+exercise_frequency = form.get('exercise_frequency_default', None)
+if exercise_frequency:
+    exercise_frequency_dict[exercise_frequency] = "selected='selected'"
+
+# pool frequency
+pool_frequency = form.get('pool_frequency_default', None)
+if pool_frequency:
+    pool_frequency_dict[pool_frequency] = "selected='selected'"
+
+# smoking frequency
+smoking_frequency = form.get('smoking_frequency_default', None)
+if smoking_frequency:
+    smoking_frequency_dict[smoking_frequency] = "selected='selected'"
+
+# alcohol frequency
+alcohol_frequency = form.get('alcohol_frequency_default', None)
+if alcohol_frequency:
+    alcohol_frequency_dict[alcohol_frequency] = "selected='selected'"
+
+# teethbrushing frequency
+teethbrushing_frequency = form.get('teethbrushing_frequency_default', None)
+if teethbrushing_frequency:
+    teethbrushing_frequency_dict[teethbrushing_frequency] = "selected='selected'"
+
+# flossing frequency
+flossing_frequency = form.get('flossing_frequency_default', None)
+if flossing_frequency:
+    flossing_frequency_dict[flossing_frequency] = "selected='selected'"
+
+# cosmetics frequency
+cosmetics_frequency = form.get('cosmetics_frequency_default', None)
+if cosmetics_frequency:
+    cosmetics_frequency_dict[cosmetics_frequency] = "selected='selected'"
+
+# exercise location
+exercise_location_dict = {'Indoors': '', 'Outdoors': '', 'Both': '',
+    'Depends on the season': '', 'None of the above': ''}
+exercise_location = form.get('exercise_location_default', None)
+if exercise_location:
+    exercise_location_dict[exercise_location] = "selected='selected'"
+
+# deodorant use
+deodorant_use_dict = {'I use deoderant': '', 'I use an antiperspirant': '',
+    'Not sure, but I use some form of deoderant/antiperspirant': '',
+    'I do not use deoderant or antiperspirant': ''}
+deodorant_use = form.get('deoderant_use_default', None)
+if deodorant_use:
+    deodorant_use_dict[deodorant_use] = "selected='selected'"
+
+# sleep duration
+sleep_duration_dict = {'Less than 5 hours': '', '5-6 hours': '',
+    '6-7 hours': '', '7-8 hours': '', '8 or more hours': ''}
+sleep_duration = form.get('sleep_duration_default', None)
+if sleep_duration:
+    sleep_duration_dict[sleep_duration] = "selected='selected'"
+
+# nail biting
+nails = form.get('nails_default', None)
+nails_yes = 'checked' if nails == 'yes' else ''
+nails_no = 'checked' if nails == 'no' else ''
+
+# nail biting
+softener = form.get('softener_default', None)
+softener_yes = 'checked' if softener == 'yes' else ''
+softener_no = 'checked' if softener == 'no' else ''
+
 %>
 
 
@@ -23,20 +106,20 @@ for f in form:
                         <tr>
                         <td>Do you use any artificial tanning methods?</td>
                         <td>
-                                <input tabindex="1" type="checkbox" id="tanning_beds" name="tanning_beds" value="bed"/><label for="tanning_yesbeds">Beds</label>
-                                <input tabindex="2" type="checkbox" id="tanning_sprays" name="tanning_sprays" value="spray"/><label for="tanning_yessprays">Sprays</label>
+                                <input tabindex="1" type="checkbox" id="tanning_beds" name="tanning_beds" value="bed" <%=tanning_beds%>/><label for="tanning_yesbeds">Beds</label>
+                                <input tabindex="2" type="checkbox" id="tanning_sprays" name="tanning_sprays" value="spray" <%=tanning_sprays%>/><label for="tanning_yessprays">Sprays</label>
                         </td>
                         </tr>
                         <tr>
                             <td>How often do you exercise?</td>
                             <td>
                                 <select tabindex="3" name="exercise_frequency" id="exercise_frequency">
-                                    <option value="">Select an option</option>
-                                    <option>Daily</option>
-                                    <option>Regularly (3-5 times/week)</option>
-                                    <option>Occasionally (1-2 times/week)</option>
-                                    <option>Rarely (few times/month)</option>
-                                    <option>Never</option>
+                                    <option value="" <%=exercise_frequency_dict['Daily']%>>Select an option</option>
+                                    <option <%=exercise_frequency_dict['Daily']%>>Daily</option>
+                                    <option <%=exercise_frequency_dict['Regularly (3-5 times/week)']%>>Regularly (3-5 times/week)</option>
+                                    <option <%=exercise_frequency_dict['Occasionally (1-2 times/week)']%>>Occasionally (1-2 times/week)</option>
+                                    <option <%=exercise_frequency_dict['Rarely (few times/month)']%>>Rarely (few times/month)</option>
+                                    <option <%=exercise_frequency_dict['Never']%>>Never</option>
                                 </select>
                             </td>
                         </tr>
@@ -45,11 +128,11 @@ for f in form:
                             <td>
                                 <select tabindex="4" name="exercise_location" id="exercise_location">
                                     <option value="">Select an option</option>
-                                    <option>Indoors</option>
-                                    <option>Outdoors</option>
-                                    <option>Both</option>
-                                    <option>Depends on the season</option>
-                                    <option>None of the above</option>
+                                    <option <%=exercise_location_dict['Indoors']%>>Indoors</option>
+                                    <option <%=exercise_location_dict['Outdoors']%>>Outdoors</option>
+                                    <option <%=exercise_location_dict['Both']%>>Both</option>
+                                    <option <%=exercise_location_dict['Depends on the season']%>>Depends on the season</option>
+                                    <option <%=exercise_location_dict['None of the above']%>>None of the above</option>
                                 </select>
                             </td>
                         </tr>
@@ -57,8 +140,8 @@ for f in form:
                             <td>Do you bite your fingernails?</td>
                             <td>
                                 <div id="nails">
-                                    <input tabindex="5" type="radio" id="nails_yes" name="nails" value="yes"/><label for="nails_yes">Yes</label>
-                                    <input tabindex="6" type="radio" id="nails_no" name="nails" value="no"/><label for="nails_no">No</label>
+                                    <input tabindex="5" type="radio" id="nails_yes" name="nails" value="yes" <%=nails_yes%>/><label for="nails_yes">Yes</label>
+                                    <input tabindex="6" type="radio" id="nails_no" name="nails" value="no" <%=nails_no%>/><label for="nails_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -67,11 +150,11 @@ for f in form:
                             <td>
                                 <select tabindex="7" name="pool_frequency" id="pool_frequency">
                                     <option value="">Select an option</option>
-                                    <option>Daily</option>
-                                    <option>Regularly (3-5 times/week)</option>
-                                    <option>Occasionally (1-2 times/week)</option>
-                                    <option>Rarely (few times/month)</option>
-                                    <option>Never</option>
+                                    <option <%=pool_frequency_dict['Daily']%>>Daily</option>
+                                    <option <%=pool_frequency_dict['Regularly (3-5 times/week)']%>>Regularly (3-5 times/week)</option>
+                                    <option <%=pool_frequency_dict['Occasionally (1-2 times/week)']%>>Occasionally (1-2 times/week)</option>
+                                    <option <%=pool_frequency_dict['Rarely (few times/month)']%>>Rarely (few times/month)</option>
+                                    <option <%=pool_frequency_dict['Never']%>>Never</option>
                                 </select>
                             </td>
                         </tr>
@@ -80,11 +163,11 @@ for f in form:
                             <td>
                                 <select tabindex="8" name="smoking_frequency" id="smoking_frequency">
                                     <option value="">Select an option</option>
-                                    <option>Daily</option>
-                                    <option>Regularly (3-5 times/week)</option>
-                                    <option>Occasionally (1-2 times/week)</option>
-                                    <option>Rarely (few times/month)</option>
-                                    <option>Never</option>
+                                    <option <%=smoking_frequency_dict['Daily']%>>Daily</option>
+                                    <option <%=smoking_frequency_dict['Regularly (3-5 times/week)']%>>Regularly (3-5 times/week)</option>
+                                    <option <%=smoking_frequency_dict['Occasionally (1-2 times/week)']%>>Occasionally (1-2 times/week)</option>
+                                    <option <%=smoking_frequency_dict['Rarely (few times/month)']%>>Rarely (few times/month)</option>
+                                    <option <%=smoking_frequency_dict['Never']%>>Never</option>
                                 </select>
                             </td>
                         </tr>
@@ -93,11 +176,11 @@ for f in form:
                             <td>
                                 <select tabindex="9" name="alcohol_frequency" id="alcohol_frequency">
                                     <option value="">Select an option</option>
-                                    <option>Daily</option>
-                                    <option>Regularly (3-5 times/week)</option>
-                                    <option>Occasionally (1-2 times/week)</option>
-                                    <option>Rarely (few times/month)</option>
-                                    <option>Never</option>
+                                    <option <%=alcohol_frequency_dict['Daily']%>>Daily</option>
+                                    <option <%=alcohol_frequency_dict['Regularly (3-5 times/week)']%>>Regularly (3-5 times/week)</option>
+                                    <option <%=alcohol_frequency_dict['Occasionally (1-2 times/week)']%>>Occasionally (1-2 times/week)</option>
+                                    <option <%=alcohol_frequency_dict['Rarely (few times/month)']%>>Rarely (few times/month)</option>
+                                    <option <%=alcohol_frequency_dict['Never']%>>Never</option>
                                 </select>
                             </td>
                         </tr>
@@ -106,11 +189,11 @@ for f in form:
                             <td>
                                 <select tabindex="10" name="teethbrushing_frequency" id="teethbrushing_frequency">
                                     <option value="">Select an option</option>
-                                    <option>Daily</option>
-                                    <option>Regularly (3-5 times/week)</option>
-                                    <option>Occasionally (1-2 times/week)</option>
-                                    <option>Rarely (few times/month)</option>
-                                    <option>Never</option>
+                                    <option <%=teethbrushing_frequency_dict['Daily']%>>Daily</option>
+                                    <option <%=teethbrushing_frequency_dict['Regularly (3-5 times/week)']%>>Regularly (3-5 times/week)</option>
+                                    <option <%=teethbrushing_frequency_dict['Occasionally (1-2 times/week)']%>>Occasionally (1-2 times/week)</option>
+                                    <option <%=teethbrushing_frequency_dict['Rarely (few times/month)']%>>Rarely (few times/month)</option>
+                                    <option <%=teethbrushing_frequency_dict['Never']%>>Never</option>
                                 </select>
                             </td>
                         </tr>
@@ -119,11 +202,11 @@ for f in form:
                             <td>
                                 <select tabindex="11" name="flossing_frequency" id="flossing_frequency">
                                     <option value="">Select an option</option>
-                                    <option>Daily</option>
-                                    <option>Regularly (3-5 times/week)</option>
-                                    <option>Occasionally (1-2 times/week)</option>
-                                    <option>Rarely (few times/month)</option>
-                                    <option>Never</option>
+                                    <option <%=flossing_frequency_dict['Daily']%>>Daily</option>
+                                    <option <%=flossing_frequency_dict['Regularly (3-5 times/week)']%>>Regularly (3-5 times/week)</option>
+                                    <option <%=flossing_frequency_dict['Occasionally (1-2 times/week)']%>>Occasionally (1-2 times/week)</option>
+                                    <option <%=flossing_frequency_dict['Rarely (few times/month)']%>>Rarely (few times/month)</option>
+                                    <option <%=flossing_frequency_dict['Never']%>>Never</option>
                                 </select>
                             </td>
                         </tr>
@@ -132,11 +215,11 @@ for f in form:
                             <td>
                                 <select tabindex="12" name="cosmetics_frequency" id="cosmetics_frequency">
                                     <option value="">Select an option</option>
-                                    <option>Daily</option>
-                                    <option>Regularly (3-5 times/week)</option>
-                                    <option>Occasionally (1-2 times/week)</option>
-                                    <option>Rarely (few times/month)</option>
-                                    <option>Never</option>
+                                    <option <%=cosmetics_frequency_dict['Daily']%>>Daily</option>
+                                    <option <%=cosmetics_frequency_dict['Regularly (3-5 times/week)']%>>Regularly (3-5 times/week)</option>
+                                    <option <%=cosmetics_frequency_dict['Occasionally (1-2 times/week)']%>>Occasionally (1-2 times/week)</option>
+                                    <option <%=cosmetics_frequency_dict['Rarely (few times/month)']%>>Rarely (few times/month)</option>
+                                    <option <%=cosmetics_frequency_dict['Never']%>>Never</option>
                                 </select>
                             </td>
                         </tr>
@@ -145,10 +228,10 @@ for f in form:
                             <td>
                                 <select tabindex="13" name="deoderant_use" id="deoderant_use">
                                     <option value="">Select an option</option>
-                                    <option>I use deoderant</option>
-                                    <option>I use an antiperspirant</option>
-                                    <option>Not sure, but I use some form of deoderant/antiperspirant</option>
-                                    <option>I do not use deoderant or antiperspirant</option>
+                                    <option <%=deodorant_use_dict['I use deoderant']%>>I use deoderant</option>
+                                    <option <%=deodorant_use_dict['I use an antiperspirant']%>>I use an antiperspirant</option>
+                                    <option <%=deodorant_use_dict['Not sure, but I use some form of deoderant/antiperspirant']%>>Not sure, but I use some form of deoderant/antiperspirant</option>
+                                    <option <%=deodorant_use_dict['I do not use deoderant or antiperspirant']%>>I do not use deoderant or antiperspirant</option>
                                 </select>
                             </td>
                         </tr>
@@ -157,11 +240,11 @@ for f in form:
                             <td>
                                 <select tabindex="14" name="sleep_duration" id="sleep_duration">
                                     <option value="">Select an option</option>
-                                    <option>Less than 5 hours</option>
-                                    <option>5-6 hours</option>
-                                    <option>6-7 hours</option>
-                                    <option>7-8 hours</option>
-                                    <option>8 or more hours</option>
+                                    <option <%=sleep_duration_dict['Less than 5 hours']%>>Less than 5 hours</option>
+                                    <option <%=sleep_duration_dict['5-6 hours']%>>5-6 hours</option>
+                                    <option <%=sleep_duration_dict['6-7 hours']%>>6-7 hours</option>
+                                    <option <%=sleep_duration_dict['7-8 hours']%>>7-8 hours</option>
+                                    <option <%=sleep_duration_dict['8 or more hours']%>>8 or more hours</option>
                                 </select>
                             </td>
                         </tr>
@@ -169,8 +252,8 @@ for f in form:
                             <td>Do you use fabric softener when drying your clothes?</td>
                             <td>
                                 <div id="softener">
-                                    <input tabindex="15" type="radio" id="softener_yes" name="softener" value="yes"/><label for="softener_yes">Yes</label>
-                                    <input tabindex="16" type="radio" id="softener_no" name="softener" value="no"/><label for="softener_no">No</label>
+                                    <input tabindex="15" type="radio" id="softener_yes" name="softener" value="yes" <%=softener_yes%>/><label for="softener_yes">Yes</label>
+                                    <input tabindex="16" type="radio" id="softener_no" name="softener" value="no" <%=softener_no%>/><label for="softener_no">No</label>
                                 </div>
                             </td>
                         </tr>

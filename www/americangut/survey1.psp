@@ -1,3 +1,6 @@
+<%
+from utils.psp_utils import quot
+%>
 <div id="content" class="content">
     <h2>Survey</h2>
     <h4>Personal Information</h4>
@@ -23,16 +26,30 @@ for f in form:
                             <td><select tabindex="1" name="country_of_birth" id="country_of_birth">
                             <option value="">Select an option</option>
 <%
+# write the pulldown menu for country, and set default value if present (if
+# this is a survey edit)
 d = data_access.getControlledVocabValueList(28)
 for c in d:
-    req.write('<option value="'+str(c)+'">'+d[c]+'</option>')
+    # determine the default value (if this is a survey edit)
+    selected = ''
+    if str(c) == form.get('country_of_birth_default', None):
+        selected = 'selected="selected"'
+    req.write('<option '+selected+' value="'+str(c)+'">'+d[c]+'</option>\n')
 # End for
+
+#end def
+
+# determine default values (if this is a survey edit)
+gender = form.get("gender_default", None)
+male_selected = 'selected="selected"' if gender == 'Male' else ''
+female_selected = 'selected="selected"' if gender == 'Female' else ''
+other_selected = 'selected="selected"' if gender == 'Other' else ''
 %>
                             </select></td>
                         </tr>
                         <tr>
                             <td>Birth date</td>
-                            <td><input tabindex="2" type="text" name="birth_date" id="birth_date" /> mm/dd/yyyy</td>
+                            <td><input tabindex="2" type="text" name="birth_date" id="birth_date" value=<%=quot(form, 'birth_date_default')%> /> mm/dd/yyyy</td>
                             <script>
                               $(function() {
                                 $( "#birth_date" ).datepicker({
@@ -48,7 +65,12 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Gender</td>
-                            <td><select tabindex="3" name="gender" id="gender"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select></td>
+                            <td><select tabindex="3" name="gender" id="gender">
+                                <option value="">Select an option</option>
+                                <option <%=male_selected%>>Male</option>
+                                <option <%=female_selected%>>Female</option>
+                                <option <%=other_selected%>>Other</option>
+                            </select></td>
                         </tr>
                         <tr>
                             <td>Height</td>
@@ -56,10 +78,10 @@ for c in d:
                                 <table>
                                     <tr>
                                         <td>
-                                        <input tabindex="4" class="small_text" type="text" name="height_in" id="height_in" onkeypress='validateNumber(event)' onblur="inToCm()"/> in
+                                        <input tabindex="4" class="small_text" type="text" name="height_in" id="height_in" onkeypress='validateNumber(event)' onblur="inToCm()" value=<%=quot(form, 'height_in_default')%> /> in
                                         </td>
                                         <td>
-                                        <input tabindex="4" class="small_text" type="text" name="height_cm" id="height_cm" onkeypress='validateNumber(event)' onblur="cmToIn()"/> cm
+                                        <input tabindex="4" class="small_text" type="text" name="height_cm" id="height_cm" onkeypress='validateNumber(event)' onblur="cmToIn()" value=<%=quot(form, 'height_cm_default')%> /> cm
                                         </td>
                                     </tr>
                                 </table>
@@ -71,10 +93,10 @@ for c in d:
                                 <table>
                                     <tr>
                                         <td>
-                                        <input tabindex="5" class="small_text" type="text" name="weight_lbs" id="weight_lbs" onkeypress='validateNumber(event)' onblur="lbsToKg()"/> lbs
+                                        <input tabindex="5" class="small_text" type="text" name="weight_lbs" id="weight_lbs" onkeypress='validateNumber(event)' onblur="lbsToKg()" value=<%=quot(form, 'weight_lbs_default')%> /> lbs
                                         </td>
                                         <td>
-                                        <input tabindex="5" class="small_text" type="text" name="weight_kg" id="weight_kg" onkeypress='validateNumber(event)' onblur="kgToLbs()"/> kg
+                                        <input tabindex="5" class="small_text" type="text" name="weight_kg" id="weight_kg" onkeypress='validateNumber(event)' onblur="kgToLbs()" value=<%=quot(form, 'weight_kg_default')%> /> kg
                                         </td>
                                     </tr>
                                 </table>
@@ -82,11 +104,11 @@ for c in d:
                         </tr>
                         <tr>
                             <td>Phone number</td>
-                            <td><input tabindex="6" type="text" name="phone_num" id="phone_num" onkeypress='validateNumber(event)'/></td>
+                            <td><input tabindex="6" type="text" name="phone_num" id="phone_num" onkeypress='validateNumber(event)' value=<%=quot(form, 'phone_num_default')%> /></td>
                         </tr>
                         <tr>
                             <td>Current ZIP code</td>
-                            <td><input tabindex="7" type="text" name="zip_code" id="zip_code" /></td>
+                            <td><input tabindex="7" type="text" name="zip_code" id="zip_code" value=<%=quot(form, 'zip_code_default')%> /></td>
                         </tr>
                     </table>
                 

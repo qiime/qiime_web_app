@@ -1,13 +1,62 @@
+<%
+from utils.psp_utils import quot
+
+# migraine relatives
+migraine_relatives = form.get('migraine_relatives_default', None)
+migraine_relatives_yes = 'checked' if migraine_relatives == 'yes' else ''
+migraine_relatives_no = 'checked' if migraine_relatives == 'no' else ''
+migraine_relatives_not_sure = 'checked' if migraine_relatives == 'notsure' else ''
+
+# migraine meds
+migrainemeds = form.get('migrainemeds_default', None)
+migrainemeds_yes = 'checked' if migrainemeds == 'yes' else ''
+migrainemeds_no = 'checked' if migrainemeds == 'no' else ''
+
+# migraine frequency
+migraine_frequency_options = ["Daily", "Weekly", "Monthly", "A few times a year"]
+migraine_frequency_dict = dict(zip(migraine_frequency_options, ['']*len(migraine_frequency_options)))
+migraine_frequency = form.get('migraine_frequency_default', None)
+if migraine_frequency:
+    migraine_frequency_dict[migraine_frequency] = "selected='selected'"
+
+# migraine factor (there are three of these)
+migraine_factor_options = ["Caffeine", "Stress", "Depression", "Lack of sleep", "Foods; chocolate", "Foods; red wine", "Foods; strawberries", "Foods; other", "Medications; barbiturates", "Medications; opiods", "Medications; horomones", "Other"]
+
+migraine_factor_1_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
+migraine_factor_2_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
+migraine_factor_3_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
+
+migraine_factor_1 = form.get('migraine_factor_1_default', None)
+if migraine_factor_1:
+    migraine_factor_1_dict[migraine_factor_1] = "selected='selected'"
+
+migraine_factor_2 = form.get('migraine_factor_2_default', None)
+if migraine_factor_2:
+    migraine_factor_2_dict[migraine_factor_2] = "selected='selected'"
+
+migraine_factor_3 = form.get('migraine_factor_3_default', None)
+if migraine_factor_3:
+    migraine_factor_3_dict[migraine_factor_3] = "selected='selected'"
+
+# symptom checkboxes
+migraine_pain = 'checked' if form.get('migraine_pain_default', None) == 'on' else ''
+migraine_photophobia = 'checked' if form.get('migraine_photophobia_default', None) == 'on' else ''
+migraine_phonophobia = 'checked' if form.get('migraine_phonophobia_default', None) == 'on' else ''
+migraine_nausea = 'checked' if form.get('migraine_nausea_default', None) == 'on' else ''
+migraine_aggravation = 'checked' if form.get('migraine_aggravation_default', None) == 'on' else ''
+migraine_aura = 'checked' if form.get('migraine_aura_default', None) == 'on' else ''
+
+%>
 <tr><td><h4>Migraine Questions</h4></td></tr>
 <tr>
     <td>How often do you suffer from migraines?</td>
     <td>
         <select tabindex="14" id="migraine_frequency" name="migraine_frequency">
             <option value="">Select an option</option>
-            <option>Daily</option>
-            <option>Weekly</option>
-            <option>Monthly</option>
-            <option>A few times a year</option>
+            <option <%=migraine_frequency_dict['Daily']%>>Daily</option>
+            <option <%=migraine_frequency_dict['Weekly']%>>Weekly</option>
+            <option <%=migraine_frequency_dict['Monthly']%>>Monthly</option>
+            <option <%=migraine_frequency_dict['A few times a year']%>>A few times a year</option>
         </select>
     </td>
 </tr>
@@ -16,18 +65,18 @@
     <td>
         <select tabindex="15" id="migraine_factor_1" name="migraine_factor_1" onchange="otherSelect('migraine_factor_1','migraine_option_1',12)">
             <option value="">Select an option</option>
-            <option>Caffeine</option>
-            <option>Stress</option>
-            <option>Depression</option>
-            <option>Lack of sleep</option>
-            <option>Foods; chocolate</option>
-            <option>Foods; red wine</option>
-            <option>Foods; strawberries</option>
-            <option>Foods; other</option>
-            <option>Medications; barbiturates</option>
-            <option>Medications; opiods</option>
-            <option>Medications; horomones</option>
-            <option>Other</option>
+            <option <%=migraine_factor_1_dict['Caffeine']%>>Caffeine</option>
+            <option <%=migraine_factor_1_dict['Stress']%>>Stress</option>
+            <option <%=migraine_factor_1_dict['Depression']%>>Depression</option>
+            <option <%=migraine_factor_1_dict['Lack of sleep']%>>Lack of sleep</option>
+            <option <%=migraine_factor_1_dict['Foods; chocolate']%>>Foods; chocolate</option>
+            <option <%=migraine_factor_1_dict['Foods; red wine']%>>Foods; red wine</option>
+            <option <%=migraine_factor_1_dict['Foods; strawberries']%>>Foods; strawberries</option>
+            <option <%=migraine_factor_1_dict['Foods; other']%>>Foods; other</option>
+            <option <%=migraine_factor_1_dict['Medications; barbiturates']%>>Medications; barbiturates</option>
+            <option <%=migraine_factor_1_dict['Medications; opiods']%>>Medications; opiods</option>
+            <option <%=migraine_factor_1_dict['Medications; horomones']%>>Medications; horomones</option>
+            <option <%=migraine_factor_1_dict['Other']%>>Other</option>
         </select>
     </td>
 </tr>
@@ -40,7 +89,7 @@
     </colgroup>
         <tr>
             <td>Other</td>
-            <td><input type="text" id="mainfactor_other_1" name="mainfactor_other_1" /></td>                        
+            <td><input type="text" id="mainfactor_other_1" name="mainfactor_other_1" value=<%=quot(form, 'mainfactor_other_1_decault')%>/></td>                        
         </tr>
     </table>
 </div>
@@ -54,18 +103,18 @@
     <td>
         <select tabindex="16" id="migraine_factor_2" name="migraine_factor_2" onchange="otherSelect('migraine_factor_2','migraine_option_2',12)">
             <option value="">Select an option</option>
-            <option>Caffeine</option>
-            <option>Stress</option>
-            <option>Depression</option>
-            <option>Lack of sleep</option>
-            <option>Foods; chocolate</option>
-            <option>Foods; red wine</option>
-            <option>Foods; strawberries</option>
-            <option>Foods; other</option>
-            <option>Medications; barbiturates</option>
-            <option>Medications; opiods</option>
-            <option>Medications; horomones</option>
-            <option>Other</option>
+            <option <%=migraine_factor_2_dict['Caffeine']%>>Caffeine</option>
+            <option <%=migraine_factor_2_dict['Stress']%>>Stress</option>
+            <option <%=migraine_factor_2_dict['Depression']%>>Depression</option>
+            <option <%=migraine_factor_2_dict['Lack of sleep']%>>Lack of sleep</option>
+            <option <%=migraine_factor_2_dict['Foods; chocolate']%>>Foods; chocolate</option>
+            <option <%=migraine_factor_2_dict['Foods; red wine']%>>Foods; red wine</option>
+            <option <%=migraine_factor_2_dict['Foods; strawberries']%>>Foods; strawberries</option>
+            <option <%=migraine_factor_2_dict['Foods; other']%>>Foods; other</option>
+            <option <%=migraine_factor_2_dict['Medications; barbiturates']%>>Medications; barbiturates</option>
+            <option <%=migraine_factor_2_dict['Medications; opiods']%>>Medications; opiods</option>
+            <option <%=migraine_factor_2_dict['Medications; horomones']%>>Medications; horomones</option>
+            <option <%=migraine_factor_2_dict['Other']%>>Other</option>
         </select>
     </td>
 </tr>
@@ -78,7 +127,7 @@
     </colgroup>
         <tr>
             <td>Other</td>
-            <td><input type="text" id="mainfactor_other_2" name="mainfactor_other_2" /></td>                        
+            <td><input type="text" id="mainfactor_other_2" name="mainfactor_other_2" value=<%=quot(form, 'mainfactor_other_2_default')%>/></td>                        
         </tr>
     </table>
 </div>
@@ -92,18 +141,18 @@
     <td>
         <select tabindex="17" id="migraine_factor_3" name="migraine_factor_3" onchange="otherSelect('migraine_factor_3','migraine_option_3',12)">
             <option value="">Select an option</option>
-            <option>Caffeine</option>
-            <option>Stress</option>
-            <option>Depression</option>
-            <option>Lack of sleep</option>
-            <option>Foods; chocolate</option>
-            <option>Foods; red wine</option>
-            <option>Foods; strawberries</option>
-            <option>Foods; other</option>
-            <option>Medications; barbiturates</option>
-            <option>Medications; opiods</option>
-            <option>Medications; horomones</option>
-            <option>Other</option>
+            <option <%=migraine_factor_3_dict['Caffeine']%>>Caffeine</option>
+            <option <%=migraine_factor_3_dict['Stress']%>>Stress</option>
+            <option <%=migraine_factor_3_dict['Depression']%>>Depression</option>
+            <option <%=migraine_factor_3_dict['Lack of sleep']%>>Lack of sleep</option>
+            <option <%=migraine_factor_3_dict['Foods; chocolate']%>>Foods; chocolate</option>
+            <option <%=migraine_factor_3_dict['Foods; red wine']%>>Foods; red wine</option>
+            <option <%=migraine_factor_3_dict['Foods; strawberries']%>>Foods; strawberries</option>
+            <option <%=migraine_factor_3_dict['Foods; other']%>>Foods; other</option>
+            <option <%=migraine_factor_3_dict['Medications; barbiturates']%>>Medications; barbiturates</option>
+            <option <%=migraine_factor_3_dict['Medications; opiods']%>>Medications; opiods</option>
+            <option <%=migraine_factor_3_dict['Medications; horomones']%>>Medications; horomones</option>
+            <option <%=migraine_factor_3_dict['Other']%>>Other</option>
         </select>
     </td>
 </tr>
@@ -116,7 +165,7 @@
     </colgroup>
         <tr>
             <td>Other</td>
-            <td><input type="text" id="mainfactor_other_3" name="mainfactor_other_3"/></td>                        
+            <td><input type="text" id="mainfactor_other_3" name="mainfactor_other_3" value=<%=quot(form, 'mainfactor_other_3_default')%>/></td>                        
         </tr>
     </table>
 </div>
@@ -128,26 +177,26 @@
 <tr>
     <td>Do you have any of the following migraine symptoms?</td>
     <td>
-            <input tabindex="18" type="checkbox" id="migraine_pain" name="migraine_pain" /><label for="migraine_pain">Body pain where it shouldn't exist</label>
+            <input tabindex="18" type="checkbox" id="migraine_pain" name="migraine_pain" <%=migraine_pain%>/><label for="migraine_pain">Body pain where it shouldn't exist</label>
             <br />
-            <input tabindex="19" type="checkbox" id="migraine_photophobia" name="migraine_photophobia" /><label for="migraine_photophobia">Photophobia (sensitivity to light)</label>
+            <input tabindex="19" type="checkbox" id="migraine_photophobia" name="migraine_photophobia" <%=migraine_photophobia%>/><label for="migraine_photophobia">Photophobia (sensitivity to light)</label>
             <br />
-            <input tabindex="20" type="checkbox" id="migraine_phonophobia" name="migraine_phonophobia" /><label for="migraine_phonophobia">Phonophobia (sensitivity to sounds)</label>
+            <input tabindex="20" type="checkbox" id="migraine_phonophobia" name="migraine_phonophobia" <%=migraine_phonophobia%>/><label for="migraine_phonophobia">Phonophobia (sensitivity to sounds)</label>
             <br />
-            <input tabindex="21" type="checkbox" id="migraine_nausea" name="migraine_nausea" /><label for="migraine_nausea">Nausea and/or vomiting</label>
+            <input tabindex="21" type="checkbox" id="migraine_nausea" name="migraine_nausea" <%=migraine_nausea%>/><label for="migraine_nausea">Nausea and/or vomiting</label>
             <br />
-            <input tabindex="22" type="checkbox" id="migraine_aggravation" name="migraine_aggravation" /><label for="migraine_aggravation">Aggravation or avoidance of routine</label>
+            <input tabindex="22" type="checkbox" id="migraine_aggravation" name="migraine_aggravation" <%=migraine_aggravation%>/><label for="migraine_aggravation">Aggravation or avoidance of routine</label>
             <br />
-            <input tabindex="23" type="checkbox" id="migraine_aura" name="migraine_aura" /><label for="migraine_aura">Aura <a href="http://en.wikipedia.org/wiki/Aura_(symptom)" target="_blank">(?)</a></label>
+            <input tabindex="23" type="checkbox" id="migraine_aura" name="migraine_aura" <%=migraine_aura%>/><label for="migraine_aura">Aura <a href="http://en.wikipedia.org/wiki/Aura_(symptom)" target="_blank">(?)</a></label>
     </td>
 </tr>
 <tr>
     <td>Does anyone in your immediate family suffer from migraines?</td>
     <td>
         <div id="migraine_relatives">
-            <input tabindex="24" type="radio" id="migraine_relatives_yes" name="migraine_relatives" /><label for="migraine_relatives_yes">Yes</label>
-            <input tabindex="25" type="radio" id="migraine_relatives_no" name="migraine_relatives" /><label for="migraine_relatives_no">No</label>
-            <input tabindex="26" type="radio" id="migraine_relatives_notsure" name="migraine_relatives" /><label for="migraine_relatives_notsure">Not sure</label>
+            <input tabindex="24" type="radio" id="migraine_relatives_yes" name="migraine_relatives" value="yes" <%=migraine_relatives_yes%>/><label for="migraine_relatives_yes">Yes</label>
+            <input tabindex="25" type="radio" id="migraine_relatives_no" name="migraine_relatives" value="no" <%=migraine_relatives_no%>/><label for="migraine_relatives_no">No</label>
+            <input tabindex="26" type="radio" id="migraine_relatives_notsure" name="migraine_relatives" value="notsure" <%=migraine_relatives_not_sure%>/><label for="migraine_relatives_notsure">Not sure</label>
         </div>
     </td>
 </tr>
@@ -155,8 +204,8 @@
     <td>Do you take any migraine medication?</td>
     <td>
         <div id="migrainemeds">
-            <input tabindex="27" type="radio" id="migrainemeds_yes" name="migrainemeds" onclick="javascript:setVisible('migraine_option')"/><label for="migrainemeds_yes">Yes</label>
-            <input tabindex="28" type="radio" id="migrainemeds_no" name="migrainemeds" onclick="javascript:setInvisible('migraine_option')"/><label for="migrainemeds_no">No</label>
+            <input tabindex="27" type="radio" id="migrainemeds_yes" name="migrainemeds" onclick="javascript:setVisible('migraine_option')" value="yes" <%=migrainemeds_yes%>/><label for="migrainemeds_yes">Yes</label>
+            <input tabindex="28" type="radio" id="migrainemeds_no" name="migrainemeds" onclick="javascript:setInvisible('migraine_option')" value="no" <%=migrainemeds_no%>/><label for="migrainemeds_no">No</label>
         </div>
     </td>
 </tr>
