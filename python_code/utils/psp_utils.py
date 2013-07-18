@@ -52,3 +52,11 @@ def tab_delim_lines_to_table(lines, **kwargs):
     table_lines.append('</table>')
 
     return '\n'.join(table_lines)
+
+def quot(local_form, key, quote_type='"'):
+    """Quotes a field
+
+    Put this in a function to make code clearner-looking
+    """
+    return """{0}{1}{0}""".format(quote_type, str(local_form.get(key, '')))
+
