@@ -23,6 +23,7 @@ for f in form:
                     </colgroup>
 <%
 if(form['gender'] == 'Female'):
+    #INDENT
 %>
 <%@ include file="optional_female.psp" %>
 <%
@@ -38,6 +39,7 @@ except(KeyError):
 
 if(v != 0):
     if(v == 'yes'):
+        #INDENT
 %>
 <%@ include file="optional_living.psp" %>
 <%
@@ -45,6 +47,7 @@ if(v != 0):
 %>
 <%
 if(form['diabetes'] == 'Type I' or form['diabetes'] == 'Type II'):
+    #INDENT
 %>
 <%@ include file="optional_diabetes.psp" %>
 <%
@@ -60,6 +63,7 @@ except(KeyError):
 
 if(v != 0):
     if(v == 'yes'):
+        #INDENT
 %>
 <%@ include file="optional_migraine.psp" %>
 <%

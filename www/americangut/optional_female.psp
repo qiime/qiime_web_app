@@ -1,18 +1,19 @@
 <%
-from utils.psp_utils import quot
+    # THIS INDENT IS NECESSARY BECUASE THIS PAGE IS INCLUDED
+    from utils.psp_utils import quot
 
-# contraceptive
-contraceptive_options = ['I take the pill', 'I use an injected contraceptive (DMPA)', 'I use a contraceptive patch (Ortho-Evra)', 'I use the NuvaRing', 'I use some other type of birth control', 'No']
-contraceptive_dict = dict(zip(contraceptive_options, ['']*len(contraceptive_options)))
-contraceptive = form.get('contraceptive_default', None)
-if contraceptive:
-    contraceptive_dict[contraceptive] = "selected='selected'"
+    # contraceptive
+    contraceptive_options = ['I take the pill', 'I use an injected contraceptive (DMPA)', 'I use a contraceptive patch (Ortho-Evra)', 'I use the NuvaRing', 'I use some other type of birth control', 'No']
+    contraceptive_dict = dict(zip(contraceptive_options, ['']*len(contraceptive_options)))
+    contraceptive = form.get('contraceptive_default', None)
+    if contraceptive:
+        contraceptive_dict[contraceptive] = "selected='selected'"
 
-# pregnant
-pregnant = form.get('pregnant_default', None)
-pregnant_yes = 'checked' if pregnant == 'yes' else ''
-pregnant_no = 'checked' if pregnant == 'no' else ''
-pregnant_not_sure = 'checked' if pregnant == 'notsure' else ''
+    # pregnant
+    pregnant = form.get('pregnant_default', None)
+    pregnant_yes = 'checked' if pregnant == 'yes' else ''
+    pregnant_no = 'checked' if pregnant == 'no' else ''
+    pregnant_not_sure = 'checked' if pregnant == 'notsure' else ''
 %>
 <tr><td><h4>Female Questions</h4></td></tr>
 <tr>
