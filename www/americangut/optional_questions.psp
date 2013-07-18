@@ -22,7 +22,7 @@ for f in form:
                            <col span="1" style="width: 50%;">
                     </colgroup>
 <%
-if(form['gender'] == 'Female'):
+if form.get('gender', None) == 'Female':
     #INDENT
 %>
 <%@ include file="optional_female.psp" %>
@@ -30,23 +30,16 @@ if(form['gender'] == 'Female'):
 #endif
 %>
 <%
-v = 0
-try:
-    v = form['shared_housing']
-except(KeyError):
-    req.write('')
-    #do nothing
-
-if(v != 0):
-    if(v == 'yes'):
-        #INDENT
+if form.get('shared_housing', None) == 'yes':
+    #INDENT
 %>
 <%@ include file="optional_living.psp" %>
 <%
 #endif
 %>
 <%
-if(form['diabetes'] == 'Type I' or form['diabetes'] == 'Type II'):
+form_diabetes = form.get('diabetes', None)
+if(form_diabetes == 'Type I' or form_diabetes == 'Type II'):
     #INDENT
 %>
 <%@ include file="optional_diabetes.psp" %>
@@ -54,16 +47,8 @@ if(form['diabetes'] == 'Type I' or form['diabetes'] == 'Type II'):
 #endif
 %>
 <%
-v = 0
-try:
-    v = form['migraine']
-except(KeyError):
-    req.write('')
-    #do nothing
-
-if(v != 0):
-    if(v == 'yes'):
-        #INDENT
+if form.get('migraine', None) == 'yes':
+    #INDENT
 %>
 <%@ include file="optional_migraine.psp" %>
 <%
