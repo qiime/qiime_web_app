@@ -1,3 +1,6 @@
+<%
+about_yourself_text = form.get('about_yourself_text_default', '')
+%>
 <div id="content" class="content">
     <h2>Survey</h2>
     <form action="submit_human_survey.psp" method="post">
@@ -10,7 +13,7 @@
                     Please write anything else about yourself that you think might affect your personal microorganisms.
                     </p>
                 </div>
-                <textarea tabindex="1" id="about_yourself_text" name="about_yourself_text" rows="5" cols="70"></textarea>
+                <textarea tabindex="1" id="about_yourself_text" name="about_yourself_text" rows="5" cols="70"><%=about_yourself_text%></textarea>
             </td>
             <td width="20%"></td>
         </tr>

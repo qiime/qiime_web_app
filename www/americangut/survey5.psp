@@ -1,3 +1,7 @@
+<%
+from utils.psp_utils import quot
+%>
+
 <div id="content" class="content">
     <h2>Survey</h2>
     <h4>General Health Information</h4>
@@ -11,7 +15,117 @@
 for f in form:
     if(f != 'page'):
         req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
-# End for
+
+# there are a couple of "time-frame" questions on this page, with the
+# following options:
+timeframe_options = ['In the past week', 'In the past month', 'In the past 6 months', 'In the past year', 'Not in the last year']
+
+# when did you last take antibiotics
+antibiotic_select_dict = dict(zip(timeframe_options, ['']*len(timeframe_options)))
+antibiotic_select = form.get('antibiotic_select_default', None)
+if antibiotic_select:
+    antibiotic_select_dict[antibiotic_select] = "selected='selected'"
+
+# when did you last get the flu vaccine
+flu_vaccine_date_dict = dict(zip(timeframe_options, ['']*len(timeframe_options)))
+flu_vaccine_date = form.get('flu_vaccine_date_default', None)
+if flu_vaccine_date:
+    flu_vaccine_date_dict[flu_vaccine_date] = "selected='selected'"
+
+# weight change
+weight_change_options = ['Increased more than 10 pounds', 'Decreased more than 10 pounds', 'Remained stable']
+weight_change_dict = dict(zip(weight_change_options, ['']*len(weight_change_options)))
+weight_change = form.get('weight_change_default', None)
+if weight_change:
+    weight_change_dict[weight_change] = "selected='selected'"
+
+# IBD
+ibd_options = ["Crohn''s disease", "Ulcerative colitis", "I do not have IBD"]
+ibd_dict = dict(zip(ibd_options, ['']*len(ibd_options)))
+ibd = form.get('ibd_default', None)
+if ibd:
+    ibd_dict[ibd] = "selected='selected'"
+
+# skin condition
+skin_condition_options = ["Eczema", "Rosacea", "Psoriasis", "I do not have a skin condition"]
+skin_condition_dict = dict(zip(skin_condition_options, ['']*len(skin_condition_options)))
+skin_condition = form.get('skin_condition_default', None)
+if skin_condition:
+    skin_condition_dict[skin_condition] = "selected='selected'"
+
+# diabetes
+diabetes_options = ["Type I", "Type II", "I do not have diabetes"]
+diabetes_dict = dict(zip(diabetes_options, ['']*len(diabetes_options)))
+diabetes = form.get('diabetes_default', None)
+if diabetes:
+    diabetes_dict[diabetes] = "selected='selected'"
+#ENDIF
+
+# lots of yes/no radio buttons on this page
+# tonsils removed
+tonsils_removed = form.get('tonsils_removed_default', None)
+tonsils_removed_yes = 'checked' if tonsils_removed == 'yes' else ''
+tonsils_removed_no = 'checked' if tonsils_removed == 'no' else ''
+
+# appendix removed
+appendix_removed = form.get('appendix_removed_default', None)
+appendix_removed_yes = 'checked' if appendix_removed == 'yes' else ''
+appendix_removed_no = 'checked' if appendix_removed == 'no' else ''
+
+# chickenpox
+chickenpox = form.get('chickenpox_default', None)
+chickenpox_yes = 'checked' if chickenpox == 'yes' else ''
+chickenpox_no = 'checked' if chickenpox == 'no' else ''
+
+# acne medication
+acne_medication = form.get('acne_medication_default', None)
+acne_medication_yes = 'checked' if acne_medication == 'yes' else ''
+acne_medication_no = 'checked' if acne_medication == 'no' else ''
+
+# acne medication otc
+acne_medication_otc = form.get('acne_medication_otc_default', None)
+acne_medication_otc_yes = 'checked' if acne_medication_otc == 'yes' else ''
+acne_medication_otc_no = 'checked' if acne_medication_otc == 'no' else ''
+
+# conditions medication
+conditions_medication = form.get('conditions_medication_default', None)
+conditions_medication_yes = 'checked' if conditions_medication == 'yes' else ''
+conditions_medication_no = 'checked' if conditions_medication == 'no' else ''
+
+# C-section
+csection = form.get('csection_default', None)
+csection_yes = 'checked' if csection == 'yes' else ''
+csection_no = 'checked' if csection == 'no' else ''
+csection_not_sure = 'checked' if csection == 'not_sure' else ''
+
+# pku
+pku = form.get('pku_default', None)
+pku_yes = 'checked' if pku == 'yes' else ''
+pku_no = 'checked' if pku == 'no' else ''
+
+# asthma
+asthma = form.get('asthma_default', None)
+asthma_yes = 'checked' if asthma == 'yes' else ''
+asthma_no = 'checked' if asthma == 'no' else ''
+
+# seasonal_allergies
+seasonal_allergies = form.get('seasonal_allergies_default', None)
+seasonal_allergies_yes = 'checked' if seasonal_allergies == 'yes' else ''
+seasonal_allergies_no = 'checked' if seasonal_allergies == 'no' else ''
+
+# migraine
+migraine = form.get('migraine_default', None)
+migraine_yes = 'checked' if migraine == 'yes' else ''
+migraine_no = 'checked' if migraine == 'no' else ''
+
+# non-food allergies
+nonfoodallergies_drug = 'checked' if form.get('nonfoodallergies_drug_default', None) == 'on' else ''
+nonfoodallergies_dander = 'checked' if form.get('nonfoodallergies_dander_default', None) == 'on' else ''
+nonfoodallergies_beestings = 'checked' if form.get('nonfoodallergies_beestings_default', None) == 'on' else ''
+nonfoodallergies_poisonivy = 'checked' if form.get('nonfoodallergies_poisonivy_default', None) == 'on' else ''
+nonfoodallergies_sun = 'checked' if form.get('nonfoodallergies_sun_default', None) == 'on' else ''
+nonfoodallergies_no = 'checked' if form.get('nonfoodallergies_no_default', None) == 'on' else ''
+
 %>
                     <table id="survey" width="100%">
                     <colgroup>
@@ -23,11 +137,11 @@ for f in form:
                             <td>
                                 <select tabindex="1" name="antibiotic_select" id="antibiotic_select" onchange="anySelect('antibiotic_select','antibiotic_option',[0,5])">
                                     <option value="">Select an option</option>
-                                    <option>In the past week</option>
-                                    <option>In the past month</option>
-                                    <option>In the past 6 months</option>
-                                    <option>In the past year</option>
-                                    <option>Not in the last year</option>
+                                    <option <%=antibiotic_select_dict['In the past week']%>>In the past week</option>
+                                    <option <%=antibiotic_select_dict['In the past month']%>>In the past month</option>
+                                    <option <%=antibiotic_select_dict['In the past 6 months']%>>In the past 6 months</option>
+                                    <option <%=antibiotic_select_dict['In the past year']%>>In the past year</option>
+                                    <option <%=antibiotic_select_dict['Not in the last year']%>>Not in the last year</option>
                                 </select>
                             </td>
                         </tr>
@@ -51,7 +165,7 @@ for f in form:
                                 </tr>
                                 <tr>
                                     <td>What was/is being treated?</td>
-                                    <td><input type="text" name="antibiotic_condition" id="antibiotic_condition" /></td>                        
+                                    <td><input type="text" name="antibiotic_condition" id="antibiotic_condition" value=<%=quot(form, 'antibiotic_condition_default')%>/></td>                        
                                 </tr>
                             </table>
                         </div>
@@ -65,11 +179,11 @@ for f in form:
                             <td>
                                 <select tabindex="2" name="flu_vaccine_date" id="flu_vaccine_date">
                                     <option value="">Select an option</option>
-                                    <option>In the past week</option>
-                                    <option>In the past month</option>
-                                    <option>In the past 6 months</option>
-                                    <option>In the past year</option>
-                                    <option>Not in the last year</option>
+                                    <option <%=flu_vaccine_date_dict['In the past week']%>>In the past week</option>
+                                    <option <%=flu_vaccine_date_dict['In the past month']%>>In the past month</option>
+                                    <option <%=flu_vaccine_date_dict['In the past 6 months']%>>In the past 6 months</option>
+                                    <option <%=flu_vaccine_date_dict['In the past year']%>>In the past year</option>
+                                    <option <%=flu_vaccine_date_dict['Not in the last year']%>>Not in the last year</option>
                                 </select>
                             </td>
                         </tr>
@@ -89,9 +203,9 @@ for f in form:
                             <td>
                                 <select tabindex="4" name="weight_change" id="weight_change">
                                     <option value="">Select an option</option>
-                                    <option>Increased more than 10 pounds</option>
-                                    <option>Decreased more than 10 pounds</option>
-                                    <option>Remained stable</option>
+                                    <option <%=weight_change_dict['Increased more than 10 pounds']%>>Increased more than 10 pounds</option>
+                                    <option <%=weight_change_dict['Decreased more than 10 pounds']%>>Decreased more than 10 pounds</option>
+                                    <option <%=weight_change_dict['Remained stable']%>>Remained stable</option>
                                 </select>
                             </td>
                         </tr>
@@ -99,8 +213,8 @@ for f in form:
                             <td>Have you had your tonsils removed?</td>
                             <td>
                                 <div id="tonsils_removed">
-                                    <input tabindex="5" type="radio" id="tonsils_removed_yes" name="tonsils_removed" value="yes"/><label for="tonsils_removed_yes">Yes</label>
-                                    <input tabindex="6" type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no"/><label for="tonsils_removed_no">No</label>
+                                    <input tabindex="5" type="radio" id="tonsils_removed_yes" name="tonsils_removed" value="yes" <%=tonsils_removed_yes%>/><label for="tonsils_removed_yes">Yes</label>
+                                    <input tabindex="6" type="radio" id="tonsils_removed_no" name="tonsils_removed" value="no" <%=tonsils_removed_no%>/><label for="tonsils_removed_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -108,8 +222,8 @@ for f in form:
                             <td>Have you had your appendix removed?</td>
                             <td>
                                 <div id="appendix_removed">
-                                    <input tabindex="7" type="radio" id="appendix_removed_yes" name="appendix_removed" value="yes"/><label for="appendix_removed_yes">Yes</label>
-                                    <input tabindex="8" type="radio" id="appendix_removed_no" name="appendix_removed" value="no"/><label for="appendix_removed_no">No</label>
+                                    <input tabindex="7" type="radio" id="appendix_removed_yes" name="appendix_removed" value="yes" <%=appendix_removed_yes%>/><label for="appendix_removed_yes">Yes</label>
+                                    <input tabindex="8" type="radio" id="appendix_removed_no" name="appendix_removed" value="no" <%=appendix_removed_no%>/><label for="appendix_removed_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -117,8 +231,8 @@ for f in form:
                             <td>Have you had chickenpox?</td>
                             <td>
                                 <div id="chickenpox">
-                                    <input tabindex="9" type="radio" id="chickenpox_yes" name="chickenpox" value="yes"/><label for="chickenpox_yes">Yes</label>
-                                    <input tabindex="10" type="radio" id="chickenpox_no" name="chickenpox" value="no"/><label for="chickenpox_no">No</label>
+                                    <input tabindex="9" type="radio" id="chickenpox_yes" name="chickenpox" value="yes" <%=chickenpox_yes%>/><label for="chickenpox_yes">Yes</label>
+                                    <input tabindex="10" type="radio" id="chickenpox_no" name="chickenpox" value="no" <%=chickenpox_no%>/><label for="chickenpox_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -126,8 +240,8 @@ for f in form:
                             <td>Do you currently take prescription medication for facial acne?</td>
                             <td>
                                 <div id="acne_medication">
-                                    <input tabindex="11" type="radio" id="acne_medication_yes" name="acne_medication" value="yes"/><label for="acne_medication_yes">Yes</label>
-                                    <input tabindex="12" type="radio" id="acne_medication_no" name="acne_medication" value="no"/><label for="acne_medication_no">No</label>
+                                    <input tabindex="11" type="radio" id="acne_medication_yes" name="acne_medication" value="yes" <%=acne_medication_yes%>/><label for="acne_medication_yes">Yes</label>
+                                    <input tabindex="12" type="radio" id="acne_medication_no" name="acne_medication" value="no" <%=acne_medication_no%>/><label for="acne_medication_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -135,8 +249,8 @@ for f in form:
                             <td>Do you use over the counter products to control facial acne?</td>
                             <td>
                                 <div id="acne_medication_otc">
-                                    <input tabindex="13" type="radio" id="acne_medication_otc_yes" name="acne_medication_otc" value="yes"/><label for="acne_medication_otc_yes">Yes</label>
-                                    <input tabindex="14" type="radio" id="acne_medication_otc_no" name="acne_medication_otc" value="no"/><label for="acne_medication_otc_no">No</label>
+                                    <input tabindex="13" type="radio" id="acne_medication_otc_yes" name="acne_medication_otc" value="yes" <%=acne_medication_otc_yes%>/><label for="acne_medication_otc_yes">Yes</label>
+                                    <input tabindex="14" type="radio" id="acne_medication_otc_no" name="acne_medication_otc" value="no"/ <%=acne_medication_otc_no%>><label for="acne_medication_otc_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -144,8 +258,8 @@ for f in form:
                             <td>Do you currently take over the counter or prescription medication for other conditions?</td>
                             <td>
                                 <div id="conditions_medication">
-                                    <input tabindex="15" type="radio" id="conditions_medication_yes" name="conditions_medication" value="yes"/><label for="conditions_medication_yes">Yes</label>
-                                    <input tabindex="16" type="radio" id="conditions_medication_no" name="conditions_medication" value="no"/><label for="conditions_medication_no">No</label>
+                                    <input tabindex="15" type="radio" id="conditions_medication_yes" name="conditions_medication" value="yes" <%=conditions_medication_yes%>/><label for="conditions_medication_yes">Yes</label>
+                                    <input tabindex="16" type="radio" id="conditions_medication_no" name="conditions_medication" value="no" <%=conditions_medication_no%>/><label for="conditions_medication_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -153,9 +267,9 @@ for f in form:
                             <td>Were you born via cesarean section (C-section)?</td>
                             <td>
                                 <div id="csection">
-                                    <input tabindex="17" type="radio" id="csection_yes" name="csection" value="yes"/><label for="csection_yes">Yes</label>
-                                    <input tabindex="18" type="radio" id="csection_no" name="csection" value="no"/><label for="csection_no">No</label>
-                                    <input tabindex="19" type="radio" id="csection_notsure" name="csection" value="not_sure"/><label for="csection_notsure">Not sure</label>
+                                    <input tabindex="17" type="radio" id="csection_yes" name="csection" value="yes" <%=csection_yes%>/><label for="csection_yes">Yes</label>
+                                    <input tabindex="18" type="radio" id="csection_no" name="csection" value="no" <%=csection_no%>/><label for="csection_no">No</label>
+                                    <input tabindex="19" type="radio" id="csection_notsure" name="csection" value="not_sure" <%=csection_not_sure%>/><label for="csection_notsure">Not sure</label>
                                 </div>
                             </td>
                         </tr>
@@ -163,8 +277,8 @@ for f in form:
                             <td>Do you have phenylketonuria (PKU)?</td>
                             <td>
                                 <div id="pku">
-                                    <input tabindex="20" type="radio" id="pku_yes" name="pku" value="yes"/><label for="pku_yes">Yes</label>
-                                    <input tabindex="21" type="radio" id="pku_no" name="pku" value="no"/><label for="pku_no">No</label>
+                                    <input tabindex="20" type="radio" id="pku_yes" name="pku" value="yes" <%=pku_yes%>/><label for="pku_yes">Yes</label>
+                                    <input tabindex="21" type="radio" id="pku_no" name="pku" value="no" <%=pku_no%>/><label for="pku_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -172,8 +286,8 @@ for f in form:
                             <td>Do you have asthma?</td>
                             <td>
                                 <div id="asthma">
-                                    <input tabindex="22" type="radio" id="asthma_yes" name="asthma" value="yes"/><label for="asthma_yes">Yes</label>
-                                    <input tabindex="23" type="radio" id="asthma_no" name="asthma" value="no"/><label for="asthma_no">No</label>
+                                    <input tabindex="22" type="radio" id="asthma_yes" name="asthma" value="yes" <%=asthma_yes%>/><label for="asthma_yes">Yes</label>
+                                    <input tabindex="23" type="radio" id="asthma_no" name="asthma" value="no" <%=asthma_no%>/><label for="asthma_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -181,25 +295,25 @@ for f in form:
                             <td>Do you have seasonal allergies?</td>
                             <td>
                                 <div id="seasonal_allergies">
-                                    <input tabindex="24" type="radio" id="seasonal_allergies_yes" name="seasonal_allergies" value="yes"/><label for="seasonal_allergies_yes">Yes</label>
-                                    <input tabindex="25" type="radio" id="seasonal_allergies_no" name="seasonal_allergies" value="no"/><label for="seasonal_allergies_no">No</label>
+                                    <input tabindex="24" type="radio" id="seasonal_allergies_yes" name="seasonal_allergies" value="yes" <%=seasonal_allergies_yes%>/><label for="seasonal_allergies_yes">Yes</label>
+                                    <input tabindex="25" type="radio" id="seasonal_allergies_no" name="seasonal_allergies" value="no" <%=seasonal_allergies_no%>/><label for="seasonal_allergies_no">No</label>
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td>Do you have any of the following non-food allergies?</td>
                             <td>
-                                    <input tabindex="26" type="checkbox" id="nonfoodallergies_drug" name="nonfoodallergies_drug" /><label for="nonfoodallergies_drug">Drug (e.g. Penicillin)</label>
+                                    <input tabindex="26" type="checkbox" id="nonfoodallergies_drug" name="nonfoodallergies_drug" <%=nonfoodallergies_drug%>/><label for="nonfoodallergies_drug">Drug (e.g. Penicillin)</label>
                                     <br />
-                                    <input tabindex="27" type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies_dander" /><label for="nonfoodallergies_dander">Pet dander</label>
+                                    <input tabindex="27" type="checkbox" id="nonfoodallergies_dander" name="nonfoodallergies_dander" <%=nonfoodallergies_dander%>/><label for="nonfoodallergies_dander">Pet dander</label>
                                     <br />
-                                    <input tabindex="28" type="checkbox" id="nonfoodallergies_beestings" name="nonfoodallergies_beestings" /><label for="nonfoodallergies_beestings">Bee stings</label>
+                                    <input tabindex="28" type="checkbox" id="nonfoodallergies_beestings" name="nonfoodallergies_beestings" <%=nonfoodallergies_beestings%>/><label for="nonfoodallergies_beestings">Bee stings</label>
                                     <br />
-                                    <input tabindex="29" type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies_poisonivy" /><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
+                                    <input tabindex="29" type="checkbox" id="nonfoodallergies_poisonivy" name="nonfoodallergies_poisonivy" <%=nonfoodallergies_poisonivy%>/><label for="nonfoodallergies_poisonivy">Poison Ivy/Oak</label>
                                     <br />
-                                    <input tabindex="30" type="checkbox" id="nonfoodallergies_sun" name="nonfoodallergies_sun" /><label for="nonfoodallergies_sun">Sun</label>
+                                    <input tabindex="30" type="checkbox" id="nonfoodallergies_sun" name="nonfoodallergies_sun" <%=nonfoodallergies_sun%>/><label for="nonfoodallergies_sun">Sun</label>
                                     <br />
-                                    <input tabindex="31" type="checkbox" id="nonfoodallergies_no" name="nonfoodallergies_no" /><label for="nonfoodallergies_no">No non-food allergies</label>
+                                    <input tabindex="31" type="checkbox" id="nonfoodallergies_no" name="nonfoodallergies_no" <%=nonfoodallergies_no%>/><label for="nonfoodallergies_no">No non-food allergies</label>
                             </td>
                         </tr>
                         <tr>
@@ -207,9 +321,9 @@ for f in form:
                             <td>
                                 <select tabindex="32" name="ibd" id="ibd">
                                     <option value="">Select an option</option>
-                                    <option>Crohn's disease</option>
-                                    <option>Ulcerative colitis</option>
-                                    <option>I do not have IBD</option>
+                                    <option <%=ibd_dict['Crohn\'\'s disease']%>>Crohn's disease</option>
+                                    <option <%=ibd_dict['Ulcerative colitis']%>>Ulcerative colitis</option>
+                                    <option <%=ibd_dict['I do not have IBD']%>>I do not have IBD</option>
                                 </select>
                             </td>
                         </tr>
@@ -218,10 +332,10 @@ for f in form:
                             <td>
                                 <select tabindex="33" name="skin_condition" id="skin_condition">
                                     <option value="">Select an option</option>
-                                    <option>Eczema</option>
-                                    <option>Rosacea</option>
-                                    <option>Psoriasis</option>
-                                    <option>I do not have a skin condition</option>
+                                    <option <%=skin_condition_dict['Eczema']%>>Eczema</option>
+                                    <option <%=skin_condition_dict['Rosacea']%>>Rosacea</option>
+                                    <option <%=skin_condition_dict['Psoriasis']%>>Psoriasis</option>
+                                    <option <%=skin_condition_dict['I do not have a skin condition']%>>I do not have a skin condition</option>
                                 </select>
                             </td>
                         </tr>
@@ -230,9 +344,9 @@ for f in form:
                             <td>
                                 <select tabindex="34" name="diabetes" id="diabetes">
                                     <option value="">Select an option</option>
-                                    <option>Type I</option>
-                                    <option>Type II</option>
-                                    <option>I do not have diabetes</option>
+                                    <option <%=diabetes_dict['Type I']%>>Type I</option>
+                                    <option <%=diabetes_dict['Type II']%>>Type II</option>
+                                    <option <%=diabetes_dict['I do not have diabetes']%>>I do not have diabetes</option>
                                 </select>
                             </td>
                         </tr>
@@ -240,8 +354,8 @@ for f in form:
                             <td>Do you suffer from migraines?</td>
                             <td>
                                 <div id="migraine">
-                                    <input tabindex="35" type="radio" id="migraine_yes" name="migraine" value="yes"/><label for="migraine_yes">Yes</label>
-                                    <input tabindex="36" type="radio" id="migraine_no" name="migraine" value="no"/><label for="migraine_no">No</label>
+                                    <input tabindex="35" type="radio" id="migraine_yes" name="migraine" value="yes" <%=migraine_yes%>/><label for="migraine_yes">Yes</label>
+                                    <input tabindex="36" type="radio" id="migraine_no" name="migraine" value="no" <%=migraine_no%>/><label for="migraine_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -273,6 +387,9 @@ for f in form:
       $( "#asthma" ).buttonset();
       $( "#seasonal_allergies" ).buttonset();
       $( "#migraine" ).buttonset();
+        anySelect('antibiotic_select','antibiotic_option',[0,5]);
+        setGeneralMedsDefaults('survey_5', 'generalmeds', 'generalmeds_default[]');
+        setAntibioticMedsDefaults('survey_5', 'antibiotic_med', 'antibiotic_med_default[]');
         $( "#progressbar" ).progressbar({
           value: 55
         });
