@@ -211,7 +211,7 @@ div.portal_unselected {
 }
 
 div#workflow_content {
-	width: 930px;
+	width: 900px;
 	margin-left: auto ;
 	margin-right: auto ;
 	border: 1px solid #ccc;
@@ -265,6 +265,10 @@ ul.workflow_menu li a{
 	width: 110px;
 	display: block;
 	text-decoration: none;
+}
+
+ol.sample_steps {
+	font-size: 12pt;
 }
 
 ul.workflow_menu li:hover {

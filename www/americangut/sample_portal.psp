@@ -1,13 +1,23 @@
-<h2>Taking Samples</h2>
+<h2>Before Taking Your Samples</h2>
 <p class="portal_blurb">
-Once you have added a <a href="javascript:selectTab('source')">sample source and completed the relevant survey</a> (if applicable), you are ready to take a sample.
+These are the steps involved in taking a sample:
 </p>
+    <ol class="sample_steps">
+        <li>Make sure you have <a href="javascript:selectTab('source')">added your sample source and complete the required survey(s)</a></li>
+        <li>Remove the sample swabs from the sample tube</li>
+        <li>Collect your sample following the guidelines below</li>
+        <li>Place sample swabs into the sample tube</li>
+    </ol>
+<p class="portal_blurb">
+These sample collection instructions are very important, please read through them <strong>before</strong> beginning to take your sample. Deviations will cause issues with sample processing, sequencing, and data analysis. We cannot guarantee that we will be able to process your sample if the instructions are not followed, and <strong>we cannot offer replacements if instructions were not followed</strong>. Please do not hesitate to ask us questions at <a href="fusebox.psp?page=help_request.psp">info@americangut.org</a>.
+</p>
+<h2>Taking Your Samples</h2>
 <p class="portal_blurb">
 Once you have removed the sample tube, only handle the sample swab by the red cap.
 </p>
 <div class="centered"><img src="img/sampling_wrong.png"><img src="img/sampling_correct.png"></div>
 <p class="portal_blurb">
-For a <strong>fecal sample</strong>, rub both cotton tips on a fecal specimen (a used piece of bathroom tissue). Collect a small amount of biomass. Maximum collection would be to saturate 1/2 a swab. <strong>More is not better!</strong> The ideal amount of biomass collected is shown below.
+For a <strong>fecal sample</strong>, rub both cotton tips on a fecal specimen (a used piece ofbathroom tissue). Collect a small amount of biomass. Maximum collection would be to saturate 1/2 a swab. <strong>More is not better!</strong> The ideal amount of biomass collected is shown below.
 </p>
 <div class="centered"><img src="img/biomass.png"></div>
 <div class="centered"><img src="img/good1.png"><img src="img/good2.png"><br/><img src="img/bad1.png"><img src="img/bad2.png"></div>
@@ -26,6 +36,6 @@ For an <strong>other/environmental sample</strong>, firmly rub both sides of bot
 </p>
 <br>
 <p class="portal_blurb">
-After you have finished taking your sample, return the swabs to their tube protective tube and push the red handling cap on firmly.
+After you have finished taking your sample, return the swabs to the sample tube and push the red cap on firmly.
 </p>
 <br>
