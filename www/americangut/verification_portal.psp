@@ -1,0 +1,11 @@
+<h2>Verification</h2>
+<p class="portal_blurb">
+We ask you to verify that you received the correct sample tubes and kit. Using a <strong>Verification Code</strong> helps us ensure that you receive the correct barcodes and Credentials Sheet.  
+</p>
+<p class="portal_blurb">
+Your <strong>Verification Code</strong> will be sent to you via email to the address that you entered when you made your donation; if you made an anonymous donation, please <a href="fusebox.psp?page=help_request.psp">contact us directly</a>.
+</p>
+<p class="portal_blurb">
+If you cannot find your <strong>Verification Code</strong>, please make sure to check your spam folder. If you still cannot find the code, please <a href="fusebox.psp?page=help_request.psp">contact us</a>.
+</p>
+<%@ include file="verification.psp" %>
