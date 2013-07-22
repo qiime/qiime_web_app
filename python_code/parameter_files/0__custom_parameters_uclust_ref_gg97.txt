@@ -27,7 +27,7 @@ split_libraries_fastq:sequence_max_n
 split_libraries_fastq:start_seq_id
 split_libraries_fastq:rev_comp_mapping_barcodes
 split_libraries_fastq:rev_comp
-split_libraries_fastq:barcode_type	0
+split_libraries_fastq:barcode_type not-barcoded
 split_libraries_fastq:last_bad_quality_char
 split_libraries_fastq:max_barcode_errors	1.5
 split_libraries_fastq:store_qual_scores True

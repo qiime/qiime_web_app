@@ -3,24 +3,16 @@ from utils.psp_utils import format_submit_form_to_fusebox_string
 from utils.mail import send_email, can_send_mail
 
 deceased_parent_checkbox_checked = form.get('deceased_parent', None)
+ag_login_id = sess['user_data']['web_app_user_id']
 
 # check if the participant already exists
-query = """select participant_name
-from ag_human_survey
-where ag_login_id = '{0}'
-and participant_name = '{1}'""".format(sess['user_data']['web_app_user_id'],
-        form['participant_name'])
-participant_collision = ag_data_access.dynamicMetadataSelect(query).fetchone()
+participants = ag_data_access.getHumanParticipants(ag_login_id)
 
-# check if the participant is on the exceptions list
-query = """select participant_name from ag_bruce_waynes
-where ag_login_id = '{0}'
-and participant_name = '{1}'""".format(sess['user_data']['web_app_user_id'],
-    form['participant_name'])
-is_exception = ag_data_access.dynamicMetadataSelect(query).fetchone()
+# check if the participant is on the exceptions list (bruce wayne)
+is_exception = form['participant_name'] in ag_data_access.getParticipantExceptions(ag_login_id)
 
-# if the user already exists, stop them outright
-if participant_collision:
+# if they do, stop them outright
+if form['participant_name'] in participants:
     req.write(format_submit_form_to_fusebox_string(page="portal.psp",
         message='Participant %s already exists!' % form['participant_name']))
 

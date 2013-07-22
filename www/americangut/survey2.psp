@@ -1,3 +1,9 @@
+<%
+from utils.psp_utils import quot
+%>
+<script>
+    
+</script>
 
 <div id="content" class="content">
     <h2>Survey</h2>
@@ -9,10 +15,62 @@
             <td>
                 <form id="survey_2" method="post" action="fusebox.psp">
 <%
+#req.write(str(form))
 for f in form:
     if(f != 'page'):
         req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
-# End for
+
+# get defaults (if this is a survey edit)
+# diet type
+diet_type = form.get("diet_type_default", None)
+omnivore_selected = 'selected="selected"' if diet_type == 'Omnivore' else ''
+omnivore_no_red_selected = 'selected="selected"' if diet_type == 'Omnivore but no red meat' else ''
+veggie_selected = 'selected="selected"' if diet_type == 'Vegetarian' else ''
+veggie_but_seafood_selected = 'selected="selected"' if diet_type == 'Vegetarian but eat seafood' else ''
+vegan_selected = 'selected="selected"' if diet_type == 'Vegan' else ''
+
+# multivitamin
+multivitamin = form.get("multivitamin_default", None)
+multivitamin_yes_checked = 'checked' if multivitamin == 'yes' else ''
+multivitamin_no_checked = 'checked' if multivitamin == 'no' else ''
+
+# nutritional supplements
+supplements = form.get("supplements_default", None)
+supplements_yes_checked = 'checked' if supplements == 'yes' else ''
+supplements_no_checked = 'checked' if supplements == 'no' else ''
+# note: default values for the text boxes are taken care of in javascript
+
+# lactose intolerant
+lactose_intolerant = form.get("lactose_default", None)
+lactose_yes = 'checked' if lactose_intolerant == 'yes' else ''
+lactose_no = 'checked' if lactose_intolerant == 'no' else ''
+
+# gluten intolerant
+gluten_intolerant = form.get("gluten_default", None)
+gluten_yes = 'checked' if gluten_intolerant == 'yes' else ''
+gluten_no = 'checked' if gluten_intolerant == 'no' else ''
+
+# allergies checkboxes
+foodallergies_peanuts = 'checked' if form.get("foodallergies_peanuts_default", None) == 'on' else ''
+foodallergies_treenuts = 'checked' if form.get("foodallergies_treenuts_default", None) == 'on' else ''
+foodallergies_shellfish = 'checked' if form.get("foodallergies_shellfish_default", None) == 'on' else ''
+foodallergies_other = 'checked' if form.get("foodallergies_other_default", None) == 'on' else ''
+# "other" textbox default set in html below
+
+# special dietary restrictions radio
+special_restrictions = form.get("special_restrictions_default", None)
+special_restrictions_yes = 'checked' if special_restrictions == 'yes' else ''
+special_restrictions_no = 'checked' if special_restrictions == 'no' else ''
+# note: default values for the text boxes are taken care of in javascript
+
+# main source of drinking water
+drinking_water_source = form.get("drinking_water_source_default", None)
+city_selected = "selected='selected'" if drinking_water_source == 'City' else ''
+well_selected = "selected='selected'" if drinking_water_source == 'Well' else ''
+bottled_selected = "selected='selected'" if drinking_water_source == 'Bottled' else ''
+filtered_selected = "selected='selected'" if drinking_water_source == 'Filtered' else ''
+not_sure_selected = "selected='selected'" if drinking_water_source == 'Not sure' else ''
+
 %>
 
                     <table id="survey" width="100%">
@@ -25,11 +83,11 @@ for f in form:
                             <td>
                                 <select tabindex="1" name="diet_type" id="diet_type">
                                     <option value="">Select an option</option>
-                                    <option>Omnivore</option>
-                                    <option>Omnivore but no red meat</option>
-                                    <option>Vegetarian</option>
-                                    <option>Vegetarian but eat seafood</option>
-                                    <option>Vegan</option>
+                                    <option <%=omnivore_selected%>>Omnivore</option>
+                                    <option <%=omnivore_no_red_selected%>>Omnivore but no red meat</option>
+                                    <option <%=veggie_selected%>>Vegetarian</option>
+                                    <option <%=veggie_but_seafood_selected%>>Vegetarian but eat seafood</option>
+                                    <option <%=vegan_selected%>>Vegan</option>
                                 </select>
                             </td>
                         </tr>
@@ -37,8 +95,8 @@ for f in form:
                         <td>Are you taking a daily multivitamin?</td>
                         <td>
                             <div id="multivitamin">
-                                <input tabindex="1" type="radio" id="multivitamin_yes" name="multivitamin" value="yes"/><label for="multivitamin_yes">Yes</label>
-                                <input  tabindex="2" type="radio" id="multivitamin_no" name="multivitamin" value="no"/><label for="multivitamin_no">No</label>
+                                <input tabindex="1" type="radio" id="multivitamin_yes" name="multivitamin" value="yes" <%=multivitamin_yes_checked%> /><label for="multivitamin_yes">Yes</label>
+                                <input  tabindex="2" type="radio" id="multivitamin_no" name="multivitamin" value="no" <%=multivitamin_no_checked%> /><label for="multivitamin_no">No</label>
                             </div>
                         </td>
                         </tr>
@@ -46,8 +104,8 @@ for f in form:
                         <td>Are you taking any other nutritional/herbal supplements?</td>
                         <td>
                             <div id="supplements">
-                                <input tabindex="3" type="radio" id="supplements_yes" name="supplements" value="yes" onclick="javascript:setVisible('supplements_option')"/><label for="supplements_yes">Yes</label>
-                                <input tabindex="4" type="radio" id="supplements_no" name="supplements" value="no"/><label for="supplements_no" onclick="javascript:setInvisible('supplements_option')">No</label>
+                                <input tabindex="3" type="radio" id="supplements_yes" name="supplements" value="yes" onclick="javascript:setVisible('supplements_option')" <%=supplements_yes_checked%> /><label for="supplements_yes">Yes</label>
+                                <input tabindex="4" type="radio" id="supplements_no" name="supplements" value="no" <%=supplements_no_checked%> /><label for="supplements_no" onclick="javascript:setInvisible('supplements_option')"/>No</label>
                             </div>
                         </td>
                         </tr>
@@ -80,8 +138,8 @@ for f in form:
                         <td>Are you lactose intolerant?</td>
                         <td>
                             <div id="lactose">
-                                <input tabindex="5" type="radio" id="lactose_yes" name="lactose" value="yes"/><label for="lactose_yes">Yes</label>
-                                <input tabindex="6" type="radio" id="lactose_no" name="lactose" value="no"/><label for="lactose_no">No</label>
+                                <input tabindex="5" type="radio" id="lactose_yes" name="lactose" value="yes" <%=lactose_yes%>/><label for="lactose_yes">Yes</label>
+                                <input tabindex="6" type="radio" id="lactose_no" name="lactose" value="no" <%=lactose_no%>/><label for="lactose_no">No</label>
                             </div>
                         </td>
                         </tr>
@@ -89,33 +147,33 @@ for f in form:
                         <td>Are you gluten intolerant?</td>
                         <td>
                             <div id="gluten">
-                                <input tabindex="7" type="radio" id="gluten_yes" name="gluten" value="yes"/><label for="gluten_yes">Yes</label>
-                                <input tabindex="8" type="radio" id="gluten_no" name="gluten" value="no"/><label for="gluten_no">No</label>
+                                <input tabindex="7" type="radio" id="gluten_yes" name="gluten" value="yes" <%=gluten_yes%>/><label for="gluten_yes">Yes</label>
+                                <input tabindex="8" type="radio" id="gluten_no" name="gluten" value="no" <%=gluten_no%>/><label for="gluten_no">No</label>
                             </div>
                         </td>
                         </tr>
                         <tr>
                             <td>Are you allergic to any of the following?</td>
                             <td>
-                                    <input tabindex="9" type="checkbox" id="foodallergies_peanuts" name="foodallergies_peanuts" /><label for="foodallergies_peanuts">Peanuts</label>
+                                    <input tabindex="9" type="checkbox" id="foodallergies_peanuts" name="foodallergies_peanuts" <%=foodallergies_peanuts%>/><label for="foodallergies_peanuts">Peanuts</label>
                                     <br />
-                                    <input tabindex="10" type="checkbox" id="foodallergies_treenuts" name="foodallergies_treenuts" /><label for="foodallergies_treenuts">Tree nuts</label>
+                                    <input tabindex="10" type="checkbox" id="foodallergies_treenuts" name="foodallergies_treenuts" <%=foodallergies_treenuts%>/><label for="foodallergies_treenuts">Tree nuts</label>
                                     <br />
-                                    <input tabindex="11" type="checkbox" id="foodallergies_shellfish" name="foodallergies_shellfish" /><label for="foodallergies_shellfish">Shellfish</label>
+                                    <input tabindex="11" type="checkbox" id="foodallergies_shellfish" name="foodallergies_shellfish" <%=foodallergies_shellfish%>/><label for="foodallergies_shellfish">Shellfish</label>
                                     <br />
-                                    <input tabindex="12" type="checkbox" id="foodallergies_other" name="foodallergies_other" /><label for="foodallergies_other">Other</label>
+                                    <input tabindex="12" type="checkbox" id="foodallergies_other" name="foodallergies_other" <%=foodallergies_other%>/><label for="foodallergies_other">Other</label>
                             </td>
                         </tr>
                         <tr>
                             <td>Other</td>
-                            <td><input tabindex="13" type="text" id="foodallergies_other_text" name="foodallergies_other_text" /></td>                        
+                            <td><input tabindex="13" type="text" id="foodallergies_other_text" name="foodallergies_other_text" value=<%=quot(form, 'foodallergies_other_text_default')%>/></td>                        
                         </tr>
                         <tr>
                             <td>Do you follow any other special diet restrictions other than those indicated above?</td>
                             <td>
                                 <div id="special_restrictions">
-                                    <input tabindex="14" type="radio" id="special_yes" name="special_restrictions" value="yes" onclick="javascript:setVisible('restrictions_option')"/><label for="special_yes">Yes</label>
-                                    <input tabindex="15" type="radio" id="special_no" name="special_restrictions" value="no" onclick="javascript:setInvisible('restrictions_option')"/><label for="special_no">No</label>
+                                    <input tabindex="14" type="radio" id="special_yes" name="special_restrictions" value="yes" onclick="javascript:setVisible('restrictions_option')" <%=special_restrictions_yes%>/><label for="special_yes">Yes</label>
+                                    <input tabindex="15" type="radio" id="special_no" name="special_restrictions" value="no" onclick="javascript:setInvisible('restrictions_option')" <%=special_restrictions_no%>/><label for="special_no">No</label>
                                 </div>
                             </td>
                         </tr>
@@ -149,11 +207,11 @@ for f in form:
                             <td>
                                 <select tabindex="16" name="drinking_water_source" id="drinking_water_source">
                                     <option value="">Select an option</option>
-                                    <option>City</option>
-                                    <option>Well</option>
-                                    <option>Bottled</option>
-                                    <option>Filtered</option>
-                                    <option>Not sure</option>
+                                    <option <%=city_selected%>>City</option>
+                                    <option <%=well_selected%>>Well</option>
+                                    <option <%=bottled_selected%>>Bottled</option>
+                                    <option <%=filtered_selected%>>Filtered</option>
+                                    <option <%=not_sure_selected%>>Not sure</option>
                                 </select>
                             </td>
                         </tr>
@@ -174,6 +232,17 @@ for f in form:
     <div id="progressbar"></div>
     <script>
       $(function() {
+          if (survey_2.supplements_yes.checked)
+          {
+              setVisible('supplements_option');
+              setSupplementsDefaults('survey_2', 'supplements_fields', 'supplements_fields_default[]');
+          }
+          if (survey_2.special_yes.checked)
+          {
+              setVisible('restrictions_option');
+              setDietaryRestrictionsDefaults('survey_2', 'dietrestrictions', 'dietrestrictions_default[]');
+          }
+
           $( "#multivitamin" ).buttonset();
           $( "#supplements" ).buttonset();
           $( "#lactose" ).buttonset();
