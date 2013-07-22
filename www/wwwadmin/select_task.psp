@@ -12,13 +12,20 @@ __status__ = "Production"
 <%
 from enums import ServerConfig, DataAccessType
 
+message = ''
+
 if 'message' in form:
-	req.write(form['message'])
+	message = form['message']
 else:
 	if ServerConfig.data_access_type == DataAccessType.qiime_test:
-		req.write('Hi. Please be careful or Domokun will hunt you down and smash you.')
+		message = 'Hi. Please be careful or Domokun will hunt you down and smash you.'
 	else:
-		req.write('Batman is watching you. Please be careful.')
+		message = 'Batman is watching you. Please be careful.'
 # End if
+
+req.write(message)
 %>
 
+<script type="text/javascript">
+clippyTalk("<%=message%>");
+</script>
