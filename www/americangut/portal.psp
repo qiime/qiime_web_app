@@ -11,7 +11,7 @@ __status__ = "Development"
 
 <div id="content" class="content">
 
-<h2>Hi <%=user_data['name']%>! Welcome to the American Gut participant site.</h2>
+<h2>Hi <%=user_data['name']%>! Please follow the steps below.</h2>
 
 <%
 message = form.get('message', '')
@@ -20,45 +20,68 @@ if message:
 #ENDIF
 %>
 </div>
-<%@ include file="verification.psp" %>
 
 <div id="content" class="content">
-    <p class="note">
-    If you haven't started keeping a food diary, that's a great place to start!<br /> You'll need dietary information 
-    for at least 7 days before you can add a participant and fill out the survey. <br /><br />
-    There are a number of FREE online dietary tools out there – we recommend <a href="http://www.fitday.com/" target="_blank" class="help">FitDay</a> and 
-    <a href="http://caloriecount.about.com/" target="_blank" class="help">Calorie Count</a>. 
-    Note we will be asking questions about your carb, protein, fat, alcohol, and fiber intake, 
-    (as a percentage of your total intake) as well as some info on types of food. So, use a tool 
-    that allows you to enter as much detail as possible.
-    </p>
-    
-    <div class="left wforty">
-        <a href="fusebox.psp?page=new_participant_overview.psp" class="big_button">
-            <div class="big_button_div">
-                <p class="big_button_text">
-                    If you're looking to add samples, start here!<br><br> You must first register a participant that represents the person being sampled.
-                </p>
-                <img src="img/big_participant.png"/>
+    <div id="workflow">
+        <ul class="workflow_menu">
+<%
+supplied_kit_id = sess['supplied_kit_id']
+query = ("select kit_verification_code, kit_verified from ag_kit "
+         "where supplied_kit_id = '%s'" % supplied_kit_id)
+
+verification_textbox_class = ""
+db_code, kit_verified = ag_data_access.dynamicMetadataSelect(query).fetchone()
+
+user_verification_code = form.get('email_verification_code', None)
+if kit_verified == 'y':
+    #
+%>
+            <li id="verify_tab" class="selected" style="background-image: url('img/1.png');padding-bottom:0px;">Verify Your Kit<br><br>
+            <img src="img/verify.png"/>
+            </li>
+<%
+elif kit_verified == 'n':
+    #
+%>
+            <li id="verify_tab" class="selected" style="background-image: url('img/1.png');"><a href="javascript:selectTab('verify')">Verify Your Kit<br><br>
+            <img src="img/not_verified.png"/>
+            </a></li>
+<%
+#endif
+%>
+            <li id="source_tab" class="unselected" style="background-image: url('img/2.png');"><a href="javascript:selectTab('source')">Add Source &<br>Survey<br><img src="img/source.png"/></a></li>
+            <li id="sample_tab" class="unselected" style="background-image: url('img/3.png');"><a href="javascript:selectTab('sample')">Take a Sample<br><br><img src="img/sample.png"/></a></li>
+            <li id="log_tab" class="unselected" style="background-image: url('img/4.png');"><a href="javascript:selectTab('log')">Log a Sample<br><br><img src="img/log.png"/></a></li>
+            <li id="mail_tab" class="unselected" style="background-image: url('img/5.png');"><a href="javascript:selectTab('mail')">Mail Samples<br>to Us<br><img src="img/mail.png"/></a></li>
+            <li id="results_tab" class="unselected" style="background-image: url('img/6.png');"><a href="javascript:selectTab('results')">Sequencing &amp;<br>Results<br><img src="img/results.png"/></a></li>
+        </ul>
+        <div id="workflow_content">
+            <div id="verify_content" class="portal_selected">
+                <%@ include file="verification_portal.psp" %>
             </div>
-        </a>
-        <div class="big_button_div">
-            <p class="big_button_text">
-                You can add samples to participants using the menu on the left!
-            </p>
-            <img src="img/samples.png"/>
+            <div id="source_content" class="portal_unselected">
+                <%@ include file="source_portal.psp" %>
+            </div>
+            <div id="sample_content" class="portal_unselected">
+                <%@ include file="sample_portal.psp" %>
+            </div>
+            <div id="log_content" class="portal_unselected">
+                <%@ include file="log_portal.psp" %>
+            </div>
+            <div id="mail_content" class="portal_unselected">
+                <%@ include file="mail_portal.psp" %>
+            </div>
+            <div id="results_content" class="portal_unselected">
+                <%@ include file="results_portal.psp" %>
+            </div>
         </div>
     </div>
-    <div class="big_button_div right wfifty">
-        <p class="big_button_text">
-        <ul class="next_steps">
-            <li>Once you've successfully added all of your participants and logged all of your samples, you should send the tubes back to us in the preaddressed envelope.</li>
-            <li>We will then do sequencing which can take up to 6 months, please be patient! We will let you know as soon as your samples have been sequenced and analyzed.</li>
-            <li>Due to the fact that each sample type must be processed together in groups of 100, some sample types may take longer than others. If you have submitted skin or oral samples they may take 8 to 10 months to finish processing.</li>
-            <li>You'll be able to view your results here on this website once they are available.</li>
-        </ul>
-        </p>
-        <img src="img/next_steps.png"/>
-    </div>
 </div>
-</div>
+<%
+if kit_verified == 'y':
+    #
+%>
+<script>selectTab('source')</script>
+<%
+#endif
+%>

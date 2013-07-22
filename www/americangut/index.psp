@@ -255,7 +255,7 @@ req.write('window.onload=initialize;</script>')
             <p>Map Key</p>
         </div>
 
-        <div class="left keywrapper" style="width:100%;">
+        <div class="left keywrapper">
             <ul class="key">
                 <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00B2FF"/> Participant</li>
                 <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
@@ -280,7 +280,7 @@ req.write('window.onload=initialize;</script>')
 
     <div class="wrapper clearfix" style="position:absolute; top:130px; left:50px; opacity:0.9; width:260px;">
 		<br>
-		<div class="left menuwrapper" style="width:100%;">
+		<div class="left menuwrapper">
 			<ul class="menu">
                 <li><a href="FAQ.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
                 <li><a href="international_shipping.psp?lan=en" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">International Shipping</a><a href="international_shipping.psp?lan=es" target="_blank"> (espa&ntilde;ol)</a></li>
