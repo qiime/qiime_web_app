@@ -1,21 +1,22 @@
 <%
-# frat
-frat = form.get('frat_default', None)
-frat_yes = 'checked' if frat == 'yes' else ''
-frat_no = 'checked' if frat == 'no' else ''
+    # THIS INDENT IS NECESSARY BECUASE THIS PAGE IS INCLUDED
+    # frat
+    frat = form.get('frat_default', None)
+    frat_yes = 'checked' if frat == 'yes' else ''
+    frat_no = 'checked' if frat == 'no' else ''
 
-# communal dining
-communal_dining = form.get('communal_dining_default', None)
-communal_dining_yes = 'checked' if communal_dining == 'yes' else ''
-communal_dining_no = 'checked' if communal_dining == 'no' else ''
+    # communal dining
+    communal_dining = form.get('communal_dining_default', None)
+    communal_dining_yes = 'checked' if communal_dining == 'yes' else ''
+    communal_dining_no = 'checked' if communal_dining == 'no' else ''
 
-# roommates
-roommates_options = ["None", "One", "Two", "Three", "More than three"]
-roommates_dict = dict(zip(roommates_options, ['']*len(roommates_options)))
-roommates = form.get('roommates_default', None)
-if roommates:
-    roommates_dict[roommates] = "selected='selected'"
-#endif
+    # roommates
+    roommates_options = ["None", "One", "Two", "Three", "More than three"]
+    roommates_dict = dict(zip(roommates_options, ['']*len(roommates_options)))
+    roommates = form.get('roommates_default', None)
+    if roommates:
+        roommates_dict[roommates] = "selected='selected'"
+    #endif
 %>
 
 <tr><td><h4>Communal Living Questions</h4></td></tr>

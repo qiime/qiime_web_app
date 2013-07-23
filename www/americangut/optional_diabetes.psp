@@ -1,11 +1,10 @@
 <%
-from utils.psp_utils import quot
+    from utils.psp_utils import quot
 
-# diabetes medciation
-diabetes_medication = form.get('diabetes_medication_default', None)
-diabetes_medication_yes = 'checked' if diabetes_medication == 'yes' else ''
-diabetes_medication_no = 'checked' if diabetes_medication == 'no' else ''
-
+    # diabetes medciation
+    diabetes_medication = form.get('diabetes_medication_default', None)
+    diabetes_medication_yes = 'checked' if diabetes_medication == 'yes' else ''
+    diabetes_medication_no = 'checked' if diabetes_medication == 'no' else ''
 %>
 
 <tr><td><h4>Diabetes Questions</h4></td></tr>

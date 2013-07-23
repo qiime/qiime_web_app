@@ -1,51 +1,50 @@
 <%
-from utils.psp_utils import quot
+    from utils.psp_utils import quot
 
-# migraine relatives
-migraine_relatives = form.get('migraine_relatives_default', None)
-migraine_relatives_yes = 'checked' if migraine_relatives == 'yes' else ''
-migraine_relatives_no = 'checked' if migraine_relatives == 'no' else ''
-migraine_relatives_not_sure = 'checked' if migraine_relatives == 'notsure' else ''
+    # migraine relatives
+    migraine_relatives = form.get('migraine_relatives_default', None)
+    migraine_relatives_yes = 'checked' if migraine_relatives == 'yes' else ''
+    migraine_relatives_no = 'checked' if migraine_relatives == 'no' else ''
+    migraine_relatives_not_sure = 'checked' if migraine_relatives == 'notsure' else ''
 
-# migraine meds
-migrainemeds = form.get('migrainemeds_default', None)
-migrainemeds_yes = 'checked' if migrainemeds == 'yes' else ''
-migrainemeds_no = 'checked' if migrainemeds == 'no' else ''
+    # migraine meds
+    migrainemeds = form.get('migrainemeds_default', None)
+    migrainemeds_yes = 'checked' if migrainemeds == 'yes' else ''
+    migrainemeds_no = 'checked' if migrainemeds == 'no' else ''
 
-# migraine frequency
-migraine_frequency_options = ["Daily", "Weekly", "Monthly", "A few times a year"]
-migraine_frequency_dict = dict(zip(migraine_frequency_options, ['']*len(migraine_frequency_options)))
-migraine_frequency = form.get('migraine_frequency_default', None)
-if migraine_frequency:
-    migraine_frequency_dict[migraine_frequency] = "selected='selected'"
+    # migraine frequency
+    migraine_frequency_options = ["Daily", "Weekly", "Monthly", "A few times a year"]
+    migraine_frequency_dict = dict(zip(migraine_frequency_options, ['']*len(migraine_frequency_options)))
+    migraine_frequency = form.get('migraine_frequency_default', None)
+    if migraine_frequency:
+        migraine_frequency_dict[migraine_frequency] = "selected='selected'"
 
-# migraine factor (there are three of these)
-migraine_factor_options = ["Caffeine", "Stress", "Depression", "Lack of sleep", "Foods; chocolate", "Foods; red wine", "Foods; strawberries", "Foods; other", "Medications; barbiturates", "Medications; opiods", "Medications; horomones", "Other"]
+    # migraine factor (there are three of these)
+    migraine_factor_options = ["Caffeine", "Stress", "Depression", "Lack of sleep", "Foods; chocolate", "Foods; red wine", "Foods; strawberries", "Foods; other", "Medications; barbiturates", "Medications; opiods", "Medications; horomones", "Other"]
 
-migraine_factor_1_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
-migraine_factor_2_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
-migraine_factor_3_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
+    migraine_factor_1_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
+    migraine_factor_2_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
+    migraine_factor_3_dict = dict(zip(migraine_factor_options, ['']*len(migraine_factor_options)))
 
-migraine_factor_1 = form.get('migraine_factor_1_default', None)
-if migraine_factor_1:
-    migraine_factor_1_dict[migraine_factor_1] = "selected='selected'"
+    migraine_factor_1 = form.get('migraine_factor_1_default', None)
+    if migraine_factor_1:
+        migraine_factor_1_dict[migraine_factor_1] = "selected='selected'"
 
-migraine_factor_2 = form.get('migraine_factor_2_default', None)
-if migraine_factor_2:
-    migraine_factor_2_dict[migraine_factor_2] = "selected='selected'"
+    migraine_factor_2 = form.get('migraine_factor_2_default', None)
+    if migraine_factor_2:
+        migraine_factor_2_dict[migraine_factor_2] = "selected='selected'"
 
-migraine_factor_3 = form.get('migraine_factor_3_default', None)
-if migraine_factor_3:
-    migraine_factor_3_dict[migraine_factor_3] = "selected='selected'"
+    migraine_factor_3 = form.get('migraine_factor_3_default', None)
+    if migraine_factor_3:
+        migraine_factor_3_dict[migraine_factor_3] = "selected='selected'"
 
-# symptom checkboxes
-migraine_pain = 'checked' if form.get('migraine_pain_default', None) == 'on' else ''
-migraine_photophobia = 'checked' if form.get('migraine_photophobia_default', None) == 'on' else ''
-migraine_phonophobia = 'checked' if form.get('migraine_phonophobia_default', None) == 'on' else ''
-migraine_nausea = 'checked' if form.get('migraine_nausea_default', None) == 'on' else ''
-migraine_aggravation = 'checked' if form.get('migraine_aggravation_default', None) == 'on' else ''
-migraine_aura = 'checked' if form.get('migraine_aura_default', None) == 'on' else ''
-
+    # symptom checkboxes
+    migraine_pain = 'checked' if form.get('migraine_pain_default', None) == 'on' else ''
+    migraine_photophobia = 'checked' if form.get('migraine_photophobia_default', None) == 'on' else ''
+    migraine_phonophobia = 'checked' if form.get('migraine_phonophobia_default', None) == 'on' else ''
+    migraine_nausea = 'checked' if form.get('migraine_nausea_default', None) == 'on' else ''
+    migraine_aggravation = 'checked' if form.get('migraine_aggravation_default', None) == 'on' else ''
+    migraine_aura = 'checked' if form.get('migraine_aura_default', None) == 'on' else ''
 %>
 <tr><td><h4>Migraine Questions</h4></td></tr>
 <tr>

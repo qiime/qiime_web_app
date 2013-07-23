@@ -54,7 +54,9 @@ for k, v in sorted(survey_details.items()):
     <div class="overview">
             <table class="list" id="survey" width="100%">
 <%
+edit_survey_html =  ''
 if participant_type == 'human':
+    edit_survey_html =  '''(<a href="#" onclick="document.forms['edit_survey'].submit(); return false;">edit</a>)'''
     #INDENT
 %>
                 <tr>
@@ -65,7 +67,7 @@ if participant_type == 'human':
 #ENDIF
 %>
                 <tr>
-                    <td>Completed survey (<a href="#" onclick="document.forms['edit_survey'].submit(); return false;">edit</a>)</td>
+                    <td>Completed survey <%=edit_survey_html%></td>
                     <td><img src="img/icon-green-checkmark.png"/></td>
                 </tr>
                 <tr>
