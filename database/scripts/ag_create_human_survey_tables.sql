@@ -3,7 +3,7 @@ create table ag_human_survey
     ag_login_id raw(16) not null, 
     participant_name varchar2(200),
     consent varchar2(20),
-    is_7_to_13 varchar2(20),
+    juvenile_age varchar2(20),
     parent_1_name varchar2(200),
     parent_2_name varchar2(200),
     deceased_parent varchar2(20),

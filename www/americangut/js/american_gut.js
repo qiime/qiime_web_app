@@ -496,10 +496,12 @@ function validatePercentage(item_id) {
 }
 
 function toggleConsent() {
-	var minor = !document.getElementById('is_7_to_13').checked
+	var minor = !document.getElementById('is_juvenile').checked
     document.getElementById("parent_1_name").disabled = minor
     document.getElementById("parent_2_name").disabled = minor
     document.getElementById("deceased_parent").disabled = minor
+    document.getElementById("juvenile_age_less_than_7").disabled = minor
+    document.getElementById("juvenile_age_more_than_7").disabled = minor
 }
 
 /*validation for new participant*/
@@ -530,21 +532,22 @@ function validateConsent()
         valid = false;
     }
 
-    if(!document.consent_info.deceased_parent.checked && document.consent_info.is_7_to_13.checked)
+    if(document.consent_info.is_juvenile.checked)
     {
-        if(document.consent_info.parent_1_name.value == "")
+        if(!document.consent_info.deceased_parent.checked)
         {
-            document.consent_info.parent_1_name.className += " highlight";
-            valid = false;
-        }
-        if(document.consent_info.parent_2_name.value == "")
-        {
-            document.consent_info.parent_2_name.className += " highlight";
-            valid = false;
+            if(document.consent_info.parent_1_name.value == "")
+            {
+                document.consent_info.parent_1_name.className += " highlight";
+                valid = false;
+            }
+            if(document.consent_info.parent_2_name.value == "")
+            {
+                document.consent_info.parent_2_name.className += " highlight";
+                valid = false;
+            }
         }
     }
-	
-    
         
     if(!valid) 
 	{
