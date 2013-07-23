@@ -30,6 +30,7 @@ percentage_from_carbs_dict = dict(zip(percentage_from_carbs_options, ['']*len(pe
 percentage_from_carbs = form.get('percentage_from_carbs_default', None)
 if percentage_from_carbs:
     percentage_from_carbs_dict[percentage_from_carbs] = "selected='selected'"
+#ENDIF
 %>
                     <table width="100%">
                         <tr><td><h4>Overall macronutrient intake as a percentage of calories</h4></td></tr>
