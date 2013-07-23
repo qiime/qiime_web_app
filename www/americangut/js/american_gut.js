@@ -172,6 +172,11 @@ function addField(field_name) {
     return field_name + '_' + new_field_number;
 }
 
+function editHumanSurvey() {
+    alert('You will not be able to save your progress during this survey. In order to save changes, please complete the survey. You will see a confirmation message in red text at the top of the page when your survey is successfully updated.')
+    document.forms['edit_survey'].submit();
+}
+
 function parseMultiplesString(form_name, field_name) {
     // check if there was any input
     var theString = $(document.forms[form_name].elements[field_name])[0]
