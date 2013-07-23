@@ -56,7 +56,7 @@ for k, v in sorted(survey_details.items()):
 <%
 edit_survey_html =  ''
 if participant_type == 'human':
-    edit_survey_html =  '''(<a href="#" onclick="document.forms['edit_survey'].submit(); return false;">edit</a>)'''
+    edit_survey_html =  '''(<a href="#" onclick="editHumanSurvey();">edit</a>)'''
     #INDENT
 %>
                 <tr>
