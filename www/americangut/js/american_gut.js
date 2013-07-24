@@ -144,7 +144,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 		newinput+= '<option value="'+num+'">'+name+'</option>'
 	}
 	newinput+= '</select>'
-	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text" onkeypress=\'validateNumber(event)\'/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text" onkeypress=\'validateNumber(event, false)\'/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", div_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -355,7 +355,7 @@ function addHuman() {
 	field_name = "human"
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event, false)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -835,7 +835,7 @@ function validateText(evt) {
 }
 
 /* input field number validation*/
-function validateNumber(evt) {
+function validateNumber(evt, integer) {
   var theEvent = evt || window.event;
   if (theEvent.which == 0) {
     // this is a "special key," and theEvent.keyCode is not the ASCII value
@@ -854,6 +854,7 @@ function validateNumber(evt) {
     key = String.fromCharCode( key );
     // make sure the character typed is a number or a period
     var regex = /[0-9]|\./;
+    if (integer) regex = /[0-9]/;
     if( !regex.test(key) ) {
       theEvent.returnValue = false;
       if(theEvent.preventDefault) theEvent.preventDefault();

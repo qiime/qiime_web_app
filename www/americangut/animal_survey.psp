@@ -98,7 +98,7 @@ else:
                         </tr>
                         <tr>
                             <td>Age</td>
-                            <td><input tabindex="3" type="text" name="age" id="age" onkeypress='validateNumber(event)' class=""/></td>
+                            <td><input tabindex="3" type="text" name="age" id="age" onkeypress='validateNumber(event, False)' class=""/></td>
                         </tr>
                         <tr>
                             <td>Gender</td>
@@ -201,7 +201,7 @@ else:
                             <td>
                                 <div id="human">
                                     <div id="human_1">
-                                        <input type="text" id="human_1_age" class="small_text" name="human_1_age" value="Age" onkeypress='validateNumber(event)'/> years
+                                        <input type="text" id="human_1_age" class="small_text" name="human_1_age" value="Age" onkeypress='validateNumber(event, False)'/> years
                                         <br />
                                         <select id="human_1_sex" name="human_1_sex">
                                             <option value="">Select an option</option>
