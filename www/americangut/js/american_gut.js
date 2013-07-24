@@ -838,8 +838,6 @@ function validateText(evt) {
 function validateNumber(evt) {
   var theEvent = evt || window.event;
   if (theEvent.which == 0) {
-    console.log('which was 0');
-    console.log(theEvent.keyCode);
     // this is a "special key," and theEvent.keyCode is not the ASCII value
     // allow arrow keys (37-40), backspace (8), tab (9), and delete (46)
     if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
@@ -853,10 +851,7 @@ function validateNumber(evt) {
       theEvent.returnValue = true;
       return;
     }
-    console.log(key);
     key = String.fromCharCode( key );
-    console.log(key);
-    console.log('*******');
     // make sure the character typed is a number or a period
     var regex = /[0-9]|\./;
     if( !regex.test(key) ) {
