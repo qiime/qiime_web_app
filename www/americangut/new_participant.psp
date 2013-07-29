@@ -130,7 +130,7 @@ To withdraw from the study send email to the <a href="mailto:info@americangut.or
         <br>
         <table>
             <tr><td>Name of participant</td><td><input tabindex="2" type="text" name="participant_name" id="participant_name" onkeypress='validateText(event)'><div class="red right">*</div></td></tr>
-            <tr><td>Email of participant</td><td><input tabindex="3" type="text" name="participant_email" id="participant_email"  onkeypress='validateText(event)'><div class="red right">*</div></td></tr>
+            <tr><td>Email of participant</td><td><input tabindex="3" type="text" name="participant_email" id="participant_email"  onkeypress='validateEmail(event)'><div class="red right">*</div></td></tr>
             <tr><td>Participant is 13 years of age or younger</td><td><input type="checkbox" tabindex="4" name="is_juvenile" id="is_juvenile" class="is_juvenile" onclick="toggleConsent()"></td></tr>
             <tr><td></td><td><input type="radio" tabindex="5" name="juvenile_age" id="juvenile_age_less_than_7" value="under 7">&nbsp;&nbsp;Participant is older than 3 months and younger than 13 years of age</td></tr>
             <tr><td></td><td><input type="radio" tabindex="6" name="juvenile_age" id="juvenile_age_more_than_7" value="between 7 and 13">&nbsp;&nbsp;Participant is between 7 and 13 years of age</td></tr>
