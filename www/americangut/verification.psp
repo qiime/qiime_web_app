@@ -60,7 +60,7 @@ elif kit_verified == 'n':
     #INDENT
 %>
 
-<div id="content" class="content">
+<div class="middle_content centered">
     <h2>Verify your identity and kit barcode(s)</h2>
     <div class="lefta clearfix formdiv" id="verification">
         <form name="verification_submit" id="verification_submit" method="post" action="fusebox.psp?page=portal.psp">

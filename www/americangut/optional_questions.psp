@@ -22,44 +22,33 @@ for f in form:
                            <col span="1" style="width: 50%;">
                     </colgroup>
 <%
-if(form['gender'] == 'Female'):
+if form.get('gender', None) == 'Female':
+    #INDENT
 %>
 <%@ include file="optional_female.psp" %>
 <%
 #endif
 %>
 <%
-v = 0
-try:
-    v = form['shared_housing']
-except(KeyError):
-    req.write('')
-    #do nothing
-
-if(v != 0):
-    if(v == 'yes'):
+if form.get('shared_housing', None) == 'yes':
+    #INDENT
 %>
 <%@ include file="optional_living.psp" %>
 <%
 #endif
 %>
 <%
-if(form['diabetes'] == 'Type I' or form['diabetes'] == 'Type II'):
+form_diabetes = form.get('diabetes', None)
+if(form_diabetes == 'Type I' or form_diabetes == 'Type II'):
+    #INDENT
 %>
 <%@ include file="optional_diabetes.psp" %>
 <%
 #endif
 %>
 <%
-v = 0
-try:
-    v = form['migraine']
-except(KeyError):
-    req.write('')
-    #do nothing
-
-if(v != 0):
-    if(v == 'yes'):
+if form.get('migraine', None) == 'yes':
+    #INDENT
 %>
 <%@ include file="optional_migraine.psp" %>
 <%
@@ -107,6 +96,17 @@ if(v != 0):
                   $(this).focus();
                   }
               });
+        if (optional_questions.pregnant_yes.checked)
+            setVisible('pregnant_option');
+        if (optional_questions.diabetes_medication_yes.checked)
+            setVisible('diabetes_option');
+        if (optional_questions.migrainemeds_yes.checked)
+            setVisible('migraine_option');
+        setDiabetesMedsDefaults('optional_questions', 'diabetes_medications', 'diabetes_medications_default[]');
+        setMigraineMedsDefaults('optional_questions', 'migraine_medication', 'migraine_medication_default[]');
+        otherSelect('migraine_factor_1','migraine_option_1',12);
+        otherSelect('migraine_factor_2','migraine_option_2',12);
+        otherSelect('migraine_factor_3','migraine_option_3',12);
         $( "#progressbar" ).progressbar({
           value: 70
         });

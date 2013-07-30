@@ -1,3 +1,11 @@
+//functions for the portal toggle system
+function selectTab(id) {
+	document.querySelectorAll('.selected')[0].className = 'unselected';
+	document.querySelectorAll('.portal_selected')[0].className = 'portal_unselected';
+	document.getElementById(id+'_tab').className = 'selected';
+	document.getElementById(id+'_content').className = 'portal_selected';
+}
+
 var xmlhttp;
 
 function GetXmlHttpObject()
@@ -59,10 +67,6 @@ function validatePetSurvey1()
     xmlhttp.send(null);
 }
 
-function getCountries(id) {
-       document.getElementById(id).source = countries; 
- }
- 
  function setDefaultText() {
      $('input[type="text"], textarea').focus(function () {
          defaultText = $(this).val();
@@ -102,6 +106,13 @@ function addThreeFields(field_name) {
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field_name);
 	setDefaultText()
+
+    var new_field_names = [];
+    new_field_names.push(field_name + '_' + new_field_number);
+    new_field_names.push(field_name + '_location_' + new_field_number);
+    new_field_names.push(field_name + '_contact_' + new_field_number);
+
+    return new_field_names;
 }
 
 function addTwoFields(field1_name,field2_name) {
@@ -113,15 +124,25 @@ function addTwoFields(field1_name,field2_name) {
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field1_name);
 	setDefaultText()
+    
+    var new_field_values = [];
+    new_field_values.push(field1_name+'_'+new_field_number);
+    new_field_values.push(field2_name+'_'+new_field_number);
+
+    return new_field_values;
 }
 
 function addDestinationFields(div_name,field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
 	var newinput = '<select name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'">'
+	var num, name;
 	newinput += '<option value="">Select an option</option>'
-	for(var i =0; i < countries.length; i++)
-		newinput+= '<option>'+countries[i]+'</option>'
+	for(var i =0; i < countries.length; i++) {
+		num = countries[i][0];
+		name = countries[i][1];
+		newinput+= '<option value="'+num+'">'+name+'</option>'
+	}
 	newinput+= '</select>'
 	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
@@ -130,6 +151,12 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 	newTextBoxDiv.appendTo('#'+div_name);
 	// getCountries(field1_name+'_'+new_field_number)
 	setDefaultText()
+
+    var retvalues = [];
+    retvalues.push(field1_name+'_'+new_field_number);
+    retvalues.push(field2_name+'_'+new_field_number);
+
+    return retvalues;
 }
 
 function addField(field_name) {
@@ -141,6 +168,187 @@ function addField(field_name) {
 	newTextBoxDiv.after().html(newinput);
 	newTextBoxDiv.appendTo('#'+field_name);
 	setDefaultText()
+
+    return field_name + '_' + new_field_number;
+}
+
+function editHumanSurvey() {
+    alert('You will not be able to save your progress during this survey. In order to save changes, please complete the survey. You will see a confirmation message in red text at the top of the page when your survey is successfully updated.')
+    document.forms['edit_survey'].submit();
+}
+
+function parseMultiplesString(form_name, field_name) {
+    // check if there was any input
+    var theString = $(document.forms[form_name].elements[field_name])[0]
+    if (theString)
+        theString = $(document.forms[form_name].elements[field_name])[0].value;
+    else
+        return '';
+
+    // if there were multiple inputs, use regex to parse out the values
+    var regex = /Field\('\S+?', '(.+?)'\)/g;
+    var hits = [], found;
+    // probably want to do something else here to avoid element ID conflicts
+    while (found = regex.exec(theString)) {
+        hits.push(found[1]);
+        regex.lastIndex = found.index + 1;
+    }
+
+    // if there was only one value, the regex does not apply, and the field
+    // should be read as-is
+    if (theString.substring(0, 8) != '[Field(\'' && theString != '') {
+        hits[0] = theString;
+    }
+
+    return hits;
+    
+}
+
+// function to write default values for the supplements field (survey2.psp)
+function setSupplementsDefaults(form_name, field_name, default_field_name) {
+    var hits = parseMultiplesString(form_name, default_field_name); 
+    var new_field_names = [];
+    new_field_names.push(field_name + '_1');
+
+    for (var i = 1; i < hits.length; i++) {
+        new_field_names.push(addField(field_name, field_name));
+    }
+
+    setMultiplesDefaults_text(form_name, new_field_names, hits);
+}
+
+// function to write default values for the special dietary restrictions field (survey2.psp)
+function setDietaryRestrictionsDefaults(form_name, field_name, default_field_name) {
+    // like the supplements field, this is only text, so we can use the same
+    // function
+    setSupplementsDefaults(form_name, field_name, default_field_name);
+}
+
+// function to write default values for the drugs field (survey5.psp)
+function setGeneralMedsDefaults(form_name, field_name, default_field_name) {
+    // like the supplements field, this is only text, so we can use the same
+    // function
+    setSupplementsDefaults(form_name, field_name, default_field_name);
+}
+
+// function to write default values for the antibiotics field (survey5.psp)
+function setAntibioticMedsDefaults(form_name, field_name, default_field_name) {
+    // like the supplements field, this is only text, so we can use the same
+    // function
+    setSupplementsDefaults(form_name, field_name, default_field_name);
+}
+
+// function to write default values for the diabetes medications field (optional_questions.psp)
+function setDiabetesMedsDefaults(form_name, field_name, default_field_name) {
+    // like the supplements field, this is only text, so we can use the same
+    // function
+    setSupplementsDefaults(form_name, field_name, default_field_name);
+}
+
+// function to write default values for the diabetes medications field (optional_questions.psp)
+function setMigraineMedsDefaults(form_name, field_name, default_field_name) {
+    // like the supplements field, this is only text, so we can use the same
+    // function
+    setSupplementsDefaults(form_name, field_name, default_field_name);
+}
+
+// function to write default values for the travel options field (survey3.psp)
+function setTravelOptionsDefaults(form_name, travel_location, travel_duration, travel_location_default, travel_duration_default) {
+    var hits_travel_location = parseMultiplesString(form_name, travel_location_default);
+    var hits_travel_duration = parseMultiplesString(form_name, travel_duration_default);
+    
+    var new_field_names_travel_location = [];
+    var new_field_names_travel_duration = [];
+
+    new_field_names_travel_location.push(travel_location + '_1');
+    new_field_names_travel_duration.push(travel_duration + '_1');
+
+    var new_field_names;
+    // loop only uses one of the lengths, but they should always be equal
+    for (var i = 0; i < hits_travel_location.length - 1; i++) {
+        // addDestinationFields returns a list of 2-element lists
+        new_field_names = addDestinationFields('travel_options', travel_location, travel_duration);
+        new_field_names_travel_location.push(new_field_names[0]);
+        new_field_names_travel_duration.push(new_field_names[1]);
+    }
+
+    setMultiplesDefaults_select(form_name, new_field_names_travel_location, hits_travel_location);
+    setMultiplesDefaults_text(form_name, new_field_names_travel_duration, hits_travel_duration);
+}
+
+// function to write default values for the related participants field (survey3.psp)
+function setRelatedParticipantsDefaults(form_name, field_name_related, field_name_relation, default_field_name_related, default_field_name_relation) {
+    var hits_related = parseMultiplesString(form_name, default_field_name_related); 
+    var hits_relation = parseMultiplesString(form_name, default_field_name_relation); 
+
+    var new_field_names_related = [];
+    var new_field_names_relation = [];
+
+    new_field_names_related.push(field_name_related + '_1');
+    new_field_names_relation.push(field_name_relation + '_1');
+
+    var new_field_names;
+    // loop only uses hits_related.length, but this value will always equal hits_relation.length
+    for (var i = 0; i < hits_related.length - 1; i++) {
+        // addTwoFields returns a list of 2-element lists
+        new_field_names = addTwoFields(field_name_related, field_name_relation);
+        new_field_names_related.push(new_field_names[0]);
+        new_field_names_relation.push(new_field_names[1]);
+    }
+
+    setMultiplesDefaults_text(form_name, new_field_names_related, hits_related);
+    setMultiplesDefaults_text(form_name, new_field_names_relation, hits_relation);
+}
+
+// function to set default values for addint pets on survey_3.psp
+function setPetsDefaults(form_name, field_name_pet_type, field_name_pet_housing, field_name_pet_contact, pet_type_default, pet_housing_default, pet_contact_default) {
+    var pet_type_hits = parseMultiplesString(form_name, pet_type_default); 
+    var pet_housing_hits = parseMultiplesString(form_name, pet_housing_default); 
+    var pet_contact_hits = parseMultiplesString(form_name, pet_contact_default); 
+
+    var new_field_names_pet_type = [];
+    var new_field_names_pet_housing = [];
+    var new_field_names_pet_contact = [];
+
+    new_field_names_pet_type.push(field_name_pet_type + '_1');
+    new_field_names_pet_housing.push(field_name_pet_housing + '_1');
+    new_field_names_pet_contact.push(field_name_pet_contact + '_1');
+
+    var new_field_names;
+    // loop only uses only one of the "hits" variables here, but they should all be the same length
+    // use length - 1 because the first already exists
+    for (var i = 0; i < pet_type_hits.length - 1; i++) {
+        // addThreeFields returns a list of 2-element lists
+        new_field_names = addThreeFields(field_name_pet_type);
+
+        new_field_names_pet_type.push(new_field_names[0]);
+        new_field_names_pet_housing.push(new_field_names[1]);
+        new_field_names_pet_contact.push(new_field_names[2]);
+    }
+
+    setMultiplesDefaults_text(form_name, new_field_names_pet_type, pet_type_hits);
+    setMultiplesDefaults_select(form_name, new_field_names_pet_housing, pet_housing_hits);
+    setMultiplesDefaults_select(form_name, new_field_names_pet_contact, pet_contact_hits);
+}
+
+// this function is used to set default values for "multiples" on the survey
+// where the type of the form element is text input.
+function setMultiplesDefaults_text(form_name, new_field_names, hits) {
+    for (var i = 0; i < hits.length; i++) {
+        var theElement = document.forms[form_name].elements[new_field_names[i]];
+        theElement.value = hits[i];
+    }
+}
+
+// this function is used to set default values for select boxes
+function setMultiplesDefaults_select(form_name, new_field_names, hits) {
+    for (var i = 0; i < hits.length; i++) {
+        var theElement = document.forms[form_name].elements[new_field_names[i]];
+        for (var j = 0; j < theElement.options.length; j++) {
+            if (theElement.options[j].value == hits[i])
+                theElement.selectedIndex = j;
+        }
+    }
 }
 
 function addHuman() {
@@ -192,7 +400,7 @@ function anySelect(select_id,item_id,other_indices) {
 
 function setVisible(item_id) {
 	document.getElementById(item_id).className = document.getElementById(item_id).className.replace
-      (/(?:^|\s)invisible(?!\S)/ , '');
+      (/(?:^|\s)invisible(?!\S)/g , '');
 }
 
 function setInvisible(item_id) {
@@ -288,10 +496,12 @@ function validatePercentage(item_id) {
 }
 
 function toggleConsent() {
-	var minor = !document.getElementById('is_7_to_13').checked
+	var minor = !document.getElementById('is_juvenile').checked
     document.getElementById("parent_1_name").disabled = minor
     document.getElementById("parent_2_name").disabled = minor
     document.getElementById("deceased_parent").disabled = minor
+    document.getElementById("juvenile_age_less_than_7").disabled = minor
+    document.getElementById("juvenile_age_more_than_7").disabled = minor
 }
 
 /*validation for new participant*/
@@ -322,21 +532,22 @@ function validateConsent()
         valid = false;
     }
 
-    if(!document.consent_info.deceased_parent.checked && document.consent_info.is_7_to_13.checked)
+    if(document.consent_info.is_juvenile.checked)
     {
-        if(document.consent_info.parent_1_name.value == "")
+        if(!document.consent_info.deceased_parent.checked)
         {
-            document.consent_info.parent_1_name.className += " highlight";
-            valid = false;
-        }
-        if(document.consent_info.parent_2_name.value == "")
-        {
-            document.consent_info.parent_2_name.className += " highlight";
-            valid = false;
+            if(document.consent_info.parent_1_name.value == "")
+            {
+                document.consent_info.parent_1_name.className += " highlight";
+                valid = false;
+            }
+            if(document.consent_info.parent_2_name.value == "")
+            {
+                document.consent_info.parent_2_name.className += " highlight";
+                valid = false;
+            }
         }
     }
-	
-    
         
     if(!valid) 
 	{

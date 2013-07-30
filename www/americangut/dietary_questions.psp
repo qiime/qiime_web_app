@@ -1,3 +1,7 @@
+<%
+from utils.psp_utils import quot
+%>
+
 <div id="content" class="content">
     <h2>Survey</h2>
     <h4>Detailed Dietary Information</h4>
@@ -12,26 +16,40 @@
 for f in form:
     if(f != 'page'):
         req.write('<input type="hidden" name="{0}" id="{0}" value="{1}"/>'.format(f, form[f]))
-# End for
+
+# number of plant types
+types_of_plants_options = ["Less than 5", "6 to 10", "11 to 20", "21 to 30", "More than 30"]
+types_of_plants_dict = dict(zip(types_of_plants_options, ['']*len(types_of_plants_options)))
+types_of_plants = form.get('types_of_plants_default', None)
+if types_of_plants:
+    types_of_plants_dict[types_of_plants] = "selected='selected'"
+
+# percentage of carbs from processed sources
+percentage_from_carbs_options = ["Less than 25%", "25 to 50%", "51 to 75%", "More than 76%"]
+percentage_from_carbs_dict = dict(zip(percentage_from_carbs_options, ['']*len(percentage_from_carbs_options)))
+percentage_from_carbs = form.get('percentage_from_carbs_default', None)
+if percentage_from_carbs:
+    percentage_from_carbs_dict[percentage_from_carbs] = "selected='selected'"
+#ENDIF
 %>
                     <table width="100%">
                         <tr><td><h4>Overall macronutrient intake as a percentage of calories</h4></td></tr>
                         <tr>
                             <td>Protein</td>
                             <td>
-                                <input tabindex="1" type="number" max="100" min="0" name="protein_per" id="protein_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('protein_per')"/>%
+                                <input tabindex="1" type="number" max="100" min="0" name="protein_per" id="protein_per" value=<%=quot(form, 'protein_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('protein_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Fat</td>
                             <td>
-                                <input tabindex="2" type="number" max="100" min="0" name="fat_per" id="fat_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('fat_per')"/>%
+                                <input tabindex="2" type="number" max="100" min="0" name="fat_per" id="fat_per" value=<%=quot(form, 'fat_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('fat_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Carbohydrates</td>
                             <td>
-                                <input tabindex="3" type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('carbohydrate_per')"/>%
+                                <input tabindex="3" type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value=<%=quot(form, 'carbohydrate_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('carbohydrate_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -44,13 +62,13 @@ for f in form:
                         <tr>
                             <td>Plant</td>
                             <td>
-                                <input tabindex="4" type="number" max="100" min="0" name="plant_per" id="plant_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('plant_per')"/>%
+                                <input tabindex="4" type="number" max="100" min="0" name="plant_per" id="plant_per" value=<%=quot(form, 'plant_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('plant_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Animal</td>
                             <td>
-                                <input tabindex="5" type="number" max="100" min="0" name="animal_per" id="animal_per" value="0" onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('animal_per')"/>%
+                                <input tabindex="5" type="number" max="100" min="0" name="animal_per" id="animal_per" value=<%=quot(form, 'animal_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('animal_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -63,7 +81,7 @@ for f in form:
                         <tr>
                             <td>Grams of fiber consumed for the 7 day period</td>
                             <td>
-                                <input tabindex="6" type="text" name="fiber_grams" id="fiber_grams"/>(g)
+                                <input tabindex="6" type="text" name="fiber_grams" id="fiber_grams" value=<%=quot(form, 'fiber_grams_default')%>/>(g)
                             </td>
                         </tr>
                         
@@ -73,11 +91,11 @@ for f in form:
                             <td>
                                 <select tabindex="7" name="types_of_plants" id="types_of_plants">
                                     <option value="">Select an option</option>
-                                    <option>Less than 5</option>
-                                    <option>6 to 10</option>
-                                    <option>11 to 20</option>
-                                    <option>21 to 30</option>
-                                    <option>More than 30</option>
+                                    <option <%=types_of_plants_dict['Less than 5']%>>Less than 5</option>
+                                    <option <%=types_of_plants_dict['6 to 10']%>>6 to 10</option>
+                                    <option <%=types_of_plants_dict['11 to 20']%>>11 to 20</option>
+                                    <option <%=types_of_plants_dict['21 to 30']%>>21 to 30</option>
+                                    <option <%=types_of_plants_dict['More than 30']%>>More than 30</option>
                                 </select>
                             </td>
                         </tr>
@@ -87,10 +105,10 @@ for f in form:
                             <td>
                                 <select  tabindex="8" name="percentage_from_carbs" id="percentage_from_carbs">
                                     <option value="">Select an option</option>
-                                    <option>Less than 25%</option>
-                                    <option>25 to 50%</option>
-                                    <option>51 to 75%</option>
-                                    <option>More than 76%</option>
+                                    <option <%=percentage_from_carbs_dict['Less than 25%']%>>Less than 25%</option>
+                                    <option <%=percentage_from_carbs_dict['25 to 50%']%>>25 to 50%</option>
+                                    <option <%=percentage_from_carbs_dict['51 to 75%']%>>51 to 75%</option>
+                                    <option <%=percentage_from_carbs_dict['More than 76%']%>>More than 76%</option>
                                 </select>
                             </td>
                         </tr>
@@ -98,14 +116,14 @@ for f in form:
                         <tr>
                             <td>Primary whole vegetable <a href="#" class="help" title="Broccoli, carrots, onions, leafy greens, potatoes">(?)</a></td>
                             <td>
-                                <input tabindex="9" type="text" name="primary_vegetable" id="primary_vegetable"/>
+                                <input tabindex="9" type="text" name="primary_vegetable" id="primary_vegetable" value=<%=quot(form, 'primary_vegetable_default')%>/>
                             </td>
                         </tr>
                         <tr><td><h4>What would you consider the primary carbohydrate in your diet?</h4></td></tr>
                         <tr>
                             <td>Primary carbohydrate <a href="#" class="help" title="Bread, pasta, sugary drinks, etc">(?)</a></td>
                             <td>
-                                <input tabindex="10" type="text" name="primary_carb" id="primary_carb"/>
+                                <input tabindex="10" type="text" name="primary_carb" id="primary_carb" value=<%=quot(form, 'primary_carb_default')%>/>
                             </td>
                         </tr>
                     </table>
@@ -125,6 +143,11 @@ for f in form:
     <div id="progressbar"></div>
     <script>
       $(function() {
+        updateTotals('protein_per');
+        updateTotals('fat_per');
+        updateTotals('carbohydrate_per');
+        updateTotals('plant_per');
+        updateTotals('animal_per');
         $( "#progressbar" ).progressbar({
           value: 80
         });

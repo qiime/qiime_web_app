@@ -1,14 +1,23 @@
+<%
+    from utils.psp_utils import quot
+
+    # diabetes medciation
+    diabetes_medication = form.get('diabetes_medication_default', None)
+    diabetes_medication_yes = 'checked' if diabetes_medication == 'yes' else ''
+    diabetes_medication_no = 'checked' if diabetes_medication == 'no' else ''
+%>
+
 <tr><td><h4>Diabetes Questions</h4></td></tr>
 <tr>
     <td>Date of diabetes diagnosis</td>
-    <td><input tabindex="11" type="text" id="diabetes_diagnose_date" name="diabetes_diagnose_date" /> mm/dd/yyyy</td>                        
+    <td><input tabindex="11" type="text" id="diabetes_diagnose_date" name="diabetes_diagnose_date" value=<%=quot(form, 'diabetes_diagnose_date_default')%>/> mm/dd/yyyy</td>                        
 </tr>
 <tr>
     <td>Do you take medication to control your diabetes?</td>
     <td>
         <div id="diabetes_medication">
-            <input tabindex="12" type="radio" id="diabetes_medication_yes" name="diabetes_medication" onclick="javascript:setVisible('diabetes_option')"/><label for="diabetes_medication_yes">Yes</label>
-            <input tabindex="13" type="radio" id="diabetes_medication_no" name="diabetes_medication" onclick="javascript:setInvisible('diabetes_option')"/><label for="diabetes_medication_no">No</label>
+            <input tabindex="12" type="radio" id="diabetes_medication_yes" value="yes" name="diabetes_medication" onclick="javascript:setVisible('diabetes_option')" <%=diabetes_medication_yes%>/><label for="diabetes_medication_yes">Yes</label>
+            <input tabindex="13" type="radio" id="diabetes_medication_no" value="no" name="diabetes_medication" onclick="javascript:setInvisible('diabetes_option')" <%=diabetes_medication_no%>/><label for="diabetes_medication_no">No</label>
         </div>
     </td>
 </tr>

@@ -18,12 +18,12 @@ if form['participant_name'] in participants:
 
 # if they did not check the deceased parent checkbox, but there is an
 # exception for that participant name, then prevent them from continuing
-if form.get('is_7_to_13', 'off') == 'off' and is_exception:
+if form.get('is_juvenile', 'off') == 'off' and is_exception:
     req.write(format_submit_form_to_fusebox_string(page="portal.psp",
         message='We are expecting a survey from that juvenile user (%s)' %
         form['participant_name']))
 
-if form.get('is_7_to_13', 'off') == 'on':
+if form.get('is_juvenile', 'off') == 'on':
     # if they aren't already an exception, we need to verify them
     if not is_exception:
         alert_message = ('Thank you for your interest in this study. Because '
@@ -39,12 +39,13 @@ if form.get('is_7_to_13', 'off') == 'on':
         This participant is a child, the person filling out the survey for them
         needs to provide proof of consent. Email them for proof.
 
+        Juvenile age: %s
         Parent/Guardian 1: %s
         Parent/Guardian 2: %s
         Deceased: %s
         --------------------------------------------------------------------------------
-        """ % (form['participant_name'], form['parent_1_name'],
-               form['parent_2_name'], form.get('deceased_parent', 'off'))
+        """ % (form['participant_name'], form['juvenile_age'],
+               form['parent_1_name'], form['parent_2_name'], form.get('deceased_parent', 'off'))
 
         try:
             send_email(MESSAGE, SUBJECT)

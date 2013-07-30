@@ -4,6 +4,8 @@
 ag_login_id = sess['user_data']['web_app_user_id']
 participant_name = form['participant_name']
 participant_type = form['participant_type']
+survey_details = ag_data_access.getAGSurveyDetails(ag_login_id,
+    participant_name)
 
 remove_participant_item = \
 """
@@ -12,8 +14,39 @@ remove_participant_item = \
     <input type="button" onclick="document.forms['remove_participant_{0}'].submit(); return false;" value="Remove {0}"/>
 </form>
 """.format(participant_name)
-
 %>
+
+
+<form action="fusebox.psp" method="post" id="edit_survey">
+<input type="hidden" name="page" value="survey1.psp">
+<%
+# write the hidden values used for default values
+
+input_template = '<input type="hidden" name="{0}" value="{1}" />\n'
+for k, v in sorted(survey_details.items()):
+    # in general, suffix the field name with '_default' to differentiate it from
+    # the actual field name
+    suffix = '_default'
+    # do NOT suffix these fields
+    if k in ('consent', 'parent_1_name', 'parent_2_name', 'deceased_parent',
+        'participant_email', 'participant_name', 'ag_login_id'):
+        suffix = ''
+
+    # if the name of the field ends in a number, it's a multiple, and should
+    # be written out differently UNLESS it's migraine_factor_# or
+    # mainfactor_other_#
+    # don't like to special-case like this, but there's no other way to tell
+    # what's a multiple and what's not
+    if k[-1] in map(str, range(10)) and not k.startswith('migraine_factor_') \
+        and not k.startswith('mainfactor_other_'):
+        k = k.rsplit('_', 1)[0]
+        suffix = '_default[]'
+
+    req.write(input_template.format(k + suffix, v))
+#END FOR
+%>
+
+</form>
 
 <div id="content" class="content">
 <h2>Overview for participant <%=participant_name%></h2>
@@ -21,7 +54,9 @@ remove_participant_item = \
     <div class="overview">
             <table class="list" id="survey" width="100%">
 <%
+edit_survey_html =  ''
 if participant_type == 'human':
+    edit_survey_html =  '''(<a href="#" onclick="editHumanSurvey();">edit</a>)'''
     #INDENT
 %>
                 <tr>
@@ -32,7 +67,7 @@ if participant_type == 'human':
 #ENDIF
 %>
                 <tr>
-                    <td>Completed survey</td>
+                    <td>Completed survey <%=edit_survey_html%></td>
                     <td><img src="img/icon-green-checkmark.png"/></td>
                 </tr>
                 <tr>

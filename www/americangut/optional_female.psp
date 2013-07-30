@@ -1,15 +1,32 @@
+<%
+    # THIS INDENT IS NECESSARY BECUASE THIS PAGE IS INCLUDED
+    from utils.psp_utils import quot
+
+    # contraceptive
+    contraceptive_options = ['I take the pill', 'I use an injected contraceptive (DMPA)', 'I use a contraceptive patch (Ortho-Evra)', 'I use the NuvaRing', 'I use some other type of birth control', 'No']
+    contraceptive_dict = dict(zip(contraceptive_options, ['']*len(contraceptive_options)))
+    contraceptive = form.get('contraceptive_default', None)
+    if contraceptive:
+        contraceptive_dict[contraceptive] = "selected='selected'"
+
+    # pregnant
+    pregnant = form.get('pregnant_default', None)
+    pregnant_yes = 'checked' if pregnant == 'yes' else ''
+    pregnant_no = 'checked' if pregnant == 'no' else ''
+    pregnant_not_sure = 'checked' if pregnant == 'notsure' else ''
+%>
 <tr><td><h4>Female Questions</h4></td></tr>
 <tr>
     <td>Do you currently use some form of hormonal birth control?</td>
     <td>
         <select tabindex="1" id="contraceptive" name="contraceptive">
             <option value="">Select an option</option>
-            <option>I take the "pill"</option>
-            <option>I use an injected contraceptive (DMPA)</option>
-            <option>I use a contraceptive patch (Ortho-Evra)</option>
-            <option>I use the NuvaRing</option>
-            <option>I use some other type of birth control</option>
-            <option>No</option>
+            <option <%=contraceptive_dict['I take the pill']%>>I take the pill</option>
+            <option <%=contraceptive_dict['I use an injected contraceptive (DMPA)']%>>I use an injected contraceptive (DMPA)</option>
+            <option <%=contraceptive_dict['I use a contraceptive patch (Ortho-Evra)']%>>I use a contraceptive patch (Ortho-Evra)</option>
+            <option <%=contraceptive_dict['I use the NuvaRing']%>>I use the NuvaRing</option>
+            <option <%=contraceptive_dict['I use some other type of birth control']%>>I use some other type of birth control</option>
+            <option <%=contraceptive_dict['No']%>>No</option>
         </select>
     </td>
 </tr>
@@ -17,9 +34,9 @@
     <td>Are you currently pregnant?</td>
     <td>
         <div id="pregnant">
-            <input tabindex="2" type="radio" id="pregnant_yes" name="pregnant" onclick="javascript:setVisible('pregnant_option')"/><label for="pregnant_yes">Yes</label>
-            <input tabindex="3" type="radio" id="pregnant_no" name="pregnant" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_no">No</label>
-            <input tabindex="4" type="radio" id="pregnant_notsure" name="pregnant" onclick="javascript:setInvisible('pregnant_option')"/><label for="pregnant_notsure">Not sure</label>
+            <input tabindex="2" type="radio" id="pregnant_yes" name="pregnant" onclick="javascript:setVisible('pregnant_option')" value="yes" <%=pregnant_yes%>/><label for="pregnant_yes">Yes</label>
+            <input tabindex="3" type="radio" id="pregnant_no" name="pregnant" onclick="javascript:setInvisible('pregnant_option')" value="no" <%=pregnant_no%>/><label for="pregnant_no">No</label>
+            <input tabindex="4" type="radio" id="pregnant_notsure" name="pregnant" onclick="javascript:setInvisible('pregnant_option')" value="notsure" <%=pregnant_not_sure%>/><label for="pregnant_notsure">Not sure</label>
         </div>
     </td>
 </tr>
@@ -32,7 +49,7 @@
     </colgroup>
         <tr>
             <td>When is your due date?</td>
-            <td><input tabindex="5" type="text" id="pregnant_due_date" name="pregnant_due_date" />  mm/dd/yyyy</td>             
+            <td><input tabindex="5" type="text" id="pregnant_due_date" name="pregnant_due_date" value=<%=quot(form, 'pregnant_due_date_default')%>/>  mm/dd/yyyy</td>             
         </tr>
     </table>
 </div>
