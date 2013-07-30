@@ -24,6 +24,17 @@ def buildDateControl(control_name, current_value):
 	""".format(control_name, current_value)
 	return control_text
 
+def buildJuvenileAgeControl(control_name, current_value):
+	control_text = "<select id='{0}' name='{0}'>\n"
+	for opt in ['', 'under 7', 'between 7 and 13']:
+		selected = "selected='selected'" if current_value == opt else ''
+		control_text += "<option value='" + opt + "' " + selected + ">" + opt + "</option>\n"
+
+	control_text += "</select>\n"
+
+	return control_text.format(control_name)
+
+
 def buildTimeControl(control_name, current_value):
 	control_text = """
 	<input type="text" id="{0}" name="{0}" class="small_text" value="{1}" />
@@ -194,6 +205,8 @@ for idx, column in enumerate(column_names):
 		req.write('<td>{0}</td>\n'.format(buildSelect(column, migraine_factor_values, value)))
 	elif column in dropdown_list:
 		req.write('<td>{0}</td>\n'.format(buildSelect(column, eval('{0}_values'.format(column)), value)))
+	elif column == 'juvenile_age':
+		req.write('<td>{0}</td>\n'.format(buildJuvenileAgeControl(column, value)))
 	else:
 		req.write('<td><input type="text" name="{0}" id="{0}" value="{1}"/></td>\n'.format(column, value))
 
