@@ -400,7 +400,7 @@ function anySelect(select_id,item_id,other_indices) {
 
 function setVisible(item_id) {
 	document.getElementById(item_id).className = document.getElementById(item_id).className.replace
-      (/(?:^|\s)invisible(?!\S)/ , '');
+      (/(?:^|\s)invisible(?!\S)/g , '');
 }
 
 function setInvisible(item_id) {
