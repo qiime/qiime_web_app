@@ -74,7 +74,7 @@ def buildCountrySelect(control_name, current_value):
 # Lists to manage form bulding and controlled vocabs
 ignore_list = (['ag_login_id', 'consent', 'page'])
 country_list = (['country_of_birth'])
-yes_no_list = (['is_7_to_13', 'deceased_parent', 'multivitamin', 'supplements', 'lactose', 
+yes_no_list = (['deceased_parent', 'multivitamin', 'supplements', 'lactose', 
 	'gluten', 'special_restrictions', 'dog', 'cat', 'shared_housing', 'nails', 'tonsils_removed',
 	'appendix_removed', 'chickenpox', 'acne_medication', 'acne_medication_otc', 'conditions_medication',
 	'pku', 'asthma', 'seasonal_allergies', 'migraine'])
@@ -126,7 +126,7 @@ roommates_values = (['None', 'One', 'Two', 'Three', 'More than three'])
 migraine_frequency_values = (['Daily', 'Weekly', 'Monthly', 'A few times a year'])
 
 # If the form has been submitted, write values and return to home
-if 'is_7_to_13' in form:
+if 'juvenile_age' in form:
 	# Reset all checkbox fields
 	for field in checkbox_list:
 		ag_data_access.updateAGSurvey(form['ag_login_id'], form['participant_name'], field, '')
@@ -194,6 +194,8 @@ for idx, column in enumerate(column_names):
 		req.write('<td>{0}</td>\n'.format(buildSelect(column, migraine_factor_values, value)))
 	elif column in dropdown_list:
 		req.write('<td>{0}</td>\n'.format(buildSelect(column, eval('{0}_values'.format(column)), value)))
+	elif column == 'juvenile_age':
+		req.write('<td>{0}</td>\n'.format(buildSelect(column, ['under 7', 'between 7 and 13'], value)))
 	else:
 		req.write('<td><input type="text" name="{0}" id="{0}" value="{1}"/></td>\n'.format(column, value))
 
