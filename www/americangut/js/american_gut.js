@@ -144,7 +144,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 		newinput+= '<option value="'+num+'">'+name+'</option>'
 	}
 	newinput+= '</select>'
-	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text" onkeypress=\'validateNumber(event, false)\'/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", div_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -355,7 +355,7 @@ function addHuman() {
 	field_name = "human"
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event, false)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -838,17 +838,30 @@ function validateText(evt) {
 }
 
 /* input field number validation*/
-function validateNumber(evt) {
+function validateNumber(evt, integer) {
   var theEvent = evt || window.event;
-  var key = theEvent.keyCode || theEvent.which;
-  //say what these keys are
-  if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
-  	return
-  key = String.fromCharCode( key );
-  var regex = /[0-9]|\./;
-  if( !regex.test(key) ) {
-    theEvent.returnValue = false;
-    if(theEvent.preventDefault) theEvent.preventDefault();
+  if (theEvent.which == 0) {
+    // this is a "special key," and theEvent.keyCode is not the ASCII value
+    // allow arrow keys (37-40), backspace (8), tab (9), and delete (46)
+    if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
+      theEvent.returnValue = true;
+  }
+  else {
+    // this is a normal key, and theEvent.keyCode is the ASCII value
+    var key = theEvent.keyCode || theEvent.which;
+    // some browsers treat backspace as a normal key, so allow that
+    if (key == 8) {
+      theEvent.returnValue = true;
+      return;
+    }
+    key = String.fromCharCode( key );
+    // make sure the character typed is a number or a period
+    var regex = /[0-9]|\./;
+    if (integer) regex = /[0-9]/;
+    if( !regex.test(key) ) {
+      theEvent.returnValue = false;
+      if(theEvent.preventDefault) theEvent.preventDefault();
+    }
   }
 }
 

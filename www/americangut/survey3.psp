@@ -167,7 +167,7 @@ for c in d:
 # End for
 %>
                                                 </select>
-                                                <input type="text" name="travel_duration_1" id="travel_duration_1" value="Duration" class="smaller_text"/> days
+                                                <input type="text" name="travel_duration_1" id="travel_duration_1" value="Duration" class="smaller_text" onkeypress='validateNumber(event, false)'/> days
                                             </div>
                                         </div>
                                         <a class="add_field" href="javascript:addDestinationFields(\'travel_options\',\'travel_location\',\'travel_duration\')" title="Add another destination">+</a>
