@@ -289,6 +289,10 @@ h2.verification_text{
 	width: 100%;
 }
 
+#invalid_barcode {
+  background-color: #f00;
+}
+
 #verified {
 	background-color: #0f0;
 }
@@ -301,6 +305,13 @@ h2.verification_text{
 	background-color: #f00;
 }
 
+div#barcode_form form ul li{
+    list-style-type: square;
+    font-weigth: bold;
+}
+input.checkbox {
+    width: 25px;
+}
 a.email_link {
 	text-decoration: none;
 }

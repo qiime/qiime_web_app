@@ -2961,9 +2961,8 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False  
 
-    def updateBarcodeStatus(self, status, barcode):
+    def updateBarcodeStatus(self, status, postmark, scan_date, barcode):
         """ Updates a barcode's status
         """
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('update_barcode_status', [status, barcode])
-
+        con.cursor().callproc('update_barcode_status', [status, postmark, scan_date, barcode])
