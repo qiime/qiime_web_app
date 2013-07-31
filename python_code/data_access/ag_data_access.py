@@ -22,34 +22,34 @@ class AGDataAccess(object):
     """
     Data Access implementation for all the American Gut web portal
     """
-    
+
     def __init__(self, connections):
         self._metadataDatabaseConnection = None
         self._ontologyDatabaseConnection = None
         self._SFFDatabaseConnection = None
-        
+
         # Set up the connections
         if not connections:
             raise ValueError('connections is None. Cannot instantiate QiimeDataAccess')
-            
+
         self.getMetadataDatabaseConnection = connections.getMetadataDatabaseConnection
         self.getOntologyDatabaseConnection = connections.getOntologyDatabaseConnection
         self.getSFFDatabaseConnection = connections.getSFFDatabaseConnection
-        
+
     #####################################
     # Helper Functions
     #####################################
-    
+
     def testDatabase(self):
         """Attempt to connect to the database
-        
+
         Attempt a database connection. Will throw an exception if it fails. Returns
         "True" if successful.
         """
         con = self.getMetadataDatabaseConnection()
         if con:
             return True
-        
+
     def dynamicMetadataSelect(self, query_string):
         # Make sure no tomfoolery is afoot
         query_string_parts = set(query_string.lower().split())
@@ -57,7 +57,7 @@ class AGDataAccess(object):
         intersection = query_string_parts.intersection(verboten)
         if len(intersection) > 0:
             raise Exception('Only select statements are allowed. Your query: %s' % query_string)
-        
+
         con = self.getMetadataDatabaseConnection()
         return con.cursor().execute(query_string)
 
@@ -67,7 +67,7 @@ class AGDataAccess(object):
 
     def authenticateWebAppUser(self, username, password):
         """ Attempts to validate authenticate the supplied username/password
-        
+
         Attempt to authenticate the user against the list of users in
         web_app_user table. If successful, a dict with user innformation is
         returned. If not, the function returns False.
@@ -130,7 +130,7 @@ class AGDataAccess(object):
 
     def getAGBarcodesByLogin(self, ag_login_id):
         # returned tuple consists of:
-        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcodes_by_login', [ag_login_id, results])
@@ -138,15 +138,15 @@ class AGDataAccess(object):
         """
         Tuple format is:
 
-        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
-        akb.site_sampled, akb.environment_sampled, akb.sample_date, 
+        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode,
+        akb.site_sampled, akb.environment_sampled, akb.sample_date,
         akb.sample_time, akb.participant_name, akb.notes
         """
         return barcodes
 
     def getAGBarcodeDetails(self, barcode):
         # returned tuple consists of:
-        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcode_details', [barcode, results])
@@ -154,8 +154,8 @@ class AGDataAccess(object):
         """
         Tuple format is:
 
-        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
-        akb.site_sampled, akb.environment_sampled, akb.sample_date, 
+        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode,
+        akb.site_sampled, akb.environment_sampled, akb.sample_date,
         akb.sample_time, akb.participant_name, akb.notes
         """
         return barcode_details
@@ -294,7 +294,7 @@ class AGDataAccess(object):
     def deleteSample(self, barcode, ag_login_id):
         """
         Strictly speaking the ag_login_id isn't needed but it makes it really hard to hack
-        the function when you would need to know someone else's login id (a GUID) to 
+        the function when you would need to know someone else's login id (a GUID) to
         delete something maliciously
         """
         con = self.getMetadataDatabaseConnection()
@@ -327,7 +327,7 @@ class AGDataAccess(object):
         barcodes = []
         con.cursor().callproc('ag_get_participant_samples', [ag_login_id, participant_name, results])
         for row in results:
-            data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], 'sample_time':row[3], 
+            data = {'barcode':row[0], 'site_sampled':row[1], 'sample_date':row[2], 'sample_time':row[3],
                 'notes':row[4], 'status':row[5]}
             barcodes.append(data)
 
@@ -411,7 +411,7 @@ class AGDataAccess(object):
             return False
 
         return (lat, lon)
-        
+
     def updateGeoInfo(self, ag_login_id, lat, lon, cannot_geocode):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_update_geo_info', [ag_login_id, lat, lon, cannot_geocode])
@@ -429,14 +429,18 @@ class AGDataAccess(object):
         return is_handout.strip()
 
     def checkBarcode(self, barcode):
-        # returned tuple consists of:
-        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        # return a tuple consists of:
+        # site_sampled, sample_date, sample_time, participant_name,
+        # environment_sampled, notes, etc (please refer to
+        # ag_check_barcode_status.sql).
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_check_barcode_status', [barcode, results])
         barcode_details = results.fetchall()
-        
-        return barcode_details
+        if barcode_details:
+            return barcode_details[0]
+        else: # if the barcode does not exist in database
+            return ()
 
     def updateAGSurvey(self, ag_login_id, participant_name, field, value):
         con = self.getMetadataDatabaseConnection()
@@ -452,12 +456,16 @@ class AGDataAccess(object):
 
     def getAGStats(self):
         # returned tuple consists of:
-        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
+        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_stats', [results])
         ag_stats = results.fetchall()
-        
+
         return ag_stats
 
-
+    def updateAKB(self, barcode, moldy, overloaded, other, other_text, date_of_last_email):
+        """ Update ag_kit_barcodes table.
+        """
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('update_akb', [barcode, moldy, overloaded, other, other_text, date_of_last_email])
