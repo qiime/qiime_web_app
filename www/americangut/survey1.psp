@@ -78,10 +78,10 @@ other_selected = 'selected="selected"' if gender == 'Other' else ''
                                 <table>
                                     <tr>
                                         <td>
-                                        <input tabindex="4" class="small_text" type="text" name="height_in" id="height_in" onkeypress='validateNumber(event)' onblur="inToCm()" value=<%=quot(form, 'height_in_default')%> /> in
+                                        <input tabindex="4" class="small_text" type="text" name="height_in" id="height_in" onkeypress='validateNumber(event, true)' onblur="inToCm()" value=<%=quot(form, 'height_in_default')%> /> in
                                         </td>
                                         <td>
-                                        <input tabindex="4" class="small_text" type="text" name="height_cm" id="height_cm" onkeypress='validateNumber(event)' onblur="cmToIn()" value=<%=quot(form, 'height_cm_default')%> /> cm
+                                        <input tabindex="4" class="small_text" type="text" name="height_cm" id="height_cm" onkeypress='validateNumber(event, true)' onblur="cmToIn()" value=<%=quot(form, 'height_cm_default')%> /> cm
                                         </td>
                                     </tr>
                                 </table>
@@ -93,10 +93,10 @@ other_selected = 'selected="selected"' if gender == 'Other' else ''
                                 <table>
                                     <tr>
                                         <td>
-                                        <input tabindex="5" class="small_text" type="text" name="weight_lbs" id="weight_lbs" onkeypress='validateNumber(event)' onblur="lbsToKg()" value=<%=quot(form, 'weight_lbs_default')%> /> lbs
+                                        <input tabindex="5" class="small_text" type="text" name="weight_lbs" id="weight_lbs" onkeypress='validateNumber(event, true)' onblur="lbsToKg()" value=<%=quot(form, 'weight_lbs_default')%> /> lbs
                                         </td>
                                         <td>
-                                        <input tabindex="5" class="small_text" type="text" name="weight_kg" id="weight_kg" onkeypress='validateNumber(event)' onblur="kgToLbs()" value=<%=quot(form, 'weight_kg_default')%> /> kg
+                                        <input tabindex="5" class="small_text" type="text" name="weight_kg" id="weight_kg" onkeypress='validateNumber(event, true)' onblur="kgToLbs()" value=<%=quot(form, 'weight_kg_default')%> /> kg
                                         </td>
                                     </tr>
                                 </table>
@@ -104,7 +104,7 @@ other_selected = 'selected="selected"' if gender == 'Other' else ''
                         </tr>
                         <tr>
                             <td>Phone number</td>
-                            <td><input tabindex="6" type="text" name="phone_num" id="phone_num" onkeypress='validateNumber(event)' value=<%=quot(form, 'phone_num_default')%> /></td>
+                            <td><input tabindex="6" type="text" name="phone_num" id="phone_num" onkeypress='validateNumber(event, true)' value=<%=quot(form, 'phone_num_default')%> /></td>
                         </tr>
                         <tr>
                             <td>Current ZIP code</td>
