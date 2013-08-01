@@ -870,6 +870,7 @@ function validateNumber(evt, integer) {
     key = String.fromCharCode( key );
     // make sure the character typed is a number or a period
     var regex = /[0-9]|\./;
+    if (integer) regex = /[0-9]/;
     if( !regex.test(key) ) {
       theEvent.returnValue = false;
       if(theEvent.preventDefault) theEvent.preventDefault();
