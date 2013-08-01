@@ -99,7 +99,7 @@ function addThreeFields(field_name) {
 	newinput +='_contact_'
 	newinput +=new_field_number
 	newinput +='" name="'+field_name+'_contact_'+new_field_number
-	newinput +='"><option>Contact...</option><option>None</option><option>Little</option><option>Moderate</option><option>Extensive</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a>'
+	newinput +='"><option>Contact...</option><option>None</option><option>Little</option><option>Moderate</option><option>Extensive</option></select><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a>'
 	
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
@@ -118,7 +118,7 @@ function addThreeFields(field_name) {
 function addTwoFields(field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<input type="text" value="Name" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/><input type="text" value="Relationship" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="small_text"/><a class="remove_field" href="javascript:removeField(\''+field1_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<input type="text" value="Name" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/><input type="text" value="Relationship" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="small_text"/><a class="remove_field" href="#" onclick="removeField(\''+field1_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field1_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -144,7 +144,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 		newinput+= '<option value="'+num+'">'+name+'</option>'
 	}
 	newinput+= '</select>'
-	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text" onkeypress=\'validateNumber(event, false)\'/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text" onkeypress=\'validateNumber(event, false)\'/> days <a class="remove_field" href="#" onclick="removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", div_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -162,7 +162,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 function addField(field_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -355,7 +355,7 @@ function addHuman() {
 	field_name = "human"
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event, false)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event, false)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -367,7 +367,7 @@ function addPet() {
 	field_name = "pet"
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><select name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><option value="">Select an option</option><option>Dog</option><option>Cat</option><option>Small mammal</option><option>Large mammal</option><option>Fish</option><option>Bird</option><option>Reptile</option><option>Amphibian</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><select name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><option value="">Select an option</option><option>Dog</option><option>Cat</option><option>Small mammal</option><option>Large mammal</option><option>Fish</option><option>Bird</option><option>Reptile</option><option>Amphibian</option><option>Other</option></select><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);

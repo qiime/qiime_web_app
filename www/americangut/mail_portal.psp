@@ -8,7 +8,7 @@
 <br>
 <br>
 <p class="portal_blurb">
-Once you have added a <a href="javascript:selectTab('source')">sample source, completed the relevant survey</a> (if applicable), <a href="javascript:selectTab('sample')">taken</a> and <a href="javascript:selectTab('log')">logged</a> your samples</a>, you should then mail the samples back to us.
+Once you have added a <a href="#" onclick="selectTab('source')">sample source, completed the relevant survey</a> (if applicable), <a href="#" onclick="selectTab('sample')">taken</a> and <a href="#" onclick="selectTab('log')">logged</a> your samples</a>, you should then mail the samples back to us.
 </p>
 <p class="portal_blurb">
 Wrap the sample tube in absorbent tissue, such as facial tissue or paper towels, and mail it back as soon as possible. The absorbent tissue will help to keep the relative humidity within the package low.</p>

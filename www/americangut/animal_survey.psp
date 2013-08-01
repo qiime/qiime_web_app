@@ -193,7 +193,7 @@ else:
                                     <div id="pet_1">
                                     </div>
                                 </div>
-                                <a class="add_field" href="javascript:addPet()" title="Add another pet">+</a>
+                                <a class="add_field" href="#" onclick="addPet()" title="Add another pet">+</a>
                             </td>
                         </tr>
                         <tr>
@@ -211,7 +211,7 @@ else:
                                         </select>
                                     </div>
                                 </div>
-                                <a class="add_field" href="javascript:addHuman()" title="Add another human">+</a>
+                                <a class="add_field" href="#" onclick="addHuman()" title="Add another human">+</a>
                             </td>
                         </tr>
                         <tr>
