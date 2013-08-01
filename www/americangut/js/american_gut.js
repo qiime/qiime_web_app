@@ -826,15 +826,28 @@ function validateEmail(email) {
 } 
 
 function validateText(evt) {
-    var theEvent = evt || window.event;
+  var theEvent = evt || window.event;
+  if (theEvent.which == 0) {
+    // this is a "special key," and theEvent.keyCode is not the ASCII value
+    // allow arrow keys (37-40), backspace (8), tab (9), and delete (46)
+    if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
+      theEvent.returnValue = true;
+  }
+  else {
+    // this is a normal key, and theEvent.keyCode is the ASCII value
     var key = theEvent.keyCode || theEvent.which;
+    // some browsers treat backspace as a normal key, so allow that
+    if (key == 8) {
+      theEvent.returnValue = true;
+      return;
+    }
     key = String.fromCharCode( key );
     var regex = /[a-zA-Z0-9.\- ]/;
     if( !regex.test(key) ) {
       theEvent.returnValue = false;
       if(theEvent.preventDefault) theEvent.preventDefault();
     }
-
+  }
 }
 
 /* input field number validation*/
@@ -857,7 +870,6 @@ function validateNumber(evt, integer) {
     key = String.fromCharCode( key );
     // make sure the character typed is a number or a period
     var regex = /[0-9]|\./;
-    if (integer) regex = /[0-9]/;
     if( !regex.test(key) ) {
       theEvent.returnValue = false;
       if(theEvent.preventDefault) theEvent.preventDefault();
