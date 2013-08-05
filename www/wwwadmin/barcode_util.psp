@@ -14,33 +14,32 @@ from datetime import date
 # scan_date = date.today().isoformat()
 current_date = date.today().strftime("%m/%d/%Y")
 
-form_dict = dict(form)
-prev_barcode = form_dict.get('prev_barcode', None)
+prev_barcode = form.get('prev_barcode', None)
 
 if prev_barcode:
     try: # try to update barcode current status.
         # do not change scan_date if it's already in the database.
         # it's gotten from the html form, so use str representation of None.
-        if form_dict['scan_date'] == 'None': scan_date = current_date
-        else: scan_date = form_dict['scan_date']
+        if form['scan_date'] == 'None': scan_date = current_date
+        else: scan_date = form['scan_date']
 
-        data_access.updateBarcodeStatus('Received', form_dict['postmark_date'],
+        data_access.updateBarcodeStatus('Received', form['postmark_date'],
                                         scan_date, prev_barcode)
     
-        sent_date = form_dict['sent_date']
-        participant = form_dict['participant'] # participant name
+        sent_date = form['sent_date']
+        participant = form['participant'] # participant name
         general_name = "American Gut participant"
         if participant=="None": participant = general_name
-        login_user = form_dict['login_user'] # user name
+        login_user = form['login_user'] # user name
         if login_user=="None": login_user = general_name
 
-        if "send_email" in form_dict:
-            email_type = form_dict['email_type']
+        if "send_email" in form:
+            email_type = form['email_type']
             subject = body_message_1 = body_message_2 = ""
-            sample_time = form_dict['sample_time']
-            sample_date = form_dict['sample_date']
+            sample_time = form['sample_time']
+            sample_date = form['sample_date']
             if email_type == '2':
-                sample_site = form_dict['sample_site']
+                sample_site = form['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message='''
 Dear {name},
@@ -86,7 +85,7 @@ Thank you for your participation!
                 body_message_2 = body_message.format(name=login_user, barcode=prev_barcode,
                                                      sample_date=sample_date, sample_time=sample_time)
             elif email_type == '1':
-                sample_site = form_dict['sample_site']
+                sample_site = form['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message = '''
 Dear {name},
@@ -117,8 +116,8 @@ Thank you,
                                                      sample_time=sample_time,
                                                      sample_site=sample_site)
             
-            participant_email = form_dict['participant_email']
-            login_email = form_dict['login_email']
+            participant_email = form['participant_email']
+            login_email = form['login_email']
 
             if participant_email != "None":
                 # if an email address is associated with the participant
@@ -136,13 +135,13 @@ Thank you,
                 except:
                     req.write("Sending email to the user email:%s failed (barcode: %s)!!!<br/>" % (login_email, prev_barcode))
     
-        sample_issue = form_dict.get('sample_issue', [])
+        sample_issue = form.get('sample_issue', [])
         moldy = overloaded = other = 'N'
         if 'moldy' in sample_issue: moldy = 'Y'
         if 'overloaded' in sample_issue: overloaded = 'Y'
         if 'other' in sample_issue: other = 'Y'
         ag_data_access.updateAKB(prev_barcode, moldy, overloaded, other,
-                              form_dict['other_text'], sent_date)
+                                 form['other_text'], sent_date)
         req.write("Barcode %s was sucessfully updated<br/>" % prev_barcode)
     except:
         req.write("Barcode %s update failed!!!<br/>" % prev_barcode)
