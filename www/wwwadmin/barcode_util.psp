@@ -20,7 +20,7 @@ prev_barcode = form_dict.get('prev_barcode', None)
 if prev_barcode:
     try: # try to update barcode current status.
         # do not change scan_date if it's already in the database.
-        # it's getting from the html form, so use str representation of None.
+        # it's gotten from the html form, so use str representation of None.
         if form_dict['scan_date'] == 'None': scan_date = current_date
         else: scan_date = form_dict['scan_date']
 
@@ -39,15 +39,18 @@ if prev_barcode:
             subject = body_message_1 = body_message_2 = ""
             sample_time = form_dict['sample_time']
             sample_date = form_dict['sample_date']
-
             if email_type == '2':
+                sample_site = form_dict['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message='''
 Dear {name},
 
 We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page.  Please note that there should be two buttons that say “Log Sample.”  The one that corresponds to your sample will appear directly underneath the participant name under the “Human Samples” header.  If you do not see the participant name to which the sample corresponds you must first click “Add Human Source.”
 
-In order to help you in adding these details, the side of your sample tube reads {sample_date} {sample_time}.
+In order to help you in adding these details, the side of your sample tube reads:
+   sample date: {sample_date} 
+   sample time: {sample_time}
+   sample site: {sample_site}
 
 If you have further questions about how to do this please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
 
@@ -60,9 +63,13 @@ Thank you,
 --American Gut Team--
 '''
                 body_message_1 = body_message.format(name=participant, barcode=prev_barcode,
-                                                     sample_date=sample_date, sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
                 body_message_2 = body_message.format(name=login_user, barcode=prev_barcode,
-                                                     sample_date=sample_date,  sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
             elif email_type == '3':
                 subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
                 body_message = '''
@@ -79,6 +86,7 @@ Thank you for your participation!
                 body_message_2 = body_message.format(name=login_user, barcode=prev_barcode,
                                                      sample_date=sample_date, sample_time=sample_time)
             elif email_type == '1':
+                sample_site = form_dict['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message = '''
 Dear {name},
@@ -87,7 +95,10 @@ We have recently received your sample but we do not have consent, questionnaire 
 
 You can do this by clicking "Add Human Source" from the navigation bar on the left side of the welcome page.  This will take you to the consent form and the questionnaire.  After you complete the survey you will see your name appear in the sidebar underneath the header that reads, “Human Samples.”  You can then add the sample details by clicking the button that says “Log Sample.”  Note that there are more than one buttons that say “Log Sample.”  The one that corresponds to your sample will appear directly underneath the participant name.  If you do not see the participant name to which the sample corresponds, you must first click “Add Human Source.”
 
-In order to help you in adding these details, the side of the sample tube reads {sample_date} {sample_time}.
+In order to help you in adding these details, the side of the sample tube reads:
+   sample date: {sample_date} 
+   sample time: {sample_time}
+   sample site: {sample_site}
 
 If you have further questions about how to do this, please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
 
@@ -98,9 +109,13 @@ Thank you,
 --American Gut Team—
 '''
                 body_message_1 = body_message.format(name=participant, barcode=prev_barcode,
-                                                     sample_date=sample_date, sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
                 body_message_2 = body_message.format(name=login_user, barcode=prev_barcode,
-                                                     sample_date=sample_date, sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
             
             participant_email = form_dict['participant_email']
             login_email = form_dict['login_email']
@@ -202,8 +217,6 @@ try:
           <input type="hidden" name="sent_date" value="{sent}" />
           <input type="hidden" name="participant" value="{participant}" />
           <input type="hidden" name="login_user"  value="{login_user}" />
-          <input type="hidden" name="sample_time" value="{sample_time}" />
-          <input type="hidden" name="sample_date" value="{sample_date}" />
           <input type="hidden" name="participant_email" value="{participant_email}" />
           <input type="hidden" name="login_email" value="{login_email}" />
           <input type="hidden" name="email_type" value="{email_type}" />
@@ -227,8 +240,6 @@ try:
                    sent=barcodeinfo[12],
                    participant=participant_name,
                    login_user=barcodeinfo[17],
-                   sample_time=barcodeinfo[2],
-                   sample_date=barcodeinfo[1],
                    participant_email=barcodeinfo[16],
                    login_email=barcodeinfo[7],
                    email_type=email_type,
@@ -256,7 +267,54 @@ try:
                Send a reminder (previously sent: <%=barcodeinfo[12]%>): <br />
                <div>
                   <input class="checkbox" type="checkbox" name="send_email" value="send_email" style="float:left;" />
-                  <label style="display:block;">send participant (<%=barcodeinfo[16]%>) and <br/> user (<%=barcodeinfo[7]%>) an email </label> </div>
+                  <label style="display:block;">send participant (<%=barcodeinfo[16]%>) and <br/> user (<%=barcodeinfo[7]%>) an email </label> 
+               </div>
+<%
+        if email_type in ["1", "2"]:
+            sites_sampled = ['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead']
+            # indent
+%>
+            Sample date: <input type="text" name="sample_date" id="sample_date" /> <br/>
+                        <script>
+                          $(function() {
+                            $( "#sample_date" ).datepicker({
+                                    changeMonth: true,
+                                    maxDate: '+0m',
+                                    onSelect: function(dateText, inst) {
+                                        $(this).focus();
+                                    }
+                            });
+                          });
+                        </script>
+            Sample time: <input type="text" name="sample_time" id="sample_time" /> <br />
+                  <script>
+                      $(function() {
+                        $( "#sample_time" ).timepicker({
+                           showPeriod: true,
+                           showLeadingZero: true,
+                           onSelect: function(dateText, inst) {
+                              $(this).focus();
+                           }
+                        });
+                      });
+                  </script>
+            Sample site: <select name="sample_site" id="sample_site">
+                         <option value="">None</option>
+<%
+            for site_sampled in sites_sampled:
+                req.write('<option value="{0}">{0}</option>'.format(site_sampled))
+            # de-indent: end of for loop
+%>
+                 </select> <br />
+<%
+        elif email_type == "3":
+            # indent
+%>
+            <input type="hidden" name="sample_time" value="<%=barcodeinfo[2]%>" />
+            <input type="hidden" name="sample_date" value="<%=barcodeinfo[1]%>" />
+<%
+        # de-indent
+%>
              </li>
              <li>
                Other notes: <br />
@@ -270,7 +328,6 @@ try:
               <input type="reset" value="Reset!">
         </form>
         </div>
-    
 <%
 except(KeyError):
     #will get here on first load of this page since there should be no barcode key in the form dict
