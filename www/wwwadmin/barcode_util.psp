@@ -223,9 +223,12 @@ try:
           <ul>
              <li>
                Sample issues: <br />
-                  <input class="checkbox" type="checkbox" name="sample_issue" value="moldy" {moldy_checked}/> moldy (current: {moldy}) <br />
-                  <input class="checkbox" type="checkbox" name="sample_issue" value="overloaded" {overloaded_checked}/> overloaded (current: {overloaded}) <br />
-                  <input class="checkbox" type="checkbox" name="sample_issue" value="other" {other_checked}/> other (current: {other}) <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" id="moldy" value="moldy" {moldy_checked}/> 
+                    <label for="moldy"> moldy (current: {moldy}) </label> <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" id="overloaded" value="overloaded" {overloaded_checked}/>
+                    <label for="overloaded"> overloaded (current: {overloaded}) </label> <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" id="other" value="other" {other_checked}/>
+                    <label for="other"> other (current: {other}) </label> <br />
              </li>
         '''.format(div_id=div_id,
                    barcode=barcode,
@@ -247,8 +250,7 @@ try:
 %>
              <li>
                Sample postmark date (current: <%=barcodeinfo[15] if barcodeinfo[15] else 'NA'%>) : <br />
-                  <input type="text" name="postmark_date" id="postmark_date" value="<%=barcodeinfo[15] if barcodeinfo[15] else ''%>"
-                   onclick="this.select()" /> <br />
+                  <input type="text" name="postmark_date" id="postmark_date" value="<%=barcodeinfo[15] if barcodeinfo[15] else ''%>" onclick="this.select()" /> <br />
                         <script>
                           $(function() {
                             $( "#postmark_date" ).datepicker({
@@ -264,16 +266,17 @@ try:
              </li>
              <li>
                Send a reminder (previously sent: <%=barcodeinfo[12]%>): <br />
-               <div>
-                  <input class="checkbox" type="checkbox" name="send_email" value="send_email" style="float:left;" />
-                  <label style="display:block;">send participant (<%=barcodeinfo[16]%>) and <br/> user (<%=barcodeinfo[7]%>) an email </label> 
-               </div>
+               <table><tr>
+                  <td> <input class="checkbox" type="checkbox" name="send_email" id="send_email" value="send_email" style="float:left;" /> </td>
+                  <td><label for="send_email" style="display:block;">send participant (<%=barcodeinfo[16]%>) and <br/> user (<%=barcodeinfo[7]%>) an email </label> </td></tr>
+
 <%
         if email_type in ["1", "2"]:
             sites_sampled = ['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead']
             # indent
 %>
-            Sample date: <input type="text" name="sample_date" id="sample_date" /> <br/>
+            <tr><td></td><td>
+            sample date: <input type="text" name="sample_date" id="sample_date" style="width:100px"/> <br/>
                         <script>
                           $(function() {
                             $( "#sample_date" ).datepicker({
@@ -285,7 +288,9 @@ try:
                             });
                           });
                         </script>
-            Sample time: <input type="text" name="sample_time" id="sample_time" /> <br />
+            </td></tr>
+            <tr><td></td><td>
+            sample time: <input type="text" name="sample_time" id="sample_time" style="width:100px"/> <br />
                   <script>
                       $(function() {
                         $( "#sample_time" ).timepicker({
@@ -297,16 +302,19 @@ try:
                         });
                       });
                   </script>
-            Sample site: <select name="sample_site" id="sample_site">
+            </td></tr>
+            <tr><td></td><td>
+            sample site: <select name="sample_site" id="sample_site">
                          <option value="">None</option>
 <%
             for site_sampled in sites_sampled:
                 req.write('<option value="{0}">{0}</option>'.format(site_sampled))
-            # de-indent: end of for loop
+        # de-indent: end of if
 %>
                  </select> <br />
+            </td></tr></table>
 <%
-        elif email_type == "3":
+        if email_type == "3":
             # indent
 %>
             <input type="hidden" name="sample_time" value="<%=barcodeinfo[2]%>" />
