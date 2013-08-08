@@ -44,7 +44,7 @@ if prev_barcode:
                 body_message='''
 Dear {name},
 
-We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page.  Please note that there should be two buttons that say “Log Sample.”  The one that corresponds to your sample will appear directly underneath the participant name under the “Human Samples” header.  If you do not see the participant name to which the sample corresponds you must first click “Add Human Source.”
+We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page.  Please note that there should be two buttons that say "Log Sample."  The one that corresponds to your sample will appear directly underneath the participant name under the "Human Samples" header.  If you do not see the participant name to which the sample corresponds you must first click "Add Human Source."
 
 In order to help you in adding these details, the side of your sample tube reads:
    sample date: {sample_date} 
@@ -92,7 +92,7 @@ Dear {name},
 
 We have recently received your sample but we do not have consent, questionnaire results or sample details (type, date of collection, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
 
-You can do this by clicking "Add Human Source" from the navigation bar on the left side of the welcome page.  This will take you to the consent form and the questionnaire.  After you complete the survey you will see your name appear in the sidebar underneath the header that reads, “Human Samples.”  You can then add the sample details by clicking the button that says “Log Sample.”  Note that there are more than one buttons that say “Log Sample.”  The one that corresponds to your sample will appear directly underneath the participant name.  If you do not see the participant name to which the sample corresponds, you must first click “Add Human Source.”
+You can do this by clicking "Add Human Source" from the navigation bar on the left side of the welcome page.  This will take you to the consent form and the questionnaire.  After you complete the survey you will see your name appear in the sidebar underneath the header that reads, "Human Samples."  You can then add the sample details by clicking the button that says "Log Sample."  Note that there are more than one buttons that say "Log Sample."  The one that corresponds to your sample will appear directly underneath the participant name.  If you do not see the participant name to which the sample corresponds, you must first click "Add Human Source."
 
 In order to help you in adding these details, the side of the sample tube reads:
    sample date: {sample_date} 
@@ -176,28 +176,24 @@ try:
         ''' % barcode)
     else: 
         login_id = barcodeinfo[19]
-        participant_name = barcodeinfo[3]
-        human        = ag_data_access.getHumanParticipants(login_id)
         # req.write(str(all(barcodeinfo[1:3])))
         div_id = message = email_type = ""
-        if participant_name in human and barcodeinfo[18] != "Yes":
-            # it's a human sample and does not have consent/survey
-            div_id = "not_verified"
-            message = "NO consent or survey"
-            email_type = "1"
-        elif not all(barcodeinfo[1:3]) or \
-             (not barcodeinfo[0] if participant_name else False):
-            # if it's human or pet sample (either has a participant name), and 
-            # any of site_sampled, sample_date, or sample_time is missing; 
-            # if it's environmental sample (no participant name), and any of
-            # sample_date or sample_time is missing.
-            div_id = "not_assigned"
-            message = "NO sample details"
-            email_type = "2"
-        else:
+        req.write(str(barcodeinfo))
+        if all(barcodeinfo[1:3]):
             div_id = "verified"
             message = "all good"
             email_type = "3"
+        else:
+            if barcodeinfo[18] != "Yes":
+                # it's a human sample and does not have consent/survey
+                div_id = "not_verified"
+                message = "NO consent or survey"
+                email_type = "1"
+            else:
+                div_id = "not_assigned"
+                message = "NO sample details"
+                email_type = "2"
+
         req.write('''
         <div id="{div_id}" class="verification_color">
            <div class="verification_text_wrapper">
@@ -240,7 +236,7 @@ try:
                    other='NA' if barcodeinfo[10]==None else barcodeinfo[10],
                    other_checked="checked" if barcodeinfo[10] in ('Y','y') else "",
                    sent=barcodeinfo[12],
-                   participant=participant_name,
+                   participant=barcodeinfo[3],
                    login_user=barcodeinfo[17],
                    participant_email=barcodeinfo[16],
                    login_email=barcodeinfo[7],
@@ -272,7 +268,7 @@ try:
 
 <%
         if email_type in ["1", "2"]:
-            sites_sampled = ['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead']
+            sites_sampled = ['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead', 'Nares', 'Hair', 'Tears', 'Nasal mucus', 'Ear wax', 'Vaginal mucus']
             # indent
 %>
             <tr><td></td><td>
