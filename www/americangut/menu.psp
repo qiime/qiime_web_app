@@ -10,13 +10,12 @@ _status_ = "Development"
 %>
 
 <div class="left menuwrapper">
-    <ul class="menu">
-        <li><a href="fusebox.psp?page=portal.psp"><img class="icon" src="/qiime/img/login_icon.png">Home</a></li>
-        <li><a href="fusebox.psp?page=change_password.psp"><img class="icon" src="/qiime/img/change_password.png">Change Password</a></li>
-        <li><a href="logout.psp"><img class="icon" src="/qiime/img/logout_icon.png">Log out</a></li>
-        <div class="menu_separator"></div>
-        <li><img class="icon" src="/qiime/img/participants_icon.png">Human Samples</li>
-            <ul class="menu"> <!-- list of participants-->
+    <div id="cssmenu">
+    <ul>
+        <li class="active"><a href="fusebox.psp?page=portal.psp"><span>Home</span></a></li>
+        <li><a href="fusebox.psp?page=change_password.psp"><span>Change Password</span></a></li>
+        <li class="has-sub"><a><span>Human Samples</span></a>
+            <ul> <!-- list of participants-->
 
 <%
 ag_login_id = sess['user_data']['web_app_user_id']
@@ -26,79 +25,85 @@ available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
 
 human_participant_menu_item_template = \
 """
-    <form action="fusebox.psp" method="post" id="participant_overview_{0}">
-        <li>
-            <input type="hidden" name="page" value="participant_overview.psp"/>
-            <input type="hidden" name="participant_name" value="{0}"/>
-            <input type="hidden" name="participant_type" value="human"/>
-            <img class="icon" src="/qiime/img/participant_icon.png"/>
-            <a href="" onclick="document.forms['participant_overview_{0}'].submit(); return false;">{0}</a>
-        </li>
-    </form>
+    <li class="has-sub">
+        <a onclick="document.forms['participant_overview_{0}'].submit(); return false;">
+            <form action="fusebox.psp" method="post" id="participant_overview_{0}">
+                <input type="hidden" name="page" value="participant_overview.psp"/>
+                <input type="hidden" name="participant_name" value="{0}"/>
+                <input type="hidden" name="participant_type" value="human"/>
+                <span>{0}</span>
+            </form>
+        </a>
 """
 
 animal_participant_menu_item_template = \
 """
-    <form action="fusebox.psp" method="post" id="animal_overview_{0}">
-        <li>
-            <input type="hidden" name="page" value="participant_overview.psp"/>
-            <input type="hidden" name="participant_name" value="{0}"/>
-            <input type="hidden" name="participant_type" value="animal"/>
-            <img class="icon" src="/qiime/img/animal_icon.png"/>
-            <a href="" onclick="document.forms['animal_overview_{0}'].submit(); return false;">{0}</a>
-        </li>
-    </form>
+    <li class="has-sub">
+        <a onclick="document.forms['animal_overview_{0}'].submit(); return false;">
+            <form action="fusebox.psp" method="post" id="animal_overview_{0}">
+                <input type="hidden" name="page" value="participant_overview.psp"/>
+                <input type="hidden" name="participant_name" value="{0}"/>
+                <input type="hidden" name="participant_type" value="animal"/>
+                <span>{0}</span>
+            </form>
+        </a>
 """
 
 add_sample_menu_item_template = \
 """
-    <form action="fusebox.psp" method="post" id="add_sample_{0}">
-        <li>
-            <input type="hidden" name="page" value="add_sample.psp"/>
-            <input type="hidden" name="sample_type" value="human"/>
-            <input type="hidden" name="participant_name" value="{0}"/>
-            <img class="icon" src="/qiime/img/add_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_{0}'].submit(); return false;">Log Sample</a>
-        </li>
-    </form>
+    <li class="last">
+        <a onclick="document.forms['add_sample_{0}'].submit(); return false;">
+            <form action="fusebox.psp" method="post" id="add_sample_{0}">
+                <input type="hidden" name="page" value="add_sample.psp"/>
+                <input type="hidden" name="sample_type" value="human"/>
+                <input type="hidden" name="participant_name" value="{0}"/>
+            
+                <span>Log Sample</span>
+        
+            </form>
+        </a>
+    </li>
 """
 
 add_animal_sample_menu_item_template = \
 """
-    <form action="fusebox.psp" method="post" id="add_sample_animal_{0}">
-        <li>
-            <input type="hidden" name="page" value="add_sample.psp"/>
-            <input type="hidden" name="sample_type" value="animal"/>
-            <input type="hidden" name="participant_name" value="{0}"/>
-            <img class="icon" src="/qiime/img/add_animal_sample_icon.png"/>
-            <a href="" onclick="document.forms['add_sample_animal_{0}'].submit(); return false;">Log Animal Sample</a>
-        </li>
-    </form>
+    <li class="last">
+        <a href="" onclick="document.forms['add_sample_animal_{0}'].submit(); return false;">
+            <form action="fusebox.psp" method="post" id="add_sample_animal_{0}">
+                <input type="hidden" name="page" value="add_sample.psp"/>
+                <input type="hidden" name="sample_type" value="animal"/>
+                <input type="hidden" name="participant_name" value="{0}"/>
+                <span>Log Sample</span>
+            </form>
+        </a>
+    </li>
 """
 
 add_general_sample_menu_item = \
 """
-<form action="fusebox.psp" method="post" id="add_sample_general">
-    <li>
-        <input type="hidden" name="page" value="add_sample.psp"/>
-        <input type="hidden" name="sample_type" value="general"/>
-        <img class="icon" src="/qiime/img/environmental_icon.png"/>
-        <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Add Sample</a>
-    </li>
-</form>
+<li class="last">
+    <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">
+        <form action="fusebox.psp" method="post" id="add_sample_general">
+            <input type="hidden" name="page" value="add_sample.psp"/>
+            <input type="hidden" name="sample_type" value="general"/>
+            <span>Log Sample</span>
+        </form>
+    </a>
+</li>
 """
 
 sample_menu_item_template = \
 """
-        <form action="fusebox.psp" method="post" id="sample_overview_{0}">
-            <li>
+    <li>
+    <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;" {2}>
+            <form action="fusebox.psp" method="post" id="sample_overview_{0}">
                 <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
                 <input type="hidden" name="status" id="status" value="{1}"/>
                 <input type="hidden" name="barcode" id="barcode" value="{0}"/>
-                <img class="icon" src="/qiime/img/sample_icon.png"/>
-                <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;" {2}>{3}</a>
-            </li>
-        </form>
+                <span>{3}</span>
+            </form>
+        </a>
+    </li>
 """
 
 
@@ -110,7 +115,7 @@ for p in human_participants:
     req.write(participant_menu_item)
 
     # Start the list for the sample menu items
-    req.write('<ul class="menu">\n')
+    req.write('<ul>\n')
 
     # Get the barcodes which have actually been filled out. They will all exist but
     # only returns those that have some additional data associated with them
@@ -127,18 +132,18 @@ for p in human_participants:
     # Figure out if all samples have been used. Only draw Assign Sample if there's an unused barcode.
     if len(available_barcodes) > 0:
         req.write(add_sample_menu_item)
-    req.write('</ul>\n\n')
+    req.write('</ul></li>\n\n')
 
 # End for
 %>
-                
-                <li><a href="fusebox.psp?page=new_participant_overview.psp"><img class="icon" src="/qiime/img/add_participant_icon.png">Add Human Source</a></li>
+                <li><a href="fusebox.psp?page=new_participant_overview.psp"><span>Add Human Source</span></a></li>
             </ul>
+        </li>
             <!-- end list of participants-->
 
             <!-- top-level Animals header-->
-            <li> <img class="icon" src="/qiime/img/animal_participants_icon.png"/>Animals</li> 
-                <ul class="menu"> <!-- list of animal participants -->
+            <li class="has-sub"><a><span>Animal Samples</span></a>
+                <ul> <!-- list of animal participants -->
 <%
 for p in animal_participants:
     animal_participant_menu_item = animal_participant_menu_item_template.format(p)
@@ -148,7 +153,7 @@ for p in animal_participants:
     req.write(animal_participant_menu_item)
 
     # Start the list for the sample menu items
-    req.write('<ul class="menu">\n')
+    req.write('<ul>\n')
 
     # Get the barcodes which have actually been filled out. They will all exist but
     # only returns those that have some additional data associated with them
@@ -166,16 +171,16 @@ for p in animal_participants:
     # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
     if len(available_barcodes) > 0:
         req.write(add_animal_sample_menu_item)
-    req.write('</ul>\n\n')
+    req.write('</ul></li>\n\n')
 
 # End for
 %>
-                    <li><a href="fusebox.psp?page=animal_survey.psp"><img class="icon" src="/qiime/img/add_animal_participant_icon.png">Add Animal</a></li>
-                </ul> <!-- end list of animal participants -->
+                    <li><a href="fusebox.psp?page=animal_survey.psp"><span>Add Animal Source</span></a></li>
+                </ul></li> <!-- end list of animal participants -->
 
 
-            <li><img class="icon" src="/qiime/img/environmental_overview_icon.png"/>Environmental</li>
-                <ul class="menu">
+            <li class="has-sub"><a><span>Environmental Samples</span></a>
+                <ul>
 
 <%
 barcodes = ag_data_access.getEnvironmentalSamples(ag_login_id)
@@ -193,32 +198,31 @@ for barcode in barcodes:
 <%
 add_general_sample_menu_item = \
 """
-<form action="fusebox.psp" method="post" id="add_sample_general">
-    <li>
+<li class="last">
+    <form action="fusebox.psp" method="post" id="add_sample_general">
         <input type="hidden" name="page" value="add_sample.psp"/>
         <input type="hidden" name="sample_type" value="general"/>
-        <img class="icon" src="/qiime/img/environmental_icon.png"/>
-        <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">Log Sample</a>
-    </li>
-</form>
+        <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">
+        <span>Log Sample</span></a>
+    </form>
+</li>
 """
 
 if len(available_barcodes) > 0:
     req.write(add_general_sample_menu_item)
 # End if
 %>
-                    </ul>
-        <div class="menu_separator"></div>
-        <li><a href="FAQ.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
-        <li><a href="fusebox.psp?page=help_request.psp"><img class="icon" src="/qiime/img/mail_icon.png">Contact us</a></li>
-        
+            </ul>
+        </li>
+        <li><a href="FAQ.psp" target="_blank"><span>FAQ</span></a></li>
+        <li><a href="fusebox.psp?page=help_request.psp"><span>Contact us</span></a></li>
+        <li class="last"><a href="logout.psp"><span>Log out</span></a></li>
     </ul>
-
+</div>
     <!-- Twitter -->
 <div>
 <a class="twitter-timeline" href="https://twitter.com/americangut" data-widget-id="328928986170269696">Tweets by @americangut</a>
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 </div>
-
 </div>
 
