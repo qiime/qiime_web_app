@@ -565,8 +565,9 @@ function validateConsent()
 function verifyAddSample() {
     for(var i = 0; i < document.add_sample.length; i++) 
     {
-        document.add_sample[i].className = document.add_sample[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+        document.add_sample[i].className = document.add_sample[i].className.replace(/(?:^|\s)highlight(?!\S)/g , '');
     }
+    document.getElementById("sample_site_div").className = document.getElementById("sample_site_div").className.replace(/(?:^|\s)highlight(?!\S)/g , '');
 	
     var valid = true;
 	
@@ -580,7 +581,12 @@ function verifyAddSample() {
         document.add_sample.sample_time.className += " highlight";
         valid = false;
     }
-	
+    if(document.add_sample.sample_site.selectedIndex == 0)
+    {
+        document.getElementById("sample_site_div").className += " highlight";
+        valid = false;
+    }
+
     if(!valid) 
 	{
 	    //alert($('#consent_info').submit());
