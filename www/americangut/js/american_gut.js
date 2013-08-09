@@ -581,7 +581,7 @@ function verifyAddSample() {
         document.add_sample.sample_time.className += " highlight";
         valid = false;
     }
-    if(document.add_sample.sample_site.selectedIndex == 0)
+    if((typeof(document.add_sample.sample_site) != 'undefined' && document.add_sample.sample_site.selectedIndex == 0) || (typeof(document.add_sample.environment_sampled) != 'undefined' && document.add_sample.environment_sampled.selectedIndex == 0))
     {
         document.getElementById("sample_site_div").className += " highlight";
         valid = false;
