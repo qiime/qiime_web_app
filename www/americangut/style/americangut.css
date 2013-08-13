@@ -257,6 +257,7 @@ ul.workflow_menu li {
 
 ul.workflow_menu li.selected {
 	background-color: #fff;
+	border-bottom: 1px solid #fff;
 }
 
 ul.workflow_menu li a{ 
@@ -267,7 +268,7 @@ ul.workflow_menu li a{
 	text-decoration: none;
 }
 
-ol.sample_steps {
+.sample_steps {
 	font-size: 12pt;
 }
 
