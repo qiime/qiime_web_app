@@ -44,7 +44,7 @@ if prev_barcode:
                 body_message='''
 Dear {name},
 
-We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page.  Please note that there should be two buttons that say "Log Sample."  The one that corresponds to your sample will appear directly underneath the participant name under the "Human Samples" header.  If you do not see the participant name to which the sample corresponds you must first click "Add Human Source."
+We have recently received your sample but we do not have sample details (sample type, collection date and time, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page.  Please note that there should be multiple buttons that say "Log Sample."  The one that corresponds to your sample will appear directly underneath the participant name under the "Human Samples" header.  If you do not see the participant name to which the sample corresponds you must first click "Add Human Source."
 
 In order to help you in adding these details, the side of your sample tube reads:
    sample date: {sample_date} 
@@ -88,11 +88,11 @@ Thank you for your participation!
                 sample_site = form['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message = '''
-Dear {name},
+                Dear {name},
 
-We have recently received your sample but we do not have consent, questionnaire results or sample details (type, date of collection, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
+We have recently received your sample with barcode {barcode}, but we are not sure what it is.  If it is a human sample, we will need consent, questionnaire results and sample details (type, date, and time of collection).  If it is a pet or environmental sample we will need sample details (type, date and time of collection).  Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
 
-You can do this by clicking "Add Human Source" from the navigation bar on the left side of the welcome page.  This will take you to the consent form and the questionnaire.  After you complete the survey you will see your name appear in the sidebar underneath the header that reads, "Human Samples."  You can then add the sample details by clicking the button that says "Log Sample."  Note that there are more than one buttons that say "Log Sample."  The one that corresponds to your sample will appear directly underneath the participant name.  If you do not see the participant name to which the sample corresponds, you must first click "Add Human Source."
+You can do this for a human sample by clicking "Add Human Source" from the navigation bar on the left side of the welcome page.  This will take you to the consent form and the questionnaire.  After you complete the survey you will see your name appear in the sidebar underneath the header that reads, "Human Samples."  You can then add the sample details by clicking the button that says "Log Sample."  Note that there are multiple buttons that say "Log Sample."  If your sample is a pet sample or an environmental sample then you will need to click the "Log Sample" button that appears under their respective header.
 
 In order to help you in adding these details, the side of the sample tube reads:
    sample date: {sample_date} 
@@ -175,21 +175,20 @@ try:
          </div>
         ''' % barcode)
     else: 
-        login_id = barcodeinfo[19]
-        # req.write(str(all(barcodeinfo[1:3])))
         div_id = message = email_type = ""
-        req.write(str(barcodeinfo))
-        if all(barcodeinfo[1:3]):
+        if all(barcodeinfo[0:3]):
             div_id = "verified"
             message = "all good"
             email_type = "3"
         else:
             if barcodeinfo[18] != "Yes":
-                # it's a human sample and does not have consent/survey
+                # it does not have consent/survey.
+                # it could be an env, pet or human sample
                 div_id = "not_verified"
-                message = "NO consent or survey"
+                message = "NO consent/survey (human) or<br/>NO sample details (env/pet)"
                 email_type = "1"
             else:
+                # it has consent but no sample details
                 div_id = "not_assigned"
                 message = "NO sample details"
                 email_type = "2"
