@@ -10,7 +10,6 @@ __status__ = "Production"
 
 import gc
 
-
 # Instantiate a copy of data access
 from data_access_connections import data_access_factory
 from enums import ServerConfig
@@ -20,7 +19,7 @@ from mod_python.util import FieldStorage
 data_access = data_access_factory(ServerConfig.data_access_type)
 
 # Grab a reference to the session
-#sess = Session.Session(req)
+sess = Session.Session(req)
 
 # Get our post data
 """
@@ -28,7 +27,7 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 VERY IMPORTANT NOTE: In conjunction with the note posted below regarding the field storage object,
 you MUST also make sure you leave the POST data read BEFORE the accessing of the field storage object.
 """
-post_data = req.read(100000)
+post_data = req.read()
 #req.write('{0}'.format(post_data))
 
 # Access to a field storage object. 
@@ -50,18 +49,18 @@ def loadPage(page):
     #req.content_type = 'text/xml'
     req.content_type = 'text/html'
     doc_root = req.document_root() + '/routed/'
-    if ( os.path.isfile( doc_root + page ) ):
+    if (os.path.isfile(doc_root + page)):
         #req.write('<?xml version="1.0"?>')        
-        code = parse( page, doc_root )
-        exec ( code )
+        code = parse(page, doc_root)
+        exec(code)
     else:
         req.write('<h3>Page not found: {0}</h3>\n'.format(page))
         
 def getPage(page):
     doc_root = req.document_root() + '/routed/'
-    if ( os.path.isfile( doc_root + page ) ):
-        code = parse( page, doc_root )
-        exec ( code )
+    if (os.path.isfile( doc_root + page)):
+        code = parse(page, doc_root)
+        exec (code)
     else:
         req.write('<h3>Page not found: {0}</h3>\n'.format(page))
 
@@ -91,9 +90,19 @@ else:
 #req.write('Identifier: {0}<br/>\n'.format(identifier))
 
 # Save the identifier in the session for use in the included page
-#sess['identifier'] = identifier
-#sess['post_data'] = post_data
-#sess.save()
+sess['identifier'] = identifier
+sess['post_data'] = post_data
+sess.save()
+
+"""
+NOTE: The switchboard will pull GET/POST requests properly. The other verbs
+(delete, put) will need to be pulled from the URL.
+
+E.g.
+
+DELETE: /resource/item/delete
+PUT: /resource/item/put
+"""
 
 # Switchboard
 request_method = req.method
