@@ -576,7 +576,7 @@ function verifyAddSample() {
         document.add_sample.sample_date.className += " highlight";
         valid = false;
     }
-    if(document.add_sample.sample_time.value == "" || validateHhMm(document.add_sample.sample_time.value))
+    if(document.add_sample.sample_time.value == "" || !validateHhMm(document.add_sample.sample_time.value))
     {
         document.add_sample.sample_time.className += " highlight";
         valid = false;
@@ -877,7 +877,7 @@ function isValidDate(date)
 http://stackoverflow.com/questions/5563028/how-to-validate-with-javascript-an-input-text-with-hours-and-minutes
 */
 function validateHhMm(inputField) {
-        return /(?:[0-1]?[0-9]|[2][1-4]):[0-5]?[0-9]:[0-5]?[0-9]\s?(?:am|pm)?/.test(this.value);
+        return /(?:(?:0[0-9])|(?:1[0-2])):[0-5][0-9]\s(?:am|pm)/i.test(inputField);
     }
 
 function inToCm() {
