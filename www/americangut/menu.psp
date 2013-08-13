@@ -58,7 +58,7 @@ add_sample_menu_item_template = \
                 <input type="hidden" name="sample_type" value="human"/>
                 <input type="hidden" name="participant_name" value="{0}"/>
             
-                <span>Log Sample</span>
+                <span><strong>Log Sample...</strong></span>
         
             </form>
         </a>
@@ -73,7 +73,7 @@ add_animal_sample_menu_item_template = \
                 <input type="hidden" name="page" value="add_sample.psp"/>
                 <input type="hidden" name="sample_type" value="animal"/>
                 <input type="hidden" name="participant_name" value="{0}"/>
-                <span>Log Sample</span>
+                <span><strong>Log Sample...</strong></span>
             </form>
         </a>
     </li>
@@ -86,7 +86,7 @@ add_general_sample_menu_item = \
         <form action="fusebox.psp" method="post" id="add_sample_general">
             <input type="hidden" name="page" value="add_sample.psp"/>
             <input type="hidden" name="sample_type" value="general"/>
-            <span>Log Sample</span>
+            <span>Log Sample...</span>
         </form>
     </a>
 </li>
@@ -136,7 +136,7 @@ for p in human_participants:
 
 # End for
 %>
-                <li><a href="fusebox.psp?page=new_participant_overview.psp"><span>Add Human Source</span></a></li>
+                <li><a href="fusebox.psp?page=new_participant_overview.psp"><span><strong>Add Human Source...</strong></span></a></li>
             </ul>
         </li>
             <!-- end list of participants-->
@@ -175,7 +175,7 @@ for p in animal_participants:
 
 # End for
 %>
-                    <li><a href="fusebox.psp?page=animal_survey.psp"><span>Add Animal Source</span></a></li>
+                    <li><a href="fusebox.psp?page=animal_survey.psp"><span><strong>Add Animal Source...</strong></span></a></li>
                 </ul></li> <!-- end list of animal participants -->
 
 
@@ -203,7 +203,7 @@ add_general_sample_menu_item = \
         <input type="hidden" name="page" value="add_sample.psp"/>
         <input type="hidden" name="sample_type" value="general"/>
         <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">
-        <span>Log Sample</span></a>
+        <span><strong>Log Sample...</strong></span></a>
     </form>
 </li>
 """
