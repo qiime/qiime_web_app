@@ -1,0 +1,12 @@
+<%
+
+import json
+
+json_data = json.loads(post_data)
+if json_data:
+	for k, v in json_data.items():
+		req.write('{0}: {1}\n'.format(k, v))
+		# Do useful stuff here
+# End
+
+%>

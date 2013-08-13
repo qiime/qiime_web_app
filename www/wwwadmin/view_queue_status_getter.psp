@@ -25,7 +25,11 @@ else:
 
 items = queue_content.split()
 sql = """
-select  s.study_id, s.project_name
+select  s.study_id, s.project_name,
+        case
+            when tj.job_type_id  in (3, 12, 15) then 'study'
+            else 'meta'
+        end as job_type
 from    study s
         inner join sff.torque_job tj
         on s.study_id = tj.study_id
@@ -37,10 +41,10 @@ for item in items:
     if 'growler' in prev_item and item.isdigit():
         results = ag_data_access.dynamicMetadataSelect(sql.format(item)).fetchone()
         # Results will be None if it's a meta-analysis
-        if results == None:
+        if results == None or results[2] == 'meta':
             req.write('Job ID {0} is a Meta-Analysis<br/>'.format(item))
         else:
-            study_id, project_name = results
+            study_id, project_name, job_type = results
             req.write('Job ID {0} belongs to study {1} ({2})<br/>'.format(item, project_name, study_id))
     prev_item = item
 # End for

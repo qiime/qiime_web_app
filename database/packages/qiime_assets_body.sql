@@ -15,7 +15,7 @@ begin
     from    all_tab_columns
     where   owner = 'QIIME_METADATA'
             and (
-                  table_name in ('AIR', 'COMMON_EXTRA_PREP', 'COMMON_EXTRA_SAMPLE', 'COMMON_FIELDS', 'HOST', 'HOST_ASSOC_VERTIBRATE', 'HOST_ASSOCIATED_PLANT', 'HOST_SAMPLE', 'HUMAN_ASSOCIATED', 'MICROBIAL_MAT_BIOFILM', 'OTHER_ENVIRONMENT', 'SAMPLE', 'SAMPLE_SEQUENCE_PREP', 'SEDIMENT', 'SEQUENCE_PREP', 'SOIL', 'STUDY', 'WASTEWATER_SLUDGE', 'WATER')
+                  table_name in ('AIR', 'COMMON_EXTRA_PREP', 'COMMON_EXTRA_SAMPLE', 'COMMON_EXTRA_SAMPLE_2', 'COMMON_FIELDS', 'HOST', 'HOST_ASSOC_VERTIBRATE', 'HOST_ASSOCIATED_PLANT', 'HOST_SAMPLE', 'HUMAN_ASSOCIATED', 'MICROBIAL_MAT_BIOFILM', 'OTHER_ENVIRONMENT', 'SAMPLE', 'SAMPLE_SEQUENCE_PREP', 'SEDIMENT', 'SEQUENCE_PREP', 'SOIL', 'STUDY', 'WASTEWATER_SLUDGE', 'WATER')
                   or table_name like 'EXTRA_SAMPLE_%'
                   or table_name like 'EXTRA_PREP_%'
                 )
@@ -1639,6 +1639,13 @@ begin
 
   
   delete  common_extra_sample
+  where   sample_id in
+          (
+            select  sample_id
+            from    sample_ids
+          );
+
+  delete  common_extra_sample_2
   where   sample_id in
           (
             select  sample_id

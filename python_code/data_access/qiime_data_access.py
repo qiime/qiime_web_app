@@ -1562,7 +1562,7 @@ class QiimeDataAccess(object):
             if table_name in ['"AIR"', '"COMMON_FIELDS"', '"MICROBIAL_MAT_BIOFILM"', '"OTHER_ENVIRONMENT"', \
             '"SAMPLE"', '"SEDIMENT"', '"SOIL"', '"WASTEWATER_SLUDGE"', '"WATER"', '"SEQUENCE_PREP"', \
             '"HOST_ASSOC_VERTIBRATE"', '"HOST_ASSOCIATED_PLANT"', '"HOST_SAMPLE"', '"HUMAN_ASSOCIATED"',
-            '"COMMON_EXTRA_SAMPLE"', '"COMMON_EXTRA_PREP"'] \
+            '"COMMON_EXTRA_SAMPLE"', '"COMMON_EXTRA_SAMPLE_2"', '"COMMON_EXTRA_PREP"'] \
             or 'EXTRA_SAMPLE_' in table_name or 'EXTRA_PREP_' in table_name:
                 named_params = {'key_field':key_field, 'study_id':study_id}
                 statement = 'select sample_id from "SAMPLE" where sample_name = :key_field and study_id = :study_id'

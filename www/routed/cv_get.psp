@@ -8,7 +8,17 @@ __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
+import json
+
 #req.write('<?xml version="1.0" encoding="ISO-8859-1"?>\n')
+json_data = {}
+
+"""
+NOTE: should factor out JSON/XML option into router.psp?
+Idea: specify on URL which format is requested:
+/r/xml/cv
+/r/json/cv
+"""
 
 identifier = sess['identifier']
 if identifier != None:
@@ -16,6 +26,7 @@ if identifier != None:
     req.write('<ControlledVocabularyItems>\n')
     items = data_access.getControlledVocabValueList(identifier)
     for item in items:
+        json_data[item] = items[item]
         req.write(' <VocabularyTerm id="%s" term="%s"/>\n' % (item, items[item]))
     req.write('</ControlledVocabularyItems>\n')
 else:
@@ -23,6 +34,10 @@ else:
     req.write('<ControlledVocabularyList>\n')
     vocabs = data_access.getAllControlledVocabs()
     for vocab in vocabs:
+        json_data[vocab] = vocabs[vocab]
         req.write(' <VocabularyName id="%s" vocabulary_name="%s"/>\n' % (vocab, vocabs[vocab]))
     req.write('</ControlledVocabularyList>')
+
+req.write('\n\n')
+req.write(json.dumps(json_data))
 %>
