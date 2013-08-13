@@ -14,40 +14,42 @@ from datetime import date
 # scan_date = date.today().isoformat()
 current_date = date.today().strftime("%m/%d/%Y")
 
-form_dict = dict(form)
-prev_barcode = form_dict.get('prev_barcode', None)
+prev_barcode = form.get('prev_barcode', None)
 
 if prev_barcode:
     try: # try to update barcode current status.
         # do not change scan_date if it's already in the database.
-        # it's getting from the html form, so use str representation of None.
-        if form_dict['scan_date'] == 'None': scan_date = current_date
-        else: scan_date = form_dict['scan_date']
+        # it's gotten from the html form, so use str representation of None.
+        if form['scan_date'] == 'None': scan_date = current_date
+        else: scan_date = form['scan_date']
 
-        data_access.updateBarcodeStatus('Received', form_dict['postmark_date'],
+        data_access.updateBarcodeStatus('Received', form['postmark_date'],
                                         scan_date, prev_barcode)
     
-        sent_date = form_dict['sent_date']
-        participant = form_dict['participant'] # participant name
+        sent_date = form['sent_date']
+        participant = form['participant'] # participant name
         general_name = "American Gut participant"
         if participant=="None": participant = general_name
-        login_user = form_dict['login_user'] # user name
+        login_user = form['login_user'] # user name
         if login_user=="None": login_user = general_name
 
-        if "send_email" in form_dict:
-            email_type = form_dict['email_type']
+        if "send_email" in form:
+            email_type = form['email_type']
             subject = body_message_1 = body_message_2 = ""
-            sample_time = form_dict['sample_time']
-            sample_date = form_dict['sample_date']
-
+            sample_time = form['sample_time']
+            sample_date = form['sample_date']
             if email_type == '2':
+                sample_site = form['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message='''
 Dear {name},
 
 We have recently received your sample but we do not have sample details (sample type, collection date, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page.  Please note that there should be two buttons that say “Log Sample.”  The one that corresponds to your sample will appear directly underneath the participant name under the “Human Samples” header.  If you do not see the participant name to which the sample corresponds you must first click “Add Human Source.”
 
-In order to help you in adding these details, the side of your sample tube reads {sample_date} {sample_time}.
+In order to help you in adding these details, the side of your sample tube reads:
+   sample date: {sample_date} 
+   sample time: {sample_time}
+   sample site: {sample_site}
 
 If you have further questions about how to do this please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
 
@@ -60,9 +62,13 @@ Thank you,
 --American Gut Team--
 '''
                 body_message_1 = body_message.format(name=participant, barcode=prev_barcode,
-                                                     sample_date=sample_date, sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
                 body_message_2 = body_message.format(name=login_user, barcode=prev_barcode,
-                                                     sample_date=sample_date,  sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
             elif email_type == '3':
                 subject = 'American Gut Sample with Barcode %s is Received.' % prev_barcode
                 body_message = '''
@@ -79,6 +85,7 @@ Thank you for your participation!
                 body_message_2 = body_message.format(name=login_user, barcode=prev_barcode,
                                                      sample_date=sample_date, sample_time=sample_time)
             elif email_type == '1':
+                sample_site = form['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message = '''
 Dear {name},
@@ -87,7 +94,10 @@ We have recently received your sample but we do not have consent, questionnaire 
 
 You can do this by clicking "Add Human Source" from the navigation bar on the left side of the welcome page.  This will take you to the consent form and the questionnaire.  After you complete the survey you will see your name appear in the sidebar underneath the header that reads, “Human Samples.”  You can then add the sample details by clicking the button that says “Log Sample.”  Note that there are more than one buttons that say “Log Sample.”  The one that corresponds to your sample will appear directly underneath the participant name.  If you do not see the participant name to which the sample corresponds, you must first click “Add Human Source.”
 
-In order to help you in adding these details, the side of the sample tube reads {sample_date} {sample_time}.
+In order to help you in adding these details, the side of the sample tube reads:
+   sample date: {sample_date} 
+   sample time: {sample_time}
+   sample site: {sample_site}
 
 If you have further questions about how to do this, please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
 
@@ -98,12 +108,16 @@ Thank you,
 --American Gut Team—
 '''
                 body_message_1 = body_message.format(name=participant, barcode=prev_barcode,
-                                                     sample_date=sample_date, sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
                 body_message_2 = body_message.format(name=login_user, barcode=prev_barcode,
-                                                     sample_date=sample_date, sample_time=sample_time)
+                                                     sample_date=sample_date,
+                                                     sample_time=sample_time,
+                                                     sample_site=sample_site)
             
-            participant_email = form_dict['participant_email']
-            login_email = form_dict['login_email']
+            participant_email = form['participant_email']
+            login_email = form['login_email']
 
             if participant_email != "None":
                 # if an email address is associated with the participant
@@ -121,13 +135,13 @@ Thank you,
                 except:
                     req.write("Sending email to the user email:%s failed (barcode: %s)!!!<br/>" % (login_email, prev_barcode))
     
-        sample_issue = form_dict.get('sample_issue', [])
+        sample_issue = form.get('sample_issue', [])
         moldy = overloaded = other = 'N'
         if 'moldy' in sample_issue: moldy = 'Y'
         if 'overloaded' in sample_issue: overloaded = 'Y'
         if 'other' in sample_issue: other = 'Y'
         ag_data_access.updateAKB(prev_barcode, moldy, overloaded, other,
-                              form_dict['other_text'], sent_date)
+                                 form['other_text'], sent_date)
         req.write("Barcode %s was sucessfully updated<br/>" % prev_barcode)
     except:
         req.write("Barcode %s update failed!!!<br/>" % prev_barcode)
@@ -202,8 +216,6 @@ try:
           <input type="hidden" name="sent_date" value="{sent}" />
           <input type="hidden" name="participant" value="{participant}" />
           <input type="hidden" name="login_user"  value="{login_user}" />
-          <input type="hidden" name="sample_time" value="{sample_time}" />
-          <input type="hidden" name="sample_date" value="{sample_date}" />
           <input type="hidden" name="participant_email" value="{participant_email}" />
           <input type="hidden" name="login_email" value="{login_email}" />
           <input type="hidden" name="email_type" value="{email_type}" />
@@ -211,9 +223,12 @@ try:
           <ul>
              <li>
                Sample issues: <br />
-                  <input class="checkbox" type="checkbox" name="sample_issue" value="moldy" {moldy_checked}/> moldy (current: {moldy}) <br />
-                  <input class="checkbox" type="checkbox" name="sample_issue" value="overloaded" {overloaded_checked}/> overloaded (current: {overloaded}) <br />
-                  <input class="checkbox" type="checkbox" name="sample_issue" value="other" {other_checked}/> other (current: {other}) <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" id="moldy" value="moldy" {moldy_checked}/> 
+                    <label for="moldy"> moldy (current: {moldy}) </label> <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" id="overloaded" value="overloaded" {overloaded_checked}/>
+                    <label for="overloaded"> overloaded (current: {overloaded}) </label> <br />
+                  <input class="checkbox" type="checkbox" name="sample_issue" id="other" value="other" {other_checked}/>
+                    <label for="other"> other (current: {other}) </label> <br />
              </li>
         '''.format(div_id=div_id,
                    barcode=barcode,
@@ -227,8 +242,6 @@ try:
                    sent=barcodeinfo[12],
                    participant=participant_name,
                    login_user=barcodeinfo[17],
-                   sample_time=barcodeinfo[2],
-                   sample_date=barcodeinfo[1],
                    participant_email=barcodeinfo[16],
                    login_email=barcodeinfo[7],
                    email_type=email_type,
@@ -237,8 +250,7 @@ try:
 %>
              <li>
                Sample postmark date (current: <%=barcodeinfo[15] if barcodeinfo[15] else 'NA'%>) : <br />
-                  <input type="text" name="postmark_date" id="postmark_date" value="<%=barcodeinfo[15] if barcodeinfo[15] else ''%>"
-                   onclick="this.select()" /> <br />
+                  <input type="text" name="postmark_date" id="postmark_date" value="<%=barcodeinfo[15] if barcodeinfo[15] else ''%>" onclick="this.select()" /> <br />
                         <script>
                           $(function() {
                             $( "#postmark_date" ).datepicker({
@@ -254,9 +266,62 @@ try:
              </li>
              <li>
                Send a reminder (previously sent: <%=barcodeinfo[12]%>): <br />
-               <div>
-                  <input class="checkbox" type="checkbox" name="send_email" value="send_email" style="float:left;" />
-                  <label style="display:block;">send participant (<%=barcodeinfo[16]%>) and <br/> user (<%=barcodeinfo[7]%>) an email </label> </div>
+               <table><tr>
+                  <td> <input class="checkbox" type="checkbox" name="send_email" id="send_email" value="send_email" style="float:left;" /> </td>
+                  <td><label for="send_email" style="display:block;">send participant (<%=barcodeinfo[16]%>) and <br/> user (<%=barcodeinfo[7]%>) an email </label> </td></tr>
+
+<%
+        if email_type in ["1", "2"]:
+            sites_sampled = ['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead']
+            # indent
+%>
+            <tr><td></td><td>
+            sample date: <input type="text" name="sample_date" id="sample_date" style="width:100px"/> <br/>
+                        <script>
+                          $(function() {
+                            $( "#sample_date" ).datepicker({
+                                    changeMonth: true,
+                                    maxDate: '+0m',
+                                    onSelect: function(dateText, inst) {
+                                        $(this).focus();
+                                    }
+                            });
+                          });
+                        </script>
+            </td></tr>
+            <tr><td></td><td>
+            sample time: <input type="text" name="sample_time" id="sample_time" style="width:100px"/> <br />
+                  <script>
+                      $(function() {
+                        $( "#sample_time" ).timepicker({
+                           showPeriod: true,
+                           showLeadingZero: true,
+                           onSelect: function(dateText, inst) {
+                              $(this).focus();
+                           }
+                        });
+                      });
+                  </script>
+            </td></tr>
+            <tr><td></td><td>
+            sample site: <select name="sample_site" id="sample_site">
+                         <option value="">None</option>
+<%
+            for site_sampled in sites_sampled:
+                req.write('<option value="{0}">{0}</option>'.format(site_sampled))
+        # de-indent: end of if
+%>
+                 </select> <br />
+            </td></tr></table>
+<%
+        if email_type == "3":
+            # indent
+%>
+            <input type="hidden" name="sample_time" value="<%=barcodeinfo[2]%>" />
+            <input type="hidden" name="sample_date" value="<%=barcodeinfo[1]%>" />
+<%
+        # de-indent
+%>
              </li>
              <li>
                Other notes: <br />
@@ -270,7 +335,6 @@ try:
               <input type="reset" value="Reset!">
         </form>
         </div>
-    
 <%
 except(KeyError):
     #will get here on first load of this page since there should be no barcode key in the form dict
