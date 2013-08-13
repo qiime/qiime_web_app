@@ -15,7 +15,7 @@ from sys import argv
 from optparse import make_option
 from qiime.util import parse_command_line_parameters
 from cogent.parse.fasta import MinimalFastaParser
-from  hashlib import md5
+from hashlib import md5
 
 # Define the loading functions
 def load_gg_seqs(otu_seqs_file, data_access):
@@ -58,6 +58,8 @@ def load_gg_seqs(otu_seqs_file, data_access):
     cur.executemany(None, gg_sql_values)
     con.commit()
 
+def load_gg_taxonomy():
+    pass
 
 script_info = {}
 script_info['brief_description'] = "This scirpt loads Greengenes sequences into the database."
@@ -78,8 +80,12 @@ def main():
     debug = opts.debug
     data_access = data_access_factory(ServerConfig.data_access_type)
 
-    # Get results for all processed_data_ folders in this study's directory
+    # Load the GG sequences
     load_gg_seqs(otu_seqs_file, data_access)
+
+    # Load the GG taxonomy
 
 if __name__ == "__main__":
     main()
+
+
