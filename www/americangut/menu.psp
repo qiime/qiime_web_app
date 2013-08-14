@@ -13,6 +13,7 @@ _status_ = "Development"
     <div id="cssmenu">
     <ul>
         <li class="active"><a href="fusebox.psp?page=portal.psp"><span>Home</span></a></li>
+        <li><a href="FAQ.psp#faq0" target="_blank"><span>American Gut 101</span></a></li>
         <li><a href="fusebox.psp?page=change_password.psp"><span>Change Password</span></a></li>
         <li class="has-sub"><a><span>Human Samples</span></a>
             <ul> <!-- list of participants-->
