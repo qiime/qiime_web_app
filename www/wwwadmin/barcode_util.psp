@@ -20,11 +20,11 @@ if prev_barcode:
     try: # try to update barcode current status.
         # do not change scan_date if it's already in the database.
         # it's gotten from the html form, so use str representation of None.
-        if form['scan_date'] == 'None': scan_date = current_date
-        else: scan_date = form['scan_date']
+        # if form['scan_date'] == 'None': scan_date = current_date
+        # else: scan_date = form['scan_date']
 
         data_access.updateBarcodeStatus('Received', form['postmark_date'],
-                                        scan_date, prev_barcode)
+                                        form['scan_date'], prev_barcode)
     
         sent_date = form['sent_date']
         participant = form['participant'] # participant name
@@ -44,14 +44,14 @@ if prev_barcode:
                 body_message='''
 Dear {name},
 
-We have recently received your sample but we do not have sample details (sample type, collection date and time, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page.  Please note that there should be multiple buttons that say "Log Sample."  The one that corresponds to your sample will appear directly underneath the participant name under the "Human Samples" header.  If you do not see the participant name to which the sample corresponds you must first click "Add Human Source."
+We have recently received your sample but we do not know who it belongs to and we do not have sample details (sample type, collection date and time, etc) for barcode {barcode}. Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details? You can do this by clicking "Log Sample" from the navigation bar on the left side of the welcome page. Please note that there should be multiple buttons that say "Log Sample."  The one that corresponds to your sample will appear directly underneath the participant name under the "Human Samples" header.  If you do not see the participant name to which the sample corresponds you must first click "Add Human Source."
 
 In order to help you in adding these details, the side of your sample tube reads:
    sample date: {sample_date} 
    sample time: {sample_time}
    sample site: {sample_site}
 
-If you have further questions about how to do this please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
+If you have further questions about how to do this, please see our instructions page (http://www.microbio.me/americangut/img/full_instructions.pdf)
 
 I realize this is redundant as we ask participants to also put these details on their sample tube. We've found that, in practice, this redundancy is vital for teasing out the inevitable human errors that arise in large projects.
 
@@ -88,7 +88,7 @@ Thank you for your participation!
                 sample_site = form['sample_site']
                 subject='Follow up on Your American Gut Sample with Barcode %s' % prev_barcode
                 body_message = '''
-                Dear {name},
+Dear {name},
 
 We have recently received your sample with barcode {barcode}, but we are not sure what it is.  If it is a human sample, we will need consent, questionnaire results and sample details (type, date, and time of collection).  If it is a pet or environmental sample we will need sample details (type, date and time of collection).  Can you please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and add these details?
 
@@ -99,7 +99,7 @@ In order to help you in adding these details, the side of the sample tube reads:
    sample time: {sample_time}
    sample site: {sample_site}
 
-If you have further questions about how to do this, please see our FAQ section. (http://www.microbio.me/americangut/FAQ.psp#faq3)
+If you have further questions about how to do this, please see our instructions page (http://www.microbio.me/americangut/img/full_instructions.pdf)
 
 Please let us know if you have any problems.
 
@@ -163,6 +163,7 @@ try:
     barcodeinfo = ag_data_access.checkBarcode(barcode)
     # req.write(str(barcodeinfo))
     # req.write(str(len(barcodeinfo)))
+    # req.write(str(barcodeinfo[18])+"consetn")
     if len(barcodeinfo)==0:
         req.write('''
          <div id="invalid_barcode" class="verification_color">
@@ -182,7 +183,7 @@ try:
             email_type = "3"
         else:
             if barcodeinfo[18] != "Yes":
-                # it does not have consent/survey.
+                # The kit id has consent does not have consent/survey.
                 # it could be an env, pet or human sample
                 div_id = "not_verified"
                 message = "NO consent/survey (human) or<br/>NO sample details (env/pet)"
@@ -214,7 +215,6 @@ try:
           <input type="hidden" name="participant_email" value="{participant_email}" />
           <input type="hidden" name="login_email" value="{login_email}" />
           <input type="hidden" name="email_type" value="{email_type}" />
-          <input type="hidden" name="scan_date" value="{scan_date}" />
           <ul>
              <li>
                Sample issues: <br />
@@ -323,7 +323,20 @@ try:
                   <textarea name="other_text" onclick="this.select()"><%="" if barcodeinfo[11]==None else barcodeinfo[11]%></textarea>
              </li>
              <li>
-               Scan date: <%=current_date if barcodeinfo[14]==None else barcodeinfo[14]%>
+               Scan date(current: <%=barcodeinfo[14] if barcodeinfo[14] else 'NA'%>): <br />
+               <input type="text" name="scan_date" id="scan_date" value="<%=barcodeinfo[14] if barcodeinfo[14] else ''%>" onclick="this.select()" /> <br />
+                        <script>
+                          $(function() {
+                            $( "#scan_date" ).datepicker({
+                                    changeMonth: true,
+                                    maxDate: '+0m',
+                                    onSelect: function(dateText, inst) {
+                                        $(this).focus();
+                                    }
+                            });
+                          });
+                        </script>
+                  (please follow the format mm/dd/yyyy. Example: 12/25/2012)
              </li>
           </ul>
               <input type="submit" value="Submit">

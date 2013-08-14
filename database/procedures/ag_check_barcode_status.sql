@@ -11,7 +11,7 @@ begin
                 akb.environment_sampled, akb.notes, ak.kit_verified, al.email, akb.moldy,
                 akb.overloaded, akb.other, akb.other_text, akb.date_of_last_email,
                 barcode.status, barcode.scan_date, barcode.sample_postmark_date, ahs.participant_email,
-                al.name, ahs.consent, cast(al.ag_login_id as varchar2(100))
+                al.name, ahs.consent
         from    ag_kit_barcodes akb
                 inner join ag_kit ak
                 on akb.ag_kit_id = ak.ag_kit_id
@@ -20,7 +20,7 @@ begin
                 inner join barcode
                 on akb.barcode = barcode.barcode
                 left join ag_human_survey ahs
-                on ak.ag_login_id = ahs.ag_login_id and akb.participant_name = ahs.participant_name
+                on ak.ag_login_id = ahs.ag_login_id
         where   akb.barcode = barcode_;
 
 end;
