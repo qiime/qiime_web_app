@@ -13,7 +13,7 @@ __status__ = "Development"
 
 from optparse import make_option
 from qiime.util import parse_command_line_parameters
-from enums import ServerConfig
+#from enums import ServerConfig
 from summarize_seqs_otu_hits import summarize_all_stats, submit_mapping_to_database
 
 script_info = {}
