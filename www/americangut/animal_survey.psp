@@ -98,7 +98,7 @@ else:
                         </tr>
                         <tr>
                             <td>Age</td>
-                            <td><input tabindex="3" type="text" name="age" id="age" onkeypress='validateNumber(event)' class=""/></td>
+                            <td><input tabindex="3" type="text" name="age" id="age" onkeypress='validateNumber(event, false)' class=""/></td>
                         </tr>
                         <tr>
                             <td>Gender</td>
@@ -193,7 +193,7 @@ else:
                                     <div id="pet_1">
                                     </div>
                                 </div>
-                                <a class="add_field" href="javascript:addPet()" title="Add another pet">+</a>
+                                <a class="add_field" href="#" onclick="addPet()" title="Add another pet">+</a>
                             </td>
                         </tr>
                         <tr>
@@ -201,7 +201,7 @@ else:
                             <td>
                                 <div id="human">
                                     <div id="human_1">
-                                        <input type="text" id="human_1_age" class="small_text" name="human_1_age" value="Age" onkeypress='validateNumber(event)'/> years
+                                        <input type="text" id="human_1_age" class="small_text" name="human_1_age" value="Age" onkeypress='validateNumber(event, false)'/> years
                                         <br />
                                         <select id="human_1_sex" name="human_1_sex">
                                             <option value="">Select an option</option>
@@ -211,7 +211,7 @@ else:
                                         </select>
                                     </div>
                                 </div>
-                                <a class="add_field" href="javascript:addHuman()" title="Add another human">+</a>
+                                <a class="add_field" href="#" onclick="addHuman()" title="Add another human">+</a>
                             </td>
                         </tr>
                         <tr>

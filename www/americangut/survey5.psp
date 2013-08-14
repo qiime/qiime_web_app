@@ -160,7 +160,7 @@ nonfoodallergies_no = 'checked' if form.get('nonfoodallergies_no_default', None)
                                                 <input type="text" name="antibiotic_med_1" id="antibiotic_med_1" />
                                             </div>
                                         </div>
-                                        <a class="add_field" href="javascript:addField(\'antibiotic_med\')" title="Add another antibiotic">+</a>
+                                        <a class="add_field" href="#" onclick="addField(\'antibiotic_med\')" title="Add another antibiotic">+</a>
                                     </td>                  
                                 </tr>
                                 <tr>
@@ -195,7 +195,7 @@ nonfoodallergies_no = 'checked' if form.get('nonfoodallergies_no_default', None)
                                         <input tabindex="3" type="text" name="generalmeds_1" id="generalmeds_1" />
                                     </div>
                                 </div>
-                                <a class="add_field" href="javascript:addField(\'generalmeds\')" title="Add another medication">+</a>
+                                <a class="add_field" href="#" onclick="addField(\'generalmeds\')" title="Add another medication">+</a>
                             </td>                        
                         </tr>
                         <tr>

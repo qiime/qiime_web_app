@@ -36,7 +36,7 @@
                         <input type="text" name="diabetes_medications_1" />
                     </div>
                 </div>
-                <a class="add_field" href="javascript:addField(\'diabetes_medications\')" title="Add another medication">+</a>
+                <a class="add_field" href="#" onclick="addField(\'diabetes_medications\')" title="Add another medication">+</a>
             </td>                        
         </tr>
     </table>

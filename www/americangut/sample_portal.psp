@@ -3,7 +3,7 @@
 These are the steps involved in taking a sample:
 </p>
     <ol class="sample_steps">
-        <li>Make sure you have <a href="javascript:selectTab('source')">added your sample source and complete the required survey(s)</a></li>
+        <li>Make sure you have <a href="#" onclick="selectTab('source')">added your sample source and complete the required survey(s)</a></li>
         <li>Remove the sample swabs from the sample tube</li>
         <li>Collect your sample following the guidelines below</li>
         <li>Place sample swabs into the sample tube</li>
