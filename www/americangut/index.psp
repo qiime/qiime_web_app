@@ -42,6 +42,9 @@ sess.save()
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
+<noscript>
+<meta HTTP-EQUIV="REFRESH" content="0; url=nojs.html">
+</noscript>
 <meta charset="utf-8">
 <title>American Gut</title>
 <link rel="stylesheet" type="text/css" href="style/americangut.css">
@@ -244,7 +247,6 @@ req.write('window.onload=initialize;</script>')
 </head>
 
 <body>
-
     <div style="width:100%; height:100%; background-color:#000;">
     <div id="map_canvas" style="width:100%; height:100%; opacity:0.8;"></div>
     </div>
