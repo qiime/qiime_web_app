@@ -165,6 +165,15 @@ div.footer {
 	width: 100%;
 }
 
+div.indent_box {
+    text-align: left;
+    background-color: #ccc;
+    border: 1px solid black;
+    padding: 30px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+
 input.small_text {
 	width: 75px;
 }
