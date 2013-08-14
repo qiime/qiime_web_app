@@ -223,7 +223,7 @@
                         <input type="text" name="migraine_medication_1" id="migraine_medication_1"/>
                     </div>
                 </div>
-                <a class="add_field" href="javascript:addField(\'migraine_medication\')" title="Add another medication">+</a>
+                <a class="add_field" href="#" onclick="addField(\'migraine_medication\')" title="Add another medication">+</a>
             </td>                      
         </tr>
     </table>

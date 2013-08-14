@@ -124,7 +124,7 @@ not_sure_selected = "selected='selected'" if drinking_water_source == 'Not sure'
                                             <input type="text" name="supplements_fields_1" id="supplements_fields_1"/>
                                         </div>
                                     </div>
-                                    <a class="add_field" href="javascript:addField(\'supplements_fields\',\'supplements_fields\')" title="Add another supplement">+</a>
+                                    <a class="add_field" href="#" onclick="addField(\'supplements_fields\',\'supplements_fields\')" title="Add another supplement">+</a>
                                 </td>
                                 </tr>
                         </table>
@@ -192,7 +192,7 @@ not_sure_selected = "selected='selected'" if drinking_water_source == 'Not sure'
                                                 <input type="text" name="dietrestrictions_1" id="dietrestrictions_1"/>
                                             </div>
                                         </div>
-                                        <a class="add_field" href="javascript:addField(\'dietrestrictions\')" title="Add another diet restriction">+</a>
+                                        <a class="add_field" href="#" onclick="addField(\'dietrestrictions\')" title="Add another diet restriction">+</a>
                                     </td>                      
                                 </tr>
                             </table>

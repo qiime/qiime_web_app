@@ -37,19 +37,19 @@ if percentage_from_carbs:
                         <tr>
                             <td>Protein</td>
                             <td>
-                                <input tabindex="1" type="number" max="100" min="0" name="protein_per" id="protein_per" value=<%=quot(form, 'protein_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('protein_per')"/>%
+                                <input tabindex="1" type="number" max="100" min="0" name="protein_per" id="protein_per" value=<%=quot(form, 'protein_per_default')%> onkeypress='validateNumber(event, true)' onchange="javascript:updateTotals()" onblur="validatePercentage('protein_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Fat</td>
                             <td>
-                                <input tabindex="2" type="number" max="100" min="0" name="fat_per" id="fat_per" value=<%=quot(form, 'fat_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('fat_per')"/>%
+                                <input tabindex="2" type="number" max="100" min="0" name="fat_per" id="fat_per" value=<%=quot(form, 'fat_per_default')%> onkeypress='validateNumber(event, true)' onchange="javascript:updateTotals()" onblur="validatePercentage('fat_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Carbohydrates</td>
                             <td>
-                                <input tabindex="3" type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value=<%=quot(form, 'carbohydrate_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('carbohydrate_per')"/>%
+                                <input tabindex="3" type="number" max="100" min="0" name="carbohydrate_per" id="carbohydrate_per" value=<%=quot(form, 'carbohydrate_per_default')%> onkeypress='validateNumber(event, true)' onchange="javascript:updateTotals()" onblur="validatePercentage('carbohydrate_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -62,13 +62,13 @@ if percentage_from_carbs:
                         <tr>
                             <td>Plant</td>
                             <td>
-                                <input tabindex="4" type="number" max="100" min="0" name="plant_per" id="plant_per" value=<%=quot(form, 'plant_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('plant_per')"/>%
+                                <input tabindex="4" type="number" max="100" min="0" name="plant_per" id="plant_per" value=<%=quot(form, 'plant_per_default')%> onkeypress='validateNumber(event, true)' onchange="javascript:updateTotals()" onblur="validatePercentage('plant_per')"/>%
                             </td>
                         </tr>
                         <tr>
                             <td>Animal</td>
                             <td>
-                                <input tabindex="5" type="number" max="100" min="0" name="animal_per" id="animal_per" value=<%=quot(form, 'animal_per_default')%> onkeypress='validateNumber(event)' onchange="javascript:updateTotals()" onblur="validatePercentage('animal_per')"/>%
+                                <input tabindex="5" type="number" max="100" min="0" name="animal_per" id="animal_per" value=<%=quot(form, 'animal_per_default')%> onkeypress='validateNumber(event, true)' onchange="javascript:updateTotals()" onblur="validatePercentage('animal_per')"/>%
                             </td>
                         </tr>
                         <tr>
@@ -81,7 +81,7 @@ if percentage_from_carbs:
                         <tr>
                             <td>Grams of fiber consumed for the 7 day period</td>
                             <td>
-                                <input tabindex="6" type="text" name="fiber_grams" id="fiber_grams" value=<%=quot(form, 'fiber_grams_default')%>/>(g)
+                                <input tabindex="6" type="text" name="fiber_grams" id="fiber_grams" onkeypress='validateNumber(event, false)' value=<%=quot(form, 'fiber_grams_default')%>/>(g)
                             </td>
                         </tr>
                         
