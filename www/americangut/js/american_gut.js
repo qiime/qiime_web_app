@@ -565,8 +565,9 @@ function validateConsent()
 function verifyAddSample() {
     for(var i = 0; i < document.add_sample.length; i++) 
     {
-        document.add_sample[i].className = document.add_sample[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+        document.add_sample[i].className = document.add_sample[i].className.replace(/(?:^|\s)highlight(?!\S)/g , '');
     }
+    document.getElementById("sample_site_div").className = document.getElementById("sample_site_div").className.replace(/(?:^|\s)highlight(?!\S)/g , '');
 	
     var valid = true;
 	
@@ -575,12 +576,17 @@ function verifyAddSample() {
         document.add_sample.sample_date.className += " highlight";
         valid = false;
     }
-    if(document.add_sample.sample_time.value == "" || validateHhMm(document.add_sample.sample_time.value))
+    if(document.add_sample.sample_time.value == "" || !validateHhMm(document.add_sample.sample_time.value))
     {
         document.add_sample.sample_time.className += " highlight";
         valid = false;
     }
-	
+    if((typeof(document.add_sample.sample_site) != 'undefined' && document.add_sample.sample_site.selectedIndex == 0) || (typeof(document.add_sample.environment_sampled) != 'undefined' && document.add_sample.environment_sampled.selectedIndex == 0))
+    {
+        document.getElementById("sample_site_div").className += " highlight";
+        valid = false;
+    }
+
     if(!valid) 
 	{
 	    //alert($('#consent_info').submit());
@@ -897,7 +903,7 @@ function isValidDate(date)
 http://stackoverflow.com/questions/5563028/how-to-validate-with-javascript-an-input-text-with-hours-and-minutes
 */
 function validateHhMm(inputField) {
-        return /(?:[0-1]?[0-9]|[2][1-4]):[0-5]?[0-9]:[0-5]?[0-9]\s?(?:am|pm)?/.test(this.value);
+        return /(?:(?:0[0-9])|(?:1[0-2])):[0-5][0-9]\s(?:am|pm)/i.test(inputField);
     }
 
 function inToCm() {

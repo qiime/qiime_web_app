@@ -33,6 +33,7 @@ for barcode in barcodes:
                 <tr>
                     <td>Environment Sampled</td>
                     <td>
+                        <div id="sample_site_div" class="">
                         <select tabindex="2" name="environment_sampled" id="environment_sampled">
                             <option selected>Please Select...</option>
                             <option>Animal Habitat</option>
@@ -46,6 +47,7 @@ for barcode in barcodes:
                             <option>Soil</option>
                             <option>Sole of shoe</option>
                         </select>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -99,4 +101,3 @@ for barcode in barcodes:
         </tr>
     </table>
 </form>
-
