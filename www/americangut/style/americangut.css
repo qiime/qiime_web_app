@@ -77,6 +77,11 @@ div.faq {
 div.faq_content {
 	margin-left: 2em;
 	font-size: 10pt;
+	width: 85%;
+}
+
+div.faq_content a {
+	text-decoration: none;
 }
 
 div.login_wrapper {
@@ -163,6 +168,17 @@ div.keywrapper {
 div.footer {
 	text-align: center;
 	width: 100%;
+}
+
+div.indent_box {
+    text-align: left;
+    background-color: #ddd;
+    border: 1px dotted #181f23;
+    padding: 30px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+	width: 80%;
+	margin: auto;
 }
 
 input.small_text {
@@ -257,6 +273,7 @@ ul.workflow_menu li {
 
 ul.workflow_menu li.selected {
 	background-color: #fff;
+	border-bottom: 1px solid #fff;
 }
 
 ul.workflow_menu li a{ 
@@ -267,7 +284,7 @@ ul.workflow_menu li a{
 	text-decoration: none;
 }
 
-ol.sample_steps {
+.sample_steps {
 	font-size: 12pt;
 }
 

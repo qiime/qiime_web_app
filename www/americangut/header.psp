@@ -27,6 +27,7 @@ qiime_data_access = data_access_factory(ServerConfig.data_access_type, 'qiime')
         <script src="js/jquery.ui.timepicker.js"></script>
         <script src="js/american_gut.js"></script>
         <link rel="stylesheet" type="text/css" href="style/americangut.css">
+        <link rel="stylesheet" type="text/css" href="style/menu.css">
         <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
         <link rel="icon" type="image/ico" href="img/favicon.ico">
     </head>

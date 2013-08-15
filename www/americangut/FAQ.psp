@@ -55,6 +55,7 @@
                         <h3 class="faq_header" id="faq0">American Gut 101</h3>
                         <div class="faq_content">
                         <p><a href='www.robrdunn.com'>Rob Dunn</a> has provided this excellent introduction to some of the basics that every curious reader should check out!<br/>&nbsp;<br/>Rob is the author of the <a href="http://www.yourwildlife.org/the-wild-life-of-our-bodies/">Wild Life of Our Bodies</a>. He is an evolutionary biologist and writer at North Carolina State University. For more about your gut and all of your other parts, read more from Rob at <a href="www.robrdunn.com">www.robrdunn.com</a></p>
+                        <div class="indent_box">
                         <h4>What is a Gut?</h4>
                         <p>Your gut is a hole that runs through your body. Your gut is actually, developmentally speaking, the outside of your body, but it has evolved many intricacies that make it seem like the inside. Your gut starts with your mouth and ends with your anus. In between food is changed into energy, feces, bacteria, viruses and a few other things. Your gut exacts a kind of metamorphosis on everything you eat, turning hotdog or grilled cheese, miraculously, into energy and, ultimately, cells, signals and even thoughts. We are only beginning to understand this process, a process in which microbes play (or fail to play) a major role.</p>
                         <h4>What is American Gut?</h4>
@@ -82,7 +83,7 @@
                                     <h4>A few of the stories of the evolutionary tree in your gut</h4>
                                     <p>Some people have least favorite bacteria. Salmonella, for example, seems to have inspired some haters. But microbiologists also have favorite bacteria, as well they should. The stories of bacteria (and those who chase and study them) are among the most important of humanities stories and include the tales of many species without which we could not live, or whose presence or absence affects how we live. These species are as fascinating and, dare I say, lovely as pandas or koala bears, just harder to see and far more significant. I have begun to compile a book of the stories of some of the most common and interesting species you are likely to encounter&mdash; whether in your own gut, on your lettuce or the next time you sink your fingers into the soil. These stories will be available online here at <a href="http://invisiblelife.yourwildlife.org/">Invisible Life</a> as they are compiled as a book, a book written by some of the very best science writers AND scientists out there. For starters, you might be interested to know that <a href="http://invisiblelife.yourwildlife.org/mycoplasma/">the smallest species on Earth</a> is sometimes found inside humans and, once we look at your 16S, we will even know whether it lives in you. As more of these stories are written, they will appear here, eventually as an ebook, an ebook that you can reference when you find out what lives inside you to know whether your constant companion is a species we know everything about or, as is more typical, no one has ever studied. Like Charlie Chaplin once said&hellip; Wait, Charlie Chaplin was the one who didn't say anything wasn't he.</p>
                         </div>
-
+                        </div>
                         <br>
                         <div class="separator"></div>
                         <br>
@@ -111,7 +112,7 @@
                         <div class="separator"></div>
                         <h3 class="faq_header" id="faq3">I'm logged in, what do I do now?</h3>
                         <div class="faq_content">
-                            <p>You need to follow the add participant workflow. Click on this button:</p>
+                            <p>You need to follow the add participant workflow. Click on the "Add Source & Survey" tab located at the top of the page.</p>
                             <img src="img/add_participant.png">
                             <p>During this workflow you (or whomever is being sampled) will:</p>
                             <ol>
@@ -120,9 +121,9 @@
                                 <li>Answer survey questions (including the diet questions covered by the food diary)</li>
                                 <li>Upon completion, become eligible to log samples</li>
                             </ol>
-                            <p>When participants are eligible,  you will then see their name on the left menu, in this example we have just added the participant "Jane Doe":</p>
+                            <p>When participants are eligible,  you will then see their name under the corresponding menu on the left, in this example we have just added the participant "Test":</p>
                             <img src="img/add_participant_menu.png"/>
-                            <p>To add a sample to a participant, click the "Add sample" link underneath the participant's name</p>
+                            <p>To add a sample to a participant, click the "Log Sample" link next to the participant's name</p>
                             <img src="img/add_sample_highlight.png"/>
                             <p>When adding a sample, please be sure to select the barcodes that matches the barcode on the sampling tube of the sample that you are logging</p>
                             <img src="img/add_sample_overview.png"/>
