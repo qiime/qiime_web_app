@@ -35,6 +35,7 @@ for barcode in barcodes:
                 <tr>
                     <td>Site Sampled</td>
                     <td>
+                        <div id="sample_site_div" class="">
                         <select tabindex="2" name="sample_site" id="sample_site">
                             <option selected>Please select...</option>
                             <option>Stool</option>
@@ -49,6 +50,7 @@ for barcode in barcodes:
                             <option>Ear wax</option>
                             <option>Vaginal mucus</option>
                         </select>
+                        </div>
                     </td>
                 </tr>
                 <tr>
@@ -102,4 +104,3 @@ for barcode in barcodes:
         </tr>
     </table>
 </form>
-

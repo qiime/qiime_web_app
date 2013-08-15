@@ -99,7 +99,7 @@ function addThreeFields(field_name) {
 	newinput +='_contact_'
 	newinput +=new_field_number
 	newinput +='" name="'+field_name+'_contact_'+new_field_number
-	newinput +='"><option>Contact...</option><option>None</option><option>Little</option><option>Moderate</option><option>Extensive</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a>'
+	newinput +='"><option>Contact...</option><option>None</option><option>Little</option><option>Moderate</option><option>Extensive</option></select><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a>'
 	
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
@@ -118,7 +118,7 @@ function addThreeFields(field_name) {
 function addTwoFields(field1_name,field2_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<input type="text" value="Name" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/><input type="text" value="Relationship" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="small_text"/><a class="remove_field" href="javascript:removeField(\''+field1_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<input type="text" value="Name" name="'+field1_name+'_'+new_field_number+'" id="'+field1_name+'_'+new_field_number+'" class="small_text"/><input type="text" value="Relationship" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="small_text"/><a class="remove_field" href="#" onclick="removeField(\''+field1_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field1_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -144,7 +144,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 		newinput+= '<option value="'+num+'">'+name+'</option>'
 	}
 	newinput+= '</select>'
-	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text"/> days <a class="remove_field" href="javascript:removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	newinput+= '<input type="text" value="Duration" name="'+field2_name+'_'+new_field_number+'" id="'+field2_name+'_'+new_field_number+'" class="smaller_text" onkeypress=\'validateNumber(event, false)\'/> days <a class="remove_field" href="#" onclick="removeField(\''+div_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", div_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -162,7 +162,7 @@ function addDestinationFields(div_name,field1_name,field2_name) {
 function addField(field_name) {
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this field">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -355,7 +355,7 @@ function addHuman() {
 	field_name = "human"
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><input type="text" class="small_text" value="Age" name="'+field_name+'_'+new_field_number+'_age" id="'+field_name+'_'+new_field_number+'_age" onkeypress="validateNumber(event, false)"> years <br /><select name="'+field_name+'_'+new_field_number+'_sex" id="'+field_name+'_'+new_field_number+'_sex"><option value="">Select an option</option><option>Male</option><option>Female</option><option>Other</option></select><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -367,7 +367,7 @@ function addPet() {
 	field_name = "pet"
 	var new_field_number = old_field_number+1
 	old_field_number = new_field_number
-	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><select name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><option value="">Select an option</option><option>Dog</option><option>Cat</option><option>Small mammal</option><option>Large mammal</option><option>Fish</option><option>Bird</option><option>Reptile</option><option>Amphibian</option><option>Other</option></select><a class="remove_field" href="javascript:removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
+	var newinput = '<div id="'+field_name+'_'+new_field_number+'"><select name="'+field_name+'_'+new_field_number+'" id="'+field_name+'_'+new_field_number+'"><option value="">Select an option</option><option>Dog</option><option>Cat</option><option>Small mammal</option><option>Large mammal</option><option>Fish</option><option>Bird</option><option>Reptile</option><option>Amphibian</option><option>Other</option></select><a class="remove_field" href="#" onclick="removeField(\''+field_name+'_'+new_field_number+'\')" title="Remove this pet">x</a></input></div>'
 	var newTextBoxDiv = $(document.createElement('div'))
 	     .attr("id", field_name+'_'+new_field_number);
 	newTextBoxDiv.after().html(newinput);
@@ -565,8 +565,9 @@ function validateConsent()
 function verifyAddSample() {
     for(var i = 0; i < document.add_sample.length; i++) 
     {
-        document.add_sample[i].className = document.add_sample[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+        document.add_sample[i].className = document.add_sample[i].className.replace(/(?:^|\s)highlight(?!\S)/g , '');
     }
+    document.getElementById("sample_site_div").className = document.getElementById("sample_site_div").className.replace(/(?:^|\s)highlight(?!\S)/g , '');
 	
     var valid = true;
 	
@@ -575,12 +576,17 @@ function verifyAddSample() {
         document.add_sample.sample_date.className += " highlight";
         valid = false;
     }
-    if(document.add_sample.sample_time.value == "" || validateHhMm(document.add_sample.sample_time.value))
+    if(document.add_sample.sample_time.value == "" || !validateHhMm(document.add_sample.sample_time.value))
     {
         document.add_sample.sample_time.className += " highlight";
         valid = false;
     }
-	
+    if((typeof(document.add_sample.sample_site) != 'undefined' && document.add_sample.sample_site.selectedIndex == 0) || (typeof(document.add_sample.environment_sampled) != 'undefined' && document.add_sample.environment_sampled.selectedIndex == 0))
+    {
+        document.getElementById("sample_site_div").className += " highlight";
+        valid = false;
+    }
+
     if(!valid) 
 	{
 	    //alert($('#consent_info').submit());
@@ -826,29 +832,55 @@ function validateEmail(email) {
 } 
 
 function validateText(evt) {
-    var theEvent = evt || window.event;
+  var theEvent = evt || window.event;
+  if (theEvent.which == 0) {
+    // this is a "special key," and theEvent.keyCode is not the ASCII value
+    // allow arrow keys (37-40), backspace (8), tab (9), and delete (46)
+    if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
+      theEvent.returnValue = true;
+  }
+  else {
+    // this is a normal key, and theEvent.keyCode is the ASCII value
     var key = theEvent.keyCode || theEvent.which;
+    // some browsers treat backspace as a normal key, so allow that
+    if (key == 8) {
+      theEvent.returnValue = true;
+      return;
+    }
     key = String.fromCharCode( key );
     var regex = /[a-zA-Z0-9.\- ]/;
     if( !regex.test(key) ) {
       theEvent.returnValue = false;
       if(theEvent.preventDefault) theEvent.preventDefault();
     }
-
+  }
 }
 
 /* input field number validation*/
-function validateNumber(evt) {
+function validateNumber(evt, integer) {
   var theEvent = evt || window.event;
-  var key = theEvent.keyCode || theEvent.which;
-  //say what these keys are
-  if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
-  	return
-  key = String.fromCharCode( key );
-  var regex = /[0-9]|\./;
-  if( !regex.test(key) ) {
-    theEvent.returnValue = false;
-    if(theEvent.preventDefault) theEvent.preventDefault();
+  if (theEvent.which == 0) {
+    // this is a "special key," and theEvent.keyCode is not the ASCII value
+    // allow arrow keys (37-40), backspace (8), tab (9), and delete (46)
+    if(theEvent.keyCode == 8 || theEvent.keyCode == 37|| theEvent.keyCode ==38|| theEvent.keyCode == 39|| theEvent.keyCode == 40 || theEvent.keyCode == 46 || theEvent.keyCode == 9)
+      theEvent.returnValue = true;
+  }
+  else {
+    // this is a normal key, and theEvent.keyCode is the ASCII value
+    var key = theEvent.keyCode || theEvent.which;
+    // some browsers treat backspace as a normal key, so allow that
+    if (key == 8) {
+      theEvent.returnValue = true;
+      return;
+    }
+    key = String.fromCharCode( key );
+    // make sure the character typed is a number or a period
+    var regex = /[0-9]|\./;
+    if (integer) regex = /[0-9]/;
+    if( !regex.test(key) ) {
+      theEvent.returnValue = false;
+      if(theEvent.preventDefault) theEvent.preventDefault();
+    }
   }
 }
 
@@ -871,7 +903,7 @@ function isValidDate(date)
 http://stackoverflow.com/questions/5563028/how-to-validate-with-javascript-an-input-text-with-hours-and-minutes
 */
 function validateHhMm(inputField) {
-        return /(?:[0-1]?[0-9]|[2][1-4]):[0-5]?[0-9]:[0-5]?[0-9]\s?(?:am|pm)?/.test(this.value);
+        return /(?:(?:0[0-9])|(?:1[0-2])):[0-5][0-9]\s(?:am|pm)/i.test(inputField);
     }
 
 function inToCm() {

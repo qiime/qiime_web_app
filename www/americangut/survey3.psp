@@ -167,10 +167,10 @@ for c in d:
 # End for
 %>
                                                 </select>
-                                                <input type="text" name="travel_duration_1" id="travel_duration_1" value="Duration" class="smaller_text"/> days
+                                                <input type="text" name="travel_duration_1" id="travel_duration_1" value="Duration" class="smaller_text" onkeypress='validateNumber(event, false)'/> days
                                             </div>
                                         </div>
-                                        <a class="add_field" href="javascript:addDestinationFields(\'travel_options\',\'travel_location\',\'travel_duration\')" title="Add another destination">+</a>
+                                        <a class="add_field" href="#" onclick="addDestinationFields(\'travel_options\',\'travel_location\',\'travel_duration\')" title="Add another destination">+</a>
                                     </td>
                                 </tr>
                             </table>
@@ -184,9 +184,9 @@ for c in d:
                             <td>Are you related to or live with any of the other participants in this study?</td>
                             <td>
                                 <div id="livingwith">
-                                    <input tabindex="4" type="radio" id="livingwith_yes" name="livingwith" value="yes" onclick="javascript:setVisible('livingwith_option')" <%=livingwith_yes%>/><label for="livingwith_yes">Yes</label>
-                                    <input tabindex="5" type="radio" id="livingwith_no" name="livingwith" value="no" onclick="javascript:setInvisible('livingwith_option')" <%=livingwith_no%>/><label for="livingwith_no">No</label>
-                                    <input tabindex="6" type="radio" id="livingwith_notsure" name="livingwith" value="not_sure" onclick="javascript:setInvisible('livingwith_option')" <%=livingwith_not_sure%>/><label for="livingwith_notsure">Not sure</label>
+                                    <input tabindex="4" type="radio" id="livingwith_yes" name="livingwith" value="yes" onclick="setVisible('livingwith_option')" <%=livingwith_yes%>/><label for="livingwith_yes">Yes</label>
+                                    <input tabindex="5" type="radio" id="livingwith_no" name="livingwith" value="no" onclick="setInvisible('livingwith_option')" <%=livingwith_no%>/><label for="livingwith_no">No</label>
+                                    <input tabindex="6" type="radio" id="livingwith_notsure" name="livingwith" value="not_sure" onclick="setInvisible('livingwith_option')" <%=livingwith_not_sure%>/><label for="livingwith_notsure">Not sure</label>
                                 </div>
                             </td>
                         </tr>
@@ -205,7 +205,7 @@ for c in d:
                                                 <input type="text" value="Name" name="related_participant_1" id="related_participant_1" class="small_text"/><input type="text" value="Relationship" name="relation_1" id="relation_1" class="small_text"/>
                                             </div>
                                         </div>
-                                        <a class="add_field" href="javascript:addTwoFields(\'related_participant\',\'relation\')" title="Add another related participant">+</a>
+                                        <a class="add_field" href="#" onclick="addTwoFields(\'related_participant\',\'relation\')" title="Add another related participant">+</a>
                                     </td>                      
                                 </tr>
                             </table>
@@ -254,7 +254,7 @@ for c in d:
                                         </select>
                                     </div>
                                 </div>
-                                <a class="add_field" href="javascript:addThreeFields(\'pet\')" title="Add another pet">+</a>
+                                <a class="add_field" href="#" onclick="addThreeFields(\'pet\')" title="Add another pet">+</a>
                             </td>                      
                         </tr>
                         <tr>
