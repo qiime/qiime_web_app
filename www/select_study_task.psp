@@ -214,7 +214,7 @@ if portal_type in ['qiime', 'emp']:
                 </div>
             </ul>
             </li>
-            <br/>
+
 <%
     elif metadata_complete == 'y' and sff_complete == 'y' and web_app_user_id in approved_qiime_submitters:
         if sess["form"].has_key("message"):
@@ -266,27 +266,12 @@ if portal_type in ['qiime', 'emp']:
             <li>Submit Job to Qiime (complete sequence and metadata upload first)</li>
 <%
     if is_admin == 1:
-        #jobs = data_access.getJobInfo(study_id, 12)
         # Jobs refers to qiime submission jobs. If this is populated, activate this
         # div and watch for loading jobs to appear
-        if len(jobs) > 0:
-            # indent
 %>
-            <li>
-            Queued Data to Load
-            <span id="submit_all_span"> </span>
-            <ul>
-                <div id="qiime_load_status_div">
-                    Checking status...
-                </div>
-            </ul>
-            <br/>
+        <div id="qiime_load_status_div"> </div>
 <%
         # End if
-%>
-        </li>
-        
-<%
 
 # End if
 
