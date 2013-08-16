@@ -287,6 +287,7 @@ req.write('window.onload=initialize;</script>')
                 <li><a href="international_shipping.psp?lan=en" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">International Shipping</a><a href="international_shipping.psp?lan=es" target="_blank"> (espa&ntilde;ol)</a></li>
 				<li><a href="http://humanfoodproject.com/americangut/"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
 				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
+				<li><a href="FAQ.psp#faq0" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">American Gut 101</a></li>
 			</ul>
 
 <%
