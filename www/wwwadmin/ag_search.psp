@@ -39,6 +39,9 @@ Find stuff.
 				<td><input type="button" onclick="validateAGSingleSubmitForm()" value="Go" style="width:50px;">
 			</tr>
 		</table>
+        <script>
+           document.agForm.search_term.focus()
+        </script>
 	</form>
 </div>
 
