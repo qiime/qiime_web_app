@@ -118,6 +118,7 @@ Thank you for your participation!
 try:
     barcode = form['barcode'] #'000002000'
     barcodeinfo = ag_data_access.checkBarcode(barcode)
+    proj_type = data_access.getBarcodeProjType(barcode)
     # req.write(str(barcodeinfo))
     # req.write(str(len(barcodeinfo)))
     # req.write(str(barcodeinfo[18])+"consetn")
@@ -165,6 +166,9 @@ try:
           <input type="hidden" name="email_type" value="{email_type}" />
           <ul>
              <li>
+               Project type: {proj_type}
+             </li>
+             <li>
                Sample issues: <br />
                   <input class="checkbox" type="checkbox" name="sample_issue" id="moldy" value="moldy" {moldy_checked}/> 
                     <label for="moldy"> moldy (current: {moldy}) </label> <br />
@@ -178,6 +182,7 @@ try:
                   <textarea name="other_text" onclick="this.select()">{other_text}</textarea>
              </li>
         '''.format(div_id = div_id,
+                   proj_type = proj_type,
                    barcode = barcode,
                    message = message,
                    moldy = 'NA' if barcodeinfo[3]==None else barcodeinfo[3],
