@@ -12,12 +12,12 @@ begin
                     from    barcode
                     where   length(barcode) = 9
                             and barcode not like '9%'
-                    union
-                    select  min(cast(be.barcode as int)) as next_barcode
-                    from    barcode_exceptions be
-                            left join barcode b
-                            on be.barcode = b.barcode
-                    where   b.barcode is null
+                    --union
+                    --select  min(cast(be.barcode as int)) as next_barcode
+                    --from    barcode_exceptions be
+                    --        left join barcode b
+                    --        on be.barcode = b.barcode
+                    --where   b.barcode is null
                 )
         where   rownum = 1
         order by next_barcode;
