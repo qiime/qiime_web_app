@@ -282,8 +282,9 @@ class LiveEBISRARestServices(BaseRestServices):
             if result is not None:
                 existing_study_type = result
         study_file.write('            <STUDY_TYPE existing_study_type="{0}"/>\n'.format(existing_study_type))
-        
-        study_file.write('            <STUDY_ABSTRACT>{0}</STUDY_ABSTRACT>\n'.format(self.clean_whitespace(study_info['study_abstract'])))
+        study_abstract = self.clean_whitespace(study_info['study_abstract'])
+        study_abstract = self.clean_text_value(study_abstract)
+        study_file.write('            <STUDY_ABSTRACT>{0}</STUDY_ABSTRACT>\n'.format(study_abstract))
         study_file.write('        </DESCRIPTOR>\n')
         study_file.write('        <STUDY_ATTRIBUTES>\n')
     
