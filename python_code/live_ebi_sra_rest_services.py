@@ -299,7 +299,7 @@ class LiveEBISRARestServices(BaseRestServices):
             study_file.write('                <TAG>{0}</TAG>\n'.format(item))
             attribute_value = self.clean_whitespace(study_info[item])
             attribute_value = self.clean_text_value(attribute_value)
-            study_file.write('                <VALUE>{0}</VALUE>\n'.format(attribute_value)
+            study_file.write('                <VALUE>{0}</VALUE>\n'.format(attribute_value))
             study_file.write('            </STUDY_ATTRIBUTE>\n')
         
         study_file.write('        </STUDY_ATTRIBUTES>\n')
