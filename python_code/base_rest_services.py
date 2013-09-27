@@ -17,6 +17,7 @@ import stat
 import threading
 import gc
 from difflib import SequenceMatcher
+from sys import stdout
 
 class DataLogger(object):
     """ Generic logger for export services
@@ -30,6 +31,7 @@ class DataLogger(object):
         self._log = []
         self._log_file = open(log_file_path, 'w')
         self._log_file.write('Begin Log\n\n')
+        self._log_file.flush()
         
     def __del__(self):
         self._log_file.write('\n\nEnd log')
@@ -40,8 +42,10 @@ class DataLogger(object):
         """
         self._log.append(entry)
         self._log_file.write('{0}\n'.format(entry))
+        self._log_file.flush()
         if self._debug:
             print entry
+            stdout.flush()
 
 class BaseRestServices(object):
     def __init__(self, study_id, web_app_user_id, debug = False):
