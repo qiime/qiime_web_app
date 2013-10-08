@@ -6,7 +6,7 @@ unknown values:
 select  akb.barcode as sample_name, 
         akb.barcode as ANONYMIZED_NAME, 
         akb.sample_date as collection_date, 
-        'n' as "public",
+        'y' as "public",
         0 as depth,
         'unknown' as elevation,
         'American Gut Project ' || akb.site_sampled || ' sample' as DESCRIPTION,
