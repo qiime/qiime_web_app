@@ -48,6 +48,7 @@
                         <li><a href="#faq5">Why are there 2 swabs inside the tube?</a></li>
                         <li><a href="#faq6">I have a 2+ sample kit, and would like to collect and send them in at different times..</a></li>
                         <li><a href="#faq7">What are the forms you talk about on the sampling instructions?</a></li>
+                        <li><a href="#faq8">How can I get the raw data?</a></li>
                         </ul>
                         <br>
                         <div class="separator"></div>
@@ -156,6 +157,18 @@
                         <h3 class="faq_header" id="faq7">What are the forms you talk about on the sampling instructions?</h3>
                         <div class="faq_content">
                         <p>The instruction on the sampling instructions that requires you to "place your forms and the sample tube in preaddressed envelope" is leftover from a previous version of the sampling instructions. There are no forms for you to include inside the envelope with your sample. If you are shipping internationally, please visit the <a href="international_shipping.psp">International Shipping Instructions</a></p>
+                        </div>
+                        <div class="separator"></div>
+                        <h3 class="faq_header" id="faq8">How can I get the raw data?</h3>
+                        <div class="faq_content">
+                            <p>The raw data can be fetched from the <a href=http://www.ebi.ac.uk/>European Bioinformatics Institute</a>. EBI is part of <a href=http://www.insdc.org/>The International Nucleotide Sequence Database Collaboration</a> and is a public warehouse for sequence data. The deposited American Gut Project accessions so far are:</p>
+                            <ol>
+                                <li style="list-style-type:square"><a href="http://www.ebi.ac.uk/ena/data/view/ERP003819&display=html">ERP003819</a></li>
+                                <li style="list-style-type:square"><a href="http://www.ebi.ac.uk/ena/data/view/ERP003822&display=html">ERP003822</a></li>
+                                <li style="list-style-type:square"><a href="http://www.ebi.ac.uk/ena/data/view/ERP003820&display=html">ERP003820</a></li>
+                                <li style="list-style-type:square"><a href="http://www.ebi.ac.uk/ena/data/view/ERP003821&display=html">ERP003821</a></li>
+                            </ol>
+                            <p>Processed sequence data and open-access descriptions of the bioinformatic processing can be found at our <a href="https://github.com/qiime/American-Gut">Github page</a>.</p>
                         </div>
                     </div>
                 </div>
