@@ -169,6 +169,7 @@
                                 <li style="list-style-type:square"><a href="http://www.ebi.ac.uk/ena/data/view/ERP003821&display=html">ERP003821</a></li>
                             </ol>
                             <p>Processed sequence data and open-access descriptions of the bioinformatic processing can be found at our <a href="https://github.com/qiime/American-Gut">Github repository</a>.</p>
+                            <p>Sequencing of American Gut samples is an on-going project, as are the bioinformatic analyses. These resources will be updated as more information is added and as more open-access descriptions are finalized.</p>
                         </div>
                     </div>
                 </div>
