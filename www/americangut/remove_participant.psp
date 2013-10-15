@@ -9,6 +9,10 @@ participant_name = form['participant_name']
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
 ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
 
+for sample in ag_data_access.getParticipantSamples(ag_login_id,
+    participant_name):
+    ag_data_access.deleteSample(sample['barcode'], ag_login_id)
+
 #req.write(ag_login_id)
 #req.write(participant_name)
 

@@ -7,6 +7,11 @@ if 'animal_name' in form:
     # Clear any old data for this participant
     ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
 
+    # Clear all samples for the participant
+    for sample in ag_data_access.getParticipantSamples(ag_login_id,
+        participant_name):
+        ag_data_access.deleteSample(sample['barcode'], ag_login_id)
+
     # Create the new participant if it doesn't exist (merges)
     ag_data_access.addAGAnimalParticipant(ag_login_id, participant_name)
 

@@ -123,8 +123,19 @@ parent_deceased = form.get('deceased_parent', 'NA')
 consent_text = form.get('consent', 'NA')
 ag_login_id = sess['user_data']['web_app_user_id']
 
+# if this is a survey edit, there will be at least one thing in the form
+# that has the word "default" in it
+if any(['_default' in x for x in form]):
+	is_survey_edit = True
+
 # Clear any old data for this participant
 ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
+
+# Clear samples if this is not a survey edit
+if not is_survey_edit:
+	for sample in ag_data_access.getParticipantSamples(ag_login_id,
+		participant_name):
+		ag_data_access.deleteSample(sample['barcode'], ag_login_id)
 
 # Create the new participant if it doesn't exist (merges)
 ag_data_access.addAGHumanParticipant(ag_login_id, form['participant_name'])
@@ -140,7 +151,6 @@ for f in form:
 	if f.startswith('submit'):
 		continue
 	if f.endswith('_default') or f.endswith('_default[]'):
-		is_survey_edit = True
 		continue
 
 	form_value = form[f].replace("'", "''")
@@ -201,9 +211,9 @@ except:
 
 # default message to display upon redirect to portal
 if is_survey_edit:
-    message+="Survey updated for %s" % participant_name
+	message+="Survey updated for %s" % participant_name
 else:
-    message+=("%s successfully added as a participant! " % participant_name)
+	message+=("%s successfully added as a participant! " % participant_name)
 
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox_string(page='portal.psp', message=message))
