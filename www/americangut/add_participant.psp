@@ -105,8 +105,17 @@ The American Gut Team
 """.format(kit_verification_code, addendum)
 
 # Only email on systems that have email capability:
-if can_send_mail():
-	send_email(body, subject, email)
+try:
+    if can_send_mail():
+        send_email(body, subject, email)
+    else:
+        req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+            message='Mail can only be sent from microbio.me domain.'))
+except:
+    req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+        message="There was a problem sending your email "
+        'Please contact us directly at '
+        '<a href=&quot;mailto:info@americangut.org&quot;>info@americangut.org</a>'))
 
 # Let the user in
 url = 'fusebox.psp?page=portal.psp'
