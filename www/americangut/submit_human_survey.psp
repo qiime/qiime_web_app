@@ -102,10 +102,9 @@ Your participation in this research study is voluntary. Please think about the i
 	If you have questions about your rights as a research study participant, you can call the Institutional Review Board (IRB). The IRB is independent from the research team. You can contact the IRB if you have concerns or complaints that you do not want to talk to the study team about. The IRB phone number is (303) 735-3702.
 """
 
-
 from data_access_connections import data_access_factory
 from enums import *
-from utils.mail import send_email
+from utils.mail import send_email, can_send_mail
 
 from utils.psp_utils import format_submit_form_to_fusebox_string
 
@@ -199,9 +198,12 @@ Deceased Parent: %s
 	participant_guardian_2, parent_deceased, consent_text, AG_CONSENT_TEXT)
 
 try:
-	if not is_survey_edit:
-		send_email(MESSAGE, SUBJECT, participant_email)
-		message+="Consent form successfully sent to: %s.<br/>" % participant_email
+    if not is_survey_edit:
+        if can_send_mail():
+            send_email(MESSAGE, SUBJECT, participant_email)
+            message+="Consent form successfully sent to: %s.<br/>" % participant_email
+        else:
+            message += "Mail can be sent only from microbio.me domain.<br/>"
 except:
 	message+=("There was a problem sending you the consent form. Please contact"
 		" us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
