@@ -9,9 +9,9 @@ __maintainer__ = ["Meg Pirrung"]
 __email__ = "meganap@gmail.com"
 __status__ = "Development"
 
-from utils.mail import send_email
 from smtplib import SMTPException
 
+from utils.mail import send_email, can_send_mail
 from utils.psp_utils import format_submit_form_to_fusebox_string
 # form where users can request for help
 
@@ -33,7 +33,11 @@ if email_address:
         form_dict['email_address'], form_dict['message_body'])
 
     try:
-        send_email(MESSAGE, SUBJECT)
+        if can_send_mail():
+            send_email(MESSAGE, SUBJECT)
+        else:
+            req.write(format_submit_form_to_fusebox_string(page="portal.psp",
+                message='Mail can only be sent from microbio.me domain.'))
     except:
         req.write(format_submit_form_to_fusebox_string(page="portal.psp",
             message="There was a problem sending your email "
