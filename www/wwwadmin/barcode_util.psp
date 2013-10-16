@@ -149,9 +149,11 @@ try:
         <div id="{div_id}" class="verification_color">
            <div class="verification_text_wrapper">
               <br />
-                <h2 class="verification_text">Barcode <br>
-                "{barcode}"
-                <br>{message}</h2>
+               
+                <h2 class="verification_text">
+                 Project type: {proj_type} <br><br>
+                 Barcode: {barcode}<br><br>
+                {message}</h2>
             </div>
         </div>
 
@@ -165,9 +167,6 @@ try:
           <input type="hidden" name="login_email" value="{login_email}" />
           <input type="hidden" name="email_type" value="{email_type}" />
           <ul>
-             <li>
-               Project type: {proj_type}
-             </li>
              <li>
                Sample issues: <br />
                   <input class="checkbox" type="checkbox" name="sample_issue" id="moldy" value="moldy" {moldy_checked}/> 
