@@ -118,6 +118,7 @@ Thank you for your participation!
 try:
     barcode = form['barcode'] #'000002000'
     barcodeinfo = ag_data_access.checkBarcode(barcode)
+    proj_type = data_access.getBarcodeProjType(barcode)
     # req.write(str(barcodeinfo))
     # req.write(str(len(barcodeinfo)))
     # req.write(str(barcodeinfo[18])+"consetn")
@@ -148,9 +149,11 @@ try:
         <div id="{div_id}" class="verification_color">
            <div class="verification_text_wrapper">
               <br />
-                <h2 class="verification_text">Barcode <br>
-                "{barcode}"
-                <br>{message}</h2>
+               
+                <h2 class="verification_text">
+                 Project type: {proj_type} <br><br>
+                 Barcode: {barcode}<br><br>
+                {message}</h2>
             </div>
         </div>
 
@@ -178,6 +181,7 @@ try:
                   <textarea name="other_text" onclick="this.select()">{other_text}</textarea>
              </li>
         '''.format(div_id = div_id,
+                   proj_type = proj_type,
                    barcode = barcode,
                    message = message,
                    moldy = 'NA' if barcodeinfo[3]==None else barcodeinfo[3],

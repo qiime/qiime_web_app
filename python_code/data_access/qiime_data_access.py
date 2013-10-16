@@ -2966,3 +2966,16 @@ class QiimeDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('update_barcode_status', [status, postmark, scan_date, barcode])
+
+    def getBarcodeProjType(self, barcode):
+        """ Get the project type of the barcode.
+            Return a strings of project type.
+        """
+        con = self.getMetadataDatabaseConnection()
+        result = con.cursor()
+        con.cursor().callproc('get_barcode_proj_type', [barcode, result])
+        proj_type = result.fetchall()
+        if proj_type:
+            return proj_type[0][0]
+        else:
+            return "Unknown"
