@@ -102,10 +102,9 @@ Your participation in this research study is voluntary. Please think about the i
 	If you have questions about your rights as a research study participant, you can call the Institutional Review Board (IRB). The IRB is independent from the research team. You can contact the IRB if you have concerns or complaints that you do not want to talk to the study team about. The IRB phone number is (303) 735-3702.
 """
 
-
 from data_access_connections import data_access_factory
 from enums import *
-from utils.mail import send_email
+from utils.mail import send_email, can_send_mail
 
 from utils.psp_utils import format_submit_form_to_fusebox_string
 
@@ -124,8 +123,19 @@ parent_deceased = form.get('deceased_parent', 'NA')
 consent_text = form.get('consent', 'NA')
 ag_login_id = sess['user_data']['web_app_user_id']
 
+# if this is a survey edit, there will be at least one thing in the form
+# that has the word "default" in it
+if any(['_default' in x for x in form]):
+	is_survey_edit = True
+
 # Clear any old data for this participant
 ag_data_access.deleteAGParticipant(ag_login_id, participant_name)
+
+# Clear samples if this is not a survey edit
+if not is_survey_edit:
+	for sample in ag_data_access.getParticipantSamples(ag_login_id,
+		participant_name):
+		ag_data_access.deleteSample(sample['barcode'], ag_login_id)
 
 # Create the new participant if it doesn't exist (merges)
 ag_data_access.addAGHumanParticipant(ag_login_id, form['participant_name'])
@@ -141,7 +151,6 @@ for f in form:
 	if f.startswith('submit'):
 		continue
 	if f.endswith('_default') or f.endswith('_default[]'):
-		is_survey_edit = True
 		continue
 
 	form_value = form[f].replace("'", "''")
@@ -190,8 +199,11 @@ Deceased Parent: %s
 
 try:
     if not is_survey_edit:
-        send_email(MESSAGE, SUBJECT, participant_email)
-        message+="Consent form successfully sent to: %s.<br/>" % participant_email
+        if can_send_mail():
+            send_email(MESSAGE, SUBJECT, participant_email)
+            message+="Consent form successfully sent to: %s.<br/>" % participant_email
+        else:
+            message += "Mail can be sent only from microbio.me domain.<br/>"
 except:
 	message+=("There was a problem sending you the consent form. Please contact"
 		" us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
@@ -199,9 +211,9 @@ except:
 
 # default message to display upon redirect to portal
 if is_survey_edit:
-    message+="Survey updated for %s" % participant_name
+	message+="Survey updated for %s" % participant_name
 else:
-    message+=("%s successfully added as a participant! " % participant_name)
+	message+=("%s successfully added as a participant! " % participant_name)
 
 # Assuming nothing exploded... back to the portal
 req.write(format_submit_form_to_fusebox_string(page='portal.psp', message=message))
