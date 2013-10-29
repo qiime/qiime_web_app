@@ -276,6 +276,18 @@ ul.workflow_menu li.selected {
 	border-bottom: 1px solid #fff;
 }
 
+ul.workflow_menu li.disabled {
+	opacity: .5;
+}
+
+ul.workflow_menu li.disabled a {
+	cursor: default;
+}
+
+ul.workflow_menu li.disabled:hover {
+	background-color: #ddd;
+}
+
 ul.workflow_menu li a{ 
 	color: #000;
 	height: 120px;
