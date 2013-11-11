@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>American Gut Project</title>
+        <title>American Gut Project FAQ</title>
         <script src="js/jquery-1.9.1.js"></script>
         <script src="js/jquery-ui-1.10.1.custom.min.js"></script>
         <script src="js/jquery.ui.timepicker.js"></script>
@@ -40,6 +40,21 @@
                         <br>
                         <h3>If you're still experiencing issues, look for your problem in the FAQ below</h3>
                         <ul class="faq">
+                        <li><a href="#faq10">I'm different than other people in my category. Does that mean something is wrong with me?</a></li>
+                        <li><a href="#faq11">How can I tell if my gut microbiome is better or worse than other people in my category?</a></li>
+                        <li><a href="#faq12">I sent in a non-fecal sample and have not received any results, when should I expect results?</a></li>
+                        <li><a href="#faq13">I sent more than one kind of sample, but I only received data for my fecal sample. What happened to my other samples?</a></li>
+                        <li><a href="#faq14">My whole family participated, can we combine the results somehow?</a></li>
+                        <li><a href="#faq15">I sent in a fecal sample but did not get any results, what happened to them?</a></li>
+                        <li><a href="#faq16">Can data describing my gut microbiome be used to identify me or a medical condition I have?</a></li>
+                        <li><a href="#faq17">Where can I find more detailed information about my sample?</a></li>
+                        <li><a href="#faq18">Who is Michael Pollan?</a></li>
+                        <li><a href="#faq19">How can I change my gut microbiome?</a></li>
+                        <li><a href="#faq20">Can I get another copy of my results?</a></li>
+                        <li><a href="#faq21">Why am I asked for a seven-day food diary?</a></li>
+                        <li><a href="#faq22">How do I convert grams of macronutrients into percentage of calories?</a></li>
+                        <li><a href="#faq23">Can I participate in the project if I am diagnosed with ...?</a></li>
+                        <li><a href="#faq24">What are missing metadata?</a></li>
                         <li><a href="#faq0">American Gut 101</a></li>
                         <li><a href="#faq1">Is my password the same as my verification code?</a></li>
                         <li><a href="#faq2">My password doesn't work!</a></li>
@@ -54,6 +69,98 @@
                         <br>
                         <div class="separator"></div>
                         <br>
+                        <h3 class="faq_header" id="faq10">I'm different than other people in my category. Does that mean something is wrong with me?</h3>
+                        <div class="faq_content">
+                            <p>No! Your gut microbiome is as unique as your fingerprint so you should expect to see some differences. Many factors can affect your gut microbiome, and any differences you see are likely to be the result of one of these factors. Maybe your diet is different than most people your age. Maybe you just traveled somewhere exotic. Different does not necessarily mean bad.</p>
+                        </div>
+                        <div class="separator"></div>
+
+
+                        <h3 class="faq_header" id="faq11">How can I tell if my gut microbiome is better or worse than other people in my category?</h3>
+                        <div class="faq_content">
+                            <p>Right now, you can’t. We’re still trying to understand what constitutes a normal or average gut microbiome, and we have a lot to learn about the functions of many of the microbes that inhabit the gut. Therefore, it’s tough to know what combinations of microbes are best for nutrition and health. That’s one reason collecting data from so many people is important—hopefully we can start to learn more about this.</p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq12">I sent in a non-fecal sample and have not received any results, when should I expect results?</h3>
+                        <div class="faq_content">
+                            <p>The vast majority of the samples we’ve received are fecal, which was why we prioritized those samples. Much of the analysis and results infrastructure we’ve put in place is applicable to other sample types, but we do still need to assess what specific representations of the data make the most sense to return to participants. We apologize for the delay. Our tentative goal for skin and oral samples is January 1st, 2014, and environmental samples sometime during the first quarter of 2014. </p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq13">I sent more than one kind of sample, but I only received data for my fecal sample. What happened to my other samples?</h3>
+                        <div class="faq_content">
+                            <p>We have only sent out results for fecal samples and are in the process of evaluating how best to present the other sample types. Please see <a href="#faq12">the previous question </a></p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq14">My whole family participated, can we combine the results somehow?</h3>
+                        <div class="faq_content">
+                            <p>We're still evaluating how best to present the data for samples that represent a family.</p>
+                        </div>
+                        <div class="separator"></div>
+ 
+                        <h3 class="faq_header" id="faq15">I sent in a fecal sample but did not get any results, what happened to them?</h3>
+                        <div class="faq_content">
+                            <p>On any given sequencing run (not just the American Gut), a small percentage of the samples fail for unknown reasons -- our methods are good but not perfect. This is one of the reasons the sample kits have two Q-tips. It allows us to perform a second microbial DNA extraction and re-sequence if the first attempt failed. We will be doing this for all of the samples that failed. If there was a technical problem with the sample itself (e.g. not enough microbes on the swab) that inhibits us from producing data for you, we will be re-contacting you about collecting another sample.</p>
+                        </div>
+                        <div class="separator"></div>
+ 
+                        <h3 class="faq_header" id="faq16">Can data describing my gut microbiome be used to identify me or a medical condition I have?</h3>
+                        <div class="faq_content">
+                            <p>No. First, all of your personal information has been de-identified in our database as mandated by institutional guidelines. Second, although each person has a unique gut microbiome, many of the unique qualities are at the species or strain level of bacteria. Our sequencing methods currently do not allow us to describe your gut microbiome in that much detail. Finally, for most medical conditions, there are no known, predictable patterns in gut microbial community composition. Research simply hasn’t gotten that far yet.</p>
+                            <p>We should also mention that since we are only interested in your microbes, we do not sequence human genomic DNA in our typical analyses. Where it is possible for human DNA to be sequenced (e.g., the Beyond Bacteria kits), we remove the human DNA using the same bioinformatics approaches undertaken in the NIH-funded Human Microbiome Project and approved by NIH bioethicists. Additionally, there is so little human DNA in fecal, skin and mucus samples that the chances of us being able to sequence your entire human genome are almost none, even if we tried. </p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq17">Where can I find more detailed information about my sample?</h3>
+                        <div class="faq_content">
+                            <p>You can find it on our website. Log in with your account name and password to download the full dataset.</p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq18">Who is Michael Pollan?</h3>
+                        <div class="faq_content">
+                            <p>Michael Pollan is a New York Times Best Seller for his books on diet and nutrition. Further information about Michael can be found <a href="http://michaelpollan.com/">here</a>. </p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq19">How can I change my gut microbiome?</h3>
+                        <div class="faq_content">
+                            <p>Although we still don’t have a predictable way to change the gut microbiome in terms of increasing or decreasing the abundances of specific bacteria, we do know that a variety of factors influence gut microbial community composition. Diet is a major factor affecting the gut microbiome so by changing your diet, you may be able to affect your gut microbiome. We still don’t fully understand probiotics but know that they can influence your gut microbiome while you are actively taking them. Factors such as stress can also influence the gut microbiome. However, it is important to remember that there are factors we can’t change, such as age or genetics, that can affect the gut microbiome.</p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq20">Can I get another copy of my results?</h3>
+                        <div class="faq_content">
+                            <p>You can download a copy from our website. Log in with your account name and password.</p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq21">Why am I asked for a seven-day food diary?</h3>
+                        <div class="faq_content">
+                            <p>Diet is a major factor affecting the gut microbiome since our gut microbes eat the food we don’t digest. Having diet information will allow us to look for patterns in gut microbiome composition across populations of people with different diets.</p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq22">How do I convert grams of macronutrients into percentage of calories?</h3>
+                        <div class="faq_content">
+                            <p>Once you determine how many grams of protein, carbohydrates and lipids you have consumed each day, multiply the grams of protein and the grams of carbohydrates by 4 each (since there are 4 calories in every gram of protein and carbohydrate) and multiply the grams of lipids by 9 (since there are 9 calories in every gram of lipids). Add all of these numbers together to determine the total number of calories you consumed. Divide protein calories by the total calories to determine the percentage of calories consumed as protein. Repeat for carbohydrates and lipids.</p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq23">Can I participate in the project if I am diagnosed with ….?</h3>
+                        <div class="faq_content">
+                            <p>Of course! The only exclusion criteria are: you must be more than 6 weeks old and cannot be a convicted felon. Please keep in mind that, for legal and ethical reasons, the American Gut Project does not provide medically actionable results or advice.</p>
+                        </div>
+                        <div class="separator"></div>
+
+                        <h3 class="faq_header" id="faq24">What are missing metadata?</h3>
+                        <div class="faq_content">
+                            <p>Metadata are information describing your age, gender, diet, etc. Missing metadata mean that this person did not provide us with this information.</p>
+                        </div>
+                        <div class="separator"></div>
+
                         <h3 class="faq_header" id="faq0">American Gut 101</h3>
                         <div class="faq_content">
                         <p><a href='http://www.robrdunn.com'>Rob Dunn</a> has provided this excellent introduction to some of the basics that every curious reader should check out!<br/>&nbsp;<br/>Rob is the author of the <a href="http://www.yourwildlife.org/the-wild-life-of-our-bodies/">Wild Life of Our Bodies</a>. He is an evolutionary biologist and writer at North Carolina State University. For more about your gut and all of your other parts, read more from Rob at <a href="http://www.robrdunn.com">www.robrdunn.com</a></p>
