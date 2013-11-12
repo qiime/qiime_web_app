@@ -53,9 +53,11 @@ for barcode in barcodes:
 
 <%
 if 'barcode' in form:
-	sites_sampled = (['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead']) 
-	environments_sampled = (['Animal Habitat', 'Biofilm', 'Dust', 'Food', 'Fermented Food', 
-		'Indoor Surface', 'Outdoor Surface', 'Plant habitat', 'Soil'])
+	sites_sampled = (['Stool', 'Mouth', 'Right hand', 'Left hand', 'Forehead',
+        'Nares', 'Hair', 'Tears', 'Nasal mucus', 'Ear wax', 'Vaginal mucus']) 
+	environments_sampled = (['Animal Habitat', 'Biofilm', 'Dust', 'Food',
+        'Fermented Food', 'Indoor Surface', 'Outdoor Surface',
+        'Plant habitat', 'Soil', 'Sole of shoe'])
 
 
 
