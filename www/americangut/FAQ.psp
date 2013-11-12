@@ -61,7 +61,7 @@
                         <li><a href="#faq18">Who is Michael Pollan?</a></li>
                         <li><a href="#faq19">How can I change my gut microbiome?</a></li>
                         <li><a href="#faq20">Can I get another copy of my results?</a></li>
-                        <li><a href="#faq21">Why am I asked for a seven-day food diary?</a></li>
+                        <li><a href="#faq21">Why am I asked for a seven-day food diary? Do I really need to fill the survey?</a></li>
                         <li><a href="#faq22">How do I convert grams of macronutrients into percentage of calories?</a></li>
                         <li><a href="#faq23">Can I participate in the project if I am diagnosed with ...?</a></li>
                         <li><a href="#faq24">What are missing metadata?</a></li>
@@ -245,7 +245,7 @@
 
                         <h3 class="faq_header" id="faq17">Where can I find more detailed information about my sample?</h3>
                         <div class="faq_content">
-                            <p>You can find it on our website. Log in with your account name and password to download the full dataset.</p>
+                            <p>You can find the raw data from European Bioinformatics Institute (please see <a href="#faq8">here</a>) or download the copy of your result from our website (please see <a href="#faq20">here</a>).</p>
                         </div>
                         <div class="separator"></div>
 
@@ -263,13 +263,13 @@
 
                         <h3 class="faq_header" id="faq20">Can I get another copy of my results?</h3>
                         <div class="faq_content">
-                            <p>You can download a copy from our website. Log in with your account name and password.</p>
+                            <p>You can download a copy from our website. Log in with your account name and password, go to the left side bar, move your mouse to Human Samples -> PARTICIPANT NAME -> SAMPLE NUMBER, and then click on SAMPLE NUMBER.pdf to download it.</p>
                         </div>
                         <div class="separator"></div>
 
-                        <h3 class="faq_header" id="faq21">Why am I asked for a seven-day food diary?</h3>
+                        <h3 class="faq_header" id="faq21">Why am I asked for a seven-day food diary? Do I really need to fill the survey?</h3>
                         <div class="faq_content">
-                            <p>Diet is a major factor affecting the gut microbiome since our gut microbes eat the food we don’t digest. Having diet information will allow us to look for patterns in gut microbiome composition across populations of people with different diets.</p>
+                            <p>In fact, responses to all questions on the survey, including the dietary questions, are strictly voluntary. Technically you are not required to provide all those information, but it is <em>highly recommended</em>. Having the information will help us make possible connections from your life styles to your microbe living on/within you and hopefully figure out how that can impact your health. Particularly, we know diet is a major factor affecting the gut microbiome since our gut microbes eat the food we don’t digest. Having diet information will allow us to look for patterns in gut microbiome composition across populations of people with different diets. </p>
                         </div>
                         <div class="separator"></div>
 
