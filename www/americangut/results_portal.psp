@@ -5,6 +5,40 @@ Once you have added a <a href="#" onclick="selectTab('source')">sample source, c
 <p class="portal_blurb">
 Sequencing and data analysis can take up to 6 months, please be patient! We will let you know as soon as your samples have been sequenced and analyzed.
 </p>
+<%
+sample_link_template = \
+"""
+    <li>
+    <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">
+            <form action="fusebox.psp" method="post" id="sample_overview_{0}">
+                <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
+                <input type="hidden" name="barcode" id="barcode" value="{0}"/>
+            </form>
+            {0}
+        </a>
+    </li>
+"""
+if has_results:
+    #INDENT
+%>
+<p class="portal_blurb">
+<h2><font color="red">Your results are ready!</font></h2>
+Hover over "Human Samples" in the menu on the left, hover over your name, then click on your sample to view your results. The following barcodes are ready:
+<ul>
+<%
+    for barcode in has_results:
+        req.write(sample_link_template.format(barcode))
+    #ENDIF
+%>
+</ul>
+</p>
+<%
+else:
+    #INDENT
+%>
 <p class="portal_blurb">
 You will be able to view your results here on this website once they are available.
 </p>
+<%
+#ENDIF
+%>
