@@ -7,6 +7,9 @@ __version__ = "1.0.0.dev"
 __maintainer__ = ["Meg Pirrung"]
 __email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
 __status__ = "Development"
+
+from os.path import join
+from os import listdir
 %>
 
 <div id="content" class="content">
@@ -28,6 +31,16 @@ if message:
 supplied_kit_id = sess['supplied_kit_id']
 query = ("select kit_verification_code, kit_verified from ag_kit "
          "where supplied_kit_id = '%s'" % supplied_kit_id)
+
+user_barcodes = ag_data_access.getAGBarcodesByLogin(
+    user_data['web_app_user_id'])
+
+user_barcode_files = set([x[3] for x in user_barcodes])
+filesystem_directory = join(ServerConfig.home, 'git', 'qiime_web_app', 'www',
+    'americangut', 'img', 'results')
+filesystem_files = listdir(filesystem_directory)
+filesystem_files = set([x.replace('.pdf', '') for x in filesystem_files])
+has_results = user_barcode_files.intersection(filesystem_files)
 
 verification_textbox_class = ""
 db_code, kit_verified = ag_data_access.dynamicMetadataSelect(query).fetchone()
@@ -67,9 +80,14 @@ user_verification_code = form.get('email_verification_code', None)
 </div>
 <%
 if kit_verified == 'y':
-    #
+    #INDENT
 %>
 <script>selectTab('source')</script>
+<%
+if has_results:
+    #INDENT
+%>
+<script>selectTab('results')</script>
 <%
 #endif
 %>
