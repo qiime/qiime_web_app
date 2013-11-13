@@ -35,6 +35,8 @@ query = ("select kit_verification_code, kit_verified from ag_kit "
 user_barcodes = ag_data_access.getAGBarcodesByLogin(
     user_data['web_app_user_id'])
 
+barcodes_to_names = {x[3]:x[8] for x in user_barcodes}
+
 user_barcode_files = set([x[3] for x in user_barcodes])
 filesystem_directory = join(ServerConfig.home, 'git', 'qiime_web_app', 'www',
     'americangut', 'img', 'results')

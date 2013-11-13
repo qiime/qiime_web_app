@@ -14,7 +14,7 @@ sample_link_template = \
                 <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
                 <input type="hidden" name="barcode" id="barcode" value="{0}"/>
             </form>
-            {0}
+            {0} ({1})
         </a>
     </li>
 """
@@ -30,7 +30,8 @@ To access your available results, hover over "Human Samples" in the menu on the 
 <ul>
 <%
     for barcode in has_results:
-        req.write(sample_link_template.format(barcode))
+        req.write(sample_link_template.format(barcode,
+            barcodes_to_names[barcode]))
     #ENDIF
 %>
 </ul>
