@@ -37,8 +37,7 @@ user_barcodes = ag_data_access.getAGBarcodesByLogin(
 
 # dict comprehension cannot be used on live because live uses python 2.6
 #barcodes_to_names = {x[3]:x[8] for x in user_barcodes}
-barcodes_to_names = dict(zip([x[3] for x in user_barcodes],
-    [x[8] for x in user_barcodes]))
+barcodes_to_names = dict([(x[3], x[8]) for x in user_barcodes])
 
 user_barcode_files = set([x[3] for x in user_barcodes])
 filesystem_directory = join(ServerConfig.home, 'git', 'qiime_web_app', 'www',
