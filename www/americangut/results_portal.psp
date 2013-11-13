@@ -21,9 +21,12 @@ sample_link_template = \
 if has_results:
     #INDENT
 %>
-<p class="portal_blurb">
 <h2><font color="red">Your results are ready!</font></h2>
-Hover over "Human Samples" in the menu on the left, hover over your name, then click on your sample to view your results. The following barcodes are ready:
+<p class="portal_blurb">
+One or more of the samples you submitted have been sequenced, and the results are now available online! We will be mailing hardcopies of these results shortly. Currently, we have only processed fecal samples, but we will be processing samples from other body sites soon.
+</p>
+<p class="portal_blurb">
+To access your available results, hover over "Human Samples" in the menu on the left, hover over your name, then click on your sample to view your results, or click one of the links below. The following barcodes are ready:
 <ul>
 <%
     for barcode in has_results:
