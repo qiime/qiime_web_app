@@ -8,7 +8,7 @@ __maintainer__ = ["Meg Pirrung"]
 __email__ = "meganap@gmail.com <mailto:meganap@gmail.com>"
 __status__ = "Development"
 
-from os.path import join
+from os.path import join, splitext
 from os import listdir
 %>
 
@@ -39,7 +39,7 @@ user_barcode_files = set([x[3] for x in user_barcodes])
 filesystem_directory = join(ServerConfig.home, 'git', 'qiime_web_app', 'www',
     'americangut', 'img', 'results')
 filesystem_files = listdir(filesystem_directory)
-filesystem_files = set([x.replace('.pdf', '') for x in filesystem_files])
+filesystem_files = set([splitext(x)[0] for x in filesystem_files])
 has_results = user_barcode_files.intersection(filesystem_files)
 
 verification_textbox_class = ""
