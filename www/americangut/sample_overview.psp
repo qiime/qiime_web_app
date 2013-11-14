@@ -1,5 +1,7 @@
 <%
 
+from os.path import exists, join
+
 # Define some variables
 ag_login_id = sess['user_data']['web_app_user_id']
 barcode = form['barcode']
@@ -22,6 +24,16 @@ notes = sample_data[4]
 status = sample_data[5]
 bgcolor = '#FFF'
 header_text = 'Sample {0}'.format(barcode)
+
+# determines whether or not to display link to results pdf
+if exists(join(ServerConfig.home, 'git', 'qiime_web_app', 'www', 'americangut',
+    'img', 'results', '%s.pdf' % barcode)):
+    results_link_text = ('<a href="img/results/{0}.pdf" '
+            'title="Click this link to visualize sample {0} in the context '
+            'of other microbiomes!">{0}.pdf</a>'.format(barcode))
+else:
+    results_link_text = ('This sample has not yet been processed. '
+        'Please check back later.')
 
 if notes == None:
     notes = ''
@@ -53,6 +65,10 @@ remove_sample_item = \
 <div class="overview_wrapper">
     <div class="overview">
             <table class="list" id="survey" style="background:<%=bgcolor%>; text-align:right">
+                <tr>
+                    <td>Data Visualization</td>
+                    <td><%=results_link_text%></td>
+                </tr>
                 <tr>
                     <td style="width: 150px;">Sample Status</td>
                     <td><%=status%></td>
