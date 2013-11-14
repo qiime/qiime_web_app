@@ -25,6 +25,11 @@ human_participants = ag_data_access.getHumanParticipants(ag_login_id)
 animal_participants = ag_data_access.getAnimalParticipants(ag_login_id)
 available_barcodes = ag_data_access.getAvailableBarcodes(ag_login_id)
 
+supplied_kit_id = sess['supplied_kit_id']
+query = ("select kit_verification_code, kit_verified from ag_kit "
+         "where supplied_kit_id = '%s'" % supplied_kit_id)
+db_code, kit_verified = ag_data_access.dynamicMetadataSelect(query).fetchone()
+
 human_participant_menu_item_template = \
 """
     <li class="has-sub">
@@ -137,8 +142,14 @@ for p in human_participants:
     req.write('</ul></li>\n\n')
 
 # End for
+
+if kit_verified == 'y':
+    #
 %>
                 <li><a href="fusebox.psp?page=new_participant_overview.psp"><span><strong>Add Human Source...</strong></span></a></li>
+<%
+#endif
+%>
             </ul>
         </li>
             <!-- end list of participants-->
@@ -176,8 +187,13 @@ for p in animal_participants:
     req.write('</ul></li>\n\n')
 
 # End for
+if kit_verified == 'y':
+    #
 %>
                     <li><a href="fusebox.psp?page=animal_survey.psp"><span><strong>Add Animal Source...</strong></span></a></li>
+<%
+#endif
+%>
                 </ul></li> <!-- end list of animal participants -->
 
 
