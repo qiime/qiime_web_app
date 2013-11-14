@@ -32,8 +32,8 @@ supplied_kit_id = sess['supplied_kit_id']
 query = ("select kit_verification_code, kit_verified from ag_kit "
          "where supplied_kit_id = '%s'" % supplied_kit_id)
 
-user_barcodes = ag_data_access.getAGBarcodesByLogin(
-    user_data['web_app_user_id'])
+user_barcodes = [x for x in ag_data_access.getAGBarcodesByLogin(
+    user_data['web_app_user_id']) if x[8] != None]
 
 # dict comprehension cannot be used on live because live uses python 2.6
 #barcodes_to_names = {x[3]:x[8] for x in user_barcodes}
