@@ -15,6 +15,7 @@ _status_ = "Development"
         <li class="active"><a href="fusebox.psp?page=portal.psp"><span>Home</span></a></li>
         <li><a href="FAQ.psp#faq0" target="_blank"><span>American Gut 101</span></a></li>
         <li><a href="http://goo.gl/Jdh1cZ" target="_blank"><span>Preliminary Results!</span></a></li>
+        <li><a href="addendum.psp" target="_blank"><span>The American Gut Addendum</span></a></li>
         <li><a href="fusebox.psp?page=change_password.psp"><span>Change Password</span></a></li>
         <li class="has-sub"><a><span>Human Samples</span></a>
             <ul> <!-- list of participants-->
