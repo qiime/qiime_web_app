@@ -1,0 +1,339 @@
+<!-- Based on the same format as FAQ.psp -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut Addendum</title>
+        <script src="js/jquery-1.9.1.js"></script>
+        <script src="js/jquery-ui-1.10.1.custom.min.js"></script>
+        <script src="js/jquery.ui.timepicker.js"></script>
+        <script src="js/american_gut.js"></script>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+        <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
+        <link rel="icon" type="image/ico" href="img/favicon.ico">
+    </head>
+    <body>
+        <div class="wrapper clearfix">
+            <div class="header clearfix">
+                <img id="logo" src="img/ag_logo.jpg">
+            </div>
+            <br>
+            <div class="left menuwrapper">
+                <ul class="menu">
+                <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
+                <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
+                <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Participant Login</a></li>
+                </ul>
+            </div>
+            <div class="content">
+                <div class="faq_wrapper">
+                    <div class="faq">
+                        <div id = 'text' align="justify">
+                            <a name = "top"><h1>American Gut Addendum</h1></a>
+                            <p>First, we&apos;d like to note that in general these data allow you to understand how similar or different you are to other people in terms of the bacterial composition of the sample you sent. The information about the microbes is at as fine level of a taxonomic resolution as we were able to achieve with our sequencing methods, and varies for different groups of microbes. Currently, we cannot tell you what it means if you have more or less of a certain bacteria than other people. Gut microbiome research is still new, and we have a lot to learn. Your participation in the American Gut Project will allow us to learn more, and we hope to update you with new findings as they emerge.</p>
+
+                            <a name = "Taxonomy"><h3>Taxonomy</h3></a>
+                            <p>Taxonomy is a system scientists use to describe all life on the planet. Taxonomy is commonly referred to as an organism&apos;s scientific name. This name allows us to understand how closely related two organisms are to each other. There are seven major levels of taxonomy that go from less specific to more specific. The phylum level represents very broad range of organisms that have <strong>evolved over hundreds of millions of years</strong> whereas the species level represents only a small subset of them that are <strong>much more closely related</strong>. Typically, names at the genus and species levels are written in <em>italics</em> or are <u>underlined</u> (in our tables, they are <em>italicized</em>). For instance, here is the list of taxonomic levels and names for humans and chimpanzees:</p>
+
+                            <h5>Human</h5>
+                            <ul>
+                                <li>Kingdom: Animalia</li>
+                                <li>Phylum: Chordata</li>
+                                <li>Class: Mammalia</li>
+                                <li>Order: Primates</li>
+                                <li>Family: Hominidae</li>
+                                <li>Genus: <em>Homo</em></li>
+                                <li>Species: <em>sapiens</em></li>
+                            </ul>
+                            <h5>Chimpanzee</h5>
+                            <ul>
+                                <li>Kingdom: Animalia</li>
+                                <li>Phylum: Chordata</li>
+                                <li>Class: Mammalia</li>
+                                <li>Order: Primates</li>
+                                <li>Family: Hominidae</li>
+                                <li>Genus: <em>Pan</em></li>
+                                <li>Species: <em>troglodyte</em></li>
+                            </ul>
+
+                        <p>Here is the same list for a common yogurt bacterium (<em>Lactobacillus delbrueckii</em>):</p>
+                        <ul>
+                            <li>Kingdom: Bacteria</li>
+                            <li>Phylum: Firmicutes</li>
+                            <li>Class: Bacilli</li>
+                            <li>Order: Lactobacillales</li>
+                            <li>Family: Lactobacillaceae</li>
+                            <li>Genus: <em>Lactobacillus</em></li>
+                            <li>Species: <em>delbrueckii</em></li>
+                        </ul>
+                        <p> For more information on bacterial taxonomy, please refer to the following link: <a href = "http://en.wikipedia.org/wiki/Bacterial_taxonomy"> http://en.wikipedia.org/wiki/Bacterial_taxonomy</a></p>
+                            
+                        <a name = "taxcharts"><h2>What&apos;s in your American Gut sample?</h2></a>
+                        <h3>Taxonomy Bar Chart</h3>
+                        <img src = 'img/TaxFig.png'
+                             alt = 'Taxonomy Bar Chart'/>
+                        <p>The taxonomy bar chart shows the abundances of bacterial types at the phylum level in your sample and compares it to other samples. Specifically, it shows you what percentage of all your bacteria belonged to each phyla. We also calculated the average percentage of each bacterial phyla across all samples, across samples from people with a similar diet to the one you reported, across samples from people of the same gender as you, across samples from everyone with a similar BMI to you, across samples from everyone with the same age as you, and for one specific person, Michael Pollan. You can compare the percentage of bacterial phyla in your sample (first bar) to all of these values to get an idea of how similar or different you are.</p>
+                        <p><strong>Firmicutes and Bacteroidetes are the two most abundant bacterial phyla in the human gut, but others are also present.</strong> Please see <a href = "#phyla">Major Bacterial Phyla</a> below for basic descriptions of these phyla.</p>
+
+                        <h3>Abundant Microbes</h3>
+                        <!-- Is this better as an image or an HTML encoded table? -->
+                        <!-- <img src = 'filename'
+                             alt = 'Abundant Microbes table'/img> -->
+
+                        <table width = "33%">
+                            <caption>Your most abundant microbes:</caption>
+                            <tr>
+                                <th>Taxonomy</th>
+                                <th>Sample</th>
+                            </tr>   
+                            <tr>
+                                <td class = 'taxa'>Family Prevotella</td>
+                                <td>24.9%</td>
+                            </tr>
+                            <tr>
+                                <td class = 'taxa'>Family Ruminococcaceae</td>
+                                <td>13.4%</td>
+                            </tr>
+                            <tr>
+                                <td class = 'taxa'>Family Lachnospiraceae</td>
+                                <td>10.1%</td>
+                            </tr>
+                            <tr>
+                                <td class = 'taxa'>Genius <em>Bacteroides</em></td>
+                                <td>8.1%</td>
+                            </tr>
+                        </table>
+                        <p>The first table shows the four most abundant groups of microbes in your sample. Although you had other bacteria, these are the ones that you have the most of. The percentages on the right (under &quot;Sample&quot;) tell you what percent of all of your bacteria belong to these taxa.</p>
+
+                        <h3>Enriched Microbes</h3>
+
+                        <!-- <img scr = "None, yet"
+                             alt = "Enriched microbes table">
+                        </img> -->
+                        <h6></h6>
+                        <table frame = 'hsides' width = "50%" caption = "Your most enriched microbes">
+                            <caption>Your most enriched microbes:</caption>
+                            <colgroup> 
+                                <col span = "1" width = "37.5%">
+                            </colgroup>
+                            <tr>
+                                <th>Taxonomy</th>
+                                <th>Sample</th>
+                                <th>Population</th>
+                                <th>Fold</th>
+                            </tr>
+                            <tr>
+                                <td class = 'taxa'>Genius <em>Clostridium</em></td>
+                                <td>2.5%</td>
+                                <td>0.3%</td>
+                                <td>7x</td>
+                            </tr>
+                            <tr>
+                                <td class = 'taxa'>Genius <em>Finegoldia</em></td>
+                                <td>0.7%</td>
+                                <td>0.0%</td>
+                                <td>17x</td>
+                            </tr>
+                            <tr>
+                                <td class = 'taxa'>Genius <em>Clostridium</em></td>
+                                <td>24.9%</td>
+                                <td>2.6%</td>
+                                <td>9x</td>
+                            </tr>
+                            <tr>
+                                <td class = 'taxa'>Genius <em>Clostridium</em></td>
+                                <td>0.9%</td>
+                                <td>0.1%</td>
+                                <td>8x</td>
+                            </tr>
+                        </table>
+
+                        <p> The second table shows four microbes that you had more of compared to other people. It is likely that other participants also have these microbes in their sample, but we found substantially higher abundances of them in your sample relative to others. The percentages on the right tell you how many of your total bacteria (under &quot;Sample&quot;) or of the total bacteria in an average person&amp;s sample (under &quot;Population&quot;) belong to these taxa. Since you have more of these bacteria than most other people, the percentage under &quot;Sample&quot; should be higher than the percentage under &quot;Population&quot;.</p> 
+
+                        <p>The fold change tells you how many more of these bacteria you have than the average participant. For example, if you have 20% Bacteria A and the average person in the population has 10% Bacteria A, you have twice as many Bacteria A. This would be a twofold (2x) difference. Please note that because the percentages we report on this sheet are rounded (e.g., 0.05% rounded to 0.1%), and your fold differences are calculated from values that are not rounded, the fold differences you see may be slightly distinct than what you would calculate based on the numbers you see.</p>
+
+                        <h3>Rare Taxa</h3>
+
+                        <h6>This sample included the following rare taxa: Fenus <em>Varibaculum</em>, Genus <em>Neisseria</em>, Genus <em>Campylobacter</em>, Unclassified Order ML615J-28.</h6>
+
+                        <p>This line shows four microbes that you have that are not commonly found in the type of sample you provided. Some other people may have them, but most people do not.</p>
+
+                        
+                        <a name = "Bdiv"><h2>How do your gut microbes compare to others?</h2></a>
+
+                        <p> Here, we present three Principle Coordinates Plots. Each point on these plots represents the bacterial composition of one sample from one person. We take all of the information about the abundances of all the bacteria in each sample and compare them to each other using this type of plot. When two points are very close to each other, it means that the types of bacteria in those two samples are very similar. Points that are farther apart represent samples that are less similar to each other. The axes mean nothing in this context. It doesn&apos;t matter how high or low a point is on the plot. The only thing that matters is how close it is to other points.</p>
+
+                        <p>The large point represents your sample on each plot. This allows you to see how similar (close to) or different (far from) your sample is from others.</p>
+
+                        <h3>Different Body Sites</h3>
+                        <img src = "img/PCoA1.png"
+                             alt = "PCoA by body site for AGP and HMP"/>
+                        <p>This plot lets you compare your sample to samples collected by two microbiome projects from several body sites. The color of each point tells you which project and body site the sample came from. HMP refers to the <a href = 'http://www.hmpdacc.org'>Human Microbiome Project</a>, funded by the National Institutes of Health. You can see how your sample compared to fecal, oral, and skin samples from the Human Microbiome Project, as well as to fecal, oral, and skin samples from the American Gut Project, the Global Gut Project, and the Personal Genome Project. These samples have been combined in any category not labeled &quot;HMP&quot;. The oval around each group of points shows you where an average sample from each project and body site should fall on the plot. These sometimes make it easier to see the patterns all the clusters of points make.</p>
+
+                        <h3>Different Ages and Populations</h3>
+                        <img src = "img/PCoA2.png"
+                             alt = "PCoA of international populations colored by age"/>
+                        <p>This plot lets you compare your sample to other fecal microbiome samples according to age and place of origin. The color of each point indicates the age of the person the sample was collected from, with red being the youngest and purple being the oldest. Also, on this plot, the ovals show where in the world each sample came from. The red oval shows you the area where an average sample from a Western country should fall. The yellow oval shows you where an average sample from an Amerindian population in Venezuela should fall. The blue oval shows you where an average sample from Malawi should fall. These data are from <a href = 'http://www.nature.com/nature/journal/v486/n7402/abs/nature11053.html'>Yatsunenko et al. 2012</a>. We used these populations as a comparison to your sample since a large number of people with diverse ages were sampled in these populations. We have fewer data from other populations in other parts of the world.</p>
+
+                        <h3>The American Gut Population</h3>
+                        <img src = "img/PCoA3.png"
+                             alt = "PCoA of American Gut population colored by Firmicutes"/>
+                        <p>This plot lets you compare you sample to other fecal microbiome samples we collected from American Gut participants. The color indicates the relative abundance of Firmicutes bacteria each sample had with red being the lowest and purple being the highest. If you had a lot of Firmicutes bacteria, then your sample should be purple, and you can look for other purple samples to see how similar your whole bacterial community is to other people with high amounts of Firmicutes. As in the other plots, the location of the point along the axes means nothing. Only its relative position compared to the other points is meaningful.</p>
+                        
+                        <a = "phyla"><h2>Major Bacterial Phyla</h2></a>
+                        <h4>Firmicutes</h4>
+                        <p>A phylum of bacteria with generally Gram-positive (retain crystal violet dye) staining cell wall structure. The names is derived from Latin <em>firmus</em> for strong and <em>cutis</em> for skin. The cells are in the form of spheres called cocci (singular coccus) or rods called bacilli (singular bacillus). Firmicutes encompass bacteria that can be found in many different environments ranging from soil to wine to your gut. There are currently more than 274 genera representing 7 different classes of which Clostridia (anaerobes - no oxygen) and Bacilli (obligate or facultative aerobes) are the most significant. Both classes are predominantly saprophytic (getting nourishment from dead or decaying organic matter) playing an important role in the decomposition and nutrient mineralization processes, but also contain a few human pathogens (e.g. <em>Costridium tetani</em> or <em>Bacillus anthracis</em>).</p>
+
+                        <h4>Bacteroidetes</h4>
+                        <p>A phylum of Gram-negative bacteria, rod-shaped, present in all sorts of environments such as soil, sediments, and fresh and marine waters. Most are saprophytic and involved in carbon cycling. Often abundant in nutrient-rich habitats and so they are a major component of animal guts where they can act as degraders of complex carbohydrates and proteins but also as pathogens. Their representatives are organized within 4 major classes among which the genus <em>Bacteroides</em> in the class of Bacteroidia is the most prevalent and the most studied. Bacteroidetes together with Firmicutes make up the majority of gut bacteria. The ratio of these two types of bacteria (specifically the dominance of Firmicutes over Bacteroidetes) may be linked to obesity.</p>
+
+                        <h4>Proteobacteria</h4>
+                        <p>A phylum of Gram-negative bacteria. They are named after a Greek God Proteus to illustrate their variety of forms. They are organized in 6 recognized classes and represent all types of metabolisms ranging from heterotrophic to photosynthetic to chemoautotrophic.  They include many well-known pathogens (e.g., <em>Escherichia</em>, <em>Helicobacter</em>, <em>Salmonella</em>, <em>Vibrio</em>) as well as free-living types that can fix nitrogen (convert nitrogen present in the atmosphere into ammonia, a form of nitrogen available for plants&apos; uptake).</p>
+
+                        <h4>Actinobacteria</h4>
+                        <p>A phylum of Gram-positive bacteria both terrestrial and aquatic. They are mostly recognized as excellent decomposers of resilient organic compounds such as cellulose or chitin. Although some can be plant and animal pathogens, others are more known as producers of antibiotics (e.g. Streptomyces).  In their body form, many resemble fungi by forming mycelial-like filaments.</p>
+
+                        <h4>Verrucomicrobia</h4>
+                        <p>A relatively new phylum with only a handful of described species. Although not the most abundant, they seem to be always present in soil, aquatic environments, and feces. Most likely they are involved in the decomposition of organic matter, with no known pathogens. While some may be autotrophs, others can be internal symbionts of microscopic eukaryotes such as protists or nematodes. Their name is derived from a wart-like appearance (<em>verruca</em> means wart) but they do not cause warts.</p>
+
+                        <h4>Tenericutes</h4>
+                        <p>A phylum of Gram-negative bacteria without a cell wall (<em>tener</em> - soft, <em>cutis</em> - skin) which are Organized in a single class. Nutritionally, they represent variable pathways ranging from aerobic and anaerobic fermenters to commensals to strict pathogens of vertebrates (e.g., fish, cattle, wildlife). Among the best studied are Mycoplasmas with a fried egg-like shape and <em>Mycoplasma pneumoniae</em> is one of the best known examples of human pathogens causing pneumonia, bronchitis, and other respiratory conditions.</p>
+
+                        <h4>Cyanobacteria</h4>
+                        <p>A phylum of photosynthetic (plant-like) bacteria. The name comes from their blue pigment (in Greek <em>kyanos</em> - blue). They can grow as single cells or form filamentous colonies. They are extremely successful in every imaginable environment including places where other organisms are extremely limited like hot springs or cold Antarctic bare rocks. Through their incredible diversity and abundance, they contribute significantly to the global cycle of oxygen.</p>
+
+                        <h4>Fusobacteria</h4>
+                        <p>A phylum of rod-shaped Gram-negative bacteria. Known primarily as fermentative species but some can be pathogens. Can occur in anoxic (no oxygen) sediments as well as intestinal habitats of animals including humans. </p>
+                        </div>  
+
+                        <h2>Contributors</h2>
+                        <ul align="left">
+                            <li>Gail Ackermann</li>
+                            <li>Katie Amato</li>
+                            <li>Amnon Amir</li>
+                            <li>Donna Berg-Lyons</li>
+                            <li>Jeff DeReus</li>
+                            <li>Justine Debelius</li>
+                            <li>Rob Dunn</li>
+                            <li>Merete Eggesbo</li>
+                            <li>James Gaffney</li>
+                            <li>Matt Gebert</li>
+                            <li>Jack Gilbert</li>
+                            <li>Grant Gogul</td></li>
+                            <li>Antonio Gonzalez</li>
+
+                            <li>Julia Goodrich</li>
+                            <li>Steve Green</li>
+                            <li>Kathy Holt</li>
+                            <li>Greg Humphrey</li>  
+                            <li>Jim Huntley</li>
+                            <li>Zehra Esra Ilhan</li>
+                            <li>Jerry Kennedy</li>
+                            <li>Rob Knight</li>
+                            <li>Jeff Leach</li> 
+                            <li>Cathy Lozupone</li>
+                            <li>Sebasti&eacute;n Matamoros</li>
+                            <li>Daniel Mayer</li>
+                            
+                            <li>Kris Mayer</li>
+                            <li>Daniel McDonald</li>
+                            <li>Jess Metcalf</li>
+                            <li>Mike Minson</li>
+                            <li>Jose Navas</li>
+                            <li>Catherine Nicholas</li>
+                            <li>Sarah Owens</li>
+                            <li>Laura Parfrey</li>
+                            <li>Juanma Peralta</li>
+                            <li>Joe Petrosino</li>
+                            <li>Meg Pirrung</li>
+                            <li>Dorota Porazinska</li>
+
+                            <li>Adam Robbins-Pianka</li>
+                            <li>Jennifer Smilowitz</li>
+                            <li>Se Jin Song</li>
+                            <li>Emily TerAvest</li>
+                            <li>Luke Thompson</li>  
+                            <li>Kumar Thurimella</li>
+                            <li>Will Van Treuren</li>
+                            <li>Luke Ursell</li>  
+                            <li>Yoshiki Vazquez-Baeza</li> 
+                            <li>Tim Vigers</li> 
+                            <li>Tony Walters</li>
+                            <li>Sophie Weiss</li>
+                            <li>Doug Wendel</li>
+
+                            <li>Ulla Westermann</li>
+                            <li>Doug Woodhams</li>
+                            <li>Zhenjiang Xu</li>
+                        </ul>
+
+                        <h2>Supporters</h2>
+                        <p><img src = "img/biofrontiers.png"
+                                alt = "CU Boulder biofrontiers logo" />     
+                           <img src = "img/hmp.png"
+                                alt = "Human Food Project logo"/>     
+                           <img src = "img/fundrazr.png"
+                                alt = "FundRazr logo"/>     
+                           <img src = "img/indiegogo.png"
+                                alt = "Indiegog logo"/>     
+                           <img src = "img/emp.png"
+                                alt = "Earth Microbiome Project"/></p>
+
+                        <h2>Sponsors</h2>
+                        <p><img src = "img/eppendorf.png"
+                                alt = "Eppendorf logo"/>
+                           <img src = "img/mobio.png"
+                                alt = 'Mo Bio Laboratories logo'/>
+                           <img src = 'img/nutraceutix.png'
+                                alt = 'Neutraceutix logo'/>
+                           <img src = 'img/secondgenome.png'
+                                alt = 'Second Genome Logo'/></p>
+
+
+                        <h2>Collaborators</h2>
+                        <ul align="left">
+                        <li>Marty Blaser, Muriel G. and George W. Singer Professor of Translational Medicine; Professor; Director Human Microbiome Program; Departments of Medicine and Microbiology, New York University</li>
+                        <li>Jason Bobe, Director, Personal Genome Project, Harvard Medical School </li>
+                        <li>Frederic Bushman, Professor, Department of Microbiology, University of Pennsylvania</li>
+                        <li>J. Gregory Caporaso, Assistant Professor, Department of Biology, Northern Arizona University, and Argonne National Labs</li>
+                        <li>Patrice Cani, Group Leader, Facult&eacute; de pharmacie et des sciences biom&eacute;dicales, Universite Catholique de Louvain</li>
+                        <li>George Church, Founder, Personal Genome Project, Professor, Department of Genetics,  Harvard Medical School, Founding Core Faculty Member, Wyss Institute, Professor of Health Sciences and Technology, Harvard and MIT</li>
+                        <li>Jose Clemente, Assistant Professor, Department of Genetics and Genomic Sciences, and Department of Medicine, Division of Clinical Immunology, Mount Sinai School of Medicine, New York</li>
+                        <li>Maria Gloria Dominguez, Associate Professor, Department of Medicine, New York University, and Department of Biology, University of Puerto Rico Rio Pedras</li>
+                        <li>Pieter Dorrestein, Director, Therapuetic Discovery Mass Spectrometry Center, University of California - San Diego</li>
+                        <li>Rob Dunn, Associate Professor, Department of Biological Science, North Carolina State University</li>
+                        <li>Jonathan Eisen, Professor, Department of Evolution and Ecology and Department of Medical Microbiology, University of California at Davis</li>
+                        <li>Noah Fierer, Associate Professor, CIRES and Department of Ecology and Evolutionary Biology, University of Colorado at Boulder</li>
+                        <li>J. Bruce German, Director, Foods for Health Institute, University of California at Davis</li>
+                        <li>Dirk Gevers, Group Leader, Microbial Systems &amp; Communities, Broad Institute of MIT and Harvard</li>
+                        <li>Jack Gilbert, Associate Professor, University of Chicago and Argonne National Labs</li>
+                        <li>Jessica Green, Associate Professor, Department of Biology, University of Oregon</li>
+                        <li>Susan Holmes, Professor, Department of Statistics, Stanford University</li>
+                        <li>Phil Hugenholtz, Director, Australian Center for Ecogenomics, University of Queensland</li>
+                        <li>Curtis Huttenhower, Associate Professor, Department of Biostatistics Harvard School of Public Health</li>
+                        <li>Janet Jansson, Professor and Senior Staff Scientist, Department of Ecology, Earth Sciences Division, Lawrence Berkeley National Laboratory</li>
+                        <li>Rob Knight, Professor, HHMI and BioFrontiers Institute, Department of Chemistry &amp; Biochemistry and Department of Computer Science, University of Colorado at Boulder</li>
+                        <li>Dan Knights, Assistant Professor, Biotechnology Institute, University of Minnesota</li>
+                        <li>Rosa Krajmalnik-Brown, Assistant Professor, Engineering Research Director, School of Sustainable Engineering and the Built Environment, Biodesign Institute at Arizona State University</li>
+                        <li>Jeff Leach, Founder, Human Food Project</li>
+                        <li>Carlito Lebrilla, Professor, Department of Chemistry, University of California at Davis</li>
+                        <li>Cecil M Lewis, Associate Professor, Department of Anthropology, University of Oklahoma</li>
+                        <li>James Lewis, Senior Scholar, Epidemiology, Professor of Medicine, University of Pennsylvania</li>
+                        <li>Ruth Ley, Assistant Professor, Department of Microbiology, Cornell University</li>
+                        <li>Catherine Lozupone, Assistant Professor, Division of BioMedical Informatics and Personalized Medicine, Anschultz Medical Campus, University of Colorado at Denver</li>
+                        <li>David Mills, Peter J. Shields Endowed Chair in Dairy Food Science, Departments of Viticulture &amp; Enology and Food Science & Technology University of California at Davis</li>
+                        <li>Joseph Petrosino, Director, Alkek Center for Metagenomics and Microbiome Research, Baylor College of Medicine</li>
+                        <li>Jeroen Raes, Group Leader, Department of Structural Biology, Flemish Institute of Biotechnology (VIB), Belgium</li>
+                        <li>Jacques Ravel, Professor, Institute for Genome Sciences, University of Maryland School of Medicine</li>
+                        <li>Jan Suchodolski, Clinical Assistant Professor &amp; Associate Director, Gastrointestinal Laboratory, Texas A&amp;M University</li>
+                        <li>Kelly Swanson, Associate Professor, Department of Animal Sciences, University of Illinois at Urbana-Champaign</li>
+                        <li>Owen White, Director, Department of Bioinformatics, University of Maryland School of Medicine; PI, Human Microbiome Project Data Analysis and Coordination Center</li>
+                        <li>Gary D. Wu, Professor of Medicine, University of Pennsylvania</li>
+                        <li>Ramnik Xavier, Chief of Gastroenterology, Massachusetts General Hospital, Director Center for the study of Inflammatory Bowel Disease and Senior Associate Member, Broad Institute</li>
+                        </ul>
+       
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
