@@ -11,6 +11,42 @@
         <link rel="stylesheet" type="text/css" href="style/americangut.css">
         <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
         <link rel="icon" type="image/ico" href="img/favicon.ico">
+        <style type = 'text/css'>
+            h6 {
+                font-family: sans-serif;
+                font-size: medium;
+                font-weight: normal;
+                line-height: 115%;}
+            table{
+                border-spacing: 1px;
+                border-top: 2px solid;
+                border-bottom: 2px solid;
+            }
+            caption{
+                font-family: sans-serif;
+                font-size: large;
+                font-weight: normal;
+                text-align: left;
+                line-height: 250%;
+            }
+            th{border-bottom: 2px solid;
+                font-family: sans-serif;
+                font-size: medium;
+                font-weight: normal;
+            }
+            td.taxa{
+                font-family: sans-serif;
+                font-size: medium;
+                font-weight: normal;
+                text-align: left
+            }
+            td{
+                font-family: sans-serif;
+                font-size: medium;
+                font-weight: normal;
+                text-align: right;
+            }
+        </style>
     </head>
     <body>
         <div class="wrapper clearfix">
@@ -32,7 +68,109 @@
                             <a name = "top"><h1>American Gut Addendum</h1></a>
                             <p>First, we&apos;d like to note that in general these data allow you to understand how similar or different you are to other people in terms of the bacterial composition of the sample you sent. The information about the microbes is at as fine level of a taxonomic resolution as we were able to achieve with our sequencing methods, and varies for different groups of microbes. Currently, we cannot tell you what it means if you have more or less of a certain bacteria than other people. Gut microbiome research is still new, and we have a lot to learn. Your participation in the American Gut Project will allow us to learn more, and we hope to update you with new findings as they emerge.</p>
 
-                            <a name = "Taxonomy"><h3>Taxonomy</h3></a>
+                            <table style = 'nobord'>
+                                <tr>            
+                                    <td colspan = '8'>
+                                        <a href = '#top'
+                                           name = 'certif'>
+                                            <img src = 'img/Michael_Pollan_mod-01.png'
+                                                 alt = 'Your American Gut Sample: Michael Pollan'/>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>            
+                                    <td rowspan = '1'>
+                                    </td>
+                                    <td colspan = '6'>
+                                        <a href = '#taxcharts'>
+                                            <img src = 'img/Michael_Pollan_mod-02.png'
+                                                 alt = "What's in your sample?"/>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td rowspan = '3'>
+                                        <a href = '#barcharts'>
+                                            <img src = 'img/Michael_Pollan_mod-11.png'
+                                                 alt = 'Taxonomy Bar Charts'/>
+                                        </a>
+                                    </td>
+                                    <td rowspan = '2'>
+                                        <a href = '#phyla'>
+                                            <img src = 'img/Michael_Pollan_mod-12.png'
+                                                 alt = 'Major Phyla'/>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href = '#abundant'>
+                                            <img src = 'img/Michael_Pollan_mod-13.png'
+                                                 alt = 'Abundant Microbes'/>
+                                        </a>
+                                    </td>
+                                    <td colspan = '3'>
+                                        <a href = '#enriched'>
+                                            <img src = 'img/Michael_Pollan_mod-14.png'
+                                                 alt = 'Enriched Microbes'/>
+                                        </a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan = '4'>
+                                        <a href = '#rare'>
+                                            <img src = 'img/Michael_Pollan_mod-15.png'
+                                                 alt = 'Rare Microbes'/>
+                                        </a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan = '5'></td>
+                                    <td><p></p><p></p></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan = '4'>
+                                        <a href = '#Bdiv'>
+                                            <img src = 'img/Michael_Pollan_mod-03.png'
+                                                 alt = 'How do your gut microbes compare to others?'/>
+                                        </a>
+                                    </td>
+                                    <td colspan = '2'>
+                                        <img src = 'img/Michael_Pollan_mod-04.png'/>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan = '2'>
+                                        <a href = '#bodysites'>
+                                            <img src = 'img/Michael_Pollan_mod-08.png'
+                                                 alt = 'PCoA of BodySites with HMP'/>
+                                        </a>
+                                    </td>
+                                    <td colspan = '3'>
+                                        <a href = '#ages'>
+                                            <img src = 'img/Michael_Pollan_mod-09.png'
+                                                 alt = 'PCoA of diets and age'/>
+                                        </a>
+                                    </td>
+                                    <td colspan = '1'>
+                                        <a href = '#AGP'>
+                                            <img src = 'img/Michael_Pollan_mod-10.png'
+                                                 alt = 'PCoA of American Gut Data'/>
+                                        </a>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </table>
+
+                            
+                        <a name = "taxcharts"><h2>What&apos;s in your American Gut sample?</h2></a>
+                        <h3>Taxonomy</h3></a>
                             <p>Taxonomy is a system scientists use to describe all life on the planet. Taxonomy is commonly referred to as an organism&apos;s scientific name. This name allows us to understand how closely related two organisms are to each other. There are seven major levels of taxonomy that go from less specific to more specific. The phylum level represents very broad range of organisms that have <strong>evolved over hundreds of millions of years</strong> whereas the species level represents only a small subset of them that are <strong>much more closely related</strong>. Typically, names at the genus and species levels are written in <em>italics</em> or are <u>underlined</u> (in our tables, they are <em>italicized</em>). For instance, here is the list of taxonomic levels and names for humans and chimpanzees:</p>
 
                             <h5>Human</h5>
@@ -67,20 +205,20 @@
                             <li>Species: <em>delbrueckii</em></li>
                         </ul>
                         <p> For more information on bacterial taxonomy, please refer to the following link: <a href = "http://en.wikipedia.org/wiki/Bacterial_taxonomy"> http://en.wikipedia.org/wiki/Bacterial_taxonomy</a></p>
+
+                        <p><a href = '#top'>Back to the top</a></p>
                             
-                        <a name = "taxcharts"><h2>What&apos;s in your American Gut sample?</h2></a>
-                        <h3>Taxonomy Bar Chart</h3>
+                        <a name = 'barcharts'><h3>Taxonomy Bar Chart</h3></a>
                         <img src = 'img/TaxFig.png'
                              alt = 'Taxonomy Bar Chart'/>
                         <p>The taxonomy bar chart shows the abundances of bacterial types at the phylum level in your sample and compares it to other samples. Specifically, it shows you what percentage of all your bacteria belonged to each phyla. We also calculated the average percentage of each bacterial phyla across all samples, across samples from people with a similar diet to the one you reported, across samples from people of the same gender as you, across samples from everyone with a similar BMI to you, across samples from everyone with the same age as you, and for one specific person, Michael Pollan. You can compare the percentage of bacterial phyla in your sample (first bar) to all of these values to get an idea of how similar or different you are.</p>
                         <p><strong>Firmicutes and Bacteroidetes are the two most abundant bacterial phyla in the human gut, but others are also present.</strong> Please see <a href = "#phyla">Major Bacterial Phyla</a> below for basic descriptions of these phyla.</p>
 
-                        <h3>Abundant Microbes</h3>
-                        <!-- Is this better as an image or an HTML encoded table? -->
-                        <!-- <img src = 'filename'
-                             alt = 'Abundant Microbes table'/img> -->
+                        <p><a href = '#certif'>Back to the top</a></p>
 
-                        <table width = "33%">
+                        <a name = 'abundant'><h3>Abundant Microbes</h3></a>                    
+                        <table width = "33%" 
+                               style = 'taxa'>
                             <caption>Your most abundant microbes:</caption>
                             <tr>
                                 <th>Taxonomy</th>
@@ -104,14 +242,12 @@
                             </tr>
                         </table>
                         <p>The first table shows the four most abundant groups of microbes in your sample. Although you had other bacteria, these are the ones that you have the most of. The percentages on the right (under &quot;Sample&quot;) tell you what percent of all of your bacteria belong to these taxa.</p>
+                        <p><a href = '#certif'>Back to the top</a></p>
 
-                        <h3>Enriched Microbes</h3>
-
-                        <!-- <img scr = "None, yet"
-                             alt = "Enriched microbes table">
-                        </img> -->
+                        <a name = 'enriched'><h3>Enriched Microbes</h3></a>
                         <h6></h6>
-                        <table frame = 'hsides' width = "50%" caption = "Your most enriched microbes">
+                        <table width = "50%" 
+                               style = "taxa">
                             <caption>Your most enriched microbes:</caption>
                             <colgroup> 
                                 <col span = "1" width = "37.5%">
@@ -152,11 +288,15 @@
 
                         <p>The fold change tells you how many more of these bacteria you have than the average participant. For example, if you have 20% Bacteria A and the average person in the population has 10% Bacteria A, you have twice as many Bacteria A. This would be a twofold (2x) difference. Please note that because the percentages we report on this sheet are rounded (e.g., 0.05% rounded to 0.1%), and your fold differences are calculated from values that are not rounded, the fold differences you see may be slightly distinct than what you would calculate based on the numbers you see.</p>
 
-                        <h3>Rare Taxa</h3>
+                        <p><a href = '#certif'>Back to the top</a></p>
+
+                        <a name = 'rare'><h3>Rare Taxa</h3></a>
 
                         <h6>This sample included the following rare taxa: Fenus <em>Varibaculum</em>, Genus <em>Neisseria</em>, Genus <em>Campylobacter</em>, Unclassified Order ML615J-28.</h6>
 
                         <p>This line shows four microbes that you have that are not commonly found in the type of sample you provided. Some other people may have them, but most people do not.</p>
+
+                        <p><a href = '#certif'>Back to the top</a></p>
 
                         
                         <a name = "Bdiv"><h2>How do your gut microbes compare to others?</h2></a>
@@ -165,22 +305,28 @@
 
                         <p>The large point represents your sample on each plot. This allows you to see how similar (close to) or different (far from) your sample is from others.</p>
 
-                        <h3>Different Body Sites</h3>
+                        <a name = 'bodysites'><h3>Different Body Sites</h3></a>
                         <img src = "img/PCoA1.png"
                              alt = "PCoA by body site for AGP and HMP"/>
                         <p>This plot lets you compare your sample to samples collected by two microbiome projects from several body sites. The color of each point tells you which project and body site the sample came from. HMP refers to the <a href = 'http://www.hmpdacc.org'>Human Microbiome Project</a>, funded by the National Institutes of Health. You can see how your sample compared to fecal, oral, and skin samples from the Human Microbiome Project, as well as to fecal, oral, and skin samples from the American Gut Project, the Global Gut Project, and the Personal Genome Project. These samples have been combined in any category not labeled &quot;HMP&quot;. The oval around each group of points shows you where an average sample from each project and body site should fall on the plot. These sometimes make it easier to see the patterns all the clusters of points make.</p>
 
-                        <h3>Different Ages and Populations</h3>
+                        <p><a href = '#certif'>Back to the top</a></p>
+
+                        <a name = 'ages'><h3>Different Ages and Populations</h3></a>
                         <img src = "img/PCoA2.png"
                              alt = "PCoA of international populations colored by age"/>
                         <p>This plot lets you compare your sample to other fecal microbiome samples according to age and place of origin. The color of each point indicates the age of the person the sample was collected from, with red being the youngest and purple being the oldest. Also, on this plot, the ovals show where in the world each sample came from. The red oval shows you the area where an average sample from a Western country should fall. The yellow oval shows you where an average sample from an Amerindian population in Venezuela should fall. The blue oval shows you where an average sample from Malawi should fall. These data are from <a href = 'http://www.nature.com/nature/journal/v486/n7402/abs/nature11053.html'>Yatsunenko et al. 2012</a>. We used these populations as a comparison to your sample since a large number of people with diverse ages were sampled in these populations. We have fewer data from other populations in other parts of the world.</p>
 
-                        <h3>The American Gut Population</h3>
+                        <p><a href = '#certif'>Back to the top</a></p>
+
+                        <a name = 'AGP'><h3>The American Gut Population</h3></a>
                         <img src = "img/PCoA3.png"
                              alt = "PCoA of American Gut population colored by Firmicutes"/>
                         <p>This plot lets you compare you sample to other fecal microbiome samples we collected from American Gut participants. The color indicates the relative abundance of Firmicutes bacteria each sample had with red being the lowest and purple being the highest. If you had a lot of Firmicutes bacteria, then your sample should be purple, and you can look for other purple samples to see how similar your whole bacterial community is to other people with high amounts of Firmicutes. As in the other plots, the location of the point along the axes means nothing. Only its relative position compared to the other points is meaningful.</p>
+
+                        <p><a href = '#certif'>Back to the top</a></p>
                         
-                        <a = "phyla"><h2>Major Bacterial Phyla</h2></a>
+                        <a name = "phyla"><h2>Major Bacterial Phyla</h2></a>
                         <h4>Firmicutes</h4>
                         <p>A phylum of bacteria with generally Gram-positive (retain crystal violet dye) staining cell wall structure. The names is derived from Latin <em>firmus</em> for strong and <em>cutis</em> for skin. The cells are in the form of spheres called cocci (singular coccus) or rods called bacilli (singular bacillus). Firmicutes encompass bacteria that can be found in many different environments ranging from soil to wine to your gut. There are currently more than 274 genera representing 7 different classes of which Clostridia (anaerobes - no oxygen) and Bacilli (obligate or facultative aerobes) are the most significant. Both classes are predominantly saprophytic (getting nourishment from dead or decaying organic matter) playing an important role in the decomposition and nutrient mineralization processes, but also contain a few human pathogens (e.g. <em>Costridium tetani</em> or <em>Bacillus anthracis</em>).</p>
 
@@ -206,8 +352,10 @@
                         <p>A phylum of rod-shaped Gram-negative bacteria. Known primarily as fermentative species but some can be pathogens. Can occur in anoxic (no oxygen) sediments as well as intestinal habitats of animals including humans. </p>
                         </div>  
 
-                        <h2>Contributors</h2>
-                        <ul align="left">
+                        <p><a href = '#top'>Back to the top</a></p>
+
+                        <h2>Contributors</h2>  
+                        <ul>
                             <li>Gail Ackermann</li>
                             <li>Katie Amato</li>
                             <li>Amnon Amir</li>
@@ -221,7 +369,6 @@
                             <li>Jack Gilbert</li>
                             <li>Grant Gogul</td></li>
                             <li>Antonio Gonzalez</li>
-
                             <li>Julia Goodrich</li>
                             <li>Steve Green</li>
                             <li>Kathy Holt</li>
@@ -233,8 +380,7 @@
                             <li>Jeff Leach</li> 
                             <li>Cathy Lozupone</li>
                             <li>Sebasti&eacute;n Matamoros</li>
-                            <li>Daniel Mayer</li>
-                            
+                            <li>Daniel Mayer</li> 
                             <li>Kris Mayer</li>
                             <li>Daniel McDonald</li>
                             <li>Jess Metcalf</li>
@@ -247,7 +393,6 @@
                             <li>Joe Petrosino</li>
                             <li>Meg Pirrung</li>
                             <li>Dorota Porazinska</li>
-
                             <li>Adam Robbins-Pianka</li>
                             <li>Jennifer Smilowitz</li>
                             <li>Se Jin Song</li>
@@ -255,18 +400,16 @@
                             <li>Luke Thompson</li>  
                             <li>Kumar Thurimella</li>
                             <li>Will Van Treuren</li>
-                            <li>Luke Ursell</li>  
+                            <li>Luke Ursell</li>
                             <li>Yoshiki Vazquez-Baeza</li> 
                             <li>Tim Vigers</li> 
                             <li>Tony Walters</li>
                             <li>Sophie Weiss</li>
                             <li>Doug Wendel</li>
-
                             <li>Ulla Westermann</li>
                             <li>Doug Woodhams</li>
                             <li>Zhenjiang Xu</li>
                         </ul>
-
                         <h2>Supporters</h2>
                         <p><img src = "img/biofrontiers.png"
                                 alt = "CU Boulder biofrontiers logo" />     
@@ -321,7 +464,7 @@
                         <li>James Lewis, Senior Scholar, Epidemiology, Professor of Medicine, University of Pennsylvania</li>
                         <li>Ruth Ley, Assistant Professor, Department of Microbiology, Cornell University</li>
                         <li>Catherine Lozupone, Assistant Professor, Division of BioMedical Informatics and Personalized Medicine, Anschultz Medical Campus, University of Colorado at Denver</li>
-                        <li>David Mills, Peter J. Shields Endowed Chair in Dairy Food Science, Departments of Viticulture &amp; Enology and Food Science & Technology University of California at Davis</li>
+                        <li>David Mills, Peter J. Shields Endowed Chair in Dairy Food Science, Departments of Viticulture &amp; Enology and Food Science &amp; Technology University of California at Davis</li>
                         <li>Joseph Petrosino, Director, Alkek Center for Metagenomics and Microbiome Research, Baylor College of Medicine</li>
                         <li>Jeroen Raes, Group Leader, Department of Structural Biology, Flemish Institute of Biotechnology (VIB), Belgium</li>
                         <li>Jacques Ravel, Professor, Institute for Genome Sciences, University of Maryland School of Medicine</li>
