@@ -92,11 +92,12 @@ function formComplete_formatItem(row) {
   // Results
   var result_type = row[2];
   var result_term = row[0];
+  var result_def = row[7];
+  var result_ont = row[3];
 
   // display ontology here to make it clearer for the user. 
   if (ontology_id !== "all") {
-    var result_def = row[7];
-    var result_ont = row[3];
+   
     if (BP_include_definitions === "true") {
       result += "<div class='result_definition'>" + truncateText(decodeURIComponent(result_def.replace(/\+/g, " ")), 75) + "</div>"
     }
@@ -106,8 +107,6 @@ function formComplete_formatItem(row) {
     
   } else {
     // Results
-    var result_ont = row[3];
-    var result_def = row[7];
     result += "<div class='result_term' style='width: "+term_name_width+";'>" + result_term.replace(regex, "<b><span class='result_term_highlight'>$1</span></b>") + "</div>"
 
     if (BP_include_definitions === "true") {
@@ -218,7 +217,7 @@ function bpFormSelect(li) {
       jQuery(input).val(li.extra[4])
       break;
     case "shortid_name":
-    //changed to use extra[2] based on above comment
+      //changed to use extra[2] based on above comment
       jQuery(input).val(li.extra[2] + ':' + li.extra[4])
       break;
     case "ontprefix_name":
