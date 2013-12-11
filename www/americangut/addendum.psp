@@ -12,15 +12,33 @@
         <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
         <link rel="icon" type="image/ico" href="img/favicon.ico">
         <style type = 'text/css'>
+            div.floating_menu{
+                margin-left: 250px;                
+                background-color: #081833;
+                text-align: center;
+                color: #081833;
+                position:fixed;
+                top:0;
+                left: 250px;
+                width:100%
+            }
             h6 {
                 font-family: sans-serif;
                 font-size: medium;
                 font-weight: normal;
                 line-height: 115%;}
             table{
+                border: 0px;
+                text-align: left
+            }
+            table.taxa{
                 border-spacing: 1px;
                 border-top: 2px solid;
                 border-bottom: 2px solid;
+            }
+            table.certif{
+                background-color: white;
+                border: 0px;
             }
             caption{
                 font-family: sans-serif;
@@ -32,19 +50,74 @@
             th{border-bottom: 2px solid;
                 font-family: sans-serif;
                 font-size: medium;
-                font-weight: normal;
+                font-weight: normal;                
+            }
+            td{
+                vertical-align: text-center
+            }
+            ul.contrib{
+                list-style-type: none;
+                padding: 5px;
+                margin: 8px;
+            }
+            ul.colab{
+                list-style-type: none;
+                padding: 5px;
+
+            }
+            li.collab{
+                margin-bottom: 6px;
+                text-indent: -20px
+
+            }
+            td.list{
+                vertical-align: text-top
             }
             td.taxa{
                 font-family: sans-serif;
                 font-size: medium;
                 font-weight: normal;
-                text-align: left
+                text-align: left;
+                vertical-align: text-center;
             }
-            td{
+            td.row{
                 font-family: sans-serif;
                 font-size: medium;
                 font-weight: normal;
                 text-align: right;
+                vertical-align: text-center;
+            }
+            td.spons{               
+                padding: 15px;
+                width: 250px;
+                height: 30px;
+                vertical-align: text-center;
+                text-align: center;
+            }
+            td.emp{                
+                padding-top: 15px;
+                vertical-align: text-center;
+                text-align: center;
+                width: 125px;
+                height: 200px;
+            }
+            img.certificate{
+                opacity: 50%;                
+                filter:alpha(opacity=50);
+                -webkit-filter: grayscale(65%) opacity(80%);
+                -moz-filter: grayscale(65%) opacity(80%);
+                -ms-filter:  grayscale(65%) opacity(80%);
+                filter: grayscale(65%) opacity(80%);
+
+            }
+            img.certificate:hover{
+                opacity: 100%;
+                filter:alpha(opacity=100);
+                -webkit-filter: grayscale(0%) opacity(100%);
+                -moz-filter: grayscale(0%) opacity(100%);
+                -ms-filter:  grayscale(0%) opacity(100%);
+                filter: grayscale(0%) opacity(100%);
+
             }
         </style>
     </head>
@@ -52,38 +125,53 @@
         <div class="wrapper clearfix">
             <div class="header clearfix">
                 <img id="logo" src="img/ag_logo.jpg">
-            </div>
-            <br>
+            </div>            
+            <br>            
             <div class="left menuwrapper">
                 <ul class="menu">
                 <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
                 <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
                 <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Participant Login</a></li>
                 </ul>
-            </div>
+            </div>            
+<!--             <div class='floating_menu'>
+                <p>This is a test</p>
+            </div> -->
             <div class="content">
                 <div class="faq_wrapper">
                     <div class="faq">
                         <div id = 'text' align="justify">
                             <a name = "top"><h1>American Gut Addendum</h1></a>
-                            <p>We&apos;d like to note that in general these data allow you to understand how similar or different you are to other people in terms of the bacterial composition of the sample you sent. The information about the microbes is at as fine level of a taxonomic resolution as we were able to achieve with our sequencing methods, and varies for different groups of microbes. Currently, we cannot tell you what it means if you have more or less of a certain bacteria than other people. Gut microbiome research is still new, and we have a lot to learn. Your participation in the American Gut Project will allow us to learn more, and we hope to update you with new findings as they emerge.</p>
-
-                            <table style = 'nobord'>
+                            <p>We&apos;d like to note that in general these data allow you to understand how similar or different you are to other people in terms of the bacterial composition of the sample you sent. The information about the microbes is at as fine level of a taxonomic resolution as we were able to achieve with our sequencing methods, and varies for different groups of microbes. Currently, we cannot tell you what it means if you have more or less of a certain bacteria than other people. Gut microbiome research is still new, and we have a lot to learn. Your participation in the American Gut Project will allow us to learn more, and we hope to update you with new findings as they emerge.</p>                            
+                            <h3>Learn more about your certificate by clicking on a plot or table</h3>    
+                            <table class = 'certif'>
                                 <tr>            
-                                    <td colspan = '8'>
+                                    <td colspan = '9'>
                                         <a href = '#top'
                                            name = 'certif'>
-                                            <img src = 'img/Michael_Pollan_mod-01.png'
-                                                 alt = 'Your American Gut Sample: Michael Pollan'/>
+                                            <img class = 'certificate' 
+                                                 src = 'img/Michael_Pollan_mod-01.png'
+                                                 alt = 'Your American Gut Sample'/>
+                                        </a>
+                                        <br>
+                                        <a href = 'http://en.wikipedia.org/wiki/Michael_Pollan'>
+                                            <img class = 'certificate'
+                                                 src = 'img/Michael_Pollan_mod-01b.png'
+                                                 alt = 'Micahel Pollan'/>
                                         </a>
                                     </td>
+                                </tr>
+                                <tr>
+                                    <td colspan = '8'>
+                                        
                                 </tr>
                                 <tr>            
                                     <td rowspan = '1'>
                                     </td>
                                     <td colspan = '6'>
                                         <a href = '#taxcharts'>
-                                            <img src = 'img/Michael_Pollan_mod-02.png'
+                                            <img class = 'certificate' 
+                                                 src = 'img/Michael_Pollan_mod-02.png'
                                                  alt = "What's in your sample?"/>
                                     </td>
                                     <td></td>
@@ -93,35 +181,40 @@
                                     <td rowspan = '3'>
                                         <a href = '#barcharts'>
                                             <img src = 'img/Michael_Pollan_mod-11.png'
-                                                 alt = 'Taxonomy Bar Charts'/>
-                                        </a>
+                                                 alt = 'Taxonomy Bar Charts'
+                                                 class = 'certificate' />
+                                        </a>                                       
                                     </td>
                                     <td rowspan = '2'>
                                         <a href = '#phyla'>
                                             <img src = 'img/Michael_Pollan_mod-12.png'
-                                                 alt = 'Major Phyla'/>
+                                                 alt = 'Major Phyla'
+                                                 class = 'certificate' />
                                         </a>
                                     </td>
-                                    <td>
+                                    <td colspan = '1'>
                                         <a href = '#abundant'>
                                             <img src = 'img/Michael_Pollan_mod-13.png'
-                                                 alt = 'Abundant Microbes'/>
+                                                 alt = 'Abundant Microbes'
+                                                 class = 'certificate' />
                                         </a>
                                     </td>
-                                    <td colspan = '3'>
+                                    <td colspan = '2'>
                                         <a href = '#enriched'>
                                             <img src = 'img/Michael_Pollan_mod-14.png'
-                                                 alt = 'Enriched Microbes'/>
+                                                 alt = 'Enriched Microbes'
+                                                 class = 'certificate' />
                                         </a>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td colspan = '4'>
+                                    <td colspan = '3'>
                                         <a href = '#rare'>
                                             <img src = 'img/Michael_Pollan_mod-15.png'
-                                                 alt = 'Rare Microbes'/>
+                                                 alt = 'Rare Microbes'
+                                                 class = 'certificate' />
                                         </a>
                                     </td>
                                     <td></td>
@@ -131,43 +224,49 @@
                                     <td colspan = '5'></td>
                                     <td><p></p><p></p></td>
                                 </tr>
-                                <tr>
+                                <t3>
                                     <td></td>
-                                    <td colspan = '4'>
+                                    <td colspan = '3'>
                                         <a href = '#Bdiv'>
                                             <img src = 'img/Michael_Pollan_mod-03.png'
-                                                 alt = 'How do your gut microbes compare to others?'/>
+                                                 alt = 'How do your gut microbes compare to others?'
+                                                 class = 'certificate'/>
                                         </a>
                                     </td>
                                     <td colspan = '2'>
-                                        <img src = 'img/Michael_Pollan_mod-04.png'/>
+                                        <a href = 'http://americangut.org/wordpress/wp-content/uploads/2013/09/module1_Sept_16_small.pdf'>
+                                        <img src = 'img/Michael_Pollan_mod-04.png'
+                                             class = 'certificate' /></a>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td colspan = '2'>
+                                    <td colspan = '1'>
                                         <a href = '#bodysites'>
                                             <img src = 'img/Michael_Pollan_mod-08.png'
-                                                 alt = 'PCoA of BodySites with HMP'/>
+                                                 alt = 'PCoA of BodySites with HMP'
+                                                 class = 'certificate' />
                                         </a>
                                     </td>
-                                    <td colspan = '3'>
+                                    <td colspan = '2'>
                                         <a href = '#ages'>
                                             <img src = 'img/Michael_Pollan_mod-09.png'
-                                                 alt = 'PCoA of diets and age'/>
+                                                 alt = 'PCoA of diets and age'
+                                                 class = 'certificate' />
                                         </a>
                                     </td>
-                                    <td colspan = '1'>
+                                    <td colspan = '2'>
                                         <a href = '#AGP'>
                                             <img src = 'img/Michael_Pollan_mod-10.png'
-                                                 alt = 'PCoA of American Gut Data'/>
+                                                 alt = 'PCoA of American Gut Data'
+                                                 class = 'certificate' />
                                         </a>
                                     </td>
                                     <td></td>
                                 </tr>
                             </table>
-
+                            <p>Your certificate is designed to help you determine what was found in your sample, and how you compare to other people. Click on a graph or table to learn more.</p>
                             
                         <a name = "taxcharts"><h2>What&apos;s in your American Gut sample?</h2></a>
                         <h3>Taxonomy</h3></a>
@@ -211,14 +310,14 @@
                         <a name = 'barcharts'><h3>Taxonomy Bar Chart</h3></a>
                         <img src = 'img/TaxFig.png'
                              alt = 'Taxonomy Bar Chart'/>
-                        <p>The taxonomy bar chart shows the abundances of bacterial types at the phylum level in your sample and compares it to other samples. Specifically, it shows you what percentage of all your bacteria belonged to each phyla. We also calculated the average percentage of each bacterial phyla across all samples, across samples from people with a similar diet to the one you reported, across samples from people of the same gender as you, across samples from everyone with a similar BMI to you, across samples from everyone with the same age as you, and for one specific person, Michael Pollan. You can compare the percentage of bacterial phyla in your sample (first bar) to all of these values to get an idea of how similar or different you are.</p>
+                        <p>The taxonomy bar chart shows the abundances of bacterial types at the phylum level in your sample and compares it to other samples. Specifically, it shows you what percentage of all your bacteria belonged to each phyla. We also calculated the average percentage of each bacterial phylum across all samples, across samples from people with a similar diet to the one you reported, across samples from people of the same gender as you, across samples from everyone with a similar BMI to you, across samples from everyone with the same age as you, and for one specific person, Michael Pollan. You can compare the percentage of bacterial phyla in your sample (first bar) to all of these values to get an idea of how similar or different you are.</p>
                         <p><strong>Firmicutes and Bacteroidetes are the two most abundant bacterial phyla in the human gut, but others are also present.</strong> Please see <a href = "#phyla">Major Bacterial Phyla</a> below for basic descriptions of these phyla.</p>
 
                         <p><a href = '#certif'>Back to the top</a></p>
 
                         <a name = 'abundant'><h3>Abundant Microbes</h3></a>                    
                         <table width = "33%" 
-                               style = 'taxa'>
+                               class = 'taxa'>
                             <caption>Your most abundant microbes:</caption>
                             <tr>
                                 <th>Taxonomy</th>
@@ -226,19 +325,19 @@
                             </tr>   
                             <tr>
                                 <td class = 'taxa'>Family Prevotella</td>
-                                <td>24.9%</td>
+                                <td class = 'row'>24.9%</td>
                             </tr>
                             <tr>
                                 <td class = 'taxa'>Family Ruminococcaceae</td>
-                                <td>13.4%</td>
+                                <td class = 'row'>13.4%</td>
                             </tr>
                             <tr>
                                 <td class = 'taxa'>Family Lachnospiraceae</td>
-                                <td>10.1%</td>
+                                <td class = 'row'>10.1%</td>
                             </tr>
                             <tr>
                                 <td class = 'taxa'>Genius <em>Bacteroides</em></td>
-                                <td>8.1%</td>
+                                <td class = 'row'>8.1%</td>
                             </tr>
                         </table>
                         <p>The first table shows the four most abundant groups of microbes in your sample. Although you had other bacteria, these are the ones that you have the most of. The percentages on the right (under &quot;Sample&quot;) tell you what percent of all of your bacteria belong to these taxa.</p>
@@ -247,7 +346,7 @@
                         <a name = 'enriched'><h3>Enriched Microbes</h3></a>
                         <h6></h6>
                         <table width = "50%" 
-                               style = "taxa">
+                               class = "taxa">
                             <caption>Your most enriched microbes:</caption>
                             <colgroup> 
                                 <col span = "1" width = "37.5%">
@@ -260,27 +359,27 @@
                             </tr>
                             <tr>
                                 <td class = 'taxa'>Genius <em>Clostridium</em></td>
-                                <td>2.5%</td>
-                                <td>0.3%</td>
-                                <td>7x</td>
+                                <td class = 'row'>2.5%</td>
+                                <td class = 'row'>0.3%</td>
+                                <td class = 'row'>7x</td>
                             </tr>
                             <tr>
                                 <td class = 'taxa'>Genius <em>Finegoldia</em></td>
-                                <td>0.7%</td>
-                                <td>0.0%</td>
-                                <td>17x</td>
+                                <td class = 'row'>0.7%</td>
+                                <td class = 'row'>0.0%</td>
+                                <td class = 'row'>17x</td>
                             </tr>
                             <tr>
-                                <td class = 'taxa'>Genius <em>Clostridium</em></td>
-                                <td>24.9%</td>
-                                <td>2.6%</td>
-                                <td>9x</td>
+                                <td class = 'taxa'>Genius <em>Prevotella</em></td>
+                                <td class = 'row'>24.9%</td>
+                                <td class = 'row'>2.6%</td>
+                                <td class = 'row'>9x</td>
                             </tr>
                             <tr>
-                                <td class = 'taxa'>Genius <em>Clostridium</em></td>
-                                <td>0.9%</td>
-                                <td>0.1%</td>
-                                <td>8x</td>
+                                <td class = 'taxa'>Genius <em>Collinsella</em></td>
+                                <td class = 'row'>0.9%</td>
+                                <td class = 'row'>0.1%</td>
+                                <td class = 'row'>8x</td>
                             </tr>
                         </table>
 
@@ -292,7 +391,7 @@
 
                         <a name = 'rare'><h3>Rare Taxa</h3></a>
 
-                        <h6>This sample included the following rare taxa: Fenus <em>Varibaculum</em>, Genus <em>Neisseria</em>, Genus <em>Campylobacter</em>, Unclassified Order ML615J-28.</h6>
+                        <h6>This sample included the following rare taxa: Genus <em>Varibaculum</em>, Genus <em>Neisseria</em>, Genus <em>Campylobacter</em>, Unclassified Order ML615J-28.</h6>
 
                         <p>This line shows four microbes that you have that are not commonly found in the type of sample you provided. Some other people may have them, but most people do not.</p>
 
@@ -322,7 +421,7 @@
                         <a name = 'AGP'><h3>The American Gut Population</h3></a>
                         <img src = "img/PCoA3.png"
                              alt = "PCoA of American Gut population colored by Firmicutes"/>
-                        <p>This plot lets you compare you sample to other fecal microbiome samples we collected from American Gut participants. The color indicates the relative abundance of Firmicutes bacteria each sample had with red being the lowest and purple being the highest. If you had a lot of Firmicutes bacteria, then your sample should be purple, and you can look for other purple samples to see how similar your whole bacterial community is to other people with high amounts of Firmicutes. As in the other plots, the location of the point along the axes means nothing. Only its relative position compared to the other points is meaningful.</p>
+                        <p>This plot lets you compare your sample to other fecal microbiome samples we collected from American Gut participants. The color indicates the relative abundance of Firmicutes bacteria each sample had with red being the lowest and purple being the highest. If you had a lot of Firmicutes bacteria, then your sample should be purple, and you can look for other purple samples to see how similar your whole bacterial community is to other people with high amounts of Firmicutes. As in the other plots, the location of the point along the axes means nothing. Only its relative position compared to the other points is meaningful.</p>
 
                         <p><a href = '#certif'>Back to the top</a></p>
                         
@@ -354,125 +453,191 @@
 
                         <p><a href = '#top'>Back to the top</a></p>
 
-                        <h2>Contributors</h2>  
-                        <ul>
-                            <li>Gail Ackermann</li>
-                            <li>Katie Amato</li>
-                            <li>Amnon Amir</li>
-                            <li>Donna Berg-Lyons</li>
-                            <li>Jeff DeReus</li>
-                            <li>Justine Debelius</li>
-                            <li>Rob Dunn</li>
-                            <li>Merete Eggesbo</li>
-                            <li>James Gaffney</li>
-                            <li>Matt Gebert</li>
-                            <li>Jack Gilbert</li>
-                            <li>Grant Gogul</td></li>
-                            <li>Antonio Gonzalez</li>
-                            <li>Julia Goodrich</li>
-                            <li>Steve Green</li>
-                            <li>Kathy Holt</li>
-                            <li>Greg Humphrey</li>  
-                            <li>Jim Huntley</li>
-                            <li>Zehra Esra Ilhan</li>
-                            <li>Jerry Kennedy</li>
-                            <li>Rob Knight</li>
-                            <li>Jeff Leach</li> 
-                            <li>Cathy Lozupone</li>
-                            <li>Sebasti&eacute;n Matamoros</li>
-                            <li>Daniel Mayer</li> 
-                            <li>Kris Mayer</li>
-                            <li>Daniel McDonald</li>
-                            <li>Jess Metcalf</li>
-                            <li>Mike Minson</li>
-                            <li>Jose Navas</li>
-                            <li>Catherine Nicholas</li>
-                            <li>Sarah Owens</li>
-                            <li>Laura Parfrey</li>
-                            <li>Juanma Peralta</li>
-                            <li>Joe Petrosino</li>
-                            <li>Meg Pirrung</li>
-                            <li>Dorota Porazinska</li>
-                            <li>Adam Robbins-Pianka</li>
-                            <li>Jennifer Smilowitz</li>
-                            <li>Se Jin Song</li>
-                            <li>Emily TerAvest</li>
-                            <li>Luke Thompson</li>  
-                            <li>Kumar Thurimella</li>
-                            <li>Will Van Treuren</li>
-                            <li>Luke Ursell</li>
-                            <li>Yoshiki Vazquez-Baeza</li> 
-                            <li>Tim Vigers</li> 
-                            <li>Tony Walters</li>
-                            <li>Sophie Weiss</li>
-                            <li>Doug Wendel</li>
-                            <li>Ulla Westermann</li>
-                            <li>Doug Woodhams</li>
-                            <li>Zhenjiang Xu</li>
-                        </ul>
+                        <h2>Contributors</h2>                           
+                    <table>
+                        <tr>
+                            <td/>
+                            <td/>
+                            <td/>
+                            <td/>
+                        </tr>
+                        <tr>
+                            <td class = list><ul class = contrib>
+                                <li>Gail Ackermann</li>
+                                <li>Katie Amato</li>
+                                <li>Amnon Amir</li>
+                                <li>Donna Berg-Lyons</li>
+                                <li>Jeff DeReus</li>
+                                <li>Justine Debepus</li>
+                                <li>Rob Dunn</li>
+                                <li>Merete Eggesbo</li>
+                                <li>James Gaffney</li>
+                                <li>Matt Gebert</li>
+                                <li>Jack Gilbert</li>
+                                <li>Grant Gogul</li>
+                                                  
+                                <li>Antonio Gonzalez</li>                            
+                                <li>Jupa Goodrich</li>
+                                <li>Steve Green</li>
+                            </ul></td><td class = list><ul class = contrib>     
+                                <li>Kathy Holt</li>
+                                <li>Greg Humphrey</li>  
+                                <li>Jim Huntley</li>                            
+                                <li>Zehra Esra Ilhan</li>
+                                <li>Jerry Kennedy</li>
+                                <li>Rob Knight</li>
+                                <li>Jeff Leach</li> 
+                                <li>Cathy Lozupone</li>
+                                <li>Sebasti&eacute;n Matamoros</li>                           
+                                <li>Daniel Mayer</li>                         
+                                <li>Kris Mayer</li>
+                                <li>Daniel McDonald</li>
+                                <li>Jess Metcalf</li>
+                                <li>Mike Minson</li>
+                                <li>Jose Navas</li>
+                            </ul></td><td class = list><ul class = contrib>
+                                <li>Catherine Nicholas</li>                             
+                                <li>Sarah Owens</li>
+                                <li>Laura Parfrey</li>
+                                <li>Juanma Peralta</li>
+                                <li>Joe Petrosino</li>
+                                <li>Meg Pirrung</li>                            
+                                <li>Dorota Porazinska</li>
+                                <li>Adam Robbins-Pianka</li>                            
+                                <li>Jennifer Smilowitz</li>
+                                <li>Se Jin Song</li>
+                                <li>Emily TerAvest</li>
+                                <li>Luke Thompson</li>  
+                                <li>Kumar Thurimella</li>                            
+                                <li>Will Van Treuren</li>
+                                <li>Luke Ursell</li>
+                            </ul></td><td class = list><ul class = contrib>
+                                <li>Yoshiki Vazquez-Baeza</li>                             
+                                <li>Tim Vigers</li> 
+                                <li>Tony Walters</li>                            
+                                <li>Sophie Weiss</li>
+                                <li>Doug Wendel</li>
+                                <li>Ulla Westermann</li>
+                                <li>Doug Woodhams</li>
+                                <li>Zhenjiang Xu</li>
+                            </ul></td>
+                        </tr>
+                        </table>
                         <h2>Supporters</h2>
-                        <p><img src = "img/biofrontiers.png"
-                                alt = "CU Boulder biofrontiers logo" />     
-                           <img src = "img/hmp.png"
-                                alt = "Human Food Project logo"/>     
-                           <img src = "img/fundrazr.png"
-                                alt = "FundRazr logo"/>     
-                           <img src = "img/indiegogo.png"
-                                alt = "Indiegog logo"/>     
-                           <img src = "img/emp.png"
-                                alt = "Earth Microbiome Project"/></p>
+                        <table>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class = 'spons'
+                                    colspan = '2'>
+                                    <img src = 'img/biofrontiers.png'
+                                         alt = 'CU Boulder Biofrontiers'
+                                         width = '250'/>
+                                </td>
+                                <td class = 'spons'
+                                    colspan = '2'>
+                                     <img src = 'img/fundrazr.png'
+                                          alt = 'FundRazr'
+                                          width = '250'/>
+                                </td>
+                                <td class 'emp'
+                                    rowspan = '2'>
+                                    <img src = 'img/emp.png'
+                                          alt = 'Enviromental Microbiome Project'
+                                          height = '125'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class = 'spons'
+                                    colspan = '2'>
+                                    <img src = 'img/hmp.png'
+                                          alt = 'Human Food Project Logo'
+                                          width = '250'/>
+                                </td>
+                                <td class = 'spons'
+                                    colspan = '2'>
+                                    <img src = 'img/indiegogo.png'
+                                          alt = 'Human Food Project Logo'
+                                          width = '250'/>
+                                </td>                        
+                            </tr>
 
+                        </table>
+                        
                         <h2>Sponsors</h2>
-                        <p><img src = "img/eppendorf.png"
-                                alt = "Eppendorf logo"/>
-                           <img src = "img/mobio.png"
-                                alt = 'Mo Bio Laboratories logo'/>
-                           <img src = 'img/nutraceutix.png'
-                                alt = 'Neutraceutix logo'/>
-                           <img src = 'img/secondgenome.png'
-                                alt = 'Second Genome Logo'/></p>
-
+                        <table>
+                            <tr>
+                                <td class = 'spons'>
+                                    <img src = "img/eppendorf.png"
+                                         alt = "Eppendorf logo"
+                                         width = '275'/>
+                                </td>
+                                <td class = 'spons'>
+                                    <img src = "img/mobio.png"
+                                        alt = 'Mo Bio Laboratories logo'
+                                        width = '275'/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class = 'spons'>
+                                    <img src = 'img/nutraceutix.png'
+                                         alt = 'Neutraceutix logo'
+                                         width = '275'/>
+                                </td>
+                                <td class = 'spons'>
+                                     <img src = 'img/secondgenome.png'
+                                          alt = 'Second Genome Logo'
+                                          width = '275'/>
+                                </td>
+                            </tr>
+                        </table>
 
                         <h2>Collaborators</h2>
-                        <ul align="left">
-                        <li>Marty Blaser, Muriel G. and George W. Singer Professor of Translational Medicine; Professor; Director Human Microbiome Program; Departments of Medicine and Microbiology, New York University</li>
-                        <li>Jason Bobe, Director, Personal Genome Project, Harvard Medical School </li>
-                        <li>Frederic Bushman, Professor, Department of Microbiology, University of Pennsylvania</li>
-                        <li>J. Gregory Caporaso, Assistant Professor, Department of Biology, Northern Arizona University, and Argonne National Labs</li>
-                        <li>Patrice Cani, Group Leader, Facult&eacute; de pharmacie et des sciences biom&eacute;dicales, Universite Catholique de Louvain</li>
-                        <li>George Church, Founder, Personal Genome Project, Professor, Department of Genetics,  Harvard Medical School, Founding Core Faculty Member, Wyss Institute, Professor of Health Sciences and Technology, Harvard and MIT</li>
-                        <li>Jose Clemente, Assistant Professor, Department of Genetics and Genomic Sciences, and Department of Medicine, Division of Clinical Immunology, Mount Sinai School of Medicine, New York</li>
-                        <li>Maria Gloria Dominguez, Associate Professor, Department of Medicine, New York University, and Department of Biology, University of Puerto Rico Rio Pedras</li>
-                        <li>Pieter Dorrestein, Director, Therapuetic Discovery Mass Spectrometry Center, University of California - San Diego</li>
-                        <li>Rob Dunn, Associate Professor, Department of Biological Science, North Carolina State University</li>
-                        <li>Jonathan Eisen, Professor, Department of Evolution and Ecology and Department of Medical Microbiology, University of California at Davis</li>
-                        <li>Noah Fierer, Associate Professor, CIRES and Department of Ecology and Evolutionary Biology, University of Colorado at Boulder</li>
-                        <li>J. Bruce German, Director, Foods for Health Institute, University of California at Davis</li>
-                        <li>Dirk Gevers, Group Leader, Microbial Systems &amp; Communities, Broad Institute of MIT and Harvard</li>
-                        <li>Jack Gilbert, Associate Professor, University of Chicago and Argonne National Labs</li>
-                        <li>Jessica Green, Associate Professor, Department of Biology, University of Oregon</li>
-                        <li>Susan Holmes, Professor, Department of Statistics, Stanford University</li>
-                        <li>Phil Hugenholtz, Director, Australian Center for Ecogenomics, University of Queensland</li>
-                        <li>Curtis Huttenhower, Associate Professor, Department of Biostatistics Harvard School of Public Health</li>
-                        <li>Janet Jansson, Professor and Senior Staff Scientist, Department of Ecology, Earth Sciences Division, Lawrence Berkeley National Laboratory</li>
-                        <li>Rob Knight, Professor, HHMI and BioFrontiers Institute, Department of Chemistry &amp; Biochemistry and Department of Computer Science, University of Colorado at Boulder</li>
-                        <li>Dan Knights, Assistant Professor, Biotechnology Institute, University of Minnesota</li>
-                        <li>Rosa Krajmalnik-Brown, Assistant Professor, Engineering Research Director, School of Sustainable Engineering and the Built Environment, Biodesign Institute at Arizona State University</li>
-                        <li>Jeff Leach, Founder, Human Food Project</li>
-                        <li>Carlito Lebrilla, Professor, Department of Chemistry, University of California at Davis</li>
-                        <li>Cecil M Lewis, Associate Professor, Department of Anthropology, University of Oklahoma</li>
-                        <li>James Lewis, Senior Scholar, Epidemiology, Professor of Medicine, University of Pennsylvania</li>
-                        <li>Ruth Ley, Assistant Professor, Department of Microbiology, Cornell University</li>
-                        <li>Catherine Lozupone, Assistant Professor, Division of BioMedical Informatics and Personalized Medicine, Anschultz Medical Campus, University of Colorado at Denver</li>
-                        <li>David Mills, Peter J. Shields Endowed Chair in Dairy Food Science, Departments of Viticulture &amp; Enology and Food Science &amp; Technology University of California at Davis</li>
-                        <li>Joseph Petrosino, Director, Alkek Center for Metagenomics and Microbiome Research, Baylor College of Medicine</li>
-                        <li>Jeroen Raes, Group Leader, Department of Structural Biology, Flemish Institute of Biotechnology (VIB), Belgium</li>
-                        <li>Jacques Ravel, Professor, Institute for Genome Sciences, University of Maryland School of Medicine</li>
-                        <li>Jan Suchodolski, Clinical Assistant Professor &amp; Associate Director, Gastrointestinal Laboratory, Texas A&amp;M University</li>
-                        <li>Kelly Swanson, Associate Professor, Department of Animal Sciences, University of Illinois at Urbana-Champaign</li>
-                        <li>Owen White, Director, Department of Bioinformatics, University of Maryland School of Medicine; PI, Human Microbiome Project Data Analysis and Coordination Center</li>
-                        <li>Gary D. Wu, Professor of Medicine, University of Pennsylvania</li>
-                        <li>Ramnik Xavier, Chief of Gastroenterology, Massachusetts General Hospital, Director Center for the study of Inflammatory Bowel Disease and Senior Associate Member, Broad Institute</li>
+                        <ul class = 'contrib'
+                            align="left">
+                        <li class='collab'>Marty Blaser, Muriel G. and George W. Singer Professor of Translational Medicine; Professor; Director Human Microbiome Program; Departments of Medicine and Microbiology, New York University</li>
+                        <li class='collab'>Jason Bobe, Director, Personal Genome Project, Harvard Medical School </li>
+                        <li class='collab'>Frederic Bushman, Professor, Department of Microbiology, University of Pennsylvania</li>
+                        <li class='collab'>J. Gregory Caporaso, Assistant Professor, Department of Biology, Northern Arizona University, and Argonne National Labs</li>
+                        <li class='collab'>Patrice Cani, Group Leader, Facult&eacute; de pharmacie et des sciences biom&eacute;dicales, Universite Catholique de Louvain</li>
+                        <li class='collab'>George Church, Founder, Personal Genome Project, Professor, Department of Genetics,  Harvard Medical School, Founding Core Faculty Member, Wyss Institute, Professor of Health Sciences and Technology, Harvard and MIT</li>
+                        <li class='collab'>Jose Clemente, Assistant Professor, Department of Genetics and Genomic Sciences, and Department of Medicine, Division of Clinical Immunology, Mount Sinai School of Medicine, New York</li>
+                        <li class='collab'>Maria Gloria Dominguez, Associate Professor, Department of Medicine, New York University, and Department of Biology, University of Puerto Rico Rio Pedras</li>
+                        <li class='collab'>Pieter Dorrestein, Director, Therapuetic Discovery Mass Spectrometry Center, University of California - San Diego</li>
+                        <li class='collab'>Rob Dunn, Associate Professor, Department of Biological Science, North Carolina State University</li>
+                        <li class='collab'>Jonathan Eisen, Professor, Department of Evolution and Ecology and Department of Medical Microbiology, University of California at Davis</li>
+                        <li class='collab'>Noah Fierer, Associate Professor, CIRES and Department of Ecology and Evolutionary Biology, University of Colorado at Boulder</li>
+                        <li class='collab'>J. Bruce German, Director, Foods for Health Institute, University of California at Davis</li>
+                        <li class='collab'>Dirk Gevers, Group Leader, Microbial Systems &amp; Communities, Broad Institute of MIT and Harvard</li>
+                        <li class='collab'>Jack Gilbert, Associate Professor, University of Chicago and Argonne National Labs</li>
+                        <li class='collab'>Jessica Green, Associate Professor, Department of Biology, University of Oregon</li>
+                        <li class='collab'>Susan Holmes, Professor, Department of Statistics, Stanford University</li>
+                        <li class='collab'>Phil Hugenholtz, Director, Australian Center for Ecogenomics, University of Queensland</li>
+                        <li class='collab'>Curtis Huttenhower, Associate Professor, Department of Biostatistics Harvard School of Public Health</li>
+                        <li class='collab'>Janet Jansson, Professor and Senior Staff Scientist, Department of Ecology, Earth Sciences Division, Lawrence Berkeley National Laboratory</li>
+                        <li class='collab'>Rob Knight, Professor, HHMI and BioFrontiers Institute, Department of Chemistry &amp; Biochemistry and Department of Computer Science, University of Colorado at Boulder</li>
+                        <li class='collab'>Dan Knights, Assistant Professor, Biotechnology Institute, University of Minnesota</li>
+                        <li class='collab'>Rosa Krajmalnik-Brown, Assistant Professor, Engineering Research Director, School of Sustainable Engineering and the Built Environment, Biodesign Institute at Arizona State University</li>
+                        <li class='collab'>Jeff Leach, Founder, Human Food Project</li>
+                        <li class='collab'>Carlito Lebrilla, Professor, Department of Chemistry, University of California at Davis</li>
+                        <li class='collab'>Cecil M Lewis, Associate Professor, Department of Anthropology, University of Oklahoma</li>
+                        <li class='collab'>James Lewis, Senior Scholar, Epidemiology, Professor of Medicine, University of Pennsylvania</li>
+                        <li class='collab'>Ruth Ley, Assistant Professor, Department of Microbiology, Cornell University</li>
+                        <li class='collab'>Catherine Lozupone, Assistant Professor, Division of BioMedical Informatics and Personalized Medicine, Anschultz Medical Campus, University of Colorado at Denver</li>
+                        <li class='collab'>David Mills, Peter J. Shields Endowed Chair in Dairy Food Science, Departments of Viticulture &amp; Enology and Food Science &amp; Technology University of California at Davis</li>
+                        <li class='collab'>Joseph Petrosino, Director, Alkek Center for Metagenomics and Microbiome Research, Baylor College of Medicine</li>
+                        <li class='collab'>Jeroen Raes, Group Leader, Department of Structural Biology, Flemish Institute of Biotechnology (VIB), Belgium</li>
+                        <li class='collab'>Jacques Ravel, Professor, Institute for Genome Sciences, University of Maryland School of Medicine</li>
+                        <li class='collab'>Jan Suchodolski, Clinical Assistant Professor &amp; Associate Director, Gastrointestinal Laboratory, Texas A&amp;M University</li>
+                        <li class='collab'>Kelly Swanson, Associate Professor, Department of Animal Sciences, University of Illinois at Urbana-Champaign</li>
+                        <li class='collab'>Owen White, Director, Department of Bioinformatics, University of Maryland School of Medicine; PI, Human Microbiome Project Data Analysis and Coordination Center</li>
+                        <li class='collab'>Gary D. Wu, Professor of Medicine, University of Pennsylvania</li>
+                        <li class='collab'>Ramnik Xavier, Chief of Gastroenterology, Massachusetts General Hospital, Director Center for the study of Inflammatory Bowel Disease and Senior Associate Member, Broad Institute</li>
                         </ul>
        
                 </div>
