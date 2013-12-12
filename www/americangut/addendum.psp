@@ -102,7 +102,7 @@
                 height: 200px;
             }
             img.certificate{
-                opacity: 50%;                
+                opacity: 0.5;                
                 filter:alpha(opacity=50);
                 -webkit-filter: grayscale(65%) opacity(80%);
                 -moz-filter: grayscale(65%) opacity(80%);
@@ -111,7 +111,7 @@
 
             }
             img.certificate:hover{
-                opacity: 100%;
+                opacity: 1.0;
                 filter:alpha(opacity=100);
                 -webkit-filter: grayscale(0%) opacity(100%);
                 -moz-filter: grayscale(0%) opacity(100%);
@@ -427,7 +427,7 @@
                         
                         <a name = "phyla"><h2>Major Bacterial Phyla</h2></a>
                         <h4>Firmicutes</h4>
-                        <p>A phylum of bacteria with generally Gram-positive (retain crystal violet dye) staining cell wall structure. The names is derived from Latin <em>firmus</em> for strong and <em>cutis</em> for skin. The cells are in the form of spheres called cocci (singular coccus) or rods called bacilli (singular bacillus). Firmicutes encompass bacteria that can be found in many different environments ranging from soil to wine to your gut. There are currently more than 274 genera representing 7 different classes of which Clostridia (anaerobes - no oxygen) and Bacilli (obligate or facultative aerobes) are the most significant. Both classes are predominantly saprophytic (getting nourishment from dead or decaying organic matter) playing an important role in the decomposition and nutrient mineralization processes, but also contain a few human pathogens (e.g. <em>Costridium tetani</em> or <em>Bacillus anthracis</em>).</p>
+                        <p>A phylum of bacteria with generally Gram-positive (retain crystal violet dye) staining cell wall structure. The names is derived from Latin <em>firmus</em> for strong and <em>cutis</em> for skin. The cells are in the form of spheres called cocci (singular coccus) or rods called bacilli (singular bacillus). Firmicutes encompass bacteria that can be found in many different environments ranging from soil to wine to your gut. There are currently more than 274 genera representing 7 different classes of which Clostridia (anaerobes - no oxygen) and Bacilli (obligate or facultative aerobes) are the most significant. Both classes are predominantly saprophytic (getting nourishment from dead or decaying organic matter) playing an important role in the decomposition and nutrient mineralization processes, but also contain a few human pathogens (e.g. <em>Clostridium tetani</em> or <em>Bacillus anthracis</em>).</p>
 
                         <h4>Bacteroidetes</h4>
                         <p>A phylum of Gram-negative bacteria, rod-shaped, present in all sorts of environments such as soil, sediments, and fresh and marine waters. Most are saprophytic and involved in carbon cycling. Often abundant in nutrient-rich habitats and so they are a major component of animal guts where they can act as degraders of complex carbohydrates and proteins but also as pathogens. Their representatives are organized within 4 major classes among which the genus <em>Bacteroides</em> in the class of Bacteroidia is the most prevalent and the most studied. Bacteroidetes together with Firmicutes make up the majority of gut bacteria. The ratio of these two types of bacteria (specifically the dominance of Firmicutes over Bacteroidetes) may be linked to obesity.</p>
