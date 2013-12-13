@@ -80,6 +80,11 @@ input[type=submit] {
 	background: #ccc;
 }
 
+input[type=checkbox] {
+	width: 30px;
+	background: #ccc;
+}
+
 #header {
 	background: url(img/qiime_logo.jpg) no-repeat left top;
 	padding-top: 140px;
