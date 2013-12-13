@@ -46,9 +46,6 @@ Find stuff.
 </div>
 
 <%
-message = "It looks like you're trying to find stuff..."
-agent_action = 'animate'
-
 if 'search_term' in form:
 	search_term = str(form['search_term']).lower()
 	# First look for participant info	
@@ -86,7 +83,6 @@ if 'search_term' in form:
 	# Output the results
 	if len(login_list) > 0:
 		message = ''
-		agent_action = 'GetTechy'
 		for ag_login_id in login_list:
 
 			###########################################
@@ -213,8 +209,3 @@ if 'search_term' in form:
 		req.write(message)
 
 %>
-
-<script type="text/javascript">
-clippyTalk("<%=message%>", "<%=agent_action%>");
-</script>
-

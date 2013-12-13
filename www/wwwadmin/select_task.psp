@@ -25,7 +25,3 @@ else:
 
 req.write(message)
 %>
-
-<script type="text/javascript">
-clippyTalk("<%=message%>");
-</script>
