@@ -3,10 +3,10 @@
 from __future__ import division
 
 __author__ = "Emily TerAvest"
-__copyright__ = "Copyright 2011, The QIIME project"
+__copyright__ = "Copyright 2011, The QIIME Web App"
 __credits__ = ["Emily TerAvest"]
 __license__ = "GPL"
-__version__ = "1.7.0-dev"
+__version__ = "1.0.0-dev"
 __maintainer__ = "Emily TerAvest"
 __email__ = "ejteravest@gmail.com"
 __status__ = "Development"
