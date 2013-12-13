@@ -13,34 +13,26 @@ __status__ = "Development"
 
 
 from qiime.util import parse_command_line_parameters, make_option
-#import sqlite3 
 from data_access_connections import data_access_factory
 from enums import ServerConfig
 
-
-
-
 script_info = {}
-script_info['brief_description'] = "this script takes in a obo file and "+\
+script_info['brief_description'] = "this script takes in a obo file and " \
             "update the ontology database"
-script_info['script_description'] = "takes an obo file downloaded from " +\
-            "bioportal.bioontology.org or the ontology website. This script " +\
-            "then parses the obo file and then adds terms not in the ontology"+\
+script_info['script_description'] = "takes an obo file downloaded from " \
+            "bioportal.bioontology.org or the ontology website. This script " \
+            "then parses the obo file and then adds terms not in the ontology"\
             "database to the database"
 script_info['script_usage'] = [("","","")]
 script_info['output_description']= "this script has no output"
-script_info['required_options'] = [\
- # Example required option
- make_option('-i','--input_fp',type="existing_filepath",help='obo filepath'),\
- make_option('-O', '--ontology', type="string", help='ontology short name'),\
- make_option('-o', '--sql_output_fp', type="new_filepath", help='sql output file'),\
- make_option('-r', '--relationship_output', type="new_filepath", help='relationship'\
-             'output file'),\
-]
-script_info['optional_options'] = [\
- # Example optional option
- #make_option('-o','--output_dir',type="new_dirpath",help='the output directory [default: %default]'),\
-]
+script_info['required_options'] = [
+    make_option('-i','--input_fp',type="existing_filepath",help='obo filepath'),
+    make_option('--ontology', type="string", help='ontology short name'),
+    make_option('-o', '--sql_output_fp', type="new_filepath", 
+                help='sql output file'),
+    make_option('-r', '--relationship_output', type="new_filepath",
+                help='relationship output file')]
+script_info['optional_options'] = []
 script_info['version'] = __version__
 
 
@@ -51,7 +43,6 @@ def main():
     con = data_access.getOntologyDatabaseConnection()
     option_parser, opts, args =\
        parse_command_line_parameters(**script_info)
-    #onto_id = '946975161'
     ontology_query = "select ontology_id from ontology where shortname = '%s'" \
                     % opts.ontology
     results = con.cursor().execute(ontology_query)
@@ -63,13 +54,6 @@ def main():
                     " \'%s\'" % ontology_id 
     results = con.cursor().execute(query_string)
     exsisting_terms = [row[0] for row in results]
-    
-    #term_query = "select term_id from term where \"IDENTIFIER\" ="\
-    #                        " 'IS_A' and ontology_id = '%s'" % ontology_id
-    
-    #results = con.cursor().execute(term_query)
-    #is_a_id = [row[0] for row in results][0]
-    
     obo_file = opts.input_fp
     obo = open(obo_file, "r")
     line = obo.readline()
@@ -77,7 +61,7 @@ def main():
     relationshipfile = open(opts.relationship_output, 'w')
     count = 0
 
-
+    sqlfile.write("SET ESCAPE ON;\nSET ESCAPE '\\';\n")
     while(line):
         if line == "[Term]\n":
             #read in lines and save info until blank line
@@ -95,34 +79,23 @@ def main():
                 term_line = obo.readline() 
             #now we need to add term_values to the database
            
-            if not (term_values['id'][0] in exsisting_terms):
+            if not term_values['id'][0] in exsisting_terms:
                 insert_stmt = "Insert into Term (ontology_id, term_name, " \
                     "IDENTIFIER, definition, namespace, is_obsolete, " \
                     "is_root_term, is_leaf) values ('%s', '%s', '%s', '%s', '%s', 0, 0, 0);\n" \
                     % (ontology_id, term_values['name'][0].replace('\'','\'\''), term_values['id'][0], \
-                    term_values['def'][0].split('\" ')[0].strip('\"').replace('\'','\'\''), onto_namespace)
+                    term_values['def'][0].split('\" ')[0].strip('\"').replace('\'',\
+                        '\'\'').replace('&', '\&'), onto_namespace)
                 sqlfile.write(insert_stmt)
                 if 'is_a' in term_values:  
                     #find the other term in the relationship
                     object_terms = [a.split(' ! ')[0] for a in term_values['is_a']]
                     #find the id of that term in the database
                     #get the id for the term we are working on now
-                    #term_id_stmt = "select term_id from term where \"IDENTIFIER\"" \
-                    #             "'%s'" % term_values['id']
                     for obj_term in object_terms:
-                    #    obj_id_stmt = "select term_id from term where \"IDENTIFIER\" = '%s'" \
-                    #        % obj_term
                         relation_string = "%s IS_A %s\n" % (term_values['id'][0], \
                                             obj_term)
-                        relationshipfile.write(relation_string)
-                        #results = con.cursor().execute(obj_id_stmt)
-                        #obj_term_id = [row[0] for row in results]
-                        #for row in results:
-                        #    print row[0]
-                        #if len(obj_term_id) > 1:
-                            #print obj_term, obj_term_id
-                        #    pass
-                    #    reltaionship_stmt = "insert into term_relationship\n"  
+                        relationshipfile.write(relation_string) 
 
                 if 'relationship' in term_values:
                     relations = [a.split(' ') for a in term_values['relationship']]
