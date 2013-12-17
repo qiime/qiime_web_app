@@ -1,0 +1,26 @@
+<%
+from os.path import join
+from re import sub
+
+from utils.psp_utils import tab_delim_lines_to_table
+
+barcode = form.get('barcode', None)
+
+if barcode is None:
+    req.write("ERROR: No barcode was requested.")
+else:
+    taxa_summary_fp = join(ServerConfig.home, 'git', 'qiime_web_app', 'www',
+        'americangut', 'img', 'taxa_summaries', '%s.txt' % barcode)
+
+    headers = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family',
+        'Genus', 'Relative Abundance']
+    headers = ['<b><u>'+x+'</u></b>' for x in headers]
+    headers = '\t'.join(headers)
+
+    lines = [x.replace('; ', '\t') for x in
+        open(taxa_summary_fp, 'U').readlines()]
+    lines = [sub('[kpcofg]__', '', x) for x in lines]
+
+    req.write(tab_delim_lines_to_table([headers] + lines))
+#endif
+%>
