@@ -11,16 +11,52 @@ if barcode is None:
 else:
     taxa_summary_fp = join(ServerConfig.home, 'git', 'qiime_web_app', 'www',
         'americangut', 'img', 'taxa_summaries', '%s.txt' % barcode)
+    #END INDENT
+%>
 
+<div class="content">
+    <div class="red">
+        Note, where there are blanks in the table below, the taxonomy could not be resolved in finer detail.
+    </div>
+    <a href="img/taxa_summaries/<%=barcode%>.txt">Download the table</a>
+    <center>
+<%
+    # generate headers
     headers = ['Kingdom', 'Phylum', 'Class', 'Order', 'Family',
-        'Genus', 'Relative Abundance']
+        'Genus', 'Relative Abundance (%)']
+
+    # format headers with bold and underline
     headers = ['<b><u>'+x+'</u></b>' for x in headers]
     headers = '\t'.join(headers)
 
-    lines = [x.replace('; ', '\t') for x in
-        open(taxa_summary_fp, 'U').readlines()]
+    # read lines from taxa summary table, omit comment lines
+    lines = [x.replace('; ', '\t').strip() for x in
+        open(taxa_summary_fp, 'U').readlines() if not x.startswith('#')]
+
+    # remove the greengenes prefixes
     lines = [sub('[kpcofg]__', '', x) for x in lines]
 
-    req.write(tab_delim_lines_to_table([headers] + lines))
+    # we must operate on the genus and percent abundance columns individually,
+    # so it must be split into individual cells
+    lines = [x.split('\t') for x in lines]
+
+    for i in range(len(lines)):
+        for j in range(len(lines[i])):
+            if lines[i][j] == '':
+                lines[i][j] = '---'
+
+        # italicize the genus column
+        lines[i][-2] = '<i>' + lines[i][-2] + '</i>'
+
+        # format the last column to be a 2.2 number, and center it
+        relative_abundance = float(lines[i][-1])
+        relative_abundance *= 100
+        lines[i][-1] = '<center>%2.2f</center>' % relative_abundance
+
+    lines = ['\t'.join(x) for x in lines]
+
+    req.write(tab_delim_lines_to_table([headers] + lines, cellspacing="15"))
 #endif
 %>
+    </center>
+</div>
