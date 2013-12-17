@@ -30,9 +30,23 @@ if exists(join(ServerConfig.home, 'git', 'qiime_web_app', 'www', 'americangut',
     'img', 'results', '%s.pdf' % barcode)):
     results_link_text = ('<a href="img/results/{0}.pdf" '
             'title="Click this link to visualize sample {0} in the context '
-            'of other microbiomes!">{0}.pdf</a>'.format(barcode))
+            'of other microbiomes!" target="blank">{0}.pdf</a>'.format(barcode))
 else:
     results_link_text = ('This sample has not yet been processed. '
+        'Please check back later.')
+
+# determines whether or not to display link to taxa summary page
+if exists(join(ServerConfig.home, 'git', 'qiime_web_app', 'www', 'americangut',
+    'img', 'taxa_summaries', '%s.txt' % barcode)):
+    taxa_summary_link_text = ("""
+    <form action="fusebox.psp" method="post" id="taxa_summary">
+        <input type="hidden" name="page" value="taxa_summary.psp">
+        <input type="hidden" name="barcode" value="%s">
+        <input type="submit" name="taxa_summary" value="View Taxa Summary">
+    </form>
+    """ % barcode)
+else:
+    taxa_summary_link_text = ('This sample has not yet been processed. '
         'Please check back later.')
 
 if notes == None:
@@ -68,6 +82,10 @@ remove_sample_item = \
                 <tr>
                     <td>Data Visualization</td>
                     <td><%=results_link_text%></td>
+                </tr>
+                <tr>
+                    <td>Taxa Summary</td>
+                    <td><%=taxa_summary_link_text%></td>
                 </tr>
                 <tr>
                     <td style="width: 150px;">Sample Status</td>
