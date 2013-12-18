@@ -89,20 +89,13 @@ elif form.has_key('email'):
 %>
 
 Associate studies for <b><%=found_user_email%> (<%=found_user_id%>)</b>:
-<br/><br/>
-PLEASE know what you are doing when you edit this list. To avoid DESELECTING all studies, you must hold down 
-your <b>"Command"</b> key (Mac) or your <b>Control</b> key (Windows) when making selections in order 
-to preserve the existing associations.
-<br/><br/>
-
 <form action="fusebox.psp" method="post" name="ass_user_study" id="ass_user_study">
 <input type="hidden" name="page" value="assign_user_to_study.psp">
 <input type="hidden" id="found_user_id" name="found_user_id" value=<%=found_user_id%>>
 <input type="hidden" id="study_selection_step" name="study_selection_step" value="1">
 
-<select validate="required:true" name="study_names" id="study_names" multiple size="30">
-
 <%
+        # prepare to add elements to two separate listboxes
         web_app_user_id = sess['web_app_user_id']
         is_admin = sess['is_admin']
         portal_type = 'qiime'
@@ -117,21 +110,23 @@ to preserve the existing associations.
         
         all_study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, 'qiime')
         all_study_names.extend(data_access.getUserStudyNames(web_app_user_id, is_admin, 'emp'))
-        all_study_names = sorted(all_study_names, key = lambda study_name: study_name[1])
-        
-        #for item in all_study_names:
-            #req.write('{0} - {1}\n'.format(str(item[0]), item[1]))
-        
+        all_study_names = sorted(all_study_names, key = lambda study_name: study_name[1].lower())
+
+        checkbox_item_template = ('<input type="checkbox" name="study_names" '
+            'value="{0}" id="{0}" {2}>({0}) {1}<br>\n')
+
+        checkbox_items = []
         for item in all_study_names:
             if item[1] in user_study_names:
-                option_text = '<option value="{0}" selected>({0}) {1}</option>\n'.format(str(item[0]), item[1])
+                checkbox_items.append(checkbox_item_template.format(item[0],
+                    item[1], 'checked'))
             else:
-                option_text = '<option value="{0}">({0}) {1}</option>\n'.format(str(item[0]), item[1])
-            req.write(option_text)
+                checkbox_items.append(checkbox_item_template.format(item[0],
+                    item[1], ''))
         # End
+        req.write(''.join(checkbox_items))
 %>
 
-</select>
 <br/><br/>
 <input type="submit" value="Submit">
 </form>
