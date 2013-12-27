@@ -202,7 +202,7 @@ function output_latlong(){
 function showResult(ont_id,str,inputbox_id,txt_id)
 {
     // If the substring length is empty, then do nothing
-    if (str.length===0)
+    if (str.length==1)
     {
         return;
     } 
