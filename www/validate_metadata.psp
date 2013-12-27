@@ -1,7 +1,7 @@
 <%
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Doug Wendel"]
+__credits__ = ["Doug Wendel", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
@@ -10,9 +10,10 @@ __status__ = "Development"
 %>
 
 
-<frameset rows="*,225px" border="1" framespacing="3">
-    <frame src="validate_metadata_list.psp"/ id="validation_list" name="validation_list" noresize>
-    <frame src="validate_metadata_info.psp"/ id="validation_details" name="validation_details" noresize>
+
+<frameset border="1" framespacing="3">
+    <frame src="validate_metadata_list.psp" id="validation_list" name="validation_list" noresize>
+   
 </frameset>
 
 

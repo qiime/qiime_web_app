@@ -2,7 +2,7 @@
 
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2010, Qiime Web Analysis"
-__credits__ = ["Jesse Stombaugh", "Doug Wendel"]
+__credits__ = ["Jesse Stombaugh", "Doug Wendel", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
@@ -95,7 +95,7 @@ function replaceWithCurrent(field_name, old_value)
             if (e.value == old_value)
             {
                 e.value = current_field.value;
-                e.style.background = current_field.style.background;    
+                e.style.background = current_field.style.background;
             }
         }
     }
@@ -350,4 +350,17 @@ function GetXmlHttpObject()
         return new ActiveXObject("Microsoft.XMLHTTP");
     }
     return null;
+}
+
+
+function reValidateOntology(sender)
+{
+    onto_term = sender.value;
+    onto_term = "term="+onto_term;
+    $.ajax({type: "POST", url: "revalidate_ontology.psp", data: onto_term,
+        success: function( data ){
+            if ( $.trim(data)=='True'){sender.style.background = valid_color;}
+            else { sender.style.background = invalid_color;}
+                      },
+                  });
 }

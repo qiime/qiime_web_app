@@ -6,7 +6,7 @@ Classes to represent metadata table information
 
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Doug Wendel"]
+__credits__ = ["Doug Wendel", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.0.0"
 __maintainer__ = ["Doug Wendel"]
@@ -228,7 +228,9 @@ class OntologyColumn(BaseColumn):
 		validation_string = 'class="bp_form_complete-{0}-ontprefix_name" size="40" data-bp_include_definitions="true"'.format(','.join(ontology_ids))
 		if len(ontology_branch_ids) > 0:
 			validation_string += ' data-bp_search_branch="{0}"'.format(','.join(ontology_branch_ids))
-		
+			
+		function_string = 'reValidateOntology(this)'
+		validation_string += ' onmouseout="%s;" ' %(function_string)
 		return validation_string
 	
 	def _validate(self, term, ontology_names):
@@ -243,7 +245,7 @@ class OntologyColumn(BaseColumn):
 			if len(term_values) != 2:
 				return False
 		
-			if self._data_access.validateOntologyValue(ontology_name, term_values[1]) > 0:
+			if self._data_access.validateOntologyValue(term_values[0], term_values[1]) > 0:
 				return True
 		
 		# Not found in any list
