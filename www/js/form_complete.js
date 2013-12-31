@@ -72,7 +72,6 @@ function formComplete_formatItem(row) {
   var result = "";
   var ontology_id;
   var term_name_width = "350px";
-
   // Get ontology id and other parameters
   var classes = jQuery(input).attr('class').split(" ");
   jQuery(classes).each(function() {
@@ -94,31 +93,28 @@ function formComplete_formatItem(row) {
   var result_type = row[2];
   var result_term = row[0];
 
-  // row[7] is the ontology_id, only included when searching multiple ontologies
+  // display ontology here to make it clearer for the user. 
   if (ontology_id !== "all") {
     var result_def = row[7];
-
+    var result_ont = row[3];
     if (BP_include_definitions === "true") {
       result += "<div class='result_definition'>" + truncateText(decodeURIComponent(result_def.replace(/\+/g, " ")), 75) + "</div>"
     }
 
     result += "<div class='result_term' style='width: "+term_name_width+";'>" + result_term.replace(regex, "<b><span class='result_term_highlight'>$1</span></b>") + "</div>";
-
-    result += "<div class='result_type' style='overflow: hidden;'>" + result_type + "</div>";
+    result += "<div>" + " <div class='result_type'>" + result_type + "</div><div class='result_ontology' style='overflow: hidden;'>" + truncateText(result_ont, 15) + "</div></div>";
+    
   } else {
     // Results
-    var result_ont = row[7];
-    var result_def = row[9];
-
+    var result_ont = row[3];
+    var result_def = row[7];
     result += "<div class='result_term' style='width: "+term_name_width+";'>" + result_term.replace(regex, "<b><span class='result_term_highlight'>$1</span></b>") + "</div>"
 
     if (BP_include_definitions === "true") {
-      result += "<div class='result_definition'>" + truncateText(decodeURIComponent(result_def.replace(/\+/g, " ")), 75) + "</div>"
+      result += "<div class='result_definition'>" + truncateText(decodeURIComponent(result_def.replace(/\+/g, " ")), 15) + "</div>"
     }
 
-    result += "<div>" + " <div class='result_type'>" + result_type + "</div><div class='result_ontology' style='overflow: hidden;'>" + truncateText(result_ont, 35) + "</div></div>";
   }
-
   return result;
 }
 
@@ -194,6 +190,21 @@ function formComplete_setup_functions() {
 // Sets a hidden form value that records the concept id when a concept is chosen in the jump to
 // This is a workaround because the default autocomplete search method cannot distinguish between two
 // concepts that have the same preferred name but different ids.
+/*12-04-2013 Emily TerAvest  
+The return from BioPortal appears to have changed order from what it used to be.
+The current order is 
+extra[0] = link to term ex "http://purl.obolibrary.org/obo/ENVO_00001998"
+extra[1] = blank
+extra[2] = Ontology short name
+extra[3] = link to term (same as extra[0])
+extra[4] = term name
+extra[5] = synonym
+extra[6] = definition 
+example for soil 
+["http://purl.obolibrary.org/obo/ENVO_00001998", "", "ENVO", 
+"http://purl.obolibrary.org/obo/ENVO_00001998", "soil", "{'synonym':null}", 
+"Any+material+within+2+m+from+the+Earth%27s+surface…her+material%2C+and+water+bodies+deeper+than+2+m."]
+*/
 function bpFormSelect(li) {
   var input = this.extraParams.input;
   switch (this.extraParams.target_property) {
@@ -207,11 +218,11 @@ function bpFormSelect(li) {
       jQuery(input).val(li.extra[4])
       break;
     case "shortid_name":
-      jQuery(input).val(li.extra[0] + ':' + li.extra[4])
+    //changed to use extra[2] based on above comment
+      jQuery(input).val(li.extra[2] + ':' + li.extra[4])
       break;
     case "ontprefix_name":
-      var ontology_prefix = li.extra[0].split(":")[0]
-      jQuery(input).val(ontology_prefix + ':' + li.extra[4])
+      jQuery(input).val(li.extra[2] + ':' + li.extra[4])
       break;
   }
 
