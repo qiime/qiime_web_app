@@ -34,6 +34,7 @@ sff_complete = study_info['sff_complete']
 mapping_file_complete = study_info['mapping_file_complete']
 can_delete = study_info['can_delete']
 ebi_study_accession = study_info['ebi_study_accession']
+vamps_id = study_info['vamps_id']
 
 approved_qiime_submitters = [12428,12169,12171,12768,12782,12979,13019,12888]
 
@@ -306,7 +307,7 @@ if len(jobs) > 0 and is_admin == 1:
 
 <%
 
-elif is_admin == 1 and ebi_study_accession is None and web_app_user_id == 12169:
+elif is_admin == 1 and ebi_study_accession is None:
     # Indent
 %>
         <li>
@@ -327,6 +328,13 @@ elif ebi_study_accession is not None:
 
 # End indent
 # End if
++if vamps_id is not None:
+ +    # Indent
+ +%>    
+ +        <li>
+ +            <a href="http://vampslink" target="_blank">View Study at VAMPS</a>
+ +<%
+ +#End if vamps_id
 
 if can_delete == 'y' or is_admin:
     # indent
