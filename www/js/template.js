@@ -47,8 +47,13 @@ function validateCorrectedMetadata()
         
         if (e.style.backgroundColor == invalid_color)
         {
-            alert('Please correct all errors before submitting your metadata.')
-            return false;
+            //check to see if its an ontology we missed the first time though
+            is_valid = reValidateOntology(e, false);
+            if(is_valid === false)
+                {
+                alert('Please correct all errors before submitting your metadata.');
+                return false;
+                }
         }
     }
 }
@@ -353,15 +358,21 @@ function GetXmlHttpObject()
 }
 
 
-function reValidateOntology(sender)
+function reValidateOntology(sender, wait)
 {
     onto_term = sender.value;
     column_name = sender.id;
     onto_term = "term="+onto_term +"&column_name="+column_name;
-    $.ajax({type: "POST", url: "revalidate_ontology.psp", data: onto_term,
+    wait = wait===undefined?true:wait;
+    is_valid = false;
+    $.ajax({type: "POST", async: wait, url: "revalidate_ontology.psp", data: onto_term,
         success: function( data ){
-            if ( $.trim(data)=='True'){sender.style.background = valid_color;}
-            else { sender.style.background = invalid_color;}
-                      },
+            if ( $.trim(data)=='True')
+                {
+                    is_valid = true;
+                    sender.style.background = valid_color;
+                }
+            else { sender.style.background = invalid_color;}},
                   });
+    return is_valid;
 }
