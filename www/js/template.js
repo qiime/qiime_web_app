@@ -356,7 +356,8 @@ function GetXmlHttpObject()
 function reValidateOntology(sender)
 {
     onto_term = sender.value;
-    onto_term = "term="+onto_term;
+    column_name = sender.id;
+    onto_term = "term="+onto_term +"&column_name="+column_name;
     $.ajax({type: "POST", url: "revalidate_ontology.psp", data: onto_term,
         success: function( data ){
             if ( $.trim(data)=='True'){sender.style.background = valid_color;}
