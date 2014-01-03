@@ -15,18 +15,28 @@ from enums import ServerConfig
 
 data_access = data_access_factory(ServerConfig.data_access_type)
 
-if 'term' in form:
+is_valid = False
+
+if 'term' in form and 'column_name' in form: 
 	term = form['term']
+	full_column_name = form['column_name']
 	term_values = term.split(':')
 	if len(term_values) != 2:
 		req.write('False')
 		
 	else:
-		if data_access.validateOntologyValue(term_values[0], term_values[1]) > 0:
-			req.write('True')
+		#verify the ontology short name matches up with the column details
+		column_name = full_column_name.split(':')[-1]
+		ontology_details = data_access.get_column_ontology_details(column_name)
+		for row in ontology_details:
+			if term_values[0] == row[0]:
+				#this short name is valid in this column
+				is_valid = True
+		if data_access.validateOntologyValue(term_values[0], term_values[1]) > 0 and is_valid:
+			req.write('True')   #the term is valid and can be in the column
 			
 		else:
-			# Not found in any list
+			# Not found in any list or not valid in the column
 			req.write('False')
 
 else:

@@ -230,7 +230,7 @@ class OntologyColumn(BaseColumn):
 			validation_string += ' data-bp_search_branch="{0}"'.format(','.join(ontology_branch_ids))
 			
 		function_string = 'reValidateOntology(this)'
-		validation_string += ' onmouseout="%s;" ' %(function_string)
+		validation_string += ' onblur="%s;" ' %(function_string)
 		return validation_string
 	
 	def _validate(self, term, ontology_names):
