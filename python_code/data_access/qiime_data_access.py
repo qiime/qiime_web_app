@@ -408,7 +408,6 @@ class QiimeDataAccess(object):
             study_info['sample_count'] = row[39]
             study_info['ebi_study_accession'] = row[40]
             study_info['locked'] = row[41]
-            study_info['vamps_id'] = row[42]
         return study_info
 
     def saveTimeseriesData(self, study_id, timeseries_file, req):
@@ -1984,7 +1983,7 @@ class QiimeDataAccess(object):
         except Exception, e:
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False
-
+                
     #####################################
     # Loading
     #####################################
