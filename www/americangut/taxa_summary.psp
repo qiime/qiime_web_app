@@ -1,4 +1,13 @@
 <%
+__author__ = "Adam Robbins-Pianka"
+__copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
+__credits__ = ["Adam Robbins-Pianka"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Adam Robbins-Pianka"]
+__email__ = "adam.robbinspianka@colorado.edu"
+__status__ = "Development"
+
 from os.path import join
 from re import sub
 
@@ -20,7 +29,7 @@ else:
         <br>
         Note: The percentages listed represent the relative abundance of each taxon.
     </div>
-    <a href="taxa_summaries/<%=barcode%>.txt">Download the table</a>
+    <a href="taxa_summaries/<%=barcode%>.txt" download>Download the table</a>
     <center>
 <%
     # generate headers
