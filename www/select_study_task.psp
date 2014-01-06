@@ -306,9 +306,8 @@ if len(jobs) > 0 and is_admin == 1:
         </li>
 
 <%
-#this if statement used to be specific to Doug's user ID,  now it is here to see
-#if we want to leave it in or remove it later.
-elif is_admin == 1 and ebi_study_accession is None:
+
+elif is_admin == 1 and ebi_study_accession is None and web_app_user_id == 12169:
     # Indent
 %>
         <li>
