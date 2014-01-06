@@ -37,7 +37,7 @@ else:
 
 # determines whether or not to display link to taxa summary page
 if exists(join(ServerConfig.home, 'git', 'qiime_web_app', 'www', 'americangut',
-    'img', 'taxa_summaries', '%s.txt' % barcode)):
+    'taxa_summaries', '%s.txt' % barcode)):
     taxa_summary_link_text = ("""
     <form action="fusebox.psp" method="post" id="taxa_summary">
         <input type="hidden" name="page" value="taxa_summary.psp">

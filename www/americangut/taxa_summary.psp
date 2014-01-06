@@ -10,7 +10,7 @@ if barcode is None:
     req.write("ERROR: No barcode was requested.")
 else:
     taxa_summary_fp = join(ServerConfig.home, 'git', 'qiime_web_app', 'www',
-        'americangut', 'img', 'taxa_summaries', '%s.txt' % barcode)
+        'americangut', 'taxa_summaries', '%s.txt' % barcode)
     #END INDENT
 %>
 
@@ -18,7 +18,9 @@ else:
     <div class="red">
         Note, where there are blanks in the table below, the taxonomy could not be resolved in finer detail.
     </div>
-    <a href="img/taxa_summaries/<%=barcode%>.txt">Download the table</a>
+    <a href="taxa_summaries/<%=barcode%>.txt">Download the table</a>
+    <br>
+    Note: The percentages listed represent the relative abundance of each taxon.
     <center>
 <%
     # generate headers
