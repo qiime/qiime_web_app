@@ -132,7 +132,7 @@ ag_login_id = form['ag_login_id']
 if 'juvenile_age' in form:
     # Reset all checkbox fields
     for field in checkbox_list:
-        ag_data_access.updateAGSurvey(form['ag_login_id'], form['participant_name'], field, '')
+        ag_data_access.updateAGSurvey(ag_login_id, participant_name, field, '')
 
     for field in form:
         if field in ignore_list:
@@ -153,6 +153,26 @@ if 'juvenile_age' in form:
 
         ag_data_access.updateAGSurvey(form['ag_login_id'],
             form['participant_name'], field_to_update, value_to_update)
+
+    if form['participant_name'] != form['new_participant_name']:
+        # if the participant's name has been chnaged, we need to update the
+        # barcode associations to be associated with the new participant name
+        participant_samples = ag_data_access.getParticipantSamples(
+            ag_login_id, participant_name)
+
+        for participant_sample in participant_samples:
+            sample_details = ag_data_access.getAGBarcodeDetails(
+                participant_sample['barcode'])
+
+            ag_data_access.updateAGBarcode(
+                sample_details['barcode'],
+                sample_details['ag_kit_id'],
+                sample_details['site_sampled'],
+                sample_details['environment_sampled'],
+                sample_details['sample_date'],
+                sample_details['sample_time'],
+                form['new_participant_name'],
+                sample_details['notes'])
 
     # Redirect to home
     req.write('<script>document.submit_data.submit();</script>')
