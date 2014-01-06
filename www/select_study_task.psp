@@ -4,7 +4,7 @@ __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
-__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh", "Emily TerAvest"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
@@ -306,7 +306,8 @@ if len(jobs) > 0 and is_admin == 1:
         </li>
 
 <%
-
+#this if statement used to be specific to Doug's user ID,  now it is here to see
+#if we want to leave it in or remove it later.
 elif is_admin == 1 and ebi_study_accession is None:
     # Indent
 %>
@@ -328,13 +329,13 @@ elif ebi_study_accession is not None:
 
 # End indent
 # End if
-+if vamps_id is not None:
- +    # Indent
- +%>    
- +        <li>
- +            <a href="http://vampslink" target="_blank">View Study at VAMPS</a>
- +<%
- +#End if vamps_id
+if vamps_id is not None:
+    # Indent
+%>    
+        <li>
+            <a href="http://vamps.mbl.edu/portals/mobedac/mobedac_cv.php?project=<%=vamps_id%>" target="_blank">View Study at VAMPS</a>
+<%
+#End if vamps_id
 
 if can_delete == 'y' or is_admin:
     # indent
