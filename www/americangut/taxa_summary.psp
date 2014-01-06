@@ -16,11 +16,11 @@ else:
 
 <div class="content">
     <div class="red">
-        Note, where there are blanks in the table below, the taxonomy could not be resolved in finer detail.
+        Note: Where there are blanks in the table below, the taxonomy could not be resolved in finer detail.
+        <br>
+        Note: The percentages listed represent the relative abundance of each taxon.
     </div>
     <a href="taxa_summaries/<%=barcode%>.txt">Download the table</a>
-    <br>
-    Note: The percentages listed represent the relative abundance of each taxon.
     <center>
 <%
     # generate headers
