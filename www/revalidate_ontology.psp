@@ -32,6 +32,7 @@ if 'term' in form and 'column_name' in form:
 			if term_values[0] == row[0]:
 				#this short name is valid in this column
 				is_valid = True
+				break
 		if data_access.validateOntologyValue(term_values[0], term_values[1]) > 0 and is_valid:
 			req.write('True')   #the term is valid and can be in the column
 			
