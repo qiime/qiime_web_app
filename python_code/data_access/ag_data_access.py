@@ -372,18 +372,30 @@ class AGDataAccess(object):
             # Attempt to geocode
             address = '{0} {1} {2} {3}'.format(row[0], row[1], row[2], row[3])
             encoded_address = urllib.urlencode({'address': address})
-            url = '/maps/api/geocode/json?{0}&sensor=false'.format(encoded_address)
+            url = '/maps/api/geocode/json?{0}&sensor=false'.format(
+                encoded_address)
 
             r = self.getGeocodeJSON(url)
 
             if not r:
                 # Could not geocode, mark it so we don't try next time
-                self.updateGeoInfo(ag_login_id, '', '', 'y')
+                self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
 
             # Unpack it and write to DB
             lat, lon = r
-            self.updateGeoInfo(ag_login_id, lat, lon, '')
+
+            encoded_lat_lon = urllib.urlencode(
+                {'locations': ','.join(map(str, [lat,lon]))})
+
+            url2 = '/maps/api/elevation/json?{0}&sensor=false'.format(
+                encoded_lat_lon)
+            
+            r2 = self.getElevationJSON(url2)
+
+            elevation = r2
+
+            self.updateGeoInfo(ag_login_id, lat, lon, elevation, '')
 
         results = con.cursor()
         con.cursor().callproc('ag_get_map_markers', [results])
@@ -410,11 +422,37 @@ class AGDataAccess(object):
             # Unexpected format - not the data we want
             return False
 
+
         return (lat, lon)
+
+    def getElevationJSON(self, url):
+        conn = httplib.HTTPConnection('maps.googleapis.com')
+        conn.request('GET', url)
+        result = conn.getresponse()
+
+        # Make sure we get an 'OK' status
+        if result.status != 200:
+            return False
+
+        data = json.loads(result.read())
+
+        conn.close()
+
+        try:
+            elevation = data['results'][0]['elevation']
+        except:
+            # Unexpected format - not the data we want
+            return False
+
+        return elevation
         
-    def updateGeoInfo(self, ag_login_id, lat, lon, cannot_geocode):
+        
+    def updateGeoInfo(self, ag_login_id, lat, lon, elevation, cannot_geocode):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_update_geo_info', [ag_login_id, lat, lon, cannot_geocode])
+        con.cursor().callproc(
+            'ag_update_geo_info',
+            [ag_login_id, lat, lon, elevation, cannot_geocode]
+        )
 
     def addBruceWayne(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
