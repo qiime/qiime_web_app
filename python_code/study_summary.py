@@ -4,7 +4,7 @@ from __future__ import division
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "QIIME Web App"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.1.0-dev"
 __maintainer__ = "Jesse Stombaugh"
@@ -30,6 +30,8 @@ def print_study_info_and_values_table(query_results, data_access):
     study_titles=set(zip(*query_results)[2])
     study_abstracts=set(zip(*query_results)[3])
     pmids=set(zip(*query_results)[4])
+    ebi_ids=set(zip(*query_results)[5])
+    vamps_ids=set(zip(*query_results)[6])
     
     #write out study information
     info_table.append('<table><tr><th><u>Study Information</u></th><td></tr>')
@@ -60,16 +62,41 @@ def print_study_info_and_values_table(query_results, data_access):
     #write out the pubmed_ids for each sff and create a link to pubmed
     for i in pmids:
         if i != None:
-            info_table.append('<tr><th>Pubmed ID (pmid):</th><td '+ \
+            info_table.append('<tr><th>Pubmed ID (PMID):</th><td '+ \
                 'style="color:black;text-decoration:none">' + \
                 '<a href=http://www.ncbi.nlm.nih.gov/pubmed?term='+\
                 str(i)+'[uid] target="_blank">'+str(i)+'</a></td></tr>')
         else: 
-            info_table.append('<tr><th>Pubmed ID (pmid):</th><td>'+\
+            info_table.append('<tr><th>Pubmed ID (PMID):</th><td>'+\
                 '<em style="color:red;"> '+ \
-                'This paper does not currently have a pmid!</em></td></tr>')
-    info_table.append('</table><br>')
-    
+                'This paper does not currently have a PMID!</em></td></tr>')
+
+
+    #write out the ebi ids for each ssf and create link to ebi
+    for i in ebi_ids:
+        if i != None:
+            info_table.append('<tr><th>Study in EBI:</th><td ' +\
+                'style="color:black;text-decoration:none">'+\
+                '<a href=http://www.ebi.ac.uk/ena/data/view/'+str(i)+ \
+                ' target="_blank">View Study at EBI</a></th></tr>')
+        else:
+            info_table.append('<tr><th>Study in EBI:</th><td>' +\
+                '<em style="color:red;"> '+\
+                'This study has not been submitted to EBI!</em><td></tr>')
+
+    #write out the vamps link
+    for i in vamps_ids:
+        if i != None:
+            info_table.append('<tr><th>Study on VAMPS:</th><td ' +\
+                'style="color:black;text-decoration:none">'+\
+                '<a href=http://vamps.mbl.edu/portals/mobedac/mobedac_cv.php'+\
+                '?project='+str(i)+' target="_blank">View Study at VAMPS(must'+\
+                ' be logged into VAMPS see study)</a>')
+        else:
+            info_table.append('<tr><th>Study on VAMPS:</th><td>' +\
+                '<em style="color:red;"> '+\
+                'This study has not been uploaded to VAMPS!</em><td></tr>')
+    info_table.append('</table><br>')    
     ### get a QIIME DB connection
     try:
         from data_access_connections import data_access_factory
@@ -98,9 +125,9 @@ def print_study_info_and_values_table(query_results, data_access):
     
     # if no link, then allow user to email about getting data
     if oracle_cursor_len==0:
-        info_table.append("<table><th>Download Sequence Data:</th><td style=\"color:red;\">This dataset has not yet been collated. \
-            Feel free to contact us for the status of this dataset. \
-            (<a href='mailto:qiimeweb@gmail.com?subject=Status of QIIME-DB Study: %s'>email</a>)</td></table>" % (str(study_id)))
+        info_table.append("<table><th>Download Sequence Data:</th><td style=\"color:red;\">This dataset has not yet been collated. " \
+            "Feel free to contact us for the status of this dataset. " \
+            "(<a href='mailto:qiimeweb@gmail.com?subject=Status of QIIME-DB Study: %s'>email</a>)</td></table>" % (str(study_id)))
 
     
     return ''.join(info_table)
