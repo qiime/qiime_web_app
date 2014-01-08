@@ -65,9 +65,9 @@ add_sample_menu_item_template = \
                 <input type="hidden" name="page" value="add_sample.psp"/>
                 <input type="hidden" name="sample_type" value="human"/>
                 <input type="hidden" name="participant_name" value="{0}"/>
-            
+
                 <span><strong>Log Sample...</strong></span>
-        
+
             </form>
         </a>
     </li>
@@ -136,7 +136,7 @@ for p in human_participants:
             style = 'style="color:#0B0;"'
         sample_menu_item = sample_menu_item_template.format(barcode['barcode'], barcode['status'], style, barcode_text)
         req.write(sample_menu_item)
-    
+
     # Figure out if all samples have been used. Only draw Assign Sample if there's an unused barcode.
     if len(available_barcodes) > 0:
         req.write(add_sample_menu_item)
@@ -181,7 +181,7 @@ for p in animal_participants:
         sample_menu_item = sample_menu_item_template.format(barcode['barcode'], barcode['status'], style, barcode_text)
         req.write(sample_menu_item)
     # End for
-    
+
     # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
     if len(available_barcodes) > 0:
         req.write(add_animal_sample_menu_item)
@@ -233,6 +233,7 @@ if len(available_barcodes) > 0:
 %>
             </ul>
         </li>
+        <li><a href="fusebox.psp?page=add_sample_overview.psp">Log Sample...</a></li>
         <li><a href="FAQ.psp" target="_blank"><span>FAQ</span></a></li>
         <li><a href="fusebox.psp?page=help_request.psp"><span>Contact us</span></a></li>
         <li class="last"><a href="logout.psp"><span>Log out</span></a></li>
