@@ -369,6 +369,7 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
 
+        # clear previous geocoding attempts if retry is True
         if retry:
             sql = (
                 "select cast(ag_login_id as varchar2(100)) from ag_login "
@@ -381,6 +382,7 @@ class AGDataAccess(object):
                 ag_login_id = row[0]
                 self.updateGeoInfo(ag_login_id, '', '', '', '')
 
+        # get logins that have not been geocoded yet
         sql = (
             'select city, state, zip, country, '
             'cast(ag_login_id as varchar2(100)) '
@@ -406,10 +408,16 @@ class AGDataAccess(object):
 
             r = self.getGeocodeJSON(url)
 
-            if not r:
+            if r in ('unknown_error', 'not_OK'):
                 # Could not geocode, mark it so we don't try next time
                 self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
+            elif r == 'over_limit':
+                # If the reason for failure is merely that we are over the
+                # Google API limit, then we should try again next time
+                # ... but we should stop hitting their servers, so raise an
+                # exception
+                raise Exception, "Exceeded Google API limit"
 
             # Unpack it and write to DB
             lat, lon = r
@@ -422,10 +430,16 @@ class AGDataAccess(object):
             
             r2 = self.getElevationJSON(url2)
 
-            if not r2:
+            if r2 in ('unknown_error', 'not_OK'):
                 # Could not geocode, mark it so we don't try next time
                 self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
+            elif r2 == 'over_limit':
+                # If the reason for failure is merely that we are over the
+                # Google API limit, then we should try again next time
+                # ... but we should stop hitting their servers, so raise an
+                # exception
+                raise Exception, "Exceeded Google API limit"
 
             elevation = r2
 
@@ -447,7 +461,7 @@ class AGDataAccess(object):
 
         # Make sure we get an 'OK' status
         if result.status != 200:
-            return False
+            return 'not_OK'
 
         data = json.loads(result.read())
         conn.close()
@@ -457,7 +471,10 @@ class AGDataAccess(object):
             lon = data['results'][0]['geometry']['location']['lng']
         except:
             # Unexpected format - not the data we want
-            return False
+            if data.get('status', None) == 'OVER_QUERY_LIMIT':
+                return 'over_limit'
+            else:
+                return 'unknown_error'
 
 
         return (lat, lon)
@@ -469,7 +486,7 @@ class AGDataAccess(object):
 
         # Make sure we get an 'OK' status
         if result.status != 200:
-            return False
+            return 'not_OK'
 
         data = json.loads(result.read())
 
@@ -479,10 +496,13 @@ class AGDataAccess(object):
             elevation = data['results'][0]['elevation']
         except:
             # Unexpected format - not the data we want
-            return False
+            if data.get('status', None) == 'OVER_QUERY_LIMIT':
+                return 'over_limit'
+            else:
+                return 'unknown_error'
+
 
         return elevation
-        
         
     def updateGeoInfo(self, ag_login_id, lat, lon, elevation, cannot_geocode):
         con = self.getMetadataDatabaseConnection()
