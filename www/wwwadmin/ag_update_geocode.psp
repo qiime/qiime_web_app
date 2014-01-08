@@ -67,5 +67,39 @@ Update geocoding information in the database. It is recommended that this is per
 <%
 #endif
 %>
+
+<h3>Current Geocoding Status</h3>
+<table>
+
+<%
+stat_queries = [
+    ("Total Rows",
+     "select count(*) from ag_login"
+    ),
+    ("Cannot Geocode",
+     "select count(*) from ag_login where cannot_geocode = 'y'"
+    ),
+    ("Null Latitude Field",
+     "select count(*) from ag_login where latitude is null"
+    ),
+    ("Null Elevation Field",
+     "select count(*) from ag_login where elevation is null"
+    )
+]
+
+row_template = '''
+<tr>
+    <td>{0}</td><td>{1}</td>
+</tr>
+'''
+
+for title, sql in stat_queries:
+    result = ag_data_access.dynamicMetadataSelect(sql).next()[0]
+    req.write(row_template.format(title, result))
+#endfor
+%>
+
+</table>
+
 </div>
 
