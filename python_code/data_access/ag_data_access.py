@@ -356,18 +356,47 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_verify_kit_status', [supplied_kit_id])
 
+    def addGeocodingInfo(self, limit=None, retry=False):
+        """Adds latitude, longitude, and elevation to ag_login_table
 
-    def getMapMarkers(self):
+        Uses the city, state, zip, and country from the database to retrieve
+        lat, long, and elevation from the google maps API.
+
+        If any of that information cannot be retrieved, then cannot_geocode
+        is set to 'y' in the ag_login table, and it will not be tried again
+        on subsequent calls to this function.  Pass retry=True to retry all
+        (or maximum of limit) previously failed geocodings.
+        """
         con = self.getMetadataDatabaseConnection()
 
-        # 2 part process: First, determine if there are any logins that do not have lat/long
-        # and have not been geocoded. Look those up and write data to DB. If it can't be
-        # geocoded, also write that fact to DB so we don't look it up again.
+        if retry:
+            sql = (
+                "select cast(ag_login_id as varchar2(100)) from ag_login "
+                "where cannot_geocode = 'y'"
+            )
 
-        sql = 'select city, state, zip, country, cast(ag_login_id as varchar2(100)) from ag_login where latitude is null and cannot_geocode is null'
+            logins = self.dynamicMetadataSelect(sql)
+
+            for row in logins:
+                ag_login_id = row[0]
+                self.updateGeoInfo(ag_login_id, '', '', '', '')
+
+        sql = (
+            'select city, state, zip, country, '
+            'cast(ag_login_id as varchar2(100)) '
+            'from ag_login '
+            'where elevation is null '
+            'and cannot_geocode is null'
+        )
+
         logins = self.dynamicMetadataSelect(sql)
 
+        row_counter = 0
         for row in logins:
+            row_counter += 1
+            if limit is not None and row_counter > limit:
+                break
+
             ag_login_id = row[4]
             # Attempt to geocode
             address = '{0} {1} {2} {3}'.format(row[0], row[1], row[2], row[3])
@@ -393,9 +422,17 @@ class AGDataAccess(object):
             
             r2 = self.getElevationJSON(url2)
 
+            if not r2:
+                # Could not geocode, mark it so we don't try next time
+                self.updateGeoInfo(ag_login_id, '', '', '', 'y')
+                continue
+
             elevation = r2
 
             self.updateGeoInfo(ag_login_id, lat, lon, elevation, '')
+
+    def getMapMarkers(self):
+        con = self.getMetadataDatabaseConnection()
 
         results = con.cursor()
         con.cursor().callproc('ag_get_map_markers', [results])
