@@ -123,7 +123,12 @@ else:
             <input type="hidden" name="page" value="barcode_util.psp">
             <input type="hidden" name="page_title" value="Scan Barcode">
         </form>
-        
+
+        <form action="fusebox.psp" method="post" name="update_geocode" id="update_geocode">
+            <input type="hidden" name="page" value="ag_update_geocode.psp">
+            <input type="hidden" name="page_title" value="Update Geocode">
+        </form>
+
         <form action="fusebox.psp" method="post" name="ag_add_bruce_wayne" id="ag_add_bruce_wayne">
             <input type="hidden" name="page" value="ag_add_bruce_wayne.psp">
             <input type="hidden" name="page_title" value="Add Bruce Wayne">
@@ -149,6 +154,7 @@ else:
             <li><a href="" onclick="document.ag_edit_barcode.submit(); return false;">Edit Existing Barcode</a></li>
             <!--<li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>-->
             <li><a href="" onclick="document.barcode_util.submit(); return false;">Scan Barcode</a></li>
+            <li><a href="" onclick="document.update_geocode.submit(); return false;">Update Geocode</a></li>
             <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne<img src="img/bruce.png"/></a></li>
         </ul>
 
