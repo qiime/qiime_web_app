@@ -36,14 +36,12 @@ add_animal_sample_menu_item_template = \
 <div id="source_icons_list">
 <%
 for p in human_participants:
-    participant_menu_item = human_participant_menu_item_template.format(p)
     add_sample_menu_item = add_sample_menu_item_template.format(p)
 
     # Write out the participant menu item
     req.write(add_sample_menu_item)
 
 for p in animal_participants:
-    animal_participant_menu_item = animal_participant_menu_item_template.format(p)
     add_animal_sample_menu_item = add_animal_sample_menu_item_template.format(p)
 
     # Write out the participant menu item
