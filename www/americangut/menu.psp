@@ -233,7 +233,14 @@ if len(available_barcodes) > 0:
 %>
             </ul>
         </li>
+<%
+if kit_verified == 'y':
+    #
+%>
         <li><a href="fusebox.psp?page=add_sample_overview.psp">Log Sample...</a></li>
+<%
+#end if
+%>
         <li><a href="FAQ.psp" target="_blank"><span>FAQ</span></a></li>
         <li><a href="fusebox.psp?page=help_request.psp"><span>Contact us</span></a></li>
         <li class="last"><a href="logout.psp"><span>Log out</span></a></li>

@@ -32,7 +32,7 @@ add_animal_sample_menu_item_template = \
 %>
 
 <div id="content" class="content">
-<h2>Choose your sample source</h2>
+<h2>Choose your sample source <a href="#" class="help" title="The sample source is the person, animal or environment that the sample you are currently logging came from. If you took the sample from yourself, you should select yourself as the sample source.">(?)</a></h2>
 <div id="source_icons_list">
 <%
 for p in human_participants:
@@ -54,9 +54,10 @@ for p in animal_participants:
         <input type="hidden" name="page" value="add_sample.psp"/>
         <input type="hidden" name="sample_type" value="general"/>
         <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">
-        <div class="source_icon"><div style="background-image:url('img/environmental_transp.png');	background-repeat:no-repeat; background-position:0% 0%;"><h2>Environmental</h2></div></div>
+        <div class="source_icon"><div style="background-image:url('img/environmental_transp.png');	background-repeat:no-repeat; background-position:0% 0%;"><h2>Environmental</h2></div></div></a>
     </form>
 
 </div>
 <br />
 <br />
+<h2 class="msg">If you dont see the sample source you want here, you need to add it. You can do this in <a href="fusebox.psp?page=portal.psp">Step 2</a> on the main page when you log in.</h2>

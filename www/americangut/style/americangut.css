@@ -23,6 +23,10 @@ h2.msg {
 	background-color: #fcc;
 }
 
+h2.msg a {
+	text-decoration: none;
+}
+
 table#survey{
 	border-spacing: 20px;
 }
