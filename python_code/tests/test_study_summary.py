@@ -4,7 +4,7 @@ from __future__ import division
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2011, The QIIME-webdev project"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.2.1-dev"
 __maintainer__ = "Jesse Stombaugh"
@@ -38,7 +38,7 @@ class studySummary(TestCase):
         data_access = data_access_factory(ServerConfig.data_access_type)
         analysis_data=[]
         results=data_access.getQiimeSffDbSummary(0)
-        
+
         for row in results:
             analysis_data.append(row)
         
@@ -51,10 +51,14 @@ exp_output="""\
 <tr><th>Project Name:</th><td style="color:black;text-decoration:none">study_0</td></tr>\
 <tr><th>Study Title:</th><td style="color:black;text-decoration:none">study_0</td></tr>\
 <tr><th>Study Abstract:</th><td style="color:black;text-decoration:none">study_0</td></tr>\
-<tr><th>Pubmed ID (pmid):</th><td><em style="color:red;"> This paper does not currently have a pmid!</em></td></tr>\
+<tr><th>Pubmed ID (PMID):</th><td><em style="color:red;"> This paper does not currently have a PMID!</em></td></tr>\
+<tr><th>Study in EBI:</th><td><em style="color:red;"> This study has not been submitted to EBI!</em><td></tr>\
+<tr><th>Study in VAMPS:</th><td><em style="color:red;"> This study has not been uploaded to VAMPS!</em><td></tr>\
 </table>\
 <br>\
-<table><th>Download Sequence Data:</th><td style="color:red;">This dataset is not available. Feel free to contact Jesse Stombaugh for the status of this dataset (<a href=\'mailto:jesse.stombaugh@colorado.edu?subject=Status of QIIME-DB Study: 0\'>email</a>)</td>\
+<table><th>Download Sequence Data:</th><td style="color:red;">This dataset has not yet been collated. \
+Feel free to contact us for the status of this dataset. \
+(<a href='mailto:qiimeweb@gmail.com?subject=Status of QIIME-DB Study: 0'>email</a>)</td>\
 </table>\
 """
 
