@@ -13,10 +13,21 @@ _status_ = "Development"
     <div id="cssmenu">
     <ul>
         <li class="active"><a href="fusebox.psp?page=portal.psp"><span>Home</span></a></li>
-        <li><a href="FAQ.psp#faq0" target="_blank"><span>American Gut 101</span></a></li>
-        <li><a href="http://goo.gl/Jdh1cZ" target="_blank"><span>Preliminary Results!</span></a></li>
-        <li><a href="addendum.psp" target="_blank"><span>The American Gut Addendum</span></a></li>
+        <li class="has-sub"><a><span>Participant Resources</span></a>
+            <ul>
+                <li><a href="FAQ.psp#faq0" target="_blank"><span>American Gut 101</span></a></li>
+                <li><a href="FAQ.psp" target="_blank"><span>FAQ</span></a></li>
+                <li><a href="addendum.psp" target="_blank"><span>How do I interpret my results?</span></a></li>
+                <li class="last"><a href="http://goo.gl/Jdh1cZ" target="_blank"><span>Preliminary Results!</span></a></li>
+            </ul>
+        </li>
         <li><a href="fusebox.psp?page=change_password.psp"><span>Change Password</span></a></li>
+        <li><a href="fusebox.psp?page=help_request.psp"><span>Contact Us</span></a></li>
+        <li class="last"><a href="logout.psp"><span>Log out</span></a></li>
+        </ul>
+    </div>
+    <div id="cssmenu">
+        <ul>
         <li class="has-sub"><a><span>Human Samples</span></a>
             <ul> <!-- list of participants-->
 
@@ -65,9 +76,9 @@ add_sample_menu_item_template = \
                 <input type="hidden" name="page" value="add_sample.psp"/>
                 <input type="hidden" name="sample_type" value="human"/>
                 <input type="hidden" name="participant_name" value="{0}"/>
-            
+
                 <span><strong>Log Sample...</strong></span>
-        
+
             </form>
         </a>
     </li>
@@ -136,7 +147,7 @@ for p in human_participants:
             style = 'style="color:#0B0;"'
         sample_menu_item = sample_menu_item_template.format(barcode['barcode'], barcode['status'], style, barcode_text)
         req.write(sample_menu_item)
-    
+
     # Figure out if all samples have been used. Only draw Assign Sample if there's an unused barcode.
     if len(available_barcodes) > 0:
         req.write(add_sample_menu_item)
@@ -181,7 +192,7 @@ for p in animal_participants:
         sample_menu_item = sample_menu_item_template.format(barcode['barcode'], barcode['status'], style, barcode_text)
         req.write(sample_menu_item)
     # End for
-    
+
     # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
     if len(available_barcodes) > 0:
         req.write(add_animal_sample_menu_item)
@@ -233,9 +244,6 @@ if len(available_barcodes) > 0:
 %>
             </ul>
         </li>
-        <li><a href="FAQ.psp" target="_blank"><span>FAQ</span></a></li>
-        <li><a href="fusebox.psp?page=help_request.psp"><span>Contact us</span></a></li>
-        <li class="last"><a href="logout.psp"><span>Log out</span></a></li>
     </ul>
 </div>
     <!-- Twitter -->

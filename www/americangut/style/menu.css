@@ -7,7 +7,8 @@
 	height: 100%;
 	background-color: #fff;
 	text-align: left;
-	margin-right: 5px;	
+	margin-right: 5px;
+	margin-bottom: 10px;
 }
 
 #cssmenu > ul {
@@ -23,6 +24,7 @@
   position: relative;
   min-width: 230px;
   width: 240px;
+  box-shadow: 1px 2px 10px #888888;
 }
 /* The list elements which contain the links */
 #cssmenu > ul li {
@@ -53,7 +55,7 @@
   font-weight: 300;
   /* Background & effects */
 
-  background: #fff;
+  background: #f5f5f5;
 }
 /* Rounded corners for the first link of the menu/submenus */
 #cssmenu > ul li:first-child > a {
@@ -72,7 +74,7 @@
 #cssmenu > ul li:hover > a {
   color: #000;
 /*  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.25);*/
-  background: #eee;
+  background: #E0F5FF;
 /*  background: -webkit-linear-gradient(#d1d1d1, #b8b8b8);
   background: -moz-linear-gradient(#d1d1d1, #b8b8b8);
   background: linear-gradient(#d1d1d1, #b8b8b8);*/
@@ -115,6 +117,7 @@
 }
 /* THE SUBMENUS */
 #cssmenu > ul ul {
+  box-shadow: 1px 2px 10px #888888;
   position: absolute;
   left: 100%;
   top: -9999px;
@@ -126,6 +129,8 @@
   -webkit-transition: opacity 0.3s ease-in;
   -moz-transition: opacity 0.3s ease-in;
   transition: opacity 0.3s ease-in;
+/*  border: 1px solid #000;*/
+/*  border-radius: 5px;*/
 }
 #cssmenu > ul ul li a {
   font-size: 12px;
