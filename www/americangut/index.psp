@@ -218,8 +218,7 @@ ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gu
 # if database connection was unsuccessful, this is the first place it would
 # manifest
 try:
-    # results = ag_data_access.getMapMarkers()
-    results = []
+    results = ag_data_access.getMapMarkers()
 except:
     req.write('<div class="header clearfix">\n')
     req.write('<center><img id="logo" src="img/ag_logo.jpg">\n')
