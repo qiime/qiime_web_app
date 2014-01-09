@@ -8,7 +8,6 @@ select  akb.barcode as sample_name,
         akb.sample_date as collection_date, 
         'y' as "public",
         0 as depth,
-        'unknown' as elevation,
         'American Gut Project ' || akb.site_sampled || ' sample' as DESCRIPTION,
         akb.sample_time, 
         0 as altitude, 
@@ -166,6 +165,10 @@ select  akb.barcode as sample_name,
             when al.longitude is null then 'unknown'
             else cast(al.longitude as varchar2(100))
         end as longitude, 
+        case
+            when al.elevation is null then 'unknown'
+            else cast(al.elevation as varchar2(100))
+        end as elevation, 
         'years' as age_unit,
         case
             when ahs.birth_date is not null then
