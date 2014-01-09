@@ -53,7 +53,7 @@ exp_output="""\
 <tr><th>Study Abstract:</th><td style="color:black;text-decoration:none">study_0</td></tr>\
 <tr><th>Pubmed ID (PMID):</th><td><em style="color:red;"> This paper does not currently have a PMID!</em></td></tr>\
 <tr><th>Study in EBI:</th><td><em style="color:red;"> This study has not been submitted to EBI!</em><td></tr>\
-<tr><th>Study on VAMPS:</th><td><em style="color:red;"> This study has not been uploaded to VAMPS!</em><td></tr>\
+<tr><th>Study in VAMPS:</th><td><em style="color:red;"> This study has not been uploaded to VAMPS!</em><td></tr>\
 </table>\
 <br>\
 <table><th>Download Sequence Data:</th><td style="color:red;">This dataset has not yet been collated. \
