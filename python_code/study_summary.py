@@ -4,7 +4,7 @@ from __future__ import division
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "QIIME Web App"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.1.0-dev"
 __maintainer__ = "Jesse Stombaugh"
@@ -30,46 +30,72 @@ def print_study_info_and_values_table(query_results, data_access):
     study_titles=set(zip(*query_results)[2])
     study_abstracts=set(zip(*query_results)[3])
     pmids=set(zip(*query_results)[4])
+    ebi_ids=set(zip(*query_results)[5])
+    vamps_ids=set(zip(*query_results)[6])
     
     #write out study information
     info_table.append('<table><tr><th><u>Study Information</u></th><td></tr>')
     #Write out the study_ids for each sff
     for i in study_ids:
-        info_table.append('<tr><th>Study ID:</th><td '+ \
-                'style="color:black;text-decoration:none">' + \
-                str(i)+'</td></tr>')
+        info_table.append('<tr><th>Study ID:</th><td '
+                'style="color:black;text-decoration:none">' 
+                + str(i)+'</td></tr>')
                 
     #Write out the project_names for each sff
     for i in project_names:
-        info_table.append('<tr><th>Project Name:</th><td '+ \
-                'style="color:black;text-decoration:none">' + \
-                str(i)+'</td></tr>')
+        info_table.append('<tr><th>Project Name:</th><td '
+                'style="color:black;text-decoration:none">' 
+                + str(i)+'</td></tr>')
                 
     #Write out the study_titles for each sff
     for i in study_titles:
-        info_table.append('<tr><th>Study Title:</th><td '+ \
-                'style="color:black;text-decoration:none">' + \
-                str(i)+'</td></tr>')
+        info_table.append('<tr><th>Study Title:</th><td '
+                'style="color:black;text-decoration:none">' 
+                + str(i)+'</td></tr>')
                 
     #Write out the study_abstracts for each sff
     for i in study_abstracts:
-        info_table.append('<tr><th>Study Abstract:</th><td '+ \
-                'style="color:black;text-decoration:none">' + \
-                str(i)+'</td></tr>')
+        info_table.append('<tr><th>Study Abstract:</th><td '
+                'style="color:black;text-decoration:none">' 
+                + str(i)+'</td></tr>')
                 
     #write out the pubmed_ids for each sff and create a link to pubmed
     for i in pmids:
-        if i != None:
-            info_table.append('<tr><th>Pubmed ID (pmid):</th><td '+ \
-                'style="color:black;text-decoration:none">' + \
-                '<a href=http://www.ncbi.nlm.nih.gov/pubmed?term='+\
-                str(i)+'[uid] target="_blank">'+str(i)+'</a></td></tr>')
+        if i is not None:
+            info_table.append('<tr><th>Pubmed ID (PMID):</th><td '
+                'style="color:black;text-decoration:none">'
+                '<a href=http://www.ncbi.nlm.nih.gov/pubmed?term='
+                + str(i)+'[uid] target="_blank">'+str(i)+'</a></td></tr>')
         else: 
-            info_table.append('<tr><th>Pubmed ID (pmid):</th><td>'+\
-                '<em style="color:red;"> '+ \
-                'This paper does not currently have a pmid!</em></td></tr>')
-    info_table.append('</table><br>')
-    
+            info_table.append('<tr><th>Pubmed ID (PMID):</th><td>'
+                '<em style="color:red;"> '
+                'This paper does not currently have a PMID!</em></td></tr>')
+
+    #write out the ebi ids for each ssf and create link to ebi
+    for i in ebi_ids:
+        if i is not None:
+            info_table.append('<tr><th>Study in EBI:</th><td '
+                'style="color:black;text-decoration:none">'
+                '<a href=http://www.ebi.ac.uk/ena/data/view/'+str(i)+ 
+                ' target="_blank">View Study at EBI</a></th></tr>')
+        else:
+            info_table.append('<tr><th>Study in EBI:</th><td>' 
+                '<em style="color:red;"> '
+                'This study has not been submitted to EBI!</em><td></tr>')
+
+    #write out the vamps link
+    for i in vamps_ids:
+        if i is not None:
+            info_table.append('<tr><th>Study in VAMPS:</th><td '
+                'style="color:black;text-decoration:none">'
+                '<a href=http://vamps.mbl.edu/portals/mobedac/mobedac_cv.php'
+                '?project='+str(i)+' target="_blank">View Study at VAMPS(must'
+                ' be logged into VAMPS to see study)</a>')
+        else:
+            info_table.append('<tr><th>Study in VAMPS:</th><td>' 
+                '<em style="color:red;"> '
+                'This study has not been uploaded to VAMPS!</em><td></tr>')
+    info_table.append('</table><br>')    
     ### get a QIIME DB connection
     try:
         from data_access_connections import data_access_factory
@@ -85,7 +111,8 @@ def print_study_info_and_values_table(query_results, data_access):
     
     # create the select command
     for i in study_ids:
-        statement="select file_path from study_files where study_id=%s and file_type=\'SPLIT_LIB_SEQS_MAPPING\'" % (str(i))
+        statement="select file_path from study_files where study_id=%s and" \
+        " file_type=\'SPLIT_LIB_SEQS_MAPPING\'" % (str(i))
         study_id=str(i)
     
     # provide a link to the split-library data
@@ -94,13 +121,16 @@ def print_study_info_and_values_table(query_results, data_access):
     for path in file_path:
         oracle_cursor_len=oracle_cursor_len+1
         if path:
-            info_table.append('<table><th>Download Sequence Data:</th><td><a href=%s>Sequences, Mapping and OTU Table</a></td></table>' % (path))
+            info_table.append('<table><th>Download Sequence Data:</th><td><a '
+                'href=%s>Sequences, Mapping and OTU Table</a></td></table>' % (path))
     
     # if no link, then allow user to email about getting data
     if oracle_cursor_len==0:
-        info_table.append("<table><th>Download Sequence Data:</th><td style=\"color:red;\">This dataset has not yet been collated. \
-            Feel free to contact us for the status of this dataset. \
-            (<a href='mailto:qiimeweb@gmail.com?subject=Status of QIIME-DB Study: %s'>email</a>)</td></table>" % (str(study_id)))
+        info_table.append("<table><th>Download Sequence Data:</th><td "
+            "style=\"color:red;\">This dataset has not yet been collated. "
+            "Feel free to contact us for the status of this dataset. "
+            "(<a href='mailto:qiimeweb@gmail.com?subject=Status of QIIME-DB "
+                "Study: %s'>email</a>)</td></table>" % (str(study_id)))
 
     
     return ''.join(info_table)
@@ -166,7 +196,8 @@ def get_sample_summary_html(study_id, data_access):
             <th align="left">Number of Seqs Assigned<br/> to an OTU</th>
             <th align="left">% OTU Assignment</th>\n'''
     else:
-        out_string += '''<th align="left">Sample Name</th><th align="left">Public</th><th align="left">Collection Date</th>
+        out_string += '''<th align="left">Sample Name</th><th align="left">
+            Public</th><th align="left">Collection Date</th>
             <th align="left">Run Prefix</th>\n'''
 
     for sample_name, sample_id, public, collection_date, run_prefix,\
@@ -177,10 +208,13 @@ def get_sample_summary_html(study_id, data_access):
         if otu_percent_hit == None:
             otu_percent_hit = 0
         if write_seq_otu_cols:
-            out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s%%</td></tr>\n' % \
-                (sample_name, public, collection_date, run_prefix, sequence_count, otu_count, round(otu_percent_hit, 1))
+            out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td>' 
+            '<td>%s</td><td>%s</td><td>%s%%</td></tr>\n' % \
+                (sample_name, public, collection_date, run_prefix,
+                 sequence_count, otu_count, round(otu_percent_hit, 1))
         else:
-            out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n' % \
+            out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>'
+            '%s</td></tr>\n' % \
                 (sample_name, public, collection_date, run_prefix)
 
     out_string += '</table>\n'
