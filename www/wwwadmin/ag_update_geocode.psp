@@ -1,4 +1,13 @@
 <%
+__author__ = "Adam Robbins-Pianka"
+__copyright__ = "Copyright 2009-2014, Qiime Web Analysis"
+__credits__ = ["Adam Robbins-Pianka"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Adam Robbins-Pianka"]
+__email__ = "adam.robbinspianka@colorado.edu"
+__status__ = "Production"
+
 login_list = []
 %>
 
