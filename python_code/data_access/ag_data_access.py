@@ -480,6 +480,17 @@ class AGDataAccess(object):
         return (lat, lon)
 
     def getElevationJSON(self, url):
+        """Use Google's Maps API to retrieve an elevation
+
+        url should be formatted as described here:
+        https://developers.google.com/maps/documentation/elevation/#ElevationRequests
+
+        The number of API requests is limited to 2500 per 24 hour period.
+        If this function is called and the limit is surpassed, the return value
+        will be "over_limit".  Other errors will cause the return value to be
+        "unknown_error".  On success, the return value is the elevation of the
+        location requested in the url.
+        """
         conn = httplib.HTTPConnection('maps.googleapis.com')
         conn.request('GET', url)
         result = conn.getresponse()
@@ -494,13 +505,12 @@ class AGDataAccess(object):
 
         try:
             elevation = data['results'][0]['elevation']
-        except:
+        except KeyError:
             # Unexpected format - not the data we want
             if data.get('status', None) == 'OVER_QUERY_LIMIT':
                 return 'over_limit'
             else:
                 return 'unknown_error'
-
 
         return elevation
         
