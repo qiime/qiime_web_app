@@ -356,34 +356,97 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_verify_kit_status', [supplied_kit_id])
 
+    def addGeocodingInfo(self, limit=None, retry=False):
+        """Adds latitude, longitude, and elevation to ag_login_table
 
-    def getMapMarkers(self):
+        Uses the city, state, zip, and country from the database to retrieve
+        lat, long, and elevation from the google maps API.
+
+        If any of that information cannot be retrieved, then cannot_geocode
+        is set to 'y' in the ag_login table, and it will not be tried again
+        on subsequent calls to this function.  Pass retry=True to retry all
+        (or maximum of limit) previously failed geocodings.
+        """
         con = self.getMetadataDatabaseConnection()
 
-        # 2 part process: First, determine if there are any logins that do not have lat/long
-        # and have not been geocoded. Look those up and write data to DB. If it can't be
-        # geocoded, also write that fact to DB so we don't look it up again.
+        # clear previous geocoding attempts if retry is True
+        if retry:
+            sql = (
+                "select cast(ag_login_id as varchar2(100)) from ag_login "
+                "where cannot_geocode = 'y'"
+            )
 
-        sql = 'select city, state, zip, country, cast(ag_login_id as varchar2(100)) from ag_login where latitude is null and cannot_geocode is null'
+            logins = self.dynamicMetadataSelect(sql)
+
+            for row in logins:
+                ag_login_id = row[0]
+                self.updateGeoInfo(ag_login_id, '', '', '', '')
+
+        # get logins that have not been geocoded yet
+        sql = (
+            'select city, state, zip, country, '
+            'cast(ag_login_id as varchar2(100)) '
+            'from ag_login '
+            'where elevation is null '
+            'and cannot_geocode is null'
+        )
+
         logins = self.dynamicMetadataSelect(sql)
 
+        row_counter = 0
         for row in logins:
+            row_counter += 1
+            if limit is not None and row_counter > limit:
+                break
+
             ag_login_id = row[4]
             # Attempt to geocode
             address = '{0} {1} {2} {3}'.format(row[0], row[1], row[2], row[3])
             encoded_address = urllib.urlencode({'address': address})
-            url = '/maps/api/geocode/json?{0}&sensor=false'.format(encoded_address)
+            url = '/maps/api/geocode/json?{0}&sensor=false'.format(
+                encoded_address)
 
             r = self.getGeocodeJSON(url)
 
-            if not r:
+            if r in ('unknown_error', 'not_OK'):
                 # Could not geocode, mark it so we don't try next time
-                self.updateGeoInfo(ag_login_id, '', '', 'y')
+                self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
+            elif r == 'over_limit':
+                # If the reason for failure is merely that we are over the
+                # Google API limit, then we should try again next time
+                # ... but we should stop hitting their servers, so raise an
+                # exception
+                raise Exception, "Exceeded Google API limit"
 
             # Unpack it and write to DB
             lat, lon = r
-            self.updateGeoInfo(ag_login_id, lat, lon, '')
+
+            encoded_lat_lon = urllib.urlencode(
+                {'locations': ','.join(map(str, [lat,lon]))})
+
+            url2 = '/maps/api/elevation/json?{0}&sensor=false'.format(
+                encoded_lat_lon)
+            
+            r2 = self.getElevationJSON(url2)
+
+            if r2 in ('unknown_error', 'not_OK'):
+                # Could not geocode, mark it so we don't try next time
+                self.updateGeoInfo(ag_login_id, '', '', '', 'y')
+                continue
+            elif r2 == 'over_limit':
+                # If the reason for failure is merely that we are over the
+                # Google API limit, then we should try again next time
+                # ... but we should stop hitting their servers, so raise an
+                # exception
+                raise Exception, "Exceeded Google API limit"
+
+            elevation = r2
+
+            self.updateGeoInfo(ag_login_id, lat, lon, elevation, '')
+
+    def getMapMarkers(self):
+        con = self.getMetadataDatabaseConnection()
 
         results = con.cursor()
         con.cursor().callproc('ag_get_map_markers', [results])
@@ -398,7 +461,7 @@ class AGDataAccess(object):
 
         # Make sure we get an 'OK' status
         if result.status != 200:
-            return False
+            return 'not_OK'
 
         data = json.loads(result.read())
         conn.close()
@@ -408,13 +471,55 @@ class AGDataAccess(object):
             lon = data['results'][0]['geometry']['location']['lng']
         except:
             # Unexpected format - not the data we want
-            return False
+            if data.get('status', None) == 'OVER_QUERY_LIMIT':
+                return 'over_limit'
+            else:
+                return 'unknown_error'
+
 
         return (lat, lon)
+
+    def getElevationJSON(self, url):
+        """Use Google's Maps API to retrieve an elevation
+
+        url should be formatted as described here:
+        https://developers.google.com/maps/documentation/elevation/#ElevationRequests
+
+        The number of API requests is limited to 2500 per 24 hour period.
+        If this function is called and the limit is surpassed, the return value
+        will be "over_limit".  Other errors will cause the return value to be
+        "unknown_error".  On success, the return value is the elevation of the
+        location requested in the url.
+        """
+        conn = httplib.HTTPConnection('maps.googleapis.com')
+        conn.request('GET', url)
+        result = conn.getresponse()
+
+        # Make sure we get an 'OK' status
+        if result.status != 200:
+            return 'not_OK'
+
+        data = json.loads(result.read())
+
+        conn.close()
+
+        try:
+            elevation = data['results'][0]['elevation']
+        except KeyError:
+            # Unexpected format - not the data we want
+            if data.get('status', None) == 'OVER_QUERY_LIMIT':
+                return 'over_limit'
+            else:
+                return 'unknown_error'
+
+        return elevation
         
-    def updateGeoInfo(self, ag_login_id, lat, lon, cannot_geocode):
+    def updateGeoInfo(self, ag_login_id, lat, lon, elevation, cannot_geocode):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_update_geo_info', [ag_login_id, lat, lon, cannot_geocode])
+        con.cursor().callproc(
+            'ag_update_geo_info',
+            [ag_login_id, lat, lon, elevation, cannot_geocode]
+        )
 
     def addBruceWayne(self, ag_login_id, participant_name):
         con = self.getMetadataDatabaseConnection()
