@@ -145,20 +145,24 @@ class AGDataAccess(object):
         return barcodes
 
     def getAGBarcodeDetails(self, barcode):
-        # returned tuple consists of:
-        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcode_details', [barcode, results])
         barcode_details = results.fetchone()
-        """
-        Tuple format is:
+        row_dict = {
+            'email': barcode_details[0],
+            'ag_kit_barcode_id': barcode_details[1],
+            'ag_kit_id': barcode_details[2],
+            'barcode': barcode_details[3],
+            'site_sampled': barcode_details[4],
+            'environment_sampled': barcode_details[5],
+            'sample_date': barcode_details[6],
+            'sample_time': barcode_details[7],
+            'participant_name': barcode_details[8],
+            'notes': barcode_details[9]
+        }
 
-        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
-        akb.site_sampled, akb.environment_sampled, akb.sample_date, 
-        akb.sample_time, akb.participant_name, akb.notes
-        """
-        return barcode_details
+        return row_dict
 
     def getAGKitDetails(self, supplied_kit_id):
         con = self.getMetadataDatabaseConnection()
@@ -480,6 +484,17 @@ class AGDataAccess(object):
         return (lat, lon)
 
     def getElevationJSON(self, url):
+        """Use Google's Maps API to retrieve an elevation
+
+        url should be formatted as described here:
+        https://developers.google.com/maps/documentation/elevation/#ElevationRequests
+
+        The number of API requests is limited to 2500 per 24 hour period.
+        If this function is called and the limit is surpassed, the return value
+        will be "over_limit".  Other errors will cause the return value to be
+        "unknown_error".  On success, the return value is the elevation of the
+        location requested in the url.
+        """
         conn = httplib.HTTPConnection('maps.googleapis.com')
         conn.request('GET', url)
         result = conn.getresponse()
@@ -494,13 +509,12 @@ class AGDataAccess(object):
 
         try:
             elevation = data['results'][0]['elevation']
-        except:
+        except KeyError:
             # Unexpected format - not the data we want
             if data.get('status', None) == 'OVER_QUERY_LIMIT':
                 return 'over_limit'
             else:
                 return 'unknown_error'
-
 
         return elevation
         
