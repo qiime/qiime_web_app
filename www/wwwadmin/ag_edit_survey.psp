@@ -125,33 +125,66 @@ diabetes_values = (['Type I', 'Type II', 'I do not have diabetes'])
 roommates_values = (['None', 'One', 'Two', 'Three', 'More than three'])
 migraine_frequency_values = (['Daily', 'Weekly', 'Monthly', 'A few times a year'])
 
+participant_name = form['participant_name']
+ag_login_id = form['ag_login_id']
+
 # If the form has been submitted, write values and return to home
 if 'juvenile_age' in form:
-	# Reset all checkbox fields
-	for field in checkbox_list:
-		ag_data_access.updateAGSurvey(form['ag_login_id'], form['participant_name'], field, '')
+    # Reset all checkbox fields
+    for field in checkbox_list:
+        ag_data_access.updateAGSurvey(ag_login_id, participant_name, field, '')
 
-	for field in form:
-		if field in ignore_list:
-			continue
-		#req.write('ag_login_id: {0}<br/>'.format(form['ag_login_id']))
-		#req.write('participant_name: {0}<br/>'.format(form['participant_name']))
-		#req.write('field: {0}<br/>'.format(field))
-		#req.write('value: {0}<br/>'.format(form[field]))
-		ag_data_access.updateAGSurvey(form['ag_login_id'], form['participant_name'], field, form[field])
+    for field in form:
+        if field in ignore_list:
+            continue
+        # do not attempt to update this field, must special case
+        if field == 'participant_name':
+            continue
 
-	# Redirect to home
-	req.write('<script>document.submit_data.submit();</script>')
+        field_to_update = field
+        value_to_update = form[field]
+
+        # have to special-case participant name updates because of the way
+        # the update query is structured (participant_name is part of the
+        # primary key)
+        if field == 'new_participant_name':
+            field_to_update = 'participant_name'
+            value_to_update = form['new_participant_name']
+
+        ag_data_access.updateAGSurvey(form['ag_login_id'],
+            form['participant_name'], field_to_update, value_to_update)
+
+    if form['participant_name'] != form['new_participant_name']:
+        # if the participant's name has been chnaged, we need to update the
+        # barcode associations to be associated with the new participant name
+        participant_samples = ag_data_access.getParticipantSamples(
+            ag_login_id, participant_name)
+
+        for participant_sample in participant_samples:
+            sample_details = ag_data_access.getAGBarcodeDetails(
+                participant_sample['barcode'])
+
+            ag_data_access.updateAGBarcode(
+                sample_details['barcode'],
+                sample_details['ag_kit_id'],
+                sample_details['site_sampled'],
+                sample_details['environment_sampled'],
+                sample_details['sample_date'],
+                sample_details['sample_time'],
+                form['new_participant_name'],
+                sample_details['notes'])
+
+    # Redirect to home
+    req.write('<script>document.submit_data.submit();</script>')
 
 # End if
 
-participant_name = form['participant_name']
-ag_login_id = form['ag_login_id']
 %>
 
 <h3>Survey details for participant <%=participant_name%></h3>
 <form action="fusebox.psp?page=ag_edit_survey.psp" method="post">
 <input type="hidden" name="ag_login_id" id="ag_login_id" value="<%=ag_login_id%>"/>
+<input type="hidden" name="participant_name" id="participant_name" value="<%=participant_name%>"/>
 <table>
 <%
 sql = """
@@ -196,6 +229,8 @@ for idx, column in enumerate(column_names):
 		req.write('<td>{0}</td>\n'.format(buildSelect(column, eval('{0}_values'.format(column)), value)))
 	elif column == 'juvenile_age':
 		req.write('<td>{0}</td>\n'.format(buildSelect(column, ['under 7', 'between 7 and 13'], value)))
+	elif column == 'participant_name':
+		req.write('<td><input type="text" name="{0}" id="{0}" value="{1}"/></td>\n'.format('new_participant_name', form['participant_name']))
 	else:
 		req.write('<td><input type="text" name="{0}" id="{0}" value="{1}"/></td>\n'.format(column, value))
 

@@ -40,7 +40,7 @@ sess.save()
 %>
 
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
 <noscript>
 <meta HTTP-EQUIV="REFRESH" content="0; url=nojs.html">
@@ -48,30 +48,31 @@ sess.save()
 <meta charset="utf-8">
 <title>American Gut</title>
 <link rel="stylesheet" type="text/css" href="style/americangut.css">
+<link rel="stylesheet" type="text/css" href="style/menu.css">
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
 <script type="text/javascript" src="/qiime/js/qiime.js"></script>
 <script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="/qiime/js/jquery_validate/lib/jquery.metadata.js"></script>
 <script type="text/javascript" src="/qiime/js/jquery_validate/jquery.validate.js"></script>
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script> 
-<script type="text/javascript"> 
+<script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+<script type="text/javascript">
 $(document).ready(function(){
 
     $("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
-    
+
     $("ul.topnav li span").click(function() { //When trigger is clicked...
-        
+
         //Following events are applied to the subnav itself (moving subnav up and down)
         $(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
 
         $(this).parent().hover(function() {
-        }, function(){  
+        }, function(){
             $(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
         });
 
         //Following events are applied to the trigger (Hover events for the trigger)
-        }).hover(function() { 
+        }).hover(function() {
             $(this).addClass("subhover"); //On hover over, add class "subhover"
         }, function(){  //On Hover Out
             $(this).removeClass("subhover"); //On hover out, remove class "subhover"
@@ -100,7 +101,7 @@ function toggleSection(section_name)
 
 function drawMap(zoom_level, position)
 {
-    var mapOptions = 
+    var mapOptions =
     {
         zoom: zoom_level,
         center: position,
@@ -124,7 +125,7 @@ function drawMap(zoom_level, position)
 
     var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 
-    var mapType = new google.maps.StyledMapType(stylez, { name:"Grayscale" });    
+    var mapType = new google.maps.StyledMapType(stylez, { name:"Grayscale" });
     map.mapTypes.set('tehgrayz', mapType);
     map.setMapTypeId('tehgrayz');
 
@@ -145,8 +146,8 @@ function renderMap()
     drawMap(zoom_level, p);
 }
 
-function initialize() 
-{    
+function initialize()
+{
     if (navigator.geolocation)
     {
         navigator.geolocation.getCurrentPosition(renderLocalizedMap, renderMap);
@@ -157,17 +158,17 @@ function initialize()
     }
 }
 
-function setMarkers(map, locations) 
+function setMarkers(map, locations)
 {
-    for (var i = 0; i < locations.length; i++) 
+    for (var i = 0; i < locations.length; i++)
     {
         var loc = locations[i];
         var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
-        
+
 <%
 if tiny_markers:
     # Indent
-%>        
+%>
         var marker = new google.maps.Marker({
           position:myLatLng,
           map: map,
@@ -191,7 +192,7 @@ else:
             new google.maps.Point(12, 35));
 
         var marker = new google.maps.Marker({
-            position: myLatLng, 
+            position: myLatLng,
             map: map,
             icon: pinImage,
             shadow: pinShadow
@@ -201,7 +202,7 @@ else:
 # End if
 %>
 
-        
+
     }
 }
 </script>
@@ -283,15 +284,22 @@ req.write('window.onload=initialize;</script>')
     <div class="wrapper clearfix" style="position:absolute; top:130px; left:50px; opacity:0.9; width:260px;">
 		<br>
 		<div class="left menuwrapper">
-			<ul class="menu">
-                <li><a href="FAQ.psp" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">FAQ</a></li>
-                <li><a href="img/full_instructions.pdf" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">Kit Instructions</a></li>
-                <li><a href="international_shipping.psp?lan=en" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">International Shipping</a><a href="international_shipping.psp?lan=es" target="_blank"> (espa&ntilde;ol)</a></li>
-				<li><a href="http://humanfoodproject.com/americangut/"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
-				<li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
-				<li><a href="FAQ.psp#faq0" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">American Gut 101</a></li>
-				<li><a href="http://goo.gl/Jdh1cZ" target="_blank"><img class="icon" src="/qiime/img/what_icon.png">Preliminary Results!</a></li>
+        <div id="cssmenu">
+			<ul>
+                <li><a href="FAQ.psp#faq0">American Gut 101</a></li>
+                <li><a href="https://fundrazr.com/campaigns/4Tqx5" target="_blank">Join the Project</a></li>
+                <li><a href="http://goo.gl/Jdh1cZ" target="_blank">Preliminary Results</a></li>
+                <li class="has-sub"><a><span>Participant Resources</span></a>
+                    <ul>
+                        <li><a href="FAQ.psp">FAQ</a></li>
+                        <li><a href="img/full_instructions.pdf" target="_blank">Kit Instructions</a></li>
+                        <li><a href="international_shipping.psp?lan=en">International Shipping</a></li>
+                        <li class="last"><a  href="international_shipping.psp?lan=es">International Shipping (Espa&ntilde;ol)</a></li>
+                    </ul>
+                </li>
 			</ul>
+        </div>
+        <div id="cssmenu">
 
 <%
 # This is the location where the user directories are written
@@ -304,7 +312,7 @@ if form.has_key('username'):
     user_data = ag_data_access.authenticateWebAppUser(username, password)
 
     # Special AG case: if user data is None, it may be the first login from a hand-out kit. Check
-    # if the username/password exists in the handout list. If so, this must be the first time 
+    # if the username/password exists in the handout list. If so, this must be the first time
     # they've accessed the site and will need to fill out their user data.
     if not user_data:
         is_handout = ag_data_access.handoutCheck(username, password)
@@ -365,20 +373,4 @@ if form.has_key('username'):
     &nbsp;
     <br />
     </div>
-    
-    
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
 <%@ include file="footer.psp"%>

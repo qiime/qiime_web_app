@@ -7,12 +7,25 @@ if language == 'en':
     # IF LANGUAGE IS ENGLISH
 %>
 <html lang="en">
+<%
+elif language == 'es':
+    # IF LANGUAGE IS SPANISH
+%>
+<html lang="es">
+<%
+#endif
+%>
     <head>
         <meta charset="utf-8">
         <title>American Gut Project</title>
         <link rel="stylesheet" type="text/css" href="style/americangut.css">
+        <link rel="stylesheet" type="text/css" href="style/menu.css">
         <link rel="icon" type="image/ico" href="img/favicon.ico">
     </head>
+<%
+if language == 'en':
+    # IF LANGUAGE IS ENGLISH
+%>
     <body>
         <div class="wrapper clearfix">
             <div class="header clearfix">
@@ -20,14 +33,16 @@ if language == 'en':
             </div>
             <br>
             <div class="left menuwrapper">
-                <ul class="menu">
-                <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">Join the Project!</a></li>
-                <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">What is American Gut?</a></li>
-                <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Participant Login</a></li>
-                </ul>
+                <div id="cssmenu">
+                    <ul>
+    				<li><a href="https://fundrazr.com/campaigns/4Tqx5">Join the Project</a></li>
+    				<li><a href="FAQ.psp#faq0" target="_blank">American Gut 101</a></li>
+                    <li><a href="index.psp">Participant Login</a></li>
+                    </ul>
+                </div>
             </div>
             <div class="content">
-            <h2>American Gut International Shipping Instructions</h2>            
+            <h2>American Gut International Shipping Instructions</h2>
                 <div class="faq_wrapper">
                     <div class="faq">
                         <h3>International Participants:</h3>
@@ -38,7 +53,7 @@ For shipment, you will need to use regular tape to seal the plastic tube that co
 <br />
 <br />
 If you do not follow these directions the sample will be destroyed by United States Customs at the port of entry into the United States.</p>
-                    
+
                         <h3>Your samples</h3>
                         <ul class="shipping">
                         <li>Are considered dried specimens</li>
@@ -63,13 +78,6 @@ If you do not follow these directions the sample will be destroyed by United Sta
 elif language == 'es':
     # IF LANGUAGE IS SPANISH
 %>
-<html lang="es">
-    <head>
-        <meta charset="utf-8">
-        <title>Proyecto American Gut</title>
-        <link rel="stylesheet" type="text/css" href="style/americangut.css">
-        <link rel="icon" type="image/ico" href="img/favicon.ico">
-    </head>
     <body>
         <div class="wrapper clearfix">
             <div class="header clearfix">
@@ -77,11 +85,13 @@ elif language == 'es':
             </div>
             <br>
             <div class="left menuwrapper">
-                <ul class="menu">
-                <li><a href="http://www.indiegogo.com/projects/american-gut"><img class="icon" src="/qiime/img/purchase_icon.png">&Uacute;nete al proyecto!</a></li>
-                <li><a href="http://americangut.org"><img class="icon" src="/qiime/img/what_icon.png">¿Qu&eacute; es American Gut?</a></li>
-                <li><a href="index.psp"><img class="icon" src="/qiime/img/login_icon.png">Iniciar sesi&oacute;n</a></li>
-                </ul>
+                <div id="cssmenu">
+                    <ul>
+                    <li><a href="https://fundrazr.com/campaigns/4Tqx5">&Uacute;nete al proyecto</a></li>
+                    <li><a href="FAQ.psp#faq0">¿Qu&eacute; es American Gut?</a></li>
+                    <li><a href="index.psp">Iniciar sesi&oacute;n</a></li>
+                    </ul>
+                </div>
             </div>
             <div class="content">
             <h2>Env&iacute;os internacionales para American Gut</h2>
@@ -116,3 +126,6 @@ Si no sigues estas instrucciones tu muestra ser&aacute; destruida por los agente
         </div>
     </body>
 </html>
+<%
+#endif
+%>

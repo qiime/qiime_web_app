@@ -63,18 +63,16 @@ if 'barcode' in form:
 
 	barcode = form['barcode']
 	details = ag_data_access.getAGBarcodeDetails(barcode)
-	"""
-	Tuple of the form:
-	al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
-	akb.site_sampled, akb.environment_sampled, akb.sample_date, 
-	akb.sample_time, akb.participant_name, akb.notes
-	"""
 
-	barcode_ag_kit_id = details[2]
-	sample_date = '' if details[6] == None else details[6]
-	sample_time = '' if details[7] == None else details[7]
-	participant_name = '' if details[8] == None else details[8]
-	notes = '' if details[9] == None else details[9]
+	barcode_ag_kit_id = details['ag_kit_id']
+	req.write(barcode_ag_kit_id)
+	sample_date = '' if details['sample_date'] is None else \
+        details['sample_date']
+	sample_time = '' if details['sample_time'] is None else \
+        details['sample_time']
+	participant_name = '' if details['participant_name'] is \
+        None else details['participant_name']
+	notes = '' if details['notes'] is None else details['notes']
 
 	# Indent
 %>
@@ -108,7 +106,7 @@ if 'barcode' in form:
 					<option value="">None</option>
 <%
 	for site_sampled in sites_sampled:
-		if site_sampled == details[4]:
+		if site_sampled == details['site_sampled']:
 			req.write('<option value="{0}" selected>{0}</option>'.format(site_sampled))
 		else:
 			req.write('<option value="{0}">{0}</option>'.format(site_sampled))
@@ -132,7 +130,7 @@ if 'barcode' in form:
 					<option value="">None</option>
 <%
 	for environment_sampled in environments_sampled:
-		if environment_sampled == details[5]:
+		if environment_sampled == details['environment_sampled']:
 			req.write('<option value="{0}" selected>{0}</option>'.format(environment_sampled))
 		else:
 			req.write('<option value="{0}">{0}</option>'.format(environment_sampled))
@@ -182,8 +180,11 @@ if 'barcode' in form:
 		</tr>
 		<tr>
 			<td>Participant Name</td>
-			<td><input type="text" name="participant_name" id="participant_name" value="<%=participant_name%>"/></td>
+			<td class="warning"><input type="text" name="participant_name" id="participant_name" value="<%=participant_name%>"/></td>
 		</tr>
+        <tr>
+        <td></td><td class="warning">WARNING: Changing this value will reassign the barcode to the specified participant.<br/>Leave this alone unless you need to reassign!
+        </tr>
 		<tr>
 			<td>Notes</td>
 			<td><textarea name="notes" id="notes" style="width:350px;height:100px;"><%=notes%></textarea></td>

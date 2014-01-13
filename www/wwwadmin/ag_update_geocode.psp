@@ -1,0 +1,114 @@
+<%
+__author__ = "Adam Robbins-Pianka"
+__copyright__ = "Copyright 2009-2014, Qiime Web Analysis"
+__credits__ = ["Adam Robbins-Pianka"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Adam Robbins-Pianka"]
+__email__ = "adam.robbinspianka@colorado.edu"
+__status__ = "Production"
+
+login_list = []
+%>
+
+<style>
+th {
+    background-color: #bbb;
+}
+
+.widetable {
+    width: 100%;
+}
+
+.gridrow {
+    margin: 5px;
+    background-color: #eee;
+}
+
+.result_container {
+    background-color: #888; 
+    margin-bottom: 20px;
+    border-radius: 10px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #444;
+}
+
+.result_item {
+    
+}
+</style>
+
+<div>
+<%
+if 'limit' in form:
+    limit = int(form['limit'])
+    retry = int(form['retry'])
+
+    limit = None if limit == -1 else limit
+
+    req.write("Please wait...")
+    ag_data_access.addGeocodingInfo(limit, retry)
+    req.write("<br/>Done!")
+else:
+    #indent
+%>
+Update geocoding information in the database. It is recommended that this is performed before each metadata pulldown (if not more frequently).
+    <form action="fusebox.psp?page=ag_update_geocode.psp" name="agForm" id="agForm" method="post">
+        <table>
+            <tr>
+                <td>Pass -1 for no limit.<br/>Note that the Google API limits requests per 24 hours to about 2500 currently.</td>
+                <td><input type="text" name="limit" id="limit" value="500"></td>
+            </tr>
+            <tr>
+                <td>Pass 1 to retry previously failed geocoding attempts</td>
+                <td><input type="text" name="retry" id="retry" value="0"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="button" onclick="validateAGSingleSubmitForm()" value="Go" style="width:50px;">
+            </tr>
+        </table>
+        <script>
+           document.agForm.limit.focus()
+        </script>
+    </form>
+<%
+#endif
+%>
+
+<h3>Current Geocoding Status</h3>
+<table>
+
+<%
+stat_queries = [
+    ("Total Rows",
+     "select count(*) from ag_login"
+    ),
+    ("Cannot Geocode",
+     "select count(*) from ag_login where cannot_geocode = 'y'"
+    ),
+    ("Null Latitude Field",
+     "select count(*) from ag_login where latitude is null"
+    ),
+    ("Null Elevation Field",
+     "select count(*) from ag_login where elevation is null"
+    )
+]
+
+row_template = '''
+<tr>
+    <td>{0}</td><td>{1}</td>
+</tr>
+'''
+
+for title, sql in stat_queries:
+    result = ag_data_access.dynamicMetadataSelect(sql).next()[0]
+    req.write(row_template.format(title, result))
+#endfor
+%>
+
+</table>
+
+</div>
+
