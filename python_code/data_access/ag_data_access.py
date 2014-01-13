@@ -473,7 +473,7 @@ class AGDataAccess(object):
         try:
             lat = data['results'][0]['geometry']['location']['lat']
             lon = data['results'][0]['geometry']['location']['lng']
-        except:
+        except (KeyError, IndexError):
             # Unexpected format - not the data we want
             if data.get('status', None) == 'OVER_QUERY_LIMIT':
                 return 'over_limit'
@@ -509,7 +509,7 @@ class AGDataAccess(object):
 
         try:
             elevation = data['results'][0]['elevation']
-        except KeyError:
+        except (KeyError, IndexError):
             # Unexpected format - not the data we want
             if data.get('status', None) == 'OVER_QUERY_LIMIT':
                 return 'over_limit'
