@@ -208,10 +208,11 @@ def get_sample_summary_html(study_id, data_access):
         if otu_percent_hit == None:
             otu_percent_hit = 0
         if write_seq_otu_cols:
-            out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td>' 
-            '<td>%s</td><td>%s</td><td>%s%%</td></tr>\n' % \
-                (sample_name, public, collection_date, run_prefix,
-                 sequence_count, otu_count, round(otu_percent_hit, 1))
+            out_string += ('<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td>' 
+                           '<td>%s</td><td>%s</td><td>%s%%</td></tr>\n' % 
+                           (sample_name, public, collection_date, run_prefix,
+                           sequence_count, otu_count,
+                           round(otu_percent_hit, 1)))
         else:
             out_string += '<tr><td>%s</td><td>%s</td><td>%s</td><td>'
             '%s</td></tr>\n' % \
