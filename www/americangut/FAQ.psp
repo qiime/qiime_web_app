@@ -151,7 +151,9 @@
                             </ol>
                             <p>When participants are eligible,  you will then see their name under the corresponding menu on the left, in this example we have just added the participant "Test":</p>
                             <img src="img/add_participant_menu.png"/>
-                            <p>To add a sample to a participant, click the "Log Sample" link next to the participant's name</p>
+                            <p>To add a sample directly to a participant, click the "Log Sample" link next to the participant's name. You can also add a sample to any participant at any time by clicking the "Log Sample" link in the menu.</p>
+                            <img src="img/log_sample_options.png"/>
+                            <p>The generic add sample page looks like this:</p>
                             <img src="img/add_sample_highlight.png"/>
                             <p>When adding a sample, please be sure to select the barcodes that matches the barcode on the sampling tube of the sample that you are logging</p>
                             <img src="img/add_sample_overview.png"/>

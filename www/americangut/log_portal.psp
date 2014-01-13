@@ -4,4 +4,4 @@ Please write the sample site, date, and time on the sampling tube.
 <p>
 <div class="centered"><img src="img/labeled_tube.png"></div>
 <p class="portal_blurb">
-After writing the information on the sampling tube tube, <a href="fusebox.psp?page=add_sample_overview.psp">log the sample</a> in our system. </p>
+After writing the information on the sampling tube tube, <a href="fusebox.psp?page=add_sample_overview.psp">log the sample</a> in our system.</p>
