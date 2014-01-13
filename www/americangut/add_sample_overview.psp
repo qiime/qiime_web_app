@@ -58,4 +58,4 @@ for p in animal_participants:
 </div>
 <br />
 <br />
-<h2 class="msg">If you dont see the sample source you want here, you need to add it. You can do this in <a href="fusebox.psp?page=portal.psp">Step 2</a> on the main page when you log in.</h2>
+<h2 class="msg">If you don't see the sample source you want here, you need to add it. You can do this in <a href="fusebox.psp?page=portal.psp">Step 2</a> on the main page when you log in.</h2>
