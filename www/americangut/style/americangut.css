@@ -128,9 +128,9 @@ div.menuwrapper {
 	min-width: 230px;
 	width: 240px;
 	height: 100%;
-	background-color: #fff;
+/*	background-color: #fff;*/
 	text-align: left;
-	margin-right: 5px;	
+	margin-right: 5px;
 }
 
 div.registerwrapper {
@@ -162,7 +162,7 @@ div.keywrapper {
 	min-width: 210px;
 	height: 100%;
 	background-color: #fff;
-	text-align: left;	
+	text-align: left;
 }
 
 div.footer {
@@ -288,7 +288,7 @@ ul.workflow_menu li.disabled:hover {
 	background-color: #ddd;
 }
 
-ul.workflow_menu li a{ 
+ul.workflow_menu li a{
 	color: #000;
 	height: 120px;
 	width: 110px;
