@@ -145,20 +145,24 @@ class AGDataAccess(object):
         return barcodes
 
     def getAGBarcodeDetails(self, barcode):
-        # returned tuple consists of:
-        # site_sampled, sample_date, sample_time, participant_name, environment_sampled, notes 
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcode_details', [barcode, results])
         barcode_details = results.fetchone()
-        """
-        Tuple format is:
+        row_dict = {
+            'email': barcode_details[0],
+            'ag_kit_barcode_id': barcode_details[1],
+            'ag_kit_id': barcode_details[2],
+            'barcode': barcode_details[3],
+            'site_sampled': barcode_details[4],
+            'environment_sampled': barcode_details[5],
+            'sample_date': barcode_details[6],
+            'sample_time': barcode_details[7],
+            'participant_name': barcode_details[8],
+            'notes': barcode_details[9]
+        }
 
-        al.email, akb.ag_kit_barcode_id, akb.ag_kit_id, akb.barcode, 
-        akb.site_sampled, akb.environment_sampled, akb.sample_date, 
-        akb.sample_time, akb.participant_name, akb.notes
-        """
-        return barcode_details
+        return row_dict
 
     def getAGKitDetails(self, supplied_kit_id):
         con = self.getMetadataDatabaseConnection()
