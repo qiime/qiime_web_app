@@ -128,7 +128,7 @@ sample_menu_item_template = \
 
 for p in human_participants:
     participant_menu_item = human_participant_menu_item_template.format(p)
-    add_sample_menu_item = add_sample_menu_item_template.format(p)
+    # add_sample_menu_item = add_sample_menu_item_template.format(p)
 
     # Write out the participant menu item
     req.write(participant_menu_item)
@@ -149,8 +149,8 @@ for p in human_participants:
         req.write(sample_menu_item)
 
     # Figure out if all samples have been used. Only draw Assign Sample if there's an unused barcode.
-    if len(available_barcodes) > 0:
-        req.write(add_sample_menu_item)
+    # if len(available_barcodes) > 0:
+        # req.write(add_sample_menu_item)
     req.write('</ul></li>\n\n')
 
 # End for
@@ -172,7 +172,7 @@ if kit_verified == 'y':
 <%
 for p in animal_participants:
     animal_participant_menu_item = animal_participant_menu_item_template.format(p)
-    add_animal_sample_menu_item = add_animal_sample_menu_item_template.format(p)
+    # add_animal_sample_menu_item = add_animal_sample_menu_item_template.format(p)
 
     # Write out the participant menu item
     req.write(animal_participant_menu_item)
@@ -194,8 +194,8 @@ for p in animal_participants:
     # End for
 
     # Figure out if all samples have been used. Only draw Add Sample if there's an unused barcode.
-    if len(available_barcodes) > 0:
-        req.write(add_animal_sample_menu_item)
+    # if len(available_barcodes) > 0:
+        # req.write(add_animal_sample_menu_item)
     req.write('</ul></li>\n\n')
 
 # End for
@@ -238,14 +238,14 @@ add_general_sample_menu_item = \
 </li>
 """
 
-if len(available_barcodes) > 0:
-    req.write(add_general_sample_menu_item)
+# if len(available_barcodes) > 0:
+    # req.write(add_general_sample_menu_item)
 # End if
 %>
             </ul>
         </li>
 <%
-if kit_verified == 'y':
+if kit_verified == 'y' and len(available_barcodes) > 0:
     #
 %>
         <li class="last"><a href="fusebox.psp?page=add_sample_overview.psp"><strong>Log Sample</strong></a></li>
