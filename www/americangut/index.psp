@@ -286,14 +286,15 @@ req.write('window.onload=initialize;</script>')
 		<div class="left menuwrapper">
         <div id="cssmenu">
 			<ul>
-                <li><a href="FAQ.psp#faq0" target="_blank">American Gut 101</a></li>
-                <li><a href="https://fundrazr.com/campaigns/4Tqx5">Join the Project</a></li>
+                <li><a href="FAQ.psp#faq0">American Gut 101</a></li>
+                <li><a href="https://fundrazr.com/campaigns/4Tqx5" target="_blank">Join the Project</a></li>
                 <li><a href="http://goo.gl/Jdh1cZ" target="_blank">Preliminary Results</a></li>
                 <li class="has-sub"><a><span>Participant Resources</span></a>
                     <ul>
-                        <li><a href="FAQ.psp" target="_blank">FAQ</a></li>
+                        <li><a href="FAQ.psp">FAQ</a></li>
                         <li><a href="img/full_instructions.pdf" target="_blank">Kit Instructions</a></li>
-                        <li class="last"><a href="international_shipping.psp?lan=en" target="_blank">International Shipping</a><a  href="international_shipping.psp?lan=es" target="_blank"> (es)</a></li>
+                        <li><a href="international_shipping.psp?lan=en">International Shipping</a></li>
+                        <li class="last"><a  href="international_shipping.psp?lan=es">International Shipping (Espa&ntilde;ol)</a></li>
                     </ul>
                 </li>
 			</ul>
