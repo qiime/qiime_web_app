@@ -1,0 +1,61 @@
+<%
+ag_login_id = sess['user_data']['web_app_user_id']
+human_participants = ag_data_access.getHumanParticipants(ag_login_id)
+animal_participants = ag_data_access.getAnimalParticipants(ag_login_id)
+
+add_sample_menu_item_template = \
+"""
+        <a href="" onclick="document.forms['add_sample_{0}'].submit(); return false;">
+            <form action="fusebox.psp" method="post" id="add_sample_{0}">
+                <input type="hidden" name="page" value="add_sample.psp"/>
+                <input type="hidden" name="sample_type" value="human"/>
+                <input type="hidden" name="participant_name" value="{0}"/>
+
+                <div class="source_icon"><div style="background-image:url('img/human_transp.png');	background-repeat:no-repeat; background-position:0% 0%;"><h2>{0}</h2></div></div>
+
+            </form>
+        </a>
+"""
+
+add_animal_sample_menu_item_template = \
+"""
+        <a href="" onclick="document.forms['add_sample_animal_{0}'].submit(); return false;">
+            <form action="fusebox.psp" method="post" id="add_sample_animal_{0}">
+                <input type="hidden" name="page" value="add_sample.psp"/>
+                <input type="hidden" name="sample_type" value="animal"/>
+                <input type="hidden" name="participant_name" value="{0}"/>
+                <div class="source_icon"><div style="background-image:url('img/animal_transp.png');	background-repeat:no-repeat; background-position:0% 0%;"><h2>{0}</h2></div></div>
+            </form>
+        </a>
+"""
+
+%>
+
+<div id="content" class="content">
+<h2>Choose your sample source <a href="#" class="help" title="The sample source is the person, animal or environment that the sample you are currently logging came from. If you took the sample from yourself, you should select yourself as the sample source.">(?)</a></h2>
+<div id="source_icons_list">
+<%
+for p in human_participants:
+    add_sample_menu_item = add_sample_menu_item_template.format(p)
+
+    # Write out the participant menu item
+    req.write(add_sample_menu_item)
+
+for p in animal_participants:
+    add_animal_sample_menu_item = add_animal_sample_menu_item_template.format(p)
+
+    # Write out the participant menu item
+    req.write(add_animal_sample_menu_item)
+%>
+
+    <form action="fusebox.psp" method="post" id="add_sample_general">
+        <input type="hidden" name="page" value="add_sample.psp"/>
+        <input type="hidden" name="sample_type" value="general"/>
+        <a href="" onclick="document.forms['add_sample_general'].submit(); return false;">
+        <div class="source_icon"><div style="background-image:url('img/environmental_transp.png');	background-repeat:no-repeat; background-position:0% 0%;"><h2>Environmental</h2></div></div></a>
+    </form>
+
+</div>
+<br />
+<br />
+<h2 class="msg">If you don't see the sample source you want here, you need to add it. You can do this in <a href="fusebox.psp?page=portal.psp">Step 2</a> on the main page when you log in.</h2>
