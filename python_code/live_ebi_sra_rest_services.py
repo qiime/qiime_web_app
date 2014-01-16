@@ -111,7 +111,7 @@ class LiveEBISRARestServices(BaseRestServices):
             self.sample_file_path,
             self.run_file_path,
             self.experiment_file_path,
-            url)
+            url
         )
             
         return curl_command
