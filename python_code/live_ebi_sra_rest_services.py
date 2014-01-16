@@ -12,8 +12,6 @@ __status__ = "Development"
 from os.path import basename, exists, join
 import sys
 import httplib, urllib
-from base_rest_services import BaseRestServices
-from sequence_file_writer import SequenceFileWriterFactory
 import hashlib
 from ftplib import FTP
 from subprocess import Popen, PIPE, STDOUT
@@ -21,6 +19,10 @@ from os.path import split
 from os import chmod
 from sys import stdout
 from datetime import date, timedelta
+
+from base_rest_services import BaseRestServices
+from sequence_file_writer import SequenceFileWriterFactory
+from credentials import Credentials
 
 class SequenceFile(object):
     def __init__(self, file_path, file_id, checksum):
@@ -56,8 +58,9 @@ class LiveEBISRARestServices(BaseRestServices):
         
         # EBI FTP info
         self.ftp_url = 'ftp.sra.ebi.ac.uk'
-        self.ftp_user = 'era-drop-215'
-        self.ftp_pass = 'J7XoQJ8I'
+        self.ftp_user = Credentials.ebi_user_id
+        self.ftp_pass = Credentials.ebi_user_pass
+        self.ebi_rest_access_key = Credentials.ebi_rest_access_key
         
         # Open the FTP connection, leave open for efficiency
         #self.ftp = FTP(self.ftp_url, self.ftp_user, self.ftp_pass)
@@ -96,9 +99,20 @@ class LiveEBISRARestServices(BaseRestServices):
         pass
 
     def generate_curl_command(self):
-        curl_command = 'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" -F "RUN=@{3}" -F"EXPERIMENT=@{4}" \
-            "https://www.ebi.ac.uk/ena/submit/drop-box/submit/?auth=ERA%20era-drop-215%20UquRb+8GCPOaT56b6wzR5pFeF8E%3D"'.format(\
-            self.submission_file_path, self.study_file_path, self.sample_file_path, self.run_file_path, self.experiment_file_path)
+        url = '?auth=ERA%20{0}%20{1}%3D'.format(self.ebi_user_id,
+                                                self.ebi_rest_access_key)
+        curl_command = (
+            'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" '
+            '-F "RUN=@{3}" -F"EXPERIMENT=@{4}" '
+            '"https://www.ebi.ac.uk/ena/submit/drop-box/submit/{5}'
+        ).format(
+            self.submission_file_path,
+            self.study_file_path,
+            self.sample_file_path,
+            self.run_file_path,
+            self.experiment_file_path,
+            url
+        )
             
         return curl_command
 
