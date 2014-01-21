@@ -23,6 +23,10 @@ h2.msg {
 	background-color: #fcc;
 }
 
+h2.msg a {
+	text-decoration: none;
+}
+
 table#survey{
 	border-spacing: 20px;
 }
@@ -195,6 +199,7 @@ img.inline {
 }
 
 div.source_icon {
+	background-color: #f8f8f8;
 	border-radius: 10px;
 	border: 1px solid #ccc;
 	margin: 1em;
@@ -220,6 +225,38 @@ div#source_icons div{
 	color: #000;
 	font-size: 18pt;
 	height: 100px;
+}
+
+div#source_icons_list {
+	width: 500px;
+	margin-left: auto ;
+	margin-right: auto ;
+	position: relative;
+}
+
+div#source_icons_list a{
+	text-decoration: none;
+}
+
+div#source_icons_list div{
+	color: #000;
+	height: 100%;
+}
+
+div#source_icons_list h2 {
+	padding-top: 10px;
+	margin-top: 10px;
+	font-size: 20pt;
+	margin-left: auto ;
+	margin-right: auto ;
+	opacity: 1;
+}
+
+div#source_icons_list img {
+	margin-left: auto ;
+	margin-right: auto ;
+	opacity: .1;
+	z-index: 0;
 }
 
 div.portal_unselected {

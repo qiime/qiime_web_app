@@ -27,7 +27,7 @@ else:
     <div class="red">
         Note: Where there are blanks in the table below, the taxonomy could not be resolved in finer detail.
         <br>
-        Note: The percentages listed represent the relative abundance of each taxon.
+        Note: The percentages listed represent the relative abundance of each taxon. This summary is based off of normalized data. Because of limitations in the way the samples are processed, we cannot reliably obtain species level resolution. As such, the data shown are collapsed at the genus level.
     </div>
     <a href="taxa_summaries/<%=barcode%>.txt" download>Download the table</a>
     <center>
