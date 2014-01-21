@@ -9,11 +9,11 @@ Sequencing and data analysis can take up to 6 months, please be patient! We will
 sample_link_template = \
 """
     <li>
+    <form action="fusebox.psp" method="post" id="sample_overview2_{0}">
+        <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
+        <input type="hidden" name="barcode" id="barcode" value="{0}"/>
+    </form>
     <a href="" onclick="document.forms['sample_overview2_{0}'].submit(); return false;">
-            <form action="fusebox.psp" method="post" id="sample_overview2_{0}">
-                <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
-                <input type="hidden" name="barcode" id="barcode" value="{0}"/>
-            </form>
             {0} ({1})
         </a>
     </li>
