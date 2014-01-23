@@ -1,7 +1,8 @@
 <%
 _author_ = "Meg Pirrung"
 _copyright_ = "Copyright 2009-2013, QIIME Web Analysis"
-_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza", "Doug Wendel"]
+_credits_ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza",\
+             "Emily TerAvest", "Doug Wendel"]
 _license_ = "GPL"
 _version_ = "1.0.0.dev"
 _maintainer_ = ["Meg Pirrung"]
@@ -17,6 +18,7 @@ _status_ = "Development"
             <ul>
                 <li><a href="FAQ.psp#faq0" target="_blank"><span>American Gut 101</span></a></li>
                 <li><a href="FAQ.psp" target="_blank"><span>FAQ</span></a></li>
+                <li><a href="img/FAQ_Human_Microbiome.pdf" target="_blank"><span>Human Microbiome FAQ</span></a></li>
                 <li><a href="addendum.psp" target="_blank"><span>How do I interpret my results?</span></a></li>
                 <li class="last"><a href="http://goo.gl/Jdh1cZ" target="_blank"><span>Preliminary Results!</span></a></li>
             </ul>
