@@ -12,11 +12,16 @@ __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
-import cx_Oracle
-import httplib
-import json
 import urllib
+import httplib
 from random import choice
+import json
+from time import sleep
+
+import cx_Oracle
+
+class OverGoogleAPILimitException(Exception):
+    pass
 
 class AGDataAccess(object):
     """
@@ -412,7 +417,7 @@ class AGDataAccess(object):
 
             r = self.getGeocodeJSON(url)
 
-            if r in ('unknown_error', 'not_OK'):
+            if r in ('unknown_error', 'not_OK', 'no_results'):
                 # Could not geocode, mark it so we don't try next time
                 self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
@@ -421,7 +426,7 @@ class AGDataAccess(object):
                 # Google API limit, then we should try again next time
                 # ... but we should stop hitting their servers, so raise an
                 # exception
-                raise Exception, "Exceeded Google API limit"
+                raise OverGoogleAPILimitException("Exceeded Google API limit")
 
             # Unpack it and write to DB
             lat, lon = r
@@ -443,7 +448,7 @@ class AGDataAccess(object):
                 # Google API limit, then we should try again next time
                 # ... but we should stop hitting their servers, so raise an
                 # exception
-                raise Exception, "Exceeded Google API limit"
+                raise OverGoogleAPILimitException("Exceeded Google API limit")
 
             elevation = r2
 
@@ -460,26 +465,50 @@ class AGDataAccess(object):
 
     def getGeocodeJSON(self, url):
         conn = httplib.HTTPConnection('maps.googleapis.com')
-        conn.request('GET', url)
-        result = conn.getresponse()
+        success = False
+        num_tries = 0
+        while num_tries < 2 and not success:
+            conn.request('GET', url)
+            result = conn.getresponse()
 
-        # Make sure we get an 'OK' status
-        if result.status != 200:
-            return 'not_OK'
+            # Make sure we get an 'OK' status
+            if result.status != 200:
+                return 'not_OK'
 
-        data = json.loads(result.read())
-        conn.close()
+            data = json.loads(result.read())
 
-        try:
-            lat = data['results'][0]['geometry']['location']['lat']
-            lon = data['results'][0]['geometry']['location']['lng']
-        except (KeyError, IndexError):
-            # Unexpected format - not the data we want
+            # if we're over the query limit, wait 2 seconds and try again,
+            # it may just be that we're submitting requests too fast
             if data.get('status', None) == 'OVER_QUERY_LIMIT':
-                return 'over_limit'
+                num_tries += 1
+                sleep(2)
+            elif data.has_key('results'):
+                success = True
             else:
+                raise Exception("first")
                 return 'unknown_error'
 
+        conn.close()
+
+        # if we got here without getting an unknown_error or succeeding, then
+        # we are over the request limit for the 24 hour period
+        if not success:
+            return 'over_limit'
+
+        # sanity check the data returned by Google and return the lat/lng
+        if len(data['results']) == 0:
+            return 'no_results'
+        if not data['results'][0].get('geometry', {}).get('location',
+                {}).get('lat', {}):
+            raise Exception("second")
+            return 'unknown_error'
+        if not data['results'][0].get('geometry', {}).get('location',
+                {}).get('lng', {}):
+            raise Exception("third")
+            return 'unknown_error'
+
+        lat = data['results'][0]['geometry']['location']['lat']
+        lon = data['results'][0]['geometry']['location']['lng']
 
         return (lat, lon)
 
@@ -496,27 +525,42 @@ class AGDataAccess(object):
         location requested in the url.
         """
         conn = httplib.HTTPConnection('maps.googleapis.com')
-        conn.request('GET', url)
-        result = conn.getresponse()
+        success = False
+        num_tries = 0
+        while num_tries < 2 and not success:
+            conn.request('GET', url)
+            result = conn.getresponse()
 
-        # Make sure we get an 'OK' status
-        if result.status != 200:
-            return 'not_OK'
+            # Make sure we get an 'OK' status
+            if result.status != 200:
+                return 'not_OK'
 
-        data = json.loads(result.read())
+            data = json.loads(result.read())
 
-        conn.close()
-
-        try:
-            elevation = data['results'][0]['elevation']
-        except (KeyError, IndexError):
-            # Unexpected format - not the data we want
+            # if we're over the query limit, wait 2 seconds and try again,
+            # it may just be that we're submitting requests too fast
             if data.get('status', None) == 'OVER_QUERY_LIMIT':
-                return 'over_limit'
+                num_tries += 1
+                sleep(2)
+            elif data.has_key('results'):
+                success = True
             else:
                 return 'unknown_error'
 
-        return elevation
+        conn.close()
+
+        # if we got here without getting an unknown_error or succeeding, then
+        # we are over the request limit for the 24 hour period
+        if not success:
+            return 'over_limit'
+
+        # sanity check the data returned by Google and return the lat/lng
+        if len(data['results']) == 0:
+            return 'no_results'
+        if not data['results'][0].get('elevation', None):
+            return 'unknown_error'
+
+        return data['results'][0]['elevation']
         
     def updateGeoInfo(self, ag_login_id, lat, lon, elevation, cannot_geocode):
         con = self.getMetadataDatabaseConnection()
