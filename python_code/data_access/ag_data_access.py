@@ -20,7 +20,7 @@ from time import sleep
 
 import cx_Oracle
 
-class OverGoogleAPILimitException(Exception):
+class GoogleAPILimitExceeded(Exception):
     pass
 
 class AGDataAccess(object):
@@ -426,7 +426,7 @@ class AGDataAccess(object):
                 # Google API limit, then we should try again next time
                 # ... but we should stop hitting their servers, so raise an
                 # exception
-                raise OverGoogleAPILimitException("Exceeded Google API limit")
+                raise GoogleAPILimitExceeded("Exceeded Google API limit")
 
             # Unpack it and write to DB
             lat, lon = r
@@ -439,7 +439,7 @@ class AGDataAccess(object):
             
             r2 = self.getElevationJSON(url2)
 
-            if r2 in ('unknown_error', 'not_OK'):
+            if r2 in ('unknown_error', 'not_OK', 'no_results'):
                 # Could not geocode, mark it so we don't try next time
                 self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
@@ -448,7 +448,7 @@ class AGDataAccess(object):
                 # Google API limit, then we should try again next time
                 # ... but we should stop hitting their servers, so raise an
                 # exception
-                raise OverGoogleAPILimitException("Exceeded Google API limit")
+                raise GoogleAPILimitExceeded("Exceeded Google API limit")
 
             elevation = r2
 
@@ -485,7 +485,6 @@ class AGDataAccess(object):
             elif data.has_key('results'):
                 success = True
             else:
-                raise Exception("first")
                 return 'unknown_error'
 
         conn.close()
@@ -498,17 +497,14 @@ class AGDataAccess(object):
         # sanity check the data returned by Google and return the lat/lng
         if len(data['results']) == 0:
             return 'no_results'
-        if not data['results'][0].get('geometry', {}).get('location',
-                {}).get('lat', {}):
-            raise Exception("second")
-            return 'unknown_error'
-        if not data['results'][0].get('geometry', {}).get('location',
-                {}).get('lng', {}):
-            raise Exception("third")
-            return 'unknown_error'
 
-        lat = data['results'][0]['geometry']['location']['lat']
-        lon = data['results'][0]['geometry']['location']['lng']
+        geometry = data['results'][0].get('geometry'), {})
+        location = geometry.get('location', {})
+        lat = location.get('lat', {})
+        lon = location.get('lng', {})
+
+        if not lat or not lon:
+            return 'unknown_error'
 
         return (lat, lon)
 
@@ -557,10 +553,13 @@ class AGDataAccess(object):
         # sanity check the data returned by Google and return the lat/lng
         if len(data['results']) == 0:
             return 'no_results'
-        if not data['results'][0].get('elevation', None):
+
+        elevation = data['results'][0].get('elevation', {})
+
+        if not elevation:
             return 'unknown_error'
 
-        return data['results'][0]['elevation']
+        return elevation
         
     def updateGeoInfo(self, ag_login_id, lat, lon, elevation, cannot_geocode):
         con = self.getMetadataDatabaseConnection()
