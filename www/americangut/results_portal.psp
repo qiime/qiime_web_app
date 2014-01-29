@@ -1,6 +1,6 @@
 <h2>Sequencing &amp; Results</h2>
 <p class="portal_blurb">
-Once you have added a <a href="#" onclick="selectTab('source')">sample source, completed the relevant survey</a> (if applicable), <a href="#" onclick="selectTab('sample')">taken</a> and <a href="#" onclick="selectTab('log')">logged</a> your samples</a> and you have <a href="#" onclick="selectTab('mail')">mailed the samples back to us</a>, we will then perform sequencing and analysis on your samples.
+Once you have added a <a href="#" onclick="selectTab('source')">sample source, completed the relevant survey</a> (if applicable), <a href="#" onclick="selectTab('sample')">taken</a> and <a href="#" onclick="selectTab('log')">logged your samples</a> and you have <a href="#" onclick="selectTab('mail')">mailed the samples back to us</a>, we will then perform sequencing and analysis on your samples.
 </p>
 <p class="portal_blurb">
 Sequencing and data analysis can take up to 6 months, please be patient! We will let you know as soon as your samples have been sequenced and analyzed.
@@ -9,11 +9,11 @@ Sequencing and data analysis can take up to 6 months, please be patient! We will
 sample_link_template = \
 """
     <li>
-    <a href="" onclick="document.forms['sample_overview_{0}'].submit(); return false;">
-            <form action="fusebox.psp" method="post" id="sample_overview_{0}">
-                <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
-                <input type="hidden" name="barcode" id="barcode" value="{0}"/>
-            </form>
+    <form action="fusebox.psp" method="post" id="sample_overview2_{0}">
+        <input type="hidden" name="page" id="page" value="sample_overview.psp"/>
+        <input type="hidden" name="barcode" id="barcode" value="{0}"/>
+    </form>
+    <a href="" onclick="document.forms['sample_overview2_{0}'].submit(); return false;">
             {0} ({1})
         </a>
     </li>
