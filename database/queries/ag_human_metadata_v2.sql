@@ -93,16 +93,16 @@ select  akb.barcode as sample_name,
             else akb.site_sampled
         end as body_product, 
         case akb.site_sampled
-            when 'Stool' then 'ENVO:human-associated habitat'
-            when 'Mouth' then 'ENVO:human-associated habitat'
-            when 'Right hand' then 'ENVO:human-associated habitat'
-            when 'Left hand' then 'ENVO:human-associated habitat'
-            when 'Forehead' then 'ENVO:human-associated habitat'
-            when 'Nares' then 'ENVO:human-associated habitat'
-            when 'Hair' then 'ENVO:human-associated habitat'
-            when 'Tears' then 'ENVO:human-associated habitat'
-            when 'Ear wax' then 'ENVO:human-associated habitat'
-            when 'Vaginal mucus' then 'ENVO:human-associated habitat'
+            when 'Stool' then 'ENVO:urban biome'
+            when 'Mouth' then 'ENVO:urban biome'
+            when 'Right hand' then 'ENVO:urban biome'
+            when 'Left hand' then 'ENVO:urban biome'
+            when 'Forehead' then 'ENVO:urban biome'
+            when 'Nares' then 'ENVO:urban biome'
+            when 'Hair' then 'ENVO:urban biome'
+            when 'Tears' then 'ENVO:urban biome'
+            when 'Ear wax' then 'ENVO:urban biome'
+            when 'Vaginal mucus' then 'ENVO:urban biome'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
         end as env_biome, 
