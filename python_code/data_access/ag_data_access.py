@@ -498,7 +498,7 @@ class AGDataAccess(object):
         if len(data['results']) == 0:
             return 'no_results'
 
-        geometry = data['results'][0].get('geometry'), {})
+        geometry = data['results'][0].get('geometry', {})
         location = geometry.get('location', {})
         lat = location.get('lat', {})
         lon = location.get('lng', {})
