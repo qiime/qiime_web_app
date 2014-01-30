@@ -1,0 +1,77 @@
+<%
+__author__ = "Emily TerAvest"
+__copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
+__credits__ = ["Emily TerAvest"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Emily TerAvest"]
+__email__ = "emily.teravest@colorado.edu"
+__status__ = "Development"
+
+'''This page allows the user to supply their email and their Kit ID is emailed to them'''
+
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig
+from utils.mail import send_email, can_send_mail
+
+%>
+
+<body>
+
+
+<div class="content">
+
+<hr/>
+
+
+<table class="header_table">
+<tr><td>Retrieve Kit ID</td></tr>
+</table>
+
+<br/>
+
+<%
+# if the form was submitted and contains a username, then we want to 
+# check that the username supplied is valid, then generate a pass and email 
+# the user.
+if form.has_key('email'):
+    agDataAccess= data_access_factory(ServerConfig.data_access_type, 'american_gut')
+    kitid = agDataAccess.getAGKitbyEmail(form["email"])
+    try:
+        if len(kitid) > 0:
+            if can_send_mail():
+                MESSAGE='Your American Gut Kit ID is %s. You are receiving this email '\
+                        'because you requested your Kit ID from the American Gut web page '\
+                        'If you did not request your Kit ID please email info@americangut.org '\
+                        'Thank you,\n The American Gut Team\n'
+                send_email(MESSAGE, 'American Gut Kit ID', form["email"])
+            else:
+                req.write("Mail can be sent only from microbio.me domain.")
+                req.write('<p>your kit id is %s<p>' % kitid[0])
+        else:
+            req.write('<p style="color:red;">This email address is not in our system</p>')
+            req.write('<p>Please email <a href=&quot;mailto:info@americangut.org&quot;> for further assistance<p>')
+    except:
+        req.write("<p>There was a problem sending you the kit ID. Please contact"
+            " us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
+            "info@americangut.org</a>.</p>")
+
+        #remove the line below before merging
+%>
+        
+<%
+    # display default page if this is not a form submission load
+else:
+%>
+<form id="new_user" method="post" action="retrieve_kitid.psp">
+    <table>
+    <tr><td>E-mail:</td><td><input type="text" id="email" name="email" /></td></tr>
+    <tr><td colspan="2"><input type="submit" value="Send E-mail" /></tr>
+    </table>
+</form>
+<%
+#
+%>
+</body>
+</html>
