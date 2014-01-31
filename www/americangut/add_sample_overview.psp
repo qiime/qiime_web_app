@@ -46,6 +46,7 @@ for p in animal_participants:
 
     # Write out the participant menu item
     req.write(add_animal_sample_menu_item)
+#UNINDENT
 %>
 
     <form action="fusebox.psp" method="post" id="add_sample_general">
