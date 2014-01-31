@@ -17,7 +17,42 @@ from utils.mail import send_email, can_send_mail
 
 %>
 
-<body>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut Kit ID Retrieval</title>
+        <script src="js/jquery-1.9.1.js"></script>
+        <script src="js/jquery-ui-1.10.1.custom.min.js"></script>
+        <script src="js/jquery.ui.timepicker.js"></script>
+        <script src="js/american_gut.js"></script>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+        <link rel="stylesheet" type="text/css" href="style/menu.css">
+        <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
+        <link rel="icon" type="image/ico" href="img/favicon.ico">
+    </head>
+    <body>
+        <div class="wrapper clearfix">
+            <div class="header clearfix">
+                <img id="logo" src="img/ag_logo.jpg">
+            </div>
+            <br>
+            <div class="left menuwrapper">
+                <div id="cssmenu">
+                    <ul>
+                    <li><a href="https://fundrazr.com/campaigns/4Tqx5" target="_blank">Join the Project</a></li>
+                    <li class="has-sub"><a><span>Participant Resources</span></a>
+                        <ul>
+                            <li><a href="#faq0">American Gut 101</a></li>
+                            <li><a href="img/full_instructions.pdf" target="_blank">Kit Instructions</a></li>
+                            <li><a href="international_shipping.psp?lan=en">International Shipping</a></li>
+                            <li class="last"><a  href="international_shipping.psp?lan=es">International Shipping (Espa&ntilde;ol)</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="index.psp">Participant Login</a></li>
+                    </ul>
+                </div>
+            </div>
 
 
 <div class="content">
@@ -25,9 +60,7 @@ from utils.mail import send_email, can_send_mail
 <hr/>
 
 
-<table class="header_table">
-<tr><td>Retrieve Kit ID</td></tr>
-</table>
+
 
 <br/>
 
@@ -51,10 +84,10 @@ if form.has_key('email'):
                 req.write('<p>your kit id is %s<p>' % kitid[0])
         else:
             req.write('<p style="color:red;">This email address is not in our system</p>')
-            req.write('<p>Please email <a href=&quot;mailto:info@americangut.org&quot;> for further assistance<p>')
+            req.write('<p>Please email <a href="mailto:info@americangut.org"> for further assistance</a></p>')
     except:
         req.write("<p>There was a problem sending you the kit ID. Please contact"
-            " us directly at <a href=&quot;mailto:info@americangut.org&quot;>"
+            " us directly at <a href=\"mailto:info@americangut.org\">"
             "info@americangut.org</a>.</p>")
 
         #remove the line below before merging
@@ -66,8 +99,9 @@ else:
 %>
 <form id="new_user" method="post" action="retrieve_kitid.psp">
     <table>
+    <tr><td><h2>Please Enter Your Email</h2></td></tr>
     <tr><td>E-mail:</td><td><input type="text" id="email" name="email" /></td></tr>
-    <tr><td colspan="2"><input type="submit" value="Send E-mail" /></tr>
+    <tr><td colspan="2"><input type="submit" value="Send Kit Id in E-mail" /></tr>
     </table>
 </form>
 <%
