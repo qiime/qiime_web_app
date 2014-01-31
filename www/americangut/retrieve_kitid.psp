@@ -65,9 +65,8 @@ from utils.mail import send_email, can_send_mail
 <br/>
 
 <%
-# if the form was submitted and contains a username, then we want to 
-# check that the username supplied is valid, then generate a pass and email 
-# the user.
+# if the form was submitted and contains email then we want to 
+#check the email and send an email with the kit id
 if form.has_key('email'):
     agDataAccess= data_access_factory(ServerConfig.data_access_type, 'american_gut')
     kitid = agDataAccess.getAGKitbyEmail(form["email"])
@@ -104,8 +103,6 @@ else:
     <tr><td colspan="2"><input type="submit" value="Send Kit Id in E-mail" /></tr>
     </table>
 </form>
-<%
-#
-%>
+
 </body>
 </html>
