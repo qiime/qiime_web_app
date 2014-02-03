@@ -631,3 +631,18 @@ class AGDataAccess(object):
                     return False
         except:
             return False
+
+    def ag_is_kit_verified(self, supplied_kit_id):
+        """returns true if the kit is verified 
+
+        suppiled_kit_id is the suppiled_kit_id in the ag_kit table
+        """
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_is_kit_verified', [supplied_kit_id, results])
+        isverified = results.fetchone()
+        if isverified[0] =='y':
+            return True
+        else:
+            return False
+
