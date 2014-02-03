@@ -72,15 +72,17 @@ if form.has_key('email'):
     kitid = agDataAccess.getAGKitbyEmail(form["email"])
     try:
         if len(kitid) > 0:
-            if can_send_mail():
-                MESSAGE='Your American Gut Kit ID is %s. You are receiving this email '\
+            MESSAGE=('Your American Gut Kit ID is %s. You are receiving this email '\
                         'because you requested your Kit ID from the American Gut web page '\
                         'If you did not request your Kit ID please email info@americangut.org '\
-                        'Thank you,\n The American Gut Team\n'
+                        'Thank you,\n The American Gut Team\n' % kitid[0])
+            if can_send_mail():
                 send_email(MESSAGE, 'American Gut Kit ID', form["email"])
+                req.write('<p>Your kit ID has been emailed to you. Please '\
+                          'check your email</p>')
             else:
                 req.write("Mail can be sent only from microbio.me domain.")
-                req.write('<p>your kit id is %s<p>' % kitid[0])
+                req.write(MESSAGE)
         else:
             req.write('<p style="color:red;">This email address is not in our system</p>')
             req.write('<p>Please email <a href="mailto:info@americangut.org"> for further assistance</a></p>')
