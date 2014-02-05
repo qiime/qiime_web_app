@@ -622,3 +622,17 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('update_akb', [barcode, moldy, overloaded, other, other_text, date_of_last_email])
+
+    def getBarcodesByKit(self, kitID):
+        """Returns a list of barcodes in a kit
+
+        kitID is the supplied_kit_id from the ag_kit table
+        """
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_barcodes_by_kit', [kitID, results])
+        barcodes = []
+        for row in results:
+            barcodes.append(row[0])
+        return barcodes
+
