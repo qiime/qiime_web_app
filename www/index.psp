@@ -4,7 +4,7 @@ __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
 __credits__ = ["Doug Wendel", "Jesse Stombaugh"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
-__maintainer__ = ["Doug Wendel", "Jesse Stombaugh"]
+__maintainer__ = ["Doug Wendel", "Jesse Stombaugh", "Emily TerAvest"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
@@ -18,8 +18,20 @@ import locale
 import operator
 locale.setlocale(locale.LC_ALL, 'en_US')
 
+
 data_access = data_access_factory(ServerConfig.data_access_type)
 sess = Session.Session(req)
+if 'logout' in form:
+    sess.invalidate()
+    #after invalidating the session refresh the page to get a new session
+    psp.redirect('.')
+
+if not sess.is_new():
+   #i want to error here....
+   #requesthandler(req)
+   psp.redirect('./onewindow.html')
+   
+
 sess['portal_type'] = 'qiime'
 sess.save()
 
