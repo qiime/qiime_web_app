@@ -1,5 +1,5 @@
 create or replace procedure get_project_names 
-( proj_names_  in out types.ref_cursor
+( proj_names_  out types.ref_cursor
 )as 
 begin
   open proj_names_ for 

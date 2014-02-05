@@ -72,7 +72,7 @@ if 'ag_kit_id' in form:
 		<%
 	for project in project_names:
 		req.write('<option value="{0}">{0}</option>'.format(project))
-#End
+
 %>
 		</select></td></tr>
 		<tr><td></td><td><input type="button" onclick="validateAGForm();" value="Submit"></td></tr>
