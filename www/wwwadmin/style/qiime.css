@@ -306,7 +306,15 @@ h2.verification_text{
 	background-color: #ff0;
 }
 
+#no_metadata {
+	background-color: #ff0;
+}
+
 #not_verified {
+	background-color: #f00;
+}
+
+#md_pulldown_error {
 	background-color: #f00;
 }
 

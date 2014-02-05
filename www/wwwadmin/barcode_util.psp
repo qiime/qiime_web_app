@@ -142,12 +142,12 @@ try:
                 email_type = "1"
             elif len(barcode_metadata) == 0:
                 # we cannot retrieve metadata
-                div_id = "not_assigned"
+                div_id = "no_metadata"
                 message = "Cannot retrieve metadata"
             else:
                 # should never get here (this would happen if the metadata
                 # pulldown returned more than one row for a single barcode)
-                div_id = "not_assigned"
+                div_id = "md_pulldown_error"
                 message = "Please notify Adam that you saw this message..."
         else:
             div_id = "not_assigned"
