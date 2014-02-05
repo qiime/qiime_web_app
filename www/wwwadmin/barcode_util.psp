@@ -2,7 +2,7 @@
 <%
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2013, Qiime Web Analysis"
-__credits__ = ["Doug Wendel", "Zhenjiang Xu"]
+__credits__ = ["Doug Wendel", "Zhenjiang Xu", "Adam Robbins-Pianka"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __email__ = "zhenjiang.xu@colorado.edu"
@@ -116,12 +116,10 @@ Thank you for your participation!
 </div>
 <%
 try:
-    barcode = form['barcode'] #'000002000'
+    barcode = form['barcode']
     barcodeinfo = ag_data_access.checkBarcode(barcode)
+    barcode_metadata = ag_data_access.getSingleSampleMetadata(barcode)
     proj_type = data_access.getBarcodeProjType(barcode)
-    # req.write(str(barcodeinfo))
-    # req.write(str(len(barcodeinfo)))
-    # req.write(str(barcodeinfo[18])+"consetn")
     if len(barcodeinfo)==0:
         req.write('''
          <div id="invalid_barcode" class="verification_color">
@@ -137,9 +135,22 @@ try:
         div_id = message = email_type = ""
         if all(barcodeinfo[0:3]):
             # it has all sample details (sample time, date, site)
-            div_id = "verified"
-            message = "All good"
-            email_type = "1"
+            if len(barcode_metadata) == 1:
+                # and we can successfully retrieve sample metadata
+                div_id = "verified"
+                message = "All good"
+                email_type = "1"
+            elif len(barcode_metadata) == 0:
+                # we cannot retrieve metadata
+                div_id = "not_assigned"
+                message = "Cannot retrieve metadata"
+                email_type = "1"
+            else:
+                # should never get here (this would happen if the metadata
+                # pulldown returned more than one row for a single barcode)
+                div_id = "not_assigned"
+                message = "Please notify Adam that you saw this message..."
+                email_type = "1"
         else:
             div_id = "not_assigned"
             message = "Missing info"
