@@ -99,7 +99,7 @@ class LiveEBISRARestServices(BaseRestServices):
         pass
 
     def generate_curl_command(self):
-        url = '?auth=ERA%20{0}%20{1}%3D'.format(self.ebi_user_id,
+        url = '?auth=ERA%20{0}%20{1}%3D'.format(self.ftp_user,
                                                 self.ebi_rest_access_key)
         curl_command = (
             'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" '
