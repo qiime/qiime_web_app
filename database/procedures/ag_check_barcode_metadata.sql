@@ -831,15 +831,6 @@ select akb.barcode as sample_name,
                         and item_name like 'pet_location_%'
             )
         end as pet_locations,
-        /*
-        (
-            select  listagg(item_value, ', ') within group(order by item_name)
-            from    ag_survey_multiples
-            where   ag_login_id = al.ag_login_id
-                    and participant_name = akb.participant_name
-                    and item_name like 'related_participant_%'
-        ) as related_participants,
-        */
         case
             when 
             (
@@ -990,21 +981,6 @@ select akb.barcode as sample_name,
         
         
         
-        /*,
-        (
-            select  listagg(item_value, ', ') within group(order by item_name)
-            from    ag_survey_multiples
-            where   ag_login_id = al.ag_login_id
-                    and participant_name = akb.participant_name
-                    and item_name like 'travel_duration_%'
-        ) as travel_durations,
-        (
-            select  listagg(item_value, ', ') within group(order by item_name)
-            from    ag_survey_multiples
-            where   ag_login_id = al.ag_login_id
-                    and participant_name = akb.participant_name
-                    and item_name like 'travel_location_%'
-        ) as travel_locations*/
 from    ag_login al
         inner join ag_kit ak
         on al.ag_login_id = ak.ag_login_id
@@ -1019,3 +995,9 @@ where   akb.participant_name = ahs.participant_name
         and akb.barcode = barcode_;
 
 end;
+
+/*
+variable results_cursor REFCURSOR;
+exec ag_check_barcode_metadata('000001002', :results_cursor);
+print results_cursor;
+*/
