@@ -70,8 +70,8 @@ if 'ag_kit_id' in form:
 		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="kit_verification_code" value="<%=details[4]%>"></td></tr>
 		<tr><td><Project</td><td><select name="project" id="project" ><option value="<%=current_project%>"><%=current_project%></option>
 		<%
-for project in project_names:
-	req.write('<option value="{0}">{0}</option>'.format(project))
+	for project in project_names:
+		req.write('<option value="{0}">{0}</option>'.format(project))
 #End
 %>
 		</select></td></tr>
