@@ -4,7 +4,7 @@ create or replace PROCEDURE AG_UPDATE_KIT_PASSWORD
 , PASS_ IN VARCHAR2 
 ) AS 
 BEGIN
-  UPDATE AG_KIT  set kit_password = PASS_
+  UPDATE AG_KIT  set kit_password = PASS_, pass_reset_code = null
   where supplied_kit_id = KIT_ID_;
   commit;
   

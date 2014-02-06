@@ -13,6 +13,6 @@ BEGIN
 END AG_GET_KIT_ID_BY_EMAIL;
 
 /*variable user_data_ REFCURSOR;
-execute ag_get_kits_by_login('ejteravest@gmail.com', :user_data_);
+execute ag_get_kits_by_email('ejteravest@gmail.com', :user_data_);
 print user_data_;
 */

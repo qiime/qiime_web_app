@@ -72,9 +72,9 @@ if form.has_key('email'):
     kitid = agDataAccess.getAGKitbyEmail(form["email"])
     try:
         if len(kitid) > 0:
-            MESSAGE=('Your American Gut Kit ID is %s. You are receiving this email '\
-                        'because you requested your Kit ID from the American Gut web page '\
-                        'If you did not request your Kit ID please email info@americangut.org '\
+            MESSAGE=('Your American Gut Kit ID is %s. You are receiving this email '
+                        'because you requested your Kit ID from the American Gut web page '
+                        'If you did not request your Kit ID please email info@americangut.org '
                         'Thank you,\n The American Gut Team\n' % kitid[0])
             if can_send_mail():
                 send_email(MESSAGE, 'American Gut Kit ID', form["email"])
@@ -91,10 +91,6 @@ if form.has_key('email'):
             " us directly at <a href=\"mailto:info@americangut.org\">"
             "info@americangut.org</a>.</p>")
 
-        #remove the line below before merging
-%>
-        
-<%
     # display default page if this is not a form submission load
 else:
 %>

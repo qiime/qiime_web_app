@@ -622,16 +622,17 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        try: 
-            con.cursor().callproc('ag_verify_password_change_code', [email, kitid, passcode, results])
-            isgood = results.fetchone()
+        con.cursor().callproc('ag_verify_password_change_code', [email, kitid, passcode, results])
+        isgood = results.fetchone()
+        if isgood is not None:
             if isgood[0] == 1:
-                    return True
+                return True
             else: 
-                    return False
-        except:
+                return False
+        else:
             return False
-
+        
+        
     def ag_is_kit_verified(self, supplied_kit_id):
         """returns true if the kit is verified 
 
