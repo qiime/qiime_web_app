@@ -24,8 +24,9 @@ sess = Session.Session(req)
 
 portal_type = sess['portal_type']
 page_mode = form['page_mode']
+
 if page_mode == 'edit':
-    study_id = sess['study_id']
+    study_id = form['study_id']
 
 study_name = form['study_name']
 sess['study_name'] = study_name

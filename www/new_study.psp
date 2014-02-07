@@ -22,7 +22,6 @@ form if the fields are valid.
 */
 
 <%
-
 if form['mode'] == 'new':
     req.write('$.validator.setDefaults({ ')
     req.write('submitHandler:function(){ ')
@@ -104,10 +103,11 @@ function check_study_name()
 # Find out if it's new or an edit
 page_mode = form['mode']
 portal_type = sess['portal_type']
-
+study_id = ''
 if page_mode == 'edit':
-    environmental_packages = qda.getStudyPackages(sess['study_id'])
-    study_info = qda.getStudyInfo(sess['study_id'], sess['web_app_user_id'])
+    study_id = form['study_id']
+    environmental_packages = qda.getStudyPackages(study_id)
+    study_info = qda.getStudyInfo(study_id, sess['web_app_user_id'])
     includes_timeseries = study_info['includes_timeseries']
     project_name = study_info['project_name']
     study_title = study_info['study_title']
@@ -332,6 +332,12 @@ else:
         </tr>
         
 <%
+if page_mode == 'edit':
+    #Indent
+%>
+    <input type ="hidden" name="study_id" id="study_id" value="<%=study_id%>">
+<%
+    #END Indent
 if sess['portal_type'] == 'emp':
     # Indent
     
