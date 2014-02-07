@@ -148,7 +148,9 @@ try:
                 # should never get here (this would happen if the metadata
                 # pulldown returned more than one row for a single barcode)
                 div_id = "md_pulldown_error"
-                message = "Please notify Adam that you saw this message..."
+                message = ("This barcode has multiple entries in the "
+                           "database, which should never happeen. Please "
+                           "notify someone on the database crew.")
         else:
             div_id = "not_assigned"
             message = "Missing info"
