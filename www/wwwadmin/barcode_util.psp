@@ -118,7 +118,7 @@ Thank you for your participation!
 try:
     barcode = form['barcode']
     barcodeinfo = ag_data_access.checkBarcode(barcode)
-    barcode_metadata = ag_data_access.getSingleSampleMetadata(barcode)
+    barcode_metadata = ag_data_access.AGGetBarcodeMetadata(barcode)
     proj_type = data_access.getBarcodeProjType(barcode)
     if len(barcodeinfo)==0:
         req.write('''

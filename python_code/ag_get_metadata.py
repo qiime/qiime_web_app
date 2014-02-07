@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+# File created on 07 Feb 2014
+
+from __future__ import division
+
+"""Gets the American Gut metadata associated with set of barcodes"""
+
+__author__ = "Adam Robbins-Pianka"
+__copyright__ = "Copyright 2014, The QIIME-DB Project"
+__credits__ = ["Adam Robbins-Pianka"]
+__license__ = "GPL"
+__version__ = "1.0.0-dev"
+__maintainer__ = "Adam Robbins-Pianka"
+__email__ = "adam.robbinspianka@colorado.edu"
+__status__ = "Development"
+
+
+from argparse import ArgumentParser
+
+import cx_Oracle
+
+from data_access_connections import data_access_factory
+from enums import ServerConfig, DataAccessType
+
+parser = ArgumentParser()
+parser.add_argument('-i', '--input_barcodes_file', required=True, type=str,
+                    help="The input file containing barcodes, one per line")
+parser.add_argument('-o', '--output_file', required=True, type=str,
+                    help="The output file, to which metadata will be written")
+parser.add_argument('-H', '--omit_headers', action='store_true',
+                    help="Do not print column headers as the first line")
+
+class BarcodeError(Exception):
+    pass
+
+def get_ag_metadata_bulk(barcodes):
+    """Calls ag_get_barcode_metadata on a list of barcodes
+
+    The input, barcodes, should be an iterable list of barcodes (or an open
+    file that has one barcode per line)
+    """
+    ag_data_access = data_access_factory(ServerConfig.data_access_type,
+                                         'american_gut')
+
+    results = []
+    for line in barcodes:
+        bc = line.strip()
+        metadata = ag_data_access.AGGetBarcodeMetadata(bc)
+        if len(metadata) != 1:
+            raise BarcodeError("%d results were returned for barcode %s; "
+                               "there should be exactly one result for any "
+                               "single barcode" % (len(metadata), bc))
+        yield metadata[0]
+
+def main():
+    args = parser.parse_args()
+    input_fp = args.input_barcodes_file
+    output_fp = args.output_file
+    print_headers = not args.omit_headers
+
+    # this is the order of the columns to write.
+    headers = [
+        'SAMPLE_NAME', 'ANONYMIZED_NAME', 'COLLECTION_DATE', 'public',
+        'DEPTH', 'DESCRIPTION', 'SAMPLE_TIME', 'ALTITUDE',
+        'ASSIGNED_FROM_GEO', 'TITLE', 'SITE_SAMPLED', 'HOST_SUBJECT_ID',
+        'TAXON_ID', 'HOST_TAXID', 'COMMON_NAME', 'HOST_COMMON_NAME',
+        'BODY_HABITAT', 'BODY_SITE', 'BODY_PRODUCT', 'ENV_BIOME',
+        'ENV_FEATURE', 'ENV_MATTER', 'CITY', 'STATE', 'ZIP', 'COUNTRY',
+        'LATITUDE', 'LONGITUDE', 'ELEVATION', 'AGE_UNIT', 'AGE',
+        'ACNE_MEDICATION', 'ACNE_MEDICATION_OTC', 'ALCOHOL_FREQUENCY',
+        'FAT_PER', 'CARBOHYDRATE_PER', 'PROTEIN_PER', 'ANIMAL_PER',
+        'PLANT_PER', 'ANTIBIOTIC_CONDITION', 'ANTIBIOTIC_SELECT',
+        'APPENDIX_REMOVED', 'ASTHMA', 'BIRTH_DATE', 'CAT', 'CHICKENPOX',
+        'COMMUNAL_DINING', 'CONDITIONS_MEDICATION', 'CONTRACEPTIVE',
+        'COSMETICS_FREQUENCY', 'COUNTRY_OF_BIRTH', 'CSECTION',
+        'CURRENT_RESIDENCE_DURATION', 'DECEASED_PARENT', 'DEODORANT_USE',
+        'DIABETES', 'DIABETES_DIAGNOSE_DATE', 'DIABETES_MEDICATION',
+        'DIET_TYPE', 'DOG', 'DRINKING_WATER_SOURCE', 'EXERCISE_FREQUENCY',
+        'EXERCISE_LOCATION', 'FIBER_GRAMS', 'FLOSSING_FREQUENCY',
+        'FLU_VACCINE_DATE', 'FOODALLERGIES_OTHER',
+        'FOODALLERGIES_OTHER_TEXT', 'FOODALLERGIES_PEANUTS',
+        'FOODALLERGIES_SHELLFISH', 'FOODALLERGIES_TREENUTS', 'FRAT', 'SEX',
+        'GLUTEN', 'DOMINANT_HAND', 'HEIGHT_IN', 'HEIGHT_OR_LENGTH', 'IBD', 
+        'LACTOSE', 'LAST_TRAVEL', 'LIVINGWITH', 'MAINFACTOR_OTHER_1',
+        'MAINFACTOR_OTHER_2', 'MAINFACTOR_OTHER_3', 'MIGRAINE',
+        'MIGRAINEMEDS', 'MIGRAINE_AGGRAVATION', 'MIGRAINE_AURA',
+        'MIGRAINE_FACTOR_1', 'MIGRAINE_FACTOR_2', 'MIGRAINE_FACTOR_3',
+        'MIGRAINE_FREQUENCY', 'MIGRAINE_NAUSEA', 'MIGRAINE_PAIN',
+        'MIGRAINE_PHONOPHOBIA', 'MIGRAINE_PHOTOPHOBIA',
+        'MIGRAINE_RELATIVES', 'MULTIVITAMIN', 'NAILS',
+        'NONFOODALLERGIES_BEESTINGS', 'NONFOODALLERGIES_DANDER',
+        'NONFOODALLERGIES_DRUG', 'NONFOODALLERGIES_NO',
+        'NONFOODALLERGIES_POISONIVY', 'NONFOODALLERGIES_SUN',
+        'PERCENTAGE_FROM_CARBS', 'PKU', 'POOL_FREQUENCY', 'PREGNANT',
+        'PREGNANT_DUE_DATE', 'PRIMARY_CARB', 'PRIMARY_VEGETABLE', 'RACE',
+        'RACE_OTHER', 'ROOMMATES', 'SEASONAL_ALLERGIES', 'SHARED_HOUSING',
+        'SKIN_CONDITION', 'SLEEP_DURATION', 'SMOKING_FREQUENCY',
+        'SOFTENER', 'SPECIAL_RESTRICTIONS', 'SUPPLEMENTS', 'TANNING_BEDS',
+        'TANNING_SPRAYS', 'TEETHBRUSHING_FREQUENCY', 'TONSILS_REMOVED',
+        'TYPES_OF_PLANTS', 'WEIGHT_CHANGE', 'TOT_MASS', 'WEIGHT_LBS',
+        'BMI', 'ANTIBIOTIC_MEDS', 'DIABETES_MEDICATIONS', 
+        'DIET_RESTRICTIONS', 'GENERAL_MEDS', 'MIGRAINE_MEDICATIONS',
+        'PETS', 'PET_CONTACT', 'PET_LOCATIONS', 'RELATIONS',
+        'SUPPLEMENTS_FIELDS', 'MACRONUTRIENT_PCT_TOTAL', 'QUINOLINE',
+        'NITROMIDAZOLE', 'PENICILLIN', 'SULFA_DRUG', 'CEPHALOSPORIN'
+    ]
+
+    with open(output_fp, 'w') as out_file:
+        if print_headers:
+            out_file.write('\t'.join(headers) + '\n')
+
+        for metadata in get_ag_metadata_bulk(open(input_fp, 'U')):
+            line = '\t'.join([str(metadata[header]) for header in headers])
+            line += '\n'
+            out_file.write(line)
+
+if __name__ == '__main__':
+    main()

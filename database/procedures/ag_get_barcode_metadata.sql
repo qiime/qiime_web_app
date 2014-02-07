@@ -1,6 +1,6 @@
 -- Run the metadata pulldown for a single barcode
 create or replace
-procedure ag_check_barcode_metadata
+procedure ag_get_barcode_metadata
 (
     barcode_ IN varchar2,
     user_data_ OUT types.ref_cursor

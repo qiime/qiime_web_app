@@ -316,10 +316,10 @@ class AGDataAccess(object):
 
         return [row[0] for row in results]
 
-    def getSingleSampleMetadata(self, barcode):
+    def AGGetBarcodeMetadata(self, barcode):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        con.cursor().callproc('ag_check_barcode_metadata', [barcode, results])
+        con.cursor().callproc('ag_get_barcode_metadata', [barcode, results])
 
         headers = [
             'SAMPLE_NAME', 'ANONYMIZED_NAME', 'COLLECTION_DATE', 'public',
