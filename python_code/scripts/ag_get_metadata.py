@@ -23,10 +23,24 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig, DataAccessType
 
 script_info = {}
-script_info['brief_description'] = ""
-script_info['script_description'] = ""
+script_info['brief_description'] = (
+    "Query the database and retrieve metadata for a set of barcodes in the "
+    "American Gut Project"
+)
+
+script_info['script_description'] = (
+    "Connects to the QIIME metadata database using the web app's "
+    "ag_data_access.AGGetBarcodeMetadata. This function is called once per "
+    "barcodes in the input file."
+)
+
 script_info['script_usage'] = [("","","")]
-script_info['output_description']= ""
+
+script_info['output_description']= (
+    "Results are written to an output file, one line per barcode. Column "
+    "headers are written by default, but can be omitted by passing -H."
+)
+
 script_info['required_options'] = [
     make_option('-i', '--input_barcodes_file', type='existing_filepath',
                 help="The input file containing barcodes, one per line"),
@@ -34,6 +48,7 @@ script_info['required_options'] = [
                 help="The output file, to which metadata will be written")
 
 ]
+
 script_info['optional_options'] = [
     make_option('-H', '--omit_headers', action='store_true',
                 help="Do not print column headers as the first line")
@@ -42,6 +57,8 @@ script_info['optional_options'] = [
 script_info['version'] = __version__
 
 class BarcodeError(Exception):
+    """Error raised when there's a problem retrieving metadata for a barcode
+    """
     pass
 
 def get_ag_metadata_bulk(barcodes):
