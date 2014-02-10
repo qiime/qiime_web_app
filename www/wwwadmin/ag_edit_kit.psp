@@ -58,8 +58,7 @@ if 'ag_kit_id' in form:
 	details = ag_data_access.dynamicMetadataSelect(sql).fetchone()
 	project_names = data_access.getProjectNames()
 	barcodes = ag_data_access.getBarcodesByKit(details[1])
-	current_project = data_access.getBarcodeProjType(barcodes[0])
-	barcodesstring = '-'.join(barcodes)
+	current_project = ''
 	# Indent
 %>
 		<tr><td>Kit Owner</td><td><input type="text" name="ag_login_id" id="ag_login_id" value="<%=details[6]%>" disabled style="background-color:#ccc;"></td></tr>
@@ -68,10 +67,16 @@ if 'ag_kit_id' in form:
 		<tr><td>Kit Password</td><td><input type="text" name="kit_password" id="kit_password" value="<%=details[2]%>"></td></tr>
 		<tr><td>Number of Swabs</td><td><input type="text" name="swabs_per_kit" id="swabs_per_kit" onkeypress='validateNumber(event)' value="<%=details[3]%>"></td></tr>
 		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="kit_verification_code" value="<%=details[4]%>"></td></tr>
-		<tr><td><Project</td><td><select name="project" id="project" ><option value="<%=current_project%>"><%=current_project%></option>
-		<%
+		<tr><td>Project</td><td><select name="project" id="project" >
+<%
+	if barcodes:
+		current_project = data_access.getBarcodeProjType(barcodes[0])
+		barcodesstring = '-'.join(barcodes)
 	for project in project_names:
-		req.write('<option value="{0}">{0}</option>'.format(project))
+		if project == current_project:
+			req.write('<option value="{0}" selected>{0}</option>'.format(project))
+		else:
+			req.write('<option value="{0}">{0}</option>'.format(project))
 	#end
 %>
 		</select></td></tr>

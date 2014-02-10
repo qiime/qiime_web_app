@@ -2996,8 +2996,6 @@ class QiimeDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         result = con.cursor()
         con.cursor().callproc('get_project_names', [result])
-        projnames = []
-        for row in result:
-            projnames.append(row[0])
+        projnames = [row[0] for row in result]
         return projnames
 

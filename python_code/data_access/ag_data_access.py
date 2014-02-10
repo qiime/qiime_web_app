@@ -631,8 +631,6 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcodes_by_kit', [kitID, results])
-        barcodes = []
-        for row in results:
-            barcodes.append(row[0])
+        barcodes = [row[0] for row in results]
         return barcodes
 
