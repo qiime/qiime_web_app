@@ -72,7 +72,7 @@ if 'ag_kit_id' in form:
 		<%
 	for project in project_names:
 		req.write('<option value="{0}">{0}</option>'.format(project))
-
+	#end
 %>
 		</select></td></tr>
 		<tr><td></td><td><input type="button" onclick="validateAGForm();" value="Submit"></td></tr>
@@ -86,6 +86,3 @@ if 'ag_kit_id' in form:
 	<input type="hidden" name="barcodes" value="<%=barcodesstring%>"/>
 </form>
 
-<%
-# End indent
-%>
