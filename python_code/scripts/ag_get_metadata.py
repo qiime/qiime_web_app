@@ -15,20 +15,31 @@ __email__ = "adam.robbinspianka@colorado.edu"
 __status__ = "Development"
 
 
-from argparse import ArgumentParser
-
 import cx_Oracle
+
+from qiime.util import parse_command_line_parameters, make_option
 
 from data_access_connections import data_access_factory
 from enums import ServerConfig, DataAccessType
 
-parser = ArgumentParser()
-parser.add_argument('-i', '--input_barcodes_file', required=True, type=str,
-                    help="The input file containing barcodes, one per line")
-parser.add_argument('-o', '--output_file', required=True, type=str,
-                    help="The output file, to which metadata will be written")
-parser.add_argument('-H', '--omit_headers', action='store_true',
-                    help="Do not print column headers as the first line")
+script_info = {}
+script_info['brief_description'] = ""
+script_info['script_description'] = ""
+script_info['script_usage'] = [("","","")]
+script_info['output_description']= ""
+script_info['required_options'] = [
+    make_option('-i', '--input_barcodes_file', type='existing_filepath',
+                help="The input file containing barcodes, one per line"),
+    make_option('-o', '--output_file', type='new_filepath',
+                help="The output file, to which metadata will be written")
+
+]
+script_info['optional_options'] = [
+    make_option('-H', '--omit_headers', action='store_true',
+                help="Do not print column headers as the first line")
+]
+
+script_info['version'] = __version__
 
 class BarcodeError(Exception):
     pass
@@ -53,10 +64,11 @@ def get_ag_metadata_bulk(barcodes):
         yield metadata[0]
 
 def main():
-    args = parser.parse_args()
-    input_fp = args.input_barcodes_file
-    output_fp = args.output_file
-    print_headers = not args.omit_headers
+    option_parser, opts, args = parse_command_line_parameters(**script_info)
+
+    input_fp = opts.input_barcodes_file
+    output_fp = opts.output_file
+    print_headers = not opts.omit_headers
 
     # this is the order of the columns to write.
     headers = [
