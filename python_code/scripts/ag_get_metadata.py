@@ -56,11 +56,6 @@ script_info['optional_options'] = [
 
 script_info['version'] = __version__
 
-class BarcodeError(Exception):
-    """Error raised when there's a problem retrieving metadata for a barcode
-    """
-    pass
-
 def get_ag_metadata_bulk(barcodes):
     """Calls ag_get_barcode_metadata on a list of barcodes
 
@@ -75,10 +70,10 @@ def get_ag_metadata_bulk(barcodes):
         bc = line.strip()
         metadata = ag_data_access.AGGetBarcodeMetadata(bc)
         if len(metadata) != 1:
-            raise BarcodeError("%d results were returned for barcode %s; "
-                               "there should be exactly one result for any "
-                               "single barcode" % (len(metadata), bc))
-        yield metadata[0]
+            print ("FAILED barcode %s; %d results were returned (should be 1)"
+                   % (bc, len(metadata)))
+        else:
+            yield metadata[0]
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
