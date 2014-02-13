@@ -178,7 +178,7 @@ if 'search_term' in form:
 							results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 							if len(results) > 0:
 								for ag_kit_barcode_id, ag_kit_id, barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled,\
-								 notes,results_ready, withdrawn, refunded in results:
+									notes,results_ready, withdrawn, refunded in results:
 									req.write('<table class="widetable">')
 									req.write('<th></th>')
 									req.write('<th>barcode</th>')
