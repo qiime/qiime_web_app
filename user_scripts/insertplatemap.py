@@ -22,7 +22,7 @@ sql output file"""
 script_info['script_usage'] = [("Examples:","create db insert statment",
     "%prog -i ag_plate_map.txt -o ag_plate_inserts.sql")]
 script_info['output_description']= "sql file"
-script_info['required_options'] = [\
+script_info['required_options'] = [
  # Example required option
 make_option('-i','--input_fp',type="existing_filepath",
     help='the input filepath'),
@@ -33,12 +33,12 @@ script_info['optional_options'] = []
 script_info['version'] = __version__
 
 
-
 def main():
     option_parser, opts, args =\
        parse_command_line_parameters(**script_info)
     platemapfile=opts.input_fp
     sqlfile=opts.output_fp
+    verbose = opts.verbose
     sqloutfile=open(sqlfile, 'w')
     platemaplines = open(platemapfile,'r').readlines()
     platename=''
@@ -55,23 +55,24 @@ def main():
             #this line contains barcodes
             if len(line[0]) == 1:
                 for barcode in line[1:]:
-                    if barcode != '':
-                        try:
-                            barcode = int(barcode)
-                        except:
-                            continue
-                        if barcode > 1000:
-                            #create an insert statment
-                            sqlstmt = "insert into plate_barcode" \
-                            " (plate_id, barcode) select plate_id, '%09d'"\
-                            " from plate where plate = '%s';\n"\
-                             % (barcode, platename)
-                            sqloutfile.write(sqlstmt)
+                    try:
+                        barcode = int(barcode)
+                    except:
+                        if verbose:
+                            print 'barcode %s cannot be added' % barcode
+                        continue
+                #create an insert statment
+                    sqlstmt = "insert into plate_barcode" \
+                    " (plate_id, barcode) select plate_id, '%09d'"\
+                    " from plate where plate = '%s';\n"\
+                    % (barcode, platename)
+                    sqloutfile.write(sqlstmt)
         else:
             #this is a separator between plates reset platename 
             platename = ''
 
     sqloutfile.close()
+
 
 if __name__ == "__main__":
     main()
