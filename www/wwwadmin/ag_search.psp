@@ -210,12 +210,12 @@ if 'search_term' in form:
 									# Barcode-Plate general info
 									################################################
 									sql = """
-										select 	status, scan_date, sample_postmark_date, biomass_remaining, sequencing_status, extracted, obsolete 
+										select 	status, scan_date, sample_postmark_date, biomass_remaining, sequencing_status, obsolete 
 										from 	barcode 
 										where barcode = '{0}'""".format(barcode)
 									results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 									if len(results) > 0:
-										for status, scan_date, sample_postmark_date, biomass_remaining, sequencing_status, extracted, obsolete in results:
+										for status, scan_date, sample_postmark_date, biomass_remaining, sequencing_status, obsolete in results:
 											req.write('<table class="widetable">')
 											req.write('<th>barcode</th>')
 											req.write('<th>status</th>')
@@ -223,7 +223,6 @@ if 'search_term' in form:
 											req.write('<th>sample_postmark_date</th>')
 											req.write('<th>biomass_remaining</th>')
 											req.write('<th>sequencing_status</th>')
-											req.write('<th>extracted</th>')
 											req.write('<th>obsolete</th>')
 											req.write('<tr class="gridrow">')
 											req.write('<td>{0}</td>'.format(barcode))
@@ -232,7 +231,6 @@ if 'search_term' in form:
 											req.write('<td>{0}</td>'.format('' if (sample_postmark_date is None) else sample_postmark_date))
 											req.write('<td>{0}</td>'.format('' if (biomass_remaining is None) else biomass_remaining))
 											req.write('<td>{0}</td>'.format('' if (sequencing_status is None) else sequencing_status))
-											req.write('<td>{0}</td>'.format('' if (extracted is None) else extracted))
 											req.write('<td>{0}</td>'.format('' if (obsolete is None) else obsolete))
 											req.write('</tr>')
 											req.write('</table>')
