@@ -381,6 +381,10 @@ function removeField(item_id) {
 }
 
 function otherSelect(select_id,item_id,other_index) {
+	if (document.getElementById(select_id) === null){
+		return;
+	}
+
 	if(document.getElementById(select_id).selectedIndex == other_index)
 	{
 		setVisible(item_id)
