@@ -171,12 +171,14 @@ if 'search_term' in form:
 							sql = """
 								select  cast(ag_kit_barcode_id as varchar2(100)) as ag_kit_barcode_id,
 								        cast(ag_kit_id as varchar2(100)) as ag_kit_id,
-								        barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes
+								        barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes,
+								        results_ready, withdrawn, refunded
 								from    ag_kit_barcodes
 								where   ag_kit_id = '{0}'""".format(ag_kit_id)
 							results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 							if len(results) > 0:
-								for ag_kit_barcode_id, ag_kit_id, barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled, notes in results:
+								for ag_kit_barcode_id, ag_kit_id, barcode, sample_date, sample_time, site_sampled, participant_name, environment_sampled,\
+									notes,results_ready, withdrawn, refunded in results:
 									req.write('<table class="widetable">')
 									req.write('<th></th>')
 									req.write('<th>barcode</th>')
@@ -185,6 +187,9 @@ if 'search_term' in form:
 									req.write('<th>site_sampled</th>')
 									req.write('<th>participant_name</th>')
 									req.write('<th>environment_sampled</th>')
+									req.write('<th>results_ready</th>')
+									req.write('<th>withdrawn</th>')
+									req.write('<th>refunded</th>')
 									req.write('<tr class="gridrow">')
 									edit_url = 'fusebox.psp?page=ag_edit_barcode.psp&barcode={0}'.format(barcode)
 									req.write('<td><a href="{0}">edit</a></td>'.format(edit_url))
@@ -194,11 +199,63 @@ if 'search_term' in form:
 									req.write('<td>{0}</td>'.format('' if (site_sampled is None) else site_sampled))
 									req.write('<td>{0}</td>'.format('' if (participant_name is None) else participant_name))
 									req.write('<td>{0}</td>'.format('' if (environment_sampled is None) else environment_sampled))
+									req.write('<td>{0}</td>'.format('' if (results_ready is None) else results_ready))
+									req.write('<td>{0}</td>'.format('' if (withdrawn is None) else withdrawn))
+									req.write('<td>{0}</td>'.format('' if (refunded is None) else refunded))
 									req.write('</tr>')
+									
+									req.write('</table>')
+
+									################################################
+									# Barcode-Plate general info
+									################################################
+									sql = """
+										select 	status, scan_date, sample_postmark_date, biomass_remaining, sequencing_status, obsolete 
+										from 	barcode 
+										where barcode = '{0}'""".format(barcode)
+									results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+									if len(results) > 0:
+										for status, scan_date, sample_postmark_date, biomass_remaining, sequencing_status, obsolete in results:
+											req.write('<table class="widetable">')
+											req.write('<th>barcode</th>')
+											req.write('<th>status</th>')
+											req.write('<th>scan_date</th>')
+											req.write('<th>sample_postmark_date</th>')
+											req.write('<th>biomass_remaining</th>')
+											req.write('<th>sequencing_status</th>')
+											req.write('<th>obsolete</th>')
+											req.write('<tr class="gridrow">')
+											req.write('<td>{0}</td>'.format(barcode))
+											req.write('<td>{0}</td>'.format('' if (status is None) else status))
+											req.write('<td>{0}</td>'.format('' if (scan_date is None) else scan_date))
+											req.write('<td>{0}</td>'.format('' if (sample_postmark_date is None) else sample_postmark_date))
+											req.write('<td>{0}</td>'.format('' if (biomass_remaining is None) else biomass_remaining))
+											req.write('<td>{0}</td>'.format('' if (sequencing_status is None) else sequencing_status))
+											req.write('<td>{0}</td>'.format('' if (obsolete is None) else obsolete))
+											req.write('</tr>')
+											req.write('</table>')
+									sql = """
+										select 	p.plate, p.sequence_date
+										from 	plate p inner join plate_barcode pb on pb.plate_id = p.plate_id 
+										where 	pb.barcode = '{0}'""".format(barcode)
+									results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+									if len(results) > 0:
+										req.write('<table class="widetable">')
+										req.write('<th>barcode</th>')
+										req.write('<th>plate</th>')
+										req.write('<th>sequencing_date</th>')
+										for plate, sequencing_date in results:
+											req.write('<tr class="gridrow">')
+											req.write('<td>{0}</td>'.format(barcode))
+											req.write('<td>{0}</td>'.format(plate))
+											req.write('<td>{0}</td>'.format(sequencing_date))
+											req.write('</tr>')
 									req.write('<tr>')
 									req.write('<td colspan="6">Notes: {0}</td>'.format('' if (notes is None) else notes))
 									req.write('</tr>')
 									req.write('</table>')
+
+
 
 				# Close the div for this login
 				req.write('</div>')
