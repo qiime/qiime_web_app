@@ -65,7 +65,6 @@ if 'barcode' in form:
 	details = ag_data_access.getAGBarcodeDetails(barcode)
 
 	barcode_ag_kit_id = details['ag_kit_id']
-	req.write(barcode_ag_kit_id)
 	sample_date = '' if details['sample_date'] is None else \
         details['sample_date']
 	sample_time = '' if details['sample_time'] is None else \
