@@ -54,8 +54,6 @@ req.write('center: new google.maps.LatLng({0},{1}),'.format(center_lat, center_l
     setMarkers(map, latlongs_db);
 }
 
-
-
 function setMarkers(map, locations)
 {
     for (var i = 0; i < locations.length; i++)
@@ -100,13 +98,9 @@ else:
 # End if
 %>
 
-
     }
 }
 </script>
-
-
-
 
 <%
 from data_access_connections import data_access_factory
