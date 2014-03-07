@@ -328,6 +328,24 @@ function setMarkers(map, locations) {
       icon: './img/emp.png',
       size(5,5,widthUnit?:px, heightUnit?:px)
     });*/
-	var styleMaker1 = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.MARKER,{size:(100,100),color:loc[4]}),position:myLatLng,map:map,title:loc[0]});
+    var pinColor = loc[4];
+    var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld= |" + pinColor,
+        new google.maps.Size(21, 34),
+        new google.maps.Point(0,0),
+        new google.maps.Point(10, 34));
+    var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+        new google.maps.Size(40, 37),
+        new google.maps.Point(0, 0),
+        new google.maps.Point(12, 35));
+
+    var styleMaker1 = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        color: pinColor,
+        clickable: false,
+        icon: pinImage,
+        title: loc[0],
+        shadow: pinShadow
+                });
   }
 }

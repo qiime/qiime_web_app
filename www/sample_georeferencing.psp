@@ -18,7 +18,6 @@ data_access = data_access_factory(DataAccessType.qiime_production)
 from qiime.parse import parse_mapping_file
 
 req.write('<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>')
-req.write('<script type="text/javascript" src="./js/StyledMarker.js"></script>')
 req.write('<script type="text/javascript" src="./js/sample_geo.js"></script>')
 req.write('<script type="text/javascript">')
 req.write('var latlongs_db = [')
