@@ -29,7 +29,8 @@ def can_send_mail():
     """
     return 'microbio.me' in gethostname()
 
-def send_email(message, subject, recipient='americangut@gmail.com', sender=FROM_EMAIL):
+def send_email(message, subject, recipient='americangut@gmail.com',
+               sender=FROM_EMAIL):
     """Send an email from your local host """
 
     # Create a text/plain message
