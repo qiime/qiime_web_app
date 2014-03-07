@@ -54,17 +54,17 @@ req.write('center: new google.maps.LatLng({0},{1}),'.format(center_lat, center_l
     setMarkers(map, latlongs_db);
 }
 
-function setMarkers(map, locations) 
+function setMarkers(map, locations)
 {
-    for (var i = 0; i < locations.length; i++) 
+    for (var i = 0; i < locations.length; i++)
     {
         var loc = locations[i];
         var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
-        
+
 <%
 if tiny_markers:
     # Indent
-%>        
+%>
         var marker = new google.maps.Marker({
           position:myLatLng,
           map: map,
@@ -77,21 +77,32 @@ if tiny_markers:
 else:
     # Indent
 %>
-        var styleMaker1 = new StyledMarker({
-            styleIcon:new StyledIcon(StyledIconTypes.MARKER,{
-                size:(100,100),
-                color:loc[4]}),
-            position:myLatLng,
-            map:map,
-            title:loc[0]});
+        var pinColor = loc[4];
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld= |" + pinColor,
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+        var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+            new google.maps.Size(40, 37),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 35));
+
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            color: pinColor,
+            clickable: false,
+            icon: pinImage,
+            shadow: pinShadow
+        });
+
 <%
 # End if
 %>
 
-        
+
     }
 }
-
 </script>
 
 <%
