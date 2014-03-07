@@ -2,7 +2,7 @@
 
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2010, Qiime Web Analysis"
-__credits__ = ["Jesse Stombaugh"]
+__credits__ = ["Jesse Stombaugh", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Jesse Stombaugh"]
@@ -139,8 +139,17 @@ function geocode_results(i){
     //query google maps for lat/lngs
     geocoder.geocode( { 'address': unique_addresses[i]}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-            var latlong = new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng()); 
+            var latlong = new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng());
             
+            var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld= |" + 'FF0000',
+                new google.maps.Size(21, 34),
+                new google.maps.Point(0,0),
+                new google.maps.Point(10, 34));
+            var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+                new google.maps.Size(40, 37),
+                new google.maps.Point(0, 0),
+                new google.maps.Point(12, 35));
+
             /* This function gets the Elevation using Google Maps Elevations API. */
             elevator.getElevationForLocations({'locations':[latlong]}, function(results2, status2){
                 if (status == google.maps.ElevationStatus.OK) {
@@ -152,12 +161,14 @@ function geocode_results(i){
                         elevation[unique_addresses[i]]=results2[0].elevation;
                         
                         //put a pointer on the map
-                        markersArray[unique_addresses[i]] = new StyledMarker({styleIcon:new StyledIcon(StyledIconTypes.MARKER,
-                                                                             {size:(100,100),color:'#FF0000'}),
-                                                                              position:latlong,map:map,
-                                                                              title:unique_addresses[i].replace(/^loc:/i, '')+'\nLatitude: '+latitude[unique_addresses[i]].toFixed(2)+'\nLongitude: '+longitude[unique_addresses[i]].toFixed(2)+'\nElevation: '+elevation[unique_addresses[i]].toFixed(2),
-                                                                              flat:true});
-                        
+                        markersArray[unique_addresses[i]] = new google.maps.Marker({
+                                                        position: latlong,
+                                                        map: map,
+                                                        color: '#FF0000',
+                                                        clickable: false,
+                                                        icon: pinImage,
+                                                        shadow: pinShadow
+                                                    });
                     } else {
                         alert("No elevation results found!");
                     }
