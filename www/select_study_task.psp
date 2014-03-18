@@ -63,9 +63,12 @@ approved_qiime_submitters = [12428,12169,12171,12768,12782,12979,13019,12888]
             </form>
         </li>
         <li>
-            <form id="user_study" action="select_user_study_submit.psp" method="post">
-                Select an Existing Study:<br/>
-                <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
+        <table>
+            <tr>
+                <td>
+                    <form id="user_study" action="select_user_study_submit.psp" method="post">
+                    Select an Existing Study by Name:<br/>
+                    <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
 <%
 study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, portal_type)
 for item in study_names:
@@ -75,8 +78,25 @@ for item in study_names:
         req.write('<option value="' + str(item[0]) + ':' + item[1] + '">' + item[1] + '</option>\n')
 # end
 %>
-                </select>
-            </form>
+                    </select>
+                    </form>
+                </td>
+                <td>
+                    <form id="user_study_id" action="select_user_study_submit.psp" method="post">
+                    Or by Study ID:<br/>
+                    <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study_id', this); return false;">
+                    <option value=""></option>
+<%
+for item in study_names:
+    selected = 'selected' if study_id == item[0] else ''
+    req.write('<option value="' + str(item[0]) + ':' + item[1] + '" ' + selected + '>' + str(item[0]) + '</option>\n')
+#end
+%>
+                    </select>
+                    </form>
+                </td>
+            </tr>
+        </table>
         </li>
         
         <li>
