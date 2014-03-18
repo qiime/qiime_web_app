@@ -310,8 +310,9 @@ class QiimeDataAccess(object):
         try:
             con = self.getMetadataDatabaseConnection()
             study_names = con.cursor()
-            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id,
-                                            is_admin, portal_type, study_names])
+            con.cursor().callproc('qiime_assets.get_user_study_names',
+                                  [user_id, is_admin, portal_type,
+                                   study_names])
             study_name_list = []
             for row in study_names:
                 if row[0] is None:
