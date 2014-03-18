@@ -2,7 +2,7 @@
 __author__ = "Meg Pirrung"
 __copyright__ = "Copyright 2009-2013, QIIME Web Analysis"
 __credits__ = ["Meg Pirrung", "Adam Robbins-Pianka", "Yoshiki Vazquez-Baeza",
-    "Daniel McDonald"]
+    "Daniel McDonald", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Meg Pirrung"]
@@ -34,7 +34,7 @@ if email_address:
 
     try:
         if can_send_mail():
-            send_email(MESSAGE, SUBJECT)
+            send_email(MESSAGE, SUBJECT,sender=form_dict['email_address'])
         else:
             req.write(format_submit_form_to_fusebox_string(page="portal.psp",
                 message='Mail can only be sent from microbio.me domain.'))
