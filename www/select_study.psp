@@ -72,7 +72,7 @@ for study_name in study_names:
                     <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study_id', this); return false;">
                     <option value=""></option>
 <%
-for study_name in study_names:
+for study_name in sorted(study_names):
     req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + str(study_name[0]) + '</option>\n')
 #end
 %>

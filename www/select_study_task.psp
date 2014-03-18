@@ -87,7 +87,7 @@ for item in study_names:
                     <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study_id', this); return false;">
                     <option value=""></option>
 <%
-for item in study_names:
+for item in sorted(study_names):
     selected = 'selected' if study_id == item[0] else ''
     req.write('<option value="' + str(item[0]) + ':' + item[1] + '" ' + selected + '>' + str(item[0]) + '</option>\n')
 #end
