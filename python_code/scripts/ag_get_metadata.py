@@ -31,7 +31,8 @@ script_info['brief_description'] = (
 script_info['script_description'] = (
     "Connects to the QIIME metadata database using the web app's "
     "ag_data_access.AGGetBarcodeMetadata. This function is called once per "
-    "barcodes in the input file."
+    "barcodes in the input file.\nNote that at least one of -b or -i must "
+    "be supplied. If both are supplied, the two lists will be concatenated."
 )
 
 script_info['script_usage'] = [("","","")]
@@ -51,13 +52,10 @@ script_info['optional_options'] = [
     make_option('-H', '--omit_headers', action='store_true',
                 help="Do not print column headers as the first line"),
     make_option('-i', '--input_barcodes_file', type='existing_filepath',
-                help="The input file containing barcodes, one per line. "
-                "At least one of -b or -i must be supplied.  If both are "
-                "supplied, the two sets will be merged."),
+                help="The input file containing barcodes, one per line."),
     make_option('-b', '--barcodes', type=str,
                 help="A comma separated list of barcodes to fetch. At least "
-                "one of -b or -i must be supplised.  If both are supplied, "
-                "the two sets will be merged.")
+                "one of -b or -i must be supplised.")
 ]
 
 script_info['version'] = __version__
@@ -139,7 +137,7 @@ def main():
     all_barcodes = []
 
     if input_fp is None and barcodes is None:
-        raise IOError("Must supply either -i or -b")
+        raise option_parser.error("Must supply either -i or -b")
 
     if input_fp is not None:
         all_barcodes = [x.strip() for x in open(input_fp).readlines()]
