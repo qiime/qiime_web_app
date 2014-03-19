@@ -42,8 +42,6 @@ script_info['output_description']= (
 )
 
 script_info['required_options'] = [
-    make_option('-i', '--input_barcodes_file', type='existing_filepath',
-                help="The input file containing barcodes, one per line"),
     make_option('-o', '--output_file', type='new_filepath',
                 help="The output file, to which metadata will be written")
 
@@ -51,7 +49,15 @@ script_info['required_options'] = [
 
 script_info['optional_options'] = [
     make_option('-H', '--omit_headers', action='store_true',
-                help="Do not print column headers as the first line")
+                help="Do not print column headers as the first line"),
+    make_option('-i', '--input_barcodes_file', type='existing_filepath',
+                help="The input file containing barcodes, one per line. "
+                "At least one of -b or -i must be supplied.  If both are "
+                "supplied, the two sets will be merged."),
+    make_option('-b', '--barcodes', type=str,
+                help="A comma separated list of barcodes to fetch. At least "
+                "one of -b or -i must be supplised.  If both are supplied, "
+                "the two sets will be merged.")
 ]
 
 script_info['version'] = __version__
@@ -79,6 +85,7 @@ def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
 
     input_fp = opts.input_barcodes_file
+    barcodes = opts.barcodes
     output_fp = opts.output_file
     print_headers = not opts.omit_headers
 
@@ -128,6 +135,17 @@ def main():
         'SUPPLEMENTS_FIELDS', 'MACRONUTRIENT_PCT_TOTAL', 'QUINOLINE',
         'NITROMIDAZOLE', 'PENICILLIN', 'SULFA_DRUG', 'CEPHALOSPORIN'
     ]
+
+    all_barcodes = []
+
+    if input_fp is not None:
+        all_barcodes = [x.strip() for x in open(input_fp).readlines()]
+
+    if barcodes is not None:
+        all_barcodes.extend(barcodes.split(','))
+
+    if input_fp is None and barcodes is None:
+        raise IOError("Must supply either -i or -b!")
 
     with open(output_fp, 'w') as out_file:
         if print_headers:
