@@ -137,7 +137,7 @@ def main():
     all_barcodes = []
 
     if input_fp is None and barcodes is None:
-        raise option_parser.error("Must supply either -i or -b")
+        option_parser.error("Must supply either -i or -b")
 
     if input_fp is not None:
         all_barcodes = [x.strip() for x in open(input_fp).readlines()]
