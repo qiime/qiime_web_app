@@ -104,8 +104,7 @@ class LiveEBISRARestServices(BaseRestServices):
         curl_command = (
             'curl -F "SUBMISSION=@{0}" -F "STUDY=@{1}" -F "SAMPLE=@{2}" '
             '-F "RUN=@{3}" -F"EXPERIMENT=@{4}" '
-            '             ' # legacy white-spaces
-            '"https://www.ebi.ac.uk/ena/submit/drop-box/submit/{5}"'
+            ' "https://www.ebi.ac.uk/ena/submit/drop-box/submit/{5}"'
         ).format(
             self.submission_file_path,
             self.study_file_path,
