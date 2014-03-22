@@ -17,7 +17,7 @@ select akb.barcode as sample_name,
         'American Gut Project ' || akb.site_sampled || ' sample' as DESCRIPTION,
         akb.sample_time, 
         0 as altitude, 
-        'n' as assigned_from_geo,
+        'y' as assigned_from_geo,
         'American Gut Project' as TITLE,
         case akb.site_sampled
             when 'Please select...' then 'unknown'
@@ -158,10 +158,36 @@ select akb.barcode as sample_name,
             when lower(country) = 'united states of america' then 'GAZ:United States of America'
             when lower(country) = 'us' then 'GAZ:United States of America'
             when lower(country) = 'usa' then 'GAZ:United States of America'
+            when lower(country) = 'u.s.a' then 'GAZ:United States of America'
+            when lower(country) = 'u.s.' then 'GAZ:United States of America'
             when lower(country) = 'canada' then 'GAZ:Canada'
+            when lower(country) = 'canadian' then 'GAZ:Canada'
+            when lower(country) = 'ca' then 'GAZ:Canada'
+            when lower(country) = 'australia' then 'GAZ:Australia'
+            when lower(country) = 'au' then 'GAZ:Australia'
+            when lower(country) = 'united kingdom' then 'GAZ:United Kingdom'
+            when lower(country) = 'belgium' then 'GAZ:Belgium'
+            when lower(country) = 'gb' then 'GAZ:Great Britain'
+            when lower(country) = 'korea, republic of' then 'GAZ:South Korea'
+            when lower(country) = 'nl' then 'GAZ:Netherlands'
+            when lower(country) = 'netherlands' then 'GAZ:Netherlands'
             when lower(country) = 'spain' then 'GAZ:Spain'
+            when lower(country) = 'es' then 'GAZ:Spain'
             when lower(country) = 'norway' then 'GAZ:Norway'
-            else lower(country)
+            when lower(country) = 'germany' then 'GAZ:Germany'
+            when lower(country) = 'de' then 'GAZ:Germany'
+            when lower(country) = 'china' then 'GAZ:China'
+            when lower(country) = 'singapore' then 'GAZ:Singapore'
+            when lower(country) = 'new zealand' then 'GAZ:New Zealand'
+            when lower(country) = 'france' then 'GAZ:France'
+            when lower(country) = 'fr' then 'GAZ:France'
+            when lower(country) = 'ch' then 'GAZ:Switzerland'
+            when lower(country) = 'switzerland' then 'GAZ:Switzerland'
+            when lower(country) = 'denmark' then 'GAZ:Denmark'
+            when lower(country) = 'scotland' then 'GAZ:Scotland'
+            when lower(country) = 'united arab emirates' then 'GAZ:United Arab Emirates'
+            when lower(country) = 'ireland' then 'GAZ:Ireland'
+            else 'unknown'
         end as country,
         case
             when al.latitude is null then 'unknown'
