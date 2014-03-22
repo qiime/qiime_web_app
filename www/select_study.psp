@@ -50,24 +50,44 @@ if portal_type == 'qiime' or portal_type == 'emp':
             </form>
         </li>
         <li>
-            <form id="user_study" action="select_user_study_submit.psp" method="post">
-                Select an Existing Study:<br/>
-                <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
-                <option value=""></option>
+        Select an Existing Study:<br/>
+        <table>
+            <tr>
+                <td>
+                    By Name:<br/>
+                    <form id="user_study" action="select_user_study_submit.psp" method="post">
+                    <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
+                    <option value=""></option>
 <%
 study_names = data_access.getUserStudyNames(sess['web_app_user_id'], sess["is_admin"], sess['portal_type'])
 for study_name in study_names:
     req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + study_name[1] + '</option>\n')
 # end
 %>
-                </select>
-            </form>
-            </li>
-            <li>
-                <a href="" onclick="toggleSection(\'search_div\'); $('#search_text').focus(); return false;">Search for a study...</a>
-                <div id="search_div" name="search_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">    
-                <input type="text" id="search_text" name="search_text" style="border-radius:5px;width:200px;"><br/>
-                    <ul id="list">    
+                    </select>
+                    </form>
+                </td>
+                <td>
+                    Or by Study ID:<br/>
+                    <form id="user_study_id" action="select_user_study_submit.psp" method="post">
+                    <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study_id', this); return false;">
+                    <option value=""></option>
+<%
+for study_name in sorted(study_names):
+    req.write('<option value="' + str(study_name[0]) + ':' + study_name[1] + '">' + str(study_name[0]) + '</option>\n')
+#end
+%>
+                    </select>
+                    </form>
+                </td>
+            </tr>
+        </table>
+        </li>
+        <li>
+            <a href="" onclick="toggleSection(\'search_div\'); $('#search_text').focus(); return false;">Search for a study...</a>
+            <div id="search_div" name="search_div" style="display:none; border:10px solid; border-color:#ffffff; border-radius:20px; width:95%; height=100%; padding:5px; background-color:#b0c4de;">    
+            <input type="text" id="search_text" name="search_text" style="border-radius:5px;width:200px;"><br/>
+                <ul id="list">    
 <%
 for item in study_names:
     req.write('<li><a href="select_user_study_submit.psp?study_names={0}:{1}">{1}</a></li>\n'.format(str(item[0]), item[1]))
