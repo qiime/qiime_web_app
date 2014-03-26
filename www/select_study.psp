@@ -50,7 +50,7 @@ if portal_type == 'qiime' or portal_type == 'emp':
             </form>
         </li>
         <li>
-        Select an Existing Study:<br/>
+        Select an Existing Study:</br>
         <table>
             <tr>
                 <td>
