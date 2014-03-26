@@ -31,7 +31,8 @@ script_info['brief_description'] = (
 script_info['script_description'] = (
     "Connects to the QIIME metadata database using the web app's "
     "ag_data_access.AGGetBarcodeMetadata. This function is called once per "
-    "barcodes in the input file."
+    "barcodes in the input file.\nNote that at least one of -b or -i must "
+    "be supplied. If both are supplied, the two lists will be concatenated."
 )
 
 script_info['script_usage'] = [("","","")]
@@ -42,8 +43,6 @@ script_info['output_description']= (
 )
 
 script_info['required_options'] = [
-    make_option('-i', '--input_barcodes_file', type='existing_filepath',
-                help="The input file containing barcodes, one per line"),
     make_option('-o', '--output_file', type='new_filepath',
                 help="The output file, to which metadata will be written")
 
@@ -51,7 +50,12 @@ script_info['required_options'] = [
 
 script_info['optional_options'] = [
     make_option('-H', '--omit_headers', action='store_true',
-                help="Do not print column headers as the first line")
+                help="Do not print column headers as the first line"),
+    make_option('-i', '--input_barcodes_file', type='existing_filepath',
+                help="The input file containing barcodes, one per line."),
+    make_option('-b', '--barcodes', type=str,
+                help="A comma separated list of barcodes to fetch. At least "
+                "one of -b or -i must be supplised.")
 ]
 
 script_info['version'] = __version__
@@ -79,6 +83,7 @@ def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
 
     input_fp = opts.input_barcodes_file
+    barcodes = opts.barcodes
     output_fp = opts.output_file
     print_headers = not opts.omit_headers
 
@@ -129,11 +134,22 @@ def main():
         'NITROMIDAZOLE', 'PENICILLIN', 'SULFA_DRUG', 'CEPHALOSPORIN'
     ]
 
+    all_barcodes = []
+
+    if input_fp is None and barcodes is None:
+        option_parser.error("Must supply either -i or -b")
+
+    if input_fp is not None:
+        all_barcodes = [x.strip() for x in open(input_fp).readlines()]
+
+    if barcodes is not None:
+        all_barcodes.extend(barcodes.split(','))
+
     with open(output_fp, 'w') as out_file:
         if print_headers:
             out_file.write('\t'.join(headers) + '\n')
 
-        for metadata in get_ag_metadata_bulk(open(input_fp, 'U')):
+        for metadata in get_ag_metadata_bulk(all_barcodes):
             line = '\t'.join([str(metadata[header]) for header in headers])
             line += '\n'
             out_file.write(line)
