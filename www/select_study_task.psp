@@ -59,15 +59,16 @@ approved_qiime_submitters = [12428,12169,12171,12768,12782,12979,13019,12888]
                 <input type="hidden" name="page" id="page" value="new_study.psp">
                 <input type="hidden" name="mode" id="mode" value="new">
                 <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
-                Create a new study</a>
+                Create a New Study</a>
             </form>
         </li>
         <li>
+        Select an Existing Study:<br>
         <table>
             <tr>
                 <td>
+                    By Name:<br>
                     <form id="user_study" action="select_user_study_submit.psp" method="post">
-                    Select an Existing Study by Name:<br/>
                     <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
 <%
 study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, portal_type)
@@ -82,8 +83,8 @@ for item in study_names:
                     </form>
                 </td>
                 <td>
+                    Or by Study ID:<br>
                     <form id="user_study_id" action="select_user_study_submit.psp" method="post">
-                    Or by Study ID:<br/>
                     <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study_id', this); return false;">
                     <option value=""></option>
 <%

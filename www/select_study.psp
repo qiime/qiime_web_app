@@ -50,11 +50,11 @@ if portal_type == 'qiime' or portal_type == 'emp':
             </form>
         </li>
         <li>
-        Select an Existing Study:<br/>
+        Select an Existing Study:<br>
         <table>
             <tr>
                 <td>
-                    By Name:<br/>
+                    By Name:<br>
                     <form id="user_study" action="select_user_study_submit.psp" method="post">
                     <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
                     <option value=""></option>
@@ -68,7 +68,7 @@ for study_name in study_names:
                     </form>
                 </td>
                 <td>
-                    Or by Study ID:<br/>
+                    Or by Study ID:<br>
                     <form id="user_study_id" action="select_user_study_submit.psp" method="post">
                     <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study_id', this); return false;">
                     <option value=""></option>
