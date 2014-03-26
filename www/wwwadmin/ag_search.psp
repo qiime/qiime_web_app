@@ -268,16 +268,18 @@ if 'search_term' in form:
 				# Close the div for this login
 				req.write('</div>')
 				
-	elif len(handout_kit_list) > 0:
+	if len(handout_kit_list) > 0:
 		########################################
 		# Hand-out Kit information             #
 		########################################
+		req.write('<h2>Handout Kit Information Below</h2>')
 		for kit_id in handout_kit_list:
 			sql = """
 			select kit_id, password, barcode, verification_code 
 			from ag_handout_kits
 			where kit_id = '{0}'""".format(kit_id)
 			results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+			req.write('<div class="result_container">')
 			if len(results) > 0:
 				req.write('<table class="widetable">')
 				req.write('<th>kit_id</th>')
@@ -291,6 +293,7 @@ if 'search_term' in form:
 					req.write('<td>{}</td>'.format(tableout))
 					req.write('</tr>')
 				req.write('</table>')
+			req.write('</div>')
 
 	else:
 		message = 'No results found.'
