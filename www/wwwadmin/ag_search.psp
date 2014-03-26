@@ -1,5 +1,6 @@
 <%
 login_list = []
+handout_kit_list =[]
 %>
 
 <style>
@@ -79,7 +80,14 @@ if 'search_term' in form:
 	for item in results:
 		if item[0] not in login_list:
 			login_list.append(item[0])
-	
+
+	#check matches in ag_handout_kits
+	sql = """
+	select kit_id from ag_handout_kits where kit_id like '%{0}%' or barcode like '%{0}%'""".format(search_term)
+	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+	for item in results:
+		if item[0] not in handout_kit_list:
+			handout_kit_list.append(item[0])
 	# Output the results
 	if len(login_list) > 0:
 		message = ''
@@ -260,6 +268,32 @@ if 'search_term' in form:
 				# Close the div for this login
 				req.write('</div>')
 				
+	if len(handout_kit_list) > 0:
+		########################################
+		# Hand-out Kit information             #
+		########################################
+		req.write('<h2>Handout Kit Information Below</h2>')
+		for kit_id in handout_kit_list:
+			sql = """
+			select kit_id, password, barcode, verification_code 
+			from ag_handout_kits
+			where kit_id = '{0}'""".format(kit_id)
+			results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
+			req.write('<div class="result_container">')
+			if len(results) > 0:
+				req.write('<table class="widetable">')
+				req.write('<th>kit_id</th>')
+				req.write('<th>password</th>')
+				req.write('<th>barcode</th>')
+				req.write('<th>verification_code</th>')
+				for row in results:
+					#the first <td> and last </td>  are added in the write
+					tableout= '</td><td>'.join(row)
+					req.write('<tr class="gridrow">')
+					req.write('<td>{}</td>'.format(tableout))
+					req.write('</tr>')
+				req.write('</table>')
+			req.write('</div>')
 
 	else:
 		message = 'No results found.'
