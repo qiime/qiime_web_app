@@ -285,10 +285,11 @@ if 'search_term' in form:
 				req.write('<th>barcode</th>')
 				req.write('<th>verification_code</th>')
 				for row in results:
-						tableout= '</td><td>'.join(row)
-						req.write('<tr class="gridrow">')
-						req.write('<td>{}</td>'.format(tableout))
-						req.write('</tr>')
+					#the first <td> and last </td>  are added in the write
+					tableout= '</td><td>'.join(row)
+					req.write('<tr class="gridrow">')
+					req.write('<td>{}</td>'.format(tableout))
+					req.write('</tr>')
 				req.write('</table>')
 
 	else:
