@@ -1,6 +1,6 @@
 <%
 login_list = []
-kit_list =[]
+handout_kit_list =[]
 %>
 
 <style>
@@ -86,8 +86,8 @@ if 'search_term' in form:
 	select kit_id from ag_handout_kits where kit_id like '%{0}%' or barcode like '%{0}%'""".format(search_term)
 	results = ag_data_access.dynamicMetadataSelect(sql).fetchall()
 	for item in results:
-		if item[0] not in kit_list:
-			kit_list.append(item[0])
+		if item[0] not in handout_kit_list:
+			handout_kit_list.append(item[0])
 	# Output the results
 	if len(login_list) > 0:
 		message = ''
@@ -268,11 +268,11 @@ if 'search_term' in form:
 				# Close the div for this login
 				req.write('</div>')
 				
-	elif len(kit_list) > 0:
+	elif len(handout_kit_list) > 0:
 		########################################
 		# Hand-out Kit information             #
 		########################################
-		for kit_id in kit_list:
+		for kit_id in handout_kit_list:
 			sql = """
 			select kit_id, password, barcode, verification_code 
 			from ag_handout_kits
