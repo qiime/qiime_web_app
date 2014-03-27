@@ -1,6 +1,6 @@
 -- Run the metadata pulldown for a single barcode (for an animal sample)
 create or replace
-procedure ag_get_barcode_metadata_animal
+procedure ag_get_barcode_md_animal
 (
     barcode_ IN varchar2,
     user_data_ OUT types.ref_cursor
@@ -260,6 +260,6 @@ end;
 
 /*
 variable results_cursor REFCURSOR;
-exec ag_check_barcode_metadata_animal('000013395', :results_cursor);
+exec ag_get_barcode_md_animal('000013395', :results_cursor);
 print results_cursor;
 */

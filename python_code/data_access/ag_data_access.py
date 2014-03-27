@@ -388,7 +388,7 @@ class AGDataAccess(object):
             'SETTING', 'TOILE_WATER_ACCESS', 'WEIGHT_CLASS'
         ]
 
-        return [dict(zip(headers, row)) for row in results]
+        return [dict(zip(animal_headers, row)) for row in results]
 
     def getAnimalParticipants(self, ag_login_id):
         con = self.getMetadataDatabaseConnection()
