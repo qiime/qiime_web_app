@@ -14,10 +14,12 @@ __maintainer__ = "Adam Robbins-Pianka"
 __email__ = "adam.robbinspianka@colorado.edu"
 __status__ = "Development"
 
+from os.path import join, exists
+from os import mkdir
 
 import cx_Oracle
-
-from qiime.util import parse_command_line_parameters, make_option
+from qiime.util import (parse_command_line_parameters, make_option,
+                        get_options_lookup)
 
 from data_access_connections import data_access_factory
 from enums import ServerConfig, DataAccessType
@@ -38,14 +40,14 @@ script_info['script_description'] = (
 script_info['script_usage'] = [("","","")]
 
 script_info['output_description']= (
-    "Results are written to an output file, one line per barcode. Column "
+    "Results are written to two output files, one file for humans, and one "
+    "file for animals.  In each file, there is one line per barcode. Column "
     "headers are written by default, but can be omitted by passing -H."
 )
 
+options_lookup = get_options_lookup()
 script_info['required_options'] = [
-    make_option('-o', '--output_file', type='new_filepath',
-                help="The output file, to which metadata will be written")
-
+    options_lookup['output_dir']
 ]
 
 script_info['optional_options'] = [
@@ -74,21 +76,43 @@ def get_ag_metadata_bulk(barcodes):
         bc = line.strip()
         metadata = ag_data_access.AGGetBarcodeMetadata(bc)
         if len(metadata) != 1:
-            print ("FAILED barcode %s; %d results were returned (should be 1)"
-                   % (bc, len(metadata)))
+            yield False, bc
         else:
-            yield metadata[0]
+            yield True, metadata[0]
+
+def get_ag_metadata_bulk_animal(barcodes):
+    """Calls ag_get_barcode_metadata on a list of barcodes
+
+    The input, barcodes, should be an iterable list of barcodes (or an open
+    file that has one barcode per line)
+    """
+    ag_data_access = data_access_factory(ServerConfig.data_access_type,
+                                         'american_gut')
+
+    results = []
+    for line in barcodes:
+        bc = line.strip()
+        metadata = ag_data_access.AGGetBarcodeMetadataAnimal(bc)
+        if len(metadata) != 1:
+            yield False, bc
+        else:
+            yield True, metadata[0]
 
 def main():
     option_parser, opts, args = parse_command_line_parameters(**script_info)
 
     input_fp = opts.input_barcodes_file
     barcodes = opts.barcodes
-    output_fp = opts.output_file
+    output_dir = opts.output_dir
     print_headers = not opts.omit_headers
 
+    if exists(output_dir):
+        option_parser.error("Output dir already exists!")
+    else:
+        mkdir(output_dir)
+
     # this is the order of the columns to write.
-    headers = [
+    human_headers = [
         'SAMPLE_NAME', 'ANONYMIZED_NAME', 'COLLECTION_DATE', 'public',
         'DEPTH', 'DESCRIPTION', 'SAMPLE_TIME', 'ALTITUDE',
         'ASSIGNED_FROM_GEO', 'TITLE', 'SITE_SAMPLED', 'HOST_SUBJECT_ID',
@@ -134,6 +158,20 @@ def main():
         'NITROMIDAZOLE', 'PENICILLIN', 'SULFA_DRUG', 'CEPHALOSPORIN'
     ]
 
+    animal_headers = [
+        'SAMPLE_NAME', 'ANONYMIZED_NAME', 'COLLECTION_DATE', 'public',
+        'DEPTH', 'DESCRIPTION', 'SAMPLE_TIME', 'ALTITUDE',
+        'ASSIGNED_FROM_GEO', 'TITLE', 'SITE_SAMPLED', 'HOST_SUBJECT_ID',
+        'TAXON_ID', 'HOST_TAXID', 'COMMON_NAME', 'HOST_COMMON_NAME',
+        'BODY_HABITAT', 'BODY_SITE', 'BODY_PRODUCT', 'ENV_BIOME',
+        'ENV_FEATURE', 'ENV_MATTER', 'CITY', 'STATE', 'ZIP', 'COUNTRY',
+        'LATITUDE', 'LONGITUDE', 'ELEVATION', 'AGE_UNIT', 'AGE', 'SEX', 
+        'COPROPHAGE', 'DIET', 'EATS_HUMAN_FOOD', 'EATS_STORE_FOOD',
+        'EATS_WILD_FOOD', 'FOOD_TYPE', 'EATS_GRAIN_FREE_FOOD',
+        'EATS_ORGANIC_FOOD', 'LIVING_STATUS', 'ORIGIN', 'OUTSIDE_TIME',
+        'SETTING', 'TOILE_WATER_ACCESS', 'WEIGHT_CLASS'
+    ]
+
     all_barcodes = []
 
     if input_fp is None and barcodes is None:
@@ -145,14 +183,41 @@ def main():
     if barcodes is not None:
         all_barcodes.extend(barcodes.split(','))
 
-    with open(output_fp, 'w') as out_file:
+    fails = []
+    human_output_fp = join(output_dir, 'human_md.txt')
+    with open(human_output_fp, 'w') as out_file:
         if print_headers:
-            out_file.write('\t'.join(headers) + '\n')
+            out_file.write('\t'.join(human_headers) + '\n')
 
-        for metadata in get_ag_metadata_bulk(all_barcodes):
-            line = '\t'.join([str(metadata[header]) for header in headers])
-            line += '\n'
-            out_file.write(line)
+        for success, metadata in get_ag_metadata_bulk(all_barcodes):
+            if success:
+                line = '\t'.join([str(metadata[header]) for header in
+                                  human_headers])
+                line += '\n'
+                out_file.write(line)
+            else:
+                # in this case (on fail), "metadata" will just be the barcode
+                fails.append(metadata)
+
+    fails2 = []
+    animal_output_fp = join(output_dir, 'animal_md.txt')
+    with open(animal_output_fp, 'w') as out_file:
+        if print_headers:
+            out_file.write('\t'.join(animal_headers) + '\n')
+
+        for success, metadata in get_ag_metadata_bulk_animal(fails):
+            if success:
+                line = '\t'.join([str(metadata[header]) for header in
+                                  animal_headers])
+                line += '\n'
+                out_file.write(line)
+            else:
+                # in this case (on fail), "metadata" will just be the barcode
+                fails2.append(metadata)
+
+    print "The following barcodes failed:"
+    for bc in fails2:
+        print bc
 
 if __name__ == '__main__':
     main()
