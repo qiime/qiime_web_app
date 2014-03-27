@@ -290,7 +290,7 @@ if 'search_term' in form:
 					#the first <td> and last </td>  are added in the write
 					tableout= '</td><td>'.join(row)
 					req.write('<tr class="gridrow">')
-					req.write('<td>{}</td>'.format(tableout))
+					req.write('<td>{0}</td>'.format(tableout))
 					req.write('</tr>')
 				req.write('</table>')
 			req.write('</div>')
