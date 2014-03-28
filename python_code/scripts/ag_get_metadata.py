@@ -41,7 +41,7 @@ script_info['script_usage'] = [("","","")]
 
 script_info['output_description']= (
     "Results are written to two output files, one file for humans, and one "
-    "file for animals.  In each file, there is one line per barcode. Column "
+    "file for animals. In each file, there is one line per barcode. Column "
     "headers are written by default, but can be omitted by passing -H."
 )
 
@@ -62,37 +62,27 @@ script_info['optional_options'] = [
 
 script_info['version'] = __version__
 
-def get_ag_metadata_bulk(barcodes):
+def get_ag_metadata_bulk(barcodes, participant_type):
     """Calls ag_get_barcode_metadata on a list of barcodes
 
-    The input, barcodes, should be an iterable list of barcodes (or an open
+    barcodes should be an iterable list of barcodes (or an open
     file that has one barcode per line)
+
+    participant_type should be either 'human' or 'animal'
     """
+    if participant_type not in ('human', 'animal'):
+        raise ValueError("participant_type must be either 'human' or 'animal'")
+
     ag_data_access = data_access_factory(ServerConfig.data_access_type,
                                          'american_gut')
 
     results = []
     for line in barcodes:
         bc = line.strip()
-        metadata = ag_data_access.AGGetBarcodeMetadata(bc)
-        if len(metadata) != 1:
-            yield False, bc
-        else:
-            yield True, metadata[0]
-
-def get_ag_metadata_bulk_animal(barcodes):
-    """Calls ag_get_barcode_metadata on a list of barcodes
-
-    The input, barcodes, should be an iterable list of barcodes (or an open
-    file that has one barcode per line)
-    """
-    ag_data_access = data_access_factory(ServerConfig.data_access_type,
-                                         'american_gut')
-
-    results = []
-    for line in barcodes:
-        bc = line.strip()
-        metadata = ag_data_access.AGGetBarcodeMetadataAnimal(bc)
+        if participant_type == 'human':
+            metadata = ag_data_access.AGGetBarcodeMetadata(bc)
+        else: # participant_type == 'animal'
+            metadata = ag_data_access.AGGetBarcodeMetadataAnimal(bc)
         if len(metadata) != 1:
             yield False, bc
         else:
@@ -183,13 +173,13 @@ def main():
     if barcodes is not None:
         all_barcodes.extend(barcodes.split(','))
 
-    fails = []
+    human_failures = []
     human_output_fp = join(output_dir, 'human_md.txt')
     with open(human_output_fp, 'w') as out_file:
         if print_headers:
             out_file.write('\t'.join(human_headers) + '\n')
 
-        for success, metadata in get_ag_metadata_bulk(all_barcodes):
+        for success, metadata in get_ag_metadata_bulk(all_barcodes, 'human'):
             if success:
                 line = '\t'.join([str(metadata[header]) for header in
                                   human_headers])
@@ -197,15 +187,15 @@ def main():
                 out_file.write(line)
             else:
                 # in this case (on fail), "metadata" will just be the barcode
-                fails.append(metadata)
+                human_failures.append(metadata)
 
-    fails2 = []
+    double_failures = []
     animal_output_fp = join(output_dir, 'animal_md.txt')
     with open(animal_output_fp, 'w') as out_file:
         if print_headers:
             out_file.write('\t'.join(animal_headers) + '\n')
 
-        for success, metadata in get_ag_metadata_bulk_animal(fails):
+        for success, metadata in get_ag_metadata_bulk(human_failures, 'animal'):
             if success:
                 line = '\t'.join([str(metadata[header]) for header in
                                   animal_headers])
@@ -213,10 +203,10 @@ def main():
                 out_file.write(line)
             else:
                 # in this case (on fail), "metadata" will just be the barcode
-                fails2.append(metadata)
+                double_failures.append(metadata)
 
     print "The following barcodes failed:"
-    for bc in fails2:
+    for bc in double_failures:
         print bc
 
 if __name__ == '__main__':
