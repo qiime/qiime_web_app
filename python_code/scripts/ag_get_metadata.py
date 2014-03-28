@@ -203,11 +203,12 @@ def main():
                 out_file.write(line)
             else:
                 # in this case (on fail), "metadata" will just be the barcode
-                double_failures.append(metadata)
+                double_failures2.append(metadata)
 
-    print "The following barcodes failed:"
-    for bc in double_failures:
-        print bc
+    if double_failures2:
+        print "The following barcodes failed:"
+        for bc in double_failures2:
+            print bc
 
 if __name__ == '__main__':
     main()
