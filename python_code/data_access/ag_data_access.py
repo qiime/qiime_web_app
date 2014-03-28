@@ -381,11 +381,12 @@ class AGDataAccess(object):
             'TAXON_ID', 'HOST_TAXID', 'COMMON_NAME', 'HOST_COMMON_NAME',
             'BODY_HABITAT', 'BODY_SITE', 'BODY_PRODUCT', 'ENV_BIOME',
             'ENV_FEATURE', 'ENV_MATTER', 'CITY', 'STATE', 'ZIP', 'COUNTRY',
-            'LATITUDE', 'LONGITUDE', 'ELEVATION', 'AGE_UNIT', 'AGE', 'SEX', 
+            'LATITUDE', 'LONGITUDE', 'ELEVATION', 'AGE_UNIT', 'AGE', 'SEX',
             'COPROPHAGE', 'DIET', 'EATS_HUMAN_FOOD', 'EATS_STORE_FOOD',
             'EATS_WILD_FOOD', 'FOOD_TYPE', 'EATS_GRAIN_FREE_FOOD',
             'EATS_ORGANIC_FOOD', 'LIVING_STATUS', 'ORIGIN', 'OUTSIDE_TIME',
-            'SETTING', 'TOILE_WATER_ACCESS', 'WEIGHT_CLASS'
+            'SETTING', 'TOILE_WATER_ACCESS', 'WEIGHT_CLASS', 'HUMAN_SEXES',
+            'HUMAN_AGES', 'PETS_COHOUSED'
         ]
 
         return [dict(zip(animal_headers, row)) for row in results]

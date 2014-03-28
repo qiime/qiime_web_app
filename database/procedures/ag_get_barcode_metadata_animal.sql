@@ -241,7 +241,65 @@ select akb.barcode as sample_name,
         case
             when aas.weight is null then 'unknown'
             else aas.weight
-        end as weight_class
+        end as weight_class,
+
+        -- multiples
+        case
+            when 
+            (
+                select  listagg(item_value, ', ') within group(order by item_name)
+                from    ag_survey_multiples
+                where   ag_login_id = al.ag_login_id
+                        and participant_name = akb.participant_name
+                        and item_name like 'human/_%/_sex' escape '/'
+            ) is null then 'unknown'
+            else 
+            (
+                select  listagg(item_value, ', ') within group(order by item_name)
+                from    ag_survey_multiples
+                where   ag_login_id = al.ag_login_id
+                        and participant_name = akb.participant_name
+                        and item_name like 'human/_%/_sex' escape '/'
+            )
+        end as human_sexes,
+
+        case
+            when 
+            (
+                select  listagg(item_value, ', ') within group(order by item_name)
+                from    ag_survey_multiples
+                where   ag_login_id = al.ag_login_id
+                        and participant_name = akb.participant_name
+                        and item_name like 'human/_%/_age' escape '/'
+            ) is null then 'unknown'
+            else 
+            (
+                select  listagg(item_value, ', ') within group(order by item_name)
+                from    ag_survey_multiples
+                where   ag_login_id = al.ag_login_id
+                        and participant_name = akb.participant_name
+                        and item_name like 'human/_%/_age' escape '/'
+            )
+        end as human_ages,
+
+        case
+            when 
+            (
+                select  listagg(item_value, ', ') within group(order by item_name)
+                from    ag_survey_multiples
+                where   ag_login_id = al.ag_login_id
+                        and participant_name = akb.participant_name
+                        and item_name like 'pet/_%' escape '/'
+            ) is null then 'unknown'
+            else 
+            (
+                select  listagg(item_value, ', ') within group(order by item_name)
+                from    ag_survey_multiples
+                where   ag_login_id = al.ag_login_id
+                        and participant_name = akb.participant_name
+                        and item_name like 'pet/_%' escape '/'
+            )
+        end as pets_cohoused
         
 from    ag_login al
         inner join ag_kit ak
