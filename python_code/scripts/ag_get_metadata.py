@@ -195,7 +195,7 @@ def main():
         if print_headers:
             out_file.write('\t'.join(animal_headers) + '\n')
 
-        for success, metadata in get_ag_metadata_bulk(human_failures, 'animal'):
+        for success, metadata in get_ag_metadata_bulk(human_failures,'animal'):
             if success:
                 line = '\t'.join([str(metadata[header]) for header in
                                   animal_headers])
@@ -203,11 +203,11 @@ def main():
                 out_file.write(line)
             else:
                 # in this case (on fail), "metadata" will just be the barcode
-                double_failures2.append(metadata)
+                double_failures.append(metadata)
 
-    if double_failures2:
+    if double_failures:
         print "The following barcodes failed:"
-        for bc in double_failures2:
+        for bc in double_failures:
             print bc
 
 if __name__ == '__main__':
