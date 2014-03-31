@@ -44,8 +44,9 @@ else:
     lines = [x.replace(';', '\t').strip() for x in
         open(taxa_summary_fp, 'U').readlines() if not x.startswith('#')]
 
-    # remove the greengenes prefixes
-    lines = [sub('[kpcofg]__', '', x) for x in lines]
+    # remove the greengenes prefixes. If hierarchy is delimitd by semicolon-
+    # space, the GG prefix may be preceded by a space
+    lines = [sub(' *?[kpcofg]__', '', x) for x in lines]
 
     # we must operate on the genus and percent abundance columns individually,
     # so it must be split into individual cells
