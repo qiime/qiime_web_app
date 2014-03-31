@@ -41,7 +41,7 @@ else:
     headers = '\t'.join(headers)
 
     # read lines from taxa summary table, omit comment lines
-    lines = [x.replace('; ', '\t').strip() for x in
+    lines = [x.replace(';', '\t').strip() for x in
         open(taxa_summary_fp, 'U').readlines() if not x.startswith('#')]
 
     # remove the greengenes prefixes
