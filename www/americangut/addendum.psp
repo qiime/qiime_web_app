@@ -336,7 +336,7 @@
                                 <td class = 'row'>10.1%</td>
                             </tr>
                             <tr>
-                                <td class = 'taxa'>Genius <em>Bacteroides</em></td>
+                                <td class = 'taxa'>Genus <em>Bacteroides</em></td>
                                 <td class = 'row'>8.1%</td>
                             </tr>
                         </table>
@@ -358,25 +358,25 @@
                                 <th>Fold</th>
                             </tr>
                             <tr>
-                                <td class = 'taxa'>Genius <em>Clostridium</em></td>
+                                <td class = 'taxa'>Genus <em>Clostridium</em></td>
                                 <td class = 'row'>2.5%</td>
                                 <td class = 'row'>0.3%</td>
                                 <td class = 'row'>7x</td>
                             </tr>
                             <tr>
-                                <td class = 'taxa'>Genius <em>Finegoldia</em></td>
+                                <td class = 'taxa'>Genus <em>Finegoldia</em></td>
                                 <td class = 'row'>0.7%</td>
                                 <td class = 'row'>0.0%</td>
                                 <td class = 'row'>17x</td>
                             </tr>
                             <tr>
-                                <td class = 'taxa'>Genius <em>Prevotella</em></td>
+                                <td class = 'taxa'>Genus <em>Prevotella</em></td>
                                 <td class = 'row'>24.9%</td>
                                 <td class = 'row'>2.6%</td>
                                 <td class = 'row'>9x</td>
                             </tr>
                             <tr>
-                                <td class = 'taxa'>Genius <em>Collinsella</em></td>
+                                <td class = 'taxa'>Genus <em>Collinsella</em></td>
                                 <td class = 'row'>0.9%</td>
                                 <td class = 'row'>0.1%</td>
                                 <td class = 'row'>8x</td>
