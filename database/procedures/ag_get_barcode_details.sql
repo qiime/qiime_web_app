@@ -12,7 +12,8 @@ begin
                 cast(akb.ag_kit_id as varchar2(100)), 
                 akb.barcode, 
                 akb.site_sampled, akb.environment_sampled, akb.sample_date, 
-                akb.sample_time, akb.participant_name, akb.notes
+                akb.sample_time, akb.participant_name, akb.notes, akb.refunded, akb.withdrawn,
+                akb.moldy, akb.other, akb.other_text, akb.date_of_last_email ,akb.overloaded, al.name
         from    ag_kit_barcodes akb
                 inner join ag_kit ak
                 on akb.ag_kit_id = ak.ag_kit_id
@@ -29,5 +30,3 @@ execute ag_get_barcode_details('000001029', :user_data_);
 print user_data_;
 */
 
-
- 

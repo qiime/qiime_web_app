@@ -2963,11 +2963,14 @@ class QiimeDataAccess(object):
             print 'Exception caught: %s.\nThe error is: %s' % (type(e), e)
             return False  
 
-    def updateBarcodeStatus(self, status, postmark, scan_date, barcode):
+    def updateBarcodeStatus(self, status, postmark, scan_date, barcode, 
+                            biomass_remaining, sequencing_status, obsolete):
         """ Updates a barcode's status
         """
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('update_barcode_status', [status, postmark, scan_date, barcode])
+        con.cursor().callproc('update_barcode_status', [status, postmark, 
+                               scan_date, barcode, biomass_remaining, 
+                               sequencing_status, obsolete])
 
     def getBarcodeProjType(self, barcode):
         """ Get the project type of the barcode.
@@ -2999,4 +3002,57 @@ class QiimeDataAccess(object):
         con.cursor().callproc('get_project_names', [result])
         projnames = [row[0] for row in result]
         return projnames
+    
+    def getSequencingStatuses(self):
+        """Returns a list of sequencings statuses
+        """
+        con = self.getMetadataDatabaseConnection()
+        result = con.cursor()
+        con.cursor().callproc('get_sequencing_statuses', [result])
+        seq_statuses = [row[0] for row in result]
+        return seq_statuses
 
+    def getBarcodeStatuses(self):
+        """Returns a list of barcode statuses
+        """
+        con = self.getMetadataDatabaseConnection()
+        result = con.cursor()
+        con.cursor().callproc('get_barcode_statuses', [result])
+        bar_statuses = [row[0] for row in result]
+        return bar_statuses
+
+    def getProjectGroup(self, project_name):
+        """Returns a project group name
+
+        project_name is the name of the project from the table project
+        """
+        con = self.getMetadataDatabaseConnection()
+        result = con.cursor()
+        con.cursor().callproc('get_project_group', [project_name,result])
+        group = result.fetchone()
+        if group:
+            return group[0]
+        else:
+            return None
+
+    def getBarcodeDetails(self, barcode):
+        """returns a dictionary of barcode deatails
+        """
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('get_barcode_details',[barcode, results])
+        row = results.fetchone()
+        if row is not None:
+            barcode_details = {
+                'create_date' : row[0],
+                'status' : row[1],
+                'scan_date' : row[2],
+                'sample_postmark_date' : row[3],
+                'biomass_remaining' : row[4],
+                'sequencing_status' : row[5],
+                'obsolete' : row[6]
+                }
+        else:
+            #no results mean barcode doesn't exist 
+            barcode_details = {}
+        return barcode_details

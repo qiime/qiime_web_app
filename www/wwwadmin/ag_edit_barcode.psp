@@ -13,7 +13,7 @@ if 'submit_flag' in form:
 		# Submit and redirect to fusebox
 		ag_data_access.updateAGBarcode(form['barcode'], form['ag_kit_id'], form['site_sampled'], 
 			form['environment_sampled'], form['sample_date'], form['sample_time'], 
-			form['participant_name'], form['notes'])
+			form['participant_name'], form['notes'], form['refunded'], form['withdrawn'])
 		req.write('<script>document.submit_data.submit();</script>')
 # End if
 %>
@@ -35,7 +35,6 @@ if 'submit_flag' in form:
 		<tr>
 			<td>Barcode</td>
 			<td>
-				<!--<select name="barcode" id="barcode" class="hidden" onChange="document.edit_barcode.submit();">-->
 				<select name="barcode" id="barcode" onChange="document.edit_barcode.submit();">
 				<option value="">Please Select...</a>
 <%
@@ -72,7 +71,8 @@ if 'barcode' in form:
 	participant_name = '' if details['participant_name'] is \
         None else details['participant_name']
 	notes = '' if details['notes'] is None else details['notes']
-
+	refunded = 'N' if details['refunded'] is None else details['refunded']
+	withdrawn = 'N' if details['withdrawn'] is None else details['withdrawn']
 	# Indent
 %>
 
@@ -189,8 +189,38 @@ if 'barcode' in form:
 			<td><textarea name="notes" id="notes" style="width:350px;height:100px;"><%=notes%></textarea></td>
 		</tr>
 		<tr>
+        <td>Refunded</td><td><select name="refunded" id="refunded">
+<%
+        if refunded == 'N':
+          req.write('<option value="N" selected>No</option>')
+          req.write('<option value="Y">Yes</option>')
+        else:
+          req.write('<option value="N">No</option>')
+          req.write('<option value="Y" selected>Yes</option>')
+        #END Indent
+%>
+		</select>
+		</td></tr>
+		<tr>
+        <td>Withdrawn</td><td><select name="withdrawn" id="withdrawn">
+<%
+        if withdrawn == 'N':
+          req.write('<option value="N" selected>No</option>')
+          req.write('<option value="Y">Yes</option>')
+        else:
+          req.write('<option value="N">No</option>')
+          req.write('<option value="Y" selected>Yes</option>')
+        #END Indent
+%>
+		</select>
+		</td></tr>
+
+
+
+		<tr>
 			<td></td><td><input type="button" onClick="validateEditBarcode();" value="Submit"></td>
 		</tr>
+		
 
 <%
 # End indent

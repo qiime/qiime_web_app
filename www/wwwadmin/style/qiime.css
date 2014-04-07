@@ -318,6 +318,10 @@ h2.verification_text{
 	background-color: #f00;
 }
 
+#obsolete {
+	background-color: #f00;
+}
+
 div#barcode_form form ul li{
     list-style-type: square;
     font-weigth: bold;

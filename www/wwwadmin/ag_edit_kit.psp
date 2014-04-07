@@ -11,9 +11,6 @@ if 'submit_flag' in form:
 		# Submit and redirect to fusebox
 		ag_data_access.updateAGKit(form['ag_kit_id'], form['kit_id'], form['kit_password'], \
 			form['swabs_per_kit'], form['kit_verification_code'])
-		barcodes = form['barcodes'].split('-')
-		for barcode in barcodes:
-			data_access.setBarcodeProjType(form['project'], barcode)
 		req.write('<script>document.submit_data.submit();</script>')
 # End if
 %>
@@ -67,19 +64,6 @@ if 'ag_kit_id' in form:
 		<tr><td>Kit Password</td><td><input type="text" name="kit_password" id="kit_password" value="<%=details[2]%>"></td></tr>
 		<tr><td>Number of Swabs</td><td><input type="text" name="swabs_per_kit" id="swabs_per_kit" onkeypress='validateNumber(event)' value="<%=details[3]%>"></td></tr>
 		<tr><td>Kit Verification Code</td><td><input type="text" name="kit_verification_code" id="kit_verification_code" value="<%=details[4]%>"></td></tr>
-		<tr><td>Project</td><td><select name="project" id="project" >
-<%
-	if barcodes:
-		current_project = data_access.getBarcodeProjType(barcodes[0])
-		barcodesstring = '-'.join(barcodes)
-	for project in project_names:
-		if project == current_project:
-			req.write('<option value="{0}" selected>{0}</option>'.format(project))
-		else:
-			req.write('<option value="{0}">{0}</option>'.format(project))
-	#end
-%>
-		</select></td></tr>
 		<tr><td></td><td><input type="button" onclick="validateAGForm();" value="Submit"></td></tr>
 
 

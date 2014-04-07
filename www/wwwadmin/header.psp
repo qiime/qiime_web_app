@@ -150,12 +150,16 @@ else:
             <li><a href="" onclick="document.ag_edit_participant.submit(); return false;">Edit Participant</a></li>
             <li><a href="" onclick="document.ag_new_kit.submit(); return false;">Add New Kit</a></li>
             <li><a href="" onclick="document.ag_edit_kit.submit(); return false;">Edit Existing Kit</a></li>
-            <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New Barcode</a></li>
-            <li><a href="" onclick="document.ag_edit_barcode.submit(); return false;">Edit Existing Barcode</a></li>
+            <li><a href="" onclick="document.ag_new_barcode.submit(); return false;">Add New American Gut Barcode</a></li>
+            <li><a href="" onclick="document.ag_edit_barcode.submit(); return false;">Edit Existing American Gut Barcode</a></li>
             <!--<li><a href="" onclick="document.ag_reassign_barcode.submit(); return false;">Reassign Barcode</a></li>-->
-            <li><a href="" onclick="document.barcode_util.submit(); return false;">Scan Barcode</a></li>
             <li><a href="" onclick="document.update_geocode.submit(); return false;">Update Geocode</a></li>
             <li><a href="" onclick="document.ag_add_bruce_wayne.submit(); return false;">Add Bruce Wayne<img src="img/bruce.png"/></a></li>
+        </ul>
+
+        <h3>General Project Utilities</h3>
+        <ul class="mainmenu">
+            <li><a href="" onclick="document.barcode_util.submit(); return false;">Scan Barcode</a></li>
         </ul>
 
         <h3>Legacy Web App Utilities</h3>
