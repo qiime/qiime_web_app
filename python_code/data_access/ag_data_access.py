@@ -701,7 +701,7 @@ class AGDataAccess(object):
     def getAGKitbyEmail(self, email):
         """Returns a list of kitids based on email
 
-        email is email address of participant
+        email is email address of login
         returns a list of kit_id's associated with the email or an empty list
         """
         con = self.getMetadataDatabaseConnection()
@@ -742,13 +742,7 @@ class AGDataAccess(object):
         results = con.cursor()
         con.cursor().callproc('ag_verify_password_change_code', [email, kitid, passcode, results])
         isgood = results.fetchone()
-        if isgood is not None:
-            if isgood[0] == 1:
-                return True
-            else: 
-                return False
-        else:
-            return False     
+        return isgood is not None and isgood[0] == 1
 
     def getBarcodesByKit(self, kitID):
         """Returns a list of barcodes in a kit
