@@ -295,7 +295,7 @@ if 'search_term' in form:
 				req.write('</table>')
 			req.write('</div>')
 
-	else:
+	if len(handout_kit_list) == 0 and len(login_list) == 0:
 		message = 'No results found.'
 		req.write(message)
 
