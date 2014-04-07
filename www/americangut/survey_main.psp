@@ -43,9 +43,11 @@ if form.get('is_juvenile', 'off') == 'on':
         Parent/Guardian 1: %s
         Parent/Guardian 2: %s
         Deceased: %s
+        Kit id: %s
         --------------------------------------------------------------------------------
         """ % (form['participant_name'], form['juvenile_age'],
-               form['parent_1_name'], form['parent_2_name'], form.get('deceased_parent', 'off'))
+               form['parent_1_name'], form['parent_2_name'], form.get('deceased_parent', 'off'),
+               sess['supplied_kit_id'])
 
         try:
             if can_send_mail():
