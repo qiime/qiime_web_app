@@ -49,6 +49,7 @@ approved_qiime_submitters = [12428,12169,12171,12768,12782,12979,13019,12888]
             <form id="edit_study" action="fusebox.psp" method="post">
                 <input type="hidden" name="page" id="page" value="new_study.psp">
                 <input type="hidden" name="mode" id="mode" value="edit">
+                <input type="hidden" name="study_id" id="study_id" value=<%= '"'+str(study_id)+'"' %>>
                 <a href="" onclick="document.forms['edit_study'].submit(); return false;">
                 Edit study information</a>
             </form>
@@ -58,13 +59,17 @@ approved_qiime_submitters = [12428,12169,12171,12768,12782,12979,13019,12888]
                 <input type="hidden" name="page" id="page" value="new_study.psp">
                 <input type="hidden" name="mode" id="mode" value="new">
                 <a href="" onclick="document.forms['create_new_study'].submit(); return false;">
-                Create a new study</a>
+                Create a New Study</a>
             </form>
         </li>
         <li>
-            <form id="user_study" action="select_user_study_submit.psp" method="post">
-                Select an Existing Study:<br/>
-                <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
+        Select an Existing Study:<br>
+        <table>
+            <tr>
+                <td>
+                    By Name:<br>
+                    <form id="user_study" action="select_user_study_submit.psp" method="post">
+                    <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study', this); return false;">
 <%
 study_names = data_access.getUserStudyNames(web_app_user_id, is_admin, portal_type)
 for item in study_names:
@@ -74,8 +79,25 @@ for item in study_names:
         req.write('<option value="' + str(item[0]) + ':' + item[1] + '">' + item[1] + '</option>\n')
 # end
 %>
-                </select>
-            </form>
+                    </select>
+                    </form>
+                </td>
+                <td>
+                    Or by Study ID:<br>
+                    <form id="user_study_id" action="select_user_study_submit.psp" method="post">
+                    <select validate="required:true" name="study_names" id="study_names" onchange="select_change_submit('user_study_id', this); return false;">
+                    <option value=""></option>
+<%
+for item in sorted(study_names):
+    selected = 'selected' if study_id == item[0] else ''
+    req.write('<option value="' + str(item[0]) + ':' + item[1] + '" ' + selected + '>' + str(item[0]) + '</option>\n')
+#end
+%>
+                    </select>
+                    </form>
+                </td>
+            </tr>
+        </table>
         </li>
         
         <li>

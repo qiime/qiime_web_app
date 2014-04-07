@@ -12,11 +12,16 @@ __maintainer__ = ["Doug Wendel"]
 __email__ = "wendel@colorado.edu"
 __status__ = "Production"
 
-import cx_Oracle
-import httplib
-import json
 import urllib
+import httplib
 from random import choice
+import json
+from time import sleep
+
+import cx_Oracle
+
+class GoogleAPILimitExceeded(Exception):
+    pass
 
 class AGDataAccess(object):
     """
@@ -311,6 +316,81 @@ class AGDataAccess(object):
 
         return [row[0] for row in results]
 
+    def AGGetBarcodeMetadata(self, barcode):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_barcode_metadata', [barcode, results])
+
+        headers = [
+            'SAMPLE_NAME', 'ANONYMIZED_NAME', 'COLLECTION_DATE', 'public',
+            'DEPTH', 'DESCRIPTION', 'SAMPLE_TIME', 'ALTITUDE',
+            'ASSIGNED_FROM_GEO', 'TITLE', 'SITE_SAMPLED', 'HOST_SUBJECT_ID',
+            'TAXON_ID', 'HOST_TAXID', 'COMMON_NAME', 'HOST_COMMON_NAME',
+            'BODY_HABITAT', 'BODY_SITE', 'BODY_PRODUCT', 'ENV_BIOME',
+            'ENV_FEATURE', 'ENV_MATTER', 'CITY', 'STATE', 'ZIP', 'COUNTRY',
+            'LATITUDE', 'LONGITUDE', 'ELEVATION', 'AGE_UNIT', 'AGE',
+            'ACNE_MEDICATION', 'ACNE_MEDICATION_OTC', 'ALCOHOL_FREQUENCY',
+            'FAT_PER', 'CARBOHYDRATE_PER', 'PROTEIN_PER', 'ANIMAL_PER',
+            'PLANT_PER', 'ANTIBIOTIC_CONDITION', 'ANTIBIOTIC_SELECT',
+            'APPENDIX_REMOVED', 'ASTHMA', 'BIRTH_DATE', 'CAT', 'CHICKENPOX',
+            'COMMUNAL_DINING', 'CONDITIONS_MEDICATION', 'CONTRACEPTIVE',
+            'COSMETICS_FREQUENCY', 'COUNTRY_OF_BIRTH', 'CSECTION',
+            'CURRENT_RESIDENCE_DURATION', 'DECEASED_PARENT', 'DEODORANT_USE',
+            'DIABETES', 'DIABETES_DIAGNOSE_DATE', 'DIABETES_MEDICATION',
+            'DIET_TYPE', 'DOG', 'DRINKING_WATER_SOURCE', 'EXERCISE_FREQUENCY',
+            'EXERCISE_LOCATION', 'FIBER_GRAMS', 'FLOSSING_FREQUENCY',
+            'FLU_VACCINE_DATE', 'FOODALLERGIES_OTHER',
+            'FOODALLERGIES_OTHER_TEXT', 'FOODALLERGIES_PEANUTS',
+            'FOODALLERGIES_SHELLFISH', 'FOODALLERGIES_TREENUTS', 'FRAT', 'SEX',
+            'GLUTEN', 'DOMINANT_HAND', 'HEIGHT_IN', 'HEIGHT_OR_LENGTH', 'IBD', 
+            'LACTOSE', 'LAST_TRAVEL', 'LIVINGWITH', 'MAINFACTOR_OTHER_1',
+            'MAINFACTOR_OTHER_2', 'MAINFACTOR_OTHER_3', 'MIGRAINE',
+            'MIGRAINEMEDS', 'MIGRAINE_AGGRAVATION', 'MIGRAINE_AURA',
+            'MIGRAINE_FACTOR_1', 'MIGRAINE_FACTOR_2', 'MIGRAINE_FACTOR_3',
+            'MIGRAINE_FREQUENCY', 'MIGRAINE_NAUSEA', 'MIGRAINE_PAIN',
+            'MIGRAINE_PHONOPHOBIA', 'MIGRAINE_PHOTOPHOBIA',
+            'MIGRAINE_RELATIVES', 'MULTIVITAMIN', 'NAILS',
+            'NONFOODALLERGIES_BEESTINGS', 'NONFOODALLERGIES_DANDER',
+            'NONFOODALLERGIES_DRUG', 'NONFOODALLERGIES_NO',
+            'NONFOODALLERGIES_POISONIVY', 'NONFOODALLERGIES_SUN',
+            'PERCENTAGE_FROM_CARBS', 'PKU', 'POOL_FREQUENCY', 'PREGNANT',
+            'PREGNANT_DUE_DATE', 'PRIMARY_CARB', 'PRIMARY_VEGETABLE', 'RACE',
+            'RACE_OTHER', 'ROOMMATES', 'SEASONAL_ALLERGIES', 'SHARED_HOUSING',
+            'SKIN_CONDITION', 'SLEEP_DURATION', 'SMOKING_FREQUENCY',
+            'SOFTENER', 'SPECIAL_RESTRICTIONS', 'SUPPLEMENTS', 'TANNING_BEDS',
+            'TANNING_SPRAYS', 'TEETHBRUSHING_FREQUENCY', 'TONSILS_REMOVED',
+            'TYPES_OF_PLANTS', 'WEIGHT_CHANGE', 'TOT_MASS', 'WEIGHT_LBS',
+            'BMI', 'ANTIBIOTIC_MEDS', 'DIABETES_MEDICATIONS', 
+            'DIET_RESTRICTIONS', 'GENERAL_MEDS', 'MIGRAINE_MEDICATIONS',
+            'PETS', 'PET_CONTACT', 'PET_LOCATIONS', 'RELATIONS',
+            'SUPPLEMENTS_FIELDS', 'MACRONUTRIENT_PCT_TOTAL', 'QUINOLINE',
+            'NITROMIDAZOLE', 'PENICILLIN', 'SULFA_DRUG', 'CEPHALOSPORIN'
+        ]
+
+        return [dict(zip(headers, row)) for row in results]
+
+    def AGGetBarcodeMetadataAnimal(self, barcode):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_barcode_md_animal', [barcode, results])
+
+        animal_headers = [
+            'SAMPLE_NAME', 'ANONYMIZED_NAME', 'COLLECTION_DATE', 'public',
+            'DEPTH', 'DESCRIPTION', 'SAMPLE_TIME', 'ALTITUDE',
+            'ASSIGNED_FROM_GEO', 'TITLE', 'SITE_SAMPLED', 'HOST_SUBJECT_ID',
+            'TAXON_ID', 'HOST_TAXID', 'COMMON_NAME', 'HOST_COMMON_NAME',
+            'BODY_HABITAT', 'BODY_SITE', 'BODY_PRODUCT', 'ENV_BIOME',
+            'ENV_FEATURE', 'ENV_MATTER', 'CITY', 'STATE', 'ZIP', 'COUNTRY',
+            'LATITUDE', 'LONGITUDE', 'ELEVATION', 'AGE_UNIT', 'AGE', 'SEX',
+            'COPROPHAGE', 'DIET', 'EATS_HUMAN_FOOD', 'EATS_STORE_FOOD',
+            'EATS_WILD_FOOD', 'FOOD_TYPE', 'EATS_GRAIN_FREE_FOOD',
+            'EATS_ORGANIC_FOOD', 'LIVING_STATUS', 'ORIGIN', 'OUTSIDE_TIME',
+            'SETTING', 'TOILE_WATER_ACCESS', 'WEIGHT_CLASS', 'HUMAN_SEXES',
+            'HUMAN_AGES', 'PETS_COHOUSED'
+        ]
+
+        return [dict(zip(animal_headers, row)) for row in results]
+
     def getAnimalParticipants(self, ag_login_id):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
@@ -412,7 +492,7 @@ class AGDataAccess(object):
 
             r = self.getGeocodeJSON(url)
 
-            if r in ('unknown_error', 'not_OK'):
+            if r in ('unknown_error', 'not_OK', 'no_results'):
                 # Could not geocode, mark it so we don't try next time
                 self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
@@ -421,7 +501,7 @@ class AGDataAccess(object):
                 # Google API limit, then we should try again next time
                 # ... but we should stop hitting their servers, so raise an
                 # exception
-                raise Exception, "Exceeded Google API limit"
+                raise GoogleAPILimitExceeded("Exceeded Google API limit")
 
             # Unpack it and write to DB
             lat, lon = r
@@ -434,7 +514,7 @@ class AGDataAccess(object):
             
             r2 = self.getElevationJSON(url2)
 
-            if r2 in ('unknown_error', 'not_OK'):
+            if r2 in ('unknown_error', 'not_OK', 'no_results'):
                 # Could not geocode, mark it so we don't try next time
                 self.updateGeoInfo(ag_login_id, '', '', '', 'y')
                 continue
@@ -443,7 +523,7 @@ class AGDataAccess(object):
                 # Google API limit, then we should try again next time
                 # ... but we should stop hitting their servers, so raise an
                 # exception
-                raise Exception, "Exceeded Google API limit"
+                raise GoogleAPILimitExceeded("Exceeded Google API limit")
 
             elevation = r2
 
@@ -460,26 +540,46 @@ class AGDataAccess(object):
 
     def getGeocodeJSON(self, url):
         conn = httplib.HTTPConnection('maps.googleapis.com')
-        conn.request('GET', url)
-        result = conn.getresponse()
+        success = False
+        num_tries = 0
+        while num_tries < 2 and not success:
+            conn.request('GET', url)
+            result = conn.getresponse()
 
-        # Make sure we get an 'OK' status
-        if result.status != 200:
-            return 'not_OK'
+            # Make sure we get an 'OK' status
+            if result.status != 200:
+                return 'not_OK'
 
-        data = json.loads(result.read())
-        conn.close()
+            data = json.loads(result.read())
 
-        try:
-            lat = data['results'][0]['geometry']['location']['lat']
-            lon = data['results'][0]['geometry']['location']['lng']
-        except (KeyError, IndexError):
-            # Unexpected format - not the data we want
+            # if we're over the query limit, wait 2 seconds and try again,
+            # it may just be that we're submitting requests too fast
             if data.get('status', None) == 'OVER_QUERY_LIMIT':
-                return 'over_limit'
+                num_tries += 1
+                sleep(2)
+            elif data.has_key('results'):
+                success = True
             else:
                 return 'unknown_error'
 
+        conn.close()
+
+        # if we got here without getting an unknown_error or succeeding, then
+        # we are over the request limit for the 24 hour period
+        if not success:
+            return 'over_limit'
+
+        # sanity check the data returned by Google and return the lat/lng
+        if len(data['results']) == 0:
+            return 'no_results'
+
+        geometry = data['results'][0].get('geometry', {})
+        location = geometry.get('location', {})
+        lat = location.get('lat', {})
+        lon = location.get('lng', {})
+
+        if not lat or not lon:
+            return 'unknown_error'
 
         return (lat, lon)
 
@@ -496,25 +596,43 @@ class AGDataAccess(object):
         location requested in the url.
         """
         conn = httplib.HTTPConnection('maps.googleapis.com')
-        conn.request('GET', url)
-        result = conn.getresponse()
+        success = False
+        num_tries = 0
+        while num_tries < 2 and not success:
+            conn.request('GET', url)
+            result = conn.getresponse()
 
-        # Make sure we get an 'OK' status
-        if result.status != 200:
-            return 'not_OK'
+            # Make sure we get an 'OK' status
+            if result.status != 200:
+                return 'not_OK'
 
-        data = json.loads(result.read())
+            data = json.loads(result.read())
+
+            # if we're over the query limit, wait 2 seconds and try again,
+            # it may just be that we're submitting requests too fast
+            if data.get('status', None) == 'OVER_QUERY_LIMIT':
+                num_tries += 1
+                sleep(2)
+            elif data.has_key('results'):
+                success = True
+            else:
+                return 'unknown_error'
 
         conn.close()
 
-        try:
-            elevation = data['results'][0]['elevation']
-        except (KeyError, IndexError):
-            # Unexpected format - not the data we want
-            if data.get('status', None) == 'OVER_QUERY_LIMIT':
-                return 'over_limit'
-            else:
-                return 'unknown_error'
+        # if we got here without getting an unknown_error or succeeding, then
+        # we are over the request limit for the 24 hour period
+        if not success:
+            return 'over_limit'
+
+        # sanity check the data returned by Google and return the lat/lng
+        if len(data['results']) == 0:
+            return 'no_results'
+
+        elevation = data['results'][0].get('elevation', {})
+
+        if not elevation:
+            return 'unknown_error'
 
         return elevation
         
@@ -630,7 +748,16 @@ class AGDataAccess(object):
             else: 
                 return False
         else:
-            return False
-        
+            return False     
 
+    def getBarcodesByKit(self, kitID):
+        """Returns a list of barcodes in a kit
+
+        kitID is the supplied_kit_id from the ag_kit table
+        """
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_barcodes_by_kit', [kitID, results])
+        barcodes = [row[0] for row in results]
+        return barcodes
 

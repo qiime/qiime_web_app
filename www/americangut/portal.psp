@@ -99,15 +99,13 @@ else:
     </div>
 </div>
 <%
+# Note that the "verification" tab is selected by default. This selection 
+# should only be changed if the kit has been verified, regardless of whether
+# or not the user has results
 if kit_verified == 'y':
-    #INDENT
-%>
-<script>selectTab('source')</script>
-<%
-if has_results:
-    #INDENT
-%>
-<script>selectTab('results')</script>
-<%
-#endif
+    if has_results:
+        req.write("<script>selectTab('results')</script>")
+    else:
+        req.write("<script>selectTab('source')</script>")
+#ENDIF
 %>

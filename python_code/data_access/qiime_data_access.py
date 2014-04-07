@@ -310,8 +310,9 @@ class QiimeDataAccess(object):
         try:
             con = self.getMetadataDatabaseConnection()
             study_names = con.cursor()
-            con.cursor().callproc('qiime_assets.get_user_study_names', [user_id,
-                                            is_admin, portal_type, study_names])
+            con.cursor().callproc('qiime_assets.get_user_study_names',
+                                  [user_id, is_admin, portal_type,
+                                   study_names])
             study_name_list = []
             for row in study_names:
                 if row[0] is None:
@@ -2980,3 +2981,22 @@ class QiimeDataAccess(object):
             return proj_type[0][0]
         else:
             return "Unknown"
+
+    def setBarcodeProjType(self, project, barcode):
+        """sets the project type of the barcodel
+
+            project is the project name from the project table
+            barcode is the barcode
+        """
+        con = self.getMetadataDatabaseConnection()
+        con.cursor().callproc('set_barcode_proj_type', [project, barcode])
+
+    def getProjectNames(self):
+        """Returns a list of project names
+        """
+        con = self.getMetadataDatabaseConnection()
+        result = con.cursor()
+        con.cursor().callproc('get_project_names', [result])
+        projnames = [row[0] for row in result]
+        return projnames
+

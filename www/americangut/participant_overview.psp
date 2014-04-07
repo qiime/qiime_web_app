@@ -86,7 +86,7 @@ for sample in samples:
             <input type="hidden" name="page" value="sample_overview.psp"/>
             <input type="hidden" name="barcode" value="{0}"/>
             <img class="icon" src="/qiime/img/sample_icon.png"/>
-            <a href="" onclick="document.forms['view_sample_{0}'].submit(); return false;">{0}</a>
+            <input type="button" onclick="document.forms['view_sample_{0}'].submit(); return false;" value="{0}"/>
         </form>
     </li>
     """.format(sample['barcode'])

@@ -3,7 +3,7 @@
 
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2010, Qiime Web Analysis"
-__credits__ = ["Doug Wendel"]
+__credits__ = ["Doug Wendel", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
@@ -289,6 +289,7 @@ req.write('window.onload=initialize;</script>')
                 <li><a href="FAQ.psp#faq0">American Gut 101</a></li>
                 <li><a href="https://fundrazr.com/campaigns/4Tqx5" target="_blank">Join the Project</a></li>
                 <li><a href="http://goo.gl/Jdh1cZ" target="_blank">Preliminary Results</a></li>
+                <li><a href="img/FAQ_Human_Microbiome.pdf" target="_blank">Human Microbiome FAQ</a></li>
                 <li class="has-sub"><a><span>Participant Resources</span></a>
                     <ul>
                         <li><a href="FAQ.psp">FAQ</a></li>
