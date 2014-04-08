@@ -142,8 +142,22 @@ try:
                 email_type = "1"
             elif len(barcode_metadata) == 0:
                 # we cannot retrieve metadata
-                div_id = "no_metadata"
-                message = "Cannot retrieve metadata"
+                barcode_metadata_animal = \
+                    ag_data_access.AGGetBarcodeMetadataAnimal(barcode)
+                if len(barcode_metadata_animal) == 0:
+                    div_id = "no_metadata"
+                    message = "Cannot retrieve metadata"
+                elif len(barcode_metadata_animal) == 1:
+                    div_id = "verified_animal"
+                    message = "All good"
+                    email_type = "1"
+                else:
+                    # should never get here (this would happen if the metadata
+                    # pulldown returned more than one row for a single barcode)
+                    div_id = "md_pulldown_error"
+                    message = ("This barcode has multiple entries in the "
+                               "database, which should never happeen. Please "
+                               "notify someone on the database crew.")
             else:
                 # should never get here (this would happen if the metadata
                 # pulldown returned more than one row for a single barcode)
