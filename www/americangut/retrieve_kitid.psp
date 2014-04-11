@@ -15,54 +15,24 @@ from data_access_connections import data_access_factory
 from enums import ServerConfig
 from utils.mail import send_email, can_send_mail
 
+
+
+
+
+portal_type = 'americangut'
+
+# Data Access
+data_access = data_access_factory(ServerConfig.data_access_type)
+ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
 %>
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>American Gut Kit ID Retrieval</title>
-        <script src="js/jquery-1.9.1.js"></script>
-        <script src="js/jquery-ui-1.10.1.custom.min.js"></script>
-        <script src="js/jquery.ui.timepicker.js"></script>
-        <script src="js/american_gut.js"></script>
-        <link rel="stylesheet" type="text/css" href="style/americangut.css">
-        <link rel="stylesheet" type="text/css" href="style/menu.css">
-        <link rel="stylesheet" type="text/css" href="style/ui-lightness/jquery-ui-1.10.1.custom.min.css">
-        <link rel="icon" type="image/ico" href="img/favicon.ico">
-    </head>
-    <body>
-        <div class="wrapper clearfix">
-            <div class="header clearfix">
-                <img id="logo" src="img/ag_logo.jpg">
-            </div>
-            <br>
-            <div class="left menuwrapper">
-                <div id="cssmenu">
-                    <ul>
-                    <li><a href="index.psp">Home</a></li>
-                    <li><a href="https://fundrazr.com/campaigns/4Tqx5" target="_blank">Join the Project</a></li>
-                    <li class="has-sub"><a><span>Participant Resources</span></a>
-                        <ul>
-                            <li><a href="FAQ#faq0">American Gut 101</a></li>
-                            <li><a href="img/full_instructions.pdf" target="_blank">Kit Instructions</a></li>
-                            <li><a href="international_shipping.psp?lan=en">International Shipping</a></li>
-                            <li class="last"><a  href="international_shipping.psp?lan=es">International Shipping (Espa&ntilde;ol)</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="index.psp">Participant Login</a></li>
-                    </ul>
-                </div>
-            </div>
+<%@include file="loggedoutheader.psp"%>
+<%@include file="drawmap.psp"%>
+<%@include file="loggedoutmenu.psp"%>
 
 
-<div class="content">
-
+<div class="retrievekitwrapper" style="position:absolute; top:15px; left:275px; padding:15px;">
 <hr/>
-
-
-
-
 <br/>
 
 <%
@@ -83,6 +53,7 @@ if form.has_key('email'):
                           'check your email</p>')
             else:
                 req.write("Mail can be sent only from microbio.me domain.")
+                req.write("<br><br>")
                 req.write(MESSAGE)
         else:
             req.write('<p style="color:red;">This email address is not in our system</p>')

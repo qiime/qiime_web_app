@@ -144,6 +144,20 @@ div.registerwrapper {
 	text-align: left;
 }
 
+div.retrievekitwrapper {
+    border-radius: 10px;
+    min-width: 230px;
+    background-color: #fff;
+    text-align: left;
+}
+
+div.forgotpasswrapper {
+    border-radius: 10px;
+    min-width: 230px;
+    background-color: #fff;
+    text-align: left;
+}
+
 div.menuheader {
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;

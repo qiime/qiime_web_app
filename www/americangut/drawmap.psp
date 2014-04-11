@@ -1,0 +1,184 @@
+<%
+#!/usr/bin/env python
+
+__author__ = "Doug Wendel"
+__copyright__ = "Copyright 2010, Qiime Web Analysis"
+__credits__ = ["Emily TerAvest", "Adam Robbins-Pianka"]
+__license__ = "GPL"
+__version__ = "1.0.0.dev"
+__maintainer__ = ["Emily TerAvest"]
+__email__ = "emily.teraavest@colorado.edu"
+__status__ = "Development"
+
+
+
+# Session variables
+sess = Session.Session(req)
+%>
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+
+    $("ul.subnav").parent().append("<span></span>"); //Only shows drop down trigger when js is enabled - Adds empty span tag after ul.subnav
+
+    $("ul.topnav li span").click(function() { //When trigger is clicked...
+
+        //Following events are applied to the subnav itself (moving subnav up and down)
+        $(this).parent().find("ul.subnav").slideDown('fast').show(); //Drop down the subnav on click
+
+        $(this).parent().hover(function() {
+        }, function(){
+            $(this).parent().find("ul.subnav").slideUp('slow'); //When the mouse hovers out of the subnav, move it back up
+        });
+
+        //Following events are applied to the trigger (Hover events for the trigger)
+        }).hover(function() {
+            $(this).addClass("subhover"); //On hover over, add class "subhover"
+        }, function(){  //On Hover Out
+            $(this).removeClass("subhover"); //On hover out, remove class "subhover"
+    });
+
+});
+
+function toggleSection(section_name)
+{
+    div = document.getElementById(section_name);
+    header_name = section_name + '_header';
+    if (div.style.display == 'none')
+    {
+        $('#' + section_name).fadeIn('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('+', '-');
+        window.scrollBy(0, 200);
+    }
+    else
+    {
+        $('#' + section_name).fadeOut('fast')
+        header_content = $('#' + header_name)[0].innerHTML
+        $('#' + header_name)[0].innerHTML = header_content.replace('-', '+');
+    }
+}
+
+function drawMap(zoom_level, position)
+{
+    var mapOptions =
+    {
+        zoom: zoom_level,
+        center: position,
+        scrollwheel: false,
+        mapTypeId: google.maps.MapTypeId.TERRAIN,
+        mapTypeControl: false,
+        streetViewControl: false,
+        panControl: false
+    };
+
+
+    var stylez = [
+        {
+          featureType: "all",
+          elementType: "all",
+          stylers: [
+            { saturation: -100 } // <-- THIS
+          ]
+        }
+    ];
+
+    var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+    var mapType = new google.maps.StyledMapType(stylez, { name:"Grayscale" });
+    map.mapTypes.set('tehgrayz', mapType);
+    map.setMapTypeId('tehgrayz');
+
+    setMarkers(map, latlongs_db);
+}
+
+function renderLocalizedMap(position)
+{
+    p = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    zoom_level = 10;
+    drawMap(zoom_level, p);
+}
+
+function renderMap()
+{
+    p = new google.maps.LatLng(39.83, -99.89);
+    zoom_level = 4;
+    drawMap(zoom_level, p);
+}
+
+function initialize()
+{
+    if (navigator.geolocation)
+    {
+        navigator.geolocation.getCurrentPosition(renderLocalizedMap, renderMap);
+    }
+    else
+    {
+        renderMap()
+    }
+}
+
+function setMarkers(map, locations)
+{
+    for (var i = 0; i < locations.length; i++)
+    {
+        var loc = locations[i];
+        var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
+
+
+        var pinColor = loc[4];
+        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|" + pinColor,
+            new google.maps.Size(21, 34),
+            new google.maps.Point(0,0),
+            new google.maps.Point(10, 34));
+        var pinShadow = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
+            new google.maps.Size(40, 37),
+            new google.maps.Point(0, 0),
+            new google.maps.Point(12, 35));
+
+        var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            icon: pinImage,
+            shadow: pinShadow
+        });
+
+    }
+}
+</script>
+
+<%
+req.write('<script type="text/javascript">')
+req.write(sess['map_command'])
+
+%>
+</head>
+
+<body>
+    <div style="width:100%; height:100%; background-color:#000;">
+    <div id="map_canvas" style="width:100%; height:100%; opacity:0.8;"></div>
+    </div>
+
+    <!-- Map key -->
+    <div style="position:absolute; bottom: 30px; left:50px; opacity:0.9; width:260px;">
+        <div class="left menuheader" style="margin-top:10px;">
+            <p>Map Key</p>
+        </div>
+
+        <div class="left keywrapper">
+            <ul class="key">
+                <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00B2FF"/> Participant</li>
+                <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|ffff00"/> Kit Verified</li>
+                <li><img src="http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|00ff00"/> Sample(s) Logged</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Twitter
+    <div style="position:absolute; top:145px; right:50px; width:300px;">
+    <a class="twitter-timeline" href="https://twitter.com/americangut" data-widget-id="328928986170269696">Tweets by @americangut</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    </div>
+     -->
+
