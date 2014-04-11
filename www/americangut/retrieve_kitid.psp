@@ -26,6 +26,30 @@ data_access = data_access_factory(ServerConfig.data_access_type)
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
 %>
 
+<script type="text/javascript"> 
+function validateKitRequest() {
+    for(var i = 0; i < document.get_kit.length; i++) 
+    {
+        document.get_kit[i].className = document.get_kit[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+    
+    var valid = true;
+    
+    if(!validateEmail(document.get_kit.email.value))
+    {
+        document.get_kit.email.className += " highlight"
+        valid = false;
+    }
+    if(document.get_kit.email.value == "")
+    {
+        document.get_kit.email.className += " highlight"
+        valid = false;
+    }
+    if(valid)
+        $('#get_kit').submit();
+}
+</script>
+
 <%@include file="loggedoutheader.psp"%>
 <%@include file="drawmap.psp"%>
 <%@include file="loggedoutmenu.psp"%>
@@ -66,12 +90,12 @@ if form.has_key('email'):
     # display default page if this is not a form submission load
 else:
 %>
-<form id="new_user" method="post" action="retrieve_kitid.psp">
+<form id="get_kit" name="get_kit" method="post" action="retrieve_kitid.psp">
     <table>
     <tr><td><h2>Please Enter Your Email</h2></td></tr>
     <tr><td>E-mail:</td><td><input type="text" id="email" name="email" /></td></tr>
-    <tr><td colspan="2"><input type="submit" value="Send Kit Id in E-mail" /></tr>
     </table>
+    <input type="button" name="submit_button" id="submit_button" value="Send Kit ID Email" onclick="validateKitRequest()">
 </form>
 
 </body>
