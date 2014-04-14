@@ -227,8 +227,10 @@ for i, val in enumerate(results):
         result_list.append("\n['{0}',{1},{2},{3},'{4}']".format(study_alias, val[1], val[2], str(i+1), val[3]))
 
 write_map = write_map + '%s];' % ','.join(result_list)
-write_map = write_map + 'window.onload=initialize;</script>'
+write_map = write_map + 'window.onload=initialize;'
+
 req.write(write_map)
+req.write('</script>')
 sess['map_command'] = write_map
 sess.save()
 %>

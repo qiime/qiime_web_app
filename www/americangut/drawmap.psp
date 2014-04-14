@@ -149,8 +149,53 @@ function setMarkers(map, locations)
 </script>
 
 <%
-req.write('<script type="text/javascript">')
-req.write(sess['map_command'])
+if 'map_command' not in sess:
+    # Write out the database of points
+
+    result_list=[]
+
+    # Get the map markers
+    ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
+
+    # if database connection was unsuccessful, this is the first place it would
+    # manifest
+    try:
+        results = ag_data_access.getMapMarkers()
+    except:
+        req.write('<div class="header clearfix">\n')
+        req.write('<center><img id="logo" src="img/ag_logo.jpg">\n')
+        req.write('<br/>\n')
+        req.write('<br/>\n')
+        req.write('<br/>\n')
+        req.write('<br/>\n')
+        req.write('<br/>\n')
+        req.write('<br/>\n')
+        req.write('<br/>\n')
+        req.write('<br/>\n')
+        req.write("<h1>Sorry, we could not connect to our database. <br/> We are working hard on the issue, please check back shortly!</h1>")
+        req.write('</center></div>\n')
+
+    req.write('<script type="text/javascript">')
+
+    write_map = 'var latlongs_db = ['
+    #req.write('var latlongs_db = [')
+
+    for i, val in enumerate(results):
+        if val[0] and val[1] and val[2]:
+            study_alias = str(val[0]).replace("'", "\\'")
+            result_list.append("\n['{0}',{1},{2},{3},'{4}']".format(study_alias, val[1], val[2], str(i+1), val[3]))
+
+    write_map = write_map + '%s];' % ','.join(result_list)
+    write_map = write_map + 'window.onload=initialize;'
+
+    req.write(write_map)
+    req.write('</script>')
+    sess['map_command'] = write_map
+    sess.save()
+else:
+    req.write('<script type="text/javascript">')
+    req.write(sess['map_command'])
+    req.write('</script>')
 
 %>
 </head>
