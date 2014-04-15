@@ -16,7 +16,6 @@ open results_ for
 select
 case
     when (current_time_ < k.PASS_RESET_TIME)
-   --when(current_time_ between (k.PASS_RESET_TIME - interval '2' hour) and k.PASS_RESET_TIME)
     then 1
   else 0
 end 

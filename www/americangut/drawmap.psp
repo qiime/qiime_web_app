@@ -2,8 +2,8 @@
 #!/usr/bin/env python
 
 __author__ = "Doug Wendel"
-__copyright__ = "Copyright 2010, Qiime Web Analysis"
-__credits__ = ["Emily TerAvest", "Adam Robbins-Pianka"]
+__copyright__ = "Copyright 2014, Qiime Web Analysis"
+__credits__ = ["Emily TerAvest", "Adam Robbins-Pianka", "Doug Wendel"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Emily TerAvest"]
@@ -79,7 +79,7 @@ function drawMap(zoom_level, position)
           featureType: "all",
           elementType: "all",
           stylers: [
-            { saturation: -100 } // <-- THIS
+            { saturation: -100 } 
           ]
         }
     ];
@@ -164,14 +164,7 @@ if 'map_command' not in sess:
     except:
         req.write('<div class="header clearfix">\n')
         req.write('<center><img id="logo" src="img/ag_logo.jpg">\n')
-        req.write('<br/>\n')
-        req.write('<br/>\n')
-        req.write('<br/>\n')
-        req.write('<br/>\n')
-        req.write('<br/>\n')
-        req.write('<br/>\n')
-        req.write('<br/>\n')
-        req.write('<br/>\n')
+        req.write('<br>\n<br>\n<br>\n<br>\n<br>\n<br>\n<br>\n<br>\n')
         req.write("<h1>Sorry, we could not connect to our database. <br/> We are working hard on the issue, please check back shortly!</h1>")
         req.write('</center></div>\n')
 
