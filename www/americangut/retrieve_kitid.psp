@@ -80,8 +80,17 @@ if form.has_key('email'):
                 req.write("<br><br>")
                 req.write(MESSAGE)
         else:
-            req.write('<p style="color:red;">This email address is not in our system</p>')
-            req.write('<p>Please email <a href="mailto:info@americangut.org"> for further assistance</a></p>')
+            req.write('<h2 style="color:red;">This email address is not in our system</h2>')
+            req.write(
+"""<form id="get_kit" name="get_kit" method="post" action="retrieve_kitid.psp">
+    <table>
+    <tr><td><h2>Please Enter Your Email</h2></td></tr>
+    <tr><td>E-mail:</td><td><input type="text" id="email" name="email" /></td></tr>
+    </table>
+    <input type="button" name="submit_button" id="submit_button" value="Send Kit ID Email" onclick="validateKitRequest()">
+</form>""")
+#end indent
+
     except:
         req.write("<p>There was a problem sending you the kit ID. Please contact"
             " us directly at <a href=\"mailto:info@americangut.org\">"
