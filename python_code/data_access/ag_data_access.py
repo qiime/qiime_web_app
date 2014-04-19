@@ -229,9 +229,9 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_reassign_barcode', [ag_kit_id, barcode])
 
-    def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code):
+    def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code, printresults):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code])
+        con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code, printresults])
 
     def updateAGKit(self, ag_kit_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code):
         con = self.getMetadataDatabaseConnection()
@@ -654,6 +654,14 @@ class AGDataAccess(object):
         is_handout = result[0]
 
         return is_handout.strip()
+
+    def checkPirntResults(self, username, password):
+        con = self.getMetadataDatabaseConnection()
+        printr = 'N'
+        result = con.cursor().callporc('ag_print_result',
+                                       [printr, username, password])
+        printr = result[0]
+        return printr.strip()
 
     def checkBarcode(self, barcode):
         # return a tuple consists of:
