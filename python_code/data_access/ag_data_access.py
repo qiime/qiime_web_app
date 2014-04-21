@@ -91,7 +91,8 @@ class AGDataAccess(object):
 
     def addAGLogin(self, email, name, address, city, state, zip, country):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_login', [email, name, address, city, state, zip, country])
+        con.cursor().callproc('ag_insert_login', [email.lower(), name, address, 
+                                                  city, state, zip, country])
 
     def updateAGLogin(self, ag_login_id, email, name, address, city, state, zip, country):
         con = self.getMetadataDatabaseConnection()
@@ -706,7 +707,7 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        con.cursor().callproc('ag_get_kit_id_by_email', [email, results])
+        con.cursor().callproc('ag_get_kit_id_by_email', [email.lower(), results])
         kit_ids = []
         for row in results:
             kit_ids.append(row[0])
