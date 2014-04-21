@@ -46,7 +46,7 @@ swabs_per_kit, kit_verification_code = ag_data_access.dynamicMetadataSelect(sql)
 try:
     ag_data_access.addAGKit(ag_login_id, kit_id, password, swabs_per_kit, kit_verification_code)
 except:
-    req.write('<script language="javascript">window.location.replace("db_error.psp")</script>')
+    psp.redirect('db_error.psp')
 
 # Add the barcodes
 sql = "select cast(ag_kit_id as varchar(100)) from ag_kit where supplied_kit_id = '{0}' and rownum = 1".format(kit_id)
@@ -58,7 +58,7 @@ try:
     	barcode = row[0]
     	ag_data_access.addAGBarcode(ag_kit_id, barcode)
 except:
-    req.write('<script language="javascript">window.location.replace("db_error.psp")</script>')
+    psp.redirect('db_error.psp')
 
 
 # Set up the persistant variables

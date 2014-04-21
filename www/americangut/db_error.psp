@@ -12,7 +12,7 @@
             </div>
 
         <div id="content" class="content">
-        <H2> Opps! There seems to be database error. </H2>
+        <H2> Opps! There seems to be a database error. </H2>
         <br>
         The most common way to get this error is hitting the back button
         during registration and trying to reregister. <br><br>
