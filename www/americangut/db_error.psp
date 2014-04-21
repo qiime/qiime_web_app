@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut Project</title>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+    </head>
+    <body>
+        <div class="wrapper clearfix">
+            <div class="header clearfix">
+                <a href="index.psp"><img id="logo" src="img/ag_logo.jpg"></a>
+            </div>
+
+        <div id="content" class="content">
+        <H2> Opps! There seems to be database error. </H2>
+        <br>
+        The most common way to get this error is hitting the back button
+        during registration and trying to reregister. <br><br>
+        Please help us to debug by emailing us at 
+        <a href="mailto:info@americangut.org">info.americangut.org</a> and 
+        telling us exactly what happend before you got this error. <br><br>
+
+        <br> Thanks, <br> The American Gut Team <br>
