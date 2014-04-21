@@ -56,7 +56,6 @@ results = ag_data_access.dynamicMetadataSelect(sql)
 try:
     for row in results:
     	barcode = row[0]
-    	#req.write('barcode: {0}'.format(barcode))
     	ag_data_access.addAGBarcode(ag_kit_id, barcode)
 except:
     req.write('<script language="javascript">window.location.replace("db_error.psp")</script>')
