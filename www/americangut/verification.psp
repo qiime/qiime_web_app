@@ -24,7 +24,6 @@ BARCODE_ROW = '''
         <tr>
         <td><input type="checkbox" id="barcode_{0}" name="barcode_{0}"></input></td>
         <td>{0}</td>
-        <td><img src="{1}" height="70px" width="141px" title="please verify this barcode: {0}"></td>
         </tr>
     </table>
 '''
@@ -75,8 +74,7 @@ elif kit_verified == 'n':
          "where A.supplied_kit_id = '%s'" % supplied_kit_id)
 
     for barcode,sample_barcode_file in ag_data_access.dynamicMetadataSelect(query):
-        barcode_image_fp = os.path.join(barcodes_fp, sample_barcode_file)
-        req.write(BARCODE_ROW.format(barcode, barcode_image_fp))
+        req.write(BARCODE_ROW.format(barcode))
     #ENDFOR
 %>
             <br>
