@@ -5,7 +5,7 @@ Centralized database access for the American Gut web portal
 
 __author__ = "Doug Wendel"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Doug Wendel"]
+__credits__ = ["Doug Wendel", "Emily TerAvest"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
@@ -91,7 +91,8 @@ class AGDataAccess(object):
 
     def addAGLogin(self, email, name, address, city, state, zip, country):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_login', [email, name, address, city, state, zip, country])
+        con.cursor().callproc('ag_insert_login', [email.lower(), name, address, 
+                                                  city, state, zip, country])
 
     def updateAGLogin(self, ag_login_id, email, name, address, city, state, zip, country):
         con = self.getMetadataDatabaseConnection()
@@ -697,6 +698,52 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('update_akb', [barcode, moldy, overloaded, other, other_text, date_of_last_email])
+
+    def getAGKitbyEmail(self, email):
+        """Returns a list of kitids based on email
+
+        email is email address of login
+        returns a list of kit_id's associated with the email or an empty list
+        """
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_kit_id_by_email', [email.lower(), results])
+        kit_ids = []
+        for row in results:
+            kit_ids.append(row[0])
+        return kit_ids
+
+    def ag_set_pass_change_code(self, email, kitid, pass_code):
+        """updates ag_kit table with the supplied pass_code
+
+        email is email address of participant
+        kitid is supplied_kit_kd in the ag_kit table
+        pass_code is the password change verfication value
+        """
+        con=self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_set_pass_change_code', [email, kitid, pass_code])
+
+    def ag_update_kit_password(self, kit_id, password):
+        """updates ag_kit table with password
+
+        kit_id is supplied_kit_id in the ag_kit table 
+        password is the new password
+        """
+        con=self.getMetadataDatabaseConnection()
+        con.cursor().callproc('ag_update_kit_password', [kit_id, password])
+
+    def ag_verify_kit_password_change_code(self, email, kitid, passcode):
+        """returns true if it still in the password change window
+
+        email is the email address of the participant
+        kitid is the supplied_kit_id in the ag_kit table
+        passcode is the password change verification value
+        """
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_verify_password_change_code', [email, kitid, passcode, results])
+        isgood = results.fetchone()
+        return isgood is not None and isgood[0] == 1
 
     def getBarcodesByKit(self, kitID):
         """Returns a list of barcodes in a kit

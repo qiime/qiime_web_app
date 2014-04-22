@@ -721,6 +721,41 @@ function validatePasswordReset() {
 	}
 }
 
+function validateUnknownPasswordReset() {
+    for(var i = 0; i < document.reset_password.length; i++) 
+    {
+        document.reset_password[i].className = document.reset_password[i].className.replace(/(?:^|\s)highlight(?!\S)/ , '');
+    }
+    
+    var valid = true;
+    
+    if(document.reset_password.new_password.value == "")
+    {
+        document.reset_password.new_password.className += " highlight";
+        valid = false;
+    }
+    
+    if(document.reset_password.confirm_password.value == "")
+    {
+        document.reset_password.confirm_password.className += " highlight";
+        valid = false;
+    }
+    
+    if (document.reset_password.new_password.value != document.reset_password.confirm_password.value)
+    {
+        document.reset_password.confirm_password.className += " highlight";
+        valid = false;
+    }
+    if(!valid) 
+    {
+        return;
+    }
+    else 
+    {
+        $('#reset_password').submit();
+    }
+}
+
 /*clear empty boxes for survey3*/
 function validateSurvey3() {
     for(var i = 0; i < document.survey_3.length; i++) 

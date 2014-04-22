@@ -17,7 +17,6 @@ import os
 from enums import FieldGrouping
 from qiime.parse import parse_mapping_file
 
-tiny_markers = False
 portal_type = 'americangut'
 
 # Data Access
@@ -165,22 +164,6 @@ function setMarkers(map, locations)
         var loc = locations[i];
         var myLatLng = new google.maps.LatLng(loc[1], loc[2]);
 
-<%
-if tiny_markers:
-    # Indent
-%>
-        var marker = new google.maps.Marker({
-          position:myLatLng,
-          map: map,
-          clickable: false,
-          size:(10, 10),
-          color:"00ff00",
-          icon:'/qiime/img/blue_tiny.png'
-        });
-<%
-else:
-    # Indent
-%>
         var pinColor = loc[4];
         var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_icon&chld=wc-male|" + pinColor,
             new google.maps.Size(21, 34),
@@ -234,15 +217,22 @@ except:
     req.write('</center></div>\n')
 
 req.write('<script type="text/javascript">')
-req.write('var latlongs_db = [')
+
+write_map = 'var latlongs_db = ['
+#req.write('var latlongs_db = [')
 
 for i, val in enumerate(results):
     if val[0] and val[1] and val[2]:
         study_alias = str(val[0]).replace("'", "\\'")
         result_list.append("\n['{0}',{1},{2},{3},'{4}']".format(study_alias, val[1], val[2], str(i+1), val[3]))
 
-req.write('%s];' % ','.join(result_list))
-req.write('window.onload=initialize;</script>')
+write_map = write_map + '%s];' % ','.join(result_list)
+write_map = write_map + 'window.onload=initialize;'
+
+req.write(write_map)
+req.write('</script>')
+sess['map_command'] = write_map
+sess.save()
 %>
 
 </head>
@@ -358,8 +348,9 @@ if form.has_key('username'):
                             <table width="100%">
                             	<tr><td>Kit ID</td><td><input type="text" id="username" name="username"></td></tr>
                             	<tr><td>Password</td><td><input type="password" id="password" name="password"></td></tr>
-                            	<tr><td colspan="2"><input type="submit" value="Log In"></tr>
-                                <tr><td colspan="2"><a href="mailto:americangut@gmail.com?subject=AGLOGINHELP&body=Please%20describe%20your%20problem%20and%20also%20include%20the%20last%20two%20digits%20of%20your%20Kit%20ID" class="small_link">I'm having trouble logging in...</a></td></tr>
+                            	<tr><td colspan="2"><input type="submit" value="Log In"></tr> 
+                                <tr><td colspan="2"><a href="retrieve_kitid.psp" class="small_link">I forgot my Kit ID</a></td></tr>
+                                <tr><td colspan="2"><a href="forgot_password.psp" class="small_link">I forgot my password</a></td></tr>
                             </table>
                         </form>
                     </td>
