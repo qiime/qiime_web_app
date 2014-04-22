@@ -4,7 +4,7 @@ from utils.mail import send_email, can_send_mail
 
 deceased_parent_checkbox_checked = form.get('deceased_parent', None)
 ag_login_id = sess['user_data']['web_app_user_id']
-
+kit_email = sess['user_data']['email']
 # check if the participant already exists
 participants = ag_data_access.getHumanParticipants(ag_login_id)
 
@@ -43,9 +43,12 @@ if form.get('is_juvenile', 'off') == 'on':
         Parent/Guardian 1: %s
         Parent/Guardian 2: %s
         Deceased: %s
+        Kit id: %s
+        Email: %s
         --------------------------------------------------------------------------------
         """ % (form['participant_name'], form['juvenile_age'],
-               form['parent_1_name'], form['parent_2_name'], form.get('deceased_parent', 'off'))
+               form['parent_1_name'], form['parent_2_name'], form.get('deceased_parent', 'off'),
+               sess['supplied_kit_id'], kit_email)
 
         try:
             if can_send_mail():
