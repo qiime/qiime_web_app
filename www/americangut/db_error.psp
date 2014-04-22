@@ -12,10 +12,21 @@
             </div>
 
         <div id="content" class="content">
-        <H2> Opps! There seems to be a database error. </H2>
+        <H2> Oops! There seems to be a database error. </H2>
         <br>
-        The most common way to get this error is hitting the back button
-        during registration and trying to reregister. <br><br>
+<%
+message = ''
+msgcode =form.get('msg', '')
+if msgcode == 'regkit':
+    message = "Could not add kit to database.  Did you hit the back button while\
+    registering and press 'register user' again?"
+if msgcode == 'regbarcode':
+    message = "Could not add barcode to database. Did you hit the back button \
+    while registering and press 'register user' again?"
+req.write(message)
+
+%>
+         <br><br>
         Please help us to debug by emailing us at 
         <a href="mailto:info@americangut.org">info@americangut.org</a> and 
         telling us exactly what happend before you got this error. <br><br>

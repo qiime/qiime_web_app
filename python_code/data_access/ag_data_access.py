@@ -231,7 +231,13 @@ class AGDataAccess(object):
 
     def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code])
+        try:
+            con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, 
+                                  kit_password, swabs_per_kit, 
+                                  kit_verification_code])
+            return True
+        except:
+            return False
 
     def updateAGKit(self, ag_kit_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code):
         con = self.getMetadataDatabaseConnection()
@@ -239,7 +245,11 @@ class AGDataAccess(object):
 
     def addAGBarcode(self, ag_kit_id, barcode):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_barcode', [ag_kit_id, barcode])
+        try:
+            con.cursor().callproc('ag_insert_barcode', [ag_kit_id, barcode])
+            return True
+        except:
+            return False
 
     def updateAGBarcode(self, barcode, ag_kit_id, site_sampled, environment_sampled, sample_date, sample_time, participant_name, notes):
         con = self.getMetadataDatabaseConnection()
