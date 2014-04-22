@@ -150,7 +150,7 @@ select akb.barcode as sample_name,
         end as state,
         case 
             when zip is null then 'unknown'
-            when regexp_like(zip, '^\d*$') then lpad(zip, 5, 0)
+            when regexp_like(zip, '^\d*$') and len(zip) < 5 then lpad(zip, 5, '0')
             else zip
         end as zip,
         case 
