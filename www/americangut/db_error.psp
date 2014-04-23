@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>American Gut Project</title>
+        <link rel="stylesheet" type="text/css" href="style/americangut.css">
+    </head>
+    <body>
+        <div class="wrapper clearfix">
+            <div class="header clearfix">
+                <a href="index.psp"><img id="logo" src="img/ag_logo.jpg"></a>
+            </div>
+
+        <div id="content" class="content">
+        <H2> Oops! There seems to be a database error. </H2>
+        <br>
+<%
+message = ''
+msgcode =form.get('msg', '')
+if msgcode == 'regkit':
+    message = "Could not add kit to database.  Did you hit the back button while\
+    registering and press 'register user' again?"
+if msgcode == 'regbarcode':
+    message = "Could not add barcode to database. Did you hit the back button \
+    while registering and press 'register user' again?"
+req.write(message)
+
+%>
+         <br><br>
+        Please help us to debug by emailing us at 
+        <a href="mailto:info@americangut.org">info@americangut.org</a> and 
+        tell us exactly what happend before you got this error. <br><br>
+
+        <br> Thanks, <br> The American Gut Team <br>
+    </body>
