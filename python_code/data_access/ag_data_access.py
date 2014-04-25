@@ -678,13 +678,6 @@ class AGDataAccess(object):
 
         return is_handout.strip()
 
-    def checkPirntResults(self, username, password):
-        con = self.getMetadataDatabaseConnection()
-        printr = 'N'
-        result = con.cursor().callporc('ag_print_result',
-                                       [printr, username, password])
-        printr = result[0]
-        return printr.strip()
 
     def checkBarcode(self, barcode):
         # return a tuple consists of:
@@ -791,4 +784,4 @@ class AGDataAccess(object):
         results = con.cursor()
         con.cursor().callproc('ag_get_print_results', [kit_id, results])
         print_results = results.fetchone()
-        return print_results[0]
+        return print_results[0].strip()
