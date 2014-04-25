@@ -302,6 +302,10 @@ h2.verification_text{
 	background-color: #0f0;
 }
 
+#verified_animal {
+	background-color: #0f5;
+}
+
 #not_assigned {
 	background-color: #ff0;
 }

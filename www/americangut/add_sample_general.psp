@@ -46,6 +46,7 @@ for barcode in barcodes:
                             <option>Plant habitat</option>
                             <option>Soil</option>
                             <option>Sole of shoe</option>
+                            <option>Water</option>
                         </select>
                         </div>
                     </td>

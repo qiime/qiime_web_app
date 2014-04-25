@@ -91,7 +91,8 @@ class AGDataAccess(object):
 
     def addAGLogin(self, email, name, address, city, state, zip, country):
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_login', [email, name, address, city, state, zip, country])
+        con.cursor().callproc('ag_insert_login', [email.lower(), name, address, 
+                                                  city, state, zip, country])
 
     def updateAGLogin(self, ag_login_id, email, name, address, city, state, zip, country):
         con = self.getMetadataDatabaseConnection()
@@ -229,17 +230,39 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_reassign_barcode', [ag_kit_id, barcode])
 
-    def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code, printresults):
+    def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit,
+                 kit_verification_code, printresults='N'):
+        """
+        return values
+        1:  success
+        -1: insert failed due to IntegrityError
+        """
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code, printresults])
+        try:
+            con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id,
+                                  kit_password, swabs_per_kit,
+                                  kit_verification_code,
+                                  printresults])
+        except cx_Oracle.IntegrityError:
+            return -1
+        return 1
 
     def updateAGKit(self, ag_kit_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_update_kit', [ag_kit_id, supplied_kit_id, kit_password, swabs_per_kit, kit_verification_code])
 
     def addAGBarcode(self, ag_kit_id, barcode):
+        """
+        return values
+        1:  success
+        -1: insert failed due to IntegrityError
+        """
         con = self.getMetadataDatabaseConnection()
-        con.cursor().callproc('ag_insert_barcode', [ag_kit_id, barcode])
+        try:
+            con.cursor().callproc('ag_insert_barcode', [ag_kit_id, barcode])
+        except cx_Oracle.IntegrityError:
+            return -1
+        return 1
 
     def updateAGBarcode(self, barcode, ag_kit_id, site_sampled, environment_sampled, sample_date, sample_time, participant_name, notes):
         con = self.getMetadataDatabaseConnection()
@@ -714,7 +737,7 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
-        con.cursor().callproc('ag_get_kit_id_by_email', [email, results])
+        con.cursor().callproc('ag_get_kit_id_by_email', [email.lower(), results])
         kit_ids = []
         for row in results:
             kit_ids.append(row[0])

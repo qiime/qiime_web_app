@@ -9,15 +9,12 @@ __maintainer__ = "Doug Wendel"
 __email__ = "wendel@colorado.edu"
 __status__ = "Development"
 
-from os.path import basename, exists, join, environ
-import sys
+from os import chmod, environ
+from os.path import basename, exists, join, split
 import httplib, urllib
 import hashlib
 from ftplib import FTP
 from subprocess import Popen, PIPE, STDOUT
-from os.path import split
-from os import chmod
-from sys import stdout
 from datetime import date, timedelta
 
 from base_rest_services import BaseRestServices

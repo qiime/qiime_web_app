@@ -150,6 +150,7 @@ select akb.barcode as sample_name,
         end as state,
         case 
             when zip is null then 'unknown'
+            when regexp_like(zip, '^\d*$') and len(zip) < 5 then lpad(zip, 5, '0')
             else zip
         end as zip,
         case 
@@ -187,6 +188,7 @@ select akb.barcode as sample_name,
             when lower(country) = 'scotland' then 'GAZ:Scotland'
             when lower(country) = 'united arab emirates' then 'GAZ:United Arab Emirates'
             when lower(country) = 'ireland' then 'GAZ:Ireland'
+            when lower(country) = 'thailand' then 'GAZ:Thailand'
             else 'unknown'
         end as country,
         case

@@ -13,6 +13,7 @@ __status__ = "Development"
 from data_access_connections import data_access_factory
 from enums import ServerConfig,DataAccessType
 from utils.mail import send_email, can_send_mail
+from utils.psp_utils import format_submit_form_to_fusebox_string
 
 sess = Session.Session(req)
 ag_data_access = data_access_factory(ServerConfig.data_access_type, 'american_gut')
@@ -43,7 +44,11 @@ sql = "select cast(ag_login_id as varchar2(100)) from ag_login where email = '{0
 ag_login_id = ag_data_access.dynamicMetadataSelect(sql).fetchone()[0]
 sql = "select swabs_per_kit, verification_code from ag_handout_kits where kit_id = '{0}'".format(kit_id)
 swabs_per_kit, kit_verification_code = ag_data_access.dynamicMetadataSelect(sql).fetchone()
-ag_data_access.addAGKit(ag_login_id, kit_id, password, swabs_per_kit, kit_verification_code, printresults)
+success = ag_data_access.addAGKit(ag_login_id, kit_id, password,
+                                  swabs_per_kit, kit_verification_code,
+                                  printresults)
+if success == -1:
+    psp.redirect('db_error.psp?msg=regkit')
 
 # Add the barcodes
 sql = "select cast(ag_kit_id as varchar(100)) from ag_kit where supplied_kit_id = '{0}' and rownum = 1".format(kit_id)
@@ -51,9 +56,11 @@ ag_kit_id = ag_data_access.dynamicMetadataSelect(sql).fetchone()[0]
 sql = "select barcode from ag_handout_kits where kit_id = '{0}'".format(kit_id)
 results = ag_data_access.dynamicMetadataSelect(sql)
 for row in results:
-	barcode = row[0]
-	#req.write('barcode: {0}'.format(barcode))
-	ag_data_access.addAGBarcode(ag_kit_id, barcode)
+    barcode = row[0]
+    success = ag_data_access.addAGBarcode(ag_kit_id, barcode)
+    if success == -1:
+        psp.redirect('db_error.psp?msg=regbarcode')
+
 
 # Set up the persistant variables
 user_data = ag_data_access.authenticateWebAppUser(kit_id, password)

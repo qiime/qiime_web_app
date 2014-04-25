@@ -17,14 +17,12 @@ ag_login_id = sess['user_data']['web_app_user_id']
 barcodes_fp = sess['resources']['barcode_images_fp']
 supplied_kit_id = sess['supplied_kit_id']
 
-# requires barcode as string 5 times and then the filepath to the image, then
-# the barcode as a string 1 more time
+# requires barcode as string 6 times 
 BARCODE_ROW = '''
     <table width="30%%" id="barcode_{0}" name="barcode_{0}">
         <tr>
         <td><input type="checkbox" id="barcode_{0}" name="barcode_{0}"></input></td>
         <td>{0}</td>
-        <td><img src="{1}" height="70px" width="141px" title="please verify this barcode: {0}"></td>
         </tr>
     </table>
 '''
@@ -70,13 +68,13 @@ elif kit_verified == 'n':
             <h4>Please verify that the barcode(s) you received in the mail match the barcode(s) here <a id="barcode_popup_trigger" class="help" title="" onmouseover="setVisible('barcode_popup')" onmouseout="setInvisible('barcode_popup')">(?)</a><div id="barcode_popup" class="help_popup invisible">The barcode you need to verify is located on the outside of your sample tube.<br /><img src="img/sample_barcode.jpg"/></div></h4>
             <table width="30%">
 <%
-    query = ("select B.barcode, B.sample_barcode_file "
+    query = ("select B.barcode "
          "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
          "where A.supplied_kit_id = '%s'" % supplied_kit_id)
 
-    for barcode,sample_barcode_file in ag_data_access.dynamicMetadataSelect(query):
-        barcode_image_fp = os.path.join(barcodes_fp, sample_barcode_file)
-        req.write(BARCODE_ROW.format(barcode, barcode_image_fp))
+    for barcode in ag_data_access.dynamicMetadataSelect(query):
+        req.write(BARCODE_ROW.format(barcode[0]))
+
     #ENDFOR
 %>
             <br>
