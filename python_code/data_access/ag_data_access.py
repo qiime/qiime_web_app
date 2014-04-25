@@ -786,3 +786,9 @@ class AGDataAccess(object):
         barcodes = [row[0] for row in results]
         return barcodes
 
+    def checkPrintReulsts(self, kit_id):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_print_results', [kit_id])
+        print_results = results.fetchone()
+        return print_results[0]
