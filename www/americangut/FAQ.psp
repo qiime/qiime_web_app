@@ -75,7 +75,7 @@
                         <li><a href="#faq22">How do I convert grams of macronutrients into percentage of calories?</a></li>
                         <li><a href="#faq23">Can I participate in the project if I am diagnosed with ...?</a></li>
                         <li><a href="#faq24">What are missing metadata?</a></li>
-						<li><a href="#faq25">How are the samples and data processed?</a></li>
+                        <li><a href="#faq25">How are the samples and data processed?</a></li>
                         </ul>
                         <br>
                         <div class="separator"></div>
@@ -470,6 +470,6 @@
                     </div>
                 </div>
             </div>
-		</div>
-	</body>
+        </div>
+    </body>
 </html>
