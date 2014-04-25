@@ -76,6 +76,7 @@
                         <li><a href="#faq23">Can I participate in the project if I am diagnosed with ...?</a></li>
                         <li><a href="#faq24">What are missing metadata?</a></li>
                         <li><a href="#faq25">How are the samples and data processed?</a></li>
+                        <li><a href="#faq26">We are not a business</a></li>
                         </ul>
                         <br>
                         <div class="separator"></div>
@@ -465,6 +466,19 @@
                             <li><a href="http://www.ncbi.nlm.nih.gov/pubmed/22699611">Human gut microbiome viewed across age and geography.</a></li>
                             </ul>
                         </div>
+                        
+                        <h3 class="faq_header" id="faq26">We are not a business</h3>
+                        <div class="faq_content">
+                            <p>We have had quite a few questions come in about
+                            whether we are a business or offer a service. The
+                            American Gut Project is a research project run by
+                            the <a href="http://knightlab.colorado.edu">Knight
+                                Lab</a> at the University of Colorado at
+                            Boulder. We are not a business, or a service, but
+                            are performing novel research within microbial
+                            ecology.</p>
+                        </div>
+                        <div class="separator"></div>
 
 
                     </div>
