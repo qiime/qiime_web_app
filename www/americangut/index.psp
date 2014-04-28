@@ -305,7 +305,7 @@ if form.has_key('username'):
     # Special AG case: if user data is None, it may be the first login from a hand-out kit. Check
     # if the username/password exists in the handout list. If so, this must be the first time
     # they've accessed the site and will need to fill out their user data.
-    print_results = 'N'
+    print_results = 'n'
     if not user_data:
         is_handout = ag_data_access.handoutCheck(username, password)
         if is_handout == 'y':

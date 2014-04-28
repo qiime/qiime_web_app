@@ -231,7 +231,7 @@ class AGDataAccess(object):
         con.cursor().callproc('ag_reassign_barcode', [ag_kit_id, barcode])
 
     def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit,
-                 kit_verification_code, printresults='N'):
+                 kit_verification_code, printresults='n'):
         """
         return values
         1:  success
@@ -776,12 +776,18 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcodes_by_kit', [kitID, results])
-        barcodes = [row[0] for row in results]
-        return barcodes
+        if results is None:
+            return None
+        else:
+            barcodes = [row[0] for row in results]
+            return barcodes
 
     def checkPrintResults(self, kit_id):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_print_results', [kit_id, results])
         print_results = results.fetchone()
-        return print_results[0].strip()
+        if print_results is None:
+            return None
+        else:
+            return print_results[0].strip()
