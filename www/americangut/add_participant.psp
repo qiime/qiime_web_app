@@ -27,7 +27,7 @@ zip = form['zip']
 country = form['country']
 kit_id = form['kit_id']
 password = form['password']
-printresults = form.get('printresults', 'N')
+printresults = form.get('printresults', 'n')
 
 # Create the login if it doens't already exist
 ag_login_id = None

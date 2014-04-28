@@ -776,11 +776,8 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         results = con.cursor()
         con.cursor().callproc('ag_get_barcodes_by_kit', [kitID, results])
-        if results is None:
-            return None
-        else:
-            barcodes = [row[0] for row in results]
-            return barcodes
+        barcodes = [row[0] for row in results]
+        return barcodes
 
     def checkPrintResults(self, kit_id):
         con = self.getMetadataDatabaseConnection()
