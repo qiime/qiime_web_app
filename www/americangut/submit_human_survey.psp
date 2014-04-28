@@ -1,5 +1,7 @@
 <%
 AG_CONSENT_TEXT = """
+This is a copy of the consent form, provided to you for your records only.
+
 MAIN CONSENT TO PARTICIPATE IN A RESEARCH STUDY
 Study Title: American Gut Project
 Principal Investigator: Rob Knight
@@ -147,7 +149,7 @@ for f in form:
 		req.write('\n\nFailed to insert field "{0}" with value "{1}"<br/>\n'.format(f, form_value))
 		req.write(str(e) + '<br/>\n')
 
-SUBJECT = "American Gut Consent Form"
+SUBJECT = "For Your Records Only - American Gut Consent Form"
 MESSAGE = """
 --------------------------------------------------------------------------------
 Consent Form:
