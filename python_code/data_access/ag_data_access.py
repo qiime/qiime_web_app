@@ -230,7 +230,8 @@ class AGDataAccess(object):
         con = self.getMetadataDatabaseConnection()
         con.cursor().callproc('ag_reassign_barcode', [ag_kit_id, barcode])
 
-    def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit, kit_verification_code):
+    def addAGKit(self, ag_login_id, kit_id, kit_password, swabs_per_kit,
+                 kit_verification_code, printresults='n'):
         """
         return values
         1:  success
@@ -238,9 +239,10 @@ class AGDataAccess(object):
         """
         con = self.getMetadataDatabaseConnection()
         try:
-            con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id, 
-                                  kit_password, swabs_per_kit, 
-                                  kit_verification_code])
+            con.cursor().callproc('ag_insert_kit', [ag_login_id, kit_id,
+                                  kit_password, swabs_per_kit,
+                                  kit_verification_code,
+                                  printresults])
         except cx_Oracle.IntegrityError:
             return -1
         return 1
@@ -676,6 +678,7 @@ class AGDataAccess(object):
 
         return is_handout.strip()
 
+
     def checkBarcode(self, barcode):
         # return a tuple consists of:
         # site_sampled, sample_date, sample_time, participant_name,
@@ -776,3 +779,12 @@ class AGDataAccess(object):
         barcodes = [row[0] for row in results]
         return barcodes
 
+    def checkPrintResults(self, kit_id):
+        con = self.getMetadataDatabaseConnection()
+        results = con.cursor()
+        con.cursor().callproc('ag_get_print_results', [kit_id, results])
+        print_results = results.fetchone()
+        if print_results is None:
+            return None
+        else:
+            return print_results[0].strip()
