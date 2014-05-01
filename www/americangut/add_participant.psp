@@ -45,7 +45,7 @@ sql = "select swabs_per_kit, verification_code from ag_handout_kits where kit_id
 swabs_per_kit, kit_verification_code = ag_data_access.dynamicMetadataSelect(sql).fetchone()
 printresults = ag_data_access.checkPrintResults(kit_id)
 if printresults is None:
-    printresults = 'N'
+    printresults = 'n'
 success = ag_data_access.addAGKit(ag_login_id, kit_id, password,
                                   swabs_per_kit, kit_verification_code,
                                   printresults)
