@@ -305,11 +305,9 @@ if form.has_key('username'):
     # Special AG case: if user data is None, it may be the first login from a hand-out kit. Check
     # if the username/password exists in the handout list. If so, this must be the first time
     # they've accessed the site and will need to fill out their user data.
-    print_results = 'n'
     if not user_data:
         is_handout = ag_data_access.handoutCheck(username, password)
         if is_handout == 'y':
-            print_results = ag_data_access.checkPrintResults(username)
             # Indent
             # Redirect to user registration screen
 %>
@@ -317,7 +315,6 @@ if form.has_key('username'):
 <form action="register_user.psp" method="post" name="register_user" id="register_user">
     <input type="hidden" name="username" id="username" value="<%=username%>">
     <input type="hidden" name="password" id="password" value="<%=password%>">
-    <input type="hidden" name="printresults" id="printresults" value="<%=print_results%>">
 </form>
 
 <script>document.register_user.submit();</script>

@@ -20,7 +20,7 @@ from qiime.parse import parse_mapping_file
 # Form variables
 kit_id = form['username']
 password = form['password']
-print_results = form['printresults']
+
 
 tiny_markers = False
 portal_type = 'americangut'
@@ -375,7 +375,6 @@ else:
 		<form name="newParticipant" id="newParticipant" method="post" action="add_participant.psp">
 			<input type="hidden" name="kit_id" id="kit_id" value="<%=kit_id%>">
 			<input type="hidden" name="password" id="password" value="<%=password%>">
-            <input type="hidden" name="printresults" id="printresults" value="<%=print_results%>">
 			<h3>New User Registration</h3>
 			<table>
 				<tr><td>Email</td><td><input type="text" name="email" id="email"></td></tr>
