@@ -1,4 +1,4 @@
-reate or replace procedure ag_get_print_results(
+create or replace procedure ag_get_print_results(
    kit_id_  in varchar2,
    results_ in out types.ref_cursor
 )as 
