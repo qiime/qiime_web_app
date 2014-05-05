@@ -46,11 +46,11 @@ if user_verification_code:
     else:
         # error message when the verification code was wrong
         req.write(format_submit_form_to_fusebox_string(page="portal.psp",
-            message='<h2>The kit verification code you entered does '
+            message='The kit verification code you entered does '
             'not match our records. Please double-check the code you '
             'entered. If you continue to experience difficulties, please '
             '<a href=&quot;fusebox.psp?page=help_request.psp&quot;>'
-            'contact us</a></h2>'))
+            'contact us</a>'))
         # sets the verification_code text box to highlight red
         verification_textbox_class = " highlight"
     #ENDIF
