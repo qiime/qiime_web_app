@@ -72,7 +72,7 @@ elif kit_verified == 'n':
          "from AG_KIT A join AG_KIT_BARCODES B on A.AG_KIT_ID = B.AG_KIT_ID "
          "where A.supplied_kit_id = '%s'" % supplied_kit_id)
 
-    for barcode in ag_data_access.dynamicMetadataSelect(query):
+    for barcode in sorted(ag_data_access.dynamicMetadataSelect(query)):
         req.write(BARCODE_ROW.format(barcode[0]))
 
     #ENDFOR
