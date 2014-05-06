@@ -207,7 +207,7 @@ select akb.barcode as sample_name,
         case
             when ahs.birth_date is not null then
                 case
-                    when cast((current_date - to_date(ahs.birth_date, 'MM/DD/YYYY')) / 365.0 as int) between 0 and 120 then
+                    when cast((current_date - to_date(ahs.birth_date, 'MM/DD/YYYY')) / 365.0 as int) between 1 and 120 then
                         cast(cast((current_date - to_date(ahs.birth_date, 'MM/DD/YYYY')) / 365.0 as int) as varchar2(100))
                     else
                         'unknown'
