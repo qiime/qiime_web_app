@@ -36,6 +36,7 @@ select akb.barcode as sample_name,
             when 'Hair' then '646099'
             when 'Tears' then '646099'
             when 'Ear wax' then '646099'
+            when 'Nasal mucus' then '1115523'
             when 'Vaginal mucus' then '646099'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
@@ -66,6 +67,7 @@ select akb.barcode as sample_name,
             when 'Hair' then 'UBERON:hair'
             when 'Tears' then 'UBERON:eye'
             when 'Ear wax' then 'UBERON:ear'
+            when 'Nasal mucus' then 'UBERON:nose'
             when 'Vaginal mucus' then 'UBERON:vagina'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
@@ -80,6 +82,7 @@ select akb.barcode as sample_name,
             when 'Hair' then 'UBERON:hair follicle'
             when 'Tears' then 'UBERON:secretion'
             when 'Ear wax' then 'UBERON:ear canal'
+            when 'Nasal mucus' then 'UBERON:nostril'
             when 'Vaginal mucus' then 'UBERON:mucosa of vagina'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
@@ -94,6 +97,7 @@ select akb.barcode as sample_name,
             when 'Hair' then 'UBERON:sebum'
             when 'Tears' then 'UBERON:tear'
             when 'Ear wax' then 'UBERON:cerumen'
+            when 'Nasal mucus' then 'UBERON:mucus'
             when 'Vaginal mucus' then 'UBERON:mucus'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
@@ -108,6 +112,7 @@ select akb.barcode as sample_name,
             when 'Hair' then 'ENVO:urban biome'
             when 'Tears' then 'ENVO:urban biome'
             when 'Ear wax' then 'ENVO:urban biome'
+            when 'Nasal mucus' then 'ENVO:urban biome'
             when 'Vaginal mucus' then 'ENVO:urban biome'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
@@ -122,6 +127,7 @@ select akb.barcode as sample_name,
             when 'Hair' then 'ENVO:human-associated habitat'
             when 'Tears' then 'ENVO:human-associated habitat'
             when 'Ear wax' then 'ENVO:human-associated habitat'
+            when 'Nasal mucus' then 'ENVO:human-associated habitat'
             when 'Vaginal mucus' then 'ENVO:human-associated habitat'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
@@ -136,6 +142,7 @@ select akb.barcode as sample_name,
             when 'Hair' then 'ENVO:sebum'
             when 'Tears' then 'ENVO:tears'
             when 'Ear wax' then 'ENVO:cerumen'
+            when 'Nasal mucus' then 'ENVO:mucus'
             when 'Vaginal mucus' then 'ENVO:mucus'
             when 'Please select...' then 'unknown'
             else akb.site_sampled
