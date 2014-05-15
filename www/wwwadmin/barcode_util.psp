@@ -43,23 +43,42 @@ if prev_barcode:
                 body_message='''
 Dear {name},
 
-We have recently received your sample barcode: {barcode}, but we cannot process your sample until the online forms have been completed.  Information about your sample is tracked through the American Gut participant website, and you are required to log in and complete the online process in order for your sample to be processed. 
+We have recently received your sample barcode: {barcode}, but we cannot process \
+your sample until the following steps have been completed online. Please ensure\
+ that you have completed both steps outlined below:
 
-If it is a human sample, we require formal consent, questionnaire results and sample details (type, date, and time of collection). If it is a pet or environmental sample we require sample details (type, date and time of collection). If you have already filled out the consent form and questionnaire, then it is likely that the sample simply needs to be associated with the appropriate participant.
+1). Submit consent form & survey
+For human samples, the consent form is mandatory. Please note that the consent \
+form is located on the first page of the survey. Even if you elect not to \
+answer the questions on the survey (as every question is optional), please \
+click through and submit the survey in order to ensure we receive your \
+completed consent form. 
+For pet samples, we ask that you fill out a short survey. \
+No consent form is necessary
+For environmental samples, no consent form or survey is necessary. \
+Please skip to step 2 below.
+To begin the consent/survey process, click on the "Add Source & Survey" tab \
+on the main page. Select the category (human, animal, or environmental) your \
+intended sample belongs to.
+2). Log your sample
+Note that for human & pet samples, the survey must be completed before doing \
+this step
 
-In order to help you in adding these details, the side of the sample tube {barcode} reads:
-   sample date: {sample_date} 
-   sample time: {sample_time}
+In order to log your sample, please log into your account and click the \
+"Log Sample" button at the bottom of the left-hand navigation menu. \
+This will bring you to a screen with the heading "Choose your sample source". \
+Click on the name that the sample belongs to, then fill out the prompted \
+fields. To facilitate this process, the details you included on the side of \
+your sample tube are:
+Sample Date: {sample_date}
+Sample Time: {sample_time}
 
-Instructions about the required procedures can be found here: http://www.microbio.me/americangut/img/full_instructions.pdf
-
-These procedures are in place to protect your privacy, and please be sure that we are properly associating your sample to your survey results. We realize that some of these steps may not be completely intuitive. However, our kits are designed to support multiple participants and sample types, which necessitates the added complexity of explicitly requiring participants to associate samples with themselves so that we can guarantee compliance with human subjects research protocols.
-
-Please log back into the American Gut website (http://www.microbio.me/americangut) as soon as possible and complete the online process. If you have any questions or concerns, please contact us at info@americangut.org.
+Our website is located at www.microbio.me/americangut. If you have any \
+questions, please contact us at info@americangut.org.
 
 Thank you,
+American Gut Team
 
---American Gut Team--
 '''
 
                 body_message = body_message.format(name=login_user, barcode=prev_barcode,
