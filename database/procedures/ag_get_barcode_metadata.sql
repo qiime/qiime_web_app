@@ -317,7 +317,7 @@ select akb.barcode as sample_name,
         end as ASTHMA, 
         case 
             when BIRTH_DATE is null then 'unknown'
-            else REPLACE(REPLACE(REPLACE(BIRTH_DATE, CHR(10)), CHR(13)), CHR(9))
+            else REGEXP_REPLACE(REPLACE(REPLACE(REPLACE(BIRTH_DATE, CHR(10)), CHR(13)), CHR(9)), '([[:digit:]]{2})/([[:digit:]]{2})/([[:digit:]]{4})', '\1/\3')
         end as BIRTH_DATE, 
         case 
             when CAT is null then 'unknown'
@@ -1033,6 +1033,6 @@ end;
 
 /*
 variable results_cursor REFCURSOR;
-exec ag_check_barcode_metadata('000001002', :results_cursor);
+exec ag_get_barcode_metadata('000001002', :results_cursor);
 print results_cursor;
 */
