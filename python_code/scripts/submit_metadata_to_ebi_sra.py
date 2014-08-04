@@ -26,7 +26,8 @@ script_info['script_usage'] = [("Example","This is an example usage", "python su
 script_info['output_description']= "There is no output from the script."
 script_info['required_options'] = [make_option('-s','--study_id', help='The study id to be exported')]
 script_info['optional_options'] = [\
-    make_option('-d','--debug', action='store_true', help='Specifies that verbose debug output should be displayed.',default=True)
+    make_option('-d','--debug', action='store_true', help='Specifies that verbose debug output should be displayed.',default=True),
+    make_option('-a','--action', help='Which action to do (ADD or UPDATE); VALIDATE is always performed prior to the requested action [default: %default]', type='choice', choices=['ADD', 'UPDATE'], default='ADD')
 ]
 script_info['version'] = __version__
 
@@ -36,6 +37,7 @@ def main():
     # Some needed variables
     study_id = opts.study_id
     debug = opts.debug
+    action = opts.action
     web_app_user_id = 12169
     root_dir = '/home/wwwuser/user_data/studies'
     study_dir = root_dir + '/study_{0}'.format(str(study_id))
@@ -75,8 +77,8 @@ def main():
     # Check if valid, if so regenerate with ADD attribute and send again for reals
     result, curl_result = live.send_curl_data(curl_output_fp, curl_command_fp)
     if result == 'VALID':
-        print 'VALID, resending to EBI with ADD attribute.'
-        live.generate_metadata_files(debug = True, action_type = 'ADD')
+        print 'VALID, resending to EBI with %s attribute.' % action
+        live.generate_metadata_files(debug = True, action_type = action)
         result, curl_result = live.send_curl_data(curl_output_fp, curl_command_fp)
         print curl_result
         print 'SUCCESS'
