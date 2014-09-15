@@ -15,9 +15,15 @@ wants to select studies and its associated data.
 
 # Adding login info to bypass for now
 form['meta_login'] = 'I_want_in!'
-
-if 'meta_login' in form and form['meta_login'] == 'I_want_in!':
+if sess['web_app_user_id'] != 12428:  
+    #only let Gail use this
+    req.write(<H2> This functionality has been removed due to data integrity issues. It will not be available until the replacement database (qiita) is released.
+</H2>)
+else:
     # Indent
+
+    if 'meta_login' in form and form['meta_login'] == 'I_want_in!':
+        # Indent
 %>
 
 <script type='text/javascript'>
@@ -143,8 +149,8 @@ Password for Meta-Analysis: <input type="password" name="meta_login" id="meta_lo
 </form>
 
 <%
-# End indent
-
+    # End indent
+#End indent
 %>
 
 
