@@ -136,8 +136,8 @@ function check_meta_analysis_name()
 
 <%
 
-else:
-    # Indent
+    else:
+        # Indent
 %>
 <br/>
 <form action="fusebox.psp?page=new_meta_analysis.psp" method="post">
