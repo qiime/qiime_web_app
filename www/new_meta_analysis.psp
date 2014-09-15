@@ -17,8 +17,7 @@ wants to select studies and its associated data.
 form['meta_login'] = 'I_want_in!'
 if sess['web_app_user_id'] != 12428:  
     #only let Gail use this
-    req.write(<H2> This functionality has been removed due to data integrity issues. It will not be available until the replacement database (qiita) is released.
-</H2>)
+    req.write('<H2> This functionality has been removed due to data integrity issues. It will not be available until the replacement database (qiita) is released.</H2>')
 else:
     # Indent
 
