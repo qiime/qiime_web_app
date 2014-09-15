@@ -55,21 +55,21 @@ $(document).ready(function(){
 var meta_analysis_names=new Array();
 
 <%
-    # Check to see if a login has been performed. This is quite a 
-    # hack for now, will be removed once feature is open for 
-    # general use.
+        # Check to see if a login has been performed. This is quite a 
+        # hack for now, will be removed once feature is open for 
+        # general use.
 
-    from data_access_connections import data_access_factory
-    from enums import ServerConfig
-    qda = data_access_factory(ServerConfig.data_access_type)
+        from data_access_connections import data_access_factory
+        from enums import ServerConfig
+        qda = data_access_factory(ServerConfig.data_access_type)
 
-    # get a list of studies from the database
-    meta_analysis_names = qda.getMetaAnalysisNames(sess['web_app_user_id'])
+        # get a list of studies from the database
+        meta_analysis_names = qda.getMetaAnalysisNames(sess['web_app_user_id'])
 
-    # iterate through the studies and write them into a javascript array
-    for i in range(len(meta_analysis_names)):
-        req.write('meta_analysis_names['+str(i)+']="'+str(meta_analysis_names[i][1])+'"\n');
-    #
+        # iterate through the studies and write them into a javascript array
+        for i in range(len(meta_analysis_names)):
+            req.write('meta_analysis_names['+str(i)+']="'+str(meta_analysis_names[i][1])+'"\n');
+        #
 %>
 
 
@@ -109,10 +109,10 @@ function check_meta_analysis_name()
                 <select validate="required:true" name="meta_analysis_names" id="meta_analysis_names" onchange="document.forms['user_meta_analysis'].submit(); return false;">
                 <option value=""></option>
 <%
-    meta_analysis_names = data_access.getMetaAnalysisNames(sess['web_app_user_id'])
-    for meta_analysis_name in meta_analysis_names:
-        req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
-    # end
+        meta_analysis_names = data_access.getMetaAnalysisNames(sess['web_app_user_id'])
+        for meta_analysis_name in meta_analysis_names:
+            req.write('<option value="' + str(meta_analysis_name[0]) + ':' + meta_analysis_name[1] + '">' + meta_analysis_name[1] + '</option>\n')
+        # end
 %>
                 </select>
             </td>
