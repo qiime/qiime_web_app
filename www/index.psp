@@ -285,8 +285,7 @@ else:
 # end
 %>
 <p/>
-<H2> We are currently not accepting any new data for upload the meta analysis funciton is currently offline. <p>
-This functionality will be resumed when the new database (qiita) is released</H2>
+<H2> We thank several users drawing to our attention problems with the data and metadata for studies reloaded since the storage crash earlier this year. Access to the database is temporarily offline while we investigate the scope of these issues and upgrade the system. We expect to be back online with a consistent dataset within a few weeks. We apologize for the interruption in service.</H2>
 <form method="post" action="index.psp?portal_type=<%=sess['portal_type']%>">
 <table>
     <tr><td>Email</td><td><input type="text" id="username" name="username"></td></tr>
