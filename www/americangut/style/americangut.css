@@ -652,3 +652,19 @@ html[xmlns] .clearfix {
 * html .clearfix {
     height: 1%;
 }
+
+div.centered-content {
+    margin:auto;
+    overflow:auto;
+    position:absolute;
+
+    /* position on screen */
+    top:145px;
+    left:385px;
+    padding:15px;
+
+    /* size of the div */
+    width:400px;
+    height:400px;
+}
+
