@@ -1,7 +1,7 @@
 <%
 __author__ = "Jesse Stombaugh"
 __copyright__ = "Copyright 2009-2010, Qiime Web Analysis"
-__credits__ = ["Doug Wendel"]
+__credits__ = ["Doug Wendel", "Zhenjiang Xu"]
 __license__ = "GPL"
 __version__ = "1.0.0.dev"
 __maintainer__ = ["Doug Wendel"]
@@ -40,7 +40,34 @@ else:
     raise('Could not determine job identifier. study_id and meta_analysis_id are both empty.')
 
 job_type_ids = form['job_type_id'].split(',')
+# queued_data_load = form['queued_data_load']
 
+if 'queued_data_load' in form:
+    jobs_3 = data_access.getJobInfo(study_id, 3)
+    ready = True
+    if jobs_3:
+        for job in jobs_3:
+            if job['job_state_name'] != 'COMPLETED_OKAY':
+                # if any job of preprocess is not finished with ok
+                ready = False
+                break
+    else: ready = False
+    if ready:
+        link = '<a href="update_job_status.psp?job_type_id=12">(submit all jobs)</a>'
+        for job in data_access.getJobInfo(study_id, 12):
+            if job['job_state_name'] in ['COMPLETED_OKAY', 'COMPLETING',
+                                         'QUEUED', 'NEW', 'RUNNING', 'EXITING']:
+                # not allowing submit jobs for these statuses
+                link = ''
+                break
+        #
+%>
+    <li> Queued Data to Load <%=link%>
+            <ul>
+                <div>
+
+<%
+#
 for jobid in job_type_ids:
     #req.write('<p/>looking up jobs<p/>')
     jobs = data_access.getJobInfo(job_locator_id, int(jobid))
@@ -54,5 +81,12 @@ for jobid in job_type_ids:
         req.write(display_text)
         if job['job_notes'] != None:
             req.write('<br/>Output: ' + job['job_notes'])
+if 'queued_data_load' in form:
+    #
+%>
+                </div>
+            </ul>
+    </li>
+<%
 #
 %>

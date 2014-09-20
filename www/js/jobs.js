@@ -35,37 +35,6 @@ function GetXmlHttpObject()
     return null;
 }
 
-function submitAllJobs()
-{
-    // check if browser can perform xmlhttp
-    xmlhttp = GetXmlHttpObject()
-    if (xmlhttp==null)
-    {
-        alert ("Your browser does not support XML HTTP Request");
-        return;
-    }
-
-    var span_name ="submit_all_span";
-    var url = "load_study.psp";
-
-    xmlhttp.onreadystatechange=function()
-    {
-        if (xmlhttp.readyState==4)
-        {
-            try
-            {
-                document.getElementById(span_name).innerHTML = xmlhttp.responseText;
-            }
-            catch(e)
-            {
-                // Do nothing
-            }
-        }
-    }
-    // perform a GET
-    xmlhttp.open("GET", url, true);
-    xmlhttp.send(null);
-}
 
 function checkQiimeJobLoadStatus()
 {
@@ -78,7 +47,7 @@ function checkQiimeJobLoadStatus()
     }
     
     div_name ="qiime_load_status_div";
-    var url = "check_job_status.psp?job_type_id=12,15";
+    var url = "check_job_status.psp?job_type_id=12&queued_data_load";
 
     xmlhttp.onreadystatechange=function()
     {
@@ -286,7 +255,6 @@ function checkAllStudyJobs()
     setTimeout(checkQiimeJobStatus, 0);
     setTimeout(checkQiimeJobLoadStatus, 1000);
     setTimeout(checkEBISRAJobStatus, 2000);
-    setTimeout(submitAllJobs, 3000);
 }
 
 function confirmFormSubmission(confirm_message, form_name)
