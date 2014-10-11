@@ -296,11 +296,11 @@ else:
 
 <table>
     <tr>
-        <td><a href="./register_user.psp">Create Account</a></td>
+        <td><a href="./register_user.psp?portal_type='qiime'">Create Account</a></td>
         <td> | </td>
-        <td><a href="./forgot_password.psp">Reset Password</a></td>
+        <td><a href="./forgot_password.psp?portal_type='qiime'">Reset Password</a></td>
         <td> | </td>
-        <td><a href="./change_password.psp">Change Password</a></td>
+        <td><a href="./change_password.psp?portal_tpye='qiime'">Change Password</a></td>
 </table>
 
 <br/>

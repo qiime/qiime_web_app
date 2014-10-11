@@ -23,10 +23,25 @@ from send_mail_from_server import process_and_send_email
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Qiime</title>
+<%
+portal_type = 'qiime'
+if 'portal_type' in form:
+    portal_type = form['portal_type']
+if portal_type == 'emp':
+    req.write('<title>Earth Mircrobiome Project</title>')
+else:
+    req.write('<title>Qiime</title>')
+#END INDENT
+%>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
-<link rel="stylesheet" href="style/qiime.css" type="text/css">
+<%
+if portal_type == 'emp':
+    req.write('<link rel="stylesheet" href="style/emp.css" type="text/css">')
+else:
+    req.write('<link rel="stylesheet" href="style/qiime.css" type="text/css">')
+#END INDENT
+%>
 <script type="text/javascript" src="./js/qiime.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.js"></script>
 <script type="text/javascript" src="./js/jquery_validate/lib/jquery.metadata.js"></script>
@@ -166,6 +181,7 @@ if form.has_key('username'):
             <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
             <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
             </table>
+            <input type='hidden' name='portal_type' id='portal_type' value="<%=portal_type%>"/>
         </form>
 <%
     elif available and not good_password:
@@ -181,6 +197,7 @@ if form.has_key('username'):
             <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
             <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
             </table>
+              <input type='hidden' name='portal_type' id='portal_type' value="<%=portal_type%>"/>
         </form>
 <%
     else:
@@ -194,6 +211,7 @@ if form.has_key('username'):
             <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
             <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
             </table>
+              <input type='hidden' name='portal_type' id='portal_type' value="<%=portal_type%>"/>
         </form>
 <%
 else:
@@ -206,6 +224,7 @@ else:
         <tr><td>Re-Type Password:</td><td><input type="password" id="password_again" name="password_again" /></td></tr>
         <tr><td colspan="2"><input type="submit" value="Create User" /></tr>
         </table>
+          <input type='hidden' name='portal_type' id='portal_type' value="<%=portal_type%>"/>
     </form>
 <%
 #

@@ -19,6 +19,7 @@ locale.setlocale(locale.LC_ALL, 'en_US')
 data_access = data_access_factory(ServerConfig.data_access_type)
 sess = Session.Session(req)
 sess['portal_type'] = 'emp'
+sess['stylesheet'] = 'style/emp.css'
 sess.save()
 
 # Get the general statistics
@@ -136,7 +137,6 @@ plots['country'] = 'By Location'
 <title>Earth Microbiome Project - Metadata Portal</title>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 
-<link rel="stylesheet" href="/qiime/style/style.css" type="text/css">
 <link rel="stylesheet" href="/qiime/style/emp.css" type="text/css">
 <link class="include" rel="stylesheet" type="text/css" href="/qiime/js/jqChartJQueryPlugin_3_0_0_0/css/jquery.jqChart.css" />
 
@@ -200,7 +200,7 @@ if form.has_key('username'):
         sess.set_timeout(604800)
         sess.save()
 
-        req.write('''<form action="http://www.microbio.me/qiime/index.psp" method="post" name="login_form" id="login_form">
+        req.write('''<form action="/qiime/index.psp" method="post" name="login_form" id="login_form">
         <input type="hidden" name="page" value="./select_study.psp">
         <input type="hidden" name="portal_type" value="emp">
         <input type="hidden" name="username" value="%s">
@@ -244,6 +244,14 @@ if form.has_key('username'):
 
 <br/>
 
+<table>
+    <tr>
+        <td><a href="/qiime/register_user.psp?portal_type=emp">Create Account</a></td>
+        <td> | </td>
+        <td><a href="/qiime/forgot_password.psp?portal_type=emp">Reset Password</a></td>
+        <td> | </td>
+        <td><a href="/qiime/change_password.psp?portal_type=emp">Change Password</a></td>
+</table>
 
 
 
